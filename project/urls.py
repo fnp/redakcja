@@ -8,7 +8,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    # (r'^platforma/', include('platforma.foo.urls')),
+    url(r'^$', 'explorer.views.file_list', name='file_list'),
+    url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
+    url(r'^html/(?P<path>[^/]+)/', 'explorer.views.file_html', name='file_html'),
 
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

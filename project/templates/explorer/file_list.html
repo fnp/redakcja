@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block maincontent %}
+<ul>
+{% for blob in objects %}
+    <li><a href="{% url file_xml blob %}">{{ blob }}</a></li>
+{% endfor %}
+</ul>
+{% endblock maincontent %}

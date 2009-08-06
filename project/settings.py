@@ -100,8 +100,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    
+    'explorer'
 )
 
+REPOSITORY_PATH = '/Users/zuber/Projekty/books/01'
 
 try:
     from localsettings import *
