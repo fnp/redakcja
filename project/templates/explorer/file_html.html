@@ -15,11 +15,7 @@
         var lastScroll = -1000;
                     
         function checkScroll() {
-            console.log('checkScroll', $('#images').scrollTop(), lastScroll);
-            
             if (Math.abs($('#images').scrollTop() - lastScroll) > 300) {
-                console.log('checking!');
-                
                 var container = $('#images');
                 lastScroll = container.scrollTop();
                 

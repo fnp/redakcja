@@ -15,11 +15,7 @@
         var lastScroll = -1000;
                     
         function checkScroll() {
-            console.log('checkScroll', $('#images').scrollTop(), lastScroll);
-            
             if (Math.abs($('#images').scrollTop() - lastScroll) > 300) {
-                console.log('checking!');
-                
                 var container = $('#images');
                 lastScroll = container.scrollTop();
                 
@@ -36,20 +32,25 @@
             setTimeout(checkScroll, 2000);
         }
         
+        function addEditorButton(label, fn) {
+            $('<button type="button">' + label + '</button>').click(function(event) {
+                var text = $('#id_text').getSelection().text;
+                $('#id_text').replaceSelection(fn(text));
+                event.preventDefault();
+            }).appendTo('#buttons');
+        }
+        
         $(function() {
             $('#id_folders').change(function() {
                 $('#images').load('/images/' + $('#id_folders').val() + '/', function() {
                     lastScroll = -1000;
                 });
             });
+
+            addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
+            addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
             
             setTimeout(checkScroll, 2000);
-            
-            $('#rozdzial-button').click(function(event) {
-                console.log($('#id_text').getSelection().text);
-                $('#id_text').replaceSelection('<rozdzial>' + $('#id_text').getSelection().text + '</rozdzial>', true);
-                event.preventDefault();
-            });
         });
     </script>
 {% endblock extrahead %}
@@ -65,7 +66,7 @@
         </div>
     </div>
     <form action="." method="post" accept-charset="utf-8">
-        <a href="#" id="rozdzial-button">Rodział</a>
+        <div id="buttons"></div>
         {{ form.text }}
         <p>Użytkownik: {{ form.user }} Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
     </form>
