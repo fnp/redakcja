@@ -22,7 +22,7 @@ def file_xml(request, path):
         form = forms.BookForm(request.POST)
         if form.is_valid():
             repo.add_file(path, form.cleaned_data['text'])
-            repo.commit()
+            repo.commit(message=form.cleaned_data['commit_message'], user=form.cleaned_data['user'])
             return HttpResponseRedirect(request.get_full_path())
     else:
         form = forms.BookForm()

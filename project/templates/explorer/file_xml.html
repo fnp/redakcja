@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-    <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/jquery.fieldselection.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">        
         function aboveViewport(container, element, treshold) {
             return $(container).offset().top >= $(element).offset().top + $(element).height() + treshold;
@@ -44,6 +44,12 @@
             });
             
             setTimeout(checkScroll, 2000);
+            
+            $('#rozdzial-button').click(function(event) {
+                console.log($('#id_text').getSelection().text);
+                $('#id_text').replaceSelection('<rozdzial>' + $('#id_text').getSelection().text + '</rozdzial>', true);
+                event.preventDefault();
+            });
         });
     </script>
 {% endblock extrahead %}
@@ -59,7 +65,8 @@
         </div>
     </div>
     <form action="." method="post" accept-charset="utf-8">
+        <a href="#" id="rozdzial-button">Rodział</a>
         {{ form.text }}
-        <p><input type="submit" value="Zapisz"/></p>
+        <p>Użytkownik: {{ form.user }} Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
     </form>
 {% endblock maincontent %}    
