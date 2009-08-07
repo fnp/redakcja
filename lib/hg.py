@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import codecs
-from mercurial import localrepo, ui, error, match, node
+from mercurial import localrepo, ui, error, match, node, encoding
+
+
+encoding.encoding = 'utf-8'
 
 
 class RepositoryDoesNotExist(Exception):
@@ -48,7 +51,7 @@ class Repository(object):
         if path not in self._pending_files:
             self._pending_files.append(path)
     
-    def commit(self, message='hgshelve auto commit', key=None, user=None):
+    def commit(self, message=u'hgshelve auto commit', key=None, user=None):
         """
         Commit unsynchronized data to disk.
         Arguments::
@@ -56,6 +59,11 @@ class Repository(object):
          - message: mercurial's changeset message
          - key: supply to sync only one key
         """
+        if isinstance(message, unicode):
+            message = message.encode('utf-8')
+        if isinstance(user, unicode):
+            user = user.encode('utf-8')
+        
         commited = False
         rev = None
         files_to_add = []
