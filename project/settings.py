@@ -104,7 +104,8 @@ INSTALLED_APPS = (
     'explorer'
 )
 
-REPOSITORY_PATH = '/Users/zuber/Projekty/books/01'
+REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
+IMAGE_DIR = '/Users/zuber/Projekty/platforma/files/images'
 
 try:
     from localsettings import *

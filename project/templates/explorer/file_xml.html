@@ -1,11 +1,65 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+    <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">        
+        function aboveViewport(container, element, treshold) {
+            return $(container).offset().top >= $(element).offset().top + $(element).height() + treshold;
+        }
+        
+        function belowViewport(container, element, treshold) {
+            return $(container).offset().top + $(container).height() + treshold <= $(element).offset().top;
+        }
+        
+        var TRESHOLD = 600;
+        var lastScroll = -1000;
+                    
+        function checkScroll() {
+            console.log('checkScroll', $('#images').scrollTop(), lastScroll);
+            
+            if (Math.abs($('#images').scrollTop() - lastScroll) > 300) {
+                console.log('checking!');
+                
+                var container = $('#images');
+                lastScroll = container.scrollTop();
+                
+                $('#images .image-box').each(function() {
+                    if (aboveViewport(container, this, TRESHOLD)) {
+                        $(this).html('loading...');
+                    } else if (belowViewport(container, this, TRESHOLD)) {
+                        $(this).html('loading...');
+                    } else {
+                        $(this).html('<img src="' + $(this).attr('src') + '" width="460" height="460"/>');
+                    }
+                })
+            }
+            setTimeout(checkScroll, 2000);
+        }
+        
+        $(function() {
+            $('#id_folders').change(function() {
+                $('#images').load('/images/' + $('#id_folders').val() + '/', function() {
+                    lastScroll = -1000;
+                });
+            });
+            
+            setTimeout(checkScroll, 2000);
+        });
+    </script>
+{% endblock extrahead %}
+
 {% block breadcrumbs %}<a href="/">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
+    <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a>    <div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
+
+    <div id="images">
+        <div class="image-box">
+            <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+        </div>
+    </div>
     <form action="." method="post" accept-charset="utf-8">
-        {{ form }}
+        {{ form.text }}
         <p><input type="submit" value="Zapisz"/></p>
     </form>
 {% endblock maincontent %}    

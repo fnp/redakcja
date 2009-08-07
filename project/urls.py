@@ -10,8 +10,9 @@ urlpatterns = patterns('',
     # Example:
     url(r'^$', 'explorer.views.file_list', name='file_list'),
     url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
-    url(r'^html/(?P<path>[^/]+)/', 'explorer.views.file_html', name='file_html'),
-
+    url(r'^html/(?P<path>[^/]+)/$', 'explorer.views.file_html', name='file_html'),
+    url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
+    
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),

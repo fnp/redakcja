@@ -58,12 +58,31 @@ li a:hover {
     display: none;
 }
 
+label {
+    display: block;
+}
+
 textarea {
-    width: 97%;
-    height: 42em;
+    width: 480px;
+    height: 480px;
     padding: 5px 10px;
 }
 
 #file-text {
     padding: 5px 10px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 480px;
+    height: 480px;
+    border: 1px solid #999;
+}
+
+#images {
+    float: left;
+    width: 480px;
+    height: 480px;
+    border: 1px solid #999;
+    padding: 5px 10px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
