@@ -86,3 +86,18 @@ textarea {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
+.errorlist {
+    color: red;
+    margin: 0 20px 0 0;
+    padding: 0;
+    float: left;
+}
+
+.errorlist:before {
+    content: '';
+    clear: both;
+}
+p { 
+    margin: 0;
+}

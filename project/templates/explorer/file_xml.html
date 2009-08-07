@@ -66,6 +66,9 @@
     <form action="." method="post" accept-charset="utf-8">
         <div id="buttons"></div>
         {{ form.text }}
-        <p>Użytkownik: {{ form.user }} Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
+        {{ form.user.errors }}
+        <p>Użytkownik: {{ form.user }}</p> 
+        {{ form.commit_message.errors }}
+        <p>Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
     </form>
 {% endblock maincontent %}    
