@@ -2,36 +2,8 @@
 
 {% block extrahead %}
     <script src="/static/js/jquery.fieldselection.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">        
-        function aboveViewport(container, element, treshold) {
-            return $(container).offset().top >= $(element).offset().top + $(element).height() + treshold;
-        }
-        
-        function belowViewport(container, element, treshold) {
-            return $(container).offset().top + $(container).height() + treshold <= $(element).offset().top;
-        }
-        
-        var TRESHOLD = 600;
-        var lastScroll = -1000;
-                    
-        function checkScroll() {
-            if (Math.abs($('#images').scrollTop() - lastScroll) > 300) {
-                var container = $('#images');
-                lastScroll = container.scrollTop();
-                
-                $('#images .image-box').each(function() {
-                    if (aboveViewport(container, this, TRESHOLD)) {
-                        $(this).html('loading...');
-                    } else if (belowViewport(container, this, TRESHOLD)) {
-                        $(this).html('loading...');
-                    } else {
-                        $(this).html('<img src="' + $(this).attr('src') + '" width="460" height="460"/>');
-                    }
-                })
-            }
-            setTimeout(checkScroll, 2000);
-        }
-        
         function addEditorButton(label, fn) {
             $('<button type="button">' + label + '</button>').click(function(event) {
                 var text = $('#id_text').getSelection().text;
@@ -43,14 +15,14 @@
         $(function() {
             $('#id_folders').change(function() {
                 $('#images').load('/images/' + $('#id_folders').val() + '/', function() {
-                    lastScroll = -1000;
+                    $('#images').data('lastScroll', -1000);
                 });
             });
 
             addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
             addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
             
-            setTimeout(checkScroll, 2000);
+            $('#images').lazyload('.image-box', {threshold: 600});
         });
     </script>
 {% endblock extrahead %}
