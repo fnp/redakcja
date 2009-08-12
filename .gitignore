@@ -1,4 +1,4 @@
 localsettings.py
-dev.db
+dev.sqlite
 *.pyc
 .DS_Store
