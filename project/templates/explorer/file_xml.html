@@ -38,7 +38,7 @@
     </script>
 {% endblock extrahead %}
 
-{% block breadcrumbs %}<a href="/">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
+{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
     <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a>    <div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
