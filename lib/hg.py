@@ -75,7 +75,7 @@ class Repository(object):
             # will commit all keys
             pending_files = self._pending_files
         else:
-            if key not in self._pending_files:
+            if keys not in self._pending_files:
                 # key isn't changed
                 return None
             else:
@@ -97,6 +97,9 @@ class Repository(object):
             self.repo.forget(files_to_remove)
         # ---- hg commit
         if files_to_commit:
+            for i, f in enumerate(files_to_commit):
+                if isinstance(f, unicode):
+                    files_to_commit[i] = f.encode('utf-8')
             matcher = match.match(self.repo.root, self.repo.root, files_to_commit, default='path')
             rev = self.repo.commit(message, user=user, match=matcher)
             commited = True
