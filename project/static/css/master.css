@@ -76,7 +76,7 @@ label {
     border: 1px solid #999;
 }
 
-#images {
+#images-wrap {
     float: left;
     width: 49%;
     height: 480px;

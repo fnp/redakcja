@@ -20,19 +20,27 @@
                     $('#images').data('lastScroll', -1000);
                 });
             });
-        
+                    
             var editor = CodeMirror.fromTextArea("id_text", {
                 parserfile: 'parsexml.js',
                 path: "/static/js/codemirror/",
                 stylesheet: "/static/css/xmlcolors.css",
                 parserConfig: {useHTMLKludges: false}
             });
-    		
+            
+            $('iframe').load(function() {
+                $($('iframe').contents()).scroll(function() {
+                    var percentScrolled = $('body', this).scrollTop() / $('body', this).height();
+                    $('#images-wrap').scrollTop(percentScrolled * $('#images').height());
+                });
+            })
+            
             addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
             addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
             
             $('#images').lazyload('.image-box', {threshold: 600});
         });
+
     </script>
 {% endblock extrahead %}
 
@@ -41,8 +49,10 @@
 {% block maincontent %}
     <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a>    <div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
 
-    <div id="images">
-        <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+    <div id="images-wrap">
+        <div id="images">
+            <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+        </div>
     </div>
     <form action="." method="post" accept-charset="utf-8">
         {# <div id="buttons"></div> #}
