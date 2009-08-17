@@ -27,12 +27,12 @@
             }
             
             $('#toggle-sidebar').toggle(function() {
-                $('#images-wrap').width(0);
-                $('#sidebar').width(8);
-                resizePanels();
-            }, function() {
                 $('#images-wrap').width(480);
                 $('#sidebar').width(488);
+                resizePanels();
+            }, function() {
+                $('#images-wrap').width(0);
+                $('#sidebar').width(8);
                 resizePanels();
             })
             

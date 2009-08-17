@@ -75,7 +75,7 @@ label {
 }
 
 #images-wrap {
-    width: 480px;
+    width: 0px;
     height: 480px;
     border-right: 1px solid #999;
     overflow-y: scroll;
@@ -86,14 +86,20 @@ label {
 
 #sidebar {
     float: left;
-    width: 488px;
+    width: 8px;
+    overflow: hidden;
 }
 
 #toggle-sidebar {
-    background-color: #999;
+    background-color: #DDD;
     width: 7px;
     height: 100%;
     float: left;
+}
+
+#toggle-sidebar:hover {
+    background-color: #999;
+    cursor: pointer;
 }
 
 #status-bar {
