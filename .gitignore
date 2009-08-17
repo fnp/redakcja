@@ -2,3 +2,5 @@ localsettings.py
 dev.sqlite
 *.pyc
 .DS_Store
+media
+files
