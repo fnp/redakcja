@@ -59,7 +59,7 @@
             addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
             addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
             
-            $('#images').lazyload('.image-box', {threshold: 600});
+            $('#images-wrap').lazyload('.image-box', {threshold: 600});
         });
 
     </script>
@@ -68,14 +68,15 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a>    <div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
+    <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
     
     <form action="." method="post" accept-charset="utf-8">
         <div id="panels">
             <div id="sidebar">
                 <div id="images-wrap">
                     <div id="images">
-                        <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+                        <p>Aby zobaczyć obrazki wybierz folder poniżej:</p>
+                        <p>{{ image_folders_form.folders }}</p>
                     </div>
                 </div>
                 <div id="toggle-sidebar"></div>
