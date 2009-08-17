@@ -19,7 +19,27 @@
                     $('#images').data('lastScroll', -1000);
                 });
             });
-                    
+            
+            function resizePanels() {
+                $('iframe').width($(window).width() - $('#sidebar').outerWidth());
+                $('iframe').height($(window).height() - 100);
+                $('#images-wrap, #toggle-sidebar').height($(window).height() - 100);
+            }
+            
+            $('#toggle-sidebar').toggle(function() {
+                $('#images-wrap').width(0);
+                $('#sidebar').width(8);
+                resizePanels();
+            }, function() {
+                $('#images-wrap').width(480);
+                $('#sidebar').width(488);
+                resizePanels();
+            })
+            
+            $(window).resize(function() {
+                resizePanels();
+            })
+            
             var editor = CodeMirror.fromTextArea("id_text", {
                 parserfile: 'parsexml.js',
                 path: "/static/js/codemirror/",
@@ -32,6 +52,8 @@
                     var percentScrolled = $('body', this).scrollTop() / $('body', this).height();
                     $('#images-wrap').scrollTop(percentScrolled * $('#images').height());
                 });
+                
+                setTimeout(function() {resizePanels();}, 10);
             })
             
             addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
@@ -47,18 +69,23 @@
 
 {% block maincontent %}
     <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a>    <div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
-
-    <div id="images-wrap">
-        <div id="images">
-            <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
-        </div>
-    </div>
+    
     <form action="." method="post" accept-charset="utf-8">
-        {# <div id="buttons"></div> #}
-		<textarea id="id_text" name="text" style="width:50%; height:480px">{{ form.text.field.initial }}</textarea>
-        {{ form.user.errors }}
-        <p>Użytkownik: {{ form.user }}</p> 
-        {{ form.commit_message.errors }}
-        <p>Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
+        <div id="panels">
+            <div id="sidebar">
+                <div id="images-wrap">
+                    <div id="images">
+                        <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+                    </div>
+                </div>
+                <div id="toggle-sidebar"></div>
+            </div>
+            <textarea id="id_text" name="text" width="480px">{{ form.text.field.initial }}</textarea>
+        </div>
+        
+        <div id="status-bar">
+            {{ form.user.errors }} {{ form.commit_message.errors }}
+            <p>Użytkownik: {{ form.user }} Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
+        </div>
     </form>
 {% endblock maincontent %}    
