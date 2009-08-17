@@ -59,7 +59,7 @@
             addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
             addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
             
-            $('#images-wrap').lazyload('.image-box', {threshold: 600});
+            $('#images-wrap').lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
         });
 
     </script>
