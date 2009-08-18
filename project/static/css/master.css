@@ -123,3 +123,7 @@ label {
 p { 
     margin: 0;
 }
+
+.image-box {
+    border-top: 1px solid #DDD;
+}
