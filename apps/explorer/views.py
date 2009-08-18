@@ -1,5 +1,6 @@
 from librarian import html
-import hg, urllib2, json
+import hg, urllib2
+from django.utils import simplejson as json
 
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
