@@ -50,7 +50,13 @@
             
             $('iframe').load(function() {
                 $('#images').autoscroll('iframe');
-                
+                $('.toggleAutoscroll').toggle(function() {
+                    $(this).html('Synchronizuj przewijanie');
+                    $('#images').disableAutoscroll();
+                }, function() {
+                    $(this).html('Nie synchronizuj przewijania');
+                    $('#images').enableAutoscroll();
+                })
                 setTimeout(function() {resizePanels();}, 10);
             })
             
@@ -84,7 +90,12 @@
         
         <div id="status-bar">
             {{ form.user.errors }} {{ form.commit_message.errors }}
-            <p>Użytkownik: {{ form.user }} Opis zmian: {{ form.commit_message }} <input type="submit" value="Zapisz"/></p>
+            <p>
+                Użytkownik: {{ form.user }}
+                Opis zmian: {{ form.commit_message }}
+                <input type="submit" value="Zapisz"/>
+                <a href="#" class="toggleAutoscroll" style="float: right">Nie synchronizuj przewijania</a>
+            </p>
         </div>
     </form>
 {% endblock maincontent %}    
