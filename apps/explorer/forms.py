@@ -7,7 +7,6 @@ class BookForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea)
     commit_message = forms.CharField()
     user = forms.CharField()
-    
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)
