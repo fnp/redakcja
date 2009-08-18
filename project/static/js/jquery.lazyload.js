@@ -31,7 +31,13 @@
                         || belowViewport(container, this, settings.threshold)) {
                         $(this).html(settings.placeholder);
                     } else {
-                        $(this).html('<img src="' + $(this).attr('src') + '" width="' + $(this).width() + '" />');
+                        $(this).html('');
+                        var self = this;
+                        $('<img src="' + $(this).attr('src') + '" width="' + $(this).width() + '" />').load(function() {
+                            if ($(this).height() > $(self).height()) {
+                                $(self).height($(this).height());
+                            }
+                        }).appendTo(this);
                     }
                 })
             }

@@ -1,6 +1,7 @@
 body {
     margin: 0;
     font: 100%/1.5 Georgia, Verdana, sans-serif;
+    overflow: hidden;
 }
 
 #breadcrumbs {
@@ -71,19 +72,40 @@ label {
     padding: 5px 10px;
     overflow-x: hidden;
     overflow-y: scroll;
-    width: 480px;
-    height: 480px;
-    border: 1px solid #999;
 }
 
 #images-wrap {
-    float: left;
-    width: 49%;
+    width: 0px;
     height: 480px;
-    border: 1px solid #999;
-/*    padding: 5px 10px;*/
+    border-right: 1px solid #999;
     overflow-y: scroll;
     overflow-x: hidden;
+    background-color: #fff;
+    float: left;
+}
+
+#sidebar {
+    float: left;
+    width: 8px;
+    overflow: hidden;
+}
+
+#toggle-sidebar {
+    background-color: #DDD;
+    width: 7px;
+    height: 100%;
+    float: left;
+}
+
+#toggle-sidebar:hover {
+    background-color: #999;
+    cursor: pointer;
+}
+
+#status-bar {
+    border-top: 1px solid #999;
+    background-color: #EEE;
+    padding: 2px 10px;
 }
 
 .errorlist {
@@ -100,4 +122,8 @@ label {
 
 p { 
     margin: 0;
+}
+
+.image-box {
+    border-top: 1px solid #DDD;
 }

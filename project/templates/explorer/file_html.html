@@ -10,7 +10,15 @@
                 });
             });
             
-            $('#images').lazyload('.image-box', {threshold: 600});
+            function resizePanels() {
+                $('#images-wrap').height($(window).height() - 80);
+                $('#file-text').height($(window).height() - 80);
+            }
+            
+            $(window).resize(resizePanels)
+            resizePanels();
+            
+            $('#images-wrap').lazyload('.image-box', {threshold: 600});
         });
     </script>
 {% endblock extrahead %}
@@ -20,8 +28,13 @@
 {% block maincontent %}
     <div id="tabs"><a href="{% url file_xml hash %}">Źródło</a><a href="{% url file_html hash %}" class="active">HTML</a><div style="padding: 3px; margin-left: 10px">{{ image_folders_form.folders }}</div><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
 
-    <div id="images">
-        <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+    <div id="sidebar">
+        <div id="images-wrap">
+            <div id="images">
+                <p>Aby zobaczyć obrazki wybierz folder z obrazkami powyżej.</p>
+            </div>
+        </div>
+        <div id="toggle-sidebar"></div>
     </div>
     <div id="file-text">
     {{ object|safe }}
