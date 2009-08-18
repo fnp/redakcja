@@ -5,15 +5,7 @@
     <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-        function addEditorButton(label, fn) {
-            $('<button type="button">' + label + '</button>').click(function(event) {
-                var text = $('#id_text').getSelection().text;
-                $('#id_text').replaceSelection(fn(text));
-                event.preventDefault();
-            }).appendTo('#buttons');
-        }
-        
+    <script type="text/javascript" charset="utf-8">        
         $(function() {
             $('#id_folders').change(function() {
                 $('#images').load('/images/' + $('#id_folders').val() + '/', function() {
@@ -45,24 +37,47 @@
                 parserfile: 'parsexml.js',
                 path: "/static/js/codemirror/",
                 stylesheet: "/static/css/xmlcolors.css",
-                parserConfig: {useHTMLKludges: false}
+                parserConfig: {useHTMLKludges: false},
+                initCallback: function() {
+                    $('#images').autoscroll('iframe');
+                    $('.toggleAutoscroll').toggle(function() {
+                        $(this).html('Synchronizuj przewijanie');
+                        $('#images').disableAutoscroll();
+                    }, function() {
+                        $(this).html('Nie synchronizuj przewijania');
+                        $('#images').enableAutoscroll();
+                    })
+
+                    keys = {}
+                    
+                    function addEditorButton(editor, label, keyCode, fn) {
+                        var handler = function() {
+                            var text = editor.selection();
+                            editor.replaceSelection(fn(text));
+                        }
+                        
+                        keys[keyCode] = handler;
+                        
+                        $('<button type="button">' + label + '</button>').click(function(event) {
+                            event.preventDefault();
+                            handler();
+                        }).appendTo('#buttons');
+                    }
+                    
+                    addEditorButton(editor, 'utwór', 65, function(text) { return '<utwor>' + text + '</utwor>'; });
+                    addEditorButton(editor, 'akap', 83, function(text) { return '<akap>' + text + '</akap>'; });
+                    
+                    editor.grabKeys(function(event) { 
+                        // console.log('handle', event, event.keyCode)
+                        if (keys[event.keyCode]) {
+                            keys[event.keyCode]();
+                        }
+                    }, function(event) { return event.ctrlKey && event.keyCode != 17; });
+
+                    resizePanels();
+                }
             });
-            
-            $('iframe').load(function() {
-                $('#images').autoscroll('iframe');
-                $('.toggleAutoscroll').toggle(function() {
-                    $(this).html('Synchronizuj przewijanie');
-                    $('#images').disableAutoscroll();
-                }, function() {
-                    $(this).html('Nie synchronizuj przewijania');
-                    $('#images').enableAutoscroll();
-                })
-                setTimeout(function() {resizePanels();}, 10);
-            })
-            
-            addEditorButton('utwór', function(text) { return '<utwor>' + text + '</utwor>'; });
-            addEditorButton('akap', function(text) { return '<akap>' + text + '</akap>'; });
-            
+
             $('#images-wrap').lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
         });
 
@@ -72,7 +87,12 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    <div id="tabs"><a href="{% url file_xml hash %}" class="active">Źródło</a><a href="{% url file_html hash %}">HTML</a><div style="clear: both; height: 0; width: 0">&nbsp;</div></div>    
+    <div id="tabs">
+        <a href="{% url file_xml hash %}" class="active">Źródło</a>
+        <a href="{% url file_html hash %}">HTML</a>
+        <div style="float: left" id="buttons"></div>
+        <div style="clear: both; height: 0; width: 0">&nbsp;</div>
+    </div>
     
     <form action="." method="post" accept-charset="utf-8">
         <div id="panels">
