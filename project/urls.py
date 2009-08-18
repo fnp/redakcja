@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
     url(r'^html/(?P<path>[^/]+)/$', 'explorer.views.file_html', name='file_html'),
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
+    url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
     
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
