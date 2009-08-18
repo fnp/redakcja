@@ -48,8 +48,9 @@ def folder_images(request, folder):
     })
 
 def _add_references(message, issues):
-    # TODO
-    pass
+    for issue in issues:
+        message += " refs #%d " % issue.id
+    return message
 
 def _get_issues_for_file(path):
     if not path.endswith('.xml'):
