@@ -6,6 +6,7 @@
     <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">        
         $(function() {
             $('#id_folders').change(function() {
@@ -87,6 +88,16 @@
                     resizePanels();
                 }
             });
+            
+            $('#toolbar-buttons li').wTooltip({
+                delay: 1000, 
+                style: {
+                    border: "1px solid #7F7D67",
+                    opacity: 0.9, 
+                    background: "#FBFBC6", 
+                    padding: "1px",
+                    fontSize: "12px",
+                }});
             
             $('#images-wrap').lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
         });
