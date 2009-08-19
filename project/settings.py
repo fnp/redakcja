@@ -101,11 +101,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     
-    'explorer'
+    'explorer',
+    'toolbar',
 )
 
 REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
-IMAGE_DIR = '/Users/zuber/Projekty/platforma/files/images'
+IMAGE_DIR = 'images'
 
 try:
     from localsettings import *

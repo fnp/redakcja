@@ -1,0 +1,18 @@
+<div id="toolbar">
+    <ol id="toolbar-tabs">
+        {% for group in groups %}
+        <li p:button-list="{{ group.slug }}">{{ group.name }}</li>
+        {% endfor %}
+    </ol>
+    <div style="clear: both; height: 0; width: 0">&nbsp;</div>
+    <div id="toolbar-buttons">
+        {% for group in groups %}
+        <ol id="{{ group.slug }}" style="display:none">
+            {% for button in group.button_set.all %}
+            <li p:tag="{{ button.slug }}" {% if button.key %}p:key="{{ button.key }}"{% endif %}>{{ button.label }}</li>
+            {% endfor %}
+        </ol>
+        {% endfor %}
+        <div style="clear: both; height: 0; width: 0">&nbsp;</div>
+    </div>
+</div>
