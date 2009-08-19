@@ -15,15 +15,18 @@ def file_list(request):
         'objects': repo.all_files(),
     })
 
-
 def file_xml(request, path):
     if request.method == 'POST':
         form = forms.BookForm(request.POST)
         if form.is_valid():
             repo.add_file(path, form.cleaned_data['text'])
-            # issues = _get_issues_for_file(path)
-            # commit_message = _add_references(form.cleaned_data['commit_message'], issued)
-            repo.commit(message=form.cleaned_data['commit_message'], user=form.cleaned_data['user'])
+            
+            # add references to comment
+            issues = _get_issues_for_file(path)
+            commit_message = _add_references(form.cleaned_data['commit_message'], issues)
+            print 'Commiting with: ' + commit_message
+
+            repo.commit(message=commit_message, user=form.cleaned_data['user'])
             return HttpResponseRedirect(request.get_full_path())
     else:
         form = forms.BookForm()
@@ -49,18 +52,19 @@ def folder_images(request, folder):
     })
 
 def _add_references(message, issues):
-    for issue in issues:
-        message += " refs #%d " % issue.id
-    return message
+    return message + " - " + ", ".join(map(lambda issue: "Refs #%d" % issue['id'], issues))
 
 def _get_issues_for_file(path):
     if not path.endswith('.xml'):
         raise ValueError('Path must end with .xml')
 
-    book_id = path[:-3]
-    uf = urllib2.urlopen(settings.REDMINE_URL + 'publications/%s/issues' % book_id)
+    book_id = path[:-4]
+    uf = None
 
     try:
+        uf = urllib2.urlopen(settings.REDMINE_URL + 'publications/issues/%s.json' % book_id)
         return json.loads(uf.read())
+    except urllib2.HTTPError:
+        return []
     finally:
-        uf.close()
+        if uf: uf.close()
