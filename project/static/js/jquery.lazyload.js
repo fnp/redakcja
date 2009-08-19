@@ -12,7 +12,7 @@
         }
         
         var container = this;
-        container.data('lastScroll', -10000);
+        container.data('lazyload:lastCheckedScrollTop', -10000);
         
         function aboveViewport(container, element, threshold) {
             return $(container).offset().top >= $(element).offset().top + $(element).height() + threshold;
@@ -23,8 +23,8 @@
         }
         
         function checkScroll() {
-            if (Math.abs(container.scrollTop() - container.data('lastScroll')) > settings.scrollThreshold) {
-                container.data('lastScroll', container.scrollTop());
+            if (Math.abs(container.scrollTop() - container.data('lazyload:lastCheckedScrollTop')) > settings.scrollThreshold) {
+                container.data('lazyload:lastCheckedScrollTop', container.scrollTop());
                 
                 $(pattern, container).each(function() {
                     if (aboveViewport(container, this, settings.threshold)
