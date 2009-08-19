@@ -8,7 +8,7 @@ class ButtonGroup(models.Model):
     position = models.IntegerField(default=0)
     
     class Meta:
-        ordering = ['name']
+        ordering = ('position', 'name',)
         verbose_name, verbose_name_plural = _('button group'), _('button groups')
     
     def __unicode__(self):
@@ -25,8 +25,9 @@ class Button(models.Model):
     group = models.ManyToManyField(ButtonGroup)
     
     class Meta:
-        ordering = ['label']
+        ordering = ('position', 'label',)
         verbose_name, verbose_name_plural = _('button'), _('buttons')
     
     def __unicode__(self):
         return self.label
+
