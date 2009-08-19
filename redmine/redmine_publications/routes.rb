@@ -1,10 +1,13 @@
-connect 'publications/:pub',
+connect 'publications/:action',
 	:controller => 'publications',
-	:action => 'redirect_to_platform'
+	:format => 'html'
 
-connect 'publications/:pub/:action', 
+connect 'publications/:action.:format',
+	:controller => 'publications' 
+
+connect 'publications/:action/:pub', 
 	:controller => 'publications',
 	:format => 'html'
 	
-connect 'publications/:pub/:action.:format', 
+connect 'publications/:action/:pub.:format', 
 	:controller => 'publications' 

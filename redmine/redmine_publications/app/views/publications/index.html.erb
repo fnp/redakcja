@@ -1,4 +1,6 @@
-<h2>Microrest#related-issues</h2>
-<%= @issues %>
-
-
+<h2>Publikacje</h2>
+<ol>
+<% @publications.each do |pub| %>
+	<li><a href="/publications/issues/<%= pub.name %>"><%= pub.name %></a></li>
+<% end %>
+</ol>

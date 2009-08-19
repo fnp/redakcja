@@ -1,0 +1,13 @@
+<% @tracker = Tracker.find(settings['tracker']) %>
+
+<fieldset>
+<p>
+  <label for="settings[tracker]">Typ zagadnienia: </label>
+  <%= collection_select(:tracker, :id, Tracker.all, :id, :name, {}, {:name => "settings[tracker]"}) %>
+</p>
+
+<p>
+  <label for="settings[pattern]">Filtr publikacji: </label>
+  <%= text_field_tag 'settings[pattern]', @settings['pattern'] %>
+</p>
+</fieldset>

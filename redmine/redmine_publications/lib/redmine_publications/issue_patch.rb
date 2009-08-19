@@ -11,8 +11,8 @@ module RedminePublications
       base.class_eval do
         unloadable # Send unloadable so it will not be unloaded in development
  
+ 	validate :check_relations
         after_save :update_relations
-        # after_destroy :check_relations
  
         # Add visible to Redmine 0.8.x
         unless respond_to?(:visible)
@@ -27,43 +27,57 @@ module RedminePublications
     end
     
     module InstanceMethods
-      def source_files
-	if not @source_files
-	  @source_files = self.lookup_source_files.map { |pub| pub.source_file }
-        end
-	@source_files        
+
+      def publication_names	
+	if not @pubnames
+	  self.publications.map { |pub| pub.name }
+        else
+	  @pubnames        
+	end
       end
 
-      def source_files=(value)
-	@source_files = value
+      def publication_names=(value)
+	@pubnames = value.sort!
       end
 
-      def lookup_source_files
+      def publications
         Publication.all( 
 	  :joins => 
 	    "JOIN issue_publications ON (issue_publications.publication_id = publications.id)",
  	  :conditions =>
-	    [" issue_publications.issue_id = ? ", self.id] )	
+	    ["issue_publications.issue_id = ? ", self.id] )	
       end
-	
-      def update_relations
+
+      def check_relations
+	current_names = self.publication_names
+	non_existant = []
+
+	pubs =  Publication.find_all_by_name(current_names).map {|i| i.name}
+	missing = current_names.select {|name| not pubs.include?name }
+
+	if not missing.empty?
+	  errors.add("publications", "Missing publication(s): " + missing.join(', '))
+	end
+     end
+
+     def update_relations
         self.reload
-	current_assocs = self.lookup_source_files
-	new_assocs_names = self.source_files.split(' ')
+	old = self.publications
+	current_names = self.publication_names
 
 	# delete unused relations
-	deleted = current_assocs.select { |v| not (new_assocs_names.include?(v.source_file)) }
-	deleted.each { |pub| IssuePublication.delete_all( 
-  	  :contitions => ["issue_publications.issue_id = ? AND issue_publicatons.publication_id = ?",
-		self.id, pub.id]) }
+	deleted = old.select { |v| not (current_names.include?(v.name)) }
+	deleted.each do |pub| 
+	  IssuePublication.delete_all(["issue_publications.issue_id = ? AND issue_publications.publication_id = ?", self.id, pub.id])
+	end
 
-	new_assocs_names.each do |name|
-		pub = Publication.find_or_create_by_source_file(name)
-		IssuePublication.find_or_create_by_publication_id_and_issue_id(pub.id, self.id)
+	current_names.each do |name|	
+	    pub = Publication.find_by_name(name)
+	    IssuePublication.find_or_create_by_publication_id_and_issue_id(pub.id, self.id)
 	end
 
         return true
-      end
+     end
 
     end
   end

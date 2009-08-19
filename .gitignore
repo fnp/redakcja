@@ -1,6 +1,7 @@
 localsettings.py
 dev.sqlite
 *.pyc
+.*.swp
 .DS_Store
 media
 files
