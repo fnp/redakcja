@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load toolbar_tags %}
 
 {% block extrahead %}
     <script src="/static/js/jquery.fieldselection.js" type="text/javascript" charset="utf-8"></script>
@@ -96,95 +97,7 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    <div id="toolbar">
-        <ol id="toolbar-tabs">
-            <li p:button-list="naglowki">Nagłówki</li>
-            <li p:button-list="struktr">Struktr. i mastery</li>
-            <li p:button-list="dramat">Dramat wiersz.</li>
-            <li p:button-list="poczatkowe">Elementy początk.</li>
-            <li p:button-list="akapity">Akapity i dł. cyt.</li>
-            <li p:button-list="style">Style znakowe</li>
-            <li p:button-list="polecenia">Polecenia</li>
-            <li p:button-list="wersy">Wersy</li>
-        </ol>
-        <div style="clear: both; height: 0; width: 0">&nbsp;</div>
-        <div id="toolbar-buttons">
-            <ol id="naglowki" style="display:none">
-                <li p:tag="czesc" p:key="65">część/księga</li>
-                <li p:tag="rozdzial" p:key="83">rozdział</li>
-                <li p:tag="podrozdzial">podrozdział</li>
-                <li p:tag="srodtytul">śródtytuł</li>
-                <li p:tag="akt">akt</li>
-            </ol>
-            <ol id="struktr" style="display:none">
-                <li p:tag="utwor">tagi główne</li>
-                <li p:tag="opowiadanie">opowiadanie</li>
-                <li p:tag="powiesc">powieść</li>
-                <li p:tag="dramat_wierszowany_l">dramat wiersz.</li>
-                <li p:tag="dramat_wierszowany_lp">dramat wiersz./w. łam</li>
-                <li p:tag="dramat_wspolczesny">dramat współcz.</li>
-                <li p:tag="liryka_l">liryka</li>
-                <li p:tag="liryka_lp">liryka/w. łam</li>
-                <li p:tag="wywiad">wywiad</li>
-            </ol>
-            <ol id="dramat" style="display:none">
-                <li p:tag="wers_wciety">wers m. wcięty</li>
-                <li p:tag="wers_cd">wers cd.</li>
-                <li p:tag="wers_wciety">wers wcięty</li>
-                <li p:tag="wers_akap">wers akap.</li>
-                <li p:tag="strofa">kwestiostrofa cd.</li>
-                <li p:tag="kwestia">kwestia</li>
-                <li p:tag="strofa">kwestiostrofa</li>
-                <li p:tag="strofa">strofa</li>
-                <li p:tag="strofa">strofa cd.</li>
-                <li p:tag="didaskalia">didask.</li>
-                <li p:tag="akap">kwestioakap</li>
-            </ol>
-            <ol id="poczatkowe" style="display:none">
-                <li p:tag="autor">autor</li>
-                <li p:tag="tytul">tytuł</li>
-                <li p:tag="podtytul">podtytuł</li>
-                <li p:tag="nota">nota</li>
-                <li p:tag="dedykacja">dedykacja</li>
-                <li p:tag="motto">motto</li>
-                <li p:tag="motto_podpis">motto-podp.</li>
-                <li p:tag="dzielo_nadrzedne">dzieło nadrzędne</li>
-            </ol>
-            <ol id="akapity" style="display:none">
-                <li p:tag="akap">akapit</li>
-                <li p:tag="akap_cd">akap. cd.</li>
-                <li p:tag="akap_dialog">dialog</li>
-                <li p:tag="dlugi_cyt">długi cyt.</li>
-                <li p:tag="poezja_cyt">długi cyt. poet.</li>
-            </ol>
-            <ol id="style" style="display:none">
-                <li p:tag="wyroznienie">wyróżnienie</li>
-                <li p:tag="tytul_dziela">tytuł dzieła</li>
-                <li p:tag="slowo_obce">słowo obce</li>
-                <li p:tag="mat">matemat.</li>
-                <li p:tag="www">www</li>
-                <li p:tag="didaskalia">didaskalia wewn.</li>
-                <li p:tag="osoba">osoba</li>
-                <li p:tag="uwaga">uwaga</li>
-                <li p:tag="extra">extra</li>
-            </ol>
-            <ol id="polecenia" style="display:none">
-                <li p:tag="sekcja_swiatlo">sep. światło</li>
-                <li p:tag="separator_asterysk">sep. asterysk</li>
-                <li p:tag="separator_linia">sep. linia</li>
-                <li p:tag="sekcja_swiatlo">zastępnik wersu</li>
-            </ol>
-            <ol id="wersy" style="display:none">
-                <li p:tag="strofa">strofa</li>
-                <li p:tag="strofa">strofa cd.</li>
-                <li p:tag="wers_akap">wers akap.</li>
-                <li p:tag="wers_wciety">wers wcięty</li>
-                <li p:tag="wers_wciety">wers m. wcięty</li>
-                <li p:tag="wers_cd">wers cd.</li>
-            </ol>
-            <div style="clear: both; height: 0; width: 0">&nbsp;</div>
-        </div>
-    </div>
+    {% toolbar %}
     
     <form action="." method="post" accept-charset="utf-8">
         <div id="panels">
