@@ -19,7 +19,7 @@ class Button(models.Model):
     label = models.CharField(max_length=32)
     slug = models.SlugField()
     tag = models.CharField(max_length=128)
-    key = models.CharField(max_length=1)
+    key = models.CharField(blank=True, max_length=1)
     position = models.IntegerField(default=0)
     
     group = models.ManyToManyField(ButtonGroup)
