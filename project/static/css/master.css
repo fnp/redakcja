@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font: 100%/1.5 Georgia, Verdana, sans-serif;
+    font: 14px Helvetica, Verdana, sans-serif;
     overflow: hidden;
 }
 
@@ -126,4 +126,30 @@ p {
 
 .image-box {
     border-top: 1px solid #DDD;
+}
+
+#toolbar, #toolbar ol {
+    display: block;
+    margin: 0;
+    padding: 0;
+    background-color: #CCC;
+    border-bottom: 1px solid #AAA;
+}
+
+#toolbar li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid #EEE;
+    border-right: 1px solid #AAA;
+}
+
+#toolbar li p, #toolbar ol li {
+    padding: 2px 10px;
+}
+
+#toolbar li p:hover {
+    cursor:pointer;
+    background-color: #EEE;
 }
