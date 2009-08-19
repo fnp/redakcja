@@ -83,7 +83,9 @@
                         if (keys[event.keyCode]) {
                             keys[event.keyCode]();
                         }
-                    }, function(event) { return event.ctrlKey && event.keyCode != 17; });
+                    }, function(event) {
+                        return event.ctrlKey && keys[event.keyCode];
+                    });
 
                     resizePanels();
                 }
