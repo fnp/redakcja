@@ -24,6 +24,7 @@
             $('#toggle-sidebar').toggle(function() {
                 $('#images-wrap').width(480);
                 $('#sidebar').width(488);
+                $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
                 resizePanels();
             }, function() {
                 $('#images-wrap').width(0);
