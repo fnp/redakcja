@@ -7,11 +7,12 @@
     <script src="/static/js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/jquery.resizable.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">        
         $(function() {
             $('#id_folders').change(function() {
                 $('#images').load('{% url folder_image_ajax %}' + $('#id_folders').val() + '/', function() {
-                    $('#images').data('lastScroll', -1000);
+                    $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
                 });
             });
             
@@ -19,6 +20,7 @@
                 $('iframe').width($(window).width() - $('#sidebar').outerWidth());
                 $('iframe').height($(window).height() - 100);
                 $('#images-wrap, #toggle-sidebar').height($(window).height() - 100);
+                $('#images-wrap').width($('#sidebar').width() - 8);
             }
             
             $('#toggle-sidebar').toggle(function() {
@@ -87,6 +89,8 @@
                         return event.ctrlKey && keys[event.keyCode];
                     });
 
+                    // $('#sidebar').bind('resizable:resize', resizePanels).resizable('#toggle-sidebar');
+                    
                     resizePanels();
                 }
             });

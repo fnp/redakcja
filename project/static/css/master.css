@@ -75,7 +75,7 @@ label {
 }
 
 #images-wrap {
-    width: 0px;
+/*    width: 0px;*/
     height: 480px;
     border-right: 1px solid #999;
     overflow-y: scroll;
@@ -99,7 +99,7 @@ label {
 
 #toggle-sidebar:hover {
     background-color: #999;
-    cursor: pointer;
+    cursor: ew-resize;
 }
 
 #status-bar {
