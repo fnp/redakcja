@@ -18,24 +18,11 @@
             
             function resizePanels() {
                 $('iframe').width($(window).width() - $('#sidebar').outerWidth());
-                $('iframe').height($(window).height() - 100);
-                $('#toggle-sidebar').height($(window).height() - 55);
-                $('#images-wrap').height($(window).height() - 82)
+                $('iframe').height($(window).height() - $('#breadcrumbs').height() - $('toolbar').height());
+                $('#toggle-sidebar').height($(window).height() - $('#breadcrumbs').height());
+                $('#images-wrap').height($(window).height() - $('#breadcrumbs').height() - $('#sidebar-toolbar').height())
                 $('#images-wrap, #sidebar-toolbar').width($('#sidebar').width() - 10);
             }
-            
-            $('#toggle-sidebar').toggle(function() {
-                $('#images-wrap').width(480);
-                $('#sidebar').width(488);
-                $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
-                $('#sidebar-toolbar').width(480);
-                resizePanels();
-            }, function() {
-                $('#images-wrap').width(0);
-                $('#sidebar').width(8);
-                $('#sidebar-toolbar').width(0);
-                resizePanels();
-            })
             
             $(window).resize(function() {
                 resizePanels();
@@ -92,7 +79,8 @@
                         return event.ctrlKey && keys[event.keyCode];
                     });
 
-                    // $('#sidebar').bind('resizable:resize', resizePanels).resizable('#toggle-sidebar');
+                    $('#sidebar').bind('resizable:resize', resizePanels)
+                        .resizable('#toggle-sidebar', {minWidth: 8});
                     
                     resizePanels();
                 }
