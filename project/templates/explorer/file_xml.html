@@ -19,8 +19,9 @@
             function resizePanels() {
                 $('iframe').width($(window).width() - $('#sidebar').outerWidth());
                 $('iframe').height($(window).height() - 100);
-                $('#images-wrap, #toggle-sidebar').height($(window).height() - 100);
-                $('#images-wrap').width($('#sidebar').width() - 8);
+                $('#toggle-sidebar').height($(window).height() - 55);
+                $('#images-wrap').height($(window).height() - 82)
+                $('#images-wrap, #sidebar-toolbar').width($('#sidebar').width() - 10);
             }
             
             $('#toggle-sidebar').toggle(function() {
@@ -114,19 +115,28 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    {% toolbar %}
-    
     <form action="." method="post" accept-charset="utf-8">
         <div id="panels">
             <div id="sidebar">
-                <div id="images-wrap">
-                    <div id="images">
-                        <p>Aby zobaczyć obrazki wybierz folder poniżej:</p>
-                        <p>{{ image_folders_form.folders }}</p>
+                <div id="toggle-sidebar" style="float: right"></div>
+                <div id="whatever">
+                    <div id="sidebar-toolbar">
+                        <ol id="sidebar-tabs">
+                            <li>Tab</li>
+                            <li>Tab 2</li>
+                        </ol>
+                    </div>
+                    <div id="images-wrap">
+
+                        <div style="clear: both; height: 0; width: 0">&nbsp;</div>
+                        <div id="images">
+                            <p>Aby zobaczyć obrazki wybierz folder poniżej:</p>
+                            <p>{{ image_folders_form.folders }}</p>
+                        </div>
                     </div>
                 </div>
-                <div id="toggle-sidebar"></div>
             </div>
+            {% toolbar %}
             <textarea id="id_text" name="text" width="480px">{{ form.text.field.initial }}</textarea>
         </div>
         
