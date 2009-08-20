@@ -28,10 +28,12 @@
                 $('#images-wrap').width(480);
                 $('#sidebar').width(488);
                 $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
+                $('#sidebar-toolbar').width(480);
                 resizePanels();
             }, function() {
                 $('#images-wrap').width(0);
                 $('#sidebar').width(8);
+                $('#sidebar-toolbar').width(0);
                 resizePanels();
             })
             
