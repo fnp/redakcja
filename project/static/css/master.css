@@ -104,7 +104,7 @@ label {
 
 #toggle-sidebar:hover {
     background-color: #999;
-    cursor: ew-resize;
+    cursor: col-resize;
 }
 
 #status-bar {
@@ -138,7 +138,7 @@ p {
     margin: 0;
     padding: 0;
     background-color: #CCC;
-    border-bottom: 1px solid #AAA;
+    border-top: 1px solid #AAA;
 }
 
 #toolbar {
@@ -175,6 +175,12 @@ p {
     -webkit-border-top-right-radius: 8px;
 }
 
+#sidebar-tabs, #toolbar-tabs {
+    height: 21px;
+    z-index: 1000;
+/*    overflow: hidden;*/
+}
+
 #sidebar-tabs li:hover, #sidebar-tabs li.active, #toolbar-tabs li:hover, #toolbar-tabs li.active {
     cursor: default;
     background-color: #EEE;
@@ -183,6 +189,7 @@ p {
 
 #toolbar-buttons {
     background-color: #EEE;
+    border-bottom: 1px solid #AAA;
 }
 
 #toolbar-buttons li {

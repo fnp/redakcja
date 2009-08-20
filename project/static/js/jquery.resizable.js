@@ -13,7 +13,7 @@
         stop: function(event) {
             $.resizable.element.element.trigger('resizable:stop');
             $(document).unbind('mousemove', $.resizable.drag).unbind('mouseup', $.resizable.stop)
-                .children('body').css({cursor: 'auto'})
+            $('body').css('cursor', 'auto');
             return false;
         }
     };
@@ -36,9 +36,8 @@
                 width: parseInt(element.css('width')) || element[0].scrollWidth || 0,
                 mouseX: event.pageX,
             };
-            $(document).mousemove($.resizable.drag).mouseup($.resizable.stop)
-                .children('body').css({cursor: 'se-resize'});
-            event.stopImmediatePropagation();
+            $(document).mousemove($.resizable.drag).mouseup($.resizable.stop);
+            $('body').css('cursor', 'col-resize');
         }).bind('dragstart', function(event) { event.preventDefault() });
     };
 })(jQuery);
