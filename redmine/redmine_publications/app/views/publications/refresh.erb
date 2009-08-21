@@ -1,0 +1,12 @@
+<table>
+
+<tr><th>Ścieżka zasobu</th><th>Rozpoznano</th><th>ID zasobu</th></tr>
+
+<% @match_status.each do |status| %>
+<tr>
+<td><%= status[:path] %></td>
+<td><%= (status[:matched] && 'Tak') || 'Nie' %></td>
+<td><%= status[:match] || '' %></td>
+</tr>
+<% end %>
+</table>
