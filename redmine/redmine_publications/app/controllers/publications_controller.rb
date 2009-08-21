@@ -13,7 +13,7 @@ class PublicationsController < ApplicationController
   end
 
   def refresh
-	regexp = Regexp.new(Setting.plugin_redmine_publications['pattern'])
+	regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
 	Repository.all.each do |repo|
 	  repo.entries.each do |entry|
 	    match = entry.path.match(regexp)

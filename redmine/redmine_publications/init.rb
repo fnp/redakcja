@@ -2,10 +2,11 @@ require 'redmine'
 
 # Patches to the Redmine core.
 require 'dispatcher'
- 
+
 Dispatcher.to_prepare :redmine_publications do
   require_dependency 'issue'
-  # Guards against including the module multiple time (like in tests)
+  
+  #Guards against including the module multiple time (like in tests)
   # and registering multiple callbacks
   unless Issue.included_modules.include? RedminePublications::IssuePatch
     Issue.send(:include, RedminePublications::IssuePatch)
@@ -27,7 +28,7 @@ Redmine::Plugin.register :redmine_publications do
 
   menu :application_menu, :publications, { :controller => 'publications', :action => 'index' }, :caption => 'Publikacje'
 
-  requires_redmine :version_or_higher => '0.8.0'	 
+#  requires_redmine :version_or_higher => '0.8.0'	 
 
 end
 

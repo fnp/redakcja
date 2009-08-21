@@ -12,13 +12,7 @@ module RedminePublications
         unloadable # Send unloadable so it will not be unloaded in development
  
  	validate :check_relations
-        after_save :update_relations
- 
-        # Add visible to Redmine 0.8.x
-        unless respond_to?(:visible)
-          named_scope :visible, lambda {|*args| { :include => :project,
-              :conditions => Project.allowed_to_condition(args.first || User.current, :view_issues) } }
-        end
+	after_save :update_relations
       end
  
     end
@@ -61,9 +55,9 @@ module RedminePublications
      end
 
      def update_relations
-        self.reload
 	old = self.publications
 	current_names = self.publication_names
+	Rails.logger.info('[INFO] Updating relations: old= ' << old.inspect << ' current=' << current_names.inspect)
 
 	# delete unused relations
 	deleted = old.select { |v| not (current_names.include?(v.name)) }
