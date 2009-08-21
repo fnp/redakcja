@@ -1,3 +1,22 @@
+function loadPanel(target, url) {
+    console.log('ajax', url, 'into', target);
+    $(document).trigger('panel:unload', target);
+    $.ajax({
+        url: url,
+        dataType: 'html',
+        success: function(data, textStatus) {
+            $(target).html(data);
+            $(document).trigger('panel:unload', target);
+            $(document).trigger('panel:load', target);
+            // panel(target);
+        },
+        error: function(request, textStatus, errorThrown) {
+            $(document).trigger('panel:unload', target);
+            console.log('ajax', url, target, 'error:', textStatus, errorThrown);
+        }
+    });
+}
+
 $(function() {
     // ========================
     // = Resizable panels =
@@ -17,7 +36,7 @@ $(function() {
     resizePanels();
     
     $('.panel-toolbar select').change(function() {
-        console.log('loading panel', $(this).val(), 'into', $('.panel-contents', $(this).parent()));
+        loadPanel($('.panel-contents', $(this).parent().parent()), $(this).val())
     });
     // $('#id_folders').change(function() {
     //     $('#images').load('{% url folder_image_ajax %}' + $('#id_folders').val() + '/', function() {
