@@ -13,6 +13,8 @@ class PublicationsController < ApplicationController
   end
 
   def refresh
+	@match_status = []
+
 	regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
 	Repository.all.each do |repo|
 	  repo.entries.each do |entry|
@@ -20,9 +22,18 @@ class PublicationsController < ApplicationController
             if match
 	      Publication.find_or_create_by_name(:name => match[1], 
 		:source_file => entry.path, :repository_id => repo.id)
-            end
+	      @match_status += [{:path => entry.path, :match => match[1], :matched => true}]
+            else
+	      @match_status += [{:path => entry.path, :match =>nil, :matched => false}]
+	    end
           end
         end	
+	
+	respond_to do |format|	
+	  format.html
+	  format.xml { render :xml => @publications }
+	  format.json { render :json => @publications }
+	end
   end
 
   def issues
