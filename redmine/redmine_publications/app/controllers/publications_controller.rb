@@ -17,22 +17,24 @@ class PublicationsController < ApplicationController
 
 	regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
 	Repository.all.each do |repo|
+	  repo_status = []
 	  repo.entries.each do |entry|
 	    match = entry.path.match(regexp)
             if match
 	      Publication.find_or_create_by_name(:name => match[1], 
 		:source_file => entry.path, :repository_id => repo.id)
-	      @match_status += [{:path => entry.path, :match => match[1], :matched => true}]
+	      repo_status += [{:path => entry.path, :match => match[1], :matched => true}]
             else
-	      @match_status += [{:path => entry.path, :match =>nil, :matched => false}]
+	      repo_status += [{:path => entry.path, :match =>nil, :matched => false}]
 	    end
           end
+          @match_status += [{:repo => repo, :status => repo_status}]
         end	
 	
 	respond_to do |format|	
 	  format.html
-	  format.xml { render :xml => @publications }
-	  format.json { render :json => @publications }
+	  format.xml { render :xml => @match_status}
+	  format.json { render :json => @match_status }
 	end
   end
 
