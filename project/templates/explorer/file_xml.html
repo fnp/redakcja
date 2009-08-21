@@ -9,93 +9,99 @@
     <script src="/static/js/jquery.resizable.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">        
         $(function() {
-            $('#id_folders').change(function() {
-                $('#images').load('{% url folder_image_ajax %}' + $('#id_folders').val() + '/', function() {
-                    $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
-                });
-            });
-            
+            // ========================
+            // = Two resizable panels =
+            // ========================
             function resizePanels() {
-                $('iframe').width($(window).width() - $('#sidebar').outerWidth());
-                $('iframe').height($(window).height() - $('iframe').position().top);
-                $('#toggle-sidebar').height($(window).height() - $('#toggle-sidebar').position().top);
-                $('#images-wrap').height($(window).height() - $('#images-wrap').position().top);
-                $('#images-wrap, #sidebar-toolbar').width($('#sidebar').width() - 10);
+                $('.panel').height($(window).height() - $('.panel').position().top);
+                $('#right-panel-wrap').width($(window).width() - $('#right-panel-wrap').position().left);
             }
             
             $(window).resize(function() {
                 resizePanels();
             })
             
-            var editor = CodeMirror.fromTextArea("id_text", {
-                parserfile: 'parsexml.js',
-                path: "/static/js/codemirror/",
-                stylesheet: "/static/css/xmlcolors.css",
-                parserConfig: {useHTMLKludges: false},
-                initCallback: function() {
-                    $('#images').autoscroll('iframe');
-                    $('.toggleAutoscroll').toggle(function() {
-                        $(this).html('Synchronizuj przewijanie');
-                        $('#images').disableAutoscroll();
-                    }, function() {
-                        $(this).html('Nie synchronizuj przewijania');
-                        $('#images').enableAutoscroll();
-                    })
-                    
-                    // Toolbar
-                    $('#toolbar-tabs li').click(function() {
-                        var id = $(this).attr('p:button-list');
-                        $('#toolbar-tabs li').removeClass('active');
-                        $(this).addClass('active');
-                        if (!$('#' + id).is(':visible')) {
-                            $('#toolbar-buttons ol').not('#' + id).hide();
-                            $('#' + id).show();
-                        }
-                    })
-
-                    var keys = {};
-                    $('#toolbar-buttons li').each(function() {
-                        var tag = $(this).attr('p:tag');
-                        var handler = function() {
-                            var text = editor.selection();
-                            editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
-                            if (text.length == 0) {
-                                var pos = editor.cursorPosition();
-                                editor.selectLines(pos.line, pos.character + tag.length + 2);
-                            }
-                        }
-                        if ($(this).attr('p:key')) {
-                            keys[$(this).attr('p:key')] = handler;
-                        }
-                        $(this).click(handler)
-                    });
-                    
-                    editor.grabKeys(function(event) { 
-                        if (keys[event.keyCode]) {
-                            keys[event.keyCode]();
-                        }
-                    }, function(event) {
-                        return event.altKey && keys[event.keyCode];
-                    });
-
-                    $('#sidebar').bind('resizable:resize', resizePanels)
-                        .resizable('#toggle-sidebar', {minWidth: 8});
-                    
-                    resizePanels();
-                }
-            });
+            $('#left-panel-wrap').bind('resizable:resize', resizePanels)
+                .resizable('#slider', {minWidth: 8});
             
-            $('#toolbar-buttons li').wTooltip({
-                delay: 1000, 
-                style: {
-                    border: "1px solid #7F7D67",
-                    opacity: 0.9, 
-                    background: "#FBFBC6", 
-                    padding: "1px",
-                    fontSize: "12px",
-                }});
+            resizePanels();
             
-            $('#images-wrap').lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
+            // $('#id_folders').change(function() {
+            //     $('#images').load('{% url folder_image_ajax %}' + $('#id_folders').val() + '/', function() {
+            //         $('#images-wrap').data('lazyload:lastCheckedScrollTop', -10000);
+            //     });
+            // });
+            // 
+            //
+            
+            // var editor = CodeMirror.fromTextArea("id_text", {
+            //     parserfile: 'parsexml.js',
+            //     path: "/static/js/codemirror/",
+            //     stylesheet: "/static/css/xmlcolors.css",
+            //     parserConfig: {useHTMLKludges: false},
+            //     initCallback: function() {
+            //         $('#images').autoscroll('iframe');
+            //         $('.toggleAutoscroll').toggle(function() {
+            //             $(this).html('Synchronizuj przewijanie');
+            //             $('#images').disableAutoscroll();
+            //         }, function() {
+            //             $(this).html('Nie synchronizuj przewijania');
+            //             $('#images').enableAutoscroll();
+            //         })
+            //         
+            //         // Toolbar
+            //         $('#toolbar-tabs li').click(function() {
+            //             var id = $(this).attr('p:button-list');
+            //             $('#toolbar-tabs li').removeClass('active');
+            //             $(this).addClass('active');
+            //             if (!$('#' + id).is(':visible')) {
+            //                 $('#toolbar-buttons ol').not('#' + id).hide();
+            //                 $('#' + id).show();
+            //             }
+            //         })
+            // 
+            //         var keys = {};
+            //         $('#toolbar-buttons li').each(function() {
+            //             var tag = $(this).attr('p:tag');
+            //             var handler = function() {
+            //                 var text = editor.selection();
+            //                 editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
+            //                 if (text.length == 0) {
+            //                     var pos = editor.cursorPosition();
+            //                     editor.selectLines(pos.line, pos.character + tag.length + 2);
+            //                 }
+            //             }
+            //             if ($(this).attr('p:key')) {
+            //                 keys[$(this).attr('p:key')] = handler;
+            //             }
+            //             $(this).click(handler)
+            //         });
+            //         
+            //         editor.grabKeys(function(event) { 
+            //             if (keys[event.keyCode]) {
+            //                 keys[event.keyCode]();
+            //             }
+            //         }, function(event) {
+            //             return event.altKey && keys[event.keyCode];
+            //         });
+            //     }
+            // });
+            
+
+            
+
+            
+            // $('#toolbar-buttons li').wTooltip({
+            //     delay: 1000, 
+            //     style: {
+            //         border: "1px solid #7F7D67",
+            //         opacity: 0.9, 
+            //         background: "#FBFBC6", 
+            //         padding: "1px",
+            //         fontSize: "12px",
+            //     }});
+            
+            // $('#images-wrap').lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
         });
 
     </script>
@@ -104,39 +110,36 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block maincontent %}
-    <form action="." method="post" accept-charset="utf-8">
         <div id="panels">
-            <div id="sidebar">
-                <div id="toggle-sidebar" style="float: right"></div>
-                <div id="whatever">
-                    <div id="sidebar-toolbar">
-                        <ol id="sidebar-tabs">
-                            <li>Tab</li>
-                            <li>Tab 2</li>
-                        </ol>
-                    </div>
-                    <div id="images-wrap">
-
-                        <div style="clear: both; height: 0; width: 0">&nbsp;</div>
-                        <div id="images">
-                            <p>Aby zobaczyć obrazki wybierz folder poniżej:</p>
-                            <p>{{ image_folders_form.folders }}</p>
-                        </div>
-                    </div>
+            <div id="left-panel-wrap" class="panel-wrap">
+                <div id="left-panel" class="panel">
+                    <div id="slider" style="float: right"></div>
                 </div>
             </div>
-            {% toolbar %}
-            <textarea id="id_text" name="text" width="480px">{{ form.text.field.initial }}</textarea>
+            <div id="right-panel-wrap" class="panel-wrap">
+                <div id="right-panel" class="panel">
+                    {# <textarea id="id_text" name="text" width="480px">{{ form.text.field.initial }}</textarea> #}
+                </div>
+            </div>
+                        {#  #}
+                        {#     <div id="toggle-sidebar" style="float: right"></div> #}
+                        {#     <div id="whatever"> #}
+                        {#         <div id="sidebar-toolbar"> #}
+                        {#             <ol id="sidebar-tabs"> #}
+                        {#                 <li>Tab</li> #}
+                        {#                 <li>Tab 2</li> #}
+                        {#             </ol> #}
+                        {#         </div> #}
+                        {#         <div id="images-wrap"> #}
+                        {#  #}
+                        {#             <div style="clear: both; height: 0; width: 0">&nbsp;</div> #}
+                        {#             <div id="images"> #}
+                        {#                 <p>Aby zobaczyć obrazki wybierz folder poniżej:</p> #}
+                        {#                 <p>{{ image_folders_form.folders }}</p> #}
+                        {#             </div> #}
+                        {#         </div> #}
+                        {#     </div> #}
+                        {# </div> #}
+                        {# {% toolbar %} #}
         </div>
-        
-        {# <div id="status-bar"> #}
-        {#     {{ form.user.errors }} {{ form.commit_message.errors }} #}
-        {#     <p> #}
-        {#         Użytkownik: {{ form.user }} #}
-        {#         Opis zmian: {{ form.commit_message }} #}
-        {#         <input type="submit" value="Zapisz"/> #}
-        {#         <a href="#" class="toggleAutoscroll" style="float: right">Nie synchronizuj przewijania</a> #}
-        {#     </p> #}
-        {# </div> #}
-    </form>
 {% endblock maincontent %}    

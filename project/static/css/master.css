@@ -74,26 +74,21 @@ label {
     overflow-y: scroll;
 }
 
-#whatever {
-    float: left;
-}
-
-#images-wrap {
-/*    width: 0px;*/
-    height: 480px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    background-color: #fff;
-    float: left;
-}
-
-#sidebar {
+/* ========== */
+/* = Panels = */
+/* ========== */
+#left-panel-wrap {
     float: left;
     width: 8px;
     overflow: hidden;
 }
 
-#toggle-sidebar {
+#right-panel-wrap {
+    
+}
+
+/* Slider between panels */
+#slider {
     border-left: 1px solid #999;
     border-right: 1px solid #999;
     background-color: #DDD;
@@ -102,105 +97,7 @@ label {
     float: left;
 }
 
-#toggle-sidebar:hover {
+#slider:hover {
     background-color: #999;
     cursor: col-resize;
-}
-
-#status-bar {
-    border-top: 1px solid #999;
-    background-color: #EEE;
-    padding: 2px 10px;
-}
-
-.errorlist {
-    color: red;
-    margin: 0 20px 0 0;
-    padding: 0;
-    float: left;
-}
-
-.errorlist:before {
-    content: '';
-    clear: both;
-}
-
-p { 
-    margin: 0;
-}
-
-.image-box {
-    border-top: 1px solid #DDD;
-}
-
-#toolbar {
-    height: 48px;
-    overflow: hidden;
-}
-
-#toolbar, #toolbar ol, #sidebar-toolbar, #sidebar-toolbar ol {
-/*    overflow: hidden;*/
-    display: block;
-    margin: 0;
-    padding: 0;
-    background-color: #CCC;
-    border-top: 1px solid #AAA;
-}
-
-#sidebar-toolbar {
-    width: 0;
-}
-
-#sidebar-toolbar, #sidebar-toolbar ol {
-    overflow: hidden;
-}
-
-#sidebar-tabs li, #toolbar-tabs li {
-    font-size: 14px;
-    display: block;
-    float: left;
-    margin: 4px 0 -1px 4px;
-    padding: 2px 10px 0 10px;
-    background-color: #CCC;
-    border: 1px solid #AAA;
-    border-radius-topleft: 8px;
-    border-radius-topright: 8px;
-    -moz-border-radius-topleft: 8px;
-    -moz-border-radius-topright: 8px;
-    -webkit-border-top-left-radius: 8px;
-    -webkit-border-top-right-radius: 8px;
-}
-
-#sidebar-tabs, #toolbar-tabs {
-    height: 21px;
-    z-index: 1000;
-/*    overflow: hidden;*/
-}
-
-#sidebar-tabs li:hover, #sidebar-tabs li.active, #toolbar-tabs li:hover, #toolbar-tabs li.active {
-    cursor: default;
-    background-color: #EEE;
-    border-bottom: 1px solid #EEE;
-}
-
-#toolbar-buttons {
-    background-color: #EEE;
-    border-bottom: 1px solid #AAA;
-}
-
-#toolbar-buttons li {
-    display: block;
-    font-size: 12px;
-    padding: 1px 8px;
-    margin: 4px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 8px;
-    float: left;
-}
-
-#toolbar-buttons li:hover {
-    background-color: #777;
-    color: #FFF;
-    cursor: default;
 }
