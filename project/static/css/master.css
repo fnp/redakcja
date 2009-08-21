@@ -5,7 +5,7 @@ body {
 }
 
 #breadcrumbs {
-    padding: 5px 10px;
+    padding: 2px 10px;
     background-color: #CDCDCD;
     border-bottom: 1px solid #858585;
 }
@@ -133,7 +133,13 @@ p {
     border-top: 1px solid #DDD;
 }
 
-#toolbar, #toolbar ol {
+#toolbar {
+    height: 48px;
+    overflow: hidden;
+}
+
+#toolbar, #toolbar ol, #sidebar-toolbar, #sidebar-toolbar ol {
+/*    overflow: hidden;*/
     display: block;
     margin: 0;
     padding: 0;
@@ -141,22 +147,12 @@ p {
     border-top: 1px solid #AAA;
 }
 
-#toolbar {
-    overflow: hidden;
-    width: 400%;
+#sidebar-toolbar {
+    width: 0;
 }
 
 #sidebar-toolbar, #sidebar-toolbar ol {
     overflow: hidden;
-    display: block;
-    margin: 0;
-    padding: 0;
-    background-color: #CCC;
-    border-bottom: 1px solid #AAA;
-}
-
-#sidebar-toolbar {
-    width: 0;
 }
 
 #sidebar-tabs li, #toolbar-tabs li {
