@@ -1,4 +1,4 @@
-<% @tracker = Tracker.find(@settings['tracker']) %>
+<% @tracker = Tracker.find(@settings[:tracker] || 1) %>
 
 <fieldset>
 <p>
@@ -8,6 +8,6 @@
 
 <p>
   <label for="settings[pattern]">Filtr publikacji: </label>
-  <%= text_field_tag 'settings[pattern]', @settings['pattern'] %>
+  <%= text_field_tag 'settings[pattern]', @settings[:pattern] || '' %>
 </p>
 </fieldset>
