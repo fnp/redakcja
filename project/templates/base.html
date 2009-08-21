@@ -3,14 +3,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://platforma.wolnelektury.pl/">
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <title>{% block title %}Platforma Redakcyjna{% endblock %}</title>
+        <title>{% block title %}Platforma Redakcyjna{% block subtitle %}{% endblock subtitle %}{% endblock title%}</title>
         <link rel="stylesheet" href="/static/css/master.css" type="text/css" />
         <script src="/static/js/jquery.js" type="text/javascript" charset="utf-8"></script>
         {% block extrahead %}
         {% endblock %}
     </head>
     <body id="{% block bodyid %}base{% endblock %}">
-        <div id="breadcrumbs">{% block breadcrumbs %}Platforma Redakcyjna{% endblock breadcrumbs %}</div>
+	<div id="header">
+          <span id="breadcrumbs">{% block breadcrumbs %}Platforma Redakcyjna{% endblock breadcrumbs %}</span>
+          <span id="login_info">{% include "registration/head_login.html" %}</span>
+	</div>
         {% block maincontent %}
             
         {% endblock %}

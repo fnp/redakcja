@@ -7,7 +7,7 @@ admin.autodiscover()
 
 
 urlpatterns = patterns('',
-    # Example:
+    # Explorer:
     url(r'^$', 'explorer.views.file_list', name='file_list'),
     url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
     url(r'^html/(?P<path>[^/]+)/$', 'explorer.views.file_html', name='file_html'),
@@ -17,6 +17,10 @@ urlpatterns = patterns('',
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
+
+    # Authorization
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next_page'}),
+    url(r'^accounts/logout$', 'django.contrib.auth.views.logout', {'next_page': '/'}), # {'redirect_field_name': 'next_page'}),
 )
 
 

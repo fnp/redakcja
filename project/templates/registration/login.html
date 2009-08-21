@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block subtitle %} - Logowanie {% endblock subtitle %}
+
+{% block maincontent %}
+
+<div class="isection">
+<form method="POST" action="{% url django.contrib.auth.views.login %}">
+{{ form.as_p }}
+<p><input type="submit" value="Login" /></p>
+<input type="hidden" name="next_page" value="{{ next_page }}" />
+</form>
+</div>
+
+{% endblock maincontent %}
