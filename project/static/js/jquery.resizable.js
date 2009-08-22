@@ -38,7 +38,9 @@
             };
             $(document).mousemove($.resizable.drag).mouseup($.resizable.stop);
             $('body').css('cursor', 'col-resize');
-        }).bind('dragstart', function(event) { event.preventDefault() });
+        }).bind('dragstart', function(event) { event.preventDefault(); })
+          .bind('drag', function(event) { event.preventDefault(); })
+          .bind('draggesture', function(event) { event.preventDefault(); });
     };
 })(jQuery);
 
