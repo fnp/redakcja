@@ -1,0 +1,6 @@
+{% if user.is_authenticated %}
+<span class="user_name">{{ user.get_full_name }}</span> | 
+<a href='{% url django.contrib.auth.views.logout %}?next_page={{request.get_full_path}}'>Wyloguj</a>
+{% else %}
+<a href='{% url django.contrib.auth.views.login %}?next_page={{request.get_full_path}}'>Logowanie</a>
+{% endif %}
