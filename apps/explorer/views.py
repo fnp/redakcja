@@ -57,11 +57,9 @@ def gallery_panel(request, path):
     })
 
 
-def file_html(request, path):
-    return direct_to_template(request, 'explorer/file_html.html', extra_context={
-        'object': html.transform(repo.get_file(path).data(), is_file=False),
-        'hash': path,
-        'image_folders_form': forms.ImageFoldersForm(),
+def htmleditor_panel(request, path):
+    return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
+        'html': html.transform(repo.get_file(path).data(), is_file=False),
     })
  
 

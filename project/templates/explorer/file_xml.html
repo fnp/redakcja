@@ -22,6 +22,7 @@
                             <label for="select-left-panel">Lewy panel:</label>
                             <select name="select-left-panel" id="select-left-panel">
                                 <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
+                                <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
                                 <option value="{% url gallery_panel hash %}">Galeria skanów</option>                            
                             </select>
                         </div>
@@ -36,7 +37,8 @@
                         <label for="select-right-panel">Prawy panel:</label>
                         <select name="select-right-panel" id="select-right-panel">
                             <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
-                            <option value="{% url gallery_panel hash %}">Galeria skanów</option>                            
+                            <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
+                            <option value="{% url gallery_panel hash %}">Galeria skanów</option>
                         </select>
                     </div>
                     <div id="right-panel-contents" class="panel-contents">

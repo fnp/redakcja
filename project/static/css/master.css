@@ -124,7 +124,7 @@ label {
 /* ================= */
 /* = Gallery panel = */
 /* ================= */
-.images-wrap {
+.images-wrap, .htmleditor {
     overflow-x: hidden;
     overflow-y: scroll;
 }

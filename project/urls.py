@@ -10,13 +10,13 @@ urlpatterns = patterns('',
     # Example:
     url(r'^$', 'explorer.views.file_list', name='file_list'),
     url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
-    url(r'^html/(?P<path>[^/]+)/$', 'explorer.views.file_html', name='file_html'),
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
     
     # Editor panels
-    url(r'^editor/(?P<path>[^/]+)/panels/xmleditor$', 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
-    url(r'^editor/(?P<path>[^/]+)/panels/gallery$', 'explorer.views.gallery_panel', name='gallery_panel'),
+    url(r'^editor/(?P<path>[^/]+)/panels/xmleditor/$', 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
+    url(r'^editor/(?P<path>[^/]+)/panels/gallery/$', 'explorer.views.gallery_panel', name='gallery_panel'),
+    url(r'^editor/(?P<path>[^/]+)/panels/htmleditor/$', 'explorer.views.htmleditor_panel', name='htmleditor_panel'),
     
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

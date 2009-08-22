@@ -56,7 +56,7 @@ $(function() {
         resizePanels();
     })
     
-    $('#left-panel-wrap').bind('resizable:resize', resizePanels)
+    $('#left-panel-wrap').bind('resizable:stop', resizePanels)
         .resizable('#slider', {minWidth: 8});
     
     resizePanels();
