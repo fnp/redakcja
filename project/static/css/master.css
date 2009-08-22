@@ -78,7 +78,6 @@ label {
 /* = Panels = */
 /* ========== */
 .panel-wrap {
-    position: relative;
     overflow: hidden;
 }
 
@@ -121,3 +120,12 @@ label {
     background-color: #999;
     cursor: col-resize;
 }
+
+/* ================= */
+/* = Gallery panel = */
+/* ================= */
+.images-wrap {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+

@@ -5,7 +5,9 @@ function loadPanel(target, url) {
         url: url,
         dataType: 'html',
         success: function(data, textStatus) {
+            console.log(target, 'ajax success');
             $(target).html(data);
+            console.log(target, 'triggering panel:load');
             $(document).trigger('panel:load', target);
             // panel(target);
         },
@@ -22,15 +24,21 @@ function panel(load, unload) {
     
     unloadHandler = function(event, panel) {
         if (self && self == panel) {
-            $(document).unbind('panel:unload.' + eventId, unloadHandler);
+            console.log('Panel', panel, 'unloading');
+            $(document).unbind('panel:unload.' + eventId);
+            $(panel).html('');
             unload(event, panel);
+            console.log('Panel', panel, 'unloaded');
+            return false;
         }
     };
     
     $(document).one('panel:load', function(event, panel) {
         self = panel;
+        console.log('Panel', panel, 'loading');
         $(document).bind('panel:unload.' + eventId, unloadHandler);
         load(event, panel);
+        console.log('Panel', panel, 'loaded');
     });
 }
 
@@ -40,6 +48,7 @@ $(function() {
     // ========================
     function resizePanels() {
         $('.panel').height($(window).height() - $('.panel').position().top);
+        $('.panel-contents').height($(window).height() - $('.panel-contents').position().top);
         $('#right-panel-wrap').width($(window).width() - $('#left-panel-wrap').outerWidth());
     }
     

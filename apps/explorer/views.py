@@ -39,13 +39,32 @@ def file_xml(request, path):
     })
 
 
+# ===============
+# = Panel views =
+# ===============
+def xmleditor_panel(request, path):
+    form = forms.BookForm()
+    text = repo.get_file(path).data()
+    
+    return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
+        'text': text,
+    })
+    
+
+def gallery_panel(request, path):
+    return direct_to_template(request, 'explorer/panels/gallery.html', extra_context={
+        'form': forms.ImageFoldersForm(),
+    })
+
+
 def file_html(request, path):
     return direct_to_template(request, 'explorer/file_html.html', extra_context={
         'object': html.transform(repo.get_file(path).data(), is_file=False),
         'hash': path,
         'image_folders_form': forms.ImageFoldersForm(),
     })
-  
+ 
+
 def folder_images(request, folder):
     return direct_to_template(request, 'explorer/folder_images.html', extra_context={
         'images': models.get_images_from_folder(folder),

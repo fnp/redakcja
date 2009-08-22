@@ -1,19 +1,28 @@
 <div class="panel">
-    <textarea name="text" width="480px"><ala><ma></ma></ala></textarea>
+    <textarea name="text" width="480px">{{ text }}</textarea>
 </div>
 <script type="text/javascript" charset="utf-8">
-    panel(function(event, panel) {
-        console.log('loading panel', panel);
-        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-        $('textarea', panel).attr('id', textareaId);
-        var editor = CodeMirror.fromTextArea(textareaId, {
-            parserfile: 'parsexml.js',
-            path: "/static/js/codemirror/",
-            stylesheet: "/static/css/xmlcolors.css",
-            parserConfig: {useHTMLKludges: false},
-            initCallback: function() {}
+    (function() {
+        function resizeEditor(event, panel) {
+            var panel = panel || event.data.panel;
+            $('iframe', panel).height($(panel).height());
+        }
+        
+        panel(function(event, panel) {
+            console.log('loading panel', panel);
+            var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
+            $('textarea', panel).attr('id', textareaId);
+            var editor = CodeMirror.fromTextArea(textareaId, {
+                parserfile: 'parsexml.js',
+                path: "/static/js/codemirror/",
+                stylesheet: "/static/css/xmlcolors.css",
+                parserConfig: {useHTMLKludges: false},
+                initCallback: function() {}
+            })
+            $(window).bind('resize', {'panel': panel}, resizeEditor);
+            resizeEditor(null, panel);
+        }, function(event, panel) {
+            console.log('unloaded xmleditor panel', panel);
         })
-    }, function(event, panel) {
-        console.log('unloaded panel', panel);
-    })
+    })();
 </script>

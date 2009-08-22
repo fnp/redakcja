@@ -14,8 +14,10 @@ urlpatterns = patterns('',
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
     
-    url(r'^panels/xmleditor$', 'django.views.generic.simple.direct_to_template', 
-        {'template': 'explorer/panels/xmleditor.html'}, name='xmleditor'),
+    # Editor panels
+    url(r'^editor/(?P<path>[^/]+)/panels/xmleditor$', 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
+    url(r'^editor/(?P<path>[^/]+)/panels/gallery$', 'explorer.views.gallery_panel', name='gallery_panel'),
+    
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
