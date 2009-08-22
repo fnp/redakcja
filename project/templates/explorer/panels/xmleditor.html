@@ -2,34 +2,18 @@
     <textarea name="text" width="480px"><ala><ma></ma></ala></textarea>
 </div>
 <script type="text/javascript" charset="utf-8">
-    (function() {
-        var self = null;
-        var id = Math.ceil(Math.random() * 1000000000);
-        
-        var load = function(event, panel) {
-            console.log('loading panel', panel);
-            self = panel;
-            var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-            $('textarea', panel).attr('id', textareaId);
-            var editor = CodeMirror.fromTextArea(textareaId, {
-                parserfile: 'parsexml.js',
-                path: "/static/js/codemirror/",
-                stylesheet: "/static/css/xmlcolors.css",
-                parserConfig: {useHTMLKludges: false},
-                initCallback: function() {}
-            })
-            $(document).unbind('panel:load.' + id, load);
-        }
-        
-        var unload = function(event, panel) {
-            console.log('unload event!', panel, self);
-            if (panel == self) {
-                console.log('unloading panel', self);
-                $(document).unbind('panel:unload.' + id, unload);
-            }
-        };
-        
-        $(document).bind('panel:load.' + id, load);
-        $(document).bind('panel:unload.' + id, unload);
-    })();
+    panel(function(event, panel) {
+        console.log('loading panel', panel);
+        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
+        $('textarea', panel).attr('id', textareaId);
+        var editor = CodeMirror.fromTextArea(textareaId, {
+            parserfile: 'parsexml.js',
+            path: "/static/js/codemirror/",
+            stylesheet: "/static/css/xmlcolors.css",
+            parserConfig: {useHTMLKludges: false},
+            initCallback: function() {}
+        })
+    }, function(event, panel) {
+        console.log('unloaded panel', panel);
+    })
 </script>

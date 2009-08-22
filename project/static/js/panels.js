@@ -6,14 +6,31 @@ function loadPanel(target, url) {
         dataType: 'html',
         success: function(data, textStatus) {
             $(target).html(data);
-            $(document).trigger('panel:unload', target);
             $(document).trigger('panel:load', target);
             // panel(target);
         },
         error: function(request, textStatus, errorThrown) {
-            $(document).trigger('panel:unload', target);
             console.log('ajax', url, target, 'error:', textStatus, errorThrown);
         }
+    });
+}
+
+// Funkcja do tworzenia nowych paneli
+function panel(load, unload) {
+    var self = null;
+    var eventId = Math.ceil(Math.random() * 1000000000);
+    
+    unloadHandler = function(event, panel) {
+        if (self && self == panel) {
+            $(document).unbind('panel:unload.' + eventId, unloadHandler);
+            unload(event, panel);
+        }
+    };
+    
+    $(document).one('panel:load', function(event, panel) {
+        self = panel;
+        $(document).bind('panel:unload.' + eventId, unloadHandler);
+        load(event, panel);
     });
 }
 
