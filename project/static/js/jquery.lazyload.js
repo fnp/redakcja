@@ -23,6 +23,10 @@
         }
         
         function checkScroll() {
+            console.log(checkScroll, container.data('lazyload:lastCheckedScrollTop'));
+            if (container.data('lazyload:lastCheckedScrollTop') == undefined) {
+                return;
+            }
             if (Math.abs(container.scrollTop() - container.data('lazyload:lastCheckedScrollTop')) > settings.scrollThreshold) {
                 container.data('lazyload:lastCheckedScrollTop', container.scrollTop());
                 
