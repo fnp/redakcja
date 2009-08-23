@@ -18,7 +18,7 @@
         }
     };
     
-    $.fn.resizable = function(handle, options) {
+    $.fn.resizable = function(options) {
         var settings = {
             minWidth: 0,
             maxWidth: $(window).width()
@@ -27,18 +27,26 @@
         $.extend(settings, options);
         
         var element = $(this);
+		var handle = $('.panel-slider', element)
         
-        $(handle, element).mousedown(function(event) {
+        handle.mousedown(function(event) {
             var position = element.position();
-            $.resizable.settings = settings;
-            $.resizable.element = {
+			console.log('Mouse down on position: ' + position);
+			/* from this point on, the panel should resize events */
+
+            /* $.resizable.settings = settings;
+            $.resizable.data = {
                 element: element,
                 width: parseInt(element.css('width')) || element[0].scrollWidth || 0,
                 mouseX: event.pageX,
-            };
-            $(document).mousemove($.resizable.drag).mouseup($.resizable.stop);
-            $('body').css('cursor', 'col-resize');
-        }).bind('dragstart', function(event) { event.preventDefault(); })
+            }; */
+
+            $(document).mousemove($.resizable.ondrag, element).mouseup($.resizable.stop, element);
+            /* $('body').css('cursor', 'col-resize'); */
+        });
+
+		/* stop drag events */
+		handle.bind('dragstart', function(event) { event.preventDefault(); })
           .bind('drag', function(event) { event.preventDefault(); })
           .bind('draggesture', function(event) { event.preventDefault(); });
     };

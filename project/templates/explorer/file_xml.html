@@ -5,7 +5,8 @@
     <script src="/static/js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.resizable.js" type="text/javascript" charset="utf-8"></script>
+<!--    <script src="/static/js/jquery.resizable.js" type="text/javascript" charset="utf-8"></script> -->
+    <script src="/static/js/jquery.hpanel.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/panels.js" type="text/javascript" charset="utf-8"></script>
 {% endblock extrahead %}
 
@@ -15,22 +16,20 @@
         <div id="panels">
             <div id="left-panel-wrap" class="panel-wrap">
                 <div id="left-panel" class="panel">
-                    <div id="slider" style="float: right"></div>
-                    <div style="margin-right: 10px">
+                    <div>
                         <div id="left-panel-toolbar" class="panel-toolbar">
                             <label for="select-left-panel">Lewy panel:</label>
                             <select name="select-left-panel" id="select-left-panel">
                                 <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
                                 <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                                <option value="{% url gallery_panel hash %}">Galeria skanów</option>                            
-                            </select>
+                                <option value="{% url gallery_panel hash %}">Galeria skanów</option>                                   		</select>
                         </div>
-                        <div id="left-panel-contents" class="panel-contents">
-                        </div>
+                        <div id="left-panel-contents" class="panel-contents"></div>
                     </div>
+                    <button class="panel-slider">&nbsp;</button>
                 </div>
             </div>
-            <div id="right-panel-wrap" class="panel-wrap">
+            <div id="right-panel-wrap" class="panel-wrap no-slider">
                 <div id="right-panel" class="panel">
                     <div id="right-panel-toolbar" class="panel-toolbar">
                         <label for="select-right-panel">Prawy panel:</label>

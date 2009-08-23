@@ -77,19 +77,45 @@ label {
 /* ========== */
 /* = Panels = */
 /* ========== */
+
+#panels {
+	position: absolute;
+	bottom: 0px; left: 0px; right: 0px; top: 100px;
+}
+
 .panel-wrap {
     overflow: hidden;
+	position: absolute; /* absolute to relation with #panels */
+	top: 0px;
+	bottom: 0px;
 }
 
 #left-panel-wrap {
-    float: left;
-    width: 8px;
+	left: 0px;
+	width: 8px; /* initial width */
 }
 
+#right-panel-wrap {
+	right: 0px;
+	width: auto;
+	left: 8px; /* initial width of the left panel */
+}
+
+/* contents */
+.panel-contents {
+	position: absolute;
+	top: 22px; left: 0px; right: 8px; bottom:0px;
+}
+
+.panel-wrap.no-slider .panel-contents {
+	right: 0px;
+}
 
 /* Toolbars with select box to change panel contents*/
 .panel-toolbar {
-    height: 20px;
+	position: absolute;
+	top: 0px; left:0px; right: 0px; height: 20px;
+
     padding: 0 0 2px 0;
     border-top: 1px solid #AAA;
     border-bottom: 1px solid #AAA;
@@ -107,16 +133,16 @@ label {
 }
 
 /* Slider between panels */
-#slider {
+.panel-wrap .panel-slider {
+	position: absolute;
+
+	top: 0px; bottom: 0px; right: 0px; width: 6px;
+
     border-left: 1px solid #999;
     border-right: 1px solid #999;
-    background-color: #DDD;
-    width: 8px;
-    height: 100%;
-    float: left;
 }
 
-#slider:hover {
+.panel-wrap .panel-slider:hover {
     background-color: #999;
     cursor: col-resize;
 }
