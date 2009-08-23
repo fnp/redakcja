@@ -8,14 +8,13 @@
 			console.log('Panel ' + mydata.panel.attr('id') + ' started resizing');
 			$(document).bind('mousemove', mydata, $.hpanel.resize_changed).
 				bind('mouseup', mydata, $.hpanel.resize_stop); 
+			$('iframe').bind('mousemove', mydata, $.hpanel.resize_changed).
+				bind('mouseup', mydata, $.hpanel.resize_stop); 
 			return false;
 		},
 		resize_changed: function(event) {
 			var old_width = parseInt(event.data.panel.css('width'));
 			var delta = event.pageX + event.data.hotspot_x - old_width;
-
-			console.log('o: ' + (old_width) + ' pX: ' + event.pageX + ' hX: ' + event.data.hotspot_x);
-			console.log('next_panel: ' + $(event.data.panel.next_panel).attr('id'));
 			event.data.panel.css({'width': old_width + delta});
 
 			if(event.data.panel.next_panel) {
@@ -28,6 +27,7 @@
         },
         resize_stop: function(event) {
             $(document).unbind('mousemove', $.hpanel.resize_changed).unbind('mouseup', $.hpanel.resize_stop);
+	    $('iframe').unbind('mousemove', $.hpanel.resize_changed).unbind('mouseup', $.hpanel.resize_stop);
             $('body').css('cursor', 'auto');
         }
     };
