@@ -14,34 +14,30 @@
 
 {% block maincontent %}
         <div id="panels">
+			<div class="panels-mouse-overlay"><!-- mouse overlay --></div>		
             <div id="left-panel-wrap" class="panel-wrap">
                 <div id="left-panel" class="panel">
-                    <div>
-                        <div id="left-panel-toolbar" class="panel-toolbar">
+                     <div id="left-panel-toolbar" class="panel-toolbar">
                             <label for="select-left-panel">Lewy panel:</label>
                             <select name="select-left-panel" id="select-left-panel">
                                 <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
                                 <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                                <option value="{% url gallery_panel hash %}">Galeria skanów</option>                                   		</select>
-                        </div>
-                        <div id="left-panel-contents" class="panel-contents"></div>
+                               <option value="{% url gallery_panel hash %}">Galeria skanów</option>                                   		</select>
                     </div>
+                    <div id="left-panel-contents" class="panel-contents"></div>
                     <button class="panel-slider">&nbsp;</button>
                 </div>
             </div>
             <div id="right-panel-wrap" class="panel-wrap no-slider">
-                <div id="right-panel" class="panel">
-                    <div id="right-panel-toolbar" class="panel-toolbar">
-                        <label for="select-right-panel">Prawy panel:</label>
-                        <select name="select-right-panel" id="select-right-panel">
+                <div id="right-panel-toolbar" class="panel-toolbar">
+                	<label for="select-right-panel">Prawy panel:</label>
+                    <select name="select-right-panel" id="select-right-panel">
                             <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
                             <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
                             <option value="{% url gallery_panel hash %}">Galeria skanów</option>
-                        </select>
-                    </div>
-                    <div id="right-panel-contents" class="panel-contents">
-                    </div>
-                </div>
+                    </select>
+                 </div>
+                 <div id="right-panel-contents" class="panel-contents"></div>
             </div>
         </div>
 {% endblock maincontent %}    

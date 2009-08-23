@@ -1,10 +1,34 @@
 {% load toolbar_tags %}
 
-<div class="panel">
-    {% toolbar %}
-    <textarea name="text" width="480px">{{ text }}</textarea>
+{% toolbar %}
+<div class="iframe-container" style="position: absolute; top: 48px; left:0px; right:0px; bottom: 0px;">
+	<textarea name="text">{{ text }}</textarea>
 </div>
+
 <script type="text/javascript" charset="utf-8">
+(function() {
+	function xmleditor_onload(event, me) {
+		console.log('loading: ', me);
+	        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
+        	$('textarea', panel).attr('id', textareaId);
+		var editor = CodeMirror.fromTextArea(textareaId, {
+        	        parserfile: 'parsexml.js',
+                	path: "/static/js/codemirror/",
+	                stylesheet: "/static/css/xmlcolors.css",
+	                parserConfig: {useHTMLKludges: false},
+	        })
+		console.log('Frame is: ', editor.frame);
+		var frame = $(editor.frame)
+		frame.css({width: '100%', height: '100%', background: 'yellow'});
+	};
+
+	function xmleditor_onunload(event, me) {}
+
+	panel(xmleditor_onload, xmleditor_onunload);
+})();
+</script>
+
+<!-- <script type="text/javascript" charset="utf-8">
     (function() {
         function resizeEditor(event, panel) {
             var panel = panel || event.data.panel;
@@ -28,4 +52,4 @@
             console.log('unloaded xmleditor panel', panel);
         })
     })();
-</script>
+</script> -->

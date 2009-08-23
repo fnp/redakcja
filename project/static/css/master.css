@@ -80,7 +80,14 @@ label {
 
 #panels {
 	position: absolute;
-	bottom: 0px; left: 0px; right: 0px; top: 100px;
+	bottom: 0px; left: 0px; right: 0px; top: 50px;
+}
+
+.panels-mouse-overlay {
+	position: absolute;
+	top: 0px; bottom: 0px; left: 0px; right: 0px;
+	z-index: 0;
+	background: transparent;
 }
 
 .panel-wrap {
