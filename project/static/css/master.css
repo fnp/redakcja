@@ -152,12 +152,14 @@ label {
 
 /* Slider between panels */
 .panel-wrap .panel-slider {
-	position: absolute;
+    position: absolute;
 
-	top: 0px; bottom: 0px; right: 0px; width: 6px;
+    top: 0px; bottom: 0px; right: 0px; width: 6px;
 
     border-left: 1px solid #999;
     border-right: 1px solid #999;
+    border-top: none;
+    border-bottom: none;
 }
 
 .panel-wrap .panel-slider:hover {
