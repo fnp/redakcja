@@ -194,12 +194,12 @@ label {
 /* = XML Editor panel = */
 /* ==================== */
 
-#toolbar {
+.toolbar {
     height: 48px;
     overflow: hidden;
 }
 
-#toolbar, #toolbar ol, #sidebar-toolbar, #sidebar-toolbar ol {
+.toolbar, .toolbar ol {
 /*    overflow: hidden;*/
     display: block;
     margin: 0;
@@ -208,15 +208,7 @@ label {
     border-top: 1px solid #AAA;
 }
 
-#sidebar-toolbar {
-    width: 0;
-}
-
-#sidebar-toolbar, #sidebar-toolbar ol {
-    overflow: hidden;
-}
-
-#sidebar-tabs li, #toolbar-tabs li {
+.toolbar-tabs li {
     font-size: 14px;
     display: block;
     float: left;
@@ -232,24 +224,24 @@ label {
     -webkit-border-top-right-radius: 8px;
 }
 
-#sidebar-tabs, #toolbar-tabs {
+.toolbar-tabs {
     height: 21px;
     z-index: 1000;
 /*    overflow: hidden;*/
 }
 
-#sidebar-tabs li:hover, #sidebar-tabs li.active, #toolbar-tabs li:hover, #toolbar-tabs li.active {
+.toolbar-tabs li:hover, .toolbar-tabs li.active {
     cursor: default;
     background-color: #EEE;
     border-bottom: 1px solid #EEE;
 }
 
-#toolbar-buttons {
+.toolbar-buttons {
     background-color: #EEE;
     border-bottom: 1px solid #AAA;
 }
 
-#toolbar-buttons li {
+.toolbar-buttons li {
     display: block;
     font-size: 12px;
     padding: 1px 8px;
@@ -260,7 +252,7 @@ label {
     float: left;
 }
 
-#toolbar-buttons li:hover {
+.toolbar-buttons li:hover {
     background-color: #777;
     color: #FFF;
     cursor: default;
@@ -280,3 +272,6 @@ div.isection p {
 	margin: 0.5em 1em;
 }
 
+.change-notification {
+    color: red;
+}
