@@ -7,49 +7,67 @@
 
 <script type="text/javascript" charset="utf-8">
 (function() {
-	function xmleditor_onload(event, me) {
-		console.log('loading: ', me);
-	        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-        	$('textarea', me).attr('id', textareaId);
-		var editor = CodeMirror.fromTextArea(textareaId, {
-        	        parserfile: 'parsexml.js',
-                	path: "/static/js/codemirror/",
-	                stylesheet: "/static/css/xmlcolors.css",
-	                parserConfig: {useHTMLKludges: false},
-	        })
-		console.log('Frame is: ', editor.frame);
-		var frame = $(editor.frame)
-		frame.css({width: '100%', height: '100%'});
-	};
+    function xmleditor_onload(event, me) {
+        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
+        $('textarea', me).attr('id', textareaId);
+        var editor = CodeMirror.fromTextArea(textareaId, {
+            parserfile: 'parsexml.js',
+            path: "/static/js/codemirror/",
+            stylesheet: "/static/css/xmlcolors.css",
+            parserConfig: {useHTMLKludges: false},
+            initCallback: function() {
+                // Toolbar
+                $('#toolbar-tabs li', panel).click(function() {
+                    var id = $(this).attr('p:button-list');
+                    $('#toolbar-tabs li', panel).removeClass('active');
+                    $(this).addClass('active');
+                    if (!$('#' + id).is(':visible')) {
+                        $('#toolbar-buttons ol', panel).not('#' + id).hide();
+                        $('#' + id, panel).show();
+                    }
+                })
+                
+                var keys = {};
+                $('#toolbar-buttons li', panel).each(function() {
+                    var tag = $(this).attr('p:tag');
+                    var handler = function() {
+                        var text = editor.selection();
+                        editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
+                        if (text.length == 0) {
+                            var pos = editor.cursorPosition();
+                            editor.selectLines(pos.line, pos.character + tag.length + 2);
+                        }
+                    }
+                    if ($(this).attr('p:key')) {
+                        keys[$(this).attr('p:key')] = handler;
+                    }
+                    $(this).click(handler)
+                });
 
-	function xmleditor_onunload(event, me) {}
-
-	panel(xmleditor_onload, xmleditor_onunload);
+                editor.grabKeys(function(event) { 
+                    if (keys[event.keyCode]) {
+                        keys[event.keyCode]();
+                    }
+                }, function(event) { return event.altKey && keys[event.keyCode]; });
+            }
+        })
+        
+        $(editor.frame).css({width: '100%', height: '100%'});
+        
+        $('#toolbar-buttons li').wTooltip({
+            delay: 1000, 
+            style: {
+                border: "1px solid #7F7D67",
+                opacity: 0.9, 
+                background: "#FBFBC6", 
+                padding: "1px",
+                fontSize: "12px",
+            }
+        });
+    };
+    
+    function xmleditor_onunload(event, me) {}
+    
+    panel(xmleditor_onload, xmleditor_onunload);
 })();
 </script>
-
-<!-- <script type="text/javascript" charset="utf-8">
-    (function() {
-        function resizeEditor(event, panel) {
-            var panel = panel || event.data.panel;
-            $('iframe', panel).height($(panel).height());
-        }
-        
-        panel(function(event, panel) {
-            console.log('loading panel', panel);
-            var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-            $('textarea', panel).attr('id', textareaId);
-            var editor = CodeMirror.fromTextArea(textareaId, {
-                parserfile: 'parsexml.js',
-                path: "/static/js/codemirror/",
-                stylesheet: "/static/css/xmlcolors.css",
-                parserConfig: {useHTMLKludges: false},
-                initCallback: function() {}
-            })
-            $(window).bind('resize', {'panel': panel}, resizeEditor);
-            resizeEditor(null, panel);
-        }, function(event, panel) {
-            console.log('unloaded xmleditor panel', panel);
-        })
-    })();
-</script> -->
