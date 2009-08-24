@@ -7,9 +7,9 @@
 
 <script type="text/javascript" charset="utf-8">
 (function() {
-    function xmleditor_onload(event, me) {
+    function xmleditor_onload(event, panel) {
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-        $('textarea', me).attr('id', textareaId);
+        $('textarea', panel).attr('id', textareaId);
         var editor = CodeMirror.fromTextArea(textareaId, {
             parserfile: 'parsexml.js',
             path: "/static/js/codemirror/",
@@ -17,21 +17,22 @@
             parserConfig: {useHTMLKludges: false},
             initCallback: function() {
                 // Toolbar
-                $('#toolbar-tabs li', panel).click(function() {
+                $('.toolbar-tabs li', panel).click(function() {
                     var id = $(this).attr('p:button-list');
-                    $('#toolbar-tabs li', panel).removeClass('active');
+                    $('.toolbar-tabs li', panel).removeClass('active');
                     $(this).addClass('active');
-                    if (!$('#' + id).is(':visible')) {
-                        $('#toolbar-buttons ol', panel).not('#' + id).hide();
-                        $('#' + id, panel).show();
+                    if (!$('.' + id, panel).is(':visible')) {
+                        $('.toolbar-buttons ol', panel).not('#' + id).hide();
+                        $('.' + id, panel).show();
                     }
                 })
                 
                 var keys = {};
-                $('#toolbar-buttons li', panel).each(function() {
+                $('.toolbar-buttons li', panel).each(function() {
                     var tag = $(this).attr('p:tag');
                     var handler = function() {
                         var text = editor.selection();
+                        console.log(editor, editor.frame);
                         editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
                         if (text.length == 0) {
                             var pos = editor.cursorPosition();
@@ -66,7 +67,7 @@
         });
     };
     
-    function xmleditor_onunload(event, me) {}
+    function xmleditor_onunload(event, panel) {}
     
     panel(xmleditor_onload, xmleditor_onunload);
 })();

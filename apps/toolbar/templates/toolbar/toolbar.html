@@ -1,14 +1,14 @@
 {% load toolbar_tags %}
-<div id="toolbar">
-    <ol id="toolbar-tabs">
+<div class="toolbar">
+    <ol class="toolbar-tabs">
         {% for group in groups %}
         <li p:button-list="{{ group.slug }}" {% if forloop.first %}class="active"{% endif %}>{{ group.name }}</li>
         {% endfor %}
     </ol>
     <div style="clear: both; height: 0; width: 0">&nbsp;</div>
-    <div id="toolbar-buttons">
+    <div class="toolbar-buttons">
         {% for group in groups %}
-        <ol id="{{ group.slug }}" {% if not forloop.first %}style="display:none"{% endif %}>
+        <ol class="{{ group.slug }}" {% if not forloop.first %}style="display:none"{% endif %}>
             {% for button in group.button_set.all %}
             <li p:tag="{{ button.tag }}" {% if button.key %}p:key="{{ button.key|keycode }}" title="Alt+{{ button.key|upper }}"{% endif %}>{{ button.label }}</li>
             {% endfor %}
