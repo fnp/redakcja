@@ -35,7 +35,6 @@
                     var tag = $(this).attr('p:tag');
                     var handler = function() {
                         var text = editor.selection();
-                        console.log(editor, editor.frame);
                         editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
                         if (text.length == 0) {
                             var pos = editor.cursorPosition();

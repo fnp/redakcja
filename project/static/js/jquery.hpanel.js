@@ -5,7 +5,6 @@
         settings: {},
 		current_data: {},
         resize_start: function(event, mydata) {
-			console.log('Overlay: ' + mydata.overlay);
 			$(document).bind('mousemove', mydata, $.hpanel.resize_changed).
 				bind('mouseup', mydata, $.hpanel.resize_stop); 
 
@@ -41,10 +40,8 @@
     
     $.fn.makeHorizPanel = function(options) 
 	{
-		console.log('Making an hpanel out of "#' +  $(this).attr('id') + '"'); 
 		var root = $(this)
 		var all_panels = $('.panel-wrap', root)
-		console.log('Panels: ' + all_panels);
 
 		/* create an overlay */
 		var overlay_root = $("<div class='panel-overlay'></div>");

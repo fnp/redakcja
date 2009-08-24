@@ -1,14 +1,11 @@
 function loadPanel(target, url) {
-    console.log('ajax', url, 'into', target);
     $('.change-notification', $(target).parent()).fadeOut();
     $(document).trigger('panel:unload', target);
     $.ajax({
         url: url,
         dataType: 'html',
         success: function(data, textStatus) {
-            console.log(target, 'ajax success');
             $(target).html(data);
-            console.log(target, 'triggering panel:load');
             $(document).trigger('panel:load', target);
         },
         error: function(request, textStatus, errorThrown) {
@@ -24,21 +21,17 @@ function panel(load, unload) {
     
     unloadHandler = function(event, panel) {
         if (self && self == panel) {
-            console.log('Panel', panel, 'unloading');
             $(document).unbind('panel:unload.' + eventId);
             $(panel).html('');
             unload(event, panel);
-            console.log('Panel', panel, 'unloaded');
             return false;
         }
     };
     
     $(document).one('panel:load', function(event, panel) {
         self = panel;
-        console.log('Panel', panel, 'loading');
         $(document).bind('panel:unload.' + eventId, unloadHandler);
         load(event, panel);
-        console.log('Panel', panel, 'loaded');
     });
 }
 
