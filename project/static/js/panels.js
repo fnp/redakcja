@@ -57,7 +57,7 @@ $(function() {
 //        resizePanels();
 //    })
 
-	$('#panels').make_hpanel({});
+      $('#panels').make_hpanel({});
    	
 //    $('#left-panel-wrap').bind('resizable:stop', resizePanels)
 //        .resizable({minWidth: 8});    
