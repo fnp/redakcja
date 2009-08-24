@@ -49,7 +49,7 @@ $(function() {
 //    function resizePanels() {
 //		// called on resize
 //        $('.panel').height($(window).height() - $('.panel').position().top);
-//        $('.panel-contents').height($(window).height() - $('.panel-contents').position().top);
+//        $('.panel-content').height($(window).height() - $('.panel-contents').position().top);
 //        $('#right-panel-wrap').width($(window).width() - $('#left-panel-wrap').outerWidth());
 //    }
     
@@ -57,7 +57,7 @@ $(function() {
 //        resizePanels();
 //    })
 
-    $('#panels').make_hpanel({});
+    $('#panels').makeHorizPanel({});
     $('#panels').css('top', ($('#header').outerHeight() ) + 'px');
    	
 //    $('#left-panel-wrap').bind('resizable:stop', resizePanels)
@@ -65,7 +65,7 @@ $(function() {
 //    resizePanels();
     
     $('.panel-toolbar select').change(function() {
-        loadPanel($('.panel-contents', $(this).parent().parent()), $(this).val())
+        loadPanel($('.panel-content', $(this).parent().parent()), $(this).val())
     });
     // $('#id_folders').change(function() {
     //     $('#images').load('{% url folder_image_ajax %}' + $('#id_folders').val() + '/', function() {

@@ -94,13 +94,6 @@ label {
 	bottom: 0px; left: 0px; right: 0px; top: 50px;
 }
 
-.panels-mouse-overlay {
-	position: absolute;
-	top: 0px; bottom: 0px; left: 0px; right: 0px;
-	z-index: 0;
-	background: transparent;
-}
-
 .panel-wrap {
     overflow: hidden;
 	position: absolute; /* absolute to relation with #panels */
@@ -120,12 +113,26 @@ label {
 }
 
 /* contents */
-.panel-contents {
+.panel-content {
 	position: absolute;
-	top: 22px; left: 0px; right: 8px; bottom:0px;
+	top: 22px; left: 0px; bottom:0px; right: 0px;
 }
 
-.panel-wrap.no-slider .panel-contents {
+.panel-overlay {
+	position: absolute;
+	top: 0px; bottom: 0px; left: 0px; right: 0px;
+	z-index: 10;
+	background: gray;
+	opacity: 0.8;
+	text-align: center;
+	overflow: hidden;
+	display: none;
+}
+
+.panel-content-overlay {
+}
+
+.panel-wrap.last-panel .panel-content {
 	right: 0px;
 }
 
@@ -153,6 +160,7 @@ label {
 /* Slider between panels */
 .panel-wrap .panel-slider {
     position: absolute;
+	background-color: #DDD;
 
     top: 0px; bottom: 0px; right: 0px; width: 6px;
 
@@ -160,11 +168,17 @@ label {
     border-right: 1px solid #999;
     border-top: none;
     border-bottom: none;
+
+	z-index: 5;
 }
 
 .panel-wrap .panel-slider:hover {
     background-color: #999;
     cursor: col-resize;
+}
+
+.panel-content-overlay.panel-wrap .panel-slider {
+	background-color: #DDD;
 }
 
 /* ================= */
