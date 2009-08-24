@@ -46,20 +46,22 @@ $(function() {
     // ========================
     // = Resizable panels =
     // ========================
-    function resizePanels() {
-        $('.panel').height($(window).height() - $('.panel').position().top);
-        $('.panel-contents').height($(window).height() - $('.panel-contents').position().top);
-        $('#right-panel-wrap').width($(window).width() - $('#left-panel-wrap').outerWidth());
-    }
+//    function resizePanels() {
+//		// called on resize
+//        $('.panel').height($(window).height() - $('.panel').position().top);
+//        $('.panel-contents').height($(window).height() - $('.panel-contents').position().top);
+//        $('#right-panel-wrap').width($(window).width() - $('#left-panel-wrap').outerWidth());
+//    }
     
-    $(window).resize(function() {
-        resizePanels();
-    })
-    
-    $('#left-panel-wrap').bind('resizable:stop', resizePanels)
-        .resizable('#slider', {minWidth: 8});
-    
-    resizePanels();
+//    $(window).resize(function() {
+//        resizePanels();
+//    })
+
+      $('#panels').make_hpanel({});
+   	
+//    $('#left-panel-wrap').bind('resizable:stop', resizePanels)
+//        .resizable({minWidth: 8});    
+//    resizePanels();
     
     $('.panel-toolbar select').change(function() {
         loadPanel($('.panel-contents', $(this).parent().parent()), $(this).val())
