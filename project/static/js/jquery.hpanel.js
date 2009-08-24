@@ -5,7 +5,7 @@
         settings: {},
 		current_data: {},
         resize_start: function(event, mydata) {
-			console.log('Overlay: ' + mydata.overlay);
+			$.log('Overlay: ' + mydata.overlay);
 			$(document).bind('mousemove', mydata, $.hpanel.resize_changed).
 				bind('mouseup', mydata, $.hpanel.resize_stop); 
 
@@ -29,10 +29,12 @@
 			// $('.panel-content', event.data.root).css('display', 'block');
 			var overlays = $('.panel-content-overlay', event.data.root);
 			$('.panel-content-overlay', event.data.root).each(function(i) {
-				$(this).data('panel').css({
-					'left': $(this).css('left'), 
-					'width': $(this).css('width') 
-				});
+				if( $(this).data('panel').hasClass('last-panel') )
+					$(this).data('panel').css({
+						'left': $(this).css('left'), 'right': $(this).css('right')}); 
+				else
+					$(this).data('panel').css({
+						'left': $(this).css('left'), 'width': $(this).css('width')}); 
 			});
 
 			$('.panel-overlay', event.data.root).css('display', 'none');
@@ -41,10 +43,10 @@
     
     $.fn.makeHorizPanel = function(options) 
 	{
-		console.log('Making an hpanel out of "#' +  $(this).attr('id') + '"'); 
+		$.log('Making an hpanel out of "#' +  $(this).attr('id') + '"'); 
 		var root = $(this)
 		var all_panels = $('.panel-wrap', root)
-		console.log('Panels: ' + all_panels);
+		$.log('Panels: ' + all_panels);
 
 		/* create an overlay */
 		var overlay_root = $("<div class='panel-overlay'></div>");
@@ -61,7 +63,7 @@
 			overlay.data('panel', panel);
 			overlay.data('next', null);
 
-			if( panel.hasClass('last-panel') )
+			if( panel.hasClass('last-panel') )				
 				overlay.css({'left': panel.css('left'), 'right': panel.css('right')});
 			else
 				overlay.css({'left': panel.css('left'), 'width': panel.css('width')});
@@ -80,8 +82,10 @@
 					$(this).trigger('hpanel:panel-resize-start', touch_data);
 					return false;
 				});
-				$('.panel-content', panel).css('right',handle.outerWidth() + 'px');
-				$('.panel-content-overlay', panel).css('right',handle.outerWidth() + 'px');
+				$('.panel-content', panel).css('right', 
+					(handle.outerWidth() || 10) + 'px');
+				$('.panel-content-overlay', panel).css('right',
+					(handle.outerWidth() || 10) + 'px');
 			}
 				
 			prev = overlay;

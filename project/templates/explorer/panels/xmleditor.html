@@ -8,7 +8,7 @@
 <script type="text/javascript" charset="utf-8">
 (function() {
 	function xmleditor_onload(event, me) {
-		console.log('loading: ', me);
+		$.log('loading: ', me);
 	        var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
         	$('textarea', panel).attr('id', textareaId);
 		var editor = CodeMirror.fromTextArea(textareaId, {
@@ -17,7 +17,7 @@
 	                stylesheet: "/static/css/xmlcolors.css",
 	                parserConfig: {useHTMLKludges: false},
 	        })
-		console.log('Frame is: ', editor.frame);
+		$.log('Frame is: ', editor.frame);
 		var frame = $(editor.frame)
 		frame.css({width: '100%', height: '100%', background: 'yellow'});
 	};
@@ -36,7 +36,7 @@
         }
         
         panel(function(event, panel) {
-            console.log('loading panel', panel);
+            $.log('loading panel', panel);
             var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
             $('textarea', panel).attr('id', textareaId);
             var editor = CodeMirror.fromTextArea(textareaId, {
@@ -49,7 +49,7 @@
             $(window).bind('resize', {'panel': panel}, resizeEditor);
             resizeEditor(null, panel);
         }, function(event, panel) {
-            console.log('unloaded xmleditor panel', panel);
+            $.log('unloaded xmleditor panel', panel);
         })
     })();
 </script> -->
