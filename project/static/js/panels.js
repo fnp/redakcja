@@ -1,5 +1,6 @@
 function loadPanel(target, url) {
     console.log('ajax', url, 'into', target);
+    $('.change-notification', $(target).parent()).fadeOut();
     $(document).trigger('panel:unload', target);
     $.ajax({
         url: url,
@@ -9,7 +10,6 @@ function loadPanel(target, url) {
             $(target).html(data);
             console.log(target, 'triggering panel:load');
             $(document).trigger('panel:load', target);
-            // panel(target);
         },
         error: function(request, textStatus, errorThrown) {
             console.log('ajax', url, target, 'error:', textStatus, errorThrown);

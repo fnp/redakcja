@@ -15,7 +15,10 @@
             path: "/static/js/codemirror/",
             stylesheet: "/static/css/xmlcolors.css",
             parserConfig: {useHTMLKludges: false},
-            initCallback: function() {
+            onChange: function() {
+                $(document).trigger('panel:contentChanged', panel);
+            },
+            initCallback: function(editor) {
                 // Toolbar
                 $('.toolbar-tabs li', panel).click(function() {
                     var id = $(this).attr('p:button-list');
@@ -38,6 +41,7 @@
                             var pos = editor.cursorPosition();
                             editor.selectLines(pos.line, pos.character + tag.length + 2);
                         }
+                        $(document).trigger('panel:contentChanged', panel);
                     }
                     if ($(this).attr('p:key')) {
                         keys[$(this).attr('p:key')] = handler;

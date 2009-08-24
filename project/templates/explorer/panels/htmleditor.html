@@ -5,14 +5,14 @@
 </div>
 <script type="text/javascript" charset="utf-8">
     (function() {
-        function resizeEditor(event, panel) {
-            var panel = panel || event.data.panel;
-            $('.htmleditor', panel).height($(panel).height());
-        }
-
+        var id = Math.ceil(Math.random() * 1000000000);
+        
         panel(function(event, panel) {
-            $(window).bind('resize', {'panel': panel}, resizeEditor);
-            resizeEditor(null, panel);  
-        }, function(event, panel) {});
+            $(document).bind('panel:contentChanged.' + id, function(event, p) {
+                $('.change-notification', $(panel).parent()).fadeIn();
+            })
+        }, function(event, panel) {
+            $(document).unbind('panel:contentChanged.' + id);
+        });
     })()
 </script>

@@ -15,23 +15,26 @@
         <div id="panels">
             <div id="left-panel-wrap" class="panel-wrap">
                <div id="left-panel-toolbar" class="panel-toolbar">
-                            <label for="select-left-panel">Lewy panel:</label>
-                            <select name="select-left-panel" id="select-left-panel">
-                                <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
-                                <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                            <option value="{% url gallery_panel hash %}">Galeria skanów</option>                                   		</select>
+                    <label for="select-left-panel">Lewy panel:</label>
+                    <select name="select-left-panel" id="select-left-panel">
+                        <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
+                        <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
+                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>    
+                    </select>
+                    <strong class="change-notification" style="display: none">Zmieniono!</strong>
                </div>
                <div id="left-panel-content" class="panel-content"></div>
                <button class="panel-slider">&nbsp;</button>
             </div>
             <div id="right-panel-wrap" class="panel-wrap last-panel">
                 <div id="right-panel-toolbar" class="panel-toolbar">
-                	<label for="select-right-panel">Prawy panel:</label>
+                    <label for="select-right-panel">Prawy panel:</label>
                     <select name="select-right-panel" id="select-right-panel">
-                            <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
-                            <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                            <option value="{% url gallery_panel hash %}">Galeria skanów</option>
+                        <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
+                        <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
+                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>
                     </select>
+                    <strong class="change-notification" style="display: none">Zmieniono!</strong>
                  </div>
                  <div id="right-panel-content" class="panel-content"></div>
             </div>

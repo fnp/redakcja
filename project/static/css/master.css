@@ -272,3 +272,6 @@ div.isection p {
 	margin: 0.5em 1em;
 }
 
+.change-notification {
+    color: red;
+}
