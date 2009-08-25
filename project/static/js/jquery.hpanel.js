@@ -52,10 +52,9 @@
 		var prev = null;
 
 		all_panels.each(function(i) {
-			var panel = $(all_panels[i]);
+			var panel = $(this);
 			var handle = $('.panel-slider', panel);
-
-			var overlay	= $("<div class='panel-content-overlay panel-wrap'><p>Panel #"+i+"</p></div>");
+			var overlay = $("<div class='panel-content-overlay panel-wrap'><p>Panel #"+i+"</p></div>");
 			overlay_root.append(overlay);
 			overlay.data('panel', panel);
 			overlay.data('next', null);
@@ -67,7 +66,8 @@
 
 			if (prev) prev.next = overlay;
 
-			if(handle) {
+			if(handle.length != 0) {
+				$.log('Has handle: ' + panel.attr('id') );
 				overlay.append(handle.clone());
 				/* attach the trigger */
 				handle.mousedown(function(event) {
