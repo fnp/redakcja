@@ -7,6 +7,7 @@
 
 <script type="text/javascript" charset="utf-8">
 (function() {
+
     function xmleditor_onload(event, panel) {
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
         $('textarea', panel).attr('id', textareaId);
@@ -70,8 +71,7 @@
         });
     };
     
-    function xmleditor_onunload(event, panel) {}
-    
-    panel(xmleditor_onload, xmleditor_onunload);
+	// define the callback
+	load_callback = xmleditor_onload;
 })();
 </script>
