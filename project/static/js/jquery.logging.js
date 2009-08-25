@@ -6,7 +6,7 @@
 	const LOG_LEVEL = LEVEL_DEBUG;
 
 	var mozillaLog = function(msg) {
-		if (console) console.log(msg);
+		if (window.console) console.log(msg);
 	};
 
 	var operaLog = function(msg) {
