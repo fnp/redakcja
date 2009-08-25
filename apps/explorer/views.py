@@ -69,10 +69,29 @@ def htmleditor_panel(request, path):
     })
  
 
+def dceditor_panel(request, path):
+    if request.method == 'POST':
+        form = forms.DublinCoreForm(request.POST)
+        if form.is_valid():
+            form.save(repo, path)
+            repo.commit(message='%s: DublinCore edited' % path)
+    else:
+        text = repo.get_file(path).data()
+        form = forms.DublinCoreForm(text=text)       
+
+    return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
+        'form': form,
+    })
+
+
+# =================
+# = Utility views =
+# =================
 def folder_images(request, folder):
     return direct_to_template(request, 'explorer/folder_images.html', extra_context={
         'images': models.get_images_from_folder(folder),
     })
+
 
 def _add_references(message, issues):
     return message + " - " + ", ".join(map(lambda issue: "Refs #%d" % issue['id'], issues))
