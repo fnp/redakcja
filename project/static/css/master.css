@@ -258,6 +258,23 @@ label {
     cursor: default;
 }
 
+/* =========================== */
+/* = DublinCore Editor panel = */
+/* =========================== */
+.panel-dceditor {
+    padding: 10px;
+}
+
+.panel-dceditor label {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #666;
+    font-weight: bold;
+}
+
+.panel-dceditor input, .panel-dceditor textarea {
+    width: 400px;
+}
 
 div.isection {
 	margin: 1em auto;

@@ -19,7 +19,8 @@
                     <select name="select-left-panel" id="select-left-panel">
                         <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
                         <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>    
+                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>
+                        <option value="{% url dceditor_panel hash %}">Edytor DublinCore</option>
                     </select>
                     <strong class="change-notification" style="display: none">Zmieniono!</strong>
                </div>
@@ -33,6 +34,7 @@
                         <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
                         <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
                         <option value="{% url gallery_panel hash %}">Galeria skanów</option>
+                        <option value="{% url dceditor_panel hash %}">Edytor DublinCore</option>
                     </select>
                     <strong class="change-notification" style="display: none">Zmieniono!</strong>
                  </div>

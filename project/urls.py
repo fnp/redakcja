@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^editor/(?P<path>[^/]+)/panels/xmleditor/$', 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
     url(r'^editor/(?P<path>[^/]+)/panels/gallery/$', 'explorer.views.gallery_panel', name='gallery_panel'),
     url(r'^editor/(?P<path>[^/]+)/panels/htmleditor/$', 'explorer.views.htmleditor_panel', name='htmleditor_panel'),
+    url(r'^editor/(?P<path>[^/]+)/panels/dceditor/$', 'explorer.views.dceditor_panel', name='dceditor_panel'),
     
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
