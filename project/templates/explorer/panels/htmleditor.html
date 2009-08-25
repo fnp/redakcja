@@ -1,17 +1,15 @@
-<div class="panel">
-    <div class="htmleditor">
-        {{ html|safe }}
-    </div>
-</div>
+{{ html|safe }}
 <script type="text/javascript" charset="utf-8">
     (function() {
         var id = Math.ceil(Math.random() * 1000000000);
         
-        panel(function(event, panel) {
+        panel(function(event, me) {
             $(document).bind('panel:contentChanged.' + id, function(event, p) {
-                $('.change-notification', $(panel).parent()).fadeIn();
-            })
-        }, function(event, panel) {
+                $('.change-notification', $(me).parent()).fadeIn();
+            });
+	    $(me).addClass('panel-htmleditor');
+        }, function(event, me) {
+	    $(me).removeClass('panel-htmleditor');
             $(document).unbind('panel:contentChanged.' + id);
         });
     })()
