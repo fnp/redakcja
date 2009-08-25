@@ -7,10 +7,14 @@
     <script src="/static/js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/jquery.hpanel.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/js/panels.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/save-commit.js" type="text/javascript" charset="utf-8"></script>
 {% endblock extrahead %}
 
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
+{% block header-toolbar %}
+	<button type="button" class="toolbar-button" id="toolbar-button-save">Zapisz</button>
+{% endblock %}
 {% block maincontent %}
         <div id="panels">
             <div id="left-panel-wrap" class="panel-wrap">
@@ -25,7 +29,7 @@
                     <strong class="change-notification" style="display: none">Zmieniono!</strong>
                </div>
                <div id="left-panel-content" class="panel-content"></div>
-               <button class="panel-slider" id="slider01">&nbsp;</button>
+               <button type="button" class="panel-slider" id="slider01">&nbsp;</button>
             </div>
             <div id="right-panel-wrap" class="panel-wrap last-panel">
                 <div id="right-panel-toolbar" class="panel-toolbar">

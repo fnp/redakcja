@@ -5,23 +5,18 @@
 
 	const LOG_LEVEL = LEVEL_DEBUG;
 
-	var mozillaLog = function(msg) {
-		if (window.console) console.log(msg);
+	var mozillaLog = function() {
+		if (window.console) console.log.apply(this, arguments);
 	};
 
-	var operaLog = function(msg) {
-		opera.postError(msg);
+	var operaLog = function() {
+		opera.postError.(arguments.join(' '));
 	};
 
-	var defaultLog = function(msg) { return false; };
+	var defaultLog = function() { return false; };
 
-	$.log = function(message, level) {
-		if (level == null) level = LEVEL_INFO;
-		if (message == null) message = 'TRACE';
-		if (level < LOG_LEVEL)
-			return false;
-
-		return $.log.browserLog(message);
+	$.log = function( ) {
+		return $.log.browserLog.apply(this, arguments);
 	};
 
 	if ($.browser.mozilla || $.browser.safari)

@@ -5,7 +5,7 @@ from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
 
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from explorer import forms, models
@@ -21,15 +21,19 @@ def file_xml(request, path):
     if request.method == 'POST':
         form = forms.BookForm(request.POST)
         if form.is_valid():
-            repo.add_file(path, form.cleaned_data['text'])
+            # save the changes to a local branch
+#           repo.write_lock()
+            print request.user
+#            repo.switch_to_branch(request.user.name)           
+#            repo.add_file(path, form.cleaned_data['text'])
             
             # add references to comment
             issues = _get_issues_for_file(path)
             commit_message = _add_references(form.cleaned_data['commit_message'], issues)
             print 'Commiting with: ' + commit_message
 
-            repo.commit(message=commit_message, user=form.cleaned_data['user'])
-            return HttpResponseRedirect(request.get_full_path())
+#            repo.commit(message=commit_message, user=form.cleaned_data['user'])
+        return HttpResponse( json.dumps({'message': commit_message}) )
     else:
         form = forms.BookForm()
         form.fields['text'].initial = repo.get_file(path).data()
