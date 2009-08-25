@@ -1,24 +1,29 @@
 body {
     margin: 0;
-    font: 14px Helvetica, Verdana, sans-serif;
+    font: 10pt Helvetica, Verdana, sans-serif;
     overflow: hidden;
 }
 
 #header { 
     position: relative;
-    padding: 2px 0.5em;
+    padding: 0.2em 0.5em;
     background-color: #CDCDCD;
 	border-bottom: 1px solid black;
-	clear: both;
+	height: 1.8em;
+	line-height: 1.8em;
+	vertical-align: center;
 }
 
 #header #breadcrumbs {
-
 }
 
-#header #login_info {
+#header-right-toolbar {
 	position: absolute;
 	right: 1em;
+}
+
+#header button {
+	vertical-align: center;
 }
 
 ul {
@@ -91,7 +96,7 @@ label {
 
 #panels {
 	position: absolute;
-	bottom: 0px; left: 0px; right: 0px; top: 50px;
+	bottom: 0px; left: 0px; right: 0px; top: 1em;
 }
 
 .panel-wrap {
