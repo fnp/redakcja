@@ -3,9 +3,7 @@ import os
 import codecs
 from mercurial import localrepo, ui, error, match, node, encoding
 
-
 encoding.encoding = 'utf-8'
-
 
 class RepositoryDoesNotExist(Exception):
     pass
