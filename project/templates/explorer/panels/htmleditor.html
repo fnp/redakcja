@@ -1,20 +1,12 @@
 {{ html|safe }}
 <script type="text/javascript" charset="utf-8">
-(function() {
-
-var id = Math.ceil(Math.random() * 1000000000);
-
-load_callback = function(panel) {
-	$(document).bind('panel:contentChanged.' + id, function(event, p) {
-         $('.change-notification', $(this).parent()).fadeIn();
-	});
-    $(this).addClass('panel-htmleditor');
-}
-
-unload_callback = function(panel) {
-	    $(me).removeClass('panel-htmleditor');
-            $(document).unbind('panel:contentChanged.' + id);
-}
-
-})();
+panel_hooks = {
+	load: function() 
+	{
+		this.contentDiv.addClass('panel-htmleditor');
+	},
+	unload: function() {
+		this.contentDiv.removeClass('panel-htmleditor');
+	}
+};
 </script>

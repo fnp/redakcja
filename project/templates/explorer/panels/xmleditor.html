@@ -6,18 +6,22 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
-(function() {
 
-    function xmleditor_onload(event, panel) {
+panel_hooks = {
+	load: function () {
+		var self = this;
+		var panel = self.contentDiv;
+
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-        $('textarea', panel).attr('id', textareaId);
-        var editor = CodeMirror.fromTextArea(textareaId, {
+	        $('textarea', panel).attr('id', textareaId);
+
+		var texteditor = CodeMirror.fromTextArea(textareaId, {
             parserfile: 'parsexml.js',
             path: "/static/js/codemirror/",
             stylesheet: "/static/css/xmlcolors.css",
             parserConfig: {useHTMLKludges: false},
             onChange: function() {
-                $(document).trigger('panel:contentChanged', panel);
+				panel.trigger('panel:contentChanged', self);
             },
             initCallback: function(editor) {
                 // Toolbar
@@ -35,11 +39,11 @@
                 $('.toolbar-buttons li', panel).each(function() {
                     var tag = $(this).attr('p:tag');
                     var handler = function() {
-                        var text = editor.selection();
+                        var text = texteditor.selection();
                         editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
                         if (text.length == 0) {
-                            var pos = editor.cursorPosition();
-                            editor.selectLines(pos.line, pos.character + tag.length + 2);
+                            var pos = texteditor.cursorPosition();
+                            texteditor.selectLines(pos.line, pos.character + tag.length + 2);
                         }
                         $(document).trigger('panel:contentChanged', panel);
                     }
@@ -49,7 +53,7 @@
                     $(this).click(handler)
                 });
 
-                editor.grabKeys(function(event) { 
+                texteditor.grabKeys(function(event) { 
                     if (keys[event.keyCode]) {
                         keys[event.keyCode]();
                     }
@@ -57,7 +61,7 @@
             }
         })
         
-        $(editor.frame).css({width: '100%', height: '100%'});
+        $(texteditor.frame).css({width: '100%', height: '100%'});
         
         $('#toolbar-buttons li').wTooltip({
             delay: 1000, 
@@ -69,9 +73,18 @@
                 fontSize: "12px",
             }
         });
-    };
-    
-	// define the callback
-	load_callback = xmleditor_onload;
-})();
+
+		this.texteditor = texteditor;
+    },
+
+	unload: function() { 
+		this.texteditor = null;
+	},
+
+	saveInfo: function(hn, saveInfo) {
+		var myInfo = {content: this.texteditor.getCode(), dataType: 'xml'};
+		$.extend(saveInfo, myInfo);
+	}		
+};
+
 </script>

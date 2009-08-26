@@ -11,23 +11,20 @@
 </div>
 <script type="text/javascript" charset="utf-8">
 
-    (function() {
-        function resizeEditor(event, panel) {
-            var panel = panel || event.data.panel;
-            $('.images-wrap', panel).height($(panel).height());
-        }
-
-        panel(function(event, panel) {
-            $('.id_folders', panel).change(function() {
-                $('.images', panel).load('{% url folder_image_ajax %}' + $('.id_folders', panel).val() + '/', function() {
-                    $('.images-wrap', panel).data('lazyload:lastCheckedScrollTop', -10000);
+panel_hooks = {
+	load: function() {
+		var contentDiv = this.contentDiv;
+		$('.id_folders', contentDiv).change(function() 
+		{
+        	$('.images', contentDiv).load('{% url folder_image_ajax %}' + $('.id_folders', panel).val() + '/', 
+				function() {
+                    $('.images-wrap', contentDiv).data('lazyload:lastCheckedScrollTop', -10000);
                 });
-            });
-            $('.images-wrap', panel).lazyload('.image-box', {threshold: 640 * 10, scrollTreshold: 640 * 5});
-            
-            $(window).bind('resize', {'panel': panel}, resizeEditor);
-            resizeEditor(null, panel);  
-        }, function(event, panel) {
-        });
-    })()
+		});
+		
+		$('.images-wrap', contentDiv).lazyload('.image-box', 
+			{threshold: 640 * 10, scrollTreshold: 640 * 5}
+		);
+	}
+};
 </script>
