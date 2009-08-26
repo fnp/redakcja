@@ -6,11 +6,17 @@
 	const LOG_LEVEL = LEVEL_DEBUG;
 
 	var mozillaLog = function() {
-		if (window.console) console.log.apply(this, arguments);
+		if (window.console)
+		    console.log.apply(this, arguments);
 	};
 
+    var safariLog = function() {
+        if (window.console)
+            console.log.apply(console, arguments);
+    };
+    
 	var operaLog = function() {
-		opera.postError.(arguments.join(' '));
+		opera.postError(arguments.join(' '));
 	};
 
 	var defaultLog = function() { return false; };
@@ -19,10 +25,12 @@
 		return $.log.browserLog.apply(this, arguments);
 	};
 
-	if ($.browser.mozilla || $.browser.safari)
+	if ($.browser.mozilla)
 		$.log.browserLog = mozillaLog;
+	if ($.browser.safari)
+	    $.log.browserLog = safariLog;
 	else if($.browser.opera)
-		$.log.browserLog = operaLog
+		$.log.browserLog = operaLog;
 	else 
 		$.log.browserLog = defaultLog;
 
