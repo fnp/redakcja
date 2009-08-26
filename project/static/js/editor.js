@@ -4,7 +4,6 @@ function Panel(panelWrap) {
 	self.contentDiv = $('.panel-content', panelWrap);
 	self.instanceId = Math.ceil(Math.random() * 1000000000);
 	$.log('new panel - wrap: ', self.wrap);
-
 	
 	$(document).bind('panel:unload.' + self.instanceId, 
 			function(event, data) { self.unload(event, data); });	
@@ -18,7 +17,6 @@ function Panel(panelWrap) {
 
 		return false; 		
 	});
-
 }
 
 Panel.prototype.callHook = function(hookName) {
@@ -56,7 +54,6 @@ Panel.prototype.unload = function(event, data) {
 
 	if( data == this ) {
 		$.log('unloading', this);
-		$(document).unbind('panel:unload.' + this.instanceId);
         $(this.contentDiv).html('');
 		this.callHook('unload');
 		this.hooks = null; // flush the hooks

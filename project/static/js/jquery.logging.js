@@ -27,7 +27,7 @@
 
 	if ($.browser.mozilla)
 		$.log.browserLog = mozillaLog;
-	if ($.browser.safari)
+	else if ($.browser.safari)
 	    $.log.browserLog = safariLog;
 	else if($.browser.opera)
 		$.log.browserLog = operaLog;

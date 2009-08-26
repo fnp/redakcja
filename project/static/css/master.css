@@ -120,6 +120,7 @@ label {
 /* contents */
 .panel-content {
 	position: absolute;
+	overflow: auto;
 	top: 22px; left: 0px; bottom:0px; right: 0px;
 }
 
