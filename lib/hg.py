@@ -108,4 +108,22 @@ class Repository(object):
             # reread keys
             # self._keys = self.get_persisted_objects_keys()
             # return node.hex(rev)
+
+    def in_branch(self, branch_name, action):
+        wlock = self.repo.wlock()
+        try:
+            current_branch = self.repo[None].branch()
+            self.repo.dirstate.setbranch(branch_name)
+            try:
+                # do some stuff
+                action()
+            finally:
+                self.repo.dirstate.setbranch(current_branch)
+        finally:
+            wlock.release()
+
+    def write_lock(self):
+        """Returns w write lock to the repository."""
+        return self.repo.wlock()
+
             

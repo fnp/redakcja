@@ -1,5 +1,5 @@
 from librarian import html
-import hg, urllib2
+import hg, urllib2, time
 from django.utils import simplejson as json
 
 from django.views.generic.simple import direct_to_template
@@ -17,54 +17,62 @@ def file_list(request):
         'objects': repo.all_files(),
     })
 
+
+#
+# Edit the file
+#
 def file_xml(request, path):
     if request.method == 'POST':
         form = forms.BookForm(request.POST)
         if form.is_valid():
-            # save the changes to a local branch
-#           repo.write_lock()
-            print request.user
-#            repo.switch_to_branch(request.user.name)           
-#            repo.add_file(path, form.cleaned_data['text'])
-            
-            # add references to comment
-            issues = _get_issues_for_file(path)
-            commit_message = _add_references(form.cleaned_data['commit_message'], issues)
-            print 'Commiting with: ' + commit_message
+            print 'Saving whole text.', request.user.username
+            def save_action():
+                repo.add_file(path, form.cleaned_data['content'])
+                repo.commit(message='Local save at %s' % time.ctime(), user=request.user.username)
 
-#            repo.commit(message=commit_message, user=form.cleaned_data['user'])
-        return HttpResponse( json.dumps({'message': commit_message}) )
+            repo.in_branch('local_'+request.user.username, save_action);
+            return HttpResponse( json.dumps({'result': 'ok', 'errors': []}) );
     else:
         form = forms.BookForm()
-        form.fields['text'].initial = repo.get_file(path).data()
-    
-    return direct_to_template(request, 'explorer/file_xml.html', extra_context={
-        'hash': path,
+        form.fields['content'].initial = repo.get_file(path).data()
+
+    return direct_to_template(request, 'explorer/edit_text.html', extra_context={
         'form': form,
-        'image_folders_form': forms.ImageFoldersForm(),
     })
 
+def file_dc(request, path):
+    return HttpResponse("N/A")
+
+# Display the main editor view
+def display_editor(request, path):
+    return direct_to_template(request, 'explorer/editor.html', extra_context={
+        'hash': path,
+    })
 
 # ===============
 # = Panel views =
 # ===============
+
 def xmleditor_panel(request, path):
     form = forms.BookForm()
     text = repo.get_file(path).data()
     
     return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
+        'fpath': path,
         'text': text,
     })
     
 
 def gallery_panel(request, path):
     return direct_to_template(request, 'explorer/panels/gallery.html', extra_context={
+        'fpath': path,
         'form': forms.ImageFoldersForm(),
     })
 
 
 def htmleditor_panel(request, path):
     return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
+        'fpath': path,
         'html': html.transform(repo.get_file(path).data(), is_file=False),
     })
  
@@ -80,6 +88,7 @@ def dceditor_panel(request, path):
         form = forms.DublinCoreForm(text=text)       
 
     return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
+        'fpath': path,
         'form': form,
     })
 

@@ -5,11 +5,9 @@ from librarian import dcparser
 
 from explorer import models
 
-
 class BookForm(forms.Form):
-    text = forms.CharField(widget=forms.Textarea)
-    commit_message = forms.CharField()
-    user = forms.CharField()
+    content = forms.CharField(widget=forms.Textarea)
+    message = forms.CharField(required=False)
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)
