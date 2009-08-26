@@ -45,7 +45,7 @@ panel_hooks = {
                             var pos = texteditor.cursorPosition();
                             texteditor.selectLines(pos.line, pos.character + tag.length + 2);
                         }
-                        $(document).trigger('panel:contentChanged', panel);
+                        $(document).trigger('panel:contentChanged', self);
                     }
                     if ($(this).attr('p:key')) {
                         keys[$(this).attr('p:key')] = handler;

@@ -31,7 +31,12 @@ def file_xml(request, path):
                 repo.commit(message='Local save at %s' % time.ctime(), user=request.user.username)
 
             repo.in_branch('local_'+request.user.username, save_action);
-            return HttpResponse( json.dumps({'result': 'ok', 'errors': []}) );
+            result = "ok"
+        else:
+            result = "error"
+
+        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
     else:
         form = forms.BookForm()
         form.fields['content'].initial = repo.get_file(path).data()
@@ -41,7 +46,24 @@ def file_xml(request, path):
     })
 
 def file_dc(request, path):
-    return HttpResponse("N/A")
+    if request.method == 'POST':
+        form = forms.DublinCoreForm(request.POST)
+        if form.is_valid():
+            form.save(repo, path)
+            result = "ok"
+        else:
+            result = "error" 
+
+        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+    else:
+        fulltext = repo.get_file(path).data()
+        form = forms.DublinCoreForm(text=fulltext)       
+
+    return direct_to_template(request, 'explorer/edit_dc.html', extra_context={
+        'form': form,
+        'fpath': path,
+    })
 
 # Display the main editor view
 def display_editor(request, path):
@@ -78,14 +100,8 @@ def htmleditor_panel(request, path):
  
 
 def dceditor_panel(request, path):
-    if request.method == 'POST':
-        form = forms.DublinCoreForm(request.POST)
-        if form.is_valid():
-            form.save(repo, path)
-            repo.commit(message='%s: DublinCore edited' % path)
-    else:
-        text = repo.get_file(path).data()
-        form = forms.DublinCoreForm(text=text)       
+    text = repo.get_file(path).data()
+    form = forms.DublinCoreForm(text=text)       
 
     return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
         'fpath': path,
