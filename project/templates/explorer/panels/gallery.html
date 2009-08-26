@@ -1,11 +1,12 @@
 <div class="panel">
-    <div class="images-wrap">
-        <div class="images">
-            <p>Aby zobaczyć obrazki wybierz folder poniżej:</p>
-            <p><select name="folders" class="id_folders">
+    <div class="toolbar">
+        <select name="folders" class="id_folders">
             <option value="" selected="selected">-- Wybierz folder z obrazkami --</option>
             <option value="andersen_basnie">andersen_basnie</option>
-            </select></p>
+        </select>
+    </div>
+    <div class="images-wrap">
+        <div class="images">
         </div>
     </div>
 </div>
@@ -16,7 +17,7 @@ panel_hooks = {
 		var contentDiv = this.contentDiv;
 		$('.id_folders', contentDiv).change(function() 
 		{
-        	$('.images', contentDiv).load('{% url folder_image_ajax %}' + $('.id_folders', panel).val() + '/', 
+        	$('.images', contentDiv).load('{% url folder_image_ajax %}' + $('.id_folders', contentDiv).val() + '/', 
 				function() {
                     $('.images-wrap', contentDiv).data('lazyload:lastCheckedScrollTop', -10000);
                 });
