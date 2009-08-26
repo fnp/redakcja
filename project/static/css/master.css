@@ -121,6 +121,7 @@ label {
 .panel-content {
 	position: absolute;
 	overflow: auto;
+	overflow-x: hidden;
 	top: 22px; left: 0px; bottom:0px; right: 0px;
 }
 
@@ -188,6 +189,7 @@ label {
 .panel-content-overlay.panel-wrap .panel-slider {
 	background-color: #DDD;
 }
+
 
 /* ================= */
 /* = Gallery panel = */
