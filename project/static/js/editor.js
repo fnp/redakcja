@@ -13,7 +13,7 @@ function Panel(panelWrap) {
 		if(self != data) 
 			self.otherPanelChanged(event.target);
 		else 
-			self.changed();
+			self.markChanged();
 
 		return false; 		
 	});
@@ -24,7 +24,7 @@ Panel.prototype.callHook = function(hookName) {
 	{	
 //		arguments.shift();
 		$.log('calling hook: ', hookName, 'with args: ', arguments);
-		this.hooks[hookName].apply(this, arguments);
+		return this.hooks[hookName].apply(this, arguments);
 	}
 }
 
@@ -32,6 +32,7 @@ Panel.prototype.load = function (url) {
     $.log('preparing xhr load: ', this.wrap);
     $(document).trigger('panel:unload', this);
 	var self = this;
+	self.current_url = url;
 
     $.ajax({
         url: url,
@@ -61,14 +62,30 @@ Panel.prototype.unload = function(event, data) {
     };
 }
 
+Panel.prototype.refresh = function(event, data) {
+	$('.change-notification', this.wrap).fadeOut();
+	$.log('refreshing view for panel ', this.current_url);
+	this.load(this.current_url);
+//	if( this.callHook('refresh') )
+} 
+
 Panel.prototype.otherPanelChanged = function(other) {
 	$.log('panel ', other, ' changed.');
 	$('.change-notification', this.wrap).fadeIn();
 	this.callHook('dirty');
 }	
 
+Panel.prototype.markChanged = function () {
+	if(!this.wrap.hasClass('changed') ) // TODO: is this needed ?
+		this.wrap.addClass('changed');
+}
+
 Panel.prototype.changed = function () {
-	this.wrap.addClass('changed');
+	return this.wrap.hasClass('changed');
+}
+
+Panel.prototype.unmarkChanged = function () {
+	this.wrap.removeClass('changed');
 }
 
 Panel.prototype.saveInfo = function() {
@@ -87,6 +104,7 @@ Editor.prototype.setupUI = function() {
 	// set up the UI visually and attach callbacks
 	var self = this;
 	var panelRoot = $('#panels');
+	self.rootDiv = panelRoot;
 
 	panelRoot.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
     panelRoot.css('top', ($('#header').outerHeight() ) + 'px');
@@ -112,6 +130,7 @@ Editor.prototype.loadConfig = function() {
 
 Editor.prototype.saveToBranch = function() {
 	var changed_panel = $('.panel-wrap.changed');
+	var self = this;
 	$.log('Saving to local branch - panel:', changed_panel);
 
 	if( changed_panel.length == 0) {
@@ -127,18 +146,35 @@ Editor.prototype.saveToBranch = function() {
 	saveInfo = changed_panel.data('ctrl').saveInfo();
 
 	$.ajax({
-		url: location.href + (saveInfo.part || ''),
-		dataType: (saveInfo.dataType || 'text'),
+		url: saveInfo.url,
+		dataType: 'json',
 		success: function(data, textStatus) {
-			$.log('Success:', data);
+			if (data.result != 'ok')
+				$.log('save errors: ', data.errors)
+			else 
+				self.refreshPanels(changed_panel);
 		},
 		error: function(rq, tstat, err) {
 		 	$.log('save error', rq, tstat, err);
 		},
 		type: 'POST',
-		data: (saveInfo.content || '')
+		data: saveInfo.postData
 	});
 };
+
+Editor.prototype.refreshPanels = function(goodPanel) {
+	var self = this;
+	var panels = $('#' + self.rootDiv.attr('id') +' > *.panel-wrap', self.rootDiv.parent());
+
+	panels.each(function() {
+		var panel = $(this).data('ctrl');
+		$.log(this, panel);
+		if ( panel.changed() )
+			panel.unmarkChanged();
+		else 
+			panel.refresh();
+	});
+};		
 
 $(function() {
 	editor = new Editor();

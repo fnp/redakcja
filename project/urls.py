@@ -2,23 +2,26 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.conf import settings
 
-
 admin.autodiscover()
-
+PATH_END = r"(?P<path>[^/]+)$"
 
 urlpatterns = patterns('',
     # Explorer:
     url(r'^$', 'explorer.views.file_list', name='file_list'),
-    url(r'^file/(?P<path>[^/]+)/$', 'explorer.views.file_xml', name='file_xml'),
+    
+    url(r'^file/text/'+PATH_END, 'explorer.views.file_xml', name='file_xml'),
+    url(r'^file/dc/'+PATH_END, 'explorer.views.file_dc', name='file_dc'),
+
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
     
     # Editor panels
-    url(r'^editor/(?P<path>[^/]+)/panels/xmleditor/$', 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
-    url(r'^editor/(?P<path>[^/]+)/panels/gallery/$', 'explorer.views.gallery_panel', name='gallery_panel'),
-    url(r'^editor/(?P<path>[^/]+)/panels/htmleditor/$', 'explorer.views.htmleditor_panel', name='htmleditor_panel'),
-    url(r'^editor/(?P<path>[^/]+)/panels/dceditor/$', 'explorer.views.dceditor_panel', name='dceditor_panel'),
-    
+    url(r'^editor/panel/xmleditor/'+PATH_END, 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
+    url(r'^editor/panel/gallery/'+PATH_END, 'explorer.views.gallery_panel', name='gallery_panel'),
+    url(r'^editor/panel/htmleditor/'+PATH_END, 'explorer.views.htmleditor_panel', name='htmleditor_panel'),
+    url(r'^editor/panel/dceditor/'+PATH_END, 'explorer.views.dceditor_panel', name='dceditor_panel'),
+    url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
+
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),

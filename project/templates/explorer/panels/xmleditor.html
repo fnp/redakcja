@@ -45,7 +45,7 @@ panel_hooks = {
                             var pos = texteditor.cursorPosition();
                             texteditor.selectLines(pos.line, pos.character + tag.length + 2);
                         }
-                        $(document).trigger('panel:contentChanged', panel);
+                        $(document).trigger('panel:contentChanged', self);
                     }
                     if ($(this).attr('p:key')) {
                         keys[$(this).attr('p:key')] = handler;
@@ -81,8 +81,19 @@ panel_hooks = {
 		this.texteditor = null;
 	},
 
+
+	refresh: function(hn) {
+		// TODO
+		return true;
+	},
+
 	saveInfo: function(hn, saveInfo) {
-		var myInfo = {content: this.texteditor.getCode(), dataType: 'xml'};
+		var myInfo = {
+			url: "{% url file_xml fpath %}", 
+			postData: {
+				content: this.texteditor.getCode()
+			} 
+		};
 		$.extend(saveInfo, myInfo);
 	}		
 };

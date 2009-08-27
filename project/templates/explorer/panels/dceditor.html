@@ -1,9 +1,27 @@
 <div class="panel-dceditor">
     <form action="{{ request.get_full_path }}" method="post" accept-charset="utf-8">
-        {{ form }}
-        <p><input type="submit" value="Continue &rarr;"/></p>
+        {{ form.as_p }}
+<!--        <p><input type="submit" value="Continue &rarr;"/></p> -->
     </form>
 </div>
 <script type="text/javascript" charset="utf-8">
-panel_hooks = { };
+panel_hooks = { 
+
+	load: function() {
+		var self = this;
+		self.form = $('form', self.contentDiv);
+		$("input[type='text'], textarea", self.form).each(function() {
+			$(this).change(function(event) {
+				self.contentDiv.trigger('panel:contentChanged', self);
+			});
+		});
+	},
+	saveInfo: function(hn, saveInfo) {
+		var myInfo = {
+			url: "{% url file_dc fpath %}", 
+			postData: $('form', this.contentDiv).serialize() 
+		};
+		$.extend(saveInfo, myInfo);
+	}
+};
 </script>

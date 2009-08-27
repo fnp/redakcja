@@ -1,5 +1,5 @@
 from librarian import html
-import hg, urllib2
+import hg, urllib2, time
 from django.utils import simplejson as json
 
 from django.views.generic.simple import direct_to_template
@@ -17,69 +17,94 @@ def file_list(request):
         'objects': repo.all_files(),
     })
 
+
+#
+# Edit the file
+#
 def file_xml(request, path):
     if request.method == 'POST':
         form = forms.BookForm(request.POST)
         if form.is_valid():
-            # save the changes to a local branch
-#           repo.write_lock()
-            print request.user
-#            repo.switch_to_branch(request.user.name)           
-#            repo.add_file(path, form.cleaned_data['text'])
-            
-            # add references to comment
-            issues = _get_issues_for_file(path)
-            commit_message = _add_references(form.cleaned_data['commit_message'], issues)
-            print 'Commiting with: ' + commit_message
+            print 'Saving whole text.', request.user.username
+            def save_action():
+                repo.add_file(path, form.cleaned_data['content'])
+                repo.commit(message='Local save at %s' % time.ctime(), user=request.user.username)
 
-#            repo.commit(message=commit_message, user=form.cleaned_data['user'])
-        return HttpResponse( json.dumps({'message': commit_message}) )
+            repo.in_branch('local_'+request.user.username, save_action);
+            result = "ok"
+        else:
+            result = "error"
+
+        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
     else:
         form = forms.BookForm()
-        form.fields['text'].initial = repo.get_file(path).data()
-    
-    return direct_to_template(request, 'explorer/file_xml.html', extra_context={
-        'hash': path,
+        form.fields['content'].initial = repo.get_file(path).data()
+
+    return direct_to_template(request, 'explorer/edit_text.html', extra_context={
         'form': form,
-        'image_folders_form': forms.ImageFoldersForm(),
     })
 
+def file_dc(request, path):
+    if request.method == 'POST':
+        form = forms.DublinCoreForm(request.POST)
+        if form.is_valid():
+            form.save(repo, path)
+            result = "ok"
+        else:
+            result = "error" 
+
+        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+    else:
+        fulltext = repo.get_file(path).data()
+        form = forms.DublinCoreForm(text=fulltext)       
+
+    return direct_to_template(request, 'explorer/edit_dc.html', extra_context={
+        'form': form,
+        'fpath': path,
+    })
+
+# Display the main editor view
+def display_editor(request, path):
+    return direct_to_template(request, 'explorer/editor.html', extra_context={
+        'hash': path,
+    })
 
 # ===============
 # = Panel views =
 # ===============
+
 def xmleditor_panel(request, path):
     form = forms.BookForm()
     text = repo.get_file(path).data()
     
     return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
+        'fpath': path,
         'text': text,
     })
     
 
 def gallery_panel(request, path):
     return direct_to_template(request, 'explorer/panels/gallery.html', extra_context={
+        'fpath': path,
         'form': forms.ImageFoldersForm(),
     })
 
 
 def htmleditor_panel(request, path):
     return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
+        'fpath': path,
         'html': html.transform(repo.get_file(path).data(), is_file=False),
     })
  
 
 def dceditor_panel(request, path):
-    if request.method == 'POST':
-        form = forms.DublinCoreForm(request.POST)
-        if form.is_valid():
-            form.save(repo, path)
-            repo.commit(message='%s: DublinCore edited' % path)
-    else:
-        text = repo.get_file(path).data()
-        form = forms.DublinCoreForm(text=text)       
+    text = repo.get_file(path).data()
+    form = forms.DublinCoreForm(text=text)       
 
     return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
+        'fpath': path,
         'form': form,
     })
 
