@@ -106,9 +106,29 @@ Editor.prototype.setupUI = function() {
 	var panelRoot = $('#panels');
 	self.rootDiv = panelRoot;
 
+    // Set panel widths from options.panelRatios
+    if (self.options && self.options.panelRatios) {
+        var totalWidth = 0;
+        $('.panel-wrap', panelRoot).each(function(index) {
+            var panelWidth = self.options.panelRatios[index] * panelRoot.width();
+            if ($(this).hasClass('last-panel')) {
+                $(this).css({
+                    left: totalWidth,
+                    right: 0,
+                });
+            } else {
+                $(this).css({
+                    left: totalWidth,
+                    width: panelWidth,
+                });
+                totalWidth += panelWidth;               
+            }
+        });
+    }
+    
 	panelRoot.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
     panelRoot.css('top', ($('#header').outerHeight() ) + 'px');
-
+    
 	$('#panels > *.panel-wrap').each(function() {
 		var panelWrap = $(this);
 		$.log('wrap: ', panelWrap);
@@ -120,12 +140,27 @@ Editor.prototype.setupUI = function() {
 	});	
 
 	$('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
-
-
+    
+    panelRoot.bind('stopResize', function() {
+        var panelRatios = [];
+        $('.panel-wrap', panelRoot).each(function() {
+            panelRatios.push($(this).width() / panelRoot.width());
+        });
+        self.options.panelRatios = panelRatios;
+        $.log($.toJSON(self.options));
+        $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
+    });
 }
 
 Editor.prototype.loadConfig = function() {
-	// load options from cookie 
+    // Load options from cookie
+	var cookie = $.cookie('options')
+	if (cookie) {
+        this.options = $.secureEvalJSON(cookie);
+    } else {
+        // Default options
+        this.options = {panelRatios: [0.5, 0.5]}
+    }
 }
 
 Editor.prototype.saveToBranch = function() {

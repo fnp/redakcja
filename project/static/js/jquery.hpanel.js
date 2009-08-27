@@ -35,8 +35,8 @@
 					$(this).data('panel').css({
 						'left': $(this).css('left'), 'width': $(this).css('width')}); 
 			});
-
 			$('.panel-overlay', event.data.root).css('display', 'none');
+            $(event.data.root).trigger('stopResize');
         }
     };
     
