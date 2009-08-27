@@ -10,27 +10,35 @@ from django.contrib.auth.decorators import login_required
 
 from explorer import forms, models
 
-repo = hg.Repository(settings.REPOSITORY_PATH)
 
-def file_list(request):
+def with_repo(func):
+    def inner(request, *args, **kwargs):          
+        kwargs['repo'] = hg.Repository(settings.REPOSITORY_PATH)
+        return func(request, *args, **kwargs)
+    return inner
+
+@with_repo
+def file_list(request, repo):
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
         'objects': repo.all_files(),
     })
-
-
 #
 # Edit the file
 #
-def file_xml(request, path):
+
+@with_repo
+def file_xml(request, repo, path):
     if request.method == 'POST':
         form = forms.BookForm(request.POST)
         if form.is_valid():
             print 'Saving whole text.', request.user.username
             def save_action():
-                repo.add_file(path, form.cleaned_data['content'])
-                repo.commit(message='Local save at %s' % time.ctime(), user=request.user.username)
+                print 'In branch: ' + repo.repo[None].branch()
+                print repo._add_file(path, form.cleaned_data['content'])
+                print repo.repo.status()
+                print repo._commit(message='Local save at %s' % time.ctime(), user=request.user.username)
 
-            repo.in_branch('local_'+request.user.username, save_action);
+            print repo.in_branch(save_action, models.user_branch(request.user) );
             result = "ok"
         else:
             result = "error"
@@ -39,13 +47,13 @@ def file_xml(request, path):
         return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
     else:
         form = forms.BookForm()
-        form.fields['content'].initial = repo.get_file(path).data()
-
+        form.fields['content'].initial = repo.get_file(path, models.user_branch(request.user))
     return direct_to_template(request, 'explorer/edit_text.html', extra_context={
         'form': form,
     })
 
-def file_dc(request, path):
+@with_repo
+def file_dc(request, path, repo):
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
         if form.is_valid():
@@ -57,7 +65,7 @@ def file_dc(request, path):
         errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
         return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
     else:
-        fulltext = repo.get_file(path).data()
+        fulltext = repo.get_file(path, models.user_branch(request.user))
         form = forms.DublinCoreForm(text=fulltext)       
 
     return direct_to_template(request, 'explorer/edit_dc.html', extra_context={
@@ -75,9 +83,10 @@ def display_editor(request, path):
 # = Panel views =
 # ===============
 
-def xmleditor_panel(request, path):
+@with_repo
+def xmleditor_panel(request, path, repo):
     form = forms.BookForm()
-    text = repo.get_file(path).data()
+    text = repo.get_file(path, models.user_branch(request.user))
     
     return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
         'fpath': path,
@@ -91,16 +100,19 @@ def gallery_panel(request, path):
         'form': forms.ImageFoldersForm(),
     })
 
-
-def htmleditor_panel(request, path):
+@with_repo
+def htmleditor_panel(request, path, repo):
+    user_branch = models.user_branch(request.user)
     return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
         'fpath': path,
-        'html': html.transform(repo.get_file(path).data(), is_file=False),
+        'html': html.transform(repo.get_file(path, user_branch), is_file=False),
     })
  
 
-def dceditor_panel(request, path):
-    text = repo.get_file(path).data()
+@with_repo
+def dceditor_panel(request, path, repo):
+    user_branch = models.user_branch(request.user)
+    text = repo.get_file(path, user_branch)
     form = forms.DublinCoreForm(text=text)       
 
     return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={

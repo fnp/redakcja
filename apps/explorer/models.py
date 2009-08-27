@@ -12,3 +12,5 @@ def get_images_from_folder(folder):
             in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, folder))
             if not fn.startswith('.'))
 
+def user_branch(user):
+    return 'personal_'+user.username
