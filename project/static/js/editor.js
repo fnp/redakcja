@@ -106,11 +106,11 @@ Editor.prototype.setupUI = function() {
 	var panelRoot = $('#panels');
 	self.rootDiv = panelRoot;
 
-    // Set panel widths from options.panelRatios
-    if (self.options && self.options.panelRatios) {
+    // Set panel widths from options.panels
+    if (self.options && self.options.panels) {
         var totalWidth = 0;
         $('.panel-wrap', panelRoot).each(function(index) {
-            var panelWidth = self.options.panelRatios[index] * panelRoot.width();
+            var panelWidth = self.options.panels[index].ratio * panelRoot.width();
             if ($(this).hasClass('last-panel')) {
                 $(this).css({
                     left: totalWidth,
@@ -123,6 +123,7 @@ Editor.prototype.setupUI = function() {
                 });
                 totalWidth += panelWidth;               
             }
+            $('.panel-toolbar select', this).val(self.options.panels[index].url);
         });
     }
     
@@ -132,21 +133,39 @@ Editor.prototype.setupUI = function() {
 	$('#panels > *.panel-wrap').each(function() {
 		var panelWrap = $(this);
 		$.log('wrap: ', panelWrap);
-		panelWrap.data('ctrl', new Panel(panelWrap)); // attach controllers to wraps
-
+		panel = new Panel(panelWrap);
+		panelWrap.data('ctrl', panel); // attach controllers to wraps
+        panel.load($('.panel-toolbar select', panelWrap).val());
+        
 	    $('.panel-toolbar select', panelWrap).change(function() {
-			panelWrap.data('ctrl').load( $(this).val() );
+	        var url = $(this).val();
+			panelWrap.data('ctrl').load(url);
+			var panels = [];
+			$('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function(index) {
+                panels.push({
+                    url: $('.panel-toolbar select', this).val(),
+                    ratio: $(this).width() / panelRoot.width()
+                })
+			});
+			self.options.panels = panels;
+            $.log($.toJSON(self.options));
+            $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
 	    });
 	});	
-
+    
+    $('.panel-toolbar').val()
 	$('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
     
     panelRoot.bind('stopResize', function() {
-        var panelRatios = [];
-        $('.panel-wrap', panelRoot).each(function() {
-            panelRatios.push($(this).width() / panelRoot.width());
+        var panels = [];
+        $('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function() {
+            console.log($(this), $(this).data('ctrl'));
+            panels.push({
+                url: $('.panel-toolbar select', this).val(),
+                ratio: $(this).width() / panelRoot.width()
+            })
         });
-        self.options.panelRatios = panelRatios;
+        self.options.panels = panels;
         $.log($.toJSON(self.options));
         $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
     });
@@ -154,13 +173,18 @@ Editor.prototype.setupUI = function() {
 
 Editor.prototype.loadConfig = function() {
     // Load options from cookie
-	var cookie = $.cookie('options')
-	if (cookie) {
+    try {
+    	var cookie = $.cookie('options');
         this.options = $.secureEvalJSON(cookie);
-    } else {
-        // Default options
-        this.options = {panelRatios: [0.5, 0.5]}
+    } catch (e) {        
+        this.options = {
+            panels: [
+                {url: '/editor/panel/htmleditor/', ratio: 0.5},
+                {url: '/editor/panel/gallery/', ratio: 0.5}
+            ]
+        }
     }
+    $.log(this.options);
 }
 
 Editor.prototype.saveToBranch = function() {
