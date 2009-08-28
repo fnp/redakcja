@@ -76,8 +76,7 @@ Panel.prototype.otherPanelChanged = function(other) {
 }	
 
 Panel.prototype.markChanged = function () {
-	if(!this.wrap.hasClass('changed') ) // TODO: is this needed ?
-		this.wrap.addClass('changed');
+	this.wrap.addClass('changed');
 }
 
 Panel.prototype.changed = function () {
