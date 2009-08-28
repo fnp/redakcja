@@ -240,8 +240,6 @@ label {
 
 .toolbar-tabs {
     height: 21px;
-/*    z-index: 1000;*/
-/*    overflow: hidden;*/
 }
 
 .toolbar-tabs li:hover, .toolbar-tabs li.active {
@@ -270,6 +268,33 @@ label {
     background-color: #777;
     color: #FFF;
     cursor: default;
+}
+
+.change-font-size {
+    width: 45px;
+    height: 18px;
+    padding: 3px 0 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.change-font-size div {
+    float: left;
+    text-align: center;
+    width: 20px;
+    font-size: 13px;
+    margin: 1px;
+    cursor: default;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+
+.change-font-size div:hover {
+    background-color: #EEE;
+    border: 1px solid #AAA;
+    margin: 0;
 }
 
 /* =========================== */
