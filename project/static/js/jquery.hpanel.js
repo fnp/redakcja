@@ -43,7 +43,6 @@
     $.fn.makeHorizPanel = function(options) 
 	{
 		var root = $(this)
-		var all_panels = $('.panel-wrap', root)
 
 		/* create an overlay */
 		var overlay_root = $("<div class='panel-overlay'></div>");
@@ -51,23 +50,24 @@
 
 		var prev = null;
 
-		all_panels.each(function(i) {
+		$('*.panel-wrap', root).each( function() 
+        {
 			var panel = $(this);
 			var handle = $('.panel-slider', panel);
-			var overlay = $("<div class='panel-content-overlay panel-wrap'><p>Panel #"+i+"</p></div>");
+			var overlay = $("<div class='panel-content-overlay panel-wrap'>&nbsp;</div>");
 			overlay_root.append(overlay);
 			overlay.data('panel', panel);
 			overlay.data('next', null);
 
-			if( panel.hasClass('last-panel') )				
-				overlay.css({'left': panel.css('left'), 'right': panel.css('right')});
-			else
-				overlay.css({'left': panel.css('left'), 'width': panel.css('width')});
-
 			if (prev) prev.next = overlay;
 
-			if(handle.length != 0) {
-				$.log('Has handle: ' + panel.attr('id') );
+			if( panel.hasClass('last-panel') )				
+            {
+				overlay.css({'left': panel.css('left'), 'right': panel.css('right')});
+            }
+			else {
+				overlay.css({'left': panel.css('left'), 'width': panel.css('width')});
+				$.log('Has handle: ' + panel.attr('id'));
 				overlay.append(handle.clone());
 				/* attach the trigger */
 				handle.mousedown(function(event) {
@@ -83,12 +83,12 @@
 					(handle.outerWidth() || 10) + 'px');
 				$('.panel-content-overlay', panel).css('right',
 					(handle.outerWidth() || 10) + 'px');
-			}
-				
+			};				
+
 			prev = overlay;
         });
 
-	root.bind('hpanel:panel-resize-start', $.hpanel.resize_start);
+    	root.bind('hpanel:panel-resize-start', $.hpanel.resize_start);
     };
 })(jQuery);
 

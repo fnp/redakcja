@@ -144,6 +144,10 @@ label {
 	right: 0px;
 }
 
+.panel-wrap.last-panel .panel-slider {
+    display: none;
+}
+
 /* Toolbars with select box to change panel contents*/
 .panel-toolbar {
     position: absolute;

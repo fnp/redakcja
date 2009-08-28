@@ -14,14 +14,15 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
-	<button type="button" class="toolbar-button" id="toolbar-button-save">Zapisz</button>
+	<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Zapisz</button>
 {% endblock %}
 {% block maincontent %}
         <div id="panels">
-            <div id="left-panel-wrap" class="panel-wrap">
-               <div id="left-panel-toolbar" class="panel-toolbar">
-                    <label for="select-left-panel">Lewy panel:</label>
-                    <select name="select-left-panel" id="select-left-panel">
+            {% for n in panel_list %}
+            <div class="panel-wrap{% if forloop.last %} last-panel{% endif %}" id="panel-{{n}}">
+                <div class="panel-toolbar">
+                    <label for="select-{{n}}-panel">{{n|capfirst}} panel:</label>
+                    <select name="select-{{n}}-panel" id="panel-{{n}}-select">
                         <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
                         <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
                         <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
@@ -29,21 +30,9 @@
                     </select>
                     <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
                </div>
-               <div id="left-panel-content" class="panel-content"></div>
-               <button type="button" class="panel-slider" id="slider01"></button>
+               <div id="panel-{{n}}-content" class="panel-content"></div>
+               <button type="button" class="panel-slider"></button>
             </div>
-            <div id="right-panel-wrap" class="panel-wrap last-panel">
-                <div id="right-panel-toolbar" class="panel-toolbar">
-                    <label for="select-right-panel">Prawy panel:</label>
-                    <select name="select-right-panel" id="select-right-panel">
-                        <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
-                        <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
-                        <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
-                        <option value="{% url dceditor_panel hash %}" name="dceditor">Edytor DublinCore</option>
-                    </select>
-                    <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
-                 </div>
-                 <div id="right-panel-content" class="panel-content"></div>
-            </div>
+            {% endfor %}
         </div>
 {% endblock maincontent %}    

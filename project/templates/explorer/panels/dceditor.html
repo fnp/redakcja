@@ -16,7 +16,7 @@ panel_hooks = {
 			});
 		});
 	},
-	saveInfo: function(hn, saveInfo) {
+	saveInfo: function(saveInfo) {
 		var myInfo = {
 			url: "{% url file_dc fpath %}", 
 			postData: $('form', this.contentDiv).serialize() 

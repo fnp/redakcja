@@ -24,6 +24,12 @@ panel_hooks = {
 		$('.images-wrap', contentDiv).lazyload('.image-box', 
 			{threshold: 640 * 10, scrollTreshold: 640 * 5}
 		);
-	}
+	},
+    refresh: function() {
+        return true; // gallery is always fresh
+    },
+    dirty: function() {
+        return true; // and it doesn't get dirty 
+    }
 };
 </script>
