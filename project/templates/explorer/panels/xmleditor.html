@@ -1,6 +1,10 @@
 {% load toolbar_tags %}
 
 {% toolbar %}
+<div class="change-font-size" style="">
+    <div class="decrease-font-size">A<sup>-</sup></div>
+    <div class="increase-font-size">A<sup>+</sup></div>
+</div>
 <div class="iframe-container" style="position: absolute; top: 48px; left:0px; right:0px; bottom: 0px;">
 	<textarea name="text">{{ text }}</textarea>
 </div>
@@ -74,6 +78,18 @@ panel_hooks = {
             }
         });
 
+        $('.decrease-font-size', panel).click(function() {
+            var frameBody = $('body', $(texteditor.frame).contents());
+            console.log(frameBody.css('font-size'));
+            frameBody.css('font-size', parseInt(frameBody.css('font-size')) - 2);
+        });
+        
+        $('.increase-font-size', panel).click(function() {
+            var frameBody = $('body', $(texteditor.frame).contents());
+            console.log(frameBody.css('font-size'));
+            frameBody.css('font-size', parseInt(frameBody.css('font-size')) + 2);
+        });
+        
 		this.texteditor = texteditor;
     },
 
