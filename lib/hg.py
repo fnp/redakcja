@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 import codecs
-from mercurial import localrepo, ui, error, match, node, encoding
+from mercurial import localrepo, ui, match, node, encoding, util
+import mercurial.merge, mercurial.error
 
 encoding.encoding = 'utf-8'
 
+
 class RepositoryDoesNotExist(Exception):
     pass
-
 
 class Repository(object):
     """Abstrakcja repozytorium Mercurial. Działa z Mercurial w wersji 1.3.1."""
@@ -25,7 +26,7 @@ class Repository(object):
         if os.path.isdir(path):
             try:
                 return localrepo.localrepository(self.ui, path)
-            except error.RepoError:
+            except mercurial.error.RepoError:
                 # dir is not an hg repo, we must init it
                 if create:
                     return localrepo.localrepository(self.ui, path, create=1)
@@ -34,22 +35,33 @@ class Repository(object):
             return localrepo.localrepository(self.ui, path, create=1)
         raise RepositoryDoesNotExist("Repository %s does not exist." % path)
         
-    def all_files(self):
-        return list(self.repo['tip'])
-    
-    def get_file(self, path):
-        ctx = self.repo.changectx(None)
-        return ctx.filectx(path)
-    
-    def add_file(self, path, value):
-        f = codecs.open(os.path.join(self.real_path, path), 'w', encoding='utf-8')
-        f.write(value)
-        f.close()
+    def all_files(self, branch='default'):
+        return self.in_branch(lambda: self._all_files(), branch)
 
-        if path not in self._pending_files:
-            self._pending_files.append(path)
+    def _all_files(self):
+        return list(self.repo[None])
     
-    def commit(self, message=u'hgshelve auto commit', key=None, user=None):
+    def get_file(self, path, branch='default'):
+        return self.in_branch(lambda: self._get_file(path), branch)
+
+    def _get_file(self, path):
+        return self.repo.wread(path)
+    
+    def add_file(self, path, value, branch='default'):
+        return self.in_branch(lambda: self._add_file(path, value), branch)
+
+    def _add_file(self, path, value):
+        return self.repo.wwrite(path, value.encode('utf-8'), [])
+#        f = codecs.open(os.path.join(self.real_path, path), 'w', encoding='utf-8')
+#        f.write(value)
+#        f.close()
+#        if path not in self._pending_files:
+#            self._pending_files.append(path)
+
+    def _commit(self, message, user=None, key=None):
+        return self.repo.commit(text=message, user=user)
+    
+    def _commit2(self, message, key=None, user=None):
         """
         Commit unsynchronized data to disk.
         Arguments::
@@ -109,16 +121,35 @@ class Repository(object):
             # self._keys = self.get_persisted_objects_keys()
             # return node.hex(rev)
 
-    def in_branch(self, branch_name, action):
+    def commit(self, message, key=None, user=None, branch='default'):
+        return self.in_branch(lambda: self._commit(message, key=key, user=user), branch)
+
+    def in_branch(self, action, bname='default'):
         wlock = self.repo.wlock()
         try:
-            current_branch = self.repo[None].branch()
-            self.repo.dirstate.setbranch(branch_name)
+            old = self._switch_to_branch(bname)
             try:
                 # do some stuff
-                action()
+                return action()
             finally:
-                self.repo.dirstate.setbranch(current_branch)
+                self._switch_to_branch(old)
+        finally:
+            wlock.release()
+
+    def _switch_to_branch(self, bname):
+        wlock = self.repo.wlock()
+        try:
+            current = self.repo[None].branch()
+            if current == bname:
+                return current
+
+            tip = self.repo.branchtags()[bname]
+            upstats = mercurial.merge.update(self.repo, tip, False, True, None)
+            return current
+        except KeyError, ke:
+            raise RepositoryException("Can't switch to branch '%s': no such branch." % bname , ke)
+        except util.Abort, ae:
+            raise repositoryException("Can't switch to branch '%s': %s"  % (bname, ae.message), ae)
         finally:
             wlock.release()
 
@@ -126,4 +157,9 @@ class Repository(object):
         """Returns w write lock to the repository."""
         return self.repo.wlock()
 
-            
+
+class RepositoryException(Exception):
+
+    def __init__(self, msg, cause=None):
+        Exception.__init__(self, msg)
+        self.cause = cause
