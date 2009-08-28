@@ -123,7 +123,9 @@ Editor.prototype.setupUI = function() {
                 });
                 totalWidth += panelWidth;               
             }
-            $('.panel-toolbar select', this).val(self.options.panels[index].url);
+            $('.panel-toolbar select', this).val(
+                $('.panel-toolbar option[name=' + self.options.panels[index].name + ']', this).attr('value')
+            )
         });
     }
     
@@ -143,7 +145,7 @@ Editor.prototype.setupUI = function() {
 			var panels = [];
 			$('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function(index) {
                 panels.push({
-                    url: $('.panel-toolbar select', this).val(),
+                    name: $('.panel-toolbar option:selected', this).attr('name'),
                     ratio: $(this).width() / panelRoot.width()
                 })
 			});
@@ -153,15 +155,13 @@ Editor.prototype.setupUI = function() {
 	    });
 	});	
     
-    $('.panel-toolbar').val()
 	$('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
     
     panelRoot.bind('stopResize', function() {
         var panels = [];
         $('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function() {
-            console.log($(this), $(this).data('ctrl'));
             panels.push({
-                url: $('.panel-toolbar select', this).val(),
+                name: $('.panel-toolbar option:selected', this).attr('name'),
                 ratio: $(this).width() / panelRoot.width()
             })
         });
@@ -179,8 +179,8 @@ Editor.prototype.loadConfig = function() {
     } catch (e) {        
         this.options = {
             panels: [
-                {url: '/editor/panel/htmleditor/', ratio: 0.5},
-                {url: '/editor/panel/gallery/', ratio: 0.5}
+                {name: 'htmleditor', ratio: 0.5},
+                {name: 'gallery', ratio: 0.5}
             ]
         }
     }

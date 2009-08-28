@@ -22,10 +22,10 @@
                <div id="left-panel-toolbar" class="panel-toolbar">
                     <label for="select-left-panel">Lewy panel:</label>
                     <select name="select-left-panel" id="select-left-panel">
-                        <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
-                        <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>
-                        <option value="{% url dceditor_panel hash %}">Edytor DublinCore</option>
+                        <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
+                        <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
+                        <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
+                        <option value="{% url dceditor_panel hash %}" name="dceditor">Edytor DublinCore</option>
                     </select>
                     <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
                </div>
@@ -36,10 +36,10 @@
                 <div id="right-panel-toolbar" class="panel-toolbar">
                     <label for="select-right-panel">Prawy panel:</label>
                     <select name="select-right-panel" id="select-right-panel">
-                        <option value="{% url xmleditor_panel hash %}">Edytor XML</option>
-                        <option value="{% url htmleditor_panel hash %}">Edytor HTML</option>
-                        <option value="{% url gallery_panel hash %}">Galeria skanów</option>
-                        <option value="{% url dceditor_panel hash %}">Edytor DublinCore</option>
+                        <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
+                        <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
+                        <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
+                        <option value="{% url dceditor_panel hash %}" name="dceditor">Edytor DublinCore</option>
                     </select>
                     <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
                  </div>
