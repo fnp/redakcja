@@ -96,41 +96,15 @@ Panel.prototype.saveInfo = function() {
 
 
 function Editor() {
-	// editor initialization
-	// this is probably a good place to set config
+	this.rootDiv = $('#panels');
 }
 
 Editor.prototype.setupUI = function() {
 	// set up the UI visually and attach callbacks
 	var self = this;
-	var panelRoot = $('#panels');
-	self.rootDiv = panelRoot;
-
-    // Set panel widths from options.panels
-    if (self.options && self.options.panels) {
-        var totalWidth = 0;
-        $('.panel-wrap', panelRoot).each(function(index) {
-            var panelWidth = self.options.panels[index].ratio * panelRoot.width();
-            if ($(this).hasClass('last-panel')) {
-                $(this).css({
-                    left: totalWidth,
-                    right: 0,
-                });
-            } else {
-                $(this).css({
-                    left: totalWidth,
-                    width: panelWidth,
-                });
-                totalWidth += panelWidth;               
-            }
-            $('.panel-toolbar select', this).val(
-                $('.panel-toolbar option[name=' + self.options.panels[index].name + ']', this).attr('value')
-            )
-        });
-    }
     
-	panelRoot.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
-    panelRoot.css('top', ($('#header').outerHeight() ) + 'px');
+	self.rootDiv.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
+    self.rootDiv.css('top', ($('#header').outerHeight() ) + 'px');
     
 	$('#panels > *.panel-wrap').each(function() {
 		var panelWrap = $(this);
@@ -139,52 +113,78 @@ Editor.prototype.setupUI = function() {
 		panelWrap.data('ctrl', panel); // attach controllers to wraps
         panel.load($('.panel-toolbar select', panelWrap).val());
         
-	    $('.panel-toolbar select', panelWrap).change(function() {
-	        var url = $(this).val();
-			panelWrap.data('ctrl').load(url);
-			var panels = [];
-			$('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function(index) {
-                panels.push({
-                    name: $('.panel-toolbar option:selected', this).attr('name'),
-                    ratio: $(this).width() / panelRoot.width()
-                })
-			});
-			self.options.panels = panels;
-            $.log($.toJSON(self.options));
-            $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
-	    });
-	});	
-    
-	$('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
-    
-    panelRoot.bind('stopResize', function() {
-        var panels = [];
-        $('.panel-wrap', panelRoot).not('.panel-content-overlay').each(function() {
-            panels.push({
-                name: $('.panel-toolbar option:selected', this).attr('name'),
-                ratio: $(this).width() / panelRoot.width()
-            })
+        $('.panel-toolbar select', panelWrap).change(function() {
+            var url = $(this).val();
+            panelWrap.data('ctrl').load(url);
+            self.savePanelOptions();
         });
-        self.options.panels = panels;
-        $.log($.toJSON(self.options));
-        $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
-    });
+    });	
+    
+    $('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
+    
+    self.rootDiv.bind('stopResize', function() { self.savePanelOptions() });
 }
 
 Editor.prototype.loadConfig = function() {
     // Load options from cookie
+    var defaultOptions = {
+        panels: [
+            {name: 'htmleditor', ratio: 0.5},
+            {name: 'gallery', ratio: 0.5}
+        ]
+    }
+    
     try {
     	var cookie = $.cookie('options');
         this.options = $.secureEvalJSON(cookie);
-    } catch (e) {        
-        this.options = {
-            panels: [
-                {name: 'htmleditor', ratio: 0.5},
-                {name: 'gallery', ratio: 0.5}
-            ]
+        if (!this.options) {
+            this.options = defaultOptions;
         }
+    } catch (e) {    
+        this.options = defaultOptions;
     }
     $.log(this.options);
+    
+    this.loadPanelOptions();
+}
+
+Editor.prototype.loadPanelOptions = function() {
+    var self = this;
+    var totalWidth = 0;
+    
+    $('.panel-wrap', self.rootDiv).each(function(index) {
+        var panelWidth = self.options.panels[index].ratio * self.rootDiv.width();
+        if ($(this).hasClass('last-panel')) {
+            $(this).css({
+                left: totalWidth,
+                right: 0,
+            });
+        } else {
+            $(this).css({
+                left: totalWidth,
+                width: panelWidth,
+            });
+            totalWidth += panelWidth;               
+        }
+        $.log('panel:', this, $(this).css('left'));
+        $('.panel-toolbar select', this).val(
+            $('.panel-toolbar option[name=' + self.options.panels[index].name + ']', this).attr('value')
+        )
+    });   
+}
+
+Editor.prototype.savePanelOptions = function() {
+    var self = this;
+    var panels = [];
+    $('.panel-wrap', self.rootDiv).not('.panel-content-overlay').each(function() {
+        panels.push({
+            name: $('.panel-toolbar option:selected', this).attr('name'),
+            ratio: $(this).width() / self.rootDiv.width()
+        })
+    });
+    self.options.panels = panels;
+    $.log($.toJSON(self.options));
+    $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
 }
 
 Editor.prototype.saveToBranch = function() {
