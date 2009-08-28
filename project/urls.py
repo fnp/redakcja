@@ -22,13 +22,16 @@ urlpatterns = patterns('',
     url(r'^editor/panel/dceditor/'+PATH_END, 'explorer.views.dceditor_panel', name='dceditor_panel'),
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
 
+    # Task managment
+    url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),
+
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 
     # Authorization
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next_page'}),
-    url(r'^accounts/logout$', 'django.contrib.auth.views.logout', {'next_page': '/'}), # {'redirect_field_name': 'next_page'}),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}),
+    url(r'^accounts/logout$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 )
 
 

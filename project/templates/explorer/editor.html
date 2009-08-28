@@ -14,6 +14,7 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
+	<button type="button" class="toolbar-button" id="toolbar-button-commit">Commit</button>
 	<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Zapisz</button>
 {% endblock %}
 {% block maincontent %}

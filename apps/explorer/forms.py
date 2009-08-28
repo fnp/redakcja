@@ -49,7 +49,7 @@ class DublinCoreForm(forms.Form):
                 self.fields[name].initial = value
     
     def save(self, repository, path):
-        file_contents = repository.get_file(path).data()
+        file_contents = repository.get_file(path)
         doc = etree.fromstring(file_contents)
                 
         book_info = dcparser.BookInfo()

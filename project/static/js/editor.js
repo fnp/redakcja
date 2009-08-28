@@ -23,15 +23,14 @@ Panel.prototype.callHook = function() {
     args = $.makeArray(arguments)
     var hookName = args.splice(0,1)[0]
     var noHookAction = args.splice(0,1)[0]
+    var result = false;
 
 	$.log('calling hook: ', hookName, 'with args: ', args);
 	if(this.hooks && this.hooks[hookName])
-	{	        
-		return this.hooks[hookName].apply(this, args);
-	}
-    else if (noHookAction instanceof Function)
-        return noHookAction(args);
-    else return false;
+		result = this.hooks[hookName].apply(this, args);
+	else if (noHookAction instanceof Function) 
+        result = noHookAction(args);
+    return result;
 }
 
 Panel.prototype.load = function (url) {
@@ -69,9 +68,10 @@ Panel.prototype.unload = function(event, data) {
 }
 
 Panel.prototype.refresh = function(event, data) {
+    var self = this;
     reload = function() {
-    	$.log('hard reload for panel ', this.current_url);
-    	this.load(this.current_url);
+    	$.log('hard reload for panel ', self.current_url);
+    	self.load(self.current_url);
         return true;
     }
 
@@ -130,11 +130,10 @@ Editor.prototype.setupUI = function() {
         });
     });
 
-	$(document).bind('panel:contentChanged', function(event, data) {
-        $('#toolbar-button-save').removeAttr('disabled');
-	});
+	$(document).bind('panel:contentChanged', function() { self.onContentChanged.apply(self, arguments) });
     
     $('#toolbar-button-save').click( function (event, data) { self.saveToBranch(); } );
+    $('#toolbar-button-commit').click( function (event, data) { self.sendPullRequest(); } );
     self.rootDiv.bind('stopResize', function() { self.savePanelOptions() });
 }
 
@@ -223,9 +222,11 @@ Editor.prototype.saveToBranch = function() {
 		success: function(data, textStatus) {
 			if (data.result != 'ok')
 				$.log('save errors: ', data.errors)
-			else 
+			else {
 				self.refreshPanels(changed_panel);
-            $('#toolbar-button-save').attr('disabled', 'disabled');
+                $('#toolbar-button-save').attr('disabled', 'disabled');
+                $('#toolbar-button-commit').removeAttr('disabled');
+            }
 		},
 		error: function(rq, tstat, err) {
 		 	$.log('save error', rq, tstat, err);
@@ -235,19 +236,43 @@ Editor.prototype.saveToBranch = function() {
 	});
 };
 
+Editor.prototype.onContentChanged = function(event, data) {
+        $('#toolbar-button-save').removeAttr('disabled');
+        $('#toolbar-button-commit').attr('disabled', 'disabled');
+};
+
 Editor.prototype.refreshPanels = function(goodPanel) {
 	var self = this;
 	var panels = $('#' + self.rootDiv.attr('id') +' > *.panel-wrap', self.rootDiv.parent());
 
 	panels.each(function() {
 		var panel = $(this).data('ctrl');
-		$.log(this, panel);
+		$.log('Refreshing: ', this, panel);
 		if ( panel.changed() )
 			panel.unmarkChanged();
 		else 
 			panel.refresh();
 	});
 };		
+
+
+Editor.prototype.sendPullRequest = function () {
+    if( $('.panel-wrap.changed').length != 0)
+        alert("There are unsaved changes - can't make a pull request.");
+
+	$.ajax({
+		url: '/pull-request',
+		dataType: 'json',
+		success: function(data, textStatus) {
+            $.log('data: ' + data);
+		},
+		error: function(rq, tstat, err) {
+		 	$.log('commit error', rq, tstat, err);
+		},
+		type: 'POST',
+		data: {}
+	});
+}
 
 $(function() {
 	editor = new Editor();

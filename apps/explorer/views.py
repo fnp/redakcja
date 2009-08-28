@@ -10,12 +10,30 @@ from django.contrib.auth.decorators import login_required
 
 from explorer import forms, models
 
-
-def with_repo(func):
-    def inner(request, *args, **kwargs):          
+#
+# Some useful decorators
+#
+def with_repo(view):
+    """Open a repository for this view"""
+    def view_with_repo(request, *args, **kwargs):          
         kwargs['repo'] = hg.Repository(settings.REPOSITORY_PATH)
-        return func(request, *args, **kwargs)
-    return inner
+        return view(request, *args, **kwargs)
+    return view_with_repo
+
+#
+def ajax_login_required(view):
+    """Similar ro @login_required, but instead of redirect, 
+    just return some JSON stuff with error."""
+    def view_with_auth(request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return view(request, *args, **kwargs)
+        # not authenticated
+        return HttpResponse( json.dumps({'result': 'access_denied'}) );
+    return view_with_auth
+
+#
+# View all files
+#
 
 @with_repo
 def file_list(request, repo):
@@ -26,6 +44,7 @@ def file_list(request, repo):
 # Edit the file
 #
 
+@ajax_login_required
 @with_repo
 def file_xml(request, repo, path):
     if request.method == 'POST':
@@ -45,13 +64,13 @@ def file_xml(request, repo, path):
 
         errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
         return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
-    else:
-        form = forms.BookForm()
-        form.fields['content'].initial = repo.get_file(path, models.user_branch(request.user))
-    return direct_to_template(request, 'explorer/edit_text.html', extra_context={
-        'form': form,
-    })
 
+    form = forms.BookForm()
+    data = repo.get_file(path, models.user_branch(request.user))
+    form.fields['content'].initial = data
+    return HttpResponse( json.dumps({'result': 'ok', 'content': data}) ) 
+
+@ajax_login_required
 @with_repo
 def file_dc(request, path, repo):
     if request.method == 'POST':
@@ -64,16 +83,14 @@ def file_dc(request, path, repo):
 
         errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
         return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
-    else:
-        fulltext = repo.get_file(path, models.user_branch(request.user))
-        form = forms.DublinCoreForm(text=fulltext)       
-
-    return direct_to_template(request, 'explorer/edit_dc.html', extra_context={
-        'form': form,
-        'fpath': path,
-    })
+    
+    fulltext = repo.get_file(path, models.user_branch(request.user))
+    form = forms.DublinCoreForm(text=fulltext)       
+    return HttpResponse( json.dumps({'result': 'ok', 'content': fulltext}) ) 
 
 # Display the main editor view
+
+@login_required
 def display_editor(request, path):
     return direct_to_template(request, 'explorer/editor.html', extra_context={
         'hash': path, 'panel_list': ['lewy', 'prawy'],
@@ -83,6 +100,7 @@ def display_editor(request, path):
 # = Panel views =
 # ===============
 
+@ajax_login_required
 @with_repo
 def xmleditor_panel(request, path, repo):
     form = forms.BookForm()
@@ -94,12 +112,14 @@ def xmleditor_panel(request, path, repo):
     })
     
 
+@ajax_login_required
 def gallery_panel(request, path):
     return direct_to_template(request, 'explorer/panels/gallery.html', extra_context={
         'fpath': path,
         'form': forms.ImageFoldersForm(),
     })
 
+@ajax_login_required
 @with_repo
 def htmleditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
@@ -109,6 +129,7 @@ def htmleditor_panel(request, path, repo):
     })
  
 
+@ajax_login_required
 @with_repo
 def dceditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
@@ -124,6 +145,7 @@ def dceditor_panel(request, path, repo):
 # =================
 # = Utility views =
 # =================
+@ajax_login_required
 def folder_images(request, folder):
     return direct_to_template(request, 'explorer/folder_images.html', extra_context={
         'images': models.get_images_from_folder(folder),
@@ -147,3 +169,11 @@ def _get_issues_for_file(path):
         return []
     finally:
         if uf: uf.close()
+
+
+# =================
+# = Pull requests =
+# =================
+def pull_requests(request):
+    return direct_to_template(request, 'manager/pull_request.html', extra_context = {
+        'objects': models.PullRequest.objects.all()} )
