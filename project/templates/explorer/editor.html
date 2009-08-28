@@ -19,10 +19,10 @@
 {% block maincontent %}
         <div id="panels">
             {% for n in panel_list %}
-            <div class="panel-wrap" id="panel-{{n}}">
+            <div class="panel-wrap{% if forloop.last %} last-panel{% endif %}" id="panel-{{n}}">
                 <div class="panel-toolbar">
-                    <label for="select-left-panel">{{n|capfirst}} panel:</label>
-                    <select name="select-left-panel" id="panel-{{n}}-select">
+                    <label for="select-{{n}}-panel">{{n|capfirst}} panel:</label>
+                    <select name="select-{{n}}-panel" id="panel-{{n}}-select">
                         <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
                         <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
                         <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>

@@ -113,8 +113,6 @@ Editor.prototype.setupUI = function() {
 	// set up the UI visually and attach callbacks
 	var self = this;
    
-     $('*.panel-wrap:last', this.rootDiv).addClass('last-panel');       
-    
 	self.rootDiv.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
     self.rootDiv.css('top', ($('#header').outerHeight() ) + 'px');
     
