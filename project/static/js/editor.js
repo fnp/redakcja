@@ -19,13 +19,19 @@ function Panel(panelWrap) {
 	});
 }
 
-Panel.prototype.callHook = function(hookName) {
+Panel.prototype.callHook = function() {
+    args = $.makeArray(arguments)
+    var hookName = args.splice(0,1)[0]
+    var noHookAction = args.splice(0,1)[0]
+
+	$.log('calling hook: ', hookName, 'with args: ', args);
 	if(this.hooks && this.hooks[hookName])
-	{	
-//		arguments.shift();
-		$.log('calling hook: ', hookName, 'with args: ', arguments);
-		return this.hooks[hookName].apply(this, arguments);
+	{	        
+		return this.hooks[hookName].apply(this, args);
 	}
+    else if (noHookAction instanceof Function)
+        return noHookAction(args);
+    else return false;
 }
 
 Panel.prototype.load = function (url) {
@@ -63,16 +69,20 @@ Panel.prototype.unload = function(event, data) {
 }
 
 Panel.prototype.refresh = function(event, data) {
-	$('.change-notification', this.wrap).fadeOut();
-	$.log('refreshing view for panel ', this.current_url);
-	this.load(this.current_url);
-//	if( this.callHook('refresh') )
+    reload = function() {
+    	$.log('hard reload for panel ', this.current_url);
+    	this.load(this.current_url);
+        return true;
+    }
+
+    if( this.callHook('refresh', reload) )
+    	$('.change-notification', this.wrap).fadeOut();
 } 
 
 Panel.prototype.otherPanelChanged = function(other) {
 	$.log('panel ', other, ' changed.');
-	$('.change-notification', this.wrap).fadeIn();
-	this.callHook('dirty');
+	if(!this.callHook('dirty'))
+        $('.change-notification', this.wrap).fadeIn();
 }	
 
 Panel.prototype.markChanged = function () {
@@ -90,7 +100,7 @@ Panel.prototype.unmarkChanged = function () {
 
 Panel.prototype.saveInfo = function() {
 	var saveInfo = {};
-	this.callHook('saveInfo', saveInfo);
+	this.callHook('saveInfo', null, saveInfo);
 	return saveInfo;
 }
 
@@ -105,6 +115,8 @@ Editor.prototype.setupUI = function() {
 	var self = this;
 	var panelRoot = $('#panels');
 	self.rootDiv = panelRoot;
+    
+    $('*.panel-wrap:last', panelRoot).addClass('last-panel');       
 
     // Set panel widths from options.panelRatios
     if (self.options && self.options.panelRatios) {
@@ -150,6 +162,11 @@ Editor.prototype.setupUI = function() {
         $.log($.toJSON(self.options));
         $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
     });
+
+	$(document).bind('panel:contentChanged', function(event, data) {
+        $('#toolbar-button-save').removeAttr('disabled');
+	});
+
 }
 
 Editor.prototype.loadConfig = function() {
@@ -188,6 +205,7 @@ Editor.prototype.saveToBranch = function() {
 				$.log('save errors: ', data.errors)
 			else 
 				self.refreshPanels(changed_panel);
+            $('#toolbar-button-save').attr('disabled', 'disabled');
 		},
 		error: function(rq, tstat, err) {
 		 	$.log('save error', rq, tstat, err);

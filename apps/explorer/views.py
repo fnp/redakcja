@@ -76,7 +76,7 @@ def file_dc(request, path, repo):
 # Display the main editor view
 def display_editor(request, path):
     return direct_to_template(request, 'explorer/editor.html', extra_context={
-        'hash': path,
+        'hash': path, 'panel_list': ['lewy', 'prawy'],
     })
 
 # ===============

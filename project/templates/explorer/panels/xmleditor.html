@@ -82,12 +82,11 @@ panel_hooks = {
 	},
 
 
-	refresh: function(hn) {
-		// TODO
-		return true;
+	refresh: function() {
+		return false;
 	},
 
-	saveInfo: function(hn, saveInfo) {
+	saveInfo: function(saveInfo) {
 		var myInfo = {
 			url: "{% url file_xml fpath %}", 
 			postData: {
