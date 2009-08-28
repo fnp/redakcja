@@ -7,7 +7,7 @@ from explorer import models
 
 class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
-    message = forms.CharField(required=False)
+    commit_message = forms.CharField(required=False)
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)

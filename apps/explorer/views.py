@@ -55,7 +55,7 @@ def file_xml(request, repo, path):
                 print 'In branch: ' + repo.repo[None].branch()
                 print repo._add_file(path, form.cleaned_data['content'])
                 print repo.repo.status()
-                print repo._commit(message='Local save at %s' % time.ctime(), user=request.user.username)
+                print repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
 
             print repo.in_branch(save_action, models.user_branch(request.user) );
             result = "ok"
