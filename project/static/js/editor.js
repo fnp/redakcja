@@ -262,7 +262,7 @@ Editor.prototype.onContentChanged = function(event, data) {
         $('#toolbar-button-commit').attr('disabled', 'disabled');
     
         if(this.autosaveTimer) return;    
-        this.autosaveTimer = setTimeout( function() { self.autoSave(); }, 5000 );
+        this.autosaveTimer = setTimeout( function() { self.autoSave(); }, 300000 );
 };
 
 Editor.prototype.refreshPanels = function(goodPanel) {
