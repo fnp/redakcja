@@ -10,9 +10,10 @@
 panel_hooks = {
     load: function() {
         var contentDiv = this.contentDiv;
-        $('.id_folders', contentDiv).change(function() {
+        $('select[name=folders]', contentDiv).change(function() {
+            var select = this;
             $('.images', contentDiv).fadeOut('slow', function() { 
-                $(this).html('').load('{% url folder_image_ajax %}' + $('.id_folders', contentDiv).val() + '/',  function() {
+                $(this).html('').load('{% url folder_image_ajax %}' + $(select).val() + '/',  function() {
                     $('.images-wrap', contentDiv).data('lazyload:lastCheckedScrollTop', -10000);
                 });
             })
