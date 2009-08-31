@@ -61,5 +61,5 @@ class DublinCoreForm(forms.Form):
         old_rdf = doc.getroottree().find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF')
         old_rdf.getparent().remove(old_rdf)
         doc.insert(0, rdf)
-        repository.add_file(path, unicode(etree.tostring(doc), 'utf-8'))
+        repository.add_file(path, etree.tostring(doc, pretty_print=True, encoding=unicode))
 
