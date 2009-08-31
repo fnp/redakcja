@@ -1,30 +1,29 @@
 <div class="toolbar" style="height: 24px">
-	<select name="folders" class="id_folders">
-		<option value="" selected="selected">-- Wybierz folder z obrazkami --</option>
-        <option value="andersen_basnie">andersen_basnie</option>
-	</select>
+    <select name="folders" class="id_folders">
+        {{ form.folders }}
+    </select>
 </div>
 
 <div class="images-wrap" style="position: absolute; top: 24px; left:0px; right:0px; bottom: 0px;">
-	<div class="images"><!-- To jest div na obrazki, które są wstawiane później --></div>
+    <div class="images"><!-- To jest div na obrazki, które są wstawiane później --></div>
 </div>
 <script type="text/javascript" charset="utf-8">
 
 panel_hooks = {
-	load: function() {
-		var contentDiv = this.contentDiv;
-		$('.id_folders', contentDiv).change(function() {
-        	$('.images', contentDiv).fadeOut('slow', function() { 
-        	    $(this).html('').load('{% url folder_image_ajax %}' + $('.id_folders', contentDiv).val() + '/',  function() {
+    load: function() {
+        var contentDiv = this.contentDiv;
+        $('.id_folders', contentDiv).change(function() {
+            $('.images', contentDiv).fadeOut('slow', function() { 
+                $(this).html('').load('{% url folder_image_ajax %}' + $('.id_folders', contentDiv).val() + '/',  function() {
                     $('.images-wrap', contentDiv).data('lazyload:lastCheckedScrollTop', -10000);
                 });
-		    })
-		});
-		
-		$('.images-wrap', contentDiv).lazyload('.image-box', 
-			{threshold: 640 * 10, scrollTreshold: 640 * 5}
-		);
-	},
+            })
+        });
+        
+        $('.images-wrap', contentDiv).lazyload('.image-box', 
+            {threshold: 640 * 10, scrollTreshold: 640 * 5}
+        );
+    },
     refresh: function() {
         return true; // gallery is always fresh
     },
