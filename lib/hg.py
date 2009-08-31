@@ -58,70 +58,10 @@ class Repository(object):
 #        if path not in self._pending_files:
 #            self._pending_files.append(path)
 
-    def _commit(self, message, user=None, key=None):
+    def _commit(self, message, user=None):
         return self.repo.commit(text=message, user=user)
     
-    def _commit2(self, message, key=None, user=None):
-        """
-        Commit unsynchronized data to disk.
-        Arguments::
-
-         - message: mercurial's changeset message
-         - key: supply to sync only one key
-        """
-        if isinstance(message, unicode):
-            message = message.encode('utf-8')
-        if isinstance(user, unicode):
-            user = user.encode('utf-8')
-        
-        commited = False
-        rev = None
-        files_to_add = []
-        files_to_remove = []
-        files_to_commit = []
-
-        # first of all, add absent data and clean removed
-        if key is None:
-            # will commit all keys
-            pending_files = self._pending_files
-        else:
-            if keys not in self._pending_files:
-                # key isn't changed
-                return None
-            else:
-                pending_files = [key]
-        for path in pending_files:
-            files_to_commit.append(path)
-            if path in self.all_files():
-                if not os.path.exists(os.path.join(self.real_path, path)):
-                    # file removed
-                    files_to_remove.append(path)
-            else:
-                # file added
-                files_to_add.append(path)
-        # hg add
-        if files_to_add:
-            self.repo.add(files_to_add)
-        # hg forget
-        if files_to_remove:
-            self.repo.forget(files_to_remove)
-        # ---- hg commit
-        if files_to_commit:
-            for i, f in enumerate(files_to_commit):
-                if isinstance(f, unicode):
-                    files_to_commit[i] = f.encode('utf-8')
-            matcher = match.match(self.repo.root, self.repo.root, files_to_commit, default='path')
-            rev = self.repo.commit(message, user=user, match=matcher)
-            commited = True
-        # clean pending keys
-        for key in pending_files:
-            self._pending_files.remove(key)
-        # if commited:
-            # reread keys
-            # self._keys = self.get_persisted_objects_keys()
-            # return node.hex(rev)
-
-    def commit(self, message, key=None, user=None, branch='default'):
+    def commit(self, message, user=None, branch='default'):
         return self.in_branch(lambda: self._commit(message, key=key, user=user), branch)
 
     def in_branch(self, action, bname='default'):
@@ -136,14 +76,30 @@ class Repository(object):
         finally:
             wlock.release()
 
-    def _switch_to_branch(self, bname):
+    def _switch_to_branch(self, bname, create=True):
         wlock = self.repo.wlock()
         try:
             current = self.repo[None].branch()
             if current == bname:
                 return current
+            try:
+                tip = self.repo.branchtags()[bname]
+            except KeyError, ke:
+                if not create: raise ke
+                
+                # create the branch on the fly
 
-            tip = self.repo.branchtags()[bname]
+                # first switch to default branch
+                default_tip = self.repo.branchtags()['default']
+                mercurial.merge.update(self.repo, default_tip, False, True, None)
+
+                # set the dirstate to new branch
+                self.repo.dirstate.setbranch(bname)
+                self._commit('Initial commit for automatic branch "%s".' % bname, user="django-admin")
+
+                # collect the new tip
+                tip = self.repo.branchtags()[bname]
+
             upstats = mercurial.merge.update(self.repo, tip, False, True, None)
             return current
         except KeyError, ke:

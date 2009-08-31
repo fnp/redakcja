@@ -7,7 +7,7 @@ from explorer import models
 
 class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
-    message = forms.CharField(required=False)
+    commit_message = forms.CharField(required=False)
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)
@@ -49,7 +49,7 @@ class DublinCoreForm(forms.Form):
                 self.fields[name].initial = value
     
     def save(self, repository, path):
-        file_contents = repository.get_file(path).data()
+        file_contents = repository.get_file(path)
         doc = etree.fromstring(file_contents)
                 
         book_info = dcparser.BookInfo()

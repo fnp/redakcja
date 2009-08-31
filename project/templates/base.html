@@ -17,7 +17,8 @@
 			{% block header-toolbar %}{% endblock %}
 	  		<span id="login_info">{% include "registration/head_login.html" %}</span>
 		</span>
+        <div id="message-box">{% block message-box %} {% endblock %}</div>
 	</div>
-    {% block maincontent %} {% endblock %}  
+    <div id="content">{% block maincontent %} {% endblock %}</div>
     </body>
 </html>

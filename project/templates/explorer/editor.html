@@ -14,8 +14,16 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
+	<button type="button" class="toolbar-button" id="toolbar-button-commit">Commit</button>
 	<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Zapisz</button>
 {% endblock %}
+
+{% block message-box %}
+    <div class="msg-success" id="save-successful">Zapisano :)</div>
+    <div class="msg-error" id="save-error">Błąd przy zapisie. <span class="errors" /></div>
+    <div class="msg-warning" id="not-implemented">Tej funkcji jeszcze nie ma :(</div>
+{% endblock %}
+
 {% block maincontent %}
         <div id="panels">
             {% for n in panel_list %}
