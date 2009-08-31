@@ -51,6 +51,7 @@ Panel.prototype.load = function (url) {
 		},
         error: function(request, textStatus, errorThrown) {
             $.log('ajax', url, this.target, 'error:', textStatus, errorThrown);
+            $(self.contentDiv).html("<p>Wystapił błąd podczas wczytywania panelu.");
         }
     });
 }

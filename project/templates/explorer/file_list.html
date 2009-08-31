@@ -1,9 +1,42 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<ul>
-{% for blob in objects %}
-    <li><a href="{% url editor_view blob %}">{{ blob }}</a></li>
-{% endfor %}
-</ul>
+<h2>Dodaj nowy utwór</h2>
+
+{% if perms.explorer.can_add_files %}
+<form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
+    {{ bookform.as_p }}
+    <p><button type="submit">Dodaj książkę</button></p>
+</form>
+{% endif %}
+
+<h2>Wszystkie utwory:</h2>
+<table class="object-list" cellspacing="0">
+    <tr><th>Lp.</th><th>Nazwa utworu</th><th>Wersje</th></tr>
+    <tr><td colspan="3" class="page-navigation">
+        {% if files.has_previous %}
+        <span class="prev-page-marker">
+            <a href="?page={{ files.previous_page_number }}">Poprzednia</a>
+        </span>
+        {% endif %}
+
+        <span>Strona {{files.number}} z {{files.paginator.num_pages}}</span>
+
+        {% if files.has_next %}
+        <span class="next-page-marker">
+            <a href="?page={{ files.next_page_number }}">Następna</a>
+        </span>
+        {% endif %}
+    </td>
+    </tr>
+    {% for file in files.object_list %}
+    <tr>
+        <td>{{forloop.counter0|add:files.start_index}}.</td>
+        <td><a href="{% url editor_view file %}">{{ file }}</a></td>
+        <td> &nbsp; </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
 {% endblock maincontent %}

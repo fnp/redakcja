@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     
     url(r'^file/text/'+PATH_END, 'explorer.views.file_xml', name='file_xml'),
     url(r'^file/dc/'+PATH_END, 'explorer.views.file_dc', name='file_dc'),
+    url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
 
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
