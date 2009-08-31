@@ -5,3 +5,5 @@ dev.sqlite
 .DS_Store
 media
 files
+nbproject
+nbproject/*
