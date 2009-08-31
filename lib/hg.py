@@ -35,10 +35,10 @@ class Repository(object):
             return localrepo.localrepository(self.ui, path, create=1)
         raise RepositoryDoesNotExist("Repository %s does not exist." % path)
         
-    def all_files(self, branch='default'):
-        return self.in_branch(lambda: self._all_files(), branch)
+    def file_list(self, branch='default'):
+        return self.in_branch(lambda: self._file_list(), branch)
 
-    def _all_files(self):
+    def _file_list(self):
         return list(self.repo[None])
     
     def get_file(self, path, branch='default'):
@@ -52,11 +52,6 @@ class Repository(object):
 
     def _add_file(self, path, value):
         return self.repo.wwrite(path, value.encode('utf-8'), [])
-#        f = codecs.open(os.path.join(self.real_path, path), 'w', encoding='utf-8')
-#        f.write(value)
-#        f.close()
-#        if path not in self._pending_files:
-#            self._pending_files.append(path)
 
     def _commit(self, message, user=None):
         return self.repo.commit(text=message, user=user)

@@ -114,7 +114,8 @@ INSTALLED_APPS = (
     'toolbar',
 )
 
-REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
+
+# REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
 
 try:

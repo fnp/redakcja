@@ -9,6 +9,9 @@ class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
     commit_message = forms.CharField(required=False)
 
+class BookUploadForm(forms.Form):
+    file = forms.FileField()
+
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)
     

@@ -6,6 +6,10 @@ from django.views.generic.simple import direct_to_template
 
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
+
+from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 from django.contrib.auth.decorators import login_required
 
 from explorer import forms, models
@@ -34,12 +38,38 @@ def ajax_login_required(view):
 #
 # View all files
 #
-
 @with_repo
 def file_list(request, repo):
+    paginator = Paginator( repo.file_list(), 100);
+    bookform = forms.BookUploadForm()
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    try:
+        files = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        files = paginator.page(paginator.num_pages)
+
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'objects': repo.all_files(),
+        'files': files, 'page': page, 'bookform': bookform,
     })
+
+@login_required
+@with_repo
+def file_upload(request, repo):
+    form = forms.BookUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+        f = request.FILES['file']        
+        print 'Adding file: %s' % f.name
+        repo.add_file(f.name, f.read().decode('utf-8'))
+        return HttpResponseRedirect( reverse('editor_view', kwargs={'path': f.name}) )
+
+    return direct_to_template(request, 'explorer/file_upload.html',
+        extra_context = {'form' : form} )
+   
 #
 # Edit the file
 #
@@ -53,9 +83,8 @@ def file_xml(request, repo, path):
             print 'Saving whole text.', request.user.username
             def save_action():
                 print 'In branch: ' + repo.repo[None].branch()
-                print repo._add_file(path, form.cleaned_data['content'])
-                print repo.repo.status()
-                print repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+                repo._add_file(path, form.cleaned_data['content'])                
+                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
 
             print repo.in_branch(save_action, models.user_branch(request.user) );
             result = "ok"
