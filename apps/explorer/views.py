@@ -1,6 +1,9 @@
 from librarian import html
 import hg, urllib2, time
+
 from django.utils import simplejson as json
+from lxml import etree
+from librarian import dcparser
 
 from django.views.generic.simple import direct_to_template
 
@@ -10,7 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from explorer import forms, models
 
@@ -40,7 +43,7 @@ def ajax_login_required(view):
 #
 @with_repo
 def file_list(request, repo):
-    paginator = Paginator( repo.file_list(), 100);
+    paginator = Paginator( repo.file_list('default'), 100);
     bookform = forms.BookUploadForm()
 
     try:
@@ -57,14 +60,20 @@ def file_list(request, repo):
         'files': files, 'page': page, 'bookform': bookform,
     })
 
-@login_required
+@permission_required('explorer.can_add_files')
 @with_repo
 def file_upload(request, repo):
     form = forms.BookUploadForm(request.POST, request.FILES)
     if form.is_valid():
         f = request.FILES['file']        
-        print 'Adding file: %s' % f.name
-        repo.add_file(f.name, f.read().decode('utf-8'))
+
+        def upload_action():
+            print 'Adding file: %s' % f.name
+            repo._add_file(f.name, f.read().decode('utf-8'))
+            repo._commit(message="File %s uploaded from platform by %s" %
+                (f.name, request.user.username), user=request.user.username)
+
+        repo.in_branch(upload_action, 'default')
         return HttpResponseRedirect( reverse('editor_view', kwargs={'path': f.name}) )
 
     return direct_to_template(request, 'explorer/file_upload.html',
@@ -104,8 +113,26 @@ def file_xml(request, repo, path):
 def file_dc(request, path, repo):
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
+        
         if form.is_valid():
-            form.save(repo, path)
+            def save_action():
+                file_contents = repo._get_file(path)
+                doc = etree.fromstring(file_contents)
+
+                book_info = dcparser.BookInfo()
+                for name, value in form.cleaned_data.items():
+                    if value is not None and value != '':
+                        setattr(book_info, name, value)
+                rdf = etree.XML(book_info.to_xml())
+
+                old_rdf = doc.getroottree().find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF')
+                old_rdf.getparent().remove(old_rdf)
+                doc.insert(0, rdf)
+                repo._add_file(path, etree.tostring(doc, pretty_print=True, encoding=unicode))
+                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+
+            repo.in_branch(save_action, models.user_branch(request.user) )
+
             result = "ok"
         else:
             result = "error" 

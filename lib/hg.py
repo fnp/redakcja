@@ -35,19 +35,19 @@ class Repository(object):
             return localrepo.localrepository(self.ui, path, create=1)
         raise RepositoryDoesNotExist("Repository %s does not exist." % path)
         
-    def file_list(self, branch='default'):
+    def file_list(self, branch):
         return self.in_branch(lambda: self._file_list(), branch)
 
     def _file_list(self):
         return list(self.repo[None])
     
-    def get_file(self, path, branch='default'):
+    def get_file(self, path, branch):
         return self.in_branch(lambda: self._get_file(path), branch)
 
     def _get_file(self, path):
         return self.repo.wread(path)
     
-    def add_file(self, path, value, branch='default'):
+    def add_file(self, path, value, branch):
         return self.in_branch(lambda: self._add_file(path, value), branch)
 
     def _add_file(self, path, value):
@@ -56,10 +56,10 @@ class Repository(object):
     def _commit(self, message, user=None):
         return self.repo.commit(text=message, user=user)
     
-    def commit(self, message, user=None, branch='default'):
+    def commit(self, message, branch, user=None):
         return self.in_branch(lambda: self._commit(message, key=key, user=user), branch)
 
-    def in_branch(self, action, bname='default'):
+    def in_branch(self, action, bname):
         wlock = self.repo.wlock()
         try:
             old = self._switch_to_branch(bname)

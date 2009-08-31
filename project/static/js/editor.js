@@ -207,7 +207,7 @@ Editor.prototype.saveToBranch = function(msg)
 	var self = this;
 	$.log('Saving to local branch - panel:', changed_panel);
 
-    if(!msg) msg = "Zapis z edytora platformy.";
+        if(!msg) msg = "Zapis z edytora platformy.";
 
 	if( changed_panel.length == 0) {
 		$.log('Nothing to save.');
@@ -220,7 +220,13 @@ Editor.prototype.saveToBranch = function(msg)
 	}
 
 	saveInfo = changed_panel.data('ctrl').saveInfo();
-    $.extend(saveInfo.postData, {'commit_message': msg});
+        var postData = ''
+        if(saveInfo.postData instanceof Object)
+            postData = $.param(saveInfo.postData);
+        else
+            postData = saveInfo.postData;
+
+        postData += '&' + $.param({'commit_message': msg})
 
 	$.ajax({
 		url: saveInfo.url,
@@ -242,7 +248,7 @@ Editor.prototype.saveToBranch = function(msg)
             self.showPopup('save-error');
 		},
 		type: 'POST',
-		data: saveInfo.postData
+		data: postData
 	});
 
     return true;

@@ -3,7 +3,9 @@ from django import forms
 from lxml import etree
 from librarian import dcparser
 
+
 from explorer import models
+
 
 class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
@@ -39,6 +41,8 @@ class DublinCoreForm(forms.Form):
     license = forms.CharField(required=False)
     license_description = forms.CharField(widget=forms.Textarea, required=False)
     
+    commit_message = forms.CharField(required=False)
+    
     def __init__(self, *args, **kwargs):
         text = None
         if 'text' in kwargs:
@@ -50,19 +54,3 @@ class DublinCoreForm(forms.Form):
             book_info = dcparser.BookInfo.from_string(text)
             for name, value in book_info.to_dict().items():
                 self.fields[name].initial = value
-    
-    def save(self, repository, path):
-        file_contents = repository.get_file(path)
-        doc = etree.fromstring(file_contents)
-                
-        book_info = dcparser.BookInfo()
-        for name, value in self.cleaned_data.items():
-            if value is not None and value != '':
-                setattr(book_info, name, value)
-        rdf = etree.XML(book_info.to_xml())
-        
-        old_rdf = doc.getroottree().find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF')
-        old_rdf.getparent().remove(old_rdf)
-        doc.insert(0, rdf)
-        repository.add_file(path, etree.tostring(doc, pretty_print=True, encoding=unicode))
-
