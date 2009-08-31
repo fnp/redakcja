@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-
 class PanelSettings(models.Model):
     user = models.ForeignKey(User)
     left_panel = models.CharField(blank=True,  max_length=80)
@@ -18,6 +17,12 @@ class PanelSettings(models.Model):
     def __unicode__(self):
         return u"Panel settings for %s" % self.user.name
 
+class Book(models.Model):
+    class Meta:
+        permissions = (
+            ("can_add_files", "Can do hg add."),
+        )
+    pass
 
 class PullRequest(models.Model):
     comitter = models.ForeignKey(User) # the user who request the pull 
