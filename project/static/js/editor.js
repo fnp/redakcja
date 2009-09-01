@@ -145,7 +145,8 @@ Editor.prototype.loadConfig = function() {
         panels: [
             {name: 'htmleditor', ratio: 0.5},
             {name: 'gallery', ratio: 0.5}
-        ]
+        ],
+        lastUpdate: 0,
     }
     
     try {
@@ -197,6 +198,7 @@ Editor.prototype.savePanelOptions = function() {
         })
     });
     self.options.panels = panels;
+    self.options.lastUpdate = (new Date()).getTime() / 1000;
     $.log($.toJSON(self.options));
     $.cookie('options', $.toJSON(self.options), { expires: 7, path: '/'});
 }
