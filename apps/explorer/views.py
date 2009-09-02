@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urllib2
 import hg
 from librarian import html, parser, dcparser, ParseError, ValidationError

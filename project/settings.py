@@ -119,6 +119,12 @@ INSTALLED_APPS = (
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
 EDITOR_COOKIE_NAME = 'options'
+EDITOR_DEFAULT_SETTINGS = {
+    'panels': [
+        {'name': 'htmleditor', 'ratio': 0.5},
+        {'name': 'gallery', 'ratio': 0.5}
+    ],
+}
 
 try:
     from localsettings import *
