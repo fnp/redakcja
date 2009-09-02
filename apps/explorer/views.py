@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from librarian import html
 import hg, urllib2, time
 
 from django.utils import simplejson as json
-from lxml import etree
-from librarian import dcparser
+
+from librarian import dcparser, parser
+from librarian import ParseError, ValidationError
 
 from django.views.generic.simple import direct_to_template
 
@@ -87,21 +89,28 @@ def file_upload(request, repo):
 @with_repo
 def file_xml(request, repo, path):
     if request.method == 'POST':
+        errors = None
         form = forms.BookForm(request.POST)
         if form.is_valid():
             print 'Saving whole text.', request.user.username
             def save_action():
                 print 'In branch: ' + repo.repo[None].branch()
                 repo._add_file(path, form.cleaned_data['content'])                
-                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'),\
+                     user=request.user.username)
+            try:
+                # wczytaj dokument z ciągu znaków -> weryfikacja
+                document = parser.WLDocument.from_string(form.cleaned_data['content'])
 
-            print repo.in_branch(save_action, models.user_branch(request.user) );
-            result = "ok"
-        else:
-            result = "error"
+                #  save to user's branch
+                repo.in_branch(save_action, models.user_branch(request.user) );
+            except (ParseError, ValidationError), e:
+                errors = [e.message]              
 
-        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
-        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+        if not errors:
+            errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+
+        return HttpResponse(json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}));
 
     form = forms.BookForm()
     data = repo.get_file(path, models.user_branch(request.user))
@@ -113,32 +122,46 @@ def file_xml(request, repo, path):
 def file_dc(request, path, repo):
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
+        errors = None
         
         if form.is_valid():
             def save_action():
                 file_contents = repo._get_file(path)
-                doc = etree.fromstring(file_contents)
 
-                book_info = dcparser.BookInfo()
-                for name, value in form.cleaned_data.items():
-                    if value is not None and value != '':
-                        setattr(book_info, name, value)
-                rdf = etree.XML(book_info.to_xml())
+                # wczytaj dokument z repozytorium
+                document = parser.WLDocument.from_string(file_contents)
 
-                old_rdf = doc.getroottree().find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF')
-                old_rdf.getparent().remove(old_rdf)
-                doc.insert(0, rdf)
-                repo._add_file(path, etree.tostring(doc, pretty_print=True, encoding=unicode))
-                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+                rdf_ns = dcparser.BookInfo.RDF
+                dc_ns = dcparser.BookInfo.DC
 
-            repo.in_branch(save_action, models.user_branch(request.user) )
+                rdf_attrs = {rdf_ns('about'): form.cleaned_data.pop('about')}
+                field_dict = {}
+                    
+                for key, value in form.cleaned_data.items():
+                    field_dict[ dc_ns(key) ] = value if isinstance(value, list) else [value]
 
-            result = "ok"
-        else:
-            result = "error" 
+                print field_dict
 
-        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
-        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+                new_info = dcparser.BookInfo(rdf_attrs, field_dict)
+                document.book_info = new_info
+
+                print "SAVING DC"
+
+                    # zapisz
+                repo._add_file(path, document.serialize())
+                repo._commit( \
+                    message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
+                    user=request.user.username )
+                
+            try:
+                repo.in_branch(save_action, models.user_branch(request.user) )
+            except (ParseError, ValidationError), e:
+                errors = [e.message]
+
+        if errors is None:
+            errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+
+        return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}) );
     
     fulltext = repo.get_file(path, models.user_branch(request.user))
     form = forms.DublinCoreForm(text=fulltext)       
@@ -189,8 +212,10 @@ def htmleditor_panel(request, path, repo):
 @with_repo
 def dceditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
-    text = repo.get_file(path, user_branch)
-    form = forms.DublinCoreForm(text=text)       
+    doc_text = repo.get_file(path, user_branch)
+
+    document = parser.WLDocument.from_string(doc_text)
+    form = forms.DublinCoreForm(info=document.book_info)       
 
     return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
         'fpath': path,

@@ -19,9 +19,9 @@
 {% endblock %}
 
 {% block message-box %}
-    <div class="msg-success" id="save-successful">Zapisano :)</div>
-    <div class="msg-error" id="save-error">Błąd przy zapisie. <span class="errors" /></div>
-    <div class="msg-warning" id="not-implemented">Tej funkcji jeszcze nie ma :(</div>
+    <div class="msg-success" id="save-successful">Zapisano :)<span class="data" /></div>
+    <div class="msg-error" id="save-error">Błąd przy zapisie. <span class="data" /></div>
+    <div class="msg-warning" id="not-implemented">Tej funkcji jeszcze nie ma :(<span class="data" /></div>
 {% endblock %}
 
 {% block maincontent %}
@@ -36,6 +36,7 @@
                         <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
                         <option value="{% url dceditor_panel hash %}" name="dceditor">Edytor DublinCore</option>
                     </select>
+                    <button type="button" class="refresh-button">Odśwież</button>
                     <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
                </div>
                <div id="panel-{{n}}-content" class="panel-content"></div>
