@@ -5,17 +5,19 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-class PanelSettings(models.Model):
-    user = models.ForeignKey(User)
-    left_panel = models.CharField(blank=True,  max_length=80)
-    right_panel = models.CharField(blank=True,  max_length=80)
+from explorer import fields
 
+
+class EditorSettings(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    settings = fields.JSONField()
+    
     class Meta:
-        ordering = ['user__name']
-        verbose_name, verbose_name_plural = _("panel settings"), _("panel settings")
+        verbose_name, verbose_name_plural = _("editor settings"), _("editor settings")
 
     def __unicode__(self):
-        return u"Panel settings for %s" % self.user.name
+        return u"Editor settings for %s" % self.user.username
+
 
 class Book(models.Model):
     class Meta:
@@ -23,6 +25,7 @@ class Book(models.Model):
             ("can_add_files", "Can do hg add."),
         )
     pass
+
 
 class PullRequest(models.Model):
     comitter = models.ForeignKey(User) # the user who request the pull 

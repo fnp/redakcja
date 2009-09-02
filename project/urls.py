@@ -32,7 +32,7 @@ urlpatterns = patterns('',
 
     # Authorization
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}),
-    url(r'^accounts/logout$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 )
 
 

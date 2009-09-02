@@ -75,6 +75,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'explorer.middleware.EditorSettingsMiddleware',
     'django.middleware.doc.XViewMiddleware',
 )
 
@@ -117,6 +118,7 @@ INSTALLED_APPS = (
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
+EDITOR_COOKIE_NAME = 'options'
 
 try:
     from localsettings import *
