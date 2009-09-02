@@ -1,7 +1,6 @@
 import urllib2
 import hg
-from lxml import etree
-from librarian import html,dcparser
+from librarian import html, parser, dcparser, ParseError, ValidationError
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -84,21 +83,28 @@ def file_upload(request, repo):
 @with_repo
 def file_xml(request, repo, path):
     if request.method == 'POST':
+        errors = None
         form = forms.BookForm(request.POST)
         if form.is_valid():
             print 'Saving whole text.', request.user.username
             def save_action():
                 print 'In branch: ' + repo.repo[None].branch()
                 repo._add_file(path, form.cleaned_data['content'])                
-                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'),\
+                     user=request.user.username)
+            try:
+                # wczytaj dokument z ciągu znaków -> weryfikacja
+                document = parser.WLDocument.from_string(form.cleaned_data['content'])
 
-            print repo.in_branch(save_action, models.user_branch(request.user) );
-            result = "ok"
-        else:
-            result = "error"
+                #  save to user's branch
+                repo.in_branch(save_action, models.user_branch(request.user) );
+            except (ParseError, ValidationError), e:
+                errors = [e.message]              
 
-        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
-        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+        if not errors:
+            errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+
+        return HttpResponse(json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}));
 
     form = forms.BookForm()
     data = repo.get_file(path, models.user_branch(request.user))
@@ -108,38 +114,49 @@ def file_xml(request, repo, path):
 @ajax_login_required
 @with_repo
 def file_dc(request, path, repo):
+    errors = None
+
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
         
         if form.is_valid():
             def save_action():
                 file_contents = repo._get_file(path)
-                doc = etree.fromstring(file_contents)
 
-                book_info = dcparser.BookInfo()
-                for name, value in form.cleaned_data.items():
-                    if value is not None and value != '':
-                        setattr(book_info, name, value)
-                rdf = etree.XML(book_info.to_xml())
+                # wczytaj dokument z repozytorium
+                document = parser.WLDocument.from_string(file_contents)                    
+                document.book_info.update(form.cleaned_data)
+                
+                print "SAVING DC"
 
-                old_rdf = doc.getroottree().find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF')
-                old_rdf.getparent().remove(old_rdf)
-                doc.insert(0, rdf)
-                repo._add_file(path, etree.tostring(doc, pretty_print=True, encoding=unicode))
-                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), user=request.user.username)
+                # zapisz
+                repo._add_file(path, document.serialize())
+                repo._commit( \
+                    message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
+                    user=request.user.username )
+                
+            try:
+                repo.in_branch(save_action, models.user_branch(request.user) )
+            except (ParseError, ValidationError), e:
+                errors = [e.message]
 
-            repo.in_branch(save_action, models.user_branch(request.user) )
+        if errors is None:
+            errors = ["Pole '%s': %s\n" % (field[0], field[1].as_text()) for field in form.errors.iteritems()]
 
-            result = "ok"
-        else:
-            result = "error" 
-
-        errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
-        return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+        return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}) );
     
-    fulltext = repo.get_file(path, models.user_branch(request.user))
-    form = forms.DublinCoreForm(text=fulltext)       
-    return HttpResponse( json.dumps({'result': 'ok', 'content': fulltext}) ) 
+    # this is unused currently, but may come in handy 
+    content = []
+    
+    try:
+        fulltext = repo.get_file(path, models.user_branch(request.user))
+        bookinfo = dcparser.BookInfo.from_string(fulltext)
+        content = bookinfo.to_dict()
+    except (ParseError, ValidationError), e:
+        errors = [e.message]
+
+    return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 
+        'errors': errors, 'content': content }) ) 
 
 # Display the main editor view
 
@@ -176,24 +193,34 @@ def gallery_panel(request, path):
 @with_repo
 def htmleditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
-    return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
-        'fpath': path,
-        'html': html.transform(repo.get_file(path, user_branch), is_file=False),
-    })
- 
+    try:
+        return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
+            'fpath': path,
+            'html': html.transform(repo.get_file(path, user_branch), is_file=False),
+        })
+    except (ParseError, ValidationError), e:
+        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 'panel_name': 'Edytor HTML'}) 
 
 @ajax_login_required
 @with_repo
 def dceditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
-    text = repo.get_file(path, user_branch)
-    form = forms.DublinCoreForm(text=text)       
 
-    return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
-        'fpath': path,
-        'form': form,
-    })
+    try:
+        doc_text = repo.get_file(path, user_branch)
 
+        document = parser.WLDocument.from_string(doc_text)
+        form = forms.DublinCoreForm(info=document.book_info)       
+
+        return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
+            'fpath': path,
+            'form': form,
+        })
+    except (ParseError, ValidationError), e:
+        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 
+            'panel_name': 'Edytor DublinCore'}) 
 
 # =================
 # = Utility views =

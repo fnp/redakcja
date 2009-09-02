@@ -121,7 +121,7 @@ Editor.prototype.setupUI = function() {
 	$('#panels > *.panel-wrap').each(function() {
 		var panelWrap = $(this);
 		$.log('wrap: ', panelWrap);
-		panel = new Panel(panelWrap);
+		var panel = new Panel(panelWrap);
 		panelWrap.data('ctrl', panel); // attach controllers to wraps
         panel.load($('.panel-toolbar select', panelWrap).val());
         
@@ -130,6 +130,9 @@ Editor.prototype.setupUI = function() {
             panelWrap.data('ctrl').load(url);
             self.savePanelOptions();
         });
+
+        $('.panel-toolbar button.refresh-button', panelWrap).click(
+            function() { panel.refresh(); } );            
     });
 
 	$(document).bind('panel:contentChanged', function() { self.onContentChanged.apply(self, arguments) });
@@ -222,20 +225,21 @@ Editor.prototype.saveToBranch = function(msg)
 	}
 
 	saveInfo = changed_panel.data('ctrl').saveInfo();
-        var postData = ''
-        if(saveInfo.postData instanceof Object)
-            postData = $.param(saveInfo.postData);
-        else
-            postData = saveInfo.postData;
+    var postData = ''
+    
+    if(saveInfo.postData instanceof Object)
+        postData = $.param(saveInfo.postData);
+    else
+        postData = saveInfo.postData;
 
-        postData += '&' + $.param({'commit_message': msg})
+    postData += '&' + $.param({'commit_message': msg})
 
 	$.ajax({
 		url: saveInfo.url,
 		dataType: 'json',
 		success: function(data, textStatus) {
 			if (data.result != 'ok')
-				$.log('save errors: ', data.errors)
+				self.showPopup('save-error', data.errors[0]);
 			else {
 				self.refreshPanels(changed_panel);
                 $('#toolbar-button-save').attr('disabled', 'disabled');
@@ -309,30 +313,37 @@ Editor.prototype.sendPullRequest = function () {
 	}); */
 }
 
-Editor.prototype.showPopup = function(name) 
+Editor.prototype.showPopup = function(name, text) 
 {
     var self = this;
-    self.popupQueue.push(name)
+    self.popupQueue.push( [name, text] )
 
     if( self.popupQueue.length > 1) 
         return;
 
-    $('#message-box > #' + name).fadeIn();
+    var box = $('#message-box > #' + name);
+    $('*.data', box).html(text);
+    box.fadeIn();
  
-   self._nextPopup = function() {
+    self._nextPopup = function() {
         var elem = self.popupQueue.pop()
         if(elem) {
-            elem = $('#message-box > #' + elem);
-            elem.fadeOut(300, function() {
-                if( self.popupQueue.length > 0) 
-                    $('#message-box > #' + self.popupQueue[0]).fadeIn();
-                    setTimeout(self._nextPopup, 1700);
-            });
+            var box = $('#message-box > #' + elem[0]);
 
+            box.fadeOut(300, function() {
+                $('*.data', box).html();
+    
+                if( self.popupQueue.length > 0) {
+                    box = $('#message-box > #' + self.popupQueue[0][0]);
+                    $('*.data', box).html(self.popupQueue[0][1]);
+                    box.fadeIn();
+                    setTimeout(self._nextPopup, 5000);
+                }
+            });
         }
     }
 
-    setTimeout(self._nextPopup, 2000);
+    setTimeout(self._nextPopup, 5000);
 }
 
 

@@ -353,12 +353,13 @@ div.isection p {
 #message-box {
     position: fixed;
     top: 2px;
-    left: 40%;   
+    left: 35%;
+    width: 33%;  
 }
 
 .msg-error, .msg-success, .msg-warning {
     overflow: hidden;
-    padding: 0.1em 0.2em;
+    padding: 0.1em 0.5em;
     text-align: center;
     border: 1px solid;
     -moz-border-radius: 8px;
@@ -367,13 +368,19 @@ div.isection p {
     line-height: 11pt;
     display: none;
 
-    width: 200px;
+    width: 100%;
 }
 
+#message-box * p {
+    padding: 0em;
+    margin: 0.1em;
+}
 
 .msg-error {
     background-color: red;
     border-color: red;
+    color: white;
+    font-weight: bold;
 }
 
 .msg-success {
