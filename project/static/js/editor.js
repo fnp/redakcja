@@ -47,6 +47,7 @@ Panel.prototype.load = function (url) {
 			$(self.contentDiv).html(data);
 			self.hooks = panel_hooks;			
 			panel_hooks = null;
+            self.connectToolbar();
 			self.callHook('load');
 		},
         error: function(request, textStatus, errorThrown) {
@@ -104,6 +105,52 @@ Panel.prototype.saveInfo = function() {
 	return saveInfo;
 }
 
+Panel.prototype.connectToolbar = function() {
+    // check if there is a one
+    var toolbar = $("div.toolbar", this.contentDiv);
+    $.log('Connecting toolbar', toolbar);
+    if(toolbar.length == 0) return;
+
+    // connect group-switch buttons
+    var group_buttons = $('*.toolbar-tabs-container button', toolbar);
+
+    $.log('Found groups:', group_buttons);
+
+    group_buttons.each(function() {
+        var group = $(this);
+        var group_name = group.attr('ui:group');
+        $.log('Connecting group: ' + group_name);
+
+        group.click(function() {
+            // change the active group
+            var active = $("*.toolbar-tabs-container button.active");
+            if (active != group) {
+                active.removeClass('active');                
+                group.addClass('active');
+                $(".toolbar-button-groups-container p").each(function() {
+                    if ( $(this).attr('ui:group') != group_name) 
+                        $(this).hide();
+                    else
+                        $(this).show();
+                });
+            }
+        });        
+    });
+
+    // connect action buttons
+    var action_buttons = $('*.toolbar-button-groups-container button');
+    action_buttons.each(function() {
+        var button = $(this);
+        var action = button.attr('ui:action').split(':');
+        var action_name = action[0];
+        var action_data = action[1];
+        
+        button.click(function() {
+            $.log('emiting action ', action_name, ' with data: ', action_data);
+            $(document).trigger('ui:action:' + action_name, action_data);
+        });
+    });
+}
 
 function Editor() {
 	this.rootDiv = $('#panels');

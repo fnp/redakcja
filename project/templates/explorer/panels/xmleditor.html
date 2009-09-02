@@ -1,13 +1,17 @@
 {% load toolbar_tags %}
 
-{% toolbar %}
+
 <div class="change-font-size" style="">
     <div class="decrease-font-size">A<sup>-</sup></div>
     <div class="increase-font-size">A<sup>+</sup></div>
 </div>
-<div class="iframe-container" style="position: absolute; top: 48px; left:0px; right:0px; bottom: 0px;">
+
+<div class="iframe-container" style="position: absolute; top: 41pt; left:0px; right:0px; bottom: 0px;">
 	<textarea name="text">{{ text }}</textarea>
 </div>
+
+
+{% toolbar %}
 
 <script type="text/javascript" charset="utf-8">
 
@@ -28,40 +32,26 @@ panel_hooks = {
 				panel.trigger('panel:contentChanged', self);
             },
             initCallback: function(editor) {
-                // Toolbar
-                $('.toolbar-tabs li', panel).click(function() {
-                    var id = $(this).attr('p:button-list');
-                    $('.toolbar-tabs li', panel).removeClass('active');
-                    $(this).addClass('active');
-                    if (!$('.' + id, panel).is(':visible')) {
-                        $('.toolbar-buttons ol', panel).not('#' + id).hide();
-                        $('.' + id, panel).show();
+                // Editor is loaded
+                // Buttons are connected
+                // register callbacks for actions
+                $(document).bind("ui:action:INSERT_TAG", function(event, data) {
+                    var tag = data;
+                    var text = texteditor.selection();
+                    editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
+                    if (text.length == 0) {
+                        var pos = texteditor.cursorPosition();
+                        texteditor.selectLines(pos.line, pos.character + tag.length + 2);
                     }
-                })
-                
-                var keys = {};
-                $('.toolbar-buttons li', panel).each(function() {
-                    var tag = $(this).attr('p:tag');
-                    var handler = function() {
-                        var text = texteditor.selection();
-                        editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
-                        if (text.length == 0) {
-                            var pos = texteditor.cursorPosition();
-                            texteditor.selectLines(pos.line, pos.character + tag.length + 2);
-                        }
-                        $(document).trigger('panel:contentChanged', self);
-                    }
-                    if ($(this).attr('p:key')) {
-                        keys[$(this).attr('p:key')] = handler;
-                    }
-                    $(this).click(handler)
+                    
+                    $(document).trigger('panel:contentChanged', self);
                 });
 
-                texteditor.grabKeys(function(event) { 
+/*                texteditor.grabKeys(function(event) { 
                     if (keys[event.keyCode]) {
                         keys[event.keyCode]();
                     }
-                }, function(event) { return event.altKey && keys[event.keyCode]; });
+                }, function(event) { return event.altKey && keys[event.keyCode]; }); */
             }
         })
         
