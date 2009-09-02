@@ -120,9 +120,10 @@ def file_xml(request, repo, path):
 @ajax_login_required
 @with_repo
 def file_dc(request, path, repo):
+    errors = None
+
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
-        errors = None
         
         if form.is_valid():
             def save_action():
@@ -150,9 +151,18 @@ def file_dc(request, path, repo):
 
         return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}) );
     
-    fulltext = repo.get_file(path, models.user_branch(request.user))
-    form = forms.DublinCoreForm(text=fulltext)       
-    return HttpResponse( json.dumps({'result': 'ok', 'content': fulltext}) ) 
+    # this is unused currently, but may come in handy 
+    content = []
+    
+    try:
+        fulltext = repo.get_file(path, models.user_branch(request.user))
+        bookinfo = dcparser.BookInfo.from_string(fulltext)
+        content = bookinfo.to_dict()
+    except (ParseError, ValidationError), e:
+        errors = [e.message]
+
+    return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 
+        'errors': errors, 'content': content }) ) 
 
 # Display the main editor view
 
@@ -189,26 +199,34 @@ def gallery_panel(request, path):
 @with_repo
 def htmleditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
-    return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
-        'fpath': path,
-        'html': html.transform(repo.get_file(path, user_branch), is_file=False),
-    })
- 
+    try:
+        return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
+            'fpath': path,
+            'html': html.transform(repo.get_file(path, user_branch), is_file=False),
+        })
+    except (ParseError, ValidationError), e:
+        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 'panel_name': 'Edytor HTML'}) 
 
 @ajax_login_required
 @with_repo
 def dceditor_panel(request, path, repo):
     user_branch = models.user_branch(request.user)
-    doc_text = repo.get_file(path, user_branch)
 
-    document = parser.WLDocument.from_string(doc_text)
-    form = forms.DublinCoreForm(info=document.book_info)       
+    try:
+        doc_text = repo.get_file(path, user_branch)
 
-    return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
-        'fpath': path,
-        'form': form,
-    })
+        document = parser.WLDocument.from_string(doc_text)
+        form = forms.DublinCoreForm(info=document.book_info)       
 
+        return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
+            'fpath': path,
+            'form': form,
+        })
+    except (ParseError, ValidationError), e:
+        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 
+            'panel_name': 'Edytor DublinCore'}) 
 
 # =================
 # = Utility views =
