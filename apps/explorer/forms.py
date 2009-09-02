@@ -19,7 +19,7 @@ class PersonListField(forms.Field):
         super(PersonListField, self).__init__(*args, **kwargs)
     
     def _get_initial(self):
-        return u'\n'.join( ( unicode(person) for person in self._initial) )
+        return self._initial and (u'\n'.join( ( unicode(person) for person in self._initial)))
 
     def _set_initial(self, value):
         if value is None:
