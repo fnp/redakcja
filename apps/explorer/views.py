@@ -1,21 +1,18 @@
-from librarian import html
-import hg, urllib2, time
-
-from django.utils import simplejson as json
+import urllib2
+import hg
 from lxml import etree
-from librarian import dcparser
-
-from django.views.generic.simple import direct_to_template
+from librarian import html,dcparser
 
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse
-
-from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse
+from django.utils import simplejson as json
+from django.views.generic.simple import direct_to_template
 
 from explorer import forms, models
+
 
 #
 # Some useful decorators
