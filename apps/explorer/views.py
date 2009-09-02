@@ -212,7 +212,6 @@ def dceditor_panel(request, path, repo):
         doc_text = repo.get_file(path, user_branch)
         document = parser.WLDocument.from_string(doc_text)
         form = forms.DublinCoreForm(info=document.book_info)       
-        print "FORM: ", form
         return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
             'fpath': path,
             'form': form,
