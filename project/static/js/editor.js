@@ -320,7 +320,7 @@ Editor.prototype.showPopup = function(name, text)
         return;
 
     var box = $('#message-box > #' + name);
-    $('span.data', box).html(text);
+    $('*.data', box).html(text);
     box.fadeIn();
  
     self._nextPopup = function() {
@@ -329,11 +329,11 @@ Editor.prototype.showPopup = function(name, text)
             var box = $('#message-box > #' + elem[0]);
 
             box.fadeOut(300, function() {
-                $('span.data', box).html();
+                $('*.data', box).html();
     
                 if( self.popupQueue.length > 0) {
                     box = $('#message-box > #' + self.popupQueue[0][0]);
-                    $('span.data', box).html(self.popupQueue[0][1]);
+                    $('*.data', box).html(self.popupQueue[0][1]);
                     box.fadeIn();
                     setTimeout(self._nextPopup, 5000);
                 }

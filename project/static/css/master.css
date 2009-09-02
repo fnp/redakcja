@@ -371,6 +371,10 @@ div.isection p {
     width: 100%;
 }
 
+#message-box * p {
+    padding: 0em;
+    margin: 0.1em;
+}
 
 .msg-error {
     background-color: red;

@@ -129,25 +129,12 @@ def file_dc(request, path, repo):
                 file_contents = repo._get_file(path)
 
                 # wczytaj dokument z repozytorium
-                document = parser.WLDocument.from_string(file_contents)
-
-                rdf_ns = dcparser.BookInfo.RDF
-                dc_ns = dcparser.BookInfo.DC
-
-                rdf_attrs = {rdf_ns('about'): form.cleaned_data.pop('about')}
-                field_dict = {}
-                    
-                for key, value in form.cleaned_data.items():
-                    field_dict[ dc_ns(key) ] = value if isinstance(value, list) else [value]
-
-                print field_dict
-
-                new_info = dcparser.BookInfo(rdf_attrs, field_dict)
-                document.book_info = new_info
-
+                document = parser.WLDocument.from_string(file_contents)                    
+                document.book_info.update(form.cleaned_data)
+                
                 print "SAVING DC"
 
-                    # zapisz
+                # zapisz
                 repo._add_file(path, document.serialize())
                 repo._commit( \
                     message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
@@ -159,7 +146,7 @@ def file_dc(request, path, repo):
                 errors = [e.message]
 
         if errors is None:
-            errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
+            errors = ["Pole '%s': %s\n" % (field[0], field[1].as_text()) for field in form.errors.iteritems()]
 
         return HttpResponse( json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}) );
     
