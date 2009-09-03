@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-    <link rel="stylesheet" href="/static/css/toolbar.css" type="text/css" />
-    <script src="/static/js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.hpanel.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.json.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/js/editor.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="{{STATIC_URL}}css/toolbar.css" type="text/css" />
+    <script src="{{STATIC_URL}}js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.autoscroll.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.wtooltip.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.hpanel.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.json.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/editor.js" type="text/javascript" charset="utf-8"></script>
 {% endblock extrahead %}
 
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}

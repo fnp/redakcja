@@ -25,8 +25,8 @@ panel_hooks = {
 
 		var texteditor = CodeMirror.fromTextArea(textareaId, {
             parserfile: 'parsexml.js',
-            path: "/static/js/codemirror/",
-            stylesheet: "/static/css/xmlcolors.css",
+            path: "{{STATIC_URL}}js/codemirror/",
+            stylesheet: "{{STATIC_URL}}css/xmlcolors.css",
             parserConfig: {useHTMLKludges: false},
             onChange: function() {
 				panel.trigger('panel:contentChanged', self);
@@ -64,7 +64,7 @@ panel_hooks = {
                 opacity: 0.9, 
                 background: "#FBFBC6", 
                 padding: "1px",
-                fontSize: "12px",
+                fontSize: "12px"
             }
         });
 
