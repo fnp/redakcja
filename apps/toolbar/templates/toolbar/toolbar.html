@@ -1,6 +1,6 @@
 {% load toolbar_tags %}
 <div class="toolbar" xmlns:ui="http://nowoczesnapolska.org.pl/platforma/ui">
-
+    
     <div class="toolbar-tabs-container">
     <p>
         {% for group in groups %}
@@ -17,8 +17,9 @@
             {# buttons for this group #}            
             {% for button in group.button_set.all %}
             <button type="button" 
-                ui:action="{{ button.action }}" 
-                ui:hotkey="{{ button.key|keycode }}" >
+                ui:action="{{ button.scriptlet.name }}"
+                ui:action-params="{{ button.params|escape }}"
+                {% if button.key %}ui:hotkey="{{ button.key|keycode }}"{% endif %} >
             {{ button.label }}
             </button>
             {% endfor %}

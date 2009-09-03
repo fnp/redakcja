@@ -10,7 +10,21 @@
     <script src="{{STATIC_URL}}js/jquery.json.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/editor.js" type="text/javascript" charset="utf-8"></script>
+
 {% endblock extrahead %}
+
+{% block extrabody %}
+    <script type="text/javascript" charset="utf-8">
+    $(function() {
+        {% for scriptlet in scriptlets %}
+        editor.registerScriptlet("{{scriptlet.name}}",
+            function(editor, panel, params) {
+                {{ scriptlet.code|safe }}
+            });
+        {% endfor %}
+     });  
+    </script>
+{% endblock extrabody %}
 
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> ❯ plik {{ hash }}{% endblock breadcrumbs %}
 

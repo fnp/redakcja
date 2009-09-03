@@ -18,3 +18,5 @@ admin.site.register(models.ButtonGroup)
 #    list_editable = ('position',)
 
 admin.site.register(models.Button)
+admin.site.register(models.Scriptlet)
+

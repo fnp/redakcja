@@ -12,7 +12,7 @@ from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
 
 from explorer import forms, models
-
+from toolbar import models as toolbar_models
 
 #
 # Some useful decorators
@@ -164,7 +164,9 @@ def file_dc(request, path, repo):
 @login_required
 def display_editor(request, path):
     return direct_to_template(request, 'explorer/editor.html', extra_context={
-        'hash': path, 'panel_list': ['lewy', 'prawy'],
+        'hash': path,
+        'panel_list': ['lewy', 'prawy'],
+        'scriptlets': toolbar_models.Scriptlet.objects.all()
     })
 
 # ===============

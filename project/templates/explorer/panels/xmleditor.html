@@ -35,17 +35,7 @@ panel_hooks = {
                 // Editor is loaded
                 // Buttons are connected
                 // register callbacks for actions
-                $(document).bind("ui:action:INSERT_TAG", function(event, data) {
-                    var tag = data;
-                    var text = texteditor.selection();
-                    editor.replaceSelection('<' + tag + '>' + text + '</' + tag + '>');
-                    if (text.length == 0) {
-                        var pos = texteditor.cursorPosition();
-                        texteditor.selectLines(pos.line, pos.character + tag.length + 2);
-                    }
-                    
-                    $(document).trigger('panel:contentChanged', self);
-                });
+                
 
 /*                texteditor.grabKeys(function(event) { 
                     if (keys[event.keyCode]) {
@@ -78,9 +68,8 @@ panel_hooks = {
             var frameBody = $('body', $(texteditor.frame).contents());
             console.log(frameBody.css('font-size'));
             frameBody.css('font-size', parseInt(frameBody.css('font-size')) + 2);
-        });
-        
-		this.texteditor = texteditor;
+        });        
+        this.texteditor = texteditor;
     },
 
 	unload: function() { 
