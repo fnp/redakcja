@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0"><object pk="2" model="toolbar.buttongroup"><field type="CharField" name="name">Autokorekta</field><field type="SlugField" name="slug">autokorekta</field><field type="IntegerField" name="position">0</field></object><object pk="1" model="toolbar.buttongroup"><field type="CharField" name="name">Formatowanie</field><field type="SlugField" name="slug">formatowanie</field><field type="IntegerField" name="position">0</field></object><object pk="4" model="toolbar.button"><field type="CharField" name="label">Novelpages</field><field type="SlugField" name="slug">novelpages</field><field type="TextField" name="params">({exprs: [
+  ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."],
+  ["„", ",,"] /* DOUBLE LOW-9 QUOTATION MARK */
+]})
+  </field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field><field type="CharField" name="key"></field><field type="CharField" name="tooltip">Wykonuję operację z novel-pages.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="2"></object></field></object><object pk="3" model="toolbar.button"><field type="CharField" name="label">Usuń spację</field><field type="SlugField" name="slug">strip_whitespace</field><field type="TextField" name="params">({exprs: [ ["^\\s+|\\s+$", ""], ["\\s+", " "] ]})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field><field type="CharField" name="key"></field><field type="CharField" name="tooltip">Usuwa zbędne spację z dokumentu.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="2"></object></field></object><object pk="1" model="toolbar.button"><field type="CharField" name="label">Wers</field><field type="SlugField" name="slug">insert_verse</field><field type="TextField" name="params">({tag: 'wers'})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field><field type="CharField" name="key">w</field><field type="CharField" name="tooltip">Otacza zaznaczony tekst tagiem 'wers'.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="1"></object></field></object><object pk="2" model="toolbar.button"><field type="CharField" name="label">Zamień dywiz</field><field type="SlugField" name="slug">zamien_dywiz</field><field type="TextField" name="params">({exprs:[ ["—","---"] ]})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field><field type="CharField" name="key"></field><field type="CharField" name="tooltip">Zamienia '—' na '---'.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="2"></object></field></object><object pk="insert_tag" model="toolbar.scriptlet"><field type="TextField" name="code">$.log(editor, panel, params);
+
+var texteditor = panel.texteditor;
+var text = texteditor.selection();
+texteditor.replaceSelection('&lt;' + params.tag + '&gt;' + text + '&lt;/' + params.tag + '&gt;');
+if (text.length == 0) 
+{
+    var pos = texteditor.cursorPosition();
+    texteditor.selectLines(pos.line, pos.character + params.tag.length + 2);
+}
+
+panel.fireEvent('contentChanged');</field></object><object pk="lineregexp" model="toolbar.scriptlet"><field type="TextField" name="code">// params: {exprs: list of {expr: "", repl: "" [, opts: "g"]}}
+var cm = panel.texteditor;
+
+var exprs = $.map(params.exprs, function(expr) {
+    var opts = "g";
+    if(expr.length &gt; 2)
+        opts = expr[2];
+    return {rx: new RegExp(expr[0], opts), repl: expr[1]};
+});
+
+var selection = cm.selection();
+
+if(selection) 
+{
+    var lines = selection.split('\n');
+    lines = $.map(lines, function(line) { 
+        $(exprs).each(function() { 
+            var expr = this;
+            line = line.replace(expr.rx, expr.repl);
+        });
+        return line;
+    });
+    cm.replaceSelection( lines.join('\n') );
+}
+else {
+    var line = cm.firstLine();
+    do {
+        var content = cm.lineContent(line);
+        $.log("Swapping line: $" + content + "$");
+    
+        $(exprs).each(function() { var expr = this;
+            content = content.replace(expr.rx, expr.repl);
+        });
+        cm.setLineContent(line, content);
+        line = cm.nextLine(line);
+    } while( !(line === false) );
+}</field></object></django-objects>
