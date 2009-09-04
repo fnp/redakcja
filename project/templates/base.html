@@ -12,7 +12,7 @@
     </head>
     <body id="{% block bodyid %}base{% endblock %}">
 	<div id="header">
-		<span id="breadcrumbs">{% block breadcrumbs %}Platforma Redakcyjna{% endblock breadcrumbs %}</span>
+		<span id="breadcrumbs">{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a>{% endblock breadcrumbs %}</span>
 		<span id="header-right-toolbar">
 			{% block header-toolbar %}{% endblock %}
 	  		<span id="login_info">{% include "registration/head_login.html" %}</span>

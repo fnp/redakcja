@@ -112,5 +112,5 @@ function addEventHandler(node, type, handler, removeFunc) {
 }
 
 function nodeText(node) {
-  return node.innerText || node.textContent || node.nodeValue || "";
+  return node.textContent || node.innerText || node.nodeValue || "";
 }

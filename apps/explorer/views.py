@@ -60,21 +60,44 @@ def file_list(request, repo):
 @permission_required('explorer.can_add_files')
 @with_repo
 def file_upload(request, repo):
-    form = forms.BookUploadForm(request.POST, request.FILES)
-    if form.is_valid():
-        f = request.FILES['file']        
+    other_errors = []
 
-        def upload_action():
-            print 'Adding file: %s' % f.name
-            repo._add_file(f.name, f.read().decode('utf-8'))
-            repo._commit(message="File %s uploaded from platform by %s" %
-                (f.name, request.user.username), user=request.user.username)
+    if request.method == 'POST':
+        form = forms.BookUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                # prepare the data
+                f = request.FILES['file']
+                decoded = f.read().decode('utf-8')
 
-        repo.in_branch(upload_action, 'default')
-        return HttpResponseRedirect( reverse('editor_view', kwargs={'path': f.name}) )
+                def upload_action():
+                    print 'Adding file: %s' % f.name
+                    repo._add_file(f.name, f.read().decode('utf-8'))
+                    repo._commit(
+                        message="File %s uploaded from platform by %s" %\
+                            (f.name, request.user.username), \
+                        user=request.user.username \
+                    )
+                    
+                    # end of upload
 
+                repo.in_branch(upload_action, 'default')
+
+                # if everything is ok, redirect to the editor
+                return HttpResponseRedirect( reverse('editor_view',
+                        kwargs={'path': f.name}) )
+
+            except hg.RepositoryException, e:
+                other_errors.append(u'Błąd repozytorium: ' + unicode(e) )
+            except UnicodeDecodeError, e:
+                other_errors.append(u'Niepoprawne kodowanie pliku: ' + e.reason \
+                 + u'. Żądane kodowanie: ' + e.encoding)
+        # invalid form
+
+    # get
+    form = forms.BookUploadForm()
     return direct_to_template(request, 'explorer/file_upload.html',
-        extra_context = {'form' : form} )
+        extra_context = {'form' : form, 'other_errors': other_errors})
    
 #
 # Edit the file

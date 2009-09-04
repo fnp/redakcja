@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-<h2>Dodaj nowy utwór</h2>
 
 {% if perms.explorer.can_add_files %}
+<h2>Dodaj nowy utwór</h2>
+
 <form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
     {{ bookform.as_p }}
     <p><button type="submit">Dodaj książkę</button></p>

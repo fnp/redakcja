@@ -1,9 +1,8 @@
 (function($) {
-	const LEVEL_DEBUG = 1;
-	const LEVEL_INFO = 2;
-	const LEVEL_WARN = 3;
-
-	const LOG_LEVEL = LEVEL_DEBUG;
+	var LEVEL_DEBUG = 1;
+	var LEVEL_INFO = 2;
+	var LEVEL_WARN = 3;
+	var LOG_LEVEL = LEVEL_DEBUG;
 
 	var mozillaLog = function() {
 		if (window.console)

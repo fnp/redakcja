@@ -7,8 +7,7 @@ import mercurial.merge, mercurial.error
 encoding.encoding = 'utf-8'
 
 
-class RepositoryDoesNotExist(Exception):
-    pass
+
 
 class Repository(object):
     """Abstrakcja repozytorium Mercurial. Działa z Mercurial w wersji 1.3.1."""
@@ -100,7 +99,7 @@ class Repository(object):
         except KeyError, ke:
             raise RepositoryException("Can't switch to branch '%s': no such branch." % bname , ke)
         except util.Abort, ae:
-            raise repositoryException("Can't switch to branch '%s': %s"  % (bname, ae.message), ae)
+            raise RepositoryException("Can't switch to branch '%s': %s"  % (bname, ae.message), ae)
         finally:
             wlock.release()
 
@@ -114,3 +113,6 @@ class RepositoryException(Exception):
     def __init__(self, msg, cause=None):
         Exception.__init__(self, msg)
         self.cause = cause
+
+class RepositoryDoesNotExist(RepositoryException):
+    pass
