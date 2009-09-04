@@ -1,6 +1,5 @@
 {% load toolbar_tags %}
 
-
 <div class="change-font-size" style="">
     <div class="decrease-font-size">A<sup>-</sup></div>
     <div class="increase-font-size">A<sup>+</sup></div>
@@ -23,40 +22,27 @@ panel_hooks = {
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
 	        $('textarea', panel).attr('id', textareaId);
 
-		var texteditor = CodeMirror.fromTextArea(textareaId, {
+	var texteditor = CodeMirror.fromTextArea(textareaId, {
             parserfile: 'parsexml.js',
             path: "{{STATIC_URL}}js/codemirror/",
             stylesheet: "{{STATIC_URL}}css/xmlcolors.css",
             parserConfig: {useHTMLKludges: false},
             onChange: function() {
-				panel.trigger('panel:contentChanged', self);
+		self.fireEvent('contentChanged');
             },
             initCallback: function(editor) {
                 // Editor is loaded
                 // Buttons are connected
                 // register callbacks for actions
-                
-
-/*                texteditor.grabKeys(function(event) { 
-                    if (keys[event.keyCode]) {
-                        keys[event.keyCode]();
-                    }
-                }, function(event) { return event.altKey && keys[event.keyCode]; }); */
+                texteditor.grabKeys(
+                    $.fbind(self, self.hotkeyPressed),
+                    $.fbind(self, self.isHotkey) );
             }
         })
         
         $(texteditor.frame).css({width: '100%', height: '100%'});
         
-        $('#toolbar-buttons li').wTooltip({
-            delay: 1000, 
-            style: {
-                border: "1px solid #7F7D67",
-                opacity: 0.9, 
-                background: "#FBFBC6", 
-                padding: "1px",
-                fontSize: "12px"
-            }
-        });
+        
 
         $('.decrease-font-size', panel).click(function() {
             var frameBody = $('body', $(texteditor.frame).contents());

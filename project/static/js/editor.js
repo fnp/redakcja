@@ -1,5 +1,6 @@
 function Panel(panelWrap) {
     var self = this;
+    self.hotkeys = [];
     self.wrap = panelWrap;
     self.contentDiv = $('.panel-content', panelWrap);
     self.instanceId = Math.ceil(Math.random() * 1000000000);
@@ -110,6 +111,7 @@ Panel.prototype.saveInfo = function() {
 Panel.prototype.connectToolbar = function()
 {
     var self = this;
+    self.hotkeys = [];
     
     // check if there is a one
     var toolbar = $("div.toolbar", this.contentDiv);
@@ -145,16 +147,51 @@ Panel.prototype.connectToolbar = function()
     // connect action buttons
     var action_buttons = $('*.toolbar-button-groups-container button', toolbar);
     action_buttons.each(function() {
-        var button = $(this); 
-        
-        button.click(function() {
+        var button = $(this);
+        var hk = button.attr('ui:hotkey');
+
+        var callback = function() {
            editor.callScriptlet(button.attr('ui:action'),
                 self, eval(button.attr('ui:action-params')) );
-        });
+        };
 
-        // connect hotkeys
+        // connect button
+        button.click(callback);
         
+        // connect hotkey
+        if(hk) self.hotkeys[parseInt(hk)] = callback;
+
+        // tooltip
+        if (button.attr('ui:tooltip') )
+        {
+            var tooltip = button.attr('ui:tooltip');
+            if(hk) tooltip += ' [Alt+'+hk+']';
+
+            button.wTooltip({
+                delay: 1000,
+                style: {
+                    border: "1px solid #7F7D67",
+                    opacity: 0.9,
+                    background: "#FBFBC6",
+                    padding: "1px",
+                    fontSize: "12px"
+                },
+                content: tooltip
+            });
+        }
     });
+}
+
+Panel.prototype.hotkeyPressed = function(event)
+{
+    var callback = this.hotkeys[event.keyCode];
+    if(callback) callback();
+}
+
+Panel.prototype.isHotkey = function(event) {
+    if( event.altKey && (this.hotkeys[event.keyCode] != null) )
+        return true;
+    return false;
 }
 
 //
@@ -445,6 +482,10 @@ Editor.prototype.callScriptlet = function(scriptlet_id, panel, params) {
 }
   
 $(function() {
+    $.fbind = function (self, func) {
+        return function() { return func.apply(self, arguments); };
+    };
+    
     editor = new Editor();
 
     // do the layout
