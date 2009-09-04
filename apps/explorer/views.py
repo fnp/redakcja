@@ -61,7 +61,6 @@ def file_list(request, repo):
 @with_repo
 def file_upload(request, repo):
     other_errors = []
-
     if request.method == 'POST':
         form = forms.BookUploadForm(request.POST, request.FILES)
         if form.is_valid():

@@ -128,11 +128,11 @@ Panel.prototype.connectToolbar = function()
 
         group.click(function() {
             // change the active group
-            var active = $("*.toolbar-tabs-container button.active");
+            var active = $("*.toolbar-tabs-container button.active", toolbar);
             if (active != group) {
                 active.removeClass('active');                
                 group.addClass('active');
-                $(".toolbar-button-groups-container p").each(function() {
+                $(".toolbar-button-groups-container p", toolbar).each(function() {
                     if ( $(this).attr('ui:group') != group_name) 
                         $(this).hide();
                     else
@@ -143,7 +143,7 @@ Panel.prototype.connectToolbar = function()
     });
 
     // connect action buttons
-    var action_buttons = $('*.toolbar-button-groups-container button');
+    var action_buttons = $('*.toolbar-button-groups-container button', toolbar);
     action_buttons.each(function() {
         var button = $(this); 
         
@@ -151,6 +151,8 @@ Panel.prototype.connectToolbar = function()
            editor.callScriptlet(button.attr('ui:action'),
                 self, eval(button.attr('ui:action-params')) );
         });
+
+        // connect hotkeys
         
     });
 }
