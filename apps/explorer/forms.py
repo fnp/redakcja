@@ -11,12 +11,22 @@ class PersonField(forms.CharField):
         try:
             return dcparser.Person.from_text( super(PersonField, self).clean(value) )
         except ValueError, e:
-            raise django.utils.ValidationError(e.message)        
+            raise django.utils.ValidationError(e.message)
 
-class PersonListField(forms.Field):
+def person_conv(value):
+    if isinstance(value, dcparser.Person):
+        return value
+    elif isinstance(value, basestring):
+        return dcparser.Person.from_text( unicode(value) )
+    else:
+        raise ValueError("Can't convert '%s' to Person object." % value)
 
+class ListField(forms.Field):
     def __init__(self, *args, **kwargs):
-        super(PersonListField, self).__init__(*args, **kwargs)
+        self.convert = kwargs.pop('converter', unicode)
+        if not kwargs.has_key('widget'):
+            kwargs['widget'] = forms.Textarea
+        super(ListField, self).__init__(*args, **kwargs)
     
     def _get_initial(self):
         return self._initial and (u'\n'.join( ( unicode(person) for person in self._initial)))
@@ -25,22 +35,21 @@ class PersonListField(forms.Field):
         if value is None:
             self._initial = None
         elif isinstance(value, list):
-            self._initial = [ e if isinstance(e, dcparser.Person) \
-                else dcparser.Person.from_text(e) for e in value ]
+            self._initial = [ self.convert(e) for e in value ]
         elif isinstance(value, basestring):
-            self._initial = [dcparser.Person.from_text(token) for token in value.split('\n') ]
+            self._initial = [ self.convert(e) for e in value.split('\n') ]
         else:
             raise ValueError("Invalid value. Must be a list of dcparser.Person or string")    
 
     initial = property(_get_initial, _set_initial)
 
     def clean(self, value):
-        super(PersonListField, self).clean(value)
-        people = value.split('\n')
+        super(ListField, self).clean(value)
+        elems = value.split('\n')
         try:
-            return [dcparser.Person.from_text(person) for person in people]
-        except ValueError, e:
-            raise django.utils.ValidationError(e.message)        
+            return [self.convert(el) for el in elems]
+        except ValueError, err:
+            raise django.utils.ValidationError(err.message)
 
 class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
@@ -56,19 +65,18 @@ class ImageFoldersForm(forms.Form):
         super(ImageFoldersForm, self).__init__(*args, **kwargs)
         self.fields['folders'].choices = [('', '-- Wybierz folder z obrazkami --')] + [(fn, fn) for fn in models.get_image_folders()]
 
-
 class DublinCoreForm(forms.Form):
     about = forms.URLField(verify_exists=False)
     author = PersonField()
     title = forms.CharField()
-    epoch = forms.CharField()
-    kind = forms.CharField()
-    genre = forms.CharField()
+    epochs = ListField()
+    kinds = ListField()
+    genres = ListField()
     created_at = forms.DateField()
     released_to_public_domain_at = forms.DateField()
-    editors = PersonListField(widget=forms.Textarea, required=False)
-    translators = PersonListField(widget=forms.Textarea, required=False)
-    technical_editors = PersonListField(widget=forms.Textarea, required=False)
+    editors = ListField(widget=forms.Textarea, required=False, converter=person_conv)
+    translators = ListField(widget=forms.Textarea, required=False, converter=person_conv)
+    technical_editors = ListField(widget=forms.Textarea, required=False, converter=person_conv)
     publisher = forms.CharField()
     source_name = forms.CharField(widget=forms.Textarea)
     source_url = forms.URLField(verify_exists=False)
@@ -80,11 +88,11 @@ class DublinCoreForm(forms.Form):
     commit_message = forms.CharField(required=False, widget=forms.HiddenInput)
     
     def __init__(self, *args, **kwargs):
-        text = None
-        info = kwargs.pop('info', None)
-        
+        info = kwargs.pop('info', None)        
         super(DublinCoreForm, self).__init__(*args, **kwargs)
         
         if isinstance(info, dcparser.BookInfo):
-            for name, value in info.to_dict().items():
-                self.fields[name].initial = value
+            vdict = info.to_dict()
+            for name in self.fields.keys():
+                if vdict.has_key(name):
+                    self.fields[name].initial = vdict[name]
