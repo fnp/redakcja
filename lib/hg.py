@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-import codecs
-from mercurial import localrepo, ui, match, node, encoding, util
+from mercurial import localrepo, ui, encoding, util
 import mercurial.merge, mercurial.error
 
 encoding.encoding = 'utf-8'

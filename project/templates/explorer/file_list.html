@@ -1,43 +1,58 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/filelist.css" type="text/css" />
+<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.paginate.js"></script>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+    $('#file-list').paginate({itemsPerPage: 15});
+
+    $('#file-list-find-button').click(function(event)
+    {
+        var expr = new RegExp( $('#file-list-filter').val() );
+
+        $('#file-list').filterItems( function(filename) {
+            return expr.test(filename);
+        });
+
+        event.preventDefault();
+    });
+
+    $('#file-list-reset-button').click(function(event)
+    {
+        $('#file-list').filterItems();
+        event.preventDefault();
+    });
+});
+</script>
+{% endblock extrahead %}
+
 {% block maincontent %}
+<div id="main-page-widgets">
+
+<div class="file-list-widget">
+    <form action="#" method="GET">
+    <p><input name="filter" id="file-list-filter" type="text" size="60" />
+        <input type="submit" value="Znajdź" id="file-list-find-button"/>
+        <input type="reset" value="Wyczyść" id="file-list-reset-button"/>
+    </p>
+    </form>
+    <div id="file-list">
+    {% for file in files %}
+    <p title="{{file}}"><a href="{% url editor_view file %}">{{ file }}</a></p>
+    {% endfor %}
+    </div>
+</div>
 
 {% if perms.explorer.can_add_files %}
+<div class="upload-file-widget">
 <h2>Dodaj nowy utwór</h2>
-
 <form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
     {{ bookform.as_p }}
     <p><button type="submit">Dodaj książkę</button></p>
 </form>
+</div>
 {% endif %}
 
-<h2>Wszystkie utwory:</h2>
-<table class="object-list" cellspacing="0">
-    <tr><th>Lp.</th><th>Nazwa utworu</th><th>Wersje</th></tr>
-    <tr><td colspan="3" class="page-navigation">
-        {% if files.has_previous %}
-        <span class="prev-page-marker">
-            <a href="?page={{ files.previous_page_number }}">Poprzednia</a>
-        </span>
-        {% endif %}
-
-        <span>Strona {{files.number}} z {{files.paginator.num_pages}}</span>
-
-        {% if files.has_next %}
-        <span class="next-page-marker">
-            <a href="?page={{ files.next_page_number }}">Następna</a>
-        </span>
-        {% endif %}
-    </td>
-    </tr>
-    {% for file in files.object_list %}
-    <tr>
-        <td>{{forloop.counter0|add:files.start_index}}.</td>
-        <td><a href="{% url editor_view file %}">{{ file }}</a></td>
-        <td> &nbsp; </td>
-    </tr>
-    {% endfor %}
-</table>
-
-
+</div>
 {% endblock maincontent %}

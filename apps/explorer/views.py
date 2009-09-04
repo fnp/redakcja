@@ -5,7 +5,7 @@ from librarian import html, parser, dcparser, ParseError, ValidationError
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.utils import simplejson as json
@@ -40,21 +40,12 @@ def ajax_login_required(view):
 #
 @with_repo
 def file_list(request, repo):
-    paginator = Paginator( repo.file_list('default'), 100);
+    latest_default = repo.repo.branchtags()['default']
+    files = list( repo.repo[latest_default] )
     bookform = forms.BookUploadForm()
 
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
-
-    try:
-        files = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        files = paginator.page(paginator.num_pages)
-
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'files': files, 'page': page, 'bookform': bookform,
+        'files': files, 'bookform': bookform,
     })
 
 @permission_required('explorer.can_add_files')
@@ -186,7 +177,7 @@ def file_dc(request, path, repo):
 @login_required
 @with_repo
 def display_editor(request, path, repo):
-    path = unicode(path).encode("utf-8")
+    
     if not repo.file_exists(path, models.user_branch(request.user)):
         try:
             data = repo.get_file(path, 'default')
@@ -199,7 +190,7 @@ def display_editor(request, path, repo):
                 
             repo.in_branch(new_file, models.user_branch(request.user) )
         except hg.RepositoryException, e:
-            return direct_to_templace(request, 'explorer/file_unavailble.html',\
+            return direct_to_template(request, 'explorer/file_unavailble.html',\
                 extra_context = { 'path': path, 'error': e })
 
     return direct_to_template(request, 'explorer/editor.html', extra_context={
@@ -215,7 +206,6 @@ def display_editor(request, path, repo):
 @ajax_login_required
 @with_repo
 def xmleditor_panel(request, path, repo):
-    form = forms.BookForm()
     text = repo.get_file(path, models.user_branch(request.user))
     
     return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={

@@ -11,7 +11,7 @@
 			$('.panel-overlay', mydata.root).css('display', 'block');
 			return false;
 		},
-		resize_changed: function(event) {
+	resize_changed: function(event) {
 			var old_width = parseInt(event.data.overlay.css('width'));
 			var delta = event.pageX + event.data.hotspot_x - old_width;
 			event.data.overlay.css({'width': old_width + delta});

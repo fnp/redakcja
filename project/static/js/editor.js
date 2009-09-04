@@ -151,10 +151,10 @@ Panel.prototype.connectToolbar = function()
     action_buttons.each(function() {
         var button = $(this);
         var hk = button.attr('ui:hotkey');
+        var params = $.evalJSON(button.attr('ui:action-params'));
 
         var callback = function() {
-           editor.callScriptlet(button.attr('ui:action'),
-                self, eval(button.attr('ui:action-params')) );
+           editor.callScriptlet(button.attr('ui:action'), self, params);
         };
 
         // connect button
