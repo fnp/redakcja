@@ -4,7 +4,7 @@
     background: #AAA;
     position: absolute;
     top: 0px; left:0px; right: 0px; 
-    height: 40pt;
+    height: auto;
     padding: 1pt;
     margin: 0pt;
 }

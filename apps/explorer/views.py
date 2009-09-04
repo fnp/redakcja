@@ -153,7 +153,7 @@ def file_dc(request, path, repo):
                 print "SAVING DC"
 
                 # zapisz
-                repo._add_file(path, document.serialize())
+                repo._write_file(path, document.serialize())
                 repo._commit( \
                     message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
                     user=request.user.username )
@@ -184,7 +184,24 @@ def file_dc(request, path, repo):
 # Display the main editor view
 
 @login_required
-def display_editor(request, path):
+@with_repo
+def display_editor(request, path, repo):
+    path = unicode(path).encode("utf-8")
+    if not repo.file_exists(path, models.user_branch(request.user)):
+        try:
+            data = repo.get_file(path, 'default')
+            print type(data)
+
+            def new_file():
+                repo._add_file(path, data)
+                repo._commit(message='File import from default branch',
+                    user=request.user.username)
+                
+            repo.in_branch(new_file, models.user_branch(request.user) )
+        except hg.RepositoryException, e:
+            return direct_to_templace(request, 'explorer/file_unavailble.html',\
+                extra_context = { 'path': path, 'error': e })
+
     return direct_to_template(request, 'explorer/editor.html', extra_context={
         'hash': path,
         'panel_list': ['lewy', 'prawy'],

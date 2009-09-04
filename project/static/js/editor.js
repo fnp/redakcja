@@ -52,6 +52,7 @@ Panel.prototype.load = function (url) {
             panel_hooks = null;
             self.connectToolbar();
             self.callHook('load');
+            self.callHook('toolbarResized');
         },
         error: function(request, textStatus, errorThrown) {
             $.log('ajax', url, this.target, 'error:', textStatus, errorThrown);
@@ -140,6 +141,7 @@ Panel.prototype.connectToolbar = function()
                     else
                         $(this).show();
                 });
+                self.callHook('toolbarResized');
             }
         });        
     });

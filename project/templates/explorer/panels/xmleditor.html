@@ -1,6 +1,6 @@
 {% load toolbar_tags %}
 
-<div class="iframe-container" style="position: absolute; top: 41pt; left:0px; right:0px; bottom: 0px;">
+<div class="iframe-container" style="position: absolute; top: 40px; left:0px; right:0px; bottom: 0px;">
 	<textarea name="text">{{ text }}</textarea>
 </div>
 
@@ -14,7 +14,7 @@ panel_hooks = {
 		var panel = self.contentDiv;
 
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
-	        $('textarea', panel).attr('id', textareaId);
+	$('textarea', panel).attr('id', textareaId);
 
 	var texteditor = CodeMirror.fromTextArea(textareaId, {
             parserfile: 'parsexml.js',
@@ -31,6 +31,7 @@ panel_hooks = {
                 texteditor.grabKeys(
                     $.fbind(self, self.hotkeyPressed),
                     $.fbind(self, self.isHotkey) );
+                
             }
         })
 
@@ -53,7 +54,12 @@ panel_hooks = {
 			} 
 		};
 		$.extend(saveInfo, myInfo);
-	}		
+	},
+
+        toolbarResized: function() {
+            $('.iframe-container', self.contentDiv).css('top',
+                    $('.toolbar', self.contentDiv).outerHeight() );
+        }
 };
 
 </script>

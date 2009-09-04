@@ -44,13 +44,29 @@ class Repository(object):
         return self.in_branch(lambda: self._get_file(path), branch)
 
     def _get_file(self, path):
+        if not self._file_exists(path):
+            raise RepositoryException("File not availble in this branch.")
+        
         return self.repo.wread(path)
-    
+
+    def file_exists(self, path, branch):
+        return self.in_branch(lambda: self._file_exists(path), branch)
+
+    def _file_exists(self, path):
+        return self.repo.dirstate[path] != "?"
+
+    def write_file(self, path, value, branch):
+        return self.in_branch(lambda: self._write_file(path, value), branch)
+
+    def _write_file(self, path, value):        
+        return self.repo.wwrite(path, value, [])
+
     def add_file(self, path, value, branch):
         return self.in_branch(lambda: self._add_file(path, value), branch)
 
     def _add_file(self, path, value):
-        return self.repo.wwrite(path, value.encode('utf-8'), [])
+        self._write_file(path, value)
+        return self.repo.add( [path] )
 
     def _commit(self, message, user=None):
         return self.repo.commit(text=message, user=user)
