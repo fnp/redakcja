@@ -21,7 +21,7 @@
                 ui:action-params="{{ button.params|escape }}"
                 {% if button.key %}ui:hotkey="{{ button.key|keycode }}"{% endif %} 
                 {% if button.tooltip %}ui:tooltip="{{ button.tooltip }}"{% endif %} >
-            {{ button.label }}
+            {{ button.label|safe }}
             </button>
             {% endfor %}
         </p>

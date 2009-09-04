@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<django-objects version="1.0"><object pk="2" model="toolbar.buttongroup"><field type="CharField" name="name">Autokorekta</field><field type="SlugField" name="slug">autokorekta</field><field type="IntegerField" name="position">0</field></object><object pk="1" model="toolbar.buttongroup"><field type="CharField" name="name">Formatowanie</field><field type="SlugField" name="slug">formatowanie</field><field type="IntegerField" name="position">0</field></object><object pk="4" model="toolbar.button"><field type="CharField" name="label">Novelpages</field><field type="SlugField" name="slug">novelpages</field><field type="TextField" name="params">({exprs: [
+<django-objects version="1.0"><object pk="2" model="toolbar.buttongroup"><field type="CharField" name="name">Autokorekta</field><field type="SlugField" name="slug">autokorekta</field><field type="IntegerField" name="position">0</field></object><object pk="1" model="toolbar.buttongroup"><field type="CharField" name="name">Formatowanie</field><field type="SlugField" name="slug">formatowanie</field><field type="IntegerField" name="position">0</field></object><object pk="3" model="toolbar.buttongroup"><field type="CharField" name="name">Widok</field><field type="SlugField" name="slug">display_options</field><field type="IntegerField" name="position">2</field></object><object pk="5" model="toolbar.button"><field type="CharField" name="label">A&lt;sup&gt;+&lt;/sup&gt;</field><field type="SlugField" name="slug">increase_font_size</field><field type="TextField" name="params">({change: 2})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field><field type="CharField" name="key">+</field><field type="CharField" name="tooltip">Zwiększ rozmiar czcionki.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="3"></object></field></object><object pk="6" model="toolbar.button"><field type="CharField" name="label">A&lt;sup&gt;-&lt;/sup&gt;</field><field type="SlugField" name="slug">descrease_font_size</field><field type="TextField" name="params">({change: -2})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field><field type="CharField" name="key">-</field><field type="CharField" name="tooltip">Zmniejsz rozmiar czcionki.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="3"></object></field></object><object pk="7" model="toolbar.button"><field type="CharField" name="label">A&lt;sup&gt;=&lt;/sup&gt;</field><field type="SlugField" name="slug">reset_font_size</field><field type="TextField" name="params">({fontSize: 13})</field><field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field><field type="CharField" name="key">=</field><field type="CharField" name="tooltip">Przywróć orginalny rozmiar czcionki.</field><field to="toolbar.buttongroup" name="group" rel="ManyToManyRel"><object pk="3"></object></field></object><object pk="4" model="toolbar.button"><field type="CharField" name="label">Novelpages</field><field type="SlugField" name="slug">novelpages</field><field type="TextField" name="params">({exprs: [
   ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."],
   ["„", ",,"] /* DOUBLE LOW-9 QUOTATION MARK */
 ]})
@@ -50,4 +50,13 @@ else {
         cm.setLineContent(line, content);
         line = cm.nextLine(line);
     } while( !(line === false) );
+}</field></object><object pk="codemirror_fontsize" model="toolbar.scriptlet"><field type="TextField" name="code">var texteditor = panel.texteditor;
+var frameBody = $('body', $(texteditor.frame).contents());
+
+if(params.fontSize) {
+    frameBody.css('font-size', params.fontSize);
+}
+else {
+    var old_size = parseInt(frameBody.css('font-size'));
+    frameBody.css('font-size', old_size + (params.change || 0) );
 }</field></object></django-objects>
