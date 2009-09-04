@@ -71,7 +71,7 @@ def file_upload(request, repo):
 
                 def upload_action():
                     print 'Adding file: %s' % f.name
-                    repo._add_file(f.name, decoded)
+                    repo._add_file(f.name, decoded.encode('utf-8') )
                     repo._commit(
                         message="File %s uploaded from platform by %s" %\
                             (f.name, request.user.username), \
