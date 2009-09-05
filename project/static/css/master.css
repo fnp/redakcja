@@ -294,7 +294,7 @@ div.isection p {
     width: 33%;  
 }
 
-.msg-error, .msg-success, .msg-warning {
+.msg-error, .msg-success, .msg-warning, .msg-info {
     overflow: hidden;
     padding: 0.1em 0.5em;
     text-align: center;
@@ -323,6 +323,11 @@ div.isection p {
 .msg-success {
     background-color: lightgreen;
     border-color: lightgreen;
+}
+
+.msg-info {
+    background-color: lightblue;
+    border-color: lightblue;
 }
 
 .msg-warning {

@@ -98,27 +98,37 @@ def file_upload(request, repo):
 def file_xml(request, repo, path):
     if request.method == 'POST':
         errors = None
+        warnings = None
         form = forms.BookForm(request.POST)
         if form.is_valid():
             print 'Saving whole text.', request.user.username
-            def save_action():
-                print 'In branch: ' + repo.repo[None].branch()
-                repo._add_file(path, form.cleaned_data['content'])                
-                repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'),\
-                     user=request.user.username)
             try:
-                # wczytaj dokument z ciągu znaków -> weryfikacja
-                document = parser.WLDocument.from_string(form.cleaned_data['content'])
+                # encode it back to UTF-8, so we can put it into repo
+                encoded_data = form.cleaned_data['content'].encode('utf-8')
+
+                def save_action():                    
+                    repo._add_file(path, encoded_data)
+                    repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'),\
+                         user=request.user.username)
+
+                try:
+                    # wczytaj dokument z ciągu znaków -> weryfikacja
+                    document = parser.WLDocument.from_string(form.cleaned_data['content'])
+                except (ParseError, ValidationError), e:
+                    warnings = [u'Niepoprawny dokument XML: ' + unicode(e.message)]
 
                 #  save to user's branch
                 repo.in_branch(save_action, models.user_branch(request.user) );
-            except (ParseError, ValidationError), e:
-                errors = [e.message]              
+            except UnicodeDecodeError, e:
+                errors = [u'Błąd kodowania danych przed zapisem: ' + unicode(e.message)]
+            except RepositoryException, e:
+                errors = [u'Błąd repozytorium: ' + unicode(e.message)]            
 
         if not errors:
             errors = dict( (field[0], field[1].as_text()) for field in form.errors.iteritems() )
 
-        return HttpResponse(json.dumps({'result': errors and 'error' or 'ok', 'errors': errors}));
+        return HttpResponse( json.dumps({'result': errors and 'error' or 'ok',
+            'errors': errors, 'warnings': warnings}) );
 
     form = forms.BookForm()
     data = repo.get_file(path, models.user_branch(request.user))

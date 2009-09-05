@@ -34,9 +34,11 @@
 {% endblock %}
 
 {% block message-box %}
+    <div class="msg-info" id="save-waiting"><p>Zapisuję dane na serwerze.</p><p class="data" /></div>
     <div class="msg-success" id="save-successful"><p>Zapisano :)</p><p class="data" /></div>
     <div class="msg-error" id="save-error"><p>Błąd przy zapisie.</p> <p class="data" /></div>
     <div class="msg-warning" id="not-implemented"><p>Tej funkcji jeszcze nie ma :(</p><p class="data" /></div>
+    <div class="msg-warning" id="save-warn"><p>Zapisano. Uwagi: (</p><p class="data" /></div>
 {% endblock %}
 
 {% block maincontent %}

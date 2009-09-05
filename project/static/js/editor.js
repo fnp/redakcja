@@ -154,7 +154,7 @@ Panel.prototype.connectToolbar = function()
         var params = $.evalJSON(button.attr('ui:action-params'));
 
         var callback = function() {
-           editor.callScriptlet(button.attr('ui:action'), self, params);
+            editor.callScriptlet(button.attr('ui:action'), self, params);
         };
 
         // connect button
@@ -354,12 +354,15 @@ Editor.prototype.saveToBranch = function(msg)
         'commit_message': msg
     })
 
+    self.showPopup('save-waiting', '', -1);
+
     $.ajax({
         url: saveInfo.url,
         dataType: 'json',
         success: function(data, textStatus) {
-            if (data.result != 'ok')
-                self.showPopup('save-error', data.errors[0]);
+            if (data.result != 'ok') {
+                self.showPopup('save-error', (data.errors && data.errors[0]) || 'Nieznany błąd X_X.');
+            }
             else {
                 self.refreshPanels(changed_panel);
                 $('#toolbar-button-save').attr('disabled', 'disabled');
@@ -367,11 +370,17 @@ Editor.prototype.saveToBranch = function(msg)
                 if(self.autosaveTimer)
                     clearTimeout(self.autosaveTimer);
 
-                self.showPopup('save-successful');
+                if (data.warnings == null)
+                    self.showPopup('save-successful');
+                else
+                    self.showPopup('save-warn', data.warnings[0]);
             }
+            
+            self.advancePopupQueue();
         },
         error: function(rq, tstat, err) {
-            self.showPopup('save-error');
+            self.showPopup('save-error', '- bład wewnętrzny serwera.');
+            self.advancePopupQueue();
         },
         type: 'POST',
         data: postData
@@ -435,10 +444,11 @@ Editor.prototype.sendPullRequest = function () {
 	}); */
 }
 
-Editor.prototype.showPopup = function(name, text) 
+Editor.prototype.showPopup = function(name, text, timeout)
 {
+    timeout = timeout || 4000;
     var self = this;
-    self.popupQueue.push( [name, text] )
+    self.popupQueue.push( [name, text, timeout] )
 
     if( self.popupQueue.length > 1) 
         return;
@@ -447,26 +457,31 @@ Editor.prototype.showPopup = function(name, text)
     $('*.data', box).html(text);
     box.fadeIn();
  
-    self._nextPopup = function() {
-        var elem = self.popupQueue.pop()
-        if(elem) {
-            var box = $('#message-box > #' + elem[0]);
+    if(timeout > 0)
+        setTimeout( $.fbind(self, self.advancePopupQueue), timeout);
+};
 
-            box.fadeOut(300, function() {
-                $('*.data', box).html();
-    
-                if( self.popupQueue.length > 0) {
-                    box = $('#message-box > #' + self.popupQueue[0][0]);
-                    $('*.data', box).html(self.popupQueue[0][1]);
-                    box.fadeIn();
-                    setTimeout(self._nextPopup, 5000);
-                }
-            });
-        }
+Editor.prototype.advancePopupQueue = function() {
+    var self = this;
+    var elem = this.popupQueue.shift();
+    if(elem) {
+        var box = $('#message-box > #' + elem[0]);
+
+        box.fadeOut(200, function()
+        {
+            $('*.data', box).html();
+
+            if( self.popupQueue.length > 0) {
+                var ibox = $('#message-box > #' + self.popupQueue[0][0]);
+                $('*.data', ibox).html(self.popupQueue[0][1]);
+                ibox.fadeIn();
+                if(self.popupQueue[0][2] > 0)
+                    setTimeout( $.fbind(self, self.advancePopupQueue), self.popupQueue[0][2]);
+            }
+        });
     }
+};
 
-    setTimeout(self._nextPopup, 5000);
-}
 
 Editor.prototype.registerScriptlet = function(scriptlet_id, scriptlet_func)
 {
@@ -485,7 +500,9 @@ Editor.prototype.callScriptlet = function(scriptlet_id, panel, params) {
   
 $(function() {
     $.fbind = function (self, func) {
-        return function() { return func.apply(self, arguments); };
+        return function() { 
+            return func.apply(self, arguments);
+        };
     };
     
     editor = new Editor();
