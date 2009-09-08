@@ -83,7 +83,7 @@
   <object pk="5" model="toolbar.button">
     <field type="CharField" name="label">A&lt;sup&gt;+&lt;/sup&gt;</field>
     <field type="SlugField" name="slug">increase_font_size</field>
-    <field type="TextField" name="params">({change: 2})</field>
+    <field type="TextField" name="params">{"change": 2}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field>
     <field type="CharField" name="key">+</field>
     <field type="CharField" name="tooltip">Zwiększ rozmiar czcionki.</field>
@@ -94,7 +94,7 @@
   <object pk="6" model="toolbar.button">
     <field type="CharField" name="label">A&lt;sup&gt;-&lt;/sup&gt;</field>
     <field type="SlugField" name="slug">descrease_font_size</field>
-    <field type="TextField" name="params">({change: -2})</field>
+    <field type="TextField" name="params">{"change": -2}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field>
     <field type="CharField" name="key">-</field>
     <field type="CharField" name="tooltip">Zmniejsz rozmiar czcionki.</field>
@@ -105,7 +105,7 @@
   <object pk="7" model="toolbar.button">
     <field type="CharField" name="label">A&lt;sup&gt;=&lt;/sup&gt;</field>
     <field type="SlugField" name="slug">reset_font_size</field>
-    <field type="TextField" name="params">({fontSize: 13})</field>
+    <field type="TextField" name="params">{"fontSize": 13}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">codemirror_fontsize</field>
     <field type="CharField" name="key">=</field>
     <field type="CharField" name="tooltip">Przywróć orginalny rozmiar czcionki.</field>
@@ -113,10 +113,65 @@
       <object pk="3"/>
     </field>
   </object>
+  <object pk="76" model="toolbar.button">
+    <field type="CharField" name="label">A&lt;sup&gt;↓&lt;/sup&gt;</field>
+    <field type="SlugField" name="slug">tolowercase</field>
+    <field type="TextField" name="params">[]</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lowercase</field>
+    <field type="CharField" name="key">u</field>
+    <field type="CharField" name="tooltip">Zamień wielkie litery na małe.</field>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="15"/>
+    </field>
+  </object>
+  <object pk="4" model="toolbar.button">
+    <field type="CharField" name="label">Podstawowa</field>
+    <field type="SlugField" name="slug">basic_correction</field>
+    <field type="TextField" name="params">{"exprs": [["\n\\d+\n", "\n"], ["-\\s*\n+", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">fulltextregexp</field>
+    <field type="CharField" name="key"/>
+    <field type="CharField" name="tooltip">Wykonuję operację z novel-pages i poem-pages.</field>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
+  <object pk="3" model="toolbar.button">
+    <field type="CharField" name="label">Usuń spację</field>
+    <field type="SlugField" name="slug">strip_whitespace</field>
+    <field type="TextField" name="params">{"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
+    <field type="CharField" name="key"/>
+    <field type="CharField" name="tooltip">Usuwa zbędne spację z dokumentu.</field>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
+  <object pk="77" model="toolbar.button">
+    <field type="CharField" name="label">Zamień Cudzysłowy</field>
+    <field type="SlugField" name="slug">zamien-cudzyslowy</field>
+    <field type="TextField" name="params">{"exprs": [["\u00bb|\u201e", ",,"], ["\u00ab", "\""], ["\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", ",,$1"]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
+    <field type="CharField" name="key"/>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
+  <object pk="2" model="toolbar.button">
+    <field type="CharField" name="label">Zamień dywiz</field>
+    <field type="SlugField" name="slug">zamien_dywiz</field>
+    <field type="TextField" name="params">{"exprs": [["(\\d)[\u2014-](\\d)", "$1--$2"], ["\u2014", "---"]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
+    <field type="CharField" name="key"/>
+    <field type="CharField" name="tooltip">Zamienia '—' na '---', oraz '1—2' na '1--2'.</field>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
   <object pk="39" model="toolbar.button">
     <field type="CharField" name="label">akapit</field>
     <field type="SlugField" name="slug">akapit</field>
-    <field type="TextField" name="params">({tag:"akap"})</field>
+    <field type="TextField" name="params">{"tag": "akap"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -127,7 +182,7 @@
   <object pk="40" model="toolbar.button">
     <field type="CharField" name="label">akapit cd.</field>
     <field type="SlugField" name="slug">akapit-cd</field>
-    <field type="TextField" name="params">({tag:"akap_cd"})</field>
+    <field type="TextField" name="params">{"tag": "akap_cd"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -138,7 +193,7 @@
   <object pk="41" model="toolbar.button">
     <field type="CharField" name="label">akapit dialogowy</field>
     <field type="SlugField" name="slug">akapit-dialogowy</field>
-    <field type="TextField" name="params">({tag:"akap_dialog"})</field>
+    <field type="TextField" name="params">{"tag": "akap_dialog"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -149,7 +204,7 @@
   <object pk="14" model="toolbar.button">
     <field type="CharField" name="label">akt</field>
     <field type="SlugField" name="slug">akt</field>
-    <field type="TextField" name="params">({tag:"akt"})</field>
+    <field type="TextField" name="params">{"tag": "akt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -160,7 +215,7 @@
   <object pk="32" model="toolbar.button">
     <field type="CharField" name="label">autor</field>
     <field type="SlugField" name="slug">autor</field>
-    <field type="TextField" name="params">({tag:"autor"})</field>
+    <field type="TextField" name="params">{"tag": "autor"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -171,7 +226,7 @@
   <object pk="10" model="toolbar.button">
     <field type="CharField" name="label">część/księga</field>
     <field type="SlugField" name="slug">czesc</field>
-    <field type="TextField" name="params">({tag:"naglowek_czesc"})</field>
+    <field type="TextField" name="params">{"tag": "naglowek_czesc"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -182,7 +237,7 @@
   <object pk="65" model="toolbar.button">
     <field type="CharField" name="label">dedykacja</field>
     <field type="SlugField" name="slug">dedykacja</field>
-    <field type="TextField" name="params">({tag:"dedykacja"})</field>
+    <field type="TextField" name="params">{"tag": "dedykacja"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -193,7 +248,7 @@
   <object pk="74" model="toolbar.button">
     <field type="CharField" name="label">dedykacja</field>
     <field type="SlugField" name="slug">dedykacja</field>
-    <field type="TextField" name="params">({tag:"dedykacja"})</field>
+    <field type="TextField" name="params">{"tag": "dedykacja"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -204,7 +259,7 @@
   <object pk="31" model="toolbar.button">
     <field type="CharField" name="label">didaskalia</field>
     <field type="SlugField" name="slug">didaskalia</field>
-    <field type="TextField" name="params">({tag:"didaskalia"})</field>
+    <field type="TextField" name="params">{"tag": "didaskalia"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -215,7 +270,7 @@
   <object pk="62" model="toolbar.button">
     <field type="CharField" name="label">didaskalia</field>
     <field type="SlugField" name="slug">didaskalia</field>
-    <field type="TextField" name="params">({tag:"didaskalia"})</field>
+    <field type="TextField" name="params">{"tag": "didaskalia"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -226,7 +281,7 @@
   <object pk="49" model="toolbar.button">
     <field type="CharField" name="label">didaskalia wewn.</field>
     <field type="SlugField" name="slug">didaskalia-wewn</field>
-    <field type="TextField" name="params">({tag:"didask_tekst"})</field>
+    <field type="TextField" name="params">{"tag": "didask_tekst"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -237,7 +292,7 @@
   <object pk="63" model="toolbar.button">
     <field type="CharField" name="label">didaskalia wewn.</field>
     <field type="SlugField" name="slug">didaskalia-wewn</field>
-    <field type="TextField" name="params">({tag:"didask_tekst"})</field>
+    <field type="TextField" name="params">{"tag": "didask_tekst"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -248,7 +303,7 @@
   <object pk="20" model="toolbar.button">
     <field type="CharField" name="label">dramat wiersz.</field>
     <field type="SlugField" name="slug">dramat-wiersz</field>
-    <field type="TextField" name="params">({tag:"dramat_wierszowany_l"})</field>
+    <field type="TextField" name="params">{"tag": "dramat_wierszowany_l"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -259,7 +314,7 @@
   <object pk="22" model="toolbar.button">
     <field type="CharField" name="label">dramat wiersz./w. łam</field>
     <field type="SlugField" name="slug">dramat-wiersz-w-lam</field>
-    <field type="TextField" name="params">({tag:"dramat_wierszowany_lp"})</field>
+    <field type="TextField" name="params">{"tag": "dramat_wierszowany_lp"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -270,7 +325,7 @@
   <object pk="21" model="toolbar.button">
     <field type="CharField" name="label">dramat współczesny</field>
     <field type="SlugField" name="slug">dramat-wspolczesny</field>
-    <field type="TextField" name="params">({tag:"dramat_wspolczesny"})</field>
+    <field type="TextField" name="params">{"tag": "dramat_wspolczesny"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -281,7 +336,7 @@
   <object pk="38" model="toolbar.button">
     <field type="CharField" name="label">dzieło nadrzędne</field>
     <field type="SlugField" name="slug">dzielo-nadrzedne</field>
-    <field type="TextField" name="params">({tag:"dzielo_nadrzedne"})</field>
+    <field type="TextField" name="params">{"tag": "dzielo_nadrzedne"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -292,7 +347,7 @@
   <object pk="67" model="toolbar.button">
     <field type="CharField" name="label">długi cyt. poet.</field>
     <field type="SlugField" name="slug">dlugi-cyt-poet</field>
-    <field type="TextField" name="params">({tag:"poezja_cyt"})</field>
+    <field type="TextField" name="params">{"tag": "poezja_cyt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -303,7 +358,7 @@
   <object pk="43" model="toolbar.button">
     <field type="CharField" name="label">długi cyta. poet.</field>
     <field type="SlugField" name="slug">dlugi-cyt-poet</field>
-    <field type="TextField" name="params">({tag:"poezja_cyt"})</field>
+    <field type="TextField" name="params">{"tag": "poezja_cyt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -314,29 +369,19 @@
   <object pk="42" model="toolbar.button">
     <field type="CharField" name="label">długi cytat</field>
     <field type="SlugField" name="slug">dlugi-cytat</field>
-    <field type="TextField" name="params">({tag:"dlugi_cyt"})</field>
+    <field type="TextField" name="params">{"tag": "dlugi_cyt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
     <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
       <object pk="14"/>
-    </field>
-  </object>
-  <object pk="66" model="toolbar.button">
-    <field type="CharField" name="label">długi cytat</field>
-    <field type="SlugField" name="slug">dlugi-cytat</field>
-    <field type="TextField" name="params">dlugi_cytat</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip"/>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
       <object pk="21"/>
     </field>
   </object>
   <object pk="52" model="toolbar.button">
     <field type="CharField" name="label">ekstra</field>
     <field type="SlugField" name="slug">ekstra</field>
-    <field type="TextField" name="params">({tag:"ekstra"})</field>
+    <field type="TextField" name="params">{"tag": "ekstra"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -347,7 +392,7 @@
   <object pk="29" model="toolbar.button">
     <field type="CharField" name="label">kwestia</field>
     <field type="SlugField" name="slug">kwestia</field>
-    <field type="TextField" name="params">({tag:"kwestia"})</field>
+    <field type="TextField" name="params">{"tag": "kwestia"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -358,7 +403,7 @@
   <object pk="61" model="toolbar.button">
     <field type="CharField" name="label">kwestia</field>
     <field type="SlugField" name="slug">kwestia</field>
-    <field type="TextField" name="params">({tag:"kwestia"})</field>
+    <field type="TextField" name="params">{"tag": "kwestia"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -369,7 +414,7 @@
   <object pk="23" model="toolbar.button">
     <field type="CharField" name="label">liryka</field>
     <field type="SlugField" name="slug">liryka</field>
-    <field type="TextField" name="params">({tag:"liryka_l"})</field>
+    <field type="TextField" name="params">{"tag": "liryka_l"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -380,7 +425,7 @@
   <object pk="24" model="toolbar.button">
     <field type="CharField" name="label">liryka/w. łam</field>
     <field type="SlugField" name="slug">liryka-w-lam</field>
-    <field type="TextField" name="params">({tag:"liryka_lp"})</field>
+    <field type="TextField" name="params">{"tag": "liryka_lp"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -391,7 +436,7 @@
   <object pk="47" model="toolbar.button">
     <field type="CharField" name="label">mamtemat.</field>
     <field type="SlugField" name="slug">matemat</field>
-    <field type="TextField" name="params">({tag:"mat"})</field>
+    <field type="TextField" name="params">{"tag": "mat"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -402,7 +447,7 @@
   <object pk="36" model="toolbar.button">
     <field type="CharField" name="label">motto</field>
     <field type="SlugField" name="slug">motto</field>
-    <field type="TextField" name="params">({tag:"motto"})</field>
+    <field type="TextField" name="params">{"tag": "motto"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -413,7 +458,7 @@
   <object pk="75" model="toolbar.button">
     <field type="CharField" name="label">motto</field>
     <field type="SlugField" name="slug">motto</field>
-    <field type="TextField" name="params">({tag:"motto"})</field>
+    <field type="TextField" name="params">{"tag": "motto"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -424,7 +469,7 @@
   <object pk="37" model="toolbar.button">
     <field type="CharField" name="label">motto podpis</field>
     <field type="SlugField" name="slug">motto-podpis</field>
-    <field type="TextField" name="params">({tag:"motto_podpis"})</field>
+    <field type="TextField" name="params">{"tag": "motto_podpis"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -435,7 +480,7 @@
   <object pk="16" model="toolbar.button">
     <field type="CharField" name="label">nagłówek kwestii</field>
     <field type="SlugField" name="slug">naglowek-kwestii</field>
-    <field type="TextField" name="params">({tag:"naglowek_osoba"})</field>
+    <field type="TextField" name="params">{"tag": "naglowek_osoba"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -446,7 +491,7 @@
   <object pk="35" model="toolbar.button">
     <field type="CharField" name="label">nota</field>
     <field type="SlugField" name="slug">nota</field>
-    <field type="TextField" name="params">({tag:"nota"})</field>
+    <field type="TextField" name="params">{"tag": "nota"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -454,27 +499,10 @@
       <object pk="13"/>
     </field>
   </object>
-  <object pk="4" model="toolbar.button">
-    <field type="CharField" name="label">Novelpages</field>
-    <field type="SlugField" name="slug">novelpages</field>
-    <field type="TextField" name="params">({exprs: [
-
-  ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."],
-
-  ["„", ",,"] /* DOUBLE LOW-9 QUOTATION MARK */
-
-]})</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip">Wykonuję operację z novel-pages.</field>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="2"/>
-    </field>
-  </object>
   <object pk="18" model="toolbar.button">
     <field type="CharField" name="label">opowiadanie</field>
     <field type="SlugField" name="slug">opowiadanie</field>
-    <field type="TextField" name="params">({tag:"opowiadanie"})</field>
+    <field type="TextField" name="params">{"tag": "opowiadanie"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -485,7 +513,7 @@
   <object pk="50" model="toolbar.button">
     <field type="CharField" name="label">osoba</field>
     <field type="SlugField" name="slug">osoba</field>
-    <field type="TextField" name="params">({tag:"osoba"})</field>
+    <field type="TextField" name="params">{"tag": "osoba"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -496,7 +524,7 @@
   <object pk="64" model="toolbar.button">
     <field type="CharField" name="label">osoba</field>
     <field type="SlugField" name="slug">osoba</field>
-    <field type="TextField" name="params">({tag:"osoba"})</field>
+    <field type="TextField" name="params">{"tag": "osoba"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -507,7 +535,7 @@
   <object pk="12" model="toolbar.button">
     <field type="CharField" name="label">podrozdział</field>
     <field type="SlugField" name="slug">podrozdzial</field>
-    <field type="TextField" name="params">({tag:"naglowek_podrozdzial"})</field>
+    <field type="TextField" name="params">{"tag": "naglowek_podrozdzial"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -518,7 +546,7 @@
   <object pk="34" model="toolbar.button">
     <field type="CharField" name="label">podtytuł</field>
     <field type="SlugField" name="slug">podtytul</field>
-    <field type="TextField" name="params">({tag:"podtytul"})</field>
+    <field type="TextField" name="params">{"tag": "podtytul"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -529,7 +557,7 @@
   <object pk="19" model="toolbar.button">
     <field type="CharField" name="label">powieść</field>
     <field type="SlugField" name="slug">powiesc</field>
-    <field type="TextField" name="params">({tag:"powiesc"})</field>
+    <field type="TextField" name="params">{"tag": "powiesc"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -540,7 +568,7 @@
   <object pk="68" model="toolbar.button">
     <field type="CharField" name="label">przypis autorski</field>
     <field type="SlugField" name="slug">przypis-autorski</field>
-    <field type="TextField" name="params">({tag:"pa"})</field>
+    <field type="TextField" name="params">{"tag": "pa"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -551,7 +579,7 @@
   <object pk="71" model="toolbar.button">
     <field type="CharField" name="label">przypis edytorski</field>
     <field type="SlugField" name="slug">przypis-edytorski</field>
-    <field type="TextField" name="params">({tag:"pe"})</field>
+    <field type="TextField" name="params">{"tag": "pe"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -562,7 +590,7 @@
   <object pk="70" model="toolbar.button">
     <field type="CharField" name="label">przypis redaktorski</field>
     <field type="SlugField" name="slug">przypis-redaktorski</field>
-    <field type="TextField" name="params">({tag:"pr"})</field>
+    <field type="TextField" name="params">{"tag": "pr"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -573,7 +601,7 @@
   <object pk="69" model="toolbar.button">
     <field type="CharField" name="label">przypis tłumacza</field>
     <field type="SlugField" name="slug">przypis-tlumacza</field>
-    <field type="TextField" name="params">({tag:"pt"})</field>
+    <field type="TextField" name="params">{"tag": "pt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -584,7 +612,7 @@
   <object pk="11" model="toolbar.button">
     <field type="CharField" name="label">rozdział</field>
     <field type="SlugField" name="slug">rozdzial</field>
-    <field type="TextField" name="params">({tag:"naglowek_rozdzial"})</field>
+    <field type="TextField" name="params">{"tag": "naglowek_rozdzial"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -595,7 +623,7 @@
   <object pk="15" model="toolbar.button">
     <field type="CharField" name="label">scena</field>
     <field type="SlugField" name="slug">scena</field>
-    <field type="TextField" name="params">({tag:"naglowek_scena"})</field>
+    <field type="TextField" name="params">{"tag": "naglowek_scena"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -606,7 +634,7 @@
   <object pk="54" model="toolbar.button">
     <field type="CharField" name="label">sep. asteryks</field>
     <field type="SlugField" name="slug">sep-asteryks</field>
-    <field type="TextField" name="params">({tag:"sekcja_asteryks"})</field>
+    <field type="TextField" name="params">{"tag": "sekcja_asteryks"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -617,7 +645,7 @@
   <object pk="55" model="toolbar.button">
     <field type="CharField" name="label">sep. linia</field>
     <field type="SlugField" name="slug">sep-linia</field>
-    <field type="TextField" name="params">({tag:"separator_linia"})</field>
+    <field type="TextField" name="params">{"tag": "separator_linia"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -628,7 +656,7 @@
   <object pk="53" model="toolbar.button">
     <field type="CharField" name="label">sep. światło</field>
     <field type="SlugField" name="slug">sep-swiatlo</field>
-    <field type="TextField" name="params">({tag:"sekcja_swiatlo"})</field>
+    <field type="TextField" name="params">{"tag": "sekcja_swiatlo"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -636,32 +664,10 @@
       <object pk="16"/>
     </field>
   </object>
-  <object pk="13" model="toolbar.button">
-    <field type="CharField" name="label">śródtytuł</field>
-    <field type="SlugField" name="slug">srodtytul</field>
-    <field type="TextField" name="params">({tag:"srodtytul"})</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip"/>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="1"/>
-    </field>
-  </object>
-  <object pk="30" model="toolbar.button">
-    <field type="CharField" name="label">strofa</field>
-    <field type="SlugField" name="slug">strofa</field>
-    <field type="TextField" name="params">({tag"strofa"})</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip"/>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="12"/>
-    </field>
-  </object>
   <object pk="57" model="toolbar.button">
     <field type="CharField" name="label">strofa</field>
     <field type="SlugField" name="slug">strofa</field>
-    <field type="TextField" name="params">({tag:"strofa"})</field>
+    <field type="TextField" name="params">{"tag": "strofa"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -672,7 +678,7 @@
   <object pk="46" model="toolbar.button">
     <field type="CharField" name="label">słowo obce</field>
     <field type="SlugField" name="slug">slowo-obce</field>
-    <field type="TextField" name="params">({tag:"slowo_obce"})</field>
+    <field type="TextField" name="params">{"tag": "slowo_obce"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -683,7 +689,7 @@
   <object pk="17" model="toolbar.button">
     <field type="CharField" name="label">tagi główne</field>
     <field type="SlugField" name="slug">tagi-glowne</field>
-    <field type="TextField" name="params">({tag:"utwor"})</field>
+    <field type="TextField" name="params">{"tag": "utwor"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -694,7 +700,7 @@
   <object pk="33" model="toolbar.button">
     <field type="CharField" name="label">tytuł</field>
     <field type="SlugField" name="slug">tytul</field>
-    <field type="TextField" name="params">({tag:"nazwa_utworu"})</field>
+    <field type="TextField" name="params">{"tag": "nazwa_utworu"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -705,7 +711,7 @@
   <object pk="45" model="toolbar.button">
     <field type="CharField" name="label">tytuł dzieła</field>
     <field type="SlugField" name="slug">tytul-dziela</field>
-    <field type="TextField" name="params">({tag:"tytul_dziela"})</field>
+    <field type="TextField" name="params">{"tag": "tytul_dziela", "attrs": {"typ": " "}}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -713,21 +719,10 @@
       <object pk="15"/>
     </field>
   </object>
-  <object pk="3" model="toolbar.button">
-    <field type="CharField" name="label">Usuń spację</field>
-    <field type="SlugField" name="slug">strip_whitespace</field>
-    <field type="TextField" name="params">({exprs: [ ["^\\s+|\\s+$", ""], ["\\s+", " "] ]})</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip">Usuwa zbędne spację z dokumentu.</field>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="2"/>
-    </field>
-  </object>
   <object pk="51" model="toolbar.button">
     <field type="CharField" name="label">uwaga</field>
     <field type="SlugField" name="slug">uwaga</field>
-    <field type="TextField" name="params">({tag:"uwaga"})</field>
+    <field type="TextField" name="params">{"tag": "uwaga"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -738,7 +733,7 @@
   <object pk="28" model="toolbar.button">
     <field type="CharField" name="label">wers akap.</field>
     <field type="SlugField" name="slug">wers-akap</field>
-    <field type="TextField" name="params">({tag:"wers_akap"})</field>
+    <field type="TextField" name="params">{"tag": "wers_akap"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -749,7 +744,7 @@
   <object pk="58" model="toolbar.button">
     <field type="CharField" name="label">wers akap.</field>
     <field type="SlugField" name="slug">wers-akap</field>
-    <field type="TextField" name="params">({tag:"wers_akap"})</field>
+    <field type="TextField" name="params">{"tag": "wers_akap"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -760,7 +755,7 @@
   <object pk="26" model="toolbar.button">
     <field type="CharField" name="label">wers cd.</field>
     <field type="SlugField" name="slug">wers-cd</field>
-    <field type="TextField" name="params">({tag:"wers_cd"})</field>
+    <field type="TextField" name="params">{"tag": "wers_cd"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -771,7 +766,7 @@
   <object pk="60" model="toolbar.button">
     <field type="CharField" name="label">wers cd.</field>
     <field type="SlugField" name="slug">wers-cd</field>
-    <field type="TextField" name="params">({tag:"wers_cd"})</field>
+    <field type="TextField" name="params">{"tag": "wers_cd"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -782,7 +777,7 @@
   <object pk="27" model="toolbar.button">
     <field type="CharField" name="label">wers wcięty</field>
     <field type="SlugField" name="slug">wers-wciety</field>
-    <field type="TextField" name="params">({tag:"wers_wciety"})</field>
+    <field type="TextField" name="params">{"tag": "wers_wciety"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -793,7 +788,7 @@
   <object pk="59" model="toolbar.button">
     <field type="CharField" name="label">wers wcięty</field>
     <field type="SlugField" name="slug">wers-wciety</field>
-    <field type="TextField" name="params">({tag:"wers_wciety"})</field>
+    <field type="TextField" name="params">{"tag": "wers_wciety"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -804,7 +799,7 @@
   <object pk="48" model="toolbar.button">
     <field type="CharField" name="label">www</field>
     <field type="SlugField" name="slug">www</field>
-    <field type="TextField" name="params">({tag:"www"})</field>
+    <field type="TextField" name="params">{"tag": "www"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -815,7 +810,7 @@
   <object pk="44" model="toolbar.button">
     <field type="CharField" name="label">wyróżnienie</field>
     <field type="SlugField" name="slug">wyroznienie</field>
-    <field type="TextField" name="params">({tag:"wyroznienie"})</field>
+    <field type="TextField" name="params">{"tag": "wyroznienie"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -826,7 +821,7 @@
   <object pk="25" model="toolbar.button">
     <field type="CharField" name="label">wywiad</field>
     <field type="SlugField" name="slug">wywiad</field>
-    <field type="TextField" name="params">({tag:"wywiad"})</field>
+    <field type="TextField" name="params">{"tag": "wywiad"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -837,7 +832,7 @@
   <object pk="73" model="toolbar.button">
     <field type="CharField" name="label">wywiad odpowiedź</field>
     <field type="SlugField" name="slug">wywiad-odpowiedz</field>
-    <field type="TextField" name="params">({tag:"wywiad_odp"})</field>
+    <field type="TextField" name="params">{"tag": "wywiad_odp"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -848,7 +843,7 @@
   <object pk="72" model="toolbar.button">
     <field type="CharField" name="label">wywiad pytanie</field>
     <field type="SlugField" name="slug">wywiad-pytanie</field>
-    <field type="TextField" name="params">({tag:"wywiad_pyt"})</field>
+    <field type="TextField" name="params">{"tag": "wywiad_pyt"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -856,21 +851,10 @@
       <object pk="21"/>
     </field>
   </object>
-  <object pk="2" model="toolbar.button">
-    <field type="CharField" name="label">Zamień dywiz</field>
-    <field type="SlugField" name="slug">zamien_dywiz</field>
-    <field type="TextField" name="params">({exprs:[ ["—","---"] ]})</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
-    <field type="CharField" name="key"/>
-    <field type="CharField" name="tooltip">Zamienia '—' na '---'.</field>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="2"/>
-    </field>
-  </object>
   <object pk="56" model="toolbar.button">
     <field type="CharField" name="label">zastępnik wersu</field>
     <field type="SlugField" name="slug">zastepnik-wersu</field>
-    <field type="TextField" name="params">({tag:"zastepnik_wersu"})</field>
+    <field type="TextField" name="params">{"tag": "zastepnik_wersu"}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
     <field type="CharField" name="key"/>
     <field type="CharField" name="tooltip"/>
@@ -878,20 +862,43 @@
       <object pk="16"/>
     </field>
   </object>
+  <object pk="13" model="toolbar.button">
+    <field type="CharField" name="label">śródtytuł</field>
+    <field type="SlugField" name="slug">srodtytul</field>
+    <field type="TextField" name="params">{"tag": "srodtytul"}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">insert_tag</field>
+    <field type="CharField" name="key"/>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="1"/>
+    </field>
+  </object>
   <object pk="insert_tag" model="toolbar.scriptlet">
-    <field type="TextField" name="code">$.log(editor, panel, params);
-
-
-
-var texteditor = panel.texteditor;
+    <field type="TextField" name="code">var texteditor = panel.texteditor;
 
 var text = texteditor.selection();
 
-texteditor.replaceSelection('&lt;' + params.tag + '&gt;' + text + '&lt;/' + params.tag + '&gt;');
+var out = '&lt;'+params.tag;
 
-if (text.length == 0) 
+for (var attr in params.attrs) {
 
-{
+    out += ' '+attr+'="' + params.attrs[attr] + '"';
+
+};
+
+out += '&gt;';
+
+out += text;
+
+out += '&lt;/' + params.tag + '&gt;';
+
+ 
+
+texteditor.replaceSelection(out);
+
+
+
+if (text.length == 0) {
 
     var pos = texteditor.cursorPosition();
 
@@ -905,56 +912,86 @@ panel.fireEvent('contentChanged');</field>
   </object>
   <object pk="lineregexp" model="toolbar.scriptlet">
     <field type="TextField" name="code">// params: {exprs: list of {expr: "", repl: "" [, opts: "g"]}}
+
 var cm = panel.texteditor;
 
+
+
 var exprs = $.map(params.exprs, function(expr) {
+
     var opts = "g";
+
     if(expr.length &gt; 2)
+
         opts = expr[2];
+
     return {rx: new RegExp(expr[0], opts), repl: expr[1]};
+
 });
 
-var selection = cm.selection();
 
-if(selection) 
-{
-    var changed = false;
-    var lines = selection.split('\n');
-    var lines = $.map(lines, function(line) { 
-        var old_line = line;
-        $(exprs).each(function() { 
-            var expr = this;
-            line = line.replace(expr.rx, expr.repl);
-        });
-        if(old_line != line) changed = true;
-        return line;
+
+var partial = true;
+
+var text = cm.selection();
+
+
+
+if(!text) {
+
+    var cpos = cm.cursorPosition();
+
+    cpos.line = cm.lineNumber(cpos.line)
+
+    cm.selectLines(cm.firstLine(), 0, cm.lastLine(), 0);
+
+    text = cm.selection();
+
+    partial = false;
+
+}
+
+
+
+var changed = false;
+
+var lines = text.split('\n');
+
+var lines = $.map(lines, function(line) { 
+
+    var old_line = line;
+
+    $(exprs).each(function() { 
+
+        var expr = this;
+
+        line = line.replace(expr.rx, expr.repl);
+
     });
 
-    if(changed) {
-        cm.replaceSelection( lines.join('\n') );
-        panel.fireEvent('contentChanged');
-    }
+    if(old_line != line) changed = true;
+
+    return line;
+
+});
+
+
+
+if(changed) 
+
+{
+
+    cm.replaceSelection( lines.join('\n') );
+
+    panel.fireEvent('contentChanged');
+
 }
-else {
-    var line = cm.firstLine();
-    var hasChanges = false;
-    do {
-        var content = cm.lineContent(line);    
-        var old_content = content;
-        $(exprs).each(function() { var expr = this;
-            content = content.replace(expr.rx, expr.repl);
-        });
-        
-        if(old_content != content) {
-            cm.setLineContent(line, content);
-            hasChanges = true;
-        }
 
-        line = cm.nextLine(line);
-    } while( !(line === false) );
 
-    if(hasChanges) panel.fireEvent('contentChanged');
-}</field>
+
+if(!partial)
+
+    cm.selectLines( cm.nthLine(cpos.line), cpos.character )</field>
   </object>
   <object pk="codemirror_fontsize" model="toolbar.scriptlet">
     <field type="TextField" name="code">var texteditor = panel.texteditor;
@@ -976,5 +1013,96 @@ else {
     frameBody.css('font-size', old_size + (params.change || 0) );
 
 }</field>
+  </object>
+  <object pk="fulltextregexp" model="toolbar.scriptlet">
+    <field type="TextField" name="code">var cm = panel.texteditor;
+
+var exprs = $.map(params.exprs, function(expr) {
+
+    var opts = "mg";
+
+    if(expr.length &gt; 2)
+
+        opts = expr[2];
+
+    return {rx: new RegExp(expr[0], opts), repl: expr[1]};
+
+});
+
+
+
+var partial = true;
+
+var text = cm.selection();
+
+
+
+if(!text) {
+
+    var cpos = cm.cursorPosition();
+
+    cpos.line = cm.lineNumber(cpos.line)
+
+    cm.selectLines(cm.firstLine(), 0, cm.lastLine(), 0);
+
+    text = cm.selection();
+
+    partial = false;
+
+}
+
+
+
+var original = text;
+
+
+
+$(exprs).each(function() { 
+
+    text = text.replace(this.rx, this.repl);
+
+});
+
+
+
+if( original != text) {
+
+    cm.replaceSelection(text);
+
+    panel.fireEvent('contentChanged');
+
+}
+
+
+
+if(!partial) {
+
+    cm.selectLines( cm.nthLine(cpos.line), cpos.character );
+
+}</field>
+  </object>
+  <object pk="macro" model="toolbar.scriptlet">
+    <field type="TextField" name="code">params.each(function() {
+
+    editor.callScriptlet(this[0], this[1]);
+
+});</field>
+  </object>
+  <object pk="lowercase" model="toolbar.scriptlet">
+    <field type="TextField" name="code">var cm = panel.texteditor;
+
+var text = cm.selection();
+
+if(!text) return;
+
+var repl = text.toLowerCase();
+
+if(repl != text) {
+
+    cm.replaceSelection(repl);
+
+    panel.fireEvent('contentChanged');
+
+};</field>
   </object>
 </django-objects>
