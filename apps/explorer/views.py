@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import urllib2
 import hg
-from librarian import html, parser, dcparser, ParseError, ValidationError
+from datetime import date
+
+from librarian import html, parser, dcparser, wrap_text
+from librarian import ParseError, ValidationError
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
@@ -65,9 +68,12 @@ def file_upload(request, repo):
                 f = request.FILES['file']
                 decoded = f.read().decode('utf-8')
                 path = form.cleaned_data['bookname']
+
+                if form.cleaned_data['autoxml']:
+                    decoded = wrap_text(decoded, unicode(date.today()) )
                 
                 def upload_action():
-                    repo._add_file(path ,decoded.encode('utf-8') )
+                    repo._add_file(path, decoded.encode('utf-8') )
                     repo._commit(message="File %s uploaded by user %s" % \
                         (path, request.user.username), user=request.user.username)
 

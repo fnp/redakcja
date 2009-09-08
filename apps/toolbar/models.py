@@ -24,6 +24,7 @@ class Button(models.Model):
 
     # ui related stuff
     key = models.CharField(blank=True, max_length=1)
+    key_mod = models.PositiveIntegerField(blank=True, default=1)
     tooltip = models.CharField(blank=True, max_length=120)
 
     # Why the button is restricted to have the same position in each group ?
@@ -33,6 +34,20 @@ class Button(models.Model):
     class Meta:
         ordering = ('label',)
         verbose_name, verbose_name_plural = _('button'), _('buttons')
+
+    def hotkey_code(self):
+        return ord(self.key.upper()) | (self.key_mod << 8)
+
+    def hotkey_name(self):
+        if not self.key:
+            return ''
+
+        mods = []
+        if self.key_mod & 0x01: mods.append('Alt')
+        if self.key_mod & 0x02: mods.append('Ctrl')
+        if self.key_mod & 0x04: mods.append('Shift')
+        mods.append('"'+self.key+'"')
+        return '+'.join(mods)
     
     def __unicode__(self):
         return self.label

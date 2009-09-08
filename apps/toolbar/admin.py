@@ -12,8 +12,41 @@ from toolbar import models
 #    list_editable = ('position',)
 
 
+class KeyModSelector(forms.MultiWidget):
+    def __init__(self):
+        super(KeyModSelector, self).__init__(
+            [forms.CheckboxInput() for x in xrange(0,3)])
+
+    def decompress(self, v):
+        r = [(v&0x01) != 0, (v&0x02) != 0, (v&0x04) != 0]
+        print "DECOMPRESS: " , v, repr(r)
+        return r
+
+    def format_output(self, widgets):
+        out = u''
+        out += u'<p>' + widgets[0] + u' Alt </p>'
+        out += u'<p>' + widgets[1] + u' Ctrl </p>'
+        out += u'<p>' + widgets[2] + u' Shift </p>'
+        return out
+
+class KeyModField(forms.MultiValueField):
+
+    def __init__(self):
+        super(KeyModField, self).__init__(\
+            fields=tuple(forms.BooleanField() for x in xrange(0,3)), \
+            widget=KeyModSelector() )
+
+    def compress(self, dl):
+        v = int(dl[0]) | (int(dl[1]) << 1) | (int(dl[2]) << 2)
+        print "COMPRESS", v
+        return v
+    
+
 class ButtonAdminForm(forms.ModelForm):
-    model = models.Button
+    key_mod = KeyModField()
+
+    class Meta:
+        model = models.Button
 
     def clean_params(self):
         value = self.cleaned_data['params']
@@ -22,9 +55,11 @@ class ButtonAdminForm(forms.ModelForm):
         except Exception, e:
             raise forms.ValidationError(e)
 
+
+
 class ButtonAdmin(admin.ModelAdmin):
     form = ButtonAdminForm
-    list_display = ('label', 'scriptlet', 'key', 'params')
+    list_display = ('label', 'scriptlet', 'hotkey_name', 'params')
     prepopulated_fields = {'slug': ('label',)}
 
 admin.site.register(models.Button, ButtonAdmin)

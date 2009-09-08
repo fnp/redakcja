@@ -16,7 +16,7 @@ panel_hooks = {
         var textareaId = 'xmleditor-' + Math.ceil(Math.random() * 1000000000);
 	$('textarea', panel).attr('id', textareaId);
 
-	var texteditor = CodeMirror.fromTextArea(textareaId, {
+	var texteditor = CodeMirror.fromTextArea(textareaId, {            
             parserfile: 'parsexml.js',
             path: "{{STATIC_URL}}js/codemirror/",
             stylesheet: "{{STATIC_URL}}css/xmlcolors.css",

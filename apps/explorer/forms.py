@@ -62,6 +62,7 @@ class BookUploadForm(forms.Form):
     file = forms.FileField(label='Source OCR file')
     bookname = forms.RegexField(regex='[\w-]+',  \
         label='Publication name', help_text='Example: slowacki-beniowski')
+    autoxml = forms.BooleanField(required=False, initial=True, label=u"Generate DublinCore template")
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)
@@ -78,13 +79,13 @@ class DublinCoreForm(forms.Form):
     kinds = ListField()
     genres = ListField()
     created_at = forms.DateField()
-    released_to_public_domain_at = forms.DateField()
+    released_to_public_domain_at = forms.DateField(required=False)
     editors = ListField(widget=forms.Textarea, required=False, converter=person_conv)
     translators = ListField(widget=forms.Textarea, required=False, converter=person_conv)
     technical_editors = ListField(widget=forms.Textarea, required=False, converter=person_conv)
     publisher = forms.CharField()
-    source_name = forms.CharField(widget=forms.Textarea)
-    source_url = forms.URLField(verify_exists=False)
+    source_name = forms.CharField(widget=forms.Textarea, required=False)
+    source_url = forms.URLField(verify_exists=False, required=False)
     url = forms.URLField(verify_exists=False)
     parts = forms.CharField(widget=forms.Textarea, required=False)
     license = forms.CharField(required=False)

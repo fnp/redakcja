@@ -1,3 +1,21 @@
+function Hotkey(code) {
+    this.code = code
+    this.has_alt = ((code & 0x01 << 8) != 0)
+    this.has_ctrl = ((code & 0x01 << 9) != 0)
+    this.has_shift = ((code & 0x01 << 10) != 0)
+    this.character = String.fromCharCode(code & 0xff)
+}
+
+
+Hotkey.prototype.toString = function() {
+    mods = []
+    if(this.has_alt) mods.push('Alt')
+    if(this.has_ctrl) mods.push('Ctrl')
+    if(this.has_shift) mods.push('Shift')
+    mods.push('"'+this.character+'"')
+    return mods.join('+')
+}
+
 function Panel(panelWrap) {
     var self = this;
     self.hotkeys = [];
@@ -122,12 +140,12 @@ Panel.prototype.connectToolbar = function()
     // connect group-switch buttons
     var group_buttons = $('*.toolbar-tabs-container button', toolbar);
 
-    $.log('Found groups:', group_buttons);
+    // $.log('Found groups:', group_buttons);
 
     group_buttons.each(function() {
         var group = $(this);
         var group_name = group.attr('ui:group');
-        $.log('Connecting group: ' + group_name);
+        // $.log('Connecting group: ' + group_name);
 
         group.click(function() {
             // change the active group
@@ -151,6 +169,7 @@ Panel.prototype.connectToolbar = function()
     action_buttons.each(function() {
         var button = $(this);
         var hk = button.attr('ui:hotkey');
+        if(hk) hk = new Hotkey( parseInt(hk) );
 
         try {
             var params = $.evalJSON(button.attr('ui:action-params'));
@@ -166,15 +185,18 @@ Panel.prototype.connectToolbar = function()
 
         // connect button
         button.click(callback);
-        
+       
         // connect hotkey
-        if(hk) self.hotkeys[parseInt(hk)] = callback;
-
+        if(hk) {
+            self.hotkeys[hk.code] = callback;
+             $.log('hotkey', hk);
+        }
+        
         // tooltip
         if (button.attr('ui:tooltip') )
         {
             var tooltip = button.attr('ui:tooltip');
-            if(hk) tooltip += ' [Alt+'+hk+']';
+            if(hk) tooltip += ' ['+hk+']';
 
             button.wTooltip({
                 delay: 1000,
@@ -193,13 +215,24 @@ Panel.prototype.connectToolbar = function()
 
 Panel.prototype.hotkeyPressed = function(event)
 {
-    var callback = this.hotkeys[event.keyCode];
+    code = event.keyCode;
+    if(event.altKey) code = code | 0x100;
+    if(event.ctrlKey) code = code | 0x200;
+    if(event.shiftKey) code = code | 0x400;
+
+    var callback = this.hotkeys[code];
     if(callback) callback();
 }
 
 Panel.prototype.isHotkey = function(event) {
-    if( event.altKey && (this.hotkeys[event.keyCode] != null) )
+    code = event.keyCode;
+    if(event.altKey) code = code | 0x100;
+    if(event.ctrlKey) code = code | 0x200;
+    if(event.shiftKey) code = code | 0x400;
+
+    if(this.hotkeys[code] != null)
         return true;
+        
     return false;
 }
 
@@ -522,7 +555,7 @@ Editor.prototype.showPopup = function(name, text, timeout)
 
     var box = $('#message-box > #' + name);
     $('*.data', box).html(text || '');
-    box.fadeIn();
+    box.fadeIn(100);
  
     if(timeout > 0)
         setTimeout( $.fbind(self, self.advancePopupQueue), timeout);
@@ -534,14 +567,14 @@ Editor.prototype.advancePopupQueue = function() {
     if(elem) {
         var box = $('#message-box > #' + elem[0]);
 
-        box.fadeOut(200, function()
+        box.fadeOut(100, function()
         {
-            $('*.data', box).html();
+            $('*.data', box).html('');
 
             if( self.popupQueue.length > 0) {
                 var ibox = $('#message-box > #' + self.popupQueue[0][0]);
-                $('*.data', ibox).html(self.popupQueue[0][1]);
-                ibox.fadeIn();
+                $('*.data', ibox).html(self.popupQueue[0][1] || '');
+                ibox.fadeIn(100);
                 if(self.popupQueue[0][2] > 0)
                     setTimeout( $.fbind(self, self.advancePopupQueue), self.popupQueue[0][2]);
             }

@@ -7,8 +7,3 @@ register = template.Library()
 def toolbar():
     groups = models.ButtonGroup.objects.all()
     return {'groups': groups}
-
-@register.filter
-def keycode(value):
-    return ord(str(value).upper())
-
