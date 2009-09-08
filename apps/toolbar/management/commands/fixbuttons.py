@@ -3,7 +3,7 @@ __author__="lreqc"
 __date__ ="$2009-09-08 14:31:26$"
 from django.core.management.base import NoArgsCommand
 from toolbar.models import Button
-import json
+from django.utils import simplejson as json
 import re
 
 class Command(NoArgsCommand):
