@@ -1,8 +1,9 @@
-# -*- conding: utf-8
+#!/usr/bin/env python
+# -*- conding: utf-8 -*-
 __author__="lreqc"
 __date__ ="$2009-09-08 14:31:26$"
 from django.core.management.base import NoArgsCommand
-from toolbar.models import Button
+from toolbar.models import Button, ButtonGroup
 from django.utils import simplejson as json
 import re
 
@@ -55,4 +56,14 @@ class Command(NoArgsCommand):
             b.group.clear()
 
             a.save()
-            b.delete()
+            if remove_duplicate:
+                b.delete()
+
+        print "Searching for empty groups and orphaned buttons:"
+        for g in ButtonGroup.objects.all():
+            if len(g.button_set.all()) == 0:
+                print "Empty group: '%s'"  % g.slug
+                
+        for b in Button.objects.all():
+            if len(b.group.all()) == 0:
+                print "orphan: '%s'"  % b.slug
