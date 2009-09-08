@@ -48,7 +48,7 @@ def get_image_folders():
 
 
 def get_images_from_folder(folder):
-    return sorted(settings.MEDIA_URL + settings.IMAGE_DIR + '/' + folder + '/' + fn for fn 
+    return sorted(settings.MEDIA_URL + settings.IMAGE_DIR + u'/' + folder + u'/' + fn.decode('utf-8') for fn
             in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, folder))
-            if not fn.startswith('.'))
+            if not fn.decode('utf-8').startswith('.'))
 
