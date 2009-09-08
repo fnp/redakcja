@@ -46,7 +46,7 @@ def ajax_login_required(view):
 def file_list(request, repo):
     #
     latest_default = repo.get_branch_tip('default')
-    files = list( repo.repo[latest_default] )
+    files = [ f for f in repo.repo[latest_default] if not f.startswith('.')]
     bookform = forms.BookUploadForm()
 
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
