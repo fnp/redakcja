@@ -9,10 +9,10 @@ body {
     position: absolute;
     padding: 0.2em 0.5em;
     background-color: #CDCDCD;
-	border-bottom: 0.1px solid black;
-	height: 1.8em;
-	line-height: 1.8em;
-	vertical-align: center;
+    border-bottom: 0.1px solid black;
+    height: 1.8em;
+    line-height: 1.8em;
+    vertical-align: middle;
 
     top: 0px; left: 0px; right: 0px; 
     z-index: 300;
@@ -22,12 +22,12 @@ body {
 }
 
 #header-right-toolbar {
-	position: absolute;
-	right: 1em;
+    position: absolute;
+    right: 1em;
 }
 
 #header button {
-	vertical-align: center;
+    vertical-align: middle;
 }
 
 #content {
@@ -107,53 +107,53 @@ label {
 /* ========== */
 
 #panels {
-	position: absolute;
-	bottom: 0px; left: 0px; right: 0px; top: 0px;
+    position: absolute;
+    bottom: 0px; left: 0px; right: 0px; top: 0px;
 }
 
 .panel-wrap {
     overflow: hidden;
-	position: absolute; /* absolute to relation with #panels */
-	top: 0px;
-	bottom: 0px;
+    position: absolute; /* absolute to relation with #panels */
+    top: 0px;
+    bottom: 0px;
 }
 
 #left-panel-wrap {
-	left: 0px;
-	width: 8px; /* initial width */
+    left: 0px;
+    width: 8px; /* initial width */
 }
 
 #right-panel-wrap {
-	right: 0px;
-	width: auto;
-	left: 8px; /* initial width of the left panel */
+    right: 0px;
+    width: auto;
+    left: 8px; /* initial width of the left panel */
 }
 
 /* contents */
 .panel-content {
-	position: absolute;
-	overflow: auto;
-	overflow-x: hidden;
-	top: 22px; left: 0px; bottom:0px; right: 0px;
+    position: absolute;
+    overflow: auto;
+    overflow-x: hidden;
+    top: 25px; left: 0px; bottom:0px; right: 0px;
 }
 
 .panel-overlay {
-	position: absolute;
-	top: 0px; bottom: 0px; left: 0px; right: 0px;
-	z-index: 100;
-	background: gray;
-	opacity: 0.8;
-	text-align: center;
-	overflow: hidden;
-	display: none;
-	cursor: col-resize;
+    position: absolute;
+    top: 0px; bottom: 0px; left: 0px; right: 0px;
+    z-index: 100;
+    background: gray;
+    opacity: 0.8;
+    text-align: center;
+    overflow: hidden;
+    display: none;
+    cursor: col-resize;
 }
 
 .panel-content-overlay {
 }
 
 .panel-wrap.last-panel .panel-content {
-	right: 0px;
+    right: 0px;
 }
 
 .panel-wrap.last-panel .panel-slider {
@@ -163,7 +163,7 @@ label {
 /* Toolbars with select box to change panel contents*/
 .panel-toolbar {
     position: absolute;
-    top: 0px; left:0px; right: 0px; height: 20px;
+    top: 0px; left:0px; right: 0px; height: 24px;
 
     padding: 0 0 2px 0;
     /* border-top: 1px solid #AAA; */
@@ -185,7 +185,7 @@ label {
 /* Slider between panels */
 .panel-wrap .panel-slider {
     position: absolute;
-	background-color: #DDD;
+    background-color: #DDD;
 
     top: 0px; bottom: 0px; right: 0px; width: 4px;
 
@@ -194,8 +194,8 @@ label {
     border-top: none;
     border-bottom: none;
 
-	z-index: 90;
-	cursor: col-resize;
+    z-index: 90;
+    cursor: col-resize;
 }
 
 .panel-wrap .panel-slider:hover {
@@ -203,7 +203,7 @@ label {
 }
 
 .panel-content-overlay.panel-wrap .panel-slider {
-	background-color: #DDD;
+    background-color: #DDD;
 }
 
 
@@ -268,16 +268,16 @@ label {
 }
 
 div.isection {
-	margin: 1em auto;
-	border: 1px solid black;
-	padding: 0.5em 2em;
-	background: #9f9ffa;
+    margin: 1em auto;
+    border: 1px solid black;
+    padding: 0.5em 2em;
+    background: #9f9ffa;
 
-	width: 60%;
+    width: 60%;
 }
 
 div.isection p {
-	margin: 0.5em 1em;
+    margin: 0.5em 1em;
 }
 
 .change-notification {
@@ -286,7 +286,7 @@ div.isection p {
 
 /*
  * Popups
- */
+*/
 #message-box {
     position: fixed;
     top: 2px;

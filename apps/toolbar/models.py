@@ -16,7 +16,7 @@ class ButtonGroup(models.Model):
 
 class Button(models.Model):
     label = models.CharField(max_length=32)
-    slug = models.SlugField() #unused
+    slug = models.SlugField(unique=True) #unused
 
     # behaviour
     params = models.TextField() # TODO: should be a JSON field
@@ -27,8 +27,7 @@ class Button(models.Model):
     tooltip = models.CharField(blank=True, max_length=120)
 
     # Why the button is restricted to have the same position in each group ?
-    # position = models.IntegerField(default=0)
-   
+    # position = models.IntegerField(default=0)   
     group = models.ManyToManyField(ButtonGroup)
     
     class Meta:

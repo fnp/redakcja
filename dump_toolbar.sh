@@ -1,1 +1,2 @@
-./project/manage.py dumpdata --format=xml toolbar > fixtures/przyciski.xml
+./project/manage.py dumpdata --format=xml toolbar | xmllint --format >
+fixtures/przyciski.xml.new
