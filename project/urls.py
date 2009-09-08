@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^file/text/'+PATH_END, 'explorer.views.file_xml', name='file_xml'),
     url(r'^file/dc/'+PATH_END, 'explorer.views.file_dc', name='file_dc'),
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
+    url(r'^file/commit/'+PATH_END, 'explorer.views.file_commit', name='file_commit'),
+    url(r'^file/update/'+PATH_END, 'explorer.views.file_update_local', name='file_update'),
 
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
@@ -23,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^editor/panel/dceditor/'+PATH_END, 'explorer.views.dceditor_panel', name='dceditor_panel'),
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
 
+    
     # Task managment
     url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),
 

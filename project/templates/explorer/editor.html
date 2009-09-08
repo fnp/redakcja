@@ -29,16 +29,28 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; plik {{ hash }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
-	<button type="button" class="toolbar-button" id="toolbar-button-commit">Commit</button>
-	<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Zapisz</button>
+
+<form action="{% url file_commit hash %}" method="POST" style="display: inline;" id="toolbar-commit-form">
+    <input type="text" size="40" id="toolbar-commit-message" name="message" />
+    <button type="submit" class="toolbar-button" id="toolbar-button-commit">Merge</button>
+</form>
+<button type="button" class="toolbar-button" id="toolbar-button-update"
+        ui:ajax-action="{% url file_update hash %}">Update</button>
+<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Save</button>
 {% endblock %}
 
 {% block message-box %}
-    <div class="msg-info" id="save-waiting"><p>Zapisuję dane na serwerze.</p><p class="data" /></div>
-    <div class="msg-success" id="save-successful"><p>Zapisano :)</p><p class="data" /></div>
-    <div class="msg-error" id="save-error"><p>Błąd przy zapisie.</p> <p class="data" /></div>
-    <div class="msg-warning" id="not-implemented"><p>Tej funkcji jeszcze nie ma :(</p><p class="data" /></div>
-    <div class="msg-warning" id="save-warn"><p>Zapisano. Uwagi: (</p><p class="data" /></div>
+    <div class="msg-info" id="save-waiting"><p>Zapisuję dane na serwerze.</p><p class="data"></p></div>
+    <div class="msg-success" id="save-successful"><p>Zapisano :)</p><p class="data"></p></div>
+    <div class="msg-warning" id="save-warn"><p>Zapisano. Uwagi: (</p><p class="data"></p></div>
+    <div class="msg-error" id="save-error"><p>Błąd przy zapisie.</p> <p class="data"></p></div>
+
+    <div class="msg-success" id="generic-yes"><p class="data"></p></div>
+    <div class="msg-info" id="generic-info"><p class="data"></p></div>
+    <div class="msg-error" id="generic-error"><p class="data"></p></div>
+    
+    <div class="msg-warning" id="not-implemented"><p>Tej funkcji jeszcze nie ma :(</p><p class="data"></p></div>
+    
 {% endblock %}
 
 {% block maincontent %}

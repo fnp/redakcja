@@ -55,8 +55,13 @@ class BookForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea)
     commit_message = forms.CharField(required=False)
 
+class MergeForm(forms.Form):
+    message = forms.CharField(error_messages={'required': 'Please write a merge description.'})
+
 class BookUploadForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(label='Source OCR file')
+    bookname = forms.RegexField(regex='[\w-]+',  \
+        label='Publication name', help_text='Example: slowacki-beniowski')
 
 class ImageFoldersForm(forms.Form):
     folders = forms.ChoiceField(required=False)

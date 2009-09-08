@@ -16,7 +16,11 @@ from toolbar import models as toolbar_models
 
 #
 # Some useful decorators
-#
+
+def file_branch(path, user=None):
+    return ('personal_'+user.username + '_' if user is not None else '') \
+        + 'file_' + path
+
 def with_repo(view):
     """Open a repository for this view"""
     def view_with_repo(request, *args, **kwargs):          
@@ -32,7 +36,7 @@ def ajax_login_required(view):
         if request.user.is_authenticated():
             return view(request, *args, **kwargs)
         # not authenticated
-        return HttpResponse( json.dumps({'result': 'access_denied'}) );
+        return HttpResponse( json.dumps({'result': 'access_denied', 'errors': ['Brak dostępu.']}) );
     return view_with_auth
 
 #
@@ -40,7 +44,8 @@ def ajax_login_required(view):
 #
 @with_repo
 def file_list(request, repo):
-    latest_default = repo.repo.branchtags()['default']
+    #
+    latest_default = repo.get_branch_tip('default')
     files = list( repo.repo[latest_default] )
     bookform = forms.BookUploadForm()
 
@@ -59,34 +64,29 @@ def file_upload(request, repo):
                 # prepare the data
                 f = request.FILES['file']
                 decoded = f.read().decode('utf-8')
-
+                path = form.cleaned_data['bookname']
+                
                 def upload_action():
-                    print 'Adding file: %s' % f.name
-                    repo._add_file(f.name, decoded.encode('utf-8') )
-                    repo._commit(
-                        message="File %s uploaded from platform by %s" %\
-                            (f.name, request.user.username), \
-                        user=request.user.username \
-                    )
-                    
-                    # end of upload
+                    repo._add_file(path ,decoded.encode('utf-8') )
+                    repo._commit(message="File %s uploaded by user %s" % \
+                        (path, request.user.username), user=request.user.username)
 
                 repo.in_branch(upload_action, 'default')
 
                 # if everything is ok, redirect to the editor
                 return HttpResponseRedirect( reverse('editor_view',
-                        kwargs={'path': f.name}) )
+                        kwargs={'path': path}) )
 
             except hg.RepositoryException, e:
                 other_errors.append(u'Błąd repozytorium: ' + unicode(e) )
-            except UnicodeDecodeError, e:
-                other_errors.append(u'Niepoprawne kodowanie pliku: ' + e.reason \
-                 + u'. Żądane kodowanie: ' + e.encoding)
+            #except UnicodeDecodeError, e:
+            #    other_errors.append(u'Niepoprawne kodowanie pliku: ' + e.reason \
+            #     + u'. Żądane kodowanie: ' + e.encoding)
         # invalid form
 
     # get
     form = forms.BookUploadForm()
-    return direct_to_template(request, 'explorer/file_upload.html',
+    return direct_to_template(request, 'explorer/file_upload.html',\
         extra_context = {'form' : form, 'other_errors': other_errors})
    
 #
@@ -118,10 +118,10 @@ def file_xml(request, repo, path):
                     warnings = [u'Niepoprawny dokument XML: ' + unicode(e.message)]
 
                 #  save to user's branch
-                repo.in_branch(save_action, models.user_branch(request.user) );
+                repo.in_branch(save_action, file_branch(path, request.user) );
             except UnicodeDecodeError, e:
                 errors = [u'Błąd kodowania danych przed zapisem: ' + unicode(e.message)]
-            except RepositoryException, e:
+            except hg.RepositoryException, e:
                 errors = [u'Błąd repozytorium: ' + unicode(e.message)]            
 
         if not errors:
@@ -131,9 +131,154 @@ def file_xml(request, repo, path):
             'errors': errors, 'warnings': warnings}) );
 
     form = forms.BookForm()
-    data = repo.get_file(path, models.user_branch(request.user))
+    data = repo.get_file(path, file_branch(path, request.user))
     form.fields['content'].initial = data
-    return HttpResponse( json.dumps({'result': 'ok', 'content': data}) ) 
+    return HttpResponse( json.dumps({'result': 'ok', 'content': data}) )
+
+@ajax_login_required
+@with_repo
+def file_update_local(request, path, repo):
+    result = None
+    errors = None
+    
+    wlock = repo.write_lock()
+    try:
+        tipA = repo.get_branch_tip('default')
+        tipB = repo.get_branch_tip( file_branch(path, request.user) )
+
+        nodeA = repo.getnode(tipA)
+        nodeB = repo.getnode(tipB)
+        
+        # do some wild checks - see file_commit() for more info
+        if (repo.common_ancestor(tipA, tipB) == nodeA) \
+        or (nodeB in nodeA.parents()):
+            result = 'nothing-to-do'
+        else:
+            # Case 2+
+            repo.merge_revisions(tipB, tipA, \
+                request.user.username, 'Personal branch update.')
+            result = 'done'
+    except hg.UncleanMerge, e:
+        errors = [e.message]
+        result = 'fatal-error'
+    except hg.RepositoryException, e:
+        errors = [e.message]
+        result = 'fatal-error'
+    finally:
+        wlock.release()
+
+    if result is None:
+        raise Exception("Ouch, this shouldn't happen!")
+    
+    return HttpResponse( json.dumps({'result': result, 'errors': errors}) );
+
+@ajax_login_required
+@with_repo
+def file_commit(request, path, repo):
+    result = None
+    errors = None
+    local_modified = False
+    if request.method == 'POST':
+        form = forms.MergeForm(request.POST)
+
+        if form.is_valid():           
+            wlock = repo.write_lock()
+            try:
+                tipA = repo.get_branch_tip('default')
+                tipB = repo.get_branch_tip( file_branch(path, request.user) )
+
+                nodeA = repo.getnode(tipA)
+                nodeB = repo.getnode(tipB)
+
+                print repr(nodeA), repr(nodeB), repo.common_ancestor(tipA, tipB), repo.common_ancestor(tipB, tipA)
+
+                if repo.common_ancestor(tipB, tipA) == nodeA:
+                    # Case 1:
+                    #         * tipB
+                    #         |
+                    #         * <- can also be here!
+                    #        /|
+                    #       / |
+                    # tipA *  *
+                    #      |  |
+                    # The local branch has been recently updated,
+                    # so we don't need to update yet again, but we need to
+                    # merge down to default branch, even if there was
+                    # no commit's since last update
+                    repo.merge_revisions(tipA, tipB, \
+                        request.user.username, form.cleaned_data['message'])
+                    result = 'done'
+                elif any( p.branch()==nodeB.branch() for p in nodeA.parents()):
+                    # Case 2:
+                    #
+                    # tipA *  * tipB
+                    #      |\ |
+                    #      | \|
+                    #      |  * 
+                    #      |  |
+                    # Default has no changes, to update from this branch
+                    # since the last merge of local to default.
+                    if nodeB not in nodeA.parents():
+                        repo.merge_revisions(tipA, tipB, \
+                            request.user.username, form.cleaned_data['message'])
+                        result = 'done'
+                    else:
+                        result = 'nothing-to-do'
+                elif repo.common_ancestor(tipA, tipB) == nodeB:
+                    # Case 3:
+                    # tipA * 
+                    #      |
+                    #      * <- this case overlaps with previos one
+                    #      |\
+                    #      | \
+                    #      |  * tipB
+                    #      |  |
+                    #
+                    # There was a recent merge to the defaul branch and
+                    # no changes to local branch recently.
+                    # 
+                    # Use the fact, that user is prepared to see changes, to
+                    # update his branch if there are any
+                    if nodeB not in nodeA.parents():
+                        repo.merge_revisions(tipB, tipA, \
+                            request.user.username, 'Personal branch update during merge.')
+                        local_modified = True
+                        result = 'done'
+                    else:
+                        result = 'nothing-to-do'
+                else:
+                    # both branches have changes made to them, so
+                    # first do an update
+                    repo.merge_revisions(tipB, tipA, \
+                        request.user.username, 'Personal branch update during merge.')
+
+                    local_modified = True
+
+                    # fetch the new tip
+                    tipB = repo.get_branch_tip( file_branch(path, request.user) )
+
+                    # and merge back to the default
+                    repo.merge_revisions(tipA, tipB, \
+                        request.user.username, form.cleaned_data['message'])
+                    result = 'done'
+            except hg.UncleanMerge, e:
+                errors = [e.message]
+                result = 'fatal-error'
+            except hg.RepositoryException, e:
+                errors = [e.message]
+                result = 'fatal-error'
+            finally:
+                wlock.release()
+                
+        if result is None:
+            errors = [ form.errors['message'].as_text() ]
+            if len(errors) > 0:
+                result = 'fatal-error'
+
+        return HttpResponse( json.dumps({'result': result, 'errors': errors, 'localmodified': local_modified}) );
+
+    return HttpResponse( json.dumps({'result': 'fatal-error', 'errors': ['No data posted']}) )
+    
 
 @ajax_login_required
 @with_repo
@@ -144,23 +289,24 @@ def file_dc(request, path, repo):
         form = forms.DublinCoreForm(request.POST)
         
         if form.is_valid():
+            
             def save_action():
                 file_contents = repo._get_file(path)
 
                 # wczytaj dokument z repozytorium
                 document = parser.WLDocument.from_string(file_contents)                    
-                document.book_info.update(form.cleaned_data)
-                
-                print "SAVING DC"
+                document.book_info.update(form.cleaned_data)             
 
                 # zapisz
-                repo._write_file(path, document.serialize())
+                repo._write_file(path, document.serialize().encode('utf-8'))
                 repo._commit( \
                     message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
                     user=request.user.username )
                 
             try:
-                repo.in_branch(save_action, models.user_branch(request.user) )
+                repo.in_branch(save_action, file_branch(path, request.user) )
+            except UnicodeEncodeError, e:
+                errors = ['Bład wewnętrzny: nie można zakodować pliku do utf-8']
             except (ParseError, ValidationError), e:
                 errors = [e.message]
 
@@ -173,7 +319,7 @@ def file_dc(request, path, repo):
     content = []
     
     try:
-        fulltext = repo.get_file(path, models.user_branch(request.user))
+        fulltext = repo.get_file(path, file_branch(path, request.user))
         bookinfo = dcparser.BookInfo.from_string(fulltext)
         content = bookinfo.to_dict()
     except (ParseError, ValidationError), e:
@@ -186,28 +332,25 @@ def file_dc(request, path, repo):
 
 @login_required
 @with_repo
-def display_editor(request, path, repo):
-    
-    if not repo.file_exists(path, models.user_branch(request.user)):
-        try:
-            data = repo.get_file(path, 'default')
-            print type(data)
+def display_editor(request, path, repo):    
 
-            def new_file():
-                repo._add_file(path, data)
-                repo._commit(message='File import from default branch',
-                    user=request.user.username)
-                
-            repo.in_branch(new_file, models.user_branch(request.user) )
-        except hg.RepositoryException, e:
-            return direct_to_template(request, 'explorer/file_unavailble.html',\
-                extra_context = { 'path': path, 'error': e })
-
-    return direct_to_template(request, 'explorer/editor.html', extra_context={
-        'hash': path,
-        'panel_list': ['lewy', 'prawy'],
-        'scriptlets': toolbar_models.Scriptlet.objects.all()
-    })
+    # this is the only entry point where we create an autobranch for the user
+    # if it doesn't exists. All other views SHOULD fail.
+    def ensure_branch_exists():
+        parent = repo.get_branch_tip('default')
+        repo._create_branch(file_branch(path, request.user), parent)
+        
+    try:
+        repo.with_wlock(ensure_branch_exists)
+        
+        return direct_to_template(request, 'explorer/editor.html', extra_context={
+            'hash': path,
+            'panel_list': ['lewy', 'prawy'],
+            'scriptlets': toolbar_models.Scriptlet.objects.all()
+        })
+    except KeyError:
+        return direct_to_template(request, 'explorer/nofile.html', \
+            extra_context = { 'path': path })
 
 # ===============
 # = Panel views =
@@ -216,7 +359,7 @@ def display_editor(request, path, repo):
 @ajax_login_required
 @with_repo
 def xmleditor_panel(request, path, repo):
-    text = repo.get_file(path, models.user_branch(request.user))
+    text = repo.get_file(path, file_branch(path, request.user))
     
     return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
         'fpath': path,
@@ -234,7 +377,7 @@ def gallery_panel(request, path):
 @ajax_login_required
 @with_repo
 def htmleditor_panel(request, path, repo):
-    user_branch = models.user_branch(request.user)
+    user_branch = file_branch(path, request.user)
     try:
         return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
             'fpath': path,
@@ -247,7 +390,7 @@ def htmleditor_panel(request, path, repo):
 @ajax_login_required
 @with_repo
 def dceditor_panel(request, path, repo):
-    user_branch = models.user_branch(request.user)
+    user_branch = file_branch(path, request.user)
 
     try:
         doc_text = repo.get_file(path, user_branch)

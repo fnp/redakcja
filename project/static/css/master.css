@@ -334,35 +334,3 @@ div.isection p {
     background-color: yellow;
     border-color: yellow;   
 }
-
-
-/*
- * Object list table
- */
- table.object-list {
-    border-top: 2px solid black;
-    border-left: 2px solid black;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-    width: 60%;
-    margin: auto;
- }
-
-
- table.object-list td, table.object-list th {
-     border-bottom: 1px solid black;
-     border-right: 1px solid black;
-     padding: 0.2em 0.5em;
- }
-
- table.object-list th {
-     text-align: center;
-     background-color: #8080d0;
-     font-size: 120%
- }
-
- table.object-list td.page-navigation {
-     position: relative;
-     text-align: center;
-     background-color: #CCC;
- }

@@ -238,7 +238,7 @@ var select = {};
       // Move the start of a range to the start of a node,
       // compensating for the fact that you can't call
       // moveToElementText with text nodes.
-      function moveToNodeStart(range, node) {
+      function moveToNodeStart(range, node) {        
         if (node.nodeType == 3) {
           var count = 0, cur = node.previousSibling;
           while (cur && cur.nodeType == 3) {
@@ -253,7 +253,7 @@ var select = {};
           else range.moveToElementText(node.parentNode);
           if (count) range.move("character", count);
         }
-        else range.moveToElementText(node);
+        else try{range.moveToElementText(node);} catch(e) {};
       }
 
       // Do a binary search through the container object, comparing

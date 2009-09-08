@@ -151,7 +151,14 @@ Panel.prototype.connectToolbar = function()
     action_buttons.each(function() {
         var button = $(this);
         var hk = button.attr('ui:hotkey');
-        var params = $.evalJSON(button.attr('ui:action-params'));
+
+        try {
+            var params = $.evalJSON(button.attr('ui:action-params'));
+        } catch(object) {
+           $.log('JSON exception in ', button, ': ', object);
+           button.attr('disabled', 'disabled');
+           return;
+        }
 
         var callback = function() {
             editor.callScriptlet(button.attr('ui:action'), self, params);
@@ -242,8 +249,21 @@ Editor.prototype.setupUI = function() {
     $('#toolbar-button-save').click( function (event, data) { 
         self.saveToBranch();
     } );
+
+    $('#toolbar-button-update').click( function (event, data) {
+        if (self.updateUserBranch()) {
+            // commit/update can be called only after proper, save
+            // this means all panels are clean, and will get refreshed
+             // do this only, when there are any changes to local branch
+            self.refreshPanels();
+        }
+    } );
+
     $('#toolbar-button-commit').click( function (event, data) { 
         self.sendPullRequest();
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
     } );
     self.rootDiv.bind('stopResize', function() { 
         self.savePanelOptions()
@@ -364,9 +384,10 @@ Editor.prototype.saveToBranch = function(msg)
                 self.showPopup('save-error', (data.errors && data.errors[0]) || 'Nieznany błąd X_X.');
             }
             else {
-                self.refreshPanels(changed_panel);
+                self.refreshPanels();
                 $('#toolbar-button-save').attr('disabled', 'disabled');
                 $('#toolbar-button-commit').removeAttr('disabled');
+                $('#toolbar-button-update').removeAttr('disabled');
                 if(self.autosaveTimer)
                     clearTimeout(self.autosaveTimer);
 
@@ -402,6 +423,7 @@ Editor.prototype.onContentChanged = function(event, data) {
 
     $('#toolbar-button-save').removeAttr('disabled');
     $('#toolbar-button-commit').attr('disabled', 'disabled');
+    $('#toolbar-button-update').attr('disabled', 'disabled');
     
     if(this.autosaveTimer) return;
     this.autosaveTimer = setTimeout( function() {
@@ -409,11 +431,10 @@ Editor.prototype.onContentChanged = function(event, data) {
     }, 300000 );
 };
 
-Editor.prototype.refreshPanels = function(goodPanel) {
+Editor.prototype.refreshPanels = function() {
     var self = this;
-    var panels = $('#' + self.rootDiv.attr('id') +' > *.panel-wrap', self.rootDiv.parent());
 
-    panels.each(function() {
+    self.allPanels().each(function() {
         var panel = $(this).data('ctrl');
         $.log('Refreshing: ', this, panel);
         if ( panel.changed() )
@@ -424,24 +445,70 @@ Editor.prototype.refreshPanels = function(goodPanel) {
 };		
 
 
+Editor.prototype.updateUserBranch = function() {
+    if( $('.panel-wrap.changed').length != 0)
+        alert("There are unsaved changes - can't update.");
+
+    var self = this;
+    $.ajax({
+        url: $('#toolbar-button-update').attr('ui:ajax-action'),
+	dataType: 'json',
+	success: function(data, textStatus) {
+                switch(data.result) {
+                    case 'done':
+                        self.showPopup('generic-yes', 'Plik uaktualniony.');
+                        self.refreshPanels()
+                        break;
+                    case 'nothing-to-do':
+                        self.showPopup('generic-info', 'Brak zmian do uaktualnienia.');
+                        break;
+                    default:
+                        self.showPopup('generic-error', data.errors && data.errors[0]);
+                }
+	},
+	error: function(rq, tstat, err) {
+		self.showPopup('generic-error', 'Błąd serwera: ' + err);
+	},
+	type: 'POST',
+	data: {}
+    });
+}
+
 Editor.prototype.sendPullRequest = function () {
     if( $('.panel-wrap.changed').length != 0)        
-        alert("There are unsaved changes - can't make a pull request.");
+        alert("There are unsaved changes - can't commit.");
 
-    this.showPopup('not-implemented');
-/*
-	$.ajax({
-		url: '/pull-request',
-		dataType: 'json',
-		success: function(data, textStatus) {
-            $.log('data: ' + data);
-		},
-		error: function(rq, tstat, err) {
-		 	$.log('commit error', rq, tstat, err);
-		},
-		type: 'POST',
-		data: {}
-	}); */
+    var self =  this;
+
+    /* this.showPopup('not-implemented'); */
+
+    $.log('URL !: ', $('#toolbar-commit-form').attr('action'));
+    
+    $.ajax({        
+        url: $('#toolbar-commit-form').attr('action'),
+	dataType: 'json',
+	success: function(data, textStatus) {
+                switch(data.result) {
+                    case 'done':
+                        self.showPopup('generic-yes', 'Łączenie zmian powiodło się.');
+
+                        if(data.localmodified)
+                            self.refreshPanels()
+                        
+                        break;
+                    case 'nothing-to-do':
+                        self.showPopup('generic-info', 'Brak zmian do połaczenia.');
+                        break;
+                    default:
+                        self.showPopup('generic-error', data.errors && data.errors[0]);
+                }
+	},
+	error: function(rq, tstat, err) {
+		self.showPopup('generic-error', 'Błąd serwera: ' + err);
+	},
+	type: 'POST',
+	data: {'message': $('#toolbar-commit-message').val() }
+    }); 
 }
 
 Editor.prototype.showPopup = function(name, text, timeout)
@@ -454,7 +521,7 @@ Editor.prototype.showPopup = function(name, text, timeout)
         return;
 
     var box = $('#message-box > #' + name);
-    $('*.data', box).html(text);
+    $('*.data', box).html(text || '');
     box.fadeIn();
  
     if(timeout > 0)
@@ -481,6 +548,10 @@ Editor.prototype.advancePopupQueue = function() {
         });
     }
 };
+
+Editor.prototype.allPanels = function() {
+    return $('#' + this.rootDiv.attr('id') +' > *.panel-wrap', this.rootDiv.parent());
+}
 
 
 Editor.prototype.registerScriptlet = function(scriptlet_id, scriptlet_func)
