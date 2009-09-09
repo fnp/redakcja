@@ -161,25 +161,44 @@ label {
 }
 
 /* Toolbars with select box to change panel contents*/
-.panel-toolbar {
+.panel-wrap .panel-toolbar {
     position: absolute;
-    top: 0px; left:0px; right: 0px; height: 24px;
+    top: 0px; left:0px; right: 0px; height: 26px;
+    padding: 0px;
 
-    padding: 0 0 2px 0;
     /* border-top: 1px solid #AAA; */
     border-bottom: 1px solid #AAA;
-    font-size: 12px;
-    line-height: 20px;
-    background-color: #DDD;
-    white-space: nowrap;
-    overflow: hidden;
     z-index: 80;
 }
 
 .panel-toolbar label {
-    display: block;
-    float: left;
-    margin: 0 10px 0 2px;
+    display: inline;
+}
+
+.panel-toolbar p {
+    /* position: relative; */
+    font-size: 12px;
+    line-height: 26px;
+    background-color: #DDD;
+    white-space: nowrap;
+    overflow: hidden;
+    
+    margin: 0px;
+    padding: 0px 1em;
+
+    width: auto;
+    height: 26px;
+}
+
+
+.panel-toolbar .toolbar-button-groups-container .panel-toolbar-extra button {
+    /* this is uber specific */
+    font-size: 12px;
+    font-family: Sans-Serif;
+    padding: 2px 5px;
+    margin: 0px;
+    border: 0px solid black;
+    vertical-align: bottom;
 }
 
 /* Slider between panels */
@@ -207,44 +226,14 @@ label {
 }
 
 
+
+
 /* ================= */
 /* = Gallery panel = */
 /* ================= */
 .images-wrap {
     overflow-x: hidden;
     overflow-y: scroll;
-}
-
-
-/* ==================== */
-/* = XML Editor panel = */
-/* ==================== */
-
-.change-font-size {
-    width: 45px;
-    height: 18px;
-    padding: 3px 0 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.change-font-size div {
-    float: left;
-    text-align: center;
-    width: 20px;
-    font-size: 13px;
-    margin: 1px;
-    cursor: default;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-}
-
-.change-font-size div:hover {
-    background-color: #EEE;
-    border: 1px solid #AAA;
-    margin: 0;
 }
 
 /* =========================== */

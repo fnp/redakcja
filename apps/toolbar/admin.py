@@ -11,13 +11,13 @@ from toolbar import models
 #    prepopulated_fields = {'slug': ('name',)}
 #    list_editable = ('position',)
 
-
 class KeyModSelector(forms.MultiWidget):
     def __init__(self):
         super(KeyModSelector, self).__init__(
             [forms.CheckboxInput() for x in xrange(0,3)])
 
     def decompress(self, v):
+        if not v: v = 0
         r = [(v&0x01) != 0, (v&0x02) != 0, (v&0x04) != 0]
         print "DECOMPRESS: " , v, repr(r)
         return r

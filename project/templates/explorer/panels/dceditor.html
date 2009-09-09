@@ -18,7 +18,7 @@ panel_hooks = {
 	},
 	saveInfo: function(saveInfo) {
 		var myInfo = {
-			url: "{% url file_dc fpath %}", 
+			url: "{% url file_dc fileid %}",
 			postData: $('form', this.contentDiv).serialize() 
 		};
 		$.extend(saveInfo, myInfo);

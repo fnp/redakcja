@@ -1,13 +1,11 @@
 {% load toolbar_tags %}
+{% toolbar toolbar_groups toolbar_extra_group %}
 
 <div class="iframe-container" style="position: absolute; top: 40px; left:0px; right:0px; bottom: 0px;">
 	<textarea name="text">{{ text }}</textarea>
 </div>
 
-{% toolbar %}
-
 <script type="text/javascript" charset="utf-8">
-
 panel_hooks = {
 	load: function () {
 		var self = this;
@@ -48,7 +46,7 @@ panel_hooks = {
 
 	saveInfo: function(saveInfo) {
 		var myInfo = {
-			url: "{% url file_xml fpath %}", 
+			url: "{% url file_xml fileid %}",
 			postData: {
 				content: this.texteditor.getCode()
 			} 

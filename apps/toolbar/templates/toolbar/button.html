@@ -1,0 +1,13 @@
+{% if button.link %}
+<a href="{{button.link}}" target="_new">
+{% endif %}
+<button type="button"
+        ui:action="{{ button.scriptlet.name }}"
+        ui:action-params="{{ button.params|escape }}"
+        {% if button.key %}ui:hotkey="{{ button.hotkey_code }}"{% endif %}
+        {% if button.tooltip %}ui:tooltip="{{ button.tooltip }}"{% endif %} >
+        {{ button.label|safe }}
+</button>
+{% if button.link %}
+</a>
+{% endif %}

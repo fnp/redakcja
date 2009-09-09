@@ -85,6 +85,10 @@ Panel.prototype.unload = function(event, data) {
     if( data == this ) {
         $.log('unloading', this);
         $(this.contentDiv).html('');
+
+        // disconnect the toolbar
+        $('div.panel-toolbar span.panel-toolbar-extra', this.wrap).empty();
+        
         this.callHook('unload');
         this.hooks = null; // flush the hooks
         return false;
@@ -137,6 +141,13 @@ Panel.prototype.connectToolbar = function()
     $.log('Connecting toolbar', toolbar);
     if(toolbar.length == 0) return;
 
+    // move the extra
+    var extra_buttons = $('span.panel-toolbar-extra', toolbar);
+    var placeholder = $('div.panel-toolbar span.panel-toolbar-extra', this.wrap);
+    placeholder.replaceWith(extra_buttons);
+
+    var action_buttons = $('button', extra_buttons);
+
     // connect group-switch buttons
     var group_buttons = $('*.toolbar-tabs-container button', toolbar);
 
@@ -165,8 +176,11 @@ Panel.prototype.connectToolbar = function()
     });
 
     // connect action buttons
-    var action_buttons = $('*.toolbar-button-groups-container button', toolbar);
-    action_buttons.each(function() {
+    var allbuttons = $.makeArray(action_buttons)
+    $.merge(allbuttons,
+        $.makeArray($('*.toolbar-button-groups-container button', toolbar)) );
+        
+    $(allbuttons).each(function() {
         var button = $(this);
         var hk = button.attr('ui:hotkey');
         if(hk) hk = new Hotkey( parseInt(hk) );

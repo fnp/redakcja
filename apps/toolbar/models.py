@@ -19,8 +19,9 @@ class Button(models.Model):
     slug = models.SlugField(unique=True) #unused
 
     # behaviour
-    params = models.TextField() # TODO: should be a JSON field
-    scriptlet = models.ForeignKey('Scriptlet')
+    params = models.TextField(default='[]') # TODO: should be a JSON field
+    scriptlet = models.ForeignKey('Scriptlet', null=True, blank=True)
+    link = models.CharField(max_length=256, blank=True, default='')
 
     # ui related stuff
     key = models.CharField(blank=True, max_length=1)

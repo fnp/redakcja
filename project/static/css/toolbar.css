@@ -5,33 +5,33 @@
     position: absolute;
     top: 0px; left:0px; right: 0px; 
     height: auto;
-    padding: 1pt;
-    margin: 0pt;
+    padding: 2px;
+    margin: 0px;
 }
 
 .toolbar p {
-    margin: 0pt; 
+    margin: 0px;
 
-    padding: 0pt;    
+    padding: 0px;
     padding-left: 0.5em;
 
     border: none;
     background: #AAA;
-    font-size: 10pt;
-    line-height: 12pt;
+    font-size: 10px;
+    line-height: 12px;
 }
 
 .toolbar button {
     border: none;
-    padding: 2pt 0.5em;
+    padding: 2px 0.5em;
     background: #AAA;
     font-family: Sans-Serif;
 }
 
 .toolbar div {
     background: green;
-    margin: 0pt;
-    padding: 0pt;
+    margin: 0px;
+    padding: 0px;
 }
 
 .toolbar-tabs-container button.active {
@@ -40,8 +40,8 @@
 
 .toolbar-button-groups-container p {
     background: #DDD;
-    padding-top: 2pt;
-    padding-bottom: 2pt;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .toolbar-button-groups-container button {

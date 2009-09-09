@@ -1,9 +1,16 @@
 {% load toolbar_tags %}
 <div class="toolbar" xmlns:ui="http://nowoczesnapolska.org.pl/platforma/ui">
     
+    {# This div will be connected to the right place #}
+    <span class="panel-toolbar-extra">
+    {% for button in toolbar_extra_group.button_set.all %}
+    {% toolbar_button button %}
+    {% endfor %} 
+    </span>
+
     <div class="toolbar-tabs-container">
     <p>
-        {% for group in groups %}
+        {% for group in toolbar_groups %}
         <button ui:group="{{ group.slug }}" {% if forloop.first %}class="active"{% endif %}>
             {{ group.name }}
         </button>
@@ -12,17 +19,11 @@
     </div>
 
     <div class="toolbar-button-groups-container">
-        {% for group in groups %}        
+        {% for group in toolbar_groups %}
         <p ui:group="{{group.slug}}" class="toolbar-buttons-container" {% if not forloop.first %}style="display:none;"{% endif %}>
             {# buttons for this group #}            
             {% for button in group.button_set.all %}
-            <button type="button" 
-                ui:action="{{ button.scriptlet.name }}"
-                ui:action-params="{{ button.params|escape }}"
-                {% if button.key %}ui:hotkey="{{ button.hotkey_code }}"{% endif %}
-                {% if button.tooltip %}ui:tooltip="{{ button.tooltip }}"{% endif %} >
-            {{ button.label|safe }}
-            </button>
+            {% toolbar_button button %}
             {% endfor %}
         </p>
         {% endfor %}

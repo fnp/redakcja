@@ -3,28 +3,28 @@ from django.contrib import admin
 from django.conf import settings
 
 admin.autodiscover()
-PATH_END = r"(?P<path>[^/]+)$"
+PATH_SEC = r"(?P<path>[^/]+)"
+PATH_END = PATH_SEC + "/$"
 
 urlpatterns = patterns('',
     # Explorer:
     url(r'^$', 'explorer.views.file_list', name='file_list'),
     
-    url(r'^file/text/'+PATH_END, 'explorer.views.file_xml', name='file_xml'),
-    url(r'^file/dc/'+PATH_END, 'explorer.views.file_dc', name='file_dc'),
+    url(r'^file/'+PATH_SEC+'/text/$', 'explorer.views.file_xml', name='file_xml'),
+    url(r'^file/'+PATH_SEC+'/dc/$', 'explorer.views.file_dc', name='file_dc'),
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
-    url(r'^file/commit/'+PATH_END, 'explorer.views.file_commit', name='file_commit'),
-    url(r'^file/update/'+PATH_END, 'explorer.views.file_update_local', name='file_update'),
+    url(r'^file/'+PATH_SEC+'/commit$', 'explorer.views.file_commit', name='file_commit'),
+    url(r'^file/'+PATH_SEC+'/update$', 'explorer.views.file_update_local', name='file_update'),
 
     url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
     url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
     
     # Editor panels
-    url(r'^editor/panel/xmleditor/'+PATH_END, 'explorer.views.xmleditor_panel', name='xmleditor_panel'),
-    url(r'^editor/panel/gallery/'+PATH_END, 'explorer.views.gallery_panel', name='gallery_panel'),
-    url(r'^editor/panel/htmleditor/'+PATH_END, 'explorer.views.htmleditor_panel', name='htmleditor_panel'),
-    url(r'^editor/panel/dceditor/'+PATH_END, 'explorer.views.dceditor_panel', name='dceditor_panel'),
+    url(r'^editor/'+PATH_SEC+'/panel/(?P<name>[a-z]+)/$', 'explorer.views.panel_view', name='panel_view'),
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
 
+    url(r'^editor/'+PATH_SEC+'/print/html$', 'explorer.views.print_html'),
+    url(r'^editor/'+PATH_SEC+'/print/xml$', 'explorer.views.print_xml'),
     
     # Task managment
     url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),

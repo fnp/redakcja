@@ -10,9 +10,10 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
+from django.contrib.auth.decorators import login_required
 
 from explorer import forms, models
 from toolbar import models as toolbar_models
@@ -350,66 +351,93 @@ def display_editor(request, path, repo):
         repo.with_wlock(ensure_branch_exists)
         
         return direct_to_template(request, 'explorer/editor.html', extra_context={
-            'hash': path,
+            'fileid': path,
             'panel_list': ['lewy', 'prawy'],
+            'availble_panels': models.EditorPanel.objects.all(),
             'scriptlets': toolbar_models.Scriptlet.objects.all()
         })
     except KeyError:
         return direct_to_template(request, 'explorer/nofile.html', \
-            extra_context = { 'path': path })
+            extra_context = { 'fileid': path })
 
 # ===============
 # = Panel views =
 # ===============
+class panel_view(object):
 
-@ajax_login_required
-@with_repo
-def xmleditor_panel(request, path, repo):
-    text = repo.get_file(path, file_branch(path, request.user))
-    
-    return direct_to_template(request, 'explorer/panels/xmleditor.html', extra_context={
-        'fpath': path,
-        'text': text,
-    })
-    
+    def __new__(cls, request, name, path, **kwargs):
+    #try:        
+        panel = models.EditorPanel.objects.get(id=name)
+        method = getattr(cls, name + '_panel', None)
+        if not panel or method is None:
+            raise HttpResponseNotFound
 
-@ajax_login_required
-def gallery_panel(request, path):
-    return direct_to_template(request, 'explorer/panels/gallery.html', extra_context={
-        'fpath': path,
-        'form': forms.ImageFoldersForm(),
-    })
+        extra_context = method(request, path, panel, **kwargs)
 
-@ajax_login_required
-@with_repo
-def htmleditor_panel(request, path, repo):
-    user_branch = file_branch(path, request.user)
-    try:
-        return direct_to_template(request, 'explorer/panels/htmleditor.html', extra_context={
-            'fpath': path,
-            'html': html.transform(repo.get_file(path, user_branch), is_file=False),
+        if not isinstance(extra_context, dict):
+            return extra_context
+
+        extra_context.update({
+            'toolbar_groups': panel.toolbar_groups.all(),
+            'toolbar_extra_group': panel.toolbar_extra,
+            'fileid': path
         })
-    except (ParseError, ValidationError), e:
-        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
-            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 'panel_name': 'Edytor HTML'}) 
 
-@ajax_login_required
+        return direct_to_template(request, 'explorer/panels/'+name+'.html',\
+            extra_context=extra_context)
+
+    @staticmethod
+    @ajax_login_required
+    @with_repo
+    def xmleditor_panel(request, path, panel, repo):
+        return {'text': repo.get_file(path, file_branch(path, request.user))}
+
+    @staticmethod
+    @ajax_login_required
+    def gallery_panel(request, path, panel):
+        return {'form': forms.ImageFoldersForm() }
+
+    @staticmethod
+    @ajax_login_required
+    @with_repo
+    def htmleditor_panel(request, path, panel, repo):
+        user_branch = file_branch(path, request.user)
+        try:
+            return {'html': html.transform(repo.get_file(path, user_branch), is_file=False)}
+        except (ParseError, ValidationError), e:
+            return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fileid': path, 'exception_type': type(e).__name__, 'exception': e,
+            'panel_name': panel.display_name})
+
+    @staticmethod
+    @ajax_login_required
+    @with_repo
+    def dceditor_panel(request, path, panel, repo):
+        user_branch = file_branch(path, request.user)
+        try:
+            doc_text = repo.get_file(path, user_branch)
+            document = parser.WLDocument.from_string(doc_text)
+            form = forms.DublinCoreForm(info=document.book_info)
+            return {'form': form}
+        except (ParseError, ValidationError), e:
+            return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
+            'fileid': path, 'exception_type': type(e).__name__, 'exception': e,
+            'panel_name': panel.display_name})
+
+
+@login_required
 @with_repo
-def dceditor_panel(request, path, repo):
+def print_html(request, path, repo):
     user_branch = file_branch(path, request.user)
+    return HttpResponse( 
+        html.transform(repo.get_file(path, user_branch), is_file=False),
+        mimetype="text/html")
 
-    try:
-        doc_text = repo.get_file(path, user_branch)
-        document = parser.WLDocument.from_string(doc_text)
-        form = forms.DublinCoreForm(info=document.book_info)       
-        return direct_to_template(request, 'explorer/panels/dceditor.html', extra_context={
-            'fpath': path,
-            'form': form,
-        })
-    except (ParseError, ValidationError), e:
-        return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
-            'fpath': path, 'exception_type': type(e).__name__, 'exception': e, 
-            'panel_name': 'Edytor DublinCore'}) 
+@login_required
+@with_repo
+def print_xml(request, path, repo):
+    user_branch = file_branch(path, request.user)
+    return HttpResponse( repo.get_file(path, user_branch), mimetype="text/plain; charset=utf-8")
 
 # =================
 # = Utility views =

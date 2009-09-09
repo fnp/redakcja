@@ -26,16 +26,16 @@
     </script>
 {% endblock extrabody %}
 
-{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; plik {{ hash }}{% endblock breadcrumbs %}
+{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; plik {{ fileid }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
 
-<form action="{% url file_commit hash %}" method="POST" style="display: inline;" id="toolbar-commit-form">
+<form action="{% url file_commit fileid %}" method="POST" style="display: inline;" id="toolbar-commit-form">
     <input type="text" size="40" id="toolbar-commit-message" name="message" />
     <button type="submit" class="toolbar-button" id="toolbar-button-commit">Merge</button>
 </form>
 <button type="button" class="toolbar-button" id="toolbar-button-update"
-        ui:ajax-action="{% url file_update hash %}">Update</button>
+        ui:ajax-action="{% url file_update fileid %}">Update</button>
 <button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Save</button>
 {% endblock %}
 
@@ -58,15 +58,21 @@
             {% for n in panel_list %}
             <div class="panel-wrap{% if forloop.last %} last-panel{% endif %}" id="panel-{{n}}">
                 <div class="panel-toolbar">
-                    <label for="select-{{n}}-panel">{{n|capfirst}} panel:</label>
+                    <p><label>{{n|capfirst}} panel:
                     <select name="select-{{n}}-panel" id="panel-{{n}}-select">
-                        <option value="{% url xmleditor_panel hash %}" name="xmleditor">Edytor XML</option>
-                        <option value="{% url htmleditor_panel hash %}" name="htmleditor">Edytor HTML</option>
-                        <option value="{% url gallery_panel hash %}" name="gallery">Galeria skanów</option>
-                        <option value="{% url dceditor_panel hash %}" name="dceditor">Edytor DublinCore</option>
+                        {% for panel_type in availble_panels %}
+                        <option value="{% url panel_view path=fileid,name=panel_type.id  %}">{{panel_type.display_name}}</option>
+                        {% endfor %}
                     </select>
-                    <button type="button" class="refresh-button">Odśwież</button>
+                    </label>
+                    <span class="toolbar-button-groups-container">
+                    <span class="panel-toolbar-extra" > </span>
+                    </span>
+                    <!-- rethink the refresh button - it doesn't work very well -->
+                    <!-- <button type="button" class="refresh-button">Odśwież</button> -->
+                    {# <a href="{% url print_xml fileid %}" target="_new">Wydruk</a> #}
                     <strong class="change-notification" style="display: none">Widok nieaktualny!</strong>
+                    </p>
                </div>
                <div id="panel-{{n}}-content" class="panel-content"></div>
                <button type="button" class="panel-slider"></button>

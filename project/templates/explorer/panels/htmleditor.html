@@ -1,4 +1,8 @@
+{% load toolbar_tags %}
+{% toolbar toolbar_groups toolbar_extra_group %}
+
 {{ html|safe }}
+
 <script type="text/javascript" charset="utf-8">
 panel_hooks = {
 	load: function() 

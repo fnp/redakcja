@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from explorer import fields
+import toolbar.models
 
+from explorer import fields
 
 class EditorSettings(models.Model):
     user = models.ForeignKey(User, unique=True)
@@ -18,7 +19,17 @@ class EditorSettings(models.Model):
     def __unicode__(self):
         return u"Editor settings for %s" % self.user.username
 
+class EditorPanel(models.Model):
+    id = models.CharField(max_length=24, primary_key=True)
+    display_name = models.CharField(max_length=128)
 
+    toolbar_groups = models.ManyToManyField(toolbar.models.ButtonGroup, blank=True)
+    toolbar_extra = models.ForeignKey(toolbar.models.ButtonGroup, null=True, blank=True,
+        unique=True, related_name='main_editor_panels')
+
+    def __unicode__(self):
+        return self.display_name
+    
 class Book(models.Model):
     class Meta:
         permissions = (
