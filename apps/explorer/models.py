@@ -35,6 +35,7 @@ class Book(models.Model):
         permissions = (
             ("can_add_files", "Can do hg add."),
         )
+        abstract=True
     pass
 
 

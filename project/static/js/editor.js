@@ -310,9 +310,11 @@ Editor.prototype.loadPanelOptions = function() {
             totalWidth += panelWidth;               
         }
         $.log('panel:', this, $(this).css('left'));
-        $('.panel-toolbar select', this).val(
-            $('.panel-toolbar option[name=' + self.options.panels[index].name + ']', this).attr('value')
-            )
+        $('.panel-toolbar option', this).each(function() {
+            if ($(this).attr('p:panel-name') == self.options.panels[index].name) {
+                $(this).parent('select').val($(this).attr('value'));
+            }
+        });
     });   
 }
 
@@ -321,7 +323,7 @@ Editor.prototype.savePanelOptions = function() {
     var panels = [];
     $('.panel-wrap', self.rootDiv).not('.panel-content-overlay').each(function() {
         panels.push({
-            name: $('.panel-toolbar option:selected', this).attr('name'),
+            name: $('.panel-toolbar option:selected', this).attr('p:panel-name'),
             ratio: $(this).width() / self.rootDiv.width()
         })
     });

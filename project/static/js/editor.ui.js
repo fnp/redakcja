@@ -106,7 +106,7 @@ Editor.prototype.setupUI = function() {
     self.rootDiv.bind('stopResize', function() {
         self.savePanelOptions()
     });
-
+    
     /*
      * Connect panel actions
      */
