@@ -190,7 +190,6 @@ label {
     height: 26px;
 }
 
-
 .panel-toolbar .toolbar-button-groups-container .panel-toolbar-extra button {
     /* this is uber specific */
     font-size: 12px;
@@ -322,4 +321,24 @@ div.isection p {
 .msg-warning {
     background-color: yellow;
     border-color: yellow;   
+}
+
+/* Commit dialog */
+#commit-dialog-error-empty-message {
+    color: red;
+    display: none;
+    font-weight: bold;
+}
+
+text#commit-dialog-message {
+    width: 80%;
+    margin: auto;
+}
+
+#split-dialog .container-box form {
+    margin: 0.2em 1em;
+}
+
+#split-dialog .container-box fieldset {
+    margin: 0.5em;
 }

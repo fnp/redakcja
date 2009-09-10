@@ -6,7 +6,6 @@ function Hotkey(code) {
     this.character = String.fromCharCode(code & 0xff)
 }
 
-
 Hotkey.prototype.toString = function() {
     mods = []
     if(this.has_alt) mods.push('Alt')
@@ -22,7 +21,7 @@ function Panel(panelWrap) {
     self.wrap = panelWrap;
     self.contentDiv = $('.panel-content', panelWrap);
     self.instanceId = Math.ceil(Math.random() * 1000000000);
-    $.log('new panel - wrap: ', self.wrap);
+    // $.log('new panel - wrap: ', self.wrap);
 	
     $(document).bind('panel:unload.' + self.instanceId,
         function(event, data) {
@@ -46,7 +45,7 @@ Panel.prototype.callHook = function() {
     var noHookAction = args.splice(0,1)[0]
     var result = false;
 
-    $.log('calling hook: ', hookName, 'with args: ', args);
+    // $.log('calling hook: ', hookName, 'with args: ', args);
     if(this.hooks && this.hooks[hookName])
         result = this.hooks[hookName].apply(this, args);
     else if (noHookAction instanceof Function)
@@ -55,7 +54,7 @@ Panel.prototype.callHook = function() {
 }
 
 Panel.prototype.load = function (url) {
-    $.log('preparing xhr load: ', this.wrap);
+    // $.log('preparing xhr load: ', this.wrap);
     $(document).trigger('panel:unload', this);
     var self = this;
     self.current_url = url;
@@ -80,10 +79,8 @@ Panel.prototype.load = function (url) {
 }
 
 Panel.prototype.unload = function(event, data) {
-    $.log('got unload signal', this, ' target: ', data);
-
-    if( data == this ) {
-        $.log('unloading', this);
+    // $.log('got unload signal', this, ' target: ', data);
+    if( data == this ) {        
         $(this.contentDiv).html('');
 
         // disconnect the toolbar
@@ -108,7 +105,7 @@ Panel.prototype.refresh = function(event, data) {
 } 
 
 Panel.prototype.otherPanelChanged = function(other) {
-    $.log('panel ', other, ' changed.');
+    $.log('Panel ', this, ' is aware that ', other, ' changed.');
     if(!this.callHook('dirty'))
         $('.change-notification', this.wrap).fadeIn();
 }	
@@ -138,7 +135,7 @@ Panel.prototype.connectToolbar = function()
     
     // check if there is a one
     var toolbar = $("div.toolbar", this.contentDiv);
-    $.log('Connecting toolbar', toolbar);
+    // $.log('Connecting toolbar', toolbar);
     if(toolbar.length == 0) return;
 
     // move the extra
@@ -188,9 +185,9 @@ Panel.prototype.connectToolbar = function()
         try {
             var params = $.evalJSON(button.attr('ui:action-params'));
         } catch(object) {
-           $.log('JSON exception in ', button, ': ', object);
-           button.attr('disabled', 'disabled');
-           return;
+            $.log('JSON exception in ', button, ': ', object);
+            button.attr('disabled', 'disabled');
+            return;
         }
 
         var callback = function() {
@@ -203,7 +200,7 @@ Panel.prototype.connectToolbar = function()
         // connect hotkey
         if(hk) {
             self.hotkeys[hk.code] = callback;
-             $.log('hotkey', hk);
+        // $.log('hotkey', hk);
         }
         
         // tooltip
@@ -261,60 +258,6 @@ function Editor()
     this.popupQueue = [];
     this.autosaveTimer = null;
     this.scriplets = {};
-}
-
-Editor.prototype.setupUI = function() {
-    // set up the UI visually and attach callbacks
-    var self = this;
-   
-    self.rootDiv.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
-    // self.rootDiv.css('top', ($('#header').outerHeight() ) + 'px');
-    
-    $('#panels > *.panel-wrap').each(function() {
-        var panelWrap = $(this);
-        $.log('wrap: ', panelWrap);
-        var panel = new Panel(panelWrap);
-        panelWrap.data('ctrl', panel); // attach controllers to wraps
-        panel.load($('.panel-toolbar select', panelWrap).val());
-        
-        $('.panel-toolbar select', panelWrap).change(function() {
-            var url = $(this).val();
-            panelWrap.data('ctrl').load(url);
-            self.savePanelOptions();
-        });
-
-        $('.panel-toolbar button.refresh-button', panelWrap).click(
-            function() { 
-                panel.refresh();
-            } );
-    });
-
-    $(document).bind('panel:contentChanged', function() {
-        self.onContentChanged.apply(self, arguments)
-    });
-    
-    $('#toolbar-button-save').click( function (event, data) { 
-        self.saveToBranch();
-    } );
-
-    $('#toolbar-button-update').click( function (event, data) {
-        if (self.updateUserBranch()) {
-            // commit/update can be called only after proper, save
-            // this means all panels are clean, and will get refreshed
-             // do this only, when there are any changes to local branch
-            self.refreshPanels();
-        }
-    } );
-
-    $('#toolbar-button-commit').click( function (event, data) { 
-        self.sendPullRequest();
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    } );
-    self.rootDiv.bind('stopResize', function() { 
-        self.savePanelOptions()
-    });
 }
 
 Editor.prototype.loadConfig = function() {
@@ -478,20 +421,6 @@ Editor.prototype.onContentChanged = function(event, data) {
     }, 300000 );
 };
 
-Editor.prototype.refreshPanels = function() {
-    var self = this;
-
-    self.allPanels().each(function() {
-        var panel = $(this).data('ctrl');
-        $.log('Refreshing: ', this, panel);
-        if ( panel.changed() )
-            panel.unmarkChanged();
-        else
-            panel.refresh();
-    });
-};		
-
-
 Editor.prototype.updateUserBranch = function() {
     if( $('.panel-wrap.changed').length != 0)
         alert("There are unsaved changes - can't update.");
@@ -499,107 +428,80 @@ Editor.prototype.updateUserBranch = function() {
     var self = this;
     $.ajax({
         url: $('#toolbar-button-update').attr('ui:ajax-action'),
-	dataType: 'json',
-	success: function(data, textStatus) {
-                switch(data.result) {
-                    case 'done':
-                        self.showPopup('generic-yes', 'Plik uaktualniony.');
-                        self.refreshPanels()
-                        break;
-                    case 'nothing-to-do':
-                        self.showPopup('generic-info', 'Brak zmian do uaktualnienia.');
-                        break;
-                    default:
-                        self.showPopup('generic-error', data.errors && data.errors[0]);
-                }
-	},
-	error: function(rq, tstat, err) {
-		self.showPopup('generic-error', 'Błąd serwera: ' + err);
-	},
-	type: 'POST',
-	data: {}
+        dataType: 'json',
+        success: function(data, textStatus) {
+            switch(data.result) {
+                case 'done':
+                    self.showPopup('generic-yes', 'Plik uaktualniony.');
+                    self.refreshPanels()
+                    break;
+                case 'nothing-to-do':
+                    self.showPopup('generic-info', 'Brak zmian do uaktualnienia.');
+                    break;
+                default:
+                    self.showPopup('generic-error', data.errors && data.errors[0]);
+            }
+        },
+        error: function(rq, tstat, err) {
+            self.showPopup('generic-error', 'Błąd serwera: ' + err);
+        },
+        type: 'POST',
+        data: {}
     });
 }
 
-Editor.prototype.sendPullRequest = function () {
+Editor.prototype.sendMergeRequest = function (message) {
     if( $('.panel-wrap.changed').length != 0)        
         alert("There are unsaved changes - can't commit.");
 
     var self =  this;
-
-    /* this.showPopup('not-implemented'); */
-
-    $.log('URL !: ', $('#toolbar-commit-form').attr('action'));
+    $.log('URL !: ', $('#commit-dialog form').attr('action'));
     
     $.ajax({        
-        url: $('#toolbar-commit-form').attr('action'),
-	dataType: 'json',
-	success: function(data, textStatus) {
-                switch(data.result) {
-                    case 'done':
-                        self.showPopup('generic-yes', 'Łączenie zmian powiodło się.');
+        url: $('#commit-dialog form').attr('action'),
+        dataType: 'json',
+        success: function(data, textStatus) {
+            switch(data.result) {
+                case 'done':
+                    self.showPopup('generic-yes', 'Łączenie zmian powiodło się.');
 
-                        if(data.localmodified)
-                            self.refreshPanels()
+                    if(data.localmodified)
+                        self.refreshPanels()
                         
-                        break;
-                    case 'nothing-to-do':
-                        self.showPopup('generic-info', 'Brak zmian do połaczenia.');
-                        break;
-                    default:
-                        self.showPopup('generic-error', data.errors && data.errors[0]);
-                }
-	},
-	error: function(rq, tstat, err) {
-		self.showPopup('generic-error', 'Błąd serwera: ' + err);
-	},
-	type: 'POST',
-	data: {'message': $('#toolbar-commit-message').val() }
+                    break;
+                case 'nothing-to-do':
+                    self.showPopup('generic-info', 'Brak zmian do połaczenia.');
+                    break;
+                default:
+                    self.showPopup('generic-error', data.errors && data.errors[0]);
+            }
+        },
+        error: function(rq, tstat, err) {
+            self.showPopup('generic-error', 'Błąd serwera: ' + err);
+        },
+        type: 'POST',
+        data: {
+            'message': message
+        }
     }); 
 }
 
-Editor.prototype.showPopup = function(name, text, timeout)
+Editor.prototype.postSplitRequest = function(s, f)
 {
-    timeout = timeout || 4000;
-    var self = this;
-    self.popupQueue.push( [name, text, timeout] )
-
-    if( self.popupQueue.length > 1) 
-        return;
-
-    var box = $('#message-box > #' + name);
-    $('*.data', box).html(text || '');
-    box.fadeIn(100);
- 
-    if(timeout > 0)
-        setTimeout( $.fbind(self, self.advancePopupQueue), timeout);
+    $.ajax({
+        url: $('#split-dialog form').attr('action'),
+        dataType: 'html',
+        success: s,
+        error: f,
+        type: 'POST',
+        data: $('#split-dialog form').serialize()
+    });
 };
 
-Editor.prototype.advancePopupQueue = function() {
-    var self = this;
-    var elem = this.popupQueue.shift();
-    if(elem) {
-        var box = $('#message-box > #' + elem[0]);
-
-        box.fadeOut(100, function()
-        {
-            $('*.data', box).html('');
-
-            if( self.popupQueue.length > 0) {
-                var ibox = $('#message-box > #' + self.popupQueue[0][0]);
-                $('*.data', ibox).html(self.popupQueue[0][1] || '');
-                ibox.fadeIn(100);
-                if(self.popupQueue[0][2] > 0)
-                    setTimeout( $.fbind(self, self.advancePopupQueue), self.popupQueue[0][2]);
-            }
-        });
-    }
-};
 
 Editor.prototype.allPanels = function() {
     return $('#' + this.rootDiv.attr('id') +' > *.panel-wrap', this.rootDiv.parent());
 }
-
 
 Editor.prototype.registerScriptlet = function(scriptlet_id, scriptlet_func)
 {

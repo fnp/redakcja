@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import forms
 
 from lxml import etree
@@ -70,6 +71,11 @@ class ImageFoldersForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ImageFoldersForm, self).__init__(*args, **kwargs)
         self.fields['folders'].choices = [('', '-- Wybierz folder z obrazkami --')] + [(fn, fn) for fn in models.get_image_folders()]
+
+class SplitForm(forms.Form):
+    partname = forms.RegexField(regex='[0-9\w-]+',  \
+        label='Part name', help_text='Example: rozdział-2')
+    autoxml = forms.BooleanField(required=False, initial=False, label=u"Generate DublinCore")
 
 class DublinCoreForm(forms.Form):
     about = forms.URLField(verify_exists=False)

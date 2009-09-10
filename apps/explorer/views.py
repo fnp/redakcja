@@ -424,7 +424,9 @@ class panel_view(object):
             'fileid': path, 'exception_type': type(e).__name__, 'exception': e,
             'panel_name': panel.display_name})
 
-
+##
+## Editor "commands" and "dialogs"
+##
 @login_required
 @with_repo
 def print_html(request, path, repo):
@@ -438,6 +440,41 @@ def print_html(request, path, repo):
 def print_xml(request, path, repo):
     user_branch = file_branch(path, request.user)
     return HttpResponse( repo.get_file(path, user_branch), mimetype="text/plain; charset=utf-8")
+
+@login_required # WARNING: we don't wont a login form inside a window
+@with_repo
+def split_text(request, path, repo):
+    user_branch = file_branch(path, request.user)
+    valid = False
+    
+    if request.method == "POST":
+        sform = forms.SplitForm(request.POST, prefix='splitform')
+        dcform = forms.SplitForm(request.POST, prefix='dcform')
+
+        print "validating sform"
+        if sform.is_valid():
+            valid = True
+            if sform.cleaned_data['autoxml']:
+                print "validating dcform"                
+                valid = dcform.is_valid()        
+
+        print "valid is ", valid
+        if valid:
+            uri = path + '$' + sform.cleaned_data['partname']
+            # do something
+            return HttpResponseRedirect( reverse('split-success',\
+                kwargs={'path': path})+'?child='+uri)
+    else:
+        sform = forms.SplitForm(prefix='splitform')
+        dcform = forms.DublinCoreForm(prefix='dcform')
+    
+    return direct_to_template(request, 'explorer/split.html', extra_context={
+        'splitform': sform, 'dcform': dcform, 'fileid': path} )
+
+def split_success(request, path):
+    return direct_to_template(request, 'explorer/split_success.html',\
+        extra_context={'fileid': path, 'cfileid': request.GET['child']} )
+
 
 # =================
 # = Utility views =

@@ -1,7 +1,7 @@
 <div class="panel-dceditor">
-    <form action="{{ request.get_full_path }}" method="post" accept-charset="utf-8">
+    <form action="{% url file_dc fileid %}" method="post" accept-charset="utf-8">
         {{ form.as_p }}
-<!--        <p><input type="submit" value="Continue &rarr;"/></p> -->
+<!--    <p><input type="submit" value="Continue &rarr;"/></p> -->
     </form>
 </div>
 <script type="text/javascript" charset="utf-8">
