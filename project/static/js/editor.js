@@ -268,7 +268,7 @@ Editor.prototype.setupUI = function() {
     var self = this;
    
     self.rootDiv.makeHorizPanel({}); // TODO: this probably doesn't belong into jQuery
-    // self.rootDiv.css('top', ($('#header').outerHeight() ) + 'px');
+    // self.rootcDiv.css('top', ($('#header').outerHeight() ) + 'px');
     
     $('#panels > *.panel-wrap').each(function() {
         var panelWrap = $(this);
@@ -279,8 +279,8 @@ Editor.prototype.setupUI = function() {
         
         $('.panel-toolbar select', panelWrap).change(function() {
             var url = $(this).val();
-            panelWrap.data('ctrl').load(url);
             self.savePanelOptions();
+            panelWrap.data('ctrl').load(url);
         });
 
         $('.panel-toolbar button.refresh-button', panelWrap).click(
@@ -367,9 +367,11 @@ Editor.prototype.loadPanelOptions = function() {
             totalWidth += panelWidth;               
         }
         $.log('panel:', this, $(this).css('left'));
-        $('.panel-toolbar select', this).val(
-            $('.panel-toolbar option[name=' + self.options.panels[index].name + ']', this).attr('value')
-            )
+        $('.panel-toolbar option', this).each(function() {
+            if ($(this).attr('p:panel-name') == self.options.panels[index].name) {
+                $(this).parent('select').val($(this).attr('value'));
+            }
+        });
     });   
 }
 
@@ -378,7 +380,7 @@ Editor.prototype.savePanelOptions = function() {
     var panels = [];
     $('.panel-wrap', self.rootDiv).not('.panel-content-overlay').each(function() {
         panels.push({
-            name: $('.panel-toolbar option:selected', this).attr('name'),
+            name: $('.panel-toolbar option:selected', this).attr('p:panel-name'),
             ratio: $(this).width() / self.rootDiv.width()
         })
     });
