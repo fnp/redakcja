@@ -192,6 +192,19 @@
       <object pk="24"/>
     </field>
   </object>
+  <object pk="88" model="toolbar.button">
+    <field type="CharField" name="label">Wydziel</field>
+    <field type="SlugField" name="slug">split-text-from-xmleditor</field>
+    <field type="TextField" name="params">[]</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">show_splitmodal</field>
+    <field type="CharField" name="link"/>
+    <field type="CharField" name="key"/>
+    <field type="PositiveIntegerField" name="key_mod">0</field>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="23"/>
+    </field>
+  </object>
   <object pk="77" model="toolbar.button">
     <field type="CharField" name="label">Zamień cudzysłowy</field>
     <field type="SlugField" name="slug">zamien-cudzyslowy</field>
@@ -1176,5 +1189,40 @@ if (!text) {
 
 
 panel.fireEvent('contentChanged');</field>
+  </object>
+  <object pk="show_splitmodal" model="toolbar.scriptlet">
+    <field type="TextField" name="code">var cm = panel.texteditor;
+
+cm.focus();
+
+var text = cm.selection();
+
+if(!text) return;
+
+
+
+cm.replaceSelection('&lt;include-tag-placeholder /&gt;');
+
+var fulltext = cm.getCode();
+
+
+
+$('#split-dialog').jqmShow({
+
+    selection: text, fulltext: fulltext,
+
+    success: function(uri) {
+
+        editor.refreshPanels();
+
+    },
+
+    failure: function() { cm.undo(); } 
+
+}) ;
+
+
+
+</field>
   </object>
 </django-objects>
