@@ -2,24 +2,23 @@
     <fieldset>
         <legend>Split options</legend>
         {% for field in splitform %}
+        {% if field.is_hidden %}
+        {{ field}}
+        {% else %}
         {{ field.errors }}
         {% ifequal field.html_name 'splitform-autoxml' %}
         <p><label>{{ field }} {{ field.label }}</label></p>
         {% else %}
         <p><label>{{ field.label }}: {{ field }}</label></p>
         {% endifequal %}
-
-        {% endfor %}
-
+        {% endif %}
+        {% endfor %}        
     </fieldset>
 
     <fieldset id="split-form-dc-subform" style="display: none;">
     <legend>Dublin Core</legend>
     {{ dcform.as_p }}
-    </fieldset>
-
-    <input type="hidden" name="splittext" />
-    <input type="hidden" name="fulltext" />
+    </fieldset>    
     <p>
         <button type="submit" id="split-dialog-button-accept">Split</button>
         <button type="button" id="split-dialog-button-close">Close</button>

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import urllib2
-import hg
+import hg, re
 from datetime import date
 
-from librarian import html, parser, dcparser, wrap_text
+import librarian
+
+from librarian import html, parser, dcparser
 from librarian import ParseError, ValidationError
 
 from django.conf import settings
@@ -18,12 +20,18 @@ from django.contrib.auth.decorators import login_required
 from explorer import forms, models
 from toolbar import models as toolbar_models
 
+from django.forms.util import ErrorList
+
 #
 # Some useful decorators
 
-def file_branch(path, user=None):
-    return ('personal_'+user.username + '_' if user is not None else '') \
-        + 'file_' + path
+def file_branch(fileid, user=None):
+    parts = fileid.split('$')
+    return ('personal_'+ user.username + '_' if user is not None else '') \
+        + 'file_' + parts[0]
+
+def file_path(fileid):
+    return 'pub_'+fileid+'.xml'
 
 def with_repo(view):
     """Open a repository for this view"""
@@ -50,11 +58,17 @@ def ajax_login_required(view):
 def file_list(request, repo):
     #
     latest_default = repo.get_branch_tip('default')
-    files = [ f for f in repo.repo[latest_default] if not f.startswith('.')]
+
+    fl = []
+    for file in repo.repo[latest_default]:
+        m = re.match(u'^pub_([\\w\\$0-9_-]+).xml$', file.decode('utf-8'), re.UNICODE)
+        if m is not None:
+            fl.append(m.group(1))
+            
     bookform = forms.BookUploadForm()
 
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'files': files, 'bookform': bookform,
+        'files': fl, 'bookform': bookform,
     })
 
 @permission_required('explorer.can_add_files')
@@ -68,21 +82,22 @@ def file_upload(request, repo):
                 # prepare the data
                 f = request.FILES['file']
                 decoded = f.read().decode('utf-8')
-                path = form.cleaned_data['bookname']
+                fileid = form.cleaned_data['bookname'].lower()
+                rpath = file_path(fileid)
 
                 if form.cleaned_data['autoxml']:
-                    decoded = wrap_text(decoded, unicode(date.today()) )
+                    decoded = librarian.wrap_text(decoded, unicode(date.today()) )
                 
                 def upload_action():
-                    repo._add_file(path, decoded.encode('utf-8') )
+                    repo._add_file(rpath, decoded.encode('utf-8') )
                     repo._commit(message="File %s uploaded by user %s" % \
-                        (path, request.user.username), user=request.user.username)
+                        (rpath, request.user.username), user=request.user.username)
 
                 repo.in_branch(upload_action, 'default')
 
                 # if everything is ok, redirect to the editor
                 return HttpResponseRedirect( reverse('editor_view',
-                        kwargs={'path': path}) )
+                        kwargs={'path': fileid}) )
 
             except hg.RepositoryException, e:
                 other_errors.append(u'Błąd repozytorium: ' + unicode(e) )
@@ -103,6 +118,7 @@ def file_upload(request, repo):
 @ajax_login_required
 @with_repo
 def file_xml(request, repo, path):
+    rpath = file_path(path)
     if request.method == 'POST':
         errors = None
         warnings = None
@@ -114,7 +130,7 @@ def file_xml(request, repo, path):
                 encoded_data = form.cleaned_data['content'].encode('utf-8')
 
                 def save_action():                    
-                    repo._add_file(path, encoded_data)
+                    repo._add_file(rpath, encoded_data)
                     repo._commit(message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'),\
                          user=request.user.username)
 
@@ -138,7 +154,7 @@ def file_xml(request, repo, path):
             'errors': errors, 'warnings': warnings}) );
 
     form = forms.BookForm()
-    data = repo.get_file(path, file_branch(path, request.user))
+    data = repo.get_file(rpath, file_branch(path, request.user))
     form.fields['content'].initial = data
     return HttpResponse( json.dumps({'result': 'ok', 'content': data}) )
 
@@ -291,6 +307,7 @@ def file_commit(request, path, repo):
 @with_repo
 def file_dc(request, path, repo):
     errors = None
+    rpath = file_path(fileid)
 
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
@@ -298,14 +315,14 @@ def file_dc(request, path, repo):
         if form.is_valid():
             
             def save_action():
-                file_contents = repo._get_file(path)
+                file_contents = repo._get_file(rpath)
 
                 # wczytaj dokument z repozytorium
                 document = parser.WLDocument.from_string(file_contents)                    
                 document.book_info.update(form.cleaned_data)             
 
                 # zapisz
-                repo._write_file(path, document.serialize().encode('utf-8'))
+                repo._write_file(rpath, document.serialize().encode('utf-8'))
                 repo._commit( \
                     message=(form.cleaned_data['commit_message'] or 'Lokalny zapis platformy.'), \
                     user=request.user.username )
@@ -326,7 +343,7 @@ def file_dc(request, path, repo):
     content = []
     
     try:
-        fulltext = repo.get_file(path, file_branch(path, request.user))
+        fulltext = repo.get_file(rpath, file_branch(path, request.user))
         bookinfo = dcparser.BookInfo.from_string(fulltext)
         content = bookinfo.to_dict()
     except (ParseError, ValidationError), e:
@@ -390,7 +407,8 @@ class panel_view(object):
     @ajax_login_required
     @with_repo
     def xmleditor_panel(request, path, panel, repo):
-        return {'text': repo.get_file(path, file_branch(path, request.user))}
+        rpath = file_path(path)
+        return {'text': repo.get_file(rpath, file_branch(path, request.user))}
 
     @staticmethod
     @ajax_login_required
@@ -401,9 +419,10 @@ class panel_view(object):
     @ajax_login_required
     @with_repo
     def htmleditor_panel(request, path, panel, repo):
+        rpath = file_path(path)
         user_branch = file_branch(path, request.user)
         try:
-            return {'html': html.transform(repo.get_file(path, user_branch), is_file=False)}
+            return {'html': html.transform(repo.get_file(rpath, user_branch), is_file=False)}
         except (ParseError, ValidationError), e:
             return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
             'fileid': path, 'exception_type': type(e).__name__, 'exception': e,
@@ -414,8 +433,9 @@ class panel_view(object):
     @with_repo
     def dceditor_panel(request, path, panel, repo):
         user_branch = file_branch(path, request.user)
+        rpath = file_path(path)
         try:
-            doc_text = repo.get_file(path, user_branch)
+            doc_text = repo.get_file(rpath, user_branch)
             document = parser.WLDocument.from_string(doc_text)
             form = forms.DublinCoreForm(info=document.book_info)
             return {'form': form}
@@ -431,25 +451,25 @@ class panel_view(object):
 @with_repo
 def print_html(request, path, repo):
     user_branch = file_branch(path, request.user)
+    rpath = file_path(path)
     return HttpResponse( 
-        html.transform(repo.get_file(path, user_branch), is_file=False),
+        html.transform(repo.get_file(rpath, user_branch), is_file=False),
         mimetype="text/html")
 
 @login_required
 @with_repo
 def print_xml(request, path, repo):
     user_branch = file_branch(path, request.user)
-    return HttpResponse( repo.get_file(path, user_branch), mimetype="text/plain; charset=utf-8")
+    rpath = file_path(path)
+    return HttpResponse( repo.get_file(rpath, user_branch), mimetype="text/plain; charset=utf-8")
 
-@login_required # WARNING: we don't wont a login form inside a window
-@with_repo
-def split_text(request, path, repo):
-    user_branch = file_branch(path, request.user)
-    valid = False
-    
+@permission_required('explorer.can_add_files')
+def split_text(request, path):
+    rpath = file_path(path)
+    valid = False    
     if request.method == "POST":
         sform = forms.SplitForm(request.POST, prefix='splitform')
-        dcform = forms.SplitForm(request.POST, prefix='dcform')
+        dcform = forms.DublinCoreForm(request.POST, prefix='dcform')
 
         print "validating sform"
         if sform.is_valid():
@@ -461,13 +481,52 @@ def split_text(request, path, repo):
         print "valid is ", valid
         if valid:
             uri = path + '$' + sform.cleaned_data['partname']
-            # do something
-            return HttpResponseRedirect( reverse('split-success',\
-                kwargs={'path': path})+'?child='+uri)
+            child_rpath = file_path(uri)
+            repo = hg.Repository(settings.REPOSITORY_PATH)            
+
+            # save the text into parent's branch
+            def split_action():
+                if repo._file_exists(child_rpath):
+                    el = sform._errors.get('partname', ErrorList())
+                    el.append("Part with this name already exists")
+                    sform._errors['partname'] = el
+                    return False
+                                        
+                fulltext = sform.cleaned_data['fulltext']               
+                fulltext = fulltext.replace(u'<include-tag-placeholder />',
+                    librarian.xinclude_forURI('wlrepo://'+uri) )               
+
+                repo._write_file(rpath, fulltext.encode('utf-8'))
+
+                newtext = sform.cleaned_data['splittext']
+                if sform.cleaned_data['autoxml']:
+                    # this is a horrible hack - really
+                    bi = dcparser.BookInfo.from_element(librarian.DEFAULT_BOOKINFO.to_etree())
+                    bi.update(dcform.cleaned_data)
+
+                    newtext = librarian.wrap_text(newtext, \
+                        unicode(date.today()), bookinfo=bi )
+
+                repo._add_file(child_rpath, newtext.encode('utf-8'))                
+                repo._commit(message="Split from '%s' to '%s'" % (path, uri), \
+                    user=request.user.username )
+                return True
+
+            if repo.in_branch(split_action, file_branch(path, request.user)):
+                # redirect to success
+                return HttpResponseRedirect( reverse('split-success',\
+                    kwargs={'path': path})+'?child='+uri)
     else:
+        try: # to read the current DC
+            repo = hg.Repository(settings.REPOSITORY_PATH)
+            fulltext = repo.get_file(rpath, file_branch(path, request.user))
+            bookinfo = dcparser.BookInfo.from_string(fulltext)
+        except (ParseError, ValidationError):
+            bookinfo = librarian.DEFAULT_BOOKINFO
+
         sform = forms.SplitForm(prefix='splitform')
-        dcform = forms.DublinCoreForm(prefix='dcform')
-    
+        dcform = forms.DublinCoreForm(prefix='dcform', info=bookinfo)
+   
     return direct_to_template(request, 'explorer/split.html', extra_context={
         'splitform': sform, 'dcform': dcform, 'fileid': path} )
 
@@ -485,29 +544,22 @@ def folder_images(request, folder):
         'images': models.get_images_from_folder(folder),
     })
 
-
 def _add_references(message, issues):
     return message + " - " + ", ".join(map(lambda issue: "Refs #%d" % issue['id'], issues))
 
-def _get_issues_for_file(path):
-    if not path.endswith('.xml'):
-        raise ValueError('Path must end with .xml')
-
-    book_id = path[:-4]
+def _get_issues_for_file(fileid):
     uf = None
-
     try:
-        uf = urllib2.urlopen(settings.REDMINE_URL + 'publications/issues/%s.json' % book_id)
+        uf = urllib2.urlopen(settings.REDMINE_URL + 'publications/issues/%s.json' % fileid)
         return json.loads(uf.read())
     except urllib2.HTTPError:
         return []
     finally:
         if uf: uf.close()
 
-
 # =================
 # = Pull requests =
 # =================
-def pull_requests(request):
-    return direct_to_template(request, 'manager/pull_request.html', extra_context = {
-        'objects': models.PullRequest.objects.all()} )
+#def pull_requests(request):
+#    return direct_to_template(request, 'manager/pull_request.html', extra_context = {
+#        'objects': models.PullRequest.objects.all()} )

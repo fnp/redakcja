@@ -38,8 +38,9 @@ $(function() {
     </p>
     </form>
     <div id="file-list">
+    {% load explorer_tags %}
     {% for file in files %}
-    <p title="{{file}}"><a href="{% url editor_view file %}">{{ file }}</a></p>
+    <p title="{{file|bookname}}"><a href="{% url editor_view file %}">{{ file|bookname }}</a></p>
     {% endfor %}
     </div>
 </div>

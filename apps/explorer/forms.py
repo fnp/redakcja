@@ -61,7 +61,7 @@ class MergeForm(forms.Form):
 
 class BookUploadForm(forms.Form):
     file = forms.FileField(label='Source OCR file')
-    bookname = forms.RegexField(regex='[\w-]+',  \
+    bookname = forms.RegexField(regex='[0-9\w_-]+',  \
         label='Publication name', help_text='Example: slowacki-beniowski')
     autoxml = forms.BooleanField(required=False, initial=True, label=u"Generate DublinCore template")
 
@@ -73,9 +73,11 @@ class ImageFoldersForm(forms.Form):
         self.fields['folders'].choices = [('', '-- Wybierz folder z obrazkami --')] + [(fn, fn) for fn in models.get_image_folders()]
 
 class SplitForm(forms.Form):
-    partname = forms.RegexField(regex='[0-9\w-]+',  \
+    partname = forms.RegexField(regex='[0-9\w_-]+',  \
         label='Part name', help_text='Example: rozdział-2')
-    autoxml = forms.BooleanField(required=False, initial=False, label=u"Generate DublinCore")
+    autoxml = forms.BooleanField(required=False, initial=False, label=u"Split as new publication")
+    fulltext = forms.CharField(widget=forms.HiddenInput(), required=False)
+    splittext = forms.CharField(widget=forms.HiddenInput(), required=False)
 
 class DublinCoreForm(forms.Form):
     about = forms.URLField(verify_exists=False)

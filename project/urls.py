@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^editor/'+PATH_SEC+'/print/xml$', 'explorer.views.print_xml'),
     
     # Task managment
-    url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),
+    # url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),
 
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

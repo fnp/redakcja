@@ -53,6 +53,12 @@ Panel.prototype.callHook = function() {
     return result;
 }
 
+Panel.prototype._endload = function () {
+    // this needs to be here, so we
+    this.connectToolbar();
+    this.callHook('toolbarResized');
+}  
+
 Panel.prototype.load = function (url) {
     // $.log('preparing xhr load: ', this.wrap);
     $(document).trigger('panel:unload', this);
@@ -66,14 +72,12 @@ Panel.prototype.load = function (url) {
             panel_hooks = null;
             $(self.contentDiv).html(data);
             self.hooks = panel_hooks;
-            panel_hooks = null;
-            self.connectToolbar();
-            self.callHook('load');
-            self.callHook('toolbarResized');
+            panel_hooks = null;            
+            self.callHook('load');           
         },
         error: function(request, textStatus, errorThrown) {
             $.log('ajax', url, this.target, 'error:', textStatus, errorThrown);
-            $(self.contentDiv).html("<p>Wystapił błąd podczas wczytywania panelu.");
+            $(self.contentDiv).html("<p>Wystapił błąd podczas wczytywania panelu.</p>");
         }
     });
 }
@@ -377,9 +381,8 @@ Editor.prototype.saveToBranch = function(msg)
             }
             else {
                 self.refreshPanels();
-                $('#toolbar-button-save').attr('disabled', 'disabled');
-                $('#toolbar-button-commit').removeAttr('disabled');
-                $('#toolbar-button-update').removeAttr('disabled');
+
+
                 if(self.autosaveTimer)
                     clearTimeout(self.autosaveTimer);
 

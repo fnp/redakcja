@@ -104,7 +104,7 @@ Editor.prototype.setupUI = function() {
 
     panel_root.bind('hpanel:panel-resize-start', resize_start);
     self.rootDiv.bind('stopResize', function() {
-        self.savePanelOptions()
+        self.savePanelOptions();      
     });
     
     /*
@@ -127,11 +127,17 @@ Editor.prototype.setupUI = function() {
             function() {
                 panel.refresh();
             } );
+
+        self.rootDiv.bind('stopResize', function() {
+            panel.callHook('toolbarResized');
+        });
     });
 
     $(document).bind('panel:contentChanged', function() {
         self.onContentChanged.apply(self, arguments)
     });
+    
+    
 
     /*
      * Connect various buttons
@@ -206,8 +212,8 @@ Editor.prototype.loadSplitDialog = function(hash)
         // put the form into the window
         $('div.container-box', hash.w).html(data);
         $("div.loading-box", hash.w).hide();
-        $('form input[name=splittext]', hash.w).val(hash.t.selection);
-        $('form input[name=fulltext]', hash.w).val(hash.t.fulltext);
+        $('form input[name=splitform-splittext]', hash.w).val(hash.t.selection);
+        $('form input[name=splitform-fulltext]', hash.w).val(hash.t.fulltext);
         $('div.container-box', hash.w).show();
 
         // connect buttons
@@ -225,6 +231,19 @@ Editor.prototype.loadSplitDialog = function(hash)
         $('#split-dialog-button-dismiss').click(function() {
             hash.w.jqmHide();
             $('div.container-box', hash.w).html('');
+            hash.t.success();
+        });
+
+        if($('#id_splitform-autoxml').is(':checked'))
+            $('#split-form-dc-subform').show();
+        else
+            $('#split-form-dc-subform').hide();
+
+        $('#id_splitform-autoxml').change(function() {            
+            if( $(this).is(':checked') )
+                $('#split-form-dc-subform').show();
+            else
+                $('#split-form-dc-subform').hide();
         });
     };   
 
@@ -250,8 +269,11 @@ Editor.prototype.refreshPanels = function() {
         else
             panel.refresh();
     });
-};
 
+    $('#toolbar-button-save').attr('disabled', 'disabled');
+    $('#toolbar-button-commit').removeAttr('disabled');
+    $('#toolbar-button-update').removeAttr('disabled');
+};
 
 /*
  * Pop-up messages

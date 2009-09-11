@@ -28,7 +28,9 @@
     </script>
 {% endblock extrabody %}
 
-{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; plik {{ fileid }}{% endblock breadcrumbs %}
+ {% load explorer_tags %}
+
+{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid|bookname }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
 
