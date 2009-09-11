@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-from os.path import splitext, dirname
+from os.path import splitext, dirname, basename, realpath
 from PIL import Image, ImageFilter, ImageEnhance, ImageOps
 
 
@@ -31,12 +31,24 @@ def ratio(image):
     width, height = image.size
     return float(width) / height
     
-    
-for file_name in sys.argv[1:]:
+
+def try_creating(directory):
     try:
-        os.mkdir('output')
+        os.mkdir(directory)
     except:
         pass
+
+
+output_dir = realpath(os.getcwd()) + '/output'
+big_output_dir = output_dir + '/big'
+tmp_output_dir = output_dir + '/tmp'
+
+try_creating(output_dir)
+try_creating(big_output_dir)
+try_creating(tmp_output_dir)
+
+
+for file_name in sys.argv[1:]:
     base_name, ext = splitext(file_name)
     try:
         image = Image.open(file_name)
@@ -54,26 +66,34 @@ for file_name in sys.argv[1:]:
         image = image.filter(ImageFilter.SHARPEN)
         
         image = image.filter(ImageFilter.MinFilter)
-        def convert(i):
-            if i > 48:
-                return 255
-            return i
-        image = image.point(convert)
-        image = ImageOps.autocontrast(image, cutoff=95)
+        # def convert(i):
+        #     if i > 48:
+        #         return 255
+        #     return i
+        # image = image.point(convert)
+        image = ImageOps.autocontrast(image, cutoff=80)
         image = image.convert('L')
         image = image.filter(ImageFilter.SHARPEN)
         
+        image_name = '%s.%d.png' % (basename(base_name), i)
+        
         # Save files
         small_image = resize(image, 480, 720)
-        small_image_file_name = '%s.small.%d.png' % (base_name, i)
-        small_image.save(small_image_file_name, optimize=True, bits=6)
-        os.system('pngnq -n 8 -e .png -d output -f "%s"' % small_image_file_name)
-        os.remove(small_image_file_name)
+        small_image.save(tmp_output_dir + '/' + image_name, optimize=True, bits=8)
+        os.system('pngnq -n 8 -e .png -d "%s" -f "%s"' % (
+            output_dir,
+            tmp_output_dir + '/' + image_name,
+        ))
+        os.remove(tmp_output_dir + '/' + image_name)
         
         big_image = resize(image, 960, 1440)
-        big_image_file_name = '%s.big.%d.png' % (base_name, i)
-        big_image.save(big_image_file_name, optimize=True, bits=6)
-        os.system('pngnq -n 8 -e .png -d output -f "%s"' % big_image_file_name)
-        os.remove(big_image_file_name)
+        big_image.save(tmp_output_dir + '/' + image_name, optimize=True, bits=8)
+        os.system('pngnq -n 8 -e .png -d "%s" -f "%s"' % (
+            big_output_dir,
+            tmp_output_dir + '/' + image_name,
+        ))
+        os.remove(tmp_output_dir + '/' + image_name)
         
     sys.stderr.write('.')
+
+os.remove(tmp_output_dir)
