@@ -56,8 +56,8 @@ panel_hooks = {
 	},
 
         toolbarResized: function() {
-            $('.iframe-container', self.contentDiv).css('top',
-                    $('.toolbar', self.contentDiv).outerHeight() );
+            $('.iframe-container', this.contentDiv).css('top',
+                    $('.toolbar', this.contentDiv).outerHeight() );
         }
 };
 

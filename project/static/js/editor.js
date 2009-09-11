@@ -45,7 +45,7 @@ Panel.prototype.callHook = function() {
     var noHookAction = args.splice(0,1)[0]
     var result = false;
 
-    // $.log('calling hook: ', hookName, 'with args: ', args);
+    $.log('calling hook: ', hookName, 'with args: ', args);
     if(this.hooks && this.hooks[hookName])
         result = this.hooks[hookName].apply(this, args);
     else if (noHookAction instanceof Function)
@@ -146,6 +146,7 @@ Panel.prototype.connectToolbar = function()
     var extra_buttons = $('span.panel-toolbar-extra', toolbar);
     var placeholder = $('div.panel-toolbar span.panel-toolbar-extra', this.wrap);
     placeholder.replaceWith(extra_buttons);
+    extra_buttons.hide();
 
     var action_buttons = $('button', extra_buttons);
 

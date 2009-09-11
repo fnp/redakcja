@@ -15,6 +15,11 @@ Editor.prototype.setupUI = function() {
     var resize_changed =  function(event) {
         var old_width = parseInt(event.data.overlay.css('width'));
         var delta = event.pageX + event.data.hotspot_x - old_width;
+
+        if(old_width + delta < 12) delta = 12 - old_width;
+        if(old_width + delta > $(window).width()) 
+            delta = $(window).width() - old_width;
+        
         event.data.overlay.css({
             'width': old_width + delta
         });
@@ -135,9 +140,7 @@ Editor.prototype.setupUI = function() {
 
     $(document).bind('panel:contentChanged', function() {
         self.onContentChanged.apply(self, arguments)
-    });
-    
-    
+    });  
 
     /*
      * Connect various buttons
