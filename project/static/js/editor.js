@@ -146,7 +146,7 @@ Panel.prototype.connectToolbar = function()
     var extra_buttons = $('span.panel-toolbar-extra', toolbar);
     var placeholder = $('div.panel-toolbar span.panel-toolbar-extra', this.wrap);
     placeholder.replaceWith(extra_buttons);
-    extra_buttons.hide();
+    placeholder.hide();
 
     var action_buttons = $('button', extra_buttons);
 

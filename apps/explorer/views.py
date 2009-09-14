@@ -422,7 +422,9 @@ class panel_view(object):
         rpath = file_path(path)
         user_branch = file_branch(path, request.user)
         try:
-            return {'html': html.transform(repo.get_file(rpath, user_branch), is_file=False)}
+            result = html.transform(repo.get_file(rpath, user_branch), is_file=False)
+            print "HTML: %r" % result
+            return {'html': result}
         except (ParseError, ValidationError), e:
             return direct_to_template(request, 'explorer/panels/parse_error.html', extra_context={
             'fileid': path, 'exception_type': type(e).__name__, 'exception': e,
