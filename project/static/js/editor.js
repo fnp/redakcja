@@ -1,19 +1,22 @@
+var editor;
+var panel_hooks;
+
 function Hotkey(code) {
-    this.code = code
-    this.has_alt = ((code & 0x01 << 8) != 0)
-    this.has_ctrl = ((code & 0x01 << 9) != 0)
-    this.has_shift = ((code & 0x01 << 10) != 0)
-    this.character = String.fromCharCode(code & 0xff)
+    this.code = code;
+    this.has_alt = ((code & 0x01 << 8) !== 0);
+    this.has_ctrl = ((code & 0x01 << 9) !== 0);
+    this.has_shift = ((code & 0x01 << 10) !== 0);
+    this.character = String.fromCharCode(code & 0xff);
 }
 
 Hotkey.prototype.toString = function() {
-    mods = []
-    if(this.has_alt) mods.push('Alt')
-    if(this.has_ctrl) mods.push('Ctrl')
-    if(this.has_shift) mods.push('Shift')
-    mods.push('"'+this.character+'"')
-    return mods.join('+')
-}
+    var mods = [];
+    if(this.has_alt) mods.push('Alt');
+    if(this.has_ctrl) mods.push('Ctrl');
+    if(this.has_shift) mods.push('Shift');
+    mods.push('"'+this.character+'"');
+    return mods.join('+');
+};
 
 function Panel(panelWrap) {
     var self = this;
@@ -30,34 +33,35 @@ function Panel(panelWrap) {
 
     $(document).bind('panel:contentChanged', function(event, data) {
         $.log(self, ' got changed event from: ', data);
-        if(self != data)
+        if(self != data) {
             self.otherPanelChanged(event.target);
-        else
+        } else {
             self.markChanged();
-
+        }
         return false;
     });
 }
 
 Panel.prototype.callHook = function() {
-    var args = $.makeArray(arguments)
-    var hookName = args.splice(0,1)[0]
-    var noHookAction = args.splice(0,1)[0]
+    var args = $.makeArray(arguments);
+    var hookName = args.splice(0,1)[0];
+    var noHookAction = args.splice(0,1)[0];
     var result = false;
 
     $.log('calling hook: ', hookName, 'with args: ', args);
-    if(this.hooks && this.hooks[hookName])
+    if(this.hooks && this.hooks[hookName]) {
         result = this.hooks[hookName].apply(this, args);
-    else if (noHookAction instanceof Function)
+    } else if (noHookAction instanceof Function) {
         result = noHookAction(args);
+    }
     return result;
-}
+};
 
 Panel.prototype._endload = function () {
     // this needs to be here, so we
     this.connectToolbar();
     this.callHook('toolbarResized');
-}  
+};  
 
 Panel.prototype.load = function (url) {
     // $.log('preparing xhr load: ', this.wrap);
@@ -80,7 +84,7 @@ Panel.prototype.load = function (url) {
             $(self.contentDiv).html("<p>Wystapił błąd podczas wczytywania panelu.</p>");
         }
     });
-}
+};
 
 Panel.prototype.unload = function(event, data) {
     // $.log('got unload signal', this, ' target: ', data);
@@ -93,44 +97,46 @@ Panel.prototype.unload = function(event, data) {
         this.callHook('unload');
         this.hooks = null; // flush the hooks
         return false;
-    };
-}
+    }
+};
 
 Panel.prototype.refresh = function(event, data) {
     var self = this;
-    reload = function() {
+    var reload = function() {
         $.log('hard reload for panel ', self.current_url);
         self.load(self.current_url);
         return true;
-    }
+    };
 
-    if( this.callHook('refresh', reload) )
+    if( this.callHook('refresh', reload) ) {
         $('.change-notification', this.wrap).fadeOut();
-} 
+    }
+}; 
 
 Panel.prototype.otherPanelChanged = function(other) {
     $.log('Panel ', this, ' is aware that ', other, ' changed.');
-    if(!this.callHook('dirty'))
+    if(!this.callHook('dirty')) {
         $('.change-notification', this.wrap).fadeIn();
-}	
+    }
+};	
 
 Panel.prototype.markChanged = function () {
     this.wrap.addClass('changed');
-}
+};
 
 Panel.prototype.changed = function () {
     return this.wrap.hasClass('changed');
-}
+};
 
 Panel.prototype.unmarkChanged = function () {
     this.wrap.removeClass('changed');
-}
+};
 
 Panel.prototype.saveInfo = function() {
     var saveInfo = {};
     this.callHook('saveInfo', null, saveInfo);
     return saveInfo;
-}
+};
 
 Panel.prototype.connectToolbar = function()
 {
@@ -140,7 +146,7 @@ Panel.prototype.connectToolbar = function()
     // check if there is a one
     var toolbar = $("div.toolbar", this.contentDiv);
     // $.log('Connecting toolbar', toolbar);
-    if(toolbar.length == 0) return;
+    if(toolbar.length === 0) return;
 
     // move the extra
     var extra_buttons = $('span.panel-toolbar-extra', toolbar);
@@ -167,10 +173,11 @@ Panel.prototype.connectToolbar = function()
                 active.removeClass('active');                
                 group.addClass('active');
                 $(".toolbar-button-groups-container p", toolbar).each(function() {
-                    if ( $(this).attr('ui:group') != group_name) 
+                    if ( $(this).attr('ui:group') != group_name) {
                         $(this).hide();
-                    else
+                    } else {
                         $(this).show();
+                    }
                 });
                 self.callHook('toolbarResized');
             }
@@ -178,7 +185,7 @@ Panel.prototype.connectToolbar = function()
     });
 
     // connect action buttons
-    var allbuttons = $.makeArray(action_buttons)
+    var allbuttons = $.makeArray(action_buttons);
     $.merge(allbuttons,
         $.makeArray($('*.toolbar-button-groups-container button', toolbar)) );
         
@@ -227,35 +234,34 @@ Panel.prototype.connectToolbar = function()
             });
         }
     });
-}
+};
 
 Panel.prototype.hotkeyPressed = function(event)
 {
-    code = event.keyCode;
+    var code = event.keyCode;
     if(event.altKey) code = code | 0x100;
     if(event.ctrlKey) code = code | 0x200;
     if(event.shiftKey) code = code | 0x400;
 
     var callback = this.hotkeys[code];
     if(callback) callback();
-}
+};
 
 Panel.prototype.isHotkey = function(event) {
-    code = event.keyCode;
+    var code = event.keyCode;
     if(event.altKey) code = code | 0x100;
     if(event.ctrlKey) code = code | 0x200;
     if(event.shiftKey) code = code | 0x400;
 
-    if(this.hotkeys[code] != null)
+    if(this.hotkeys[code] !== null) {
         return true;
-        
+    }
     return false;
-}
+};
 
-//
 Panel.prototype.fireEvent = function(name) {
     $(document).trigger('panel:'+name, this);
-}
+};
 
 function Editor()
 {
@@ -279,8 +285,9 @@ Editor.prototype.loadConfig = function() {
             ratio: 0.5
         }
         ],
+        recentFiles: [],
         lastUpdate: 0
-    }
+    };
     
     try {
         var cookie = $.cookie('options');
@@ -294,7 +301,7 @@ Editor.prototype.loadConfig = function() {
     $.log(this.options);
     
     this.loadPanelOptions();
-}
+};
 
 Editor.prototype.loadPanelOptions = function() {
     var self = this;
@@ -321,7 +328,7 @@ Editor.prototype.loadPanelOptions = function() {
             }
         });
     });   
-}
+};
 
 Editor.prototype.savePanelOptions = function() {
     var self = this;
@@ -330,16 +337,16 @@ Editor.prototype.savePanelOptions = function() {
         panels.push({
             name: $('.panel-toolbar option:selected', this).attr('p:panel-name'),
             ratio: $(this).width() / self.rootDiv.width()
-        })
+        });
     });
     self.options.panels = panels;
-    self.options.lastUpdate = (new Date()).getTime() / 1000;
+    self.options.lastUpdate = new Date().getTime() / 1000;
     $.log($.toJSON(self.options));
     $.cookie('options', $.toJSON(self.options), {
         expires: 7,
         path: '/'
     });
-}
+};
 
 Editor.prototype.saveToBranch = function(msg) 
 {
@@ -349,7 +356,7 @@ Editor.prototype.saveToBranch = function(msg)
 
     if(!msg) msg = "Zapis z edytora platformy.";
 
-    if( changed_panel.length == 0) {
+    if( changed_panel.length === 0) {
         $.log('Nothing to save.');
         return true; /* no changes */
     }
@@ -359,17 +366,18 @@ Editor.prototype.saveToBranch = function(msg)
         return false;
     }
 
-    saveInfo = changed_panel.data('ctrl').saveInfo();
-    var postData = ''
+    var saveInfo = changed_panel.data('ctrl').saveInfo();
+    var postData = '';
     
-    if(saveInfo.postData instanceof Object)
+    if (saveInfo.postData instanceof Object) {
         postData = $.param(saveInfo.postData);
-    else
+    } else {
         postData = saveInfo.postData;
-
+    }
+    
     postData += '&' + $.param({
         'commit_message': msg
-    })
+    });
 
     self.showPopup('save-waiting', '', -1);
 
@@ -384,13 +392,14 @@ Editor.prototype.saveToBranch = function(msg)
                 self.refreshPanels();
 
 
-                if(self.autosaveTimer)
+                if(self.autosaveTimer) {
                     clearTimeout(self.autosaveTimer);
-
-                if (data.warnings == null)
+                }
+                if (data.warnings === null) {
                     self.showPopup('save-successful');
-                else
+                } else {
                     self.showPopup('save-warn', data.warnings[0]);
+                }
             }
             
             self.advancePopupQueue();
@@ -412,7 +421,7 @@ Editor.prototype.autoSave = function()
     // first check if there is anything to save
     $.log('Autosave');
     this.saveToBranch("Automatyczny zapis z edytora platformy.");
-}
+};
 
 Editor.prototype.onContentChanged = function(event, data) {
     var self = this;
@@ -428,8 +437,9 @@ Editor.prototype.onContentChanged = function(event, data) {
 };
 
 Editor.prototype.updateUserBranch = function() {
-    if( $('.panel-wrap.changed').length != 0)
+    if($('.panel-wrap.changed').length !== 0) {
         alert("There are unsaved changes - can't update.");
+    }
 
     var self = this;
     $.ajax({
@@ -439,7 +449,7 @@ Editor.prototype.updateUserBranch = function() {
             switch(data.result) {
                 case 'done':
                     self.showPopup('generic-yes', 'Plik uaktualniony.');
-                    self.refreshPanels()
+                    self.refreshPanels();
                     break;
                 case 'nothing-to-do':
                     self.showPopup('generic-info', 'Brak zmian do uaktualnienia.');
@@ -454,11 +464,12 @@ Editor.prototype.updateUserBranch = function() {
         type: 'POST',
         data: {}
     });
-}
+};
 
 Editor.prototype.sendMergeRequest = function (message) {
-    if( $('.panel-wrap.changed').length != 0)        
+    if( $('.panel-wrap.changed').length !== 0) {
         alert("There are unsaved changes - can't commit.");
+    }
 
     var self =  this;
     $.log('URL !: ', $('#commit-dialog form').attr('action'));
@@ -471,8 +482,9 @@ Editor.prototype.sendMergeRequest = function (message) {
                 case 'done':
                     self.showPopup('generic-yes', 'Łączenie zmian powiodło się.');
 
-                    if(data.localmodified)
-                        self.refreshPanels()
+                    if(data.localmodified) {
+                        self.refreshPanels();
+                    }
                         
                     break;
                 case 'nothing-to-do':
@@ -490,7 +502,7 @@ Editor.prototype.sendMergeRequest = function (message) {
             'message': message
         }
     }); 
-}
+};
 
 Editor.prototype.postSplitRequest = function(s, f)
 {
@@ -507,23 +519,24 @@ Editor.prototype.postSplitRequest = function(s, f)
 
 Editor.prototype.allPanels = function() {
     return $('#' + this.rootDiv.attr('id') +' > *.panel-wrap', this.rootDiv.parent());
-}
+};
 
 Editor.prototype.registerScriptlet = function(scriptlet_id, scriptlet_func)
 {
     // I briefly assume, that it's verified not to break the world on SS
-    if (!this[scriptlet_id])
+    if (!this[scriptlet_id]) {
         this[scriptlet_id] = scriptlet_func;
-}
+    }
+};
 
 Editor.prototype.callScriptlet = function(scriptlet_id, panel, params) {
-    var func = this[scriptlet_id]
-    if(!func)
+    var func = this[scriptlet_id];
+    if(!func) {
         throw 'No scriptlet named "' + scriptlet_id + '" found.';
-
+    }
     return func(this, panel, params);
-}
-  
+};
+
 $(function() {
     $.fbind = function (self, func) {
         return function() { 
