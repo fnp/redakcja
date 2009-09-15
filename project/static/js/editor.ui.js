@@ -146,8 +146,12 @@ Editor.prototype.setupUI = function() {
      * Connect various buttons
      */
 
-    $('#toolbar-button-save').click( function (event, data) {
+    $('#toolbar-button-quick-save').click( function (event, data) {
         self.saveToBranch();
+    } );
+
+    $('#toolbar-button-save').click( function (event, data) {
+        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.saveToBranch)} );
     } );
 
     $('#toolbar-button-update').click( function (event, data) {
@@ -163,29 +167,18 @@ Editor.prototype.setupUI = function() {
     $('#commit-dialog').
     jqm({
         modal: true,
-        onShow: $.fbind(self, self.loadRelatedIssues),
-        trigger: '#toolbar-button-commit'
+        onShow: $.fbind(self, self.loadRelatedIssues)        
     });
+
+    $('#toolbar-button-commit').click( function (event, data) {
+        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.sendMergeRequest)} );
+    } );
     
     /* STATIC BINDS */
     $('#commit-dialog-cancel-button').click(function() {
         $('#commit-dialog-error-empty-message').hide();
         $('#commit-dialog').jqmHide();
-    });
-
-    $('#commit-dialog-save-button').click( function (event, data)
-    {
-        if( $('#commit-dialog-message').val().match(/^\s*$/)) {
-            $('#commit-dialog-error-empty-message').fadeIn();
-        }
-        else {
-            $('#commit-dialog-error-empty-message').hide();
-            $('#commit-dialog').jqmHide();
-            self.sendMergeRequest($('#commit-dialog-message').val() );
-        }
-
-        return false;
-    });
+    });   
     
 
     /* SPLIT DIALOG */
@@ -202,6 +195,25 @@ Editor.prototype.loadRelatedIssues = function(hash)
 {
     var self = this;
     var c = $('#commit-dialog-related-issues');
+
+    $('#commit-dialog-save-button').click( function (event, data)
+    {
+        if( $('#commit-dialog-message').val().match(/^\s*$/)) {
+            $('#commit-dialog-error-empty-message').fadeIn();
+        }
+        else {
+            $('#commit-dialog-error-empty-message').hide();
+            $('#commit-dialog').jqmHide();
+
+            var message = $('#commit-dialog-message').val();
+            $('#commit-dialog-related-issues input:checked').
+                each(function() { message += ' refs #' + $(this).val(); });
+            $.log("COMMIT APROVED", hash.t);
+            hash.t.callback(message);
+        }
+
+        return false;
+    });
 
     $("div.loading-box", c).show();
     $("div.fatal-error-box", c).hide();
@@ -301,9 +313,8 @@ Editor.prototype.refreshPanels = function() {
             panel.refresh();
     });
 
-    $('#toolbar-button-save').attr('disabled', 'disabled');
-    $('#toolbar-button-commit').removeAttr('disabled');
-    $('#toolbar-button-update').removeAttr('disabled');
+    $('button.provides-save').attr('disabled', 'disabled');
+    $('button.requires-save').removeAttr('disabled');
 };
 
 /*

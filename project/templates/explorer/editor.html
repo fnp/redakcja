@@ -28,17 +28,16 @@
     </script>
 {% endblock extrabody %}
 
- {% load explorer_tags %}
+{% load explorer_tags %}
 
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid|bookname }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
-
-
-<button type="button" class="toolbar-button" id="toolbar-button-commit">Merge</button>
-<button type="button" class="toolbar-button" id="toolbar-button-update"
+<button type="button" class="requires-save toolbar-button" id="toolbar-button-commit">Merge</button>
+<button type="button" class="requires-save toolbar-button" id="toolbar-button-update"
         ui:ajax-action="{% url file_update fileid %}">Update</button>
-<button type="button" class="toolbar-button" id="toolbar-button-save" disabled="disabled">Save</button>
+<button type="button" class="provides-save toolbar-button" id="toolbar-button-save" disabled="disabled">Commit</button>
+<button type="button" class="provides-save toolbar-button" id="toolbar-button-quick-save" disabled="disabled">Quick Save</button>
 {% endblock %}
 
 {% block message-box %}
@@ -96,7 +95,7 @@
                     <div class="container-box">No related issues.</div>
                 </fieldset>
                 <p>
-                   <input type="submit" value="Save" id="commit-dialog-save-button" />
+                   <input type="button" value="Save" id="commit-dialog-save-button" />
                    <input type="reset" value="Cancel" id="commit-dialog-cancel-button" />
                 </p>
             </form>
