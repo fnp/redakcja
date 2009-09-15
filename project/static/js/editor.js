@@ -298,9 +298,21 @@ Editor.prototype.loadConfig = function() {
     } catch (e) {    
         this.options = defaultOptions;
     }
+    
+    this.fileOptions = this.options;
+    var self = this;
+    $.each(this.options.recentFiles, function(index) {
+        if (fileId == self.options.recentFiles[index].fileId) {
+            $.log('Found options for', fileId);
+            self.fileOptions = self.options.recentFiles[index];
+        }
+    });
+    
     $.log(this.options);
+    $.log('fileOptions', this.fileOptions);
     
     this.loadPanelOptions();
+    this.savePanelOptions();
 };
 
 Editor.prototype.loadPanelOptions = function() {
@@ -308,7 +320,7 @@ Editor.prototype.loadPanelOptions = function() {
     var totalWidth = 0;
     
     $('.panel-wrap', self.rootDiv).each(function(index) {
-        var panelWidth = self.options.panels[index].ratio * self.rootDiv.width();
+        var panelWidth = self.fileOptions.panels[index].ratio * self.rootDiv.width();
         if ($(this).hasClass('last-panel')) {
             $(this).css({
                 left: totalWidth,
@@ -323,7 +335,7 @@ Editor.prototype.loadPanelOptions = function() {
         }
         $.log('panel:', this, $(this).css('left'));
         $('.panel-toolbar option', this).each(function() {
-            if ($(this).attr('p:panel-name') == self.options.panels[index].name) {
+            if ($(this).attr('p:panel-name') == self.fileOptions.panels[index].name) {
                 $(this).parent('select').val($(this).attr('value'));
             }
         });
@@ -340,8 +352,20 @@ Editor.prototype.savePanelOptions = function() {
         });
     });
     self.options.panels = panels;
+
+    // Dodaj obecnie oglądany plik do listy recentFiles
+    var recentFiles = [{fileId: fileId, panels: panels}];
+    var count = 1;
+    $.each(self.options.recentFiles, function(index) {
+        if (count < 5 && fileId != self.options.recentFiles[index].fileId) {
+            recentFiles.push(self.options.recentFiles[index]);
+            count++;
+        }
+    });
+    self.options.recentFiles = recentFiles;
+    
     self.options.lastUpdate = new Date().getTime() / 1000;
-    $.log($.toJSON(self.options));
+    $.log($.toJSON(self.options));    
     $.cookie('options', $.toJSON(self.options), {
         expires: 7,
         path: '/'

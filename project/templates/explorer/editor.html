@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+	<script type="text/javascript" charset="utf-8">
+		var fileId = '{{ fileid }}';
+	</script>
     <link rel="stylesheet" href="{{STATIC_URL}}css/toolbar.css" type="text/css" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/jquery.modal.css" type="text/css" />
     <script src="{{STATIC_URL}}js/jquery.lazyload.js" type="text/javascript" charset="utf-8"></script>

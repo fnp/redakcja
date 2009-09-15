@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import os
 
 from django.db import models
@@ -10,6 +11,29 @@ import toolbar.models
 from explorer import fields
 
 class EditorSettings(models.Model):
+    """Ustawienia edytora dla użytkownika.
+    
+    Pole settings zawiera obiekt JSON o  kluczach:
+     - panels - lista otwartych paneli i ich proporcje
+     - recentFiles - lista otwartych plików i ustawienia dla nich
+    
+    Przykład:
+    {
+        'panels': [
+            {'name': 'htmleditor', 'ratio': 0.5},
+            {'name': 'gallery', 'ratio': 0.5}
+        ],
+        'recentFiles': [
+            {
+                'fileId': 'mickiewicz_pan_tadeusz.xml',
+                'panels': [
+                    {'name': 'htmleditor', 'ratio': 0.4},
+                    {'name': 'gallery', 'ratio': 0.6}
+                ]
+            }
+        ]
+    }
+    """
     user = models.ForeignKey(User, unique=True)
     settings = fields.JSONField()
     

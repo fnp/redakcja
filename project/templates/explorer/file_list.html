@@ -3,6 +3,8 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/filelist.css" type="text/css" />
 <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.paginate.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.json.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 $(function() {
     $('#file-list').paginate({itemsPerPage: 15});
@@ -23,6 +25,38 @@ $(function() {
         $('#file-list').filterItems();
         event.preventDefault();
     });
+	
+    var defaultOptions = {
+        panels: [
+        {
+            name: 'htmleditor',
+            ratio: 0.5
+        },
+
+        {
+            name: 'gallery',
+            ratio: 0.5
+        }
+        ],
+        recentFiles: [],
+        lastUpdate: 0
+    };
+    
+	var options = null;
+    try {
+        var cookie = $.cookie('options');
+        options = $.secureEvalJSON(cookie);
+        if (!options) {
+            options = defaultOptions;
+        }
+    } catch (e) {    
+        options = defaultOptions;
+    }
+	
+	$.each(options.recentFiles, function(index) {
+		var fileId = options.recentFiles[index].fileId;
+		$('#recent-file-list ul').append('<li><a href="/editor/' + fileId + '/">' + fileId + '</a></li>');
+	});
 });
 </script>
 {% endblock extrahead %}
@@ -43,6 +77,12 @@ $(function() {
     <p title="{{file|bookname}}"><a href="{% url editor_view file %}">{{ file|bookname }}</a></p>
     {% endfor %}
     </div>
+</div>
+
+<div id="recent-file-list">
+	<h2>Ostatnio oglądane pliki:</h2>
+	<ul>
+	</ul>
 </div>
 
 {% if perms.explorer.can_add_files %}
