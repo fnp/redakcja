@@ -116,17 +116,43 @@
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lowercase</field>
     <field type="CharField" name="link"/>
     <field type="CharField" name="key">u</field>
-    <field type="PositiveIntegerField" name="key_mod">6</field>
+    <field type="PositiveIntegerField" name="key_mod">1</field>
     <field type="CharField" name="tooltip">Zamień wielkie litery na małe.</field>
     <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
       <object pk="15"/>
     </field>
   </object>
+  <object pk="77" model="toolbar.button">
+    <field type="CharField" name="label">Cudzysłowy (1)</field>
+    <field type="SlugField" name="slug">fix-quotes-inner-arrows</field>
+    <field type="TextField" name="params">{"exprs": [["\u00ab|\u201e", ",,"], ["\u00bb", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", "$1,,$2"], ["^\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", ",,$1"], ["(,,)\\s+|\\s+(\")", "$1"]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
+    <field type="CharField" name="link"/>
+    <field type="CharField" name="key"/>
+    <field type="PositiveIntegerField" name="key_mod">0</field>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
+  <object pk="89" model="toolbar.button">
+    <field type="CharField" name="label">Cudzysłowy (2)</field>
+    <field type="SlugField" name="slug">swap-quotes-outer-arrows</field>
+    <field type="TextField" name="params">{"exprs": [["\u00bb|\u201e", ",,"], ["\u00ab", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", "$1,,$2"], ["^\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", ",,$1"], ["(,,)\\s+|\\s+(\")", "$1"]]}</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
+    <field type="CharField" name="link"/>
+    <field type="CharField" name="key"/>
+    <field type="PositiveIntegerField" name="key_mod">0</field>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="2"/>
+    </field>
+  </object>
   <object pk="4" model="toolbar.button">
     <field type="CharField" name="label">Podstawowa</field>
     <field type="SlugField" name="slug">basic_correction</field>
-    <field type="TextField" name="params">{"exprs": [["\n\\d+\n", "\n"], ["-\\s*\n+", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">fulltextregexp</field>
+    <field type="TextField" name="params">[["fulltextregexp", {"exprs": [["\ufeff", ""], ["$[\\s]*\\d+[\\s]*^", ""], ["-\\s*^", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}], ["lineregexp", {"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+|\\s+(\")", "$1"], ["(\\d)[\u2014-](\\d)", "$1--$2"], ["\u2014", "---"], ["&lt;(/?)P([aert])", "&lt;$1p$2"], ["([^\\.])(\\s*)&lt;/p", "$1.$2&lt;/p"]]}]]</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">macro</field>
     <field type="CharField" name="link"/>
     <field type="CharField" name="key"/>
     <field type="PositiveIntegerField" name="key_mod">0</field>
@@ -138,7 +164,7 @@
   <object pk="3" model="toolbar.button">
     <field type="CharField" name="label">Usuń spację</field>
     <field type="SlugField" name="slug">strip_whitespace</field>
-    <field type="TextField" name="params">{"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "]]}</field>
+    <field type="TextField" name="params">{"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+|\\s+(\")", "$1"]]}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
     <field type="CharField" name="link"/>
     <field type="CharField" name="key"/>
@@ -203,19 +229,6 @@
     <field type="CharField" name="tooltip"/>
     <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
       <object pk="23"/>
-    </field>
-  </object>
-  <object pk="77" model="toolbar.button">
-    <field type="CharField" name="label">Zamień cudzysłowy</field>
-    <field type="SlugField" name="slug">zamien-cudzyslowy</field>
-    <field type="TextField" name="params">{"exprs": [["\u00bb|\u201e", ",,"], ["\u00ab", "\""], ["\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])", ",,$1"]]}</field>
-    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
-    <field type="CharField" name="link"/>
-    <field type="CharField" name="key"/>
-    <field type="PositiveIntegerField" name="key_mod">0</field>
-    <field type="CharField" name="tooltip"/>
-    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
-      <object pk="2"/>
     </field>
   </object>
   <object pk="2" model="toolbar.button">
@@ -1085,9 +1098,8 @@ else {
   </object>
   <object pk="fulltextregexp" model="toolbar.scriptlet">
     <field type="TextField" name="code">editor.showPopup('generic-info', 'Przetwarzanie zaznaczonego tekstu...', '', -1);
-
+$.log(editor, panel, params);
 var cm = panel.texteditor;
-
 var exprs = $.map(params.exprs, function(expr) {
     var opts = "mg";
     if(expr.length &gt; 2)
@@ -1107,8 +1119,6 @@ if(!text) {
     text = cm.selection();
     partial = false;
 }
-
-
 
 var original = text;
 $(exprs).each(function() { 
@@ -1132,54 +1142,62 @@ if(!partial) {
 }</field>
   </object>
   <object pk="macro" model="toolbar.scriptlet">
-    <field type="TextField" name="code">params.each(function() {
-
-    editor.callScriptlet(this[0], this[1]);
+    <field type="TextField" name="code">$(params).each(function() {
+    $.log(this[0], this[1]);
+    editor.callScriptlet(this[0], panel, this[1]);
 
 });</field>
   </object>
   <object pk="lowercase" model="toolbar.scriptlet">
     <field type="TextField" name="code">var cm = panel.texteditor;
-
 var text = cm.selection();
 
 if(!text) return;
+var repl = '';
+var lcase = text.toLowerCase();
+var ucase = text.toUpperCase();
 
-var repl = text.toLowerCase();
+if(lcase == text) repl = ucase; /* was lowercase */
+else if(ucase != text) repl = lcase; /* neither lower- or upper-case */
+else { /* upper case -&gt; camel-case */
+   repl = ''
+   $(lcase.split(/\s/)).each(function() { 
+     if(this.length &gt; 0) repl += this[0].toUpperCase() + this.slice(1) + ' ';
+   }); 
+} 
 
 if(repl != text) {
-
     cm.replaceSelection(repl);
-
     panel.fireEvent('contentChanged');
-
 };</field>
   </object>
   <object pk="insert_stanza" model="toolbar.scriptlet">
     <field type="TextField" name="code">var texteditor = panel.texteditor;
-
 var text = texteditor.selection();
 
-
-
 if(text) {
+  var verses = text.split('\n');
+  var text = ''; var buf = ''; var ebuf = '';
+  var first = true;
 
-   text = '\n' + text.split('\n').join('\\\n') + '\n';
-
+  for(var i=0;  i &lt; verses.length; i++) {
+    verse = verses[i].replace(/^\s+/, "").replace(/\s+$/, "");   
+    if(verse) {
+      text += (buf ? buf + '\\\n' : '') + ebuf;
+      buf = (first ? '&lt;strofa&gt;\n' : '') + verses[i];
+      ebuf = '';
+      first = false;
+    } else {    
+      ebuf += '\n' + verses[i];
+    }
+  };
+  text = text + buf + '\n&lt;/strofa&gt;' + ebuf; 
+  texteditor.replaceSelection(text);
 }
 
-
-
-texteditor.replaceSelection('&lt;strofa&gt;'+text+'&lt;/strofa&gt;');
-
-
-
 if (!text) {
-
     var pos = texteditor.cursorPosition();
-
     texteditor.selectLines(pos.line, pos.character + 6 + 2);
-
 }
 
 
@@ -1219,10 +1237,6 @@ $('#split-dialog').jqmShow({
 
     failure: function() { cm.undo(); } 
 
-}) ;
-
-
-
-</field>
+}) ;</field>
   </object>
 </django-objects>

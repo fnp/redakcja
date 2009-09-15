@@ -460,8 +460,10 @@ Editor.prototype.sendMergeRequest = function (message) {
     if( $('.panel-wrap.changed').length != 0)        
         alert("There are unsaved changes - can't commit.");
 
-    var self =  this;
-    $.log('URL !: ', $('#commit-dialog form').attr('action'));
+    var self =  this;    
+
+    $('#commit-dialog-related-issues input:checked').
+        each(function() { message += ' refs #' + $(this).val(); });  
     
     $.ajax({        
         url: $('#commit-dialog form').attr('action'),

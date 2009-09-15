@@ -163,15 +163,17 @@ Editor.prototype.setupUI = function() {
     $('#commit-dialog').
     jqm({
         modal: true,
+        onShow: $.fbind(self, self.loadRelatedIssues),
         trigger: '#toolbar-button-commit'
     });
-
+    
+    /* STATIC BINDS */
     $('#commit-dialog-cancel-button').click(function() {
         $('#commit-dialog-error-empty-message').hide();
         $('#commit-dialog').jqmHide();
     });
 
-    $('#commit-dialog-save-button').click( function (event, data) 
+    $('#commit-dialog-save-button').click( function (event, data)
     {
         if( $('#commit-dialog-message').val().match(/^\s*$/)) {
             $('#commit-dialog-error-empty-message').fadeIn();
@@ -180,10 +182,11 @@ Editor.prototype.setupUI = function() {
             $('#commit-dialog-error-empty-message').hide();
             $('#commit-dialog').jqmHide();
             self.sendMergeRequest($('#commit-dialog-message').val() );
-        }       
-     
+        }
+
         return false;
-    });    
+    });
+    
 
     /* SPLIT DIALOG */
     $('#split-dialog').jqm({
@@ -193,6 +196,31 @@ Editor.prototype.setupUI = function() {
     jqmAddClose('button.dialog-close-button');
 
 // $('#split-dialog').   
+}
+
+Editor.prototype.loadRelatedIssues = function(hash)
+{
+    var self = this;
+    var c = $('#commit-dialog-related-issues');
+
+    $("div.loading-box", c).show();
+    $("div.fatal-error-box", c).hide();
+    $("div.container-box", c).hide();
+    
+    $.getJSON( c.attr('ui:ajax-src') + '?callback=?',
+    function(data, status)
+    {
+        var fmt = '';
+        $(data).each( function() {
+            fmt += '<label><input type="checkbox" checked="checked"'
+            fmt += ' value="' + this.id + '" />' + this.subject +'</label>\n'
+        });
+        $("div.container-box", c).html(fmt);
+        $("div.loading-box", c).hide();
+        $("div.container-box", c).show();        
+    });   
+    
+    hash.w.show();
 }
 
 Editor.prototype.loadSplitDialog = function(hash)
