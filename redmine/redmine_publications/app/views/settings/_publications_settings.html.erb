@@ -10,4 +10,10 @@
   <label for="settings[pattern]">Filtr publikacji: </label>
   <%= text_field_tag 'settings[pattern]', @settings[:pattern] || '' %>
 </p>
+
+<p>
+  <label for="settings[editorurl]">Docelowy URL: </label>
+  <%= text_field_tag 'settings[editorurl]', @settings[:editorurl] || '' %>
+</p>
+
 </fieldset>

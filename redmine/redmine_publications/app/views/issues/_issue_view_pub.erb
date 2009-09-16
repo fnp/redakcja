@@ -1,0 +1,8 @@
+<tr>
+    <td><b>Publication(s)</b></td>
+    <td>
+<% @issue.publication_names.each  do |pub| %>
+      <a href="<%= Setting.plugin_redmine_publications[:editorurl].sub(':pubid', pub) %>"><%= pub %></a><br />
+<% end %>
+    </td>
+</tr>

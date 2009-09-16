@@ -378,7 +378,7 @@ Editor.prototype.saveToBranch = function(msg)
     var self = this;
     $.log('Saving to local branch - panel:', changed_panel);
 
-    if(!msg) msg = "Zapis z edytora platformy.";
+    if(!msg) msg = "Szybki zapis z edytora platformy.";
 
     if( changed_panel.length === 0) {
         $.log('Nothing to save.');
@@ -450,9 +450,8 @@ Editor.prototype.autoSave = function()
 Editor.prototype.onContentChanged = function(event, data) {
     var self = this;
 
-    $('#toolbar-button-save').removeAttr('disabled');
-    $('#toolbar-button-commit').attr('disabled', 'disabled');
-    $('#toolbar-button-update').attr('disabled', 'disabled');
+    $('button.provides-save').removeAttr('disabled');
+    $('button.requires-save').attr('disabled', 'disabled');
     
     if(this.autosaveTimer) return;
     this.autosaveTimer = setTimeout( function() {
@@ -495,9 +494,8 @@ Editor.prototype.sendMergeRequest = function (message) {
         alert("There are unsaved changes - can't commit.");
     }
 
-    var self =  this;
-    $.log('URL !: ', $('#commit-dialog form').attr('action'));
-    
+    var self =  this;    
+        
     $.ajax({        
         url: $('#commit-dialog form').attr('action'),
         dataType: 'json',
