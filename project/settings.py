@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     
     'explorer',
     'toolbar',
+    'api',
 )
 
 

@@ -44,6 +44,10 @@ class Cabinet(object):
         else:
             raise ValueError("You must provide either name or doc and user.")
 
+
+    def __str__(self):
+        return "Cabinet(%s)" % self._name
+
     def documents(self):
         """Lists all documents and sub-documents in this cabinet."""
         pass
@@ -57,13 +61,12 @@ class Cabinet(object):
         as the name for the main document"""
         pass
 
-    def create(self, name):
+    def create(self, name, initial_data=''):
         """Create a new sub-document in the cabinet with the given name."""
         pass
     
     def maindoc_name(self):
         return self._maindoc
-
 
     @property
     def library(self):
@@ -72,6 +75,9 @@ class Cabinet(object):
     @property
     def name(self):
         return self._name
+
+    def shelf(self, selector=None):
+        pass
 
 class Document(object):
     def __init__(self, cabinet, name):
@@ -92,7 +98,28 @@ class Document(object):
     def library(self):
         return self._cabinet.library
 
+    @property
+    def name(self):
+        return self._name
 
+    def shelf(self):
+        return self._cabinet.shelf()
+
+    @property
+    def size(self):
+        raise NotImplemented()
+
+    @property
+    def parts(self):
+        raise NotImplemented()
+
+
+class Shelf(object):
+
+    def __init__(self, cabinet):
+        self._cabinet = cabinet
+        
+    
 #
 # Exception classes
 #
@@ -104,6 +131,8 @@ class LibraryException(Exception):
         self.cause = cause
 
 class CabinetNotFound(LibraryException):
+    def __init__(self, cabname):
+        LibraryException.__init__(self, "Cabinet '%s' not found." % cabname)
     pass
 
 

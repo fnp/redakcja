@@ -40,6 +40,9 @@ urlpatterns = patterns('',
     # Authorization
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
+
+    # Our uber-restful api
+    url(r'^api/', include('api.urls') ),
 )
 
 

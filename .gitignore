@@ -7,3 +7,4 @@ media
 files
 nbproject
 nbproject/*
+.coverage

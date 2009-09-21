@@ -253,7 +253,9 @@ Panel.prototype.isHotkey = function(event) {
     if(event.ctrlKey) code = code | 0x200;
     if(event.shiftKey) code = code | 0x400;
 
-    if(this.hotkeys[code] !== null) {
+    $.log(event.character, this.hotkeys[code]);
+
+    if(this.hotkeys[code]) {
         return true;
     }
     return false;
@@ -301,6 +303,10 @@ Editor.prototype.loadConfig = function() {
     
     this.fileOptions = this.options;
     var self = this;
+
+    if(!this.options.recentFiles)
+        this.options.recentFiles = [];
+
     $.each(this.options.recentFiles, function(index) {
         if (fileId == self.options.recentFiles[index].fileId) {
             $.log('Found options for', fileId);

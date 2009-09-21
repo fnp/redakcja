@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+
 __author__ = "Łukasz Rekucki"
 __date__ = "$2009-09-18 10:49:24$"
 
@@ -7,6 +8,7 @@ __doc__ = """RAL implementation over Mercurial"""
 import mercurial
 from mercurial import localrepo as hglrepo
 from mercurial import ui as hgui
+from mercurial.node import hex as to_hex
 import re
 import wlrepo
 
@@ -36,8 +38,8 @@ class MercurialLibrary(wlrepo.Library):
             try:
                 self._hgrepo = hglrepo.localrepository(self._hgui, path)
             except mercurial.error.RepoError:
-                raise wlrepo.LibraryException("[HGLibrary]Not a valid repository at path '%s'." % path)
-        elif kwargs['create']:
+                raise wlrepo.LibraryException("[HGLibrary] Not a valid repository at path '%s'." % path)
+        elif kwargs.get('create', False):
             os.makedirs(path)
             try:
                 self._hgrepo = hglrepo.localrepository(self._hgui, path, create=1)
@@ -62,6 +64,9 @@ class MercurialLibrary(wlrepo.Library):
     def main_cabinet(self):
         return self._maincab
 
+    def document(self, docid, user):
+        return self.cabinet(docid, user, create=False).retrieve()
+
     def cabinet(self, docid, user, create=False):
         bname = self._bname(user, docid)
 
@@ -71,23 +76,20 @@ class MercurialLibrary(wlrepo.Library):
                 return MercurialCabinet(self, bname, doc=docid, user=user)
 
             if not create:
-                raise wlrepo.CabinetNotFound(docid, user)
+                raise wlrepo.CabinetNotFound(bname)
 
             # check if the docid exists in the main cabinet
-            needs_touch = not self._maincab.exists(docid)
-            print "Creating branch: ", needs_touch
+            needs_touch = not self._maincab.exists(docid)            
             cab = MercurialCabinet(self, bname, doc=docid, user=user)
 
-            fileid = cab._fileid(None)
+            name, fileid = cab._filename(None)
 
             def cleanup_action(l):
-                if needs_touch:
-                    print "Touch for file", docid
+                if needs_touch:                    
                     l._fileopener()(fileid, "w").write('')
                     l._fileadd(fileid)
                 
-                garbage = [fid for (fid, did) in l._filelist() if not did.startswith(docid)]
-                print "Garbage: ", garbage
+                garbage = [fid for (fid, did) in l._filelist() if not did.startswith(docid)]                
                 l._filesrm(garbage)
 
             # create the branch
@@ -128,10 +130,8 @@ class MercurialLibrary(wlrepo.Library):
     def _common_ancestor(self, revA, revB):
         return self._hgrepo[revA].ancestor(self.repo[revB])
 
-    def _commit(self, message, user="library"):
-        return self._hgrepo.commit(\
-                                   text=self._sanitize_string(message), \
-                                   user=self._sanitize_string(user))
+    def _commit(self, message, user=u"library"):
+        return self._hgrepo.commit(text=message, user=user)
 
 
     def _fileexists(self, fileid):
@@ -158,6 +158,9 @@ class MercurialLibrary(wlrepo.Library):
 
     def _fileopener(self):
         return self._hgrepo.wopener
+
+    def _filectx(self, fileid, branchid):
+        return self._hgrepo.filectx(fileid, changeid=branchid)
     
     #
     # BASIC BRANCH routines
@@ -191,7 +194,6 @@ class MercurialLibrary(wlrepo.Library):
 
         if before_commit: before_commit(self)
 
-        print "commiting"
         self._commit("[AUTO] Initial commit for branch '%s'." % name, user='library')
         
         # revert back to main
@@ -218,11 +220,10 @@ class MercurialLibrary(wlrepo.Library):
     #
 
     @staticmethod
-    def _sanitize_string(s):
-        if isinstance(s, unicode): #
-            return s.encode('utf-8')
-        else: # it's a string, so we have no idea what encoding it is
-            return s
+    def _sanitize_string(s):        
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return s
 
 class MercurialCabinet(wlrepo.Cabinet):
     
@@ -234,19 +235,25 @@ class MercurialCabinet(wlrepo.Cabinet):
             
         self._branchname = branchname
 
-    def documents(self):        
-        return self._execute_in_branch(action=lambda l, c: ( e[1] for e in l._filelist()) )
+    def shelf(self, selector=None):
+        if selector is not None:
+            raise NotImplementedException()
 
-    def retrieve(self, part=None, shelve=None):
-        fileid = self._fileid(part)
+        return MercurialShelf(self, self._hgtip())
+
+    def documents(self):        
+        return self._execute_in_branch(action=lambda l, c: (e[1] for e in l._filelist()))
+
+    def retrieve(self, part=None, shelf=None):
+        name, fileid = self._filename(part)
 
         if fileid is None:
             raise wlrepo.LibraryException("Can't retrieve main document from main cabinet.")
                 
-        return self._execute_in_branch(lambda l, c: MercurialDocument(c, fileid))
+        return self._execute_in_branch(lambda l, c: MercurialDocument(c, name, fileid))
 
-    def create(self, name, initial_data=''):
-        fileid = self._fileid(name)
+    def create(self, name, initial_data):
+        name, fileid = self._filename(name)
 
         if name is None:
             raise ValueError("Can't create main doc for maincabinet.")
@@ -257,18 +264,18 @@ class MercurialCabinet(wlrepo.Cabinet):
 
             fd = l._fileopener()(fileid, "w")
             fd.write(initial_data)
-            l._fileadd(fileid)
-            l._commit("File '%d' created.")
-
-            return MercurialDocument(c, fileid)
+            fd.close()
+            l._fileadd(fileid)            
+            l._commit("File '%s' created." % fileid)            
+            return MercurialDocument(c, fileid=fileid, name=name)           
 
         return self._execute_in_branch(create_action)
 
-    def exists(self, part=None, shelve=None):
-        fileid = self._fileid(part)
+    def exists(self, part=None, shelf=None):
+        name, filepath = self._filename(part)
 
-        if fileid is None: return false
-        return self._execute_in_branch(lambda l, c: l._fileexists(fileid))
+        if filepath is None: return False
+        return self._execute_in_branch(lambda l, c: l._fileexists(filepath))
     
     def _execute_in_branch(self, action, write=False):
         def switch_action(library):
@@ -280,16 +287,17 @@ class MercurialCabinet(wlrepo.Cabinet):
 
         return self._library._transaction(write_mode=write, action=switch_action)
 
-    def _fileid(self, part):
+    def _filename(self, part):
+        part = self._library._sanitize_string(part)
         fileid = None
 
         if self._maindoc == '':
-            if part is None: return None              
+            if part is None: return [None, None]
             fileid = part
         else:
             fileid = self._maindoc + (('$' + part) if part else '')
 
-        return 'pub_' + fileid + '.xml'        
+        return fileid, 'pub_' + fileid + '.xml'
 
     def _fileopener(self):
         return self._library._fileopener()
@@ -297,17 +305,143 @@ class MercurialCabinet(wlrepo.Cabinet):
     def _hgtip(self):
         return self._library._branch_tip(self._branchname)
 
+    def _filectx(self, fileid):
+        return self._library._filectx(fileid, self._branchname)
+
 class MercurialDocument(wlrepo.Document):
 
-    def __init__(self, cabinet, fileid):
-        super(MercurialDocument, self).__init__(cabinet, fileid)
-        self._opener = self._cabinet._fileopener()        
+    def __init__(self, cabinet, name, fileid):
+        super(MercurialDocument, self).__init__(cabinet, name=name)
+        self._opener = self._cabinet._fileopener()
+        self._fileid = fileid
+        self._refresh()
+
+    def _refresh(self):
+        self._filectx = self._cabinet._filectx(self._fileid)
+        self._shelf = MercurialShelf(self, self._filectx.node())
 
     def read(self):
-        return self._opener(self._name, "r").read()
+        return self._opener(self._filectx.path(), "r").read()
 
     def write(self, data):
-        return self._opener(self._name, "w").write(data)
+        return self._opener(self._filectx.path(), "w").write(data)
+
+    def commit(self, message, user):
+        self.library._fileadd(self._fileid)
+        self.library._commit(self._fileid, message, user)
+
+    def update(self):
+        if self._cabinet.is_main():
+            return True # always up-to-date
+
+        mdoc = self.library.document(self._fileid)
+
+        mshelf = mdoc.shelf()
+        shelf = self.shelf()
+
+        if not mshelf.ancestorof(shelf) and not shelf.parentof(mshelf):
+            shelf.merge_with(mshelf)
+
+        return rc.ALL_OK
+
+    def share(self, message, user):
+        if self._cabinet.is_main():
+            return True # always shared
+
+        main = self.shared_version()
+        local = self.shelf()
+
+        no_changes = True
+
+        # Case 1:
+        #         * local
+        #         |
+        #         * <- can also be here!
+        #        /|
+        #       / |
+        # main *  *
+        #      |  |
+        # The local branch has been recently updated,
+        # so we don't need to update yet again, but we need to
+        # merge down to default branch, even if there was
+        # no commit's since last update
+
+        if main.ancestorof(local):
+            main.merge_with(local, user=user, message=message)
+            no_changes = False
+            
+        # Case 2:
+        #
+        # main *  * local
+        #      |\ |
+        #      | \|
+        #      |  *
+        #      |  |
+        #
+        # Default has no changes, to update from this branch
+        # since the last merge of local to default.
+        elif main.has_common_ancestor(local):
+            if not local.parentof(main):
+                main.merge_with(local, user=user, message=message)
+                no_changes = False
+
+        # Case 3:
+        # main *
+        #      |
+        #      * <- this case overlaps with previos one
+        #      |\
+        #      | \
+        #      |  * local
+        #      |  |
+        #
+        # There was a recent merge to the defaul branch and
+        # no changes to local branch recently.
+        #
+        # Use the fact, that user is prepared to see changes, to
+        # update his branch if there are any
+        elif local.ancestorof(main):
+            if not local.parentof(main):
+                local.merge_with(main, user=user, message='Local branch update.')
+                no_changes = False
+        else:
+            local.merge_with(main, user=user, message='Local branch update.')
+
+            self._refresh()
+            local = self.shelf()
+
+            main.merge_with(local, user=user, message=message)
+               
+    def shared(self):
+        return self.library.document(self._fileid)
+
+    @property
+    def size(self):
+        return self._filectx.size()
+
+    
+    def shelf(self):
+        return self._shelf
+
+    @property
+    def last_modified(self):
+        return self._filectx.date()
+
+    def __str__(self):
+        return u"Document(%s->%s)" % (self._cabinet.name, self._name)
+
+
+class MercurialShelf(wlrepo.Shelf):
+
+    def __init__(self, cabinet, revision):
+        super(MercurialShelf, self).__init__(cabinet)
+        self._revision = revision
+
+    @property
+    def _rev(self):
+        return _revision
+
+    def __str__(self):
+        return to_hex(self._revision)
 
 
 class MergeStatus(object):
@@ -335,5 +469,4 @@ class UpdateStatus(object):
         return bool(len(self.modified) + len(self.added) + \
                     len(self.removed) + len(self.deleted))
 
-
-__all__ = ["MercurialLibrary", "MercurialCabinet", "MercurialDocument"]
+__all__ = ["MercurialLibrary"]

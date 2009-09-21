@@ -231,6 +231,19 @@
       <object pk="23"/>
     </field>
   </object>
+  <object pk="90" model="toolbar.button">
+    <field type="CharField" name="label">Wyszukaj</field>
+    <field type="SlugField" name="slug">wyszukaj</field>
+    <field type="TextField" name="params">["#find-dialog"]</field>
+    <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">show_dialog</field>
+    <field type="CharField" name="link"/>
+    <field type="CharField" name="key">f</field>
+    <field type="PositiveIntegerField" name="key_mod">2</field>
+    <field type="CharField" name="tooltip"/>
+    <field to="toolbar.buttongroup" name="group" rel="ManyToManyRel">
+      <object pk="23"/>
+    </field>
+  </object>
   <object pk="2" model="toolbar.button">
     <field type="CharField" name="label">Zamień dywiz</field>
     <field type="SlugField" name="slug">zamien_dywiz</field>
@@ -1238,5 +1251,8 @@ $('#split-dialog').jqmShow({
     failure: function() { cm.undo(); } 
 
 }) ;</field>
+  </object>
+  <object pk="show_dialog" model="toolbar.scriptlet">
+    <field type="TextField" name="code">$(params[0]).jqmShow({editor: editor, panel: panel, params: params});</field>
   </object>
 </django-objects>
