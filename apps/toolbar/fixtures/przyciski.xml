@@ -1023,6 +1023,7 @@ for (var attr in params.attrs) {
 start_tag += '&gt;';
 var end_tag = '&lt;/'+params.tag+'&gt;';
 
+if(text.length &gt; 0) {
 // tokenize
 var output = ''
 var token = ''
@@ -1044,8 +1045,11 @@ if( output[output.length-1] == '\\' ) {
 } else {
     output += end_tag;
 }
-
 output += token;
+}
+else {
+ output = start_tag + end_tag;
+}
 
 texteditor.replaceSelection(output);
 

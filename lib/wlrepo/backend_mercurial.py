@@ -161,6 +161,9 @@ class MercurialLibrary(wlrepo.Library):
 
     def _filectx(self, fileid, branchid):
         return self._hgrepo.filectx(fileid, changeid=branchid)
+
+    def _changectx(self, nodeid):
+        return self._hgrepo.changectx(nodeid)
     
     #
     # BASIC BRANCH routines
@@ -239,7 +242,7 @@ class MercurialCabinet(wlrepo.Cabinet):
         if selector is not None:
             raise NotImplementedException()
 
-        return MercurialShelf(self, self._hgtip())
+        return MercurialShelf(self, self._library._changectx(self._branchname))
 
     def documents(self):        
         return self._execute_in_branch(action=lambda l, c: (e[1] for e in l._filelist()))
@@ -432,17 +435,20 @@ class MercurialDocument(wlrepo.Document):
 
 class MercurialShelf(wlrepo.Shelf):
 
-    def __init__(self, cabinet, revision):
+    def __init__(self, cabinet, changectx):
         super(MercurialShelf, self).__init__(cabinet)
-        self._revision = revision
+        self._changectx = changectx        
 
     @property
     def _rev(self):
-        return _revision
+        return self._changectx.node()
 
     def __str__(self):
-        return to_hex(self._revision)
+        return self._changectx.hex()
 
+
+    def ancestorof(self, other):
+        pass
 
 class MergeStatus(object):
     def __init__(self, mstatus):
