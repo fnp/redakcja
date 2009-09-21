@@ -61,7 +61,7 @@ def file_list(request, repo):
 
     fl = []
     for file in repo.repo[latest_default]:
-        m = re.match(u'^pub_([\\w\\$\\.0-9_-]+).xml$', file.decode('utf-8'), re.UNICODE)
+        m = re.match(u'^pub_([^/]+).xml$', file.decode('utf-8'), re.UNICODE)
         if m is not None:
             fl.append(m.group(1))
             
