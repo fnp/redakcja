@@ -33,7 +33,7 @@ class Button(models.Model):
     group = models.ManyToManyField(ButtonGroup)
     
     class Meta:
-        ordering = ('label',)
+        ordering = ('slug',)
         verbose_name, verbose_name_plural = _('button'), _('buttons')
 
     def hotkey_code(self):
