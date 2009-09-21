@@ -307,7 +307,7 @@ def file_commit(request, path, repo):
 @with_repo
 def file_dc(request, path, repo):
     errors = None
-    rpath = file_path(fileid)
+    rpath = file_path(path)
 
     if request.method == 'POST':
         form = forms.DublinCoreForm(request.POST)
