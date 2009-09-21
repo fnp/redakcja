@@ -48,7 +48,7 @@ $(function() {
 	
 	$.each(options.recentFiles, function(index) {
 		var fileId = options.recentFiles[index].fileId;
-		$('#recent-file-list ul').append('<li><a href="/editor/' + fileId + '/">' + fileId + '</a></li>');
+		$('#recent-file-list ul').append('<li><a href="{% url editor_base %}'+fileId+'">' + fileId + '</a></li>');
 	});
 });
 </script>

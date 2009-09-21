@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     # Editor panels
     url(r'^editor/'+PATH_SEC+'/panel/(?P<name>[a-z]+)/$', 'explorer.views.panel_view', name='panel_view'),
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
+    url(r'^editor/$', 'explorer.views.file_list', name='editor_base'),
 
     url(r'^editor/'+PATH_SEC+'/split$', 'explorer.views.split_text'),
     url(r'^editor/'+PATH_SEC+'/split-success',

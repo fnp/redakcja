@@ -425,7 +425,7 @@ Editor.prototype.saveToBranch = function(msg)
                 if(self.autosaveTimer) {
                     clearTimeout(self.autosaveTimer);
                 }
-                if (data.warnings === null) {
+                if (data.warnings === null || data.warning === undefined) {
                     self.showPopup('save-successful');
                 } else {
                     self.showPopup('save-warn', data.warnings[0]);
