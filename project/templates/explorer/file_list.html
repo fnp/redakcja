@@ -2,30 +2,23 @@
 
 {% block extrahead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/filelist.css" type="text/css" />
-<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.paginate.js"></script>
     <script src="{{STATIC_URL}}js/jquery.json.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 $(function() {
-    $('#file-list').paginate({itemsPerPage: 15});
-
-    $('#file-list-find-button').click(function(event)
-    {
-        var expr = new RegExp( $('#file-list-filter').val() );
-
-        $('#file-list').filterItems( function(filename) {
-            return expr.test(filename);
-        });
-
+	function search(event) {
+        var expr = new RegExp($('#file-list-filter').val(), 'i');
+    	
+        $('#file-list p').hide().filter(function(index) {
+            return expr.test($(this).attr('title'));
+        }).show();
+    
         event.preventDefault();
-    });
-
-    $('#file-list-reset-button').click(function(event)
-    {
-        $('#file-list').filterItems();
-        event.preventDefault();
-    });
+    }
 	
+    $('#file-list-find-button').click(search);
+	$('#file-list-filter').bind('keyup change DOMAttrModified', search);
+		
     var defaultOptions = {
         panels: [
         {
@@ -51,7 +44,7 @@ $(function() {
         }
     } catch (e) {    
         options = defaultOptions;
-    }
+    };
 	
 	$.each(options.recentFiles, function(index) {
 		var fileId = options.recentFiles[index].fileId;
