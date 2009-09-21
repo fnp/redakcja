@@ -2,8 +2,17 @@
 <p><b>{{ exception_type }}</b></p>
 <p>{{ exception.message }}</p>
 
+<button id="try-again-button" type="button">Try Again</button>
+
 <script type="text/javascript" charset="utf-8">
 panel_hooks = {
+    load: function() {
+        var self = this;
+
+        $('#try-again-button').click(function() {
+            self.load(self.current_url);
+        });      
+    },
     refresh: function() {
         return true; // error page is static
     },
