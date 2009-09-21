@@ -148,7 +148,7 @@
   <object pk="4" model="toolbar.button">
     <field type="CharField" name="label">Podstawowa</field>
     <field type="SlugField" name="slug">basic_correction</field>
-    <field type="TextField" name="params">[["fulltextregexp", {"exprs": [["\ufeff", ""], ["$[\\s]*\\d+[\\s]*^", ""], ["-\\s*^", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}], ["lineregexp", {"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+|\\s+(\")", "$1"], ["(\\d)[\u2014-](\\d)", "$1--$2"], ["\u2014", "---"], ["&lt;(/?)P([aert])", "&lt;$1p$2"], ["([^\\.])(\\s*)&lt;/p", "$1.$2&lt;/p"]]}]]</field>
+    <field type="TextField" name="params">[["fulltextregexp", {"exprs": [["\ufeff", ""], ["$[\\s]*\\d+[\\s]*^", ""], ["-\\s*^", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}], ["lineregexp", {"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+|\\s+(\")", "$1"], ["(\\d)[\u2014-](\\d)", "$1--$2"], ["\u2014", "---"], ["&lt;(/?)P([aert])", "&lt;$1p$2"], ["([^\\.])(\\s*)&lt;/p", "$1.$2&lt;/p"], ["([,\\.:;!\\?])([^\\s\\\\])", "$1 $2"], ["([^\\s])\\s+([,\\.:;!\\?])", "$1$2"]]}]]</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">macro</field>
     <field type="CharField" name="link"/>
     <field type="CharField" name="key"/>
@@ -990,7 +990,7 @@
   <object pk="2" model="toolbar.button">
     <field type="CharField" name="label">Zamień dywiz</field>
     <field type="SlugField" name="slug">zamien_dywiz</field>
-    <field type="TextField" name="params">{"exprs": [["(\\s)-(\\s)", "$1---$2"], ["^(\\s*)-(\\s)", "$1---$2"], ["(\\s)-(\\s*)$", "$1---$2"], ["(\\d)[\u2014-](\\d)", "$1--$2"], ["\u2014", "---"]]}</field>
+    <field type="TextField" name="params">{"exprs": [["(\\s)-(\\s)", "$1---$2"], ["^(\\s*)-(\\s)", "$1---$2"], ["(\\s)-(\\s*)$", "$1---$2"], ["(\\d)[\u2014\u2013\u2010-](\\d)", "$1--$2"], ["\u2014\u2013\u2010", "---"]]}</field>
     <field to="toolbar.scriptlet" name="scriptlet" rel="ManyToOneRel">lineregexp</field>
     <field type="CharField" name="link"/>
     <field type="CharField" name="key"/>
@@ -1015,38 +1015,44 @@
   </object>
   <object pk="insert_tag" model="toolbar.scriptlet">
     <field type="TextField" name="code">var texteditor = panel.texteditor;
-
 var text = texteditor.selection();
-
-var out = '&lt;'+params.tag;
-
+var start_tag = '&lt;'+params.tag;
 for (var attr in params.attrs) {
-
-    out += ' '+attr+'="' + params.attrs[attr] + '"';
-
+    start_tag += ' '+attr+'="' + params.attrs[attr] + '"';
 };
+start_tag += '&gt;';
+var end_tag = '&lt;/'+params.tag+'&gt;';
 
-out += '&gt;';
-
-out += text;
-
-out += '&lt;/' + params.tag + '&gt;';
-
- 
-
-texteditor.replaceSelection(out);
-
-
-
-if (text.length == 0) {
-
-    var pos = texteditor.cursorPosition();
-
-    texteditor.selectLines(pos.line, pos.character + params.tag.length + 2);
-
+// tokenize
+var output = ''
+var token = ''
+for(var index=0; index &lt; text.length; index++)
+{
+    if (text[index].match(/\s/)) { // whitespace
+        token += text[index];
+    }
+    else { // character
+        output += token;
+        if(output == token) output += start_tag;
+        token = ''
+        output += text[index];
+    }
 }
 
+if( output[output.length-1] == '\\' ) {
+    output = output.substr(0, output.length-1) + end_tag + '\\';
+} else {
+    output += end_tag;
+}
 
+output += token;
+
+texteditor.replaceSelection(output);
+
+if (text.length == 0) {
+    var pos = texteditor.cursorPosition();
+    texteditor.selectLines(pos.line, pos.character + params.tag.length + 2);
+}
 
 panel.fireEvent('contentChanged');</field>
   </object>
