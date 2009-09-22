@@ -8,7 +8,7 @@ __doc__ = """RAL implementation over Mercurial"""
 import mercurial
 from mercurial import localrepo as hglrepo
 from mercurial import ui as hgui
-from mercurial.node import hex as to_hex
+from mercurial.node import nullid
 import re
 import wlrepo
 
@@ -73,14 +73,14 @@ class MercurialLibrary(wlrepo.Library):
         lock = self._lock(True)
         try:
             if self._has_branch(bname):
-                return MercurialCabinet(self, bname, doc=docid, user=user)
+                return MercurialCabinet(self, doc=docid, user=user)
 
             if not create:
                 raise wlrepo.CabinetNotFound(bname)
 
             # check if the docid exists in the main cabinet
             needs_touch = not self._maincab.exists(docid)            
-            cab = MercurialCabinet(self, bname, doc=docid, user=user)
+            cab = MercurialCabinet(self, doc=docid, user=user)
 
             name, fileid = cab._filename(None)
 
@@ -94,7 +94,7 @@ class MercurialLibrary(wlrepo.Library):
 
             # create the branch
             self._create_branch(bname, before_commit=cleanup_action)
-            return MercurialCabinet(self, bname, doc=docid, user=user)
+            return MercurialCabinet(self, doc=docid, user=user)
         finally:
             lock.release()
             
@@ -212,10 +212,8 @@ class MercurialLibrary(wlrepo.Library):
         self._checkout(self._branch_tip(branchname))
         return branchname        
 
-    #
-    # Merges
-    #
-    
+    def shelf(self, nodeid):
+        return MercurialShelf(self, self._changectx(nodeid))   
 
 
     #
@@ -230,19 +228,18 @@ class MercurialLibrary(wlrepo.Library):
 
 class MercurialCabinet(wlrepo.Cabinet):
     
-    def __init__(self, library, branchname, doc=None, user=None):
+    def __init__(self, library, branchname=None, doc=None, user=None):
         if doc and user:
             super(MercurialCabinet, self).__init__(library, doc=doc, user=user)
-        else:
+            self._branchname = library._bname(user=user, docid=doc)
+        elif branchname:
             super(MercurialCabinet, self).__init__(library, name=branchname)
-            
-        self._branchname = branchname
+            self._branchname = branchname
+        else:
+            raise ValueError("Provide either doc/user or branchname")
 
     def shelf(self, selector=None):
-        if selector is not None:
-            raise NotImplementedException()
-
-        return MercurialShelf(self, self._library._changectx(self._branchname))
+        return self._library.shelf(self._branchname)
 
     def documents(self):        
         return self._execute_in_branch(action=lambda l, c: (e[1] for e in l._filelist()))
@@ -250,10 +247,17 @@ class MercurialCabinet(wlrepo.Cabinet):
     def retrieve(self, part=None, shelf=None):
         name, fileid = self._filename(part)
 
+        print "Retrieving document %s from cab %s" % (name, self._name)
+
         if fileid is None:
             raise wlrepo.LibraryException("Can't retrieve main document from main cabinet.")
+
+        def retrieve_action(l,c):
+            if l._fileexists(fileid):
+                return MercurialDocument(c, name=name, fileid=fileid)
+            return None
                 
-        return self._execute_in_branch(lambda l, c: MercurialDocument(c, name, fileid))
+        return self._execute_in_branch(retrieve_action)        
 
     def create(self, name, initial_data):
         name, fileid = self._filename(name)
@@ -292,15 +296,15 @@ class MercurialCabinet(wlrepo.Cabinet):
 
     def _filename(self, part):
         part = self._library._sanitize_string(part)
-        fileid = None
+        docid = None
 
         if self._maindoc == '':
-            if part is None: return [None, None]
-            fileid = part
+            if part is None: rreeturn [None, None]
+            docid = part
         else:
-            fileid = self._maindoc + (('$' + part) if part else '')
+            docid = self._maindoc + (('$' + part) if part else '')
 
-        return fileid, 'pub_' + fileid + '.xml'
+        return docid, 'pub_' + docid + '.xml'
 
     def _fileopener(self):
         return self._library._fileopener()
@@ -311,17 +315,19 @@ class MercurialCabinet(wlrepo.Cabinet):
     def _filectx(self, fileid):
         return self._library._filectx(fileid, self._branchname)
 
+    def ismain(self):
+        return (self._library.main_cabinet == self)
+
 class MercurialDocument(wlrepo.Document):
 
     def __init__(self, cabinet, name, fileid):
         super(MercurialDocument, self).__init__(cabinet, name=name)
         self._opener = self._cabinet._fileopener()
         self._fileid = fileid
-        self._refresh()
+        self.refresh()
 
-    def _refresh(self):
-        self._filectx = self._cabinet._filectx(self._fileid)
-        self._shelf = MercurialShelf(self, self._filectx.node())
+    def refresh(self):
+        self._filectx = self._cabinet._filectx(self._fileid)        
 
     def read(self):
         return self._opener(self._filectx.path(), "r").read()
@@ -334,96 +340,114 @@ class MercurialDocument(wlrepo.Document):
         self.library._commit(self._fileid, message, user)
 
     def update(self):
-        if self._cabinet.is_main():
-            return True # always up-to-date
+        lock = self.library._lock()
+        try:
+            if self._cabinet.ismain():
+                return True # always up-to-date
 
-        mdoc = self.library.document(self._fileid)
+            user = self._cabinet.username or 'library'
+            mdoc = self.library.document(self._fileid)
 
-        mshelf = mdoc.shelf()
-        shelf = self.shelf()
+            mshelf = mdoc.shelf()
+            shelf = self.shelf()
 
-        if not mshelf.ancestorof(shelf) and not shelf.parentof(mshelf):
-            shelf.merge_with(mshelf)
+            if not mshelf.ancestorof(shelf) and not shelf.parentof(mshelf):
+                shelf.merge_with(mshelf, user=user)
 
-        return rc.ALL_OK
+            return True
+        finally:
+            lock.release()            
 
-    def share(self, message, user):
-        if self._cabinet.is_main():
-            return True # always shared
-
-        main = self.shared_version()
-        local = self.shelf()
-
-        no_changes = True
-
-        # Case 1:
-        #         * local
-        #         |
-        #         * <- can also be here!
-        #        /|
-        #       / |
-        # main *  *
-        #      |  |
-        # The local branch has been recently updated,
-        # so we don't need to update yet again, but we need to
-        # merge down to default branch, even if there was
-        # no commit's since last update
-
-        if main.ancestorof(local):
-            main.merge_with(local, user=user, message=message)
-            no_changes = False
+    def share(self, message):
+        lock = self.library._lock()
+        try:
+            print "sharing from", self._cabinet, self._cabinet.username
             
-        # Case 2:
-        #
-        # main *  * local
-        #      |\ |
-        #      | \|
-        #      |  *
-        #      |  |
-        #
-        # Default has no changes, to update from this branch
-        # since the last merge of local to default.
-        elif main.has_common_ancestor(local):
-            if not local.parentof(main):
+            if self._cabinet.ismain():
+                return True # always shared
+
+            if self._cabinet.username is None:
+                raise ValueError("Can only share documents from personal cabinets.")
+            
+            user = self._cabinet.username
+
+            main = self.shared().shelf()
+            local = self.shelf()
+
+            no_changes = True
+
+            # Case 1:
+            #         * local
+            #         |
+            #         * <- can also be here!
+            #        /|
+            #       / |
+            # main *  *
+            #      |  |
+            # The local branch has been recently updated,
+            # so we don't need to update yet again, but we need to
+            # merge down to default branch, even if there was
+            # no commit's since last update
+
+            if main.ancestorof(local):
                 main.merge_with(local, user=user, message=message)
                 no_changes = False
 
-        # Case 3:
-        # main *
-        #      |
-        #      * <- this case overlaps with previos one
-        #      |\
-        #      | \
-        #      |  * local
-        #      |  |
-        #
-        # There was a recent merge to the defaul branch and
-        # no changes to local branch recently.
-        #
-        # Use the fact, that user is prepared to see changes, to
-        # update his branch if there are any
-        elif local.ancestorof(main):
-            if not local.parentof(main):
+            # Case 2:
+            #
+            # main *  * local
+            #      |\ |
+            #      | \|
+            #      |  *
+            #      |  |
+            #
+            # Default has no changes, to update from this branch
+            # since the last merge of local to default.
+            elif local.has_common_ancestor(main):
+                if not local.parentof(main):
+                    main.merge_with(local, user=user, message=message)
+                    no_changes = False
+
+            # Case 3:
+            # main *
+            #      |
+            #      * <- this case overlaps with previos one
+            #      |\
+            #      | \
+            #      |  * local
+            #      |  |
+            #
+            # There was a recent merge to the defaul branch and
+            # no changes to local branch recently.
+            #
+            # Use the fact, that user is prepared to see changes, to
+            # update his branch if there are any
+            elif local.ancestorof(main):
+                if not local.parentof(main):
+                    local.merge_with(main, user=user, message='Local branch update.')
+                    no_changes = False
+            else:
                 local.merge_with(main, user=user, message='Local branch update.')
-                no_changes = False
-        else:
-            local.merge_with(main, user=user, message='Local branch update.')
 
-            self._refresh()
-            local = self.shelf()
+                self._refresh()
+                local = self.shelf()
 
-            main.merge_with(local, user=user, message=message)
+                main.merge_with(local, user=user, message=message)
+        finally:
+            lock.release()
                
     def shared(self):
-        return self.library.document(self._fileid)
+        return self.library.main_cabinet.retrieve(self._name)
+
+    def exists(self):
+        return self._cabinet.exists(self._fileid)
 
     @property
     def size(self):
         return self._filectx.size()
-
     
     def shelf(self):
-        return self._shelf
+        return MercurialShelf(self.library, self._filectx.node())
 
     @property
     def last_modified(self):
@@ -432,12 +456,20 @@ class MercurialDocument(wlrepo.Document):
     def __str__(self):
         return u"Document(%s->%s)" % (self._cabinet.name, self._name)
 
+    def __eq__(self, other):
+        return self._filectx == other._filectx
+
+
 
 class MercurialShelf(wlrepo.Shelf):
 
-    def __init__(self, cabinet, changectx):
-        super(MercurialShelf, self).__init__(cabinet)
-        self._changectx = changectx        
+    def __init__(self, lib, changectx):
+        super(MercurialShelf, self).__init__(lib)
+
+        if isinstance(changectx, str):
+            self._changectx = lib._changectx(changectx)
+        else:
+            self._changectx = changectx
 
     @property
     def _rev(self):
@@ -446,9 +478,38 @@ class MercurialShelf(wlrepo.Shelf):
     def __str__(self):
         return self._changectx.hex()
 
+    def __repr__(self):
+        return "MercurialShelf(%s)" % self._changectx.hex()
 
     def ancestorof(self, other):
-        pass
+        nodes = list(other._changectx._parents)
+        while nodes[0].node() != nullid:
+            v = nodes.pop(0)
+            if v == self._changectx:
+                return True
+            nodes.extend( v._parents )
+        return False
+
+    def parentof(self, other):
+        return self._changectx in other._changectx._parents
+
+    def has_common_ancestor(self, other):
+        a = self._changectx.ancestor(other._changectx)
+        print a, self._changectx.branch(), a.branch()
+
+        return (a.branch() == self._changectx.branch())
+
+    def merge_with(self, other, user, message):
+        lock = self._library._lock(True)
+        try:
+            self._library._checkout(self._changectx.node())
+            self._library._merge(other._changectx.node())
+        finally:
+            lock.release()
+
+    def __eq__(self, other):
+        return self._changectx.node() == other._changectx.node()
+        
 
 class MergeStatus(object):
     def __init__(self, mstatus):

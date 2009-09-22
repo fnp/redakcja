@@ -277,7 +277,7 @@ Editor.prototype.loadSplitDialog = function(hash)
             hash.t.success();
         });
 
-        if($('#id_splitform-autoxml').is(':checked'))
+        /* if($('#id_splitform-autoxml').is(':checked'))
             $('#split-form-dc-subform').show();
         else
             $('#split-form-dc-subform').hide();
@@ -287,7 +287,7 @@ Editor.prototype.loadSplitDialog = function(hash)
                 $('#split-form-dc-subform').show();
             else
                 $('#split-form-dc-subform').hide();
-        });
+        }); */
     };   
 
     $.ajax({
