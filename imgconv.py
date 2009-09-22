@@ -41,11 +41,11 @@ def try_creating(directory):
 
 
 output_dir = realpath(os.getcwd()) + '/output'
-big_output_dir = output_dir + '/big'
+# big_output_dir = output_dir + '/big'
 tmp_output_dir = output_dir + '/tmp'
 
 try_creating(output_dir)
-try_creating(big_output_dir)
+# try_creating(big_output_dir)
 try_creating(tmp_output_dir)
 
 
