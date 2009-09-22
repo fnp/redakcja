@@ -61,6 +61,10 @@ class MercurialLibrary(wlrepo.Library):
             lock.release()
 
     @property
+    def ospath(self):
+        return self._ospath
+
+    @property
     def main_cabinet(self):
         return self._maincab
 
@@ -68,6 +72,9 @@ class MercurialLibrary(wlrepo.Library):
         return self.cabinet(docid, user, create=False).retrieve()
 
     def cabinet(self, docid, user, create=False):
+        docid = self._sanitize_string(docid)
+        user = self._sanitize_string(user)
+        
         bname = self._bname(user, docid)
 
         lock = self._lock(True)
@@ -91,6 +98,7 @@ class MercurialLibrary(wlrepo.Library):
                 
                 garbage = [fid for (fid, did) in l._filelist() if not did.startswith(docid)]                
                 l._filesrm(garbage)
+                print "removed: ", garbage
 
             # create the branch
             self._create_branch(bname, before_commit=cleanup_action)
@@ -212,7 +220,9 @@ class MercurialLibrary(wlrepo.Library):
         self._checkout(self._branch_tip(branchname))
         return branchname        
 
-    def shelf(self, nodeid):
+    def shelf(self, nodeid=None):
+        if nodeid is None:
+            nodeid = self._maincab._name
         return MercurialShelf(self, self._changectx(nodeid))   
 
 
@@ -255,6 +265,7 @@ class MercurialCabinet(wlrepo.Cabinet):
         def retrieve_action(l,c):
             if l._fileexists(fileid):
                 return MercurialDocument(c, name=name, fileid=fileid)
+            print "File %s not found " % fileid
             return None
                 
         return self._execute_in_branch(retrieve_action)        
@@ -371,7 +382,7 @@ class MercurialDocument(wlrepo.Document):
             
             user = self._cabinet.username
 
-            main = self.shared().shelf()
+            main = self.library.shelf()
             local = self.shelf()
 
             no_changes = True
@@ -390,9 +401,9 @@ class MercurialDocument(wlrepo.Document):
             # no commit's since last update
 
             if main.ancestorof(local):
+                print "case 1"
                 main.merge_with(local, user=user, message=message)
                 no_changes = False
-
             # Case 2:
             #
             # main *  * local
@@ -404,6 +415,7 @@ class MercurialDocument(wlrepo.Document):
             # Default has no changes, to update from this branch
             # since the last merge of local to default.
             elif local.has_common_ancestor(main):
+                print "case 2"
                 if not local.parentof(main):
                     main.merge_with(local, user=user, message=message)
                     no_changes = False
@@ -423,16 +435,18 @@ class MercurialDocument(wlrepo.Document):
             # Use the fact, that user is prepared to see changes, to
             # update his branch if there are any
             elif local.ancestorof(main):
+                print "case 3"
                 if not local.parentof(main):
                     local.merge_with(main, user=user, message='Local branch update.')
                     no_changes = False
             else:
+                print "case 4"
                 local.merge_with(main, user=user, message='Local branch update.')
-
-                self._refresh()
                 local = self.shelf()
-
                 main.merge_with(local, user=user, message=message)
+
+            print "no_changes: ", no_changes
+            return no_changes
         finally:
             lock.release()
                
@@ -495,7 +509,7 @@ class MercurialShelf(wlrepo.Shelf):
 
     def has_common_ancestor(self, other):
         a = self._changectx.ancestor(other._changectx)
-        print a, self._changectx.branch(), a.branch()
+        # print a, self._changectx.branch(), a.branch()
 
         return (a.branch() == self._changectx.branch())
 
@@ -504,6 +518,7 @@ class MercurialShelf(wlrepo.Shelf):
         try:
             self._library._checkout(self._changectx.node())
             self._library._merge(other._changectx.node())
+            self._library._commit(user=user, message=message)
         finally:
             lock.release()
 

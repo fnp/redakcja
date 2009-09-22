@@ -14,18 +14,21 @@ import os, os.path, tempfile
 import shutil
 
 
-REPO_TEMPLATES = os.path.join( os.path.dirname(__file__), 'data/repos')
+REPO_TEMPLATES = os.path.join( os.path.dirname(__file__), 'data')
 
 def temprepo(name):
-    def decorator(func):
-        def decorated(self, *args, **kwargs):
+
+    from functools import wraps
+
+    def decorator(func):               
+        def decorated(*args, **kwargs):
             clean = False
             try:
                 temp = tempfile.mkdtemp("", "testdir_" )
-                path = join(temp, 'repo')
-                shutil.copytree(join(REPO_TEMPLATES, name), path, False)
-                repo = MercurialLibrary(path)
-                func(self, *args, library=repo, **kwargs)
+                path = os.path.join(temp, 'repo')
+                shutil.copytree(os.path.join(REPO_TEMPLATES, name), path, False)
+                kwargs['library'] = MercurialLibrary(path)
+                func(*args, **kwargs)
                 clean = True
             finally:
                 #if not clean and self.response:
@@ -34,9 +37,10 @@ def temprepo(name):
                 #    print "<<<"
                 shutil.rmtree(temp, True)
 
-        return decorated
+        decorated = make_decorator(func)(decorated)
+        return decorated   
+    
     return decorator
-
 
 @temprepo('clean')
 def test_opening(library):
@@ -72,7 +76,7 @@ def test_write_document(library):
 def test_create_document(library):
     doc = library.main_cabinet.create("another_file", "Some text")
     assert_equal( doc.read(), "Some text")
-    assert_true( os.path.isfile( os.path.join(repopath, "pub_another_file.xml")) )
+    assert_true( os.path.isfile( os.path.join(library.ospath, "pub_another_file.xml")) )
 
 @temprepo('branched')
 def test_switch_branch(library):
@@ -120,7 +124,7 @@ def test_no_branches(library):
     assert_true( n3.has_common_ancestor(n3) )
 
 
-@temprepo('branched_two')
+@temprepo('branched2')
 def test_once_branched(library):
     n7 = library.shelf(7)
     n6 = library.shelf(6)
@@ -201,16 +205,22 @@ def test_after_merge_and_local_commit(library):
 @temprepo('branched2')
 def test_merge_personal_to_default(library):   
     main = library.shelf(2)
+    print main
+    
     local = library.shelf(7)
+    print local
 
     document = library.document("ala", "admin")
     shared = document.shared()
-    print document, shared
-
+    assert_true( shared is None )
     document.share("Here is my copy!")
 
     assert_equal( document.shelf(), local) # local didn't change
 
+    shared = document.shared()
+    assert_true( shared is not None )
+
+    print library.shelf()
 
     new_main = shared.shelf()
     assert_not_equal( new_main, main) # main has new revision
@@ -220,12 +230,7 @@ def test_merge_personal_to_default(library):
     assert_true( local.parentof(new_main) )
 
 @temprepo('clean')
-def testCreateBranch(library):
-    library = MercurialLibrary(repopath)
-
+def test_create_branch(library):   
     tester_cab = library.cabinet("anotherone", "tester", create=True)
-    assert_equal( list(tester_cab.documents()), ['anotherone'])
-
-        
-
+    assert_equal( list(tester_cab.documents()), ['anotherone'])  
 

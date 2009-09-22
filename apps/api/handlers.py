@@ -9,6 +9,8 @@ from datetime import date
 from django.core.urlresolvers import reverse
 from wlrepo import MercurialLibrary, CabinetNotFound
 
+from librarian import dcparser
+
 #
 # Document List Handlers
 #
@@ -98,7 +100,10 @@ class BasicDocumentHandler(AnonymousBaseHandler):
             result['parts'] = document.parts()
 
         return result   
-        
+
+#
+# Document Meta Data
+#
 class DocumentHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
     anonymous = BasicDocumentHandler
@@ -113,6 +118,9 @@ class DocumentHandler(BaseHandler):
               
         document = lib.cabinet(docid, request.user.username, \
                 create=opts.cleaned_data['autocabinet'] ).retrieve()
+
+        if not document:
+            return rc.NOT_HERE
                 
         shared = lib.main_cabinet.retrieve(docid)
 
@@ -155,3 +163,34 @@ class DocumentTextHandler(BaseHandler):
             return rc.ALL_OK
         except (CabinetNotFound, KeyError):
             return rc.NOT_HERE
+
+
+#
+# Dublin Core handlers
+#
+# @requires librarian
+#
+class DocumentDublinCoreHandler(BaseHandler):
+    allowed_methods = ('GET', 'PUT')
+
+    def read(self, request, docid):
+        """Read document as raw text"""
+        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+        try:
+            doc = lib.document(docid, request.user.username)
+
+            # TODO: RAL:document should support file-like ops
+            bookinfo = dcparser.BookInfo.from_string(doc.read())
+            return bookinfo.serialize()
+        except CabinetNotFound:
+            return rc.NOT_HERE
+
+    def update(self, request, docid):
+        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+        try:
+            data = request.PUT['contents']
+            lib.document(docid, request.user.username).write(data)
+            return rc.ALL_OK
+        except (CabinetNotFound, KeyError):
+            return rc.NOT_HERE
+

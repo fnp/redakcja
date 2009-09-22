@@ -21,8 +21,14 @@ import tempfile
 
 REPO_TEMPLATES = join(dirname(__file__), 'data')
 
+
+
 def temprepo(name):
-    def decorator(func):   
+    from functools import wraps
+
+    def decorator(func):
+
+        @wraps(func)
         def decorated(self, *args, **kwargs):
             clean = False
             try:
@@ -39,7 +45,7 @@ def temprepo(name):
 
                 shutil.rmtree(temp, True)
                 settings.REPOSITORY_PATH = ''
-            
+           
         return decorated
     return decorator   
     
