@@ -13,224 +13,218 @@ from wlrepo.backend_mercurial import *
 import os, os.path, tempfile
 import shutil
 
+
 REPO_TEMPLATES = os.path.join( os.path.dirname(__file__), 'data/repos')
-ROOT_PATH = None
 
-class testBasicLibrary(object):
+def temprepo(name):
+    def decorator(func):
+        def decorated(self, *args, **kwargs):
+            clean = False
+            try:
+                temp = tempfile.mkdtemp("", "testdir_" )
+                path = join(temp, 'repo')
+                shutil.copytree(join(REPO_TEMPLATES, name), path, False)
+                repo = MercurialLibrary(path)
+                func(self, *args, library=repo, **kwargs)
+                clean = True
+            finally:
+                #if not clean and self.response:
+                #    print "RESULT", func.__name__, ">>>"
+                #    print self.response
+                #    print "<<<"
+                shutil.rmtree(temp, True)
 
-    def setUp(self):
-        self.path = tempfile.mkdtemp("", "testdir_" )
-        print self.path
-        for subdir in os.listdir(REPO_TEMPLATES):
-            shutil.copytree(REPO_TEMPLATES + '/' + subdir, self.path + '/' + subdir, False)
-
-    def tearDown(self):        
-        if self.path is not None:
-            shutil.rmtree(self.path, True)
-        pass
-   
-    def test_opening(self):
-        library = MercurialLibrary(self.path + '/cleanrepo')
-
-    def test_main_cabinett(self):
-        library = MercurialLibrary(self.path + '/cleanrepo')
-
-        mcab = library.main_cabinet
-        assert_equal(mcab.maindoc_name, '')
-
-        # @type mcab MercurialCabinet
-        doclist = mcab.documents()
-        assert_equal( list(doclist), ['valid_file'])
+        return decorated
+    return decorator
 
 
-    def test_read_document(self):
-        library = MercurialLibrary(self.path + '/testrepoI')
-        doc = library.main_cabinet.retrieve('valid_file')
-        
-        assert_equal(doc.read().strip(), 'Ala ma kota')
+@temprepo('clean')
+def test_opening(library):
+    pass
 
-    def test_read_UTF8_document(self):
-        library = MercurialLibrary(self.path + '/testrepoI')
-        doc = library.main_cabinet.retrieve('polish_file')
+@temprepo('clean')
+def test_main_cabinet(library):
+    mcab = library.main_cabinet
+    assert_equal(mcab.maindoc_name, '')
 
-        assert_equal(doc.read().strip(), u'Gąska!'.encode('utf-8'))
+    doclist = mcab.documents()
+    assert_equal( list(doclist), ['valid_file'])
 
-    def test_write_document(self):
-        library = MercurialLibrary(self.path + '/testrepoI')
-        doc = library.main_cabinet.retrieve('valid_file')
+@temprepo('simple')
+def test_read_document(library):
+    doc = library.main_cabinet.retrieve('valid_file')
+    assert_equal(doc.read().strip(), 'Ala ma kota')
 
-        assert_equal(doc.read().strip(), 'Ala ma kota')
-        
-        STRING = u'Gąski lubią pływać!\n'.encode('utf-8')
-        doc.write(STRING)       
-        
-        assert_equal(doc.read(), STRING)
+@temprepo('simple')
+def test_read_UTF8_document(library):
+    doc = library.main_cabinet.retrieve('polish_file')
+    assert_equal(doc.read().strip(), u'Gąska!'.encode('utf-8'))
 
-    def test_create_document(self):
-        repopath = os.path.join(self.path, 'testrepoI')
+@temprepo('simple')
+def test_write_document(library):
+    doc = library.main_cabinet.retrieve('valid_file')
+    assert_equal(doc.read().strip(), 'Ala ma kota')
+    STRING = u'Gąski lubią pływać!\n'.encode('utf-8')
+    doc.write(STRING)
+    assert_equal(doc.read(), STRING)
 
-        library = MercurialLibrary(repopath)
-        doc = library.main_cabinet.create("another_file", "Some text")
-        assert_equal( doc.read(), "Some text")
-        assert_true( os.path.isfile( os.path.join(repopath, "pub_another_file.xml")) )
-        
-    def test_switch_branch(self):
-        library = MercurialLibrary(self.path + '/testrepoII')
+@temprepo('simple')
+def test_create_document(library):
+    doc = library.main_cabinet.create("another_file", "Some text")
+    assert_equal( doc.read(), "Some text")
+    assert_true( os.path.isfile( os.path.join(repopath, "pub_another_file.xml")) )
 
-        tester_cab = library.cabinet("valid_file", "tester", create=False)
-        assert_equal( list(tester_cab.documents()), ['valid_file'])
+@temprepo('branched')
+def test_switch_branch(library):
+    tester_cab = library.cabinet("valid_file", "tester", create=False)
+    assert_equal( list(tester_cab.documents()), ['valid_file'])
 
-    @raises(wlrepo.CabinetNotFound)
-    def test_branch_not_found(self):
-        library = MercurialLibrary(self.path + '/testrepoII')
-        tester_cab = library.cabinet("ugh", "tester", create=False)
+@raises(wlrepo.CabinetNotFound)
+@temprepo('branched')
+def test_branch_not_found(library):
+    tester_cab = library.cabinet("ugh", "tester", create=False)
 
-    def test_no_branches(self):
-        library = MercurialLibrary(self.path + '/testrepoII')
-        n4 = library.shelf(4)
-        n3 = library.shelf(3)
-        n2 = library.shelf(2)
-        n1 = library.shelf(1)
-        n0 = library.shelf(0)
+@temprepo('branched')
+def test_no_branches(library):
+    n4 = library.shelf(4)
+    n3 = library.shelf(3)
+    n2 = library.shelf(2)
+    n1 = library.shelf(1)
+    n0 = library.shelf(0)
 
-        assert_true( n3.parentof(n4) )
-        assert_false( n4.parentof(n3) )
-        assert_true( n0.parentof(n1) )
-        assert_false( n1.parentof(n0) )
-        assert_false( n0.parentof(n4) )
+    assert_true( n3.parentof(n4) )
+    assert_false( n4.parentof(n3) )
+    assert_true( n0.parentof(n1) )
+    assert_false( n1.parentof(n0) )
+    assert_false( n0.parentof(n4) )
 
-    # def test_ancestor_of_simple(self):
-        assert_true( n3.ancestorof(n4) )
-        assert_true( n2.ancestorof(n4) )
-        assert_true( n1.ancestorof(n4) )
-        assert_true( n0.ancestorof(n4) )
+# def test_ancestor_of_simple(self):
+    assert_true( n3.ancestorof(n4) )
+    assert_true( n2.ancestorof(n4) )
+    assert_true( n1.ancestorof(n4) )
+    assert_true( n0.ancestorof(n4) )
 
-        assert_true( n2.ancestorof(n3) )
-        assert_true( n1.ancestorof(n3) )
-        assert_true( n0.ancestorof(n3) )
+    assert_true( n2.ancestorof(n3) )
+    assert_true( n1.ancestorof(n3) )
+    assert_true( n0.ancestorof(n3) )
 
-        assert_false( n4.ancestorof(n4) )
-        assert_false( n4.ancestorof(n3) )
-        assert_false( n3.ancestorof(n2) )
-        assert_false( n3.ancestorof(n1) )
-        assert_false( n3.ancestorof(n0) )
+    assert_false( n4.ancestorof(n4) )
+    assert_false( n4.ancestorof(n3) )
+    assert_false( n3.ancestorof(n2) )
+    assert_false( n3.ancestorof(n1) )
+    assert_false( n3.ancestorof(n0) )
 
-    # def test_common_ancestor_simple(self):
-        assert_true( n3.has_common_ancestor(n4) )
-        assert_true( n3.has_common_ancestor(n3) )
-        assert_true( n3.has_common_ancestor(n3) )
-
-
-    def test_once_branched(self):
-        library = MercurialLibrary(self.path + '/test3')
-
-        n7 = library.shelf(7)
-        n6 = library.shelf(6)
-        n5 = library.shelf(5)
-        n4 = library.shelf(4)
-        n3 = library.shelf(3)
-        n2 = library.shelf(2)
-
-        assert_true( n2.parentof(n3) )
-        assert_false( n3.parentof(n2) )
-
-        assert_true( n2.parentof(n5) )
-        assert_false( n5.parentof(n2) )
-
-        assert_false( n2.parentof(n4) )
-        assert_false( n2.parentof(n6) )
-        assert_false( n3.parentof(n5) )
-        assert_false( n5.parentof(n3) )
-
-    # def test_ancestorof_branched(self):
-        assert_true( n2.ancestorof(n7) )
-        assert_false( n7.ancestorof(n2) )
-        assert_true( n2.ancestorof(n6) )
-        assert_false( n6.ancestorof(n2) )
-        assert_true( n2.ancestorof(n5) )
-        assert_false( n5.ancestorof(n2) )
-
-        assert_false( n3.ancestorof(n5) )
-        assert_false( n5.ancestorof(n3) )
-        assert_false( n4.ancestorof(n5) )
-        assert_false( n5.ancestorof(n4) )
-        assert_false( n3.ancestorof(n7) )
-        assert_false( n7.ancestorof(n3) )
-        assert_false( n4.ancestorof(n6) )
-        assert_false( n6.ancestorof(n4) )
-
-    # def test_common_ancestor_branched(self):
-        assert_true( n2.has_common_ancestor(n4) )
-        assert_true( n2.has_common_ancestor(n7) )
-        assert_true( n2.has_common_ancestor(n6) )
-
-        # cause it's not in the right branch
-        assert_false( n5.has_common_ancestor(n3) )
-        assert_false( n7.has_common_ancestor(n4) )
-
-    def test_after_merge(self):
-        library = MercurialLibrary(self.path + '/test4')
-        n8 = library.shelf(8)
-        n7 = library.shelf(7)
-        n6 = library.shelf(6)
-
-        assert_true( n7.parentof(n8) )
-        assert_false( n8.parentof(n7) )
-        
-        assert_true( n7.ancestorof(n8) )
-        assert_true( n6.ancestorof(n8) )
-        
-
-        assert_true( n7.has_common_ancestor(n8) )
-        # cause it's not in the right branch
-        assert_false( n8.has_common_ancestor(n7) )
+# def test_common_ancestor_simple(self):
+    assert_true( n3.has_common_ancestor(n4) )
+    assert_true( n3.has_common_ancestor(n3) )
+    assert_true( n3.has_common_ancestor(n3) )
 
 
-    def test_after_merge_and_local_commit(self):
-        library = MercurialLibrary(self.path + '/test5b')
-        n9 = library.shelf(9)
-        n8 = library.shelf(8)
-        n7 = library.shelf(7)
-        n6 = library.shelf(6)
+@temprepo('branched_two')
+def test_once_branched(library):
+    n7 = library.shelf(7)
+    n6 = library.shelf(6)
+    n5 = library.shelf(5)
+    n4 = library.shelf(4)
+    n3 = library.shelf(3)
+    n2 = library.shelf(2)
 
-        assert_true( n7.parentof(n8) )
-        assert_false( n8.parentof(n7) )
+    assert_true( n2.parentof(n3) )
+    assert_false( n3.parentof(n2) )
 
-        assert_true( n9.has_common_ancestor(n8) )
-        # cause it's not in the right branch
-        assert_false( n8.has_common_ancestor(n9) )
+    assert_true( n2.parentof(n5) )
+    assert_false( n5.parentof(n2) )
+
+    assert_false( n2.parentof(n4) )
+    assert_false( n2.parentof(n6) )
+    assert_false( n3.parentof(n5) )
+    assert_false( n5.parentof(n3) )
+
+# def test_ancestorof_branched(self):
+    assert_true( n2.ancestorof(n7) )
+    assert_false( n7.ancestorof(n2) )
+    assert_true( n2.ancestorof(n6) )
+    assert_false( n6.ancestorof(n2) )
+    assert_true( n2.ancestorof(n5) )
+    assert_false( n5.ancestorof(n2) )
+
+    assert_false( n3.ancestorof(n5) )
+    assert_false( n5.ancestorof(n3) )
+    assert_false( n4.ancestorof(n5) )
+    assert_false( n5.ancestorof(n4) )
+    assert_false( n3.ancestorof(n7) )
+    assert_false( n7.ancestorof(n3) )
+    assert_false( n4.ancestorof(n6) )
+    assert_false( n6.ancestorof(n4) )
+
+# def test_common_ancestor_branched(self):
+    assert_true( n2.has_common_ancestor(n4) )
+    assert_true( n2.has_common_ancestor(n7) )
+    assert_true( n2.has_common_ancestor(n6) )
+
+    # cause it's not in the right branch
+    assert_false( n5.has_common_ancestor(n3) )
+    assert_false( n7.has_common_ancestor(n4) )
+
+@temprepo('merged')
+def test_after_merge(library):
+    n8 = library.shelf(8)
+    n7 = library.shelf(7)
+    n6 = library.shelf(6)
+
+    assert_true( n7.parentof(n8) )
+    assert_false( n8.parentof(n7) )
+
+    assert_true( n7.ancestorof(n8) )
+    assert_true( n6.ancestorof(n8) )
 
 
-    def test_merge_personal_to_default(self):
-        library = MercurialLibrary(self.path + '/test3')
+    assert_true( n7.has_common_ancestor(n8) )
+    # cause it's not in the right branch
+    assert_false( n8.has_common_ancestor(n7) )
 
-        main = library.shelf(2)
-        local = library.shelf(7)
+@temprepo('merged_with_local_commit')
+def test_after_merge_and_local_commit(library):
+    n9 = library.shelf(9)
+    n8 = library.shelf(8)
+    n7 = library.shelf(7)
+    n6 = library.shelf(6)
 
-        document = library.document("ala", "admin")
-        shared = document.shared()
-        print document, shared
+    assert_true( n7.parentof(n8) )
+    assert_false( n8.parentof(n7) )
 
-        document.share("Here is my copy!")
+    assert_true( n9.has_common_ancestor(n8) )
+    # cause it's not in the right branch
+    assert_false( n8.has_common_ancestor(n9) )
 
-        assert_equal( document.shelf(), local) # local didn't change
 
-        
-        new_main = shared.shelf()
-        assert_not_equal( new_main, main) # main has new revision
+@temprepo('branched2')
+def test_merge_personal_to_default(library):   
+    main = library.shelf(2)
+    local = library.shelf(7)
 
-        # check for parents
-        assert_true( main.parentof(new_main) )
-        assert_true( local.parentof(new_main) )
-        
-        
+    document = library.document("ala", "admin")
+    shared = document.shared()
+    print document, shared
 
-    def testCreateBranch(self):
-        repopath = os.path.join(self.path, 'testrepoII')
-        library = MercurialLibrary(repopath)
+    document.share("Here is my copy!")
 
-        tester_cab = library.cabinet("anotherone", "tester", create=True)       
-        assert_equal( list(tester_cab.documents()), ['anotherone'])
+    assert_equal( document.shelf(), local) # local didn't change
+
+
+    new_main = shared.shelf()
+    assert_not_equal( new_main, main) # main has new revision
+
+    # check for parents
+    assert_true( main.parentof(new_main) )
+    assert_true( local.parentof(new_main) )
+
+@temprepo('clean')
+def testCreateBranch(library):
+    library = MercurialLibrary(repopath)
+
+    tester_cab = library.cabinet("anotherone", "tester", create=True)
+    assert_equal( list(tester_cab.documents()), ['anotherone'])
 
         
 
