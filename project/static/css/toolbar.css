@@ -21,13 +21,6 @@
     line-height: 12px;
 }
 
-.toolbar button {
-    border: none;
-    padding: 2px 0.5em;
-    background: #AAA;
-    font-family: Sans-Serif;
-}
-
 .toolbar div {
     background: green;
     margin: 0px;
@@ -38,22 +31,30 @@
     background: #DDD;
 }
 
-.toolbar-button-groups-container p {
+.toolbar-buttons-container {
     background: #DDD;
     padding-top: 2px;
     padding-bottom: 2px;
 }
 
-.toolbar-button-groups-container button {
+.toolbar-buttons-container button {
     background: #DDD;
+    border: none;
+    padding: 2px 0.5em;
+    background: #AAA;
+    font-family: Sans-Serif;
 }
 
-.toolbar-button-groups-container button:hover {
+.toolbar-buttons-container button:hover {
     background: #EEE;
 }
 
-.toolbar-button-groups-container button:active {
+.toolbar-buttons-container button:active {
     background: yellow;
+}
+
+.panel-toolbar-extra button {
+    background: inherit;    
 }
 
 /* 
