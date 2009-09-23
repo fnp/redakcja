@@ -2,193 +2,193 @@
  * UI related Editor methods
  */
 Editor.prototype.setupUI = function() {
-    // set up the UI visually and attach callbacks
-    var self = this;
-
-    var resize_start = function(event, mydata) {
-        $(document).bind('mousemove', mydata, resize_changed).
-        bind('mouseup', mydata, resize_stop);
-
-        $('.panel-overlay', mydata.root).css('display', 'block');
-        return false;
-    }
-    var resize_changed =  function(event) {
-        var old_width = parseInt(event.data.overlay.css('width'));
-        var delta = event.pageX + event.data.hotspot_x - old_width;
-
-        if(old_width + delta < 12) delta = 12 - old_width;
-        if(old_width + delta > $(window).width()) 
-            delta = $(window).width() - old_width;
-        
-        event.data.overlay.css({
-            'width': old_width + delta
-        });
-
-        if(event.data.overlay.next) {
-            var left = parseInt(event.data.overlay.next.css('left'));
-            event.data.overlay.next.css('left', left+delta);
-        }
-
-        return false;
-    };
-
-    var resize_stop = function(event) {
-        $(document).unbind('mousemove', resize_changed).unbind('mouseup', resize_stop);
-        // $('.panel-content', event.data.root).css('display', 'block');
-        var overlays = $('.panel-content-overlay', event.data.root);
-        $('.panel-content-overlay', event.data.root).each(function(i) {
-            if( $(this).data('panel').hasClass('last-panel') )
-                $(this).data('panel').css({
-                    'left': $(this).css('left'),
-                    'right': $(this).css('right')
-                });
-            else
-                $(this).data('panel').css({
-                    'left': $(this).css('left'),
-                    'width': $(this).css('width')
-                });
-        });
-        $('.panel-overlay', event.data.root).css('display', 'none');
-        $(event.data.root).trigger('stopResize');
-    };
-
-    /*
-     * Prepare panels (overlays & stuff)
-     */
-    /* create an overlay */
-    var panel_root = self.rootDiv;
-    var overlay_root = $("<div class='panel-overlay'></div>");
-    panel_root.append(overlay_root);
-
-    var prev = null;
-
-    $('*.panel-wrap', panel_root).each( function()
-    {
-        var panel = $(this);
-        var handle = $('.panel-slider', panel);
-        var overlay = $("<div class='panel-content-overlay panel-wrap'>&nbsp;</div>");
-        overlay_root.append(overlay);
-        overlay.data('panel', panel);
-        overlay.data('next', null);
-
-        if (prev) prev.next = overlay;
-
-        if( panel.hasClass('last-panel') )
-        {
-            overlay.css({
-                'left': panel.css('left'),
-                'right': panel.css('right')
-            });
-        }
-        else {
-            overlay.css({
-                'left': panel.css('left'),
-                'width': panel.css('width')
-            });
-            // $.log('Has handle: ' + panel.attr('id'));
-            overlay.append(handle.clone());
-            /* attach the trigger */
-            handle.mousedown(function(event) {
-                var touch_data = {
-                    root: panel_root,
-                    overlay: overlay,
-                    hotspot_x: event.pageX - handle.position().left
-                };
-
-                $(this).trigger('hpanel:panel-resize-start', touch_data);
-                return false;
-            });
-            $('.panel-content', panel).css('right',
-                (handle.outerWidth() || 10) + 'px');
-            $('.panel-content-overlay', panel).css('right',
-                (handle.outerWidth() || 10) + 'px');
-        };
-
-        prev = overlay;
-    });
-
-    panel_root.bind('hpanel:panel-resize-start', resize_start);
-    self.rootDiv.bind('stopResize', function() {
-        self.savePanelOptions();      
-    });
-    
-    /*
-     * Connect panel actions
-     */
-    $('#panels > *.panel-wrap').each(function() {
-        var panelWrap = $(this);
-        // $.log('wrap: ', panelWrap);
-        var panel = new Panel(panelWrap);
-        panelWrap.data('ctrl', panel); // attach controllers to wraps
-        panel.load($('.panel-toolbar select', panelWrap).val());
-
-        $('.panel-toolbar select', panelWrap).change(function() {
-            var url = $(this).val();
-            panelWrap.data('ctrl').load(url);
-            self.savePanelOptions();
-        });
-
-        $('.panel-toolbar button.refresh-button', panelWrap).click(
-            function() {
-                panel.refresh();
-            } );
-
-        self.rootDiv.bind('stopResize', function() {
-            panel.callHook('toolbarResized');
-        });
-    });
-
-    $(document).bind('panel:contentChanged', function() {
-        self.onContentChanged.apply(self, arguments)
-    });  
-
-    /*
-     * Connect various buttons
-     */
-
-    $('#toolbar-button-quick-save').click( function (event, data) {
-        self.saveToBranch();
-    } );
-
-    $('#toolbar-button-save').click( function (event, data) {
-        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.saveToBranch)} );
-    } );
-
-    $('#toolbar-button-update').click( function (event, data) {
-        if (self.updateUserBranch()) {
-            // commit/update can be called only after proper, save
-            // this means all panels are clean, and will get refreshed
-            // do this only, when there are any changes to local branch
-            self.refreshPanels();
-        }
-    } );
-
-    /* COMMIT DIALOG */
-    $('#commit-dialog').
-    jqm({
-        modal: true,
-        onShow: $.fbind(self, self.loadRelatedIssues)        
-    });
-
-    $('#toolbar-button-commit').click( function (event, data) {
-        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.sendMergeRequest)} );
-    } );
-    
-    /* STATIC BINDS */
-    $('#commit-dialog-cancel-button').click(function() {
-        $('#commit-dialog-error-empty-message').hide();
-        $('#commit-dialog').jqmHide();
-    });   
-    
-
-    /* SPLIT DIALOG */
-    $('#split-dialog').jqm({
-        modal: true,
-        onShow: $.fbind(self, self.loadSplitDialog)
-    }).
-    jqmAddClose('button.dialog-close-button');
-
-// $('#split-dialog').   
+//     // set up the UI visually and attach callbacks
+//     var self = this;
+// 
+//     var resize_start = function(event, mydata) {
+//         $(document).bind('mousemove', mydata, resize_changed).
+//         bind('mouseup', mydata, resize_stop);
+// 
+//         $('.panel-overlay', mydata.root).css('display', 'block');
+//         return false;
+//     }
+//     var resize_changed =  function(event) {
+//         var old_width = parseInt(event.data.overlay.css('width'));
+//         var delta = event.pageX + event.data.hotspot_x - old_width;
+// 
+//         if(old_width + delta < 12) delta = 12 - old_width;
+//         if(old_width + delta > $(window).width()) 
+//             delta = $(window).width() - old_width;
+//         
+//         event.data.overlay.css({
+//             'width': old_width + delta
+//         });
+// 
+//         if(event.data.overlay.next) {
+//             var left = parseInt(event.data.overlay.next.css('left'));
+//             event.data.overlay.next.css('left', left+delta);
+//         }
+// 
+//         return false;
+//     };
+// 
+//     var resize_stop = function(event) {
+//         $(document).unbind('mousemove', resize_changed).unbind('mouseup', resize_stop);
+//         // $('.panel-content', event.data.root).css('display', 'block');
+//         var overlays = $('.panel-content-overlay', event.data.root);
+//         $('.panel-content-overlay', event.data.root).each(function(i) {
+//             if( $(this).data('panel').hasClass('last-panel') )
+//                 $(this).data('panel').css({
+//                     'left': $(this).css('left'),
+//                     'right': $(this).css('right')
+//                 });
+//             else
+//                 $(this).data('panel').css({
+//                     'left': $(this).css('left'),
+//                     'width': $(this).css('width')
+//                 });
+//         });
+//         $('.panel-overlay', event.data.root).css('display', 'none');
+//         $(event.data.root).trigger('stopResize');
+//     };
+// 
+//     /*
+//      * Prepare panels (overlays & stuff)
+//      */
+//     /* create an overlay */
+//     var panel_root = self.rootDiv;
+//     var overlay_root = $("<div class='panel-overlay'></div>");
+//     panel_root.append(overlay_root);
+// 
+//     var prev = null;
+// 
+//     $('*.panel-wrap', panel_root).each( function()
+//     {
+//         var panel = $(this);
+//         var handle = $('.panel-slider', panel);
+//         var overlay = $("<div class='panel-content-overlay panel-wrap'>&nbsp;</div>");
+//         overlay_root.append(overlay);
+//         overlay.data('panel', panel);
+//         overlay.data('next', null);
+// 
+//         if (prev) prev.next = overlay;
+// 
+//         if( panel.hasClass('last-panel') )
+//         {
+//             overlay.css({
+//                 'left': panel.css('left'),
+//                 'right': panel.css('right')
+//             });
+//         }
+//         else {
+//             overlay.css({
+//                 'left': panel.css('left'),
+//                 'width': panel.css('width')
+//             });
+//             // $.log('Has handle: ' + panel.attr('id'));
+//             overlay.append(handle.clone());
+//             /* attach the trigger */
+//             handle.mousedown(function(event) {
+//                 var touch_data = {
+//                     root: panel_root,
+//                     overlay: overlay,
+//                     hotspot_x: event.pageX - handle.position().left
+//                 };
+// 
+//                 $(this).trigger('hpanel:panel-resize-start', touch_data);
+//                 return false;
+//             });
+//             $('.panel-content', panel).css('right',
+//                 (handle.outerWidth() || 10) + 'px');
+//             $('.panel-content-overlay', panel).css('right',
+//                 (handle.outerWidth() || 10) + 'px');
+//         };
+// 
+//         prev = overlay;
+//     });
+// 
+//     panel_root.bind('hpanel:panel-resize-start', resize_start);
+//     self.rootDiv.bind('stopResize', function() {
+//         self.savePanelOptions();      
+//     });
+//     
+//     /*
+//      * Connect panel actions
+//      */
+//     $('#panels > *.panel-wrap').each(function() {
+//         var panelWrap = $(this);
+//         // $.log('wrap: ', panelWrap);
+//         var panel = new Panel(panelWrap);
+//         panelWrap.data('ctrl', panel); // attach controllers to wraps
+//         panel.load($('.panel-toolbar select', panelWrap).val());
+// 
+//         $('.panel-toolbar select', panelWrap).change(function() {
+//             var url = $(this).val();
+//             panelWrap.data('ctrl').load(url);
+//             self.savePanelOptions();
+//         });
+// 
+//         $('.panel-toolbar button.refresh-button', panelWrap).click(
+//             function() {
+//                 panel.refresh();
+//             } );
+// 
+//         self.rootDiv.bind('stopResize', function() {
+//             panel.callHook('toolbarResized');
+//         });
+//     });
+// 
+//     $(document).bind('panel:contentChanged', function() {
+//         self.onContentChanged.apply(self, arguments)
+//     });  
+// 
+//     /*
+//      * Connect various buttons
+//      */
+// 
+//     $('#toolbar-button-quick-save').click( function (event, data) {
+//         self.saveToBranch();
+//     } );
+// 
+//     $('#toolbar-button-save').click( function (event, data) {
+//         $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.saveToBranch)} );
+//     } );
+// 
+//     $('#toolbar-button-update').click( function (event, data) {
+//         if (self.updateUserBranch()) {
+//             // commit/update can be called only after proper, save
+//             // this means all panels are clean, and will get refreshed
+//             // do this only, when there are any changes to local branch
+//             self.refreshPanels();
+//         }
+//     } );
+// 
+//     /* COMMIT DIALOG */
+//     $('#commit-dialog').
+//     jqm({
+//         modal: true,
+//         onShow: $.fbind(self, self.loadRelatedIssues)        
+//     });
+// 
+//     $('#toolbar-button-commit').click( function (event, data) {
+//         $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.sendMergeRequest)} );
+//     } );
+//     
+//     /* STATIC BINDS */
+//     $('#commit-dialog-cancel-button').click(function() {
+//         $('#commit-dialog-error-empty-message').hide();
+//         $('#commit-dialog').jqmHide();
+//     });   
+//     
+// 
+//     /* SPLIT DIALOG */
+//     $('#split-dialog').jqm({
+//         modal: true,
+//         onShow: $.fbind(self, self.loadSplitDialog)
+//     }).
+//     jqmAddClose('button.dialog-close-button');
+// 
+// // $('#split-dialog').   
 }
 
 Editor.prototype.loadRelatedIssues = function(hash)

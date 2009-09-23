@@ -35,7 +35,6 @@ body {
     top: 2.4em; left: 0px; right: 0px; bottom: 0px;
     overflow: auto;    
     background-color: white;
-    padding: 0.2em 1em;
 }
 
 ul {
@@ -107,8 +106,8 @@ label {
 /* ========== */
 
 #panels {
-    position: absolute;
-    bottom: 0px; left: 0px; right: 0px; top: 0px;
+    height: 100%;
+    width: 100%;
 }
 
 .panel-wrap {
@@ -341,4 +340,15 @@ text#commit-dialog-message {
 
 #split-dialog .container-box fieldset {
     margin: 0.5em;
+}
+
+/* ======= */
+/* = New = */
+/* ======= */
+.splitview-splitbar {
+    width: 5px;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    height: 100%;
+    background-color: #CCC;
 }

@@ -1,82 +1,89 @@
 /*globals Class*/
 
+// Split view inspired by jQuery Splitter Plugin http://methvin.com/splitter/
 var SplitView = Class.extend({
-  leftPanelClass: 'splitview-left-panel',
-  rightPanelClass: 'splitview-right-panel',
-  splitterClass: 'splitview-splitter',
-  overlayClass: 'splitview-overlay',
+  splitbarClass: 'splitview-splitbar',
+  activeClass: 'splitview-active',
   element: null,
+  zombie: null,
+  leftViewOffset: 0,
+  
+  // Cache
+  _splitbarWidth: 0,
   
   init: function(element) {
-    this.element = $(element);
-    this.leftPanel = $(this.leftPanelClass, element);
-    this.rightPanel = $(this.rightPanelClass, element);
-    this.splitter = $(this.splitterClass, element);
-    this.overlay = this._createOverlay(this.overlayClass);
+    this.element = $(element).css('position', 'relative');
+    this.views = $(">*", this.element[0]).css({
+    	position: 'absolute', 			  // positioned inside splitter container
+    	'z-index': 1,					        // splitbar is positioned above
+    	'-moz-outline-style': 'none',	// don't show dotted outline
+    	overflow: 'auto'
+    });
     
-    this.splitter.bind('mousedown.splitview', this.beginResize.bind(this));
-  },
-  
-  _createOverlay: function(cssClass) {
-    var pos = this.root.position();
-    return $('<div />')
-      .addClass(cssClass)
+    this.leftView = $(this.views[0]);
+    this.rightView = $(this.views[1]);
+    this.splitbar = $(this.views[2] || '<div></div>')
+      .insertAfter(this.leftView)
       .css({
         position: 'absolute',
-        left: pos.left,
-        top: pos.top,
-        width: this.root.width(),
-        height: this.root.height()
+        'user-select': 'none',
+        '-webkit-user-select': 'none',
+        '-khtml-user-select': 'none',
+        '-moz-user-select': 'none',
+        'z-index': 100
       })
-      .hide()
-      .appendTo(this.element);
+      .attr('unselectable', 'on')
+      .addClass(this.splitbarClass)
+      .bind('mousedown.splitview', this.beginResize.bind(this));
+    
+    this._splitbarWidth = this.splitbar.outerWidth();
+    
+    // Solomon's algorithm ;-)
+    this.resplit(this.element.width() / 2);
   },
-  
+    
   beginResize: function(event) {
-    this.hotspotX = event.pageX - this.splitter.position().left;
+    this.zombie = this.zombie || this.splitbar.clone(false).insertAfter(this.leftView);
+    this.views.css("-webkit-user-select", "none"); // Safari selects A/B text on a move
+    this.splitbar.addClass(this.activeClass);
+    this.leftViewOffset = this.leftView[0].offsetWidth - event.pageX;
     
     $(document)
       .bind('mousemove.splitview', this.resizeChanged.bind(this))
       .bind('mouseup.splitview', this.endResize.bind(this));
-
-    this.overlay.show();
-    return false;
   },
   
   resizeChanged: function(event) {
-    var old_width = this.overlay.width();
-    var delta = event.pageX + this.hotspotX - old_width;
-
-    if(old_width + delta < 12) delta = 12 - old_width;
-    if(old_width + delta > $(window).width()) {
-      delta = $(window).width() - old_width;
-    }
-    
-    this.overlay.css({'width': old_width + delta});
-    
-    if(this.overlay.next) {
-        var left = parseInt(this.overlay.next.css('left'), 10);
-        this.overlay.next.css('left', left+delta);
-    }
-    return false;
+    var newPosition = event.pageX + this.leftViewOffset;
+    newPosition = Math.max(0, Math.min(newPosition, this.element.width() - this._splitbarWidth));
+    this.splitbar.css('left', newPosition);
   },
 
   endResize: function(event) {
+    var newPosition = event.pageX + this.leftViewOffset;
+    this.zombie.remove();
+    this.zombie = null;
+    this.resplit(newPosition);
+
     $(document)
       .unbind('mousemove.splitview')
       .unbind('mouseup.splitview');
-    
-    this.leftPanel.css({
+  },
+
+  resplit: function(newPosition) {
+    newPosition = Math.max(0, Math.min(newPosition, this.element.width() - this._splitbarWidth));
+    this.splitbar.css('left', newPosition);
+    this.leftView.css({
       left: 0,
-      right: this.hotspotX
+      width: newPosition
     });
-
-    this.rightPanel.css({
-      left: this.hotspotX,
-      right: 0
+    this.rightView.css({
+      left: newPosition + this._splitbarWidth,
+      width: this.element.width() - newPosition - this._splitbarWidth
     });
-
-    this.overlay.hide();
+    if (!$.browser.msie) {
+		  this.views.trigger("resize");
+		}
   },
   
   dispose: function() {
