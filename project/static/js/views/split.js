@@ -17,7 +17,7 @@ var SplitView = Class.extend({
     	position: 'absolute', 			  // positioned inside splitter container
     	'z-index': 1,					        // splitbar is positioned above
     	'-moz-outline-style': 'none',	// don't show dotted outline
-    	overflow: 'auto'
+      overflow: 'auto'
     });
     
     this.leftView = $(this.views[0]);

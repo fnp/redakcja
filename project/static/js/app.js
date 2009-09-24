@@ -4,6 +4,7 @@ var panel_hooks;
 
 
 (function(){
+  // Classes
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
   this.Class = function(){};
   Class.extend = function(prop) {
@@ -33,6 +34,39 @@ var panel_hooks;
     Class.constructor = Class;
     Class.extend = arguments.callee;   
     return Class;
+  };
+  
+  // Templates
+  var cache = {};
+
+  this.render_template = function render_template(str, data){
+    // Figure out if we're getting a template, or if we need to
+    // load the template - and be sure to cache the result.
+    var fn = !/^[\d\s-_]/.test(str) ?
+      cache[str] = cache[str] ||
+        render_template(document.getElementById(str).innerHTML) :
+
+      // Generate a reusable function that will serve as a template
+      // generator (and which will be cached).
+      new Function("obj",
+        "var p=[],print=function(){p.push.apply(p,arguments);};" +
+
+        // Introduce the data as local variables using with(){}
+        "with(obj){p.push('" +
+
+        // Convert the template into pure JavaScript
+        str
+          .replace(/[\r\t\n]/g, " ")
+          .split("<%").join("\t")
+          .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+          .replace(/\t=(.*?)%>/g, "',$1,'")
+          .split("\t").join("');")
+          .split("%>").join("p.push('")
+          .split("\r").join("\\'")
+      + "');}return p.join('');");
+
+      // Provide some basic currying to the user
+    return data ? fn( data ) : fn;
   };
 })();
 
@@ -64,7 +98,10 @@ var panel_hooks;
   
 })();
  
+var panels = [];
 
 $(function() {
-  var splitView = new SplitView('#panels');
+  var splitView = new SplitView('#splitview');
+  var leftPanelView = new PanelContainerView('#left-panel-container');
+  var rightPanelContainer = new PanelContainerView('#right-panel-container');
 });

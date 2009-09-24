@@ -3,7 +3,7 @@
  */
 Editor.prototype.setupUI = function() {
 //     // set up the UI visually and attach callbacks
-//     var self = this;
+    var self = this;
 // 
 //     var resize_start = function(event, mydata) {
 //         $(document).bind('mousemove', mydata, resize_changed).
@@ -112,83 +112,81 @@ Editor.prototype.setupUI = function() {
 //         self.savePanelOptions();      
 //     });
 //     
-//     /*
-//      * Connect panel actions
-//      */
-//     $('#panels > *.panel-wrap').each(function() {
-//         var panelWrap = $(this);
-//         // $.log('wrap: ', panelWrap);
-//         var panel = new Panel(panelWrap);
-//         panelWrap.data('ctrl', panel); // attach controllers to wraps
-//         panel.load($('.panel-toolbar select', panelWrap).val());
-// 
-//         $('.panel-toolbar select', panelWrap).change(function() {
-//             var url = $(this).val();
-//             panelWrap.data('ctrl').load(url);
-//             self.savePanelOptions();
-//         });
-// 
-//         $('.panel-toolbar button.refresh-button', panelWrap).click(
-//             function() {
-//                 panel.refresh();
-//             } );
-// 
-//         self.rootDiv.bind('stopResize', function() {
-//             panel.callHook('toolbarResized');
-//         });
-//     });
-// 
-//     $(document).bind('panel:contentChanged', function() {
-//         self.onContentChanged.apply(self, arguments)
-//     });  
-// 
-//     /*
-//      * Connect various buttons
-//      */
-// 
-//     $('#toolbar-button-quick-save').click( function (event, data) {
-//         self.saveToBranch();
-//     } );
-// 
-//     $('#toolbar-button-save').click( function (event, data) {
-//         $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.saveToBranch)} );
-//     } );
-// 
-//     $('#toolbar-button-update').click( function (event, data) {
-//         if (self.updateUserBranch()) {
-//             // commit/update can be called only after proper, save
-//             // this means all panels are clean, and will get refreshed
-//             // do this only, when there are any changes to local branch
-//             self.refreshPanels();
-//         }
-//     } );
-// 
-//     /* COMMIT DIALOG */
-//     $('#commit-dialog').
-//     jqm({
-//         modal: true,
-//         onShow: $.fbind(self, self.loadRelatedIssues)        
-//     });
-// 
-//     $('#toolbar-button-commit').click( function (event, data) {
-//         $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.sendMergeRequest)} );
-//     } );
-//     
-//     /* STATIC BINDS */
-//     $('#commit-dialog-cancel-button').click(function() {
-//         $('#commit-dialog-error-empty-message').hide();
-//         $('#commit-dialog').jqmHide();
-//     });   
-//     
-// 
-//     /* SPLIT DIALOG */
-//     $('#split-dialog').jqm({
-//         modal: true,
-//         onShow: $.fbind(self, self.loadSplitDialog)
-//     }).
-//     jqmAddClose('button.dialog-close-button');
-// 
-// // $('#split-dialog').   
+    /*
+     * Connect panel actions
+     */
+    $('#panels > *.panel-wrap').each(function() {
+        var panelWrap = $(this);
+        // $.log('wrap: ', panelWrap);
+        var panel = new Panel(panelWrap);
+        panelWrap.data('ctrl', panel); // attach controllers to wraps
+        panel.load($('.panel-toolbar select', panelWrap).val());
+
+        $('.panel-toolbar select', panelWrap).change(function() {
+            var url = $(this).val();
+            panelWrap.data('ctrl').load(url);
+            self.savePanelOptions();
+        });
+
+        $('.panel-toolbar button.refresh-button', panelWrap).click(
+            function() {
+                panel.refresh();
+            } );
+
+        self.rootDiv.bind('stopResize', function() {
+            panel.callHook('toolbarResized');
+        });
+    });
+
+    $(document).bind('panel:contentChanged', function() {
+        self.onContentChanged.apply(self, arguments)
+    });  
+
+    /*
+     * Connect various buttons
+     */
+
+    $('#toolbar-button-quick-save').click( function (event, data) {
+        self.saveToBranch();
+    } );
+
+    $('#toolbar-button-save').click( function (event, data) {
+        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.saveToBranch)} );
+    } );
+
+    $('#toolbar-button-update').click( function (event, data) {
+        if (self.updateUserBranch()) {
+            // commit/update can be called only after proper, save
+            // this means all panels are clean, and will get refreshed
+            // do this only, when there are any changes to local branch
+            self.refreshPanels();
+        }
+    } );
+
+    /* COMMIT DIALOG */
+    $('#commit-dialog').
+    jqm({
+        modal: true,
+        onShow: $.fbind(self, self.loadRelatedIssues)        
+    });
+
+    $('#toolbar-button-commit').click( function (event, data) {
+        $('#commit-dialog').jqmShow( {callback: $.fbind(self, self.sendMergeRequest)} );
+    } );
+    
+    /* STATIC BINDS */
+    $('#commit-dialog-cancel-button').click(function() {
+        $('#commit-dialog-error-empty-message').hide();
+        $('#commit-dialog').jqmHide();
+    });   
+    
+
+    /* SPLIT DIALOG */
+    $('#split-dialog').jqm({
+        modal: true,
+        onShow: $.fbind(self, self.loadSplitDialog)
+    }).
+    jqmAddClose('button.dialog-close-button');
 }
 
 Editor.prototype.loadRelatedIssues = function(hash)
