@@ -476,11 +476,12 @@ def split_text(request, path):
         print "validating sform"
         if sform.is_valid():
             valid = True
-            if sform.cleaned_data['autoxml']:
-                print "validating dcform"                
-                valid = dcform.is_valid()        
+#            if sform.cleaned_data['autoxml']:
+#                print "validating dcform"
+#                valid = dcform.is_valid()
 
         print "valid is ", valid
+
         if valid:
             uri = path + '$' + sform.cleaned_data['partname']
             child_rpath = file_path(uri)
@@ -496,7 +497,7 @@ def split_text(request, path):
                                         
                 fulltext = sform.cleaned_data['fulltext']               
                 fulltext = fulltext.replace(u'<include-tag-placeholder />',
-                    librarian.xinclude_forURI('wlrepo://'+uri) )               
+                    librarian.xinclude_forURI(u'wlrepo://'+uri) )
 
                 repo._write_file(rpath, fulltext.encode('utf-8'))
 
@@ -504,7 +505,7 @@ def split_text(request, path):
                 if sform.cleaned_data['autoxml']:
                     # this is a horrible hack - really
                     bi = dcparser.BookInfo.from_element(librarian.DEFAULT_BOOKINFO.to_etree())
-                    bi.update(dcform.cleaned_data)
+                    bi.update(dcform.data)
 
                     newtext = librarian.wrap_text(newtext, \
                         unicode(date.today()), bookinfo=bi )
@@ -516,8 +517,10 @@ def split_text(request, path):
 
             if repo.in_branch(split_action, file_branch(path, request.user)):
                 # redirect to success
+                import urllib
+                uri = urllib.quote( unicode(uri).encode('utf-8'))
                 return HttpResponseRedirect( reverse('split-success',\
-                    kwargs={'path': path})+'?child='+uri)
+                    kwargs={'path': path})+'?child='+uri )
     else:
         try: # to read the current DC
             repo = hg.Repository(settings.REPOSITORY_PATH)

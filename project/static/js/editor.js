@@ -92,7 +92,8 @@ Panel.prototype.unload = function(event, data) {
         $(this.contentDiv).html('');
 
         // disconnect the toolbar
-        $('div.panel-toolbar span.panel-toolbar-extra', this.wrap).empty();
+        $('div.panel-toolbar span.panel-toolbar-extra', this.wrap).html(
+            '<span />');
         
         this.callHook('unload');
         this.hooks = null; // flush the hooks
@@ -149,10 +150,9 @@ Panel.prototype.connectToolbar = function()
     if(toolbar.length === 0) return;
 
     // move the extra
-    var extra_buttons = $('span.panel-toolbar-extra', toolbar);
-    var placeholder = $('div.panel-toolbar span.panel-toolbar-extra', this.wrap);
-    placeholder.replaceWith(extra_buttons);
-    placeholder.hide();
+    var extra_buttons = $('span.panel-toolbar-extra button', toolbar);
+    var placeholder = $('div.panel-toolbar span.panel-toolbar-extra > span', this.wrap);
+    placeholder.replaceWith(extra_buttons);    
 
     var action_buttons = $('button', extra_buttons);
 

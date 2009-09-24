@@ -95,7 +95,7 @@ class DublinCoreForm(forms.Form):
     source_name = forms.CharField(widget=forms.Textarea, required=False)
     source_url = forms.URLField(verify_exists=False, required=False)
     url = forms.URLField(verify_exists=False)
-    parts = forms.CharField(widget=forms.Textarea, required=False)
+    parts = ListField(required=False)
     license = forms.CharField(required=False)
     license_description = forms.CharField(widget=forms.Textarea, required=False)
     

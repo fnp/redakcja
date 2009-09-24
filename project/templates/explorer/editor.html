@@ -29,11 +29,15 @@
 		</select>
 		<div class="content-view"></div>
 	</script>
+	
+	<script type="text/html" charset="utf-8" id="xml-view-template">
+		<div class="xmlview" style="position: absolute; top: 40px; left:0px; right:0px; bottom: 0px;">
+			<textarea name="text">Ala ma kota</textarea>
+		</div>
+	</script>
+	
 	<script type="text/html" charset="utf-8" id="html-view-template">
 		<p>Hej! Jestem widokiem HTML!</p>
-	</script>
-	<script type="text/html" charset="utf-8" id="xml-view-template">
-		<p>Hej! Jestem widokiem XML!</p>
 	</script>
 {% endblock extrahead %}
 
@@ -78,54 +82,40 @@
 
 {% block maincontent %}
 	<div id="splitview">
-		<div id="left-panel-container" class='panel-container'>
-			<select name="select-left-panel" id="panel-left-select">
-				{% for panel_type in availble_panels %}
-				<option value="{% url panel_view path=fileid,name=panel_type.id  %}" p:panel-name="{{ panel_type.id }}">{{panel_type.display_name}}</option>
-				{% endfor %}
-			</select>
-			            <div id="panel-left-content" class="panel-content"></div>			
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-		</div>
-	    <div id="right-panel-container" class='panel-container'>
-			{# <select name="select-right-panel" id="panel-right-select"> #}
-			{# 	{% for panel_type in availble_panels %} #}
-			{# 	<option value="{% url panel_view path=fileid,name=panel_type.id  %}" p:panel-name="{{ panel_type.id }}">{{panel_type.display_name}}</option> #}
-			{# 	{% endfor %} #}
-			{# </select> #}
-            {# <div id="panel-right-content" class="panel-content"></div> #}
-		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></div>
-	</div>
+		<div id="left-panel-container" class='panel-container'></div>
+	    <div id="right-panel-container" class='panel-container'></div>
+    </div>
 
-        <div id="commit-dialog" class="jqmWindow">
-            <form action="{% url file_commit fileid %}" method="POST">
-                <label for="message">Commit message:</label>
-                <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
-                <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                
-                <fieldset id="commit-dialog-related-issues" 
-                          ui:ajax-src="http://localhost:3000/publications/issues/{{fileid}}">
-                    <legend>Related issues</legend>
-                    <div class="loading-box" style="display: none;">
-                        <p>Loading related issues...</p>
-                    </div>
-                    <div class="container-box">No related issues.</div>
-                </fieldset>
-                <p>
-                   <input type="button" value="Save" id="commit-dialog-save-button" />
-                   <input type="reset" value="Cancel" id="commit-dialog-cancel-button" />
-                </p>
-            </form>
-        </div>
 
-        <div id="split-dialog" class="jqmWindow">
-            <div class="container-box"> </div>
-            <div class="loading-box" style="display: none;">
-                <p>Loading dialog contents...</p>
-                <!-- <p><button type="button" class="dialog-close-button">Close</button></p> -->
-            </div>
-            <div class="fatal-error-box" style="display: none;">
-                <p>Server error, while loading dialog :(</p>
-                <p><button type="button" class="dialog-close-button">Close</button></p>
-            </div>
+    <div id="commit-dialog" class="jqmWindow">
+        <form action="{% url file_commit fileid %}" method="POST">
+            <label for="message">Commit message:</label>
+            <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
+            <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                
+            <fieldset id="commit-dialog-related-issues" 
+                      ui:ajax-src="http://localhost:3000/publications/issues/{{fileid}}">
+                <legend>Related issues</legend>
+                <div class="loading-box" style="display: none;">
+                    <p>Loading related issues...</p>
+                </div>
+                <div class="container-box">No related issues.</div>
+            </fieldset>
+            <p>
+               <input type="button" value="Save" id="commit-dialog-save-button" />
+               <input type="reset" value="Cancel" id="commit-dialog-cancel-button" />
+            </p>
+        </form>
+    </div>
+
+    <div id="split-dialog" class="jqmWindow">
+        <div class="container-box"> </div>
+        <div class="loading-box" style="display: none;">
+            <p>Loading dialog contents...</p>
+            <!-- <p><button type="button" class="dialog-close-button">Close</button></p> -->
         </div>
+        <div class="fatal-error-box" style="display: none;">
+            <p>Server error, while loading dialog :(</p>
+            <p><button type="button" class="dialog-close-button">Close</button></p>
+        </div>
+    </div>
 {% endblock maincontent %}    

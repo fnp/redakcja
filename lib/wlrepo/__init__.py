@@ -38,12 +38,20 @@ class Cabinet(object):
         if name:
             self._name = name
             self._maindoc = ''
+            self._user = self._document = None
         elif doc and user:
+            self._user = user
+            self._document = doc
             self._name = user + ':' + doc
             self._maindoc = doc
         else:
             raise ValueError("You must provide either name or doc and user.")
 
+        print "new cab:", self._name, self._user, self._document
+
+    @property
+    def username(self):
+        return self._user
 
     def __str__(self):
         return "Cabinet(%s)" % self._name
@@ -64,7 +72,8 @@ class Cabinet(object):
     def create(self, name, initial_data=''):
         """Create a new sub-document in the cabinet with the given name."""
         pass
-    
+
+    @property
     def maindoc_name(self):
         return self._maindoc
 
@@ -116,9 +125,8 @@ class Document(object):
 
 class Shelf(object):
 
-    def __init__(self, cabinet):
-        self._cabinet = cabinet
-        
+    def __init__(self, lib):
+        self._library = lib        
     
 #
 # Exception classes
