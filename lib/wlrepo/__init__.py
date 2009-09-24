@@ -31,6 +31,10 @@ class Library(object):
         pass
 
 
+    def document(self, docid, user, part=None, shelve=None):
+        pass
+
+
 class Cabinet(object):
 
     def __init__(self, library, name=None, doc=None, user=None):
@@ -56,11 +60,11 @@ class Cabinet(object):
     def __str__(self):
         return "Cabinet(%s)" % self._name
 
-    def documents(self):
-        """Lists all documents and sub-documents in this cabinet."""
+    def parts(self):
+        """Lists all parts in this cabinet."""
         pass
     
-    def retrieve(self, parts=None, shelve=None):
+    def retrieve(self, part='xml', shelve=None):
         """Retrieve a document from a given shelve in the cabinet. If no
         part is given, the main document is retrieved. If no shelve is given,
         the top-most shelve is used.
@@ -70,7 +74,7 @@ class Cabinet(object):
         pass
 
     def create(self, name, initial_data=''):
-        """Create a new sub-document in the cabinet with the given name."""
+        """Create a new part in the cabinet with the given name."""
         pass
 
     @property
@@ -121,12 +125,25 @@ class Document(object):
     @property
     def parts(self):
         raise NotImplemented()
+    
+    def parentof(self, other):
+        return self.shelf().parentof(other.shelf())
+
+    def ancestorof(self, other):
+        return self.shelf().ancestorof(other.shelf())
 
 
 class Shelf(object):
 
     def __init__(self, lib):
-        self._library = lib        
+        self._library = lib
+
+
+    def parentof(self, other):
+        return False
+
+    def ancestorof(self, other):
+        return False
     
 #
 # Exception classes

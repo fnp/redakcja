@@ -342,3 +342,14 @@ text#commit-dialog-message {
 #split-dialog .container-box fieldset {
     margin: 0.5em;
 }
+
+.CodeMirror-line-numbers
+{
+    text-align: right;
+    padding-top: 0.4em;
+    padding-right: 2px;
+    width: 28px;
+    font-size: 10pt;
+    background: black;
+    color: white;
+}

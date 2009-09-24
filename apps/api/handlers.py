@@ -64,6 +64,7 @@ class LibraryHandler(BaseHandler):
         if form.cleaned_data['generate_dc']:
             data = librarian.wrap_text(data, unicode(date.today()))
 
+        # TODO: what if the file exists ?
         doc = cab.create(form.cleaned_data['bookname'], initial_data=data)
         
         return {
@@ -124,6 +125,9 @@ class DocumentHandler(BaseHandler):
                 
         shared = lib.main_cabinet.retrieve(docid)
 
+        is_shared = document.ancestorof(shared)
+        # is_uptodate = is_shared or shared.ancestorof(document)
+
         result = {
             'name': document.name,
             'size': document.size,
@@ -132,12 +136,12 @@ class DocumentHandler(BaseHandler):
             'parts_url': reverse('docparts_view', args=[docid]),
             'latest_rev': document.shelf(),
             'latest_shared_rev': shared.shelf(),
-            #'shared': lib.isparentof(document, shared),
-            #'up_to_date': lib.isparentof(shared, document),
+            'shared': is_shared,
+            # 'up_to_date': is_uptodate,
         }
 
-        if request.GET.get('with_part', 'no') == 'yes':
-            result['parts'] = document.parts()
+        #if request.GET.get('with_part', 'no') == 'yes':
+        #    result['parts'] = document.parts()
 
         return result        
 
@@ -150,7 +154,9 @@ class DocumentTextHandler(BaseHandler):
     def read(self, request, docid):
         """Read document as raw text"""
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-        try:            
+        try:
+            # latest rev
+            # comment
             return lib.document(docid, request.user.username).read()
         except CabinetNotFound:
             return rc.NOT_HERE
@@ -158,6 +164,7 @@ class DocumentTextHandler(BaseHandler):
     def update(self, request, docid):
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
         try:
+            # check latest REV
             data = request.PUT['contents']
             lib.document(docid, request.user.username).write(data)
             return rc.ALL_OK

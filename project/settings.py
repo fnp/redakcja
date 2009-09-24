@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'explorer',
     'toolbar',
     'api',
+    'wysiwyg',
 )
 
 

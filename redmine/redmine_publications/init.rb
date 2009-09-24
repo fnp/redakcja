@@ -11,6 +11,10 @@ Dispatcher.to_prepare :redmine_publications do
   unless Issue.included_modules.include? RedminePublications::IssuePatch
     Issue.send(:include, RedminePublications::IssuePatch)
   end
+
+  unless Change.included_modules.include? RedminePublications::ChangePatch
+    Change.send(:include, RedminePublications::ChangePatch)
+  end
 end
 
 require_dependency 'issue_publication_hook'

@@ -51,7 +51,7 @@ def test_main_cabinet(library):
     mcab = library.main_cabinet
     assert_equal(mcab.maindoc_name, '')
 
-    doclist = mcab.documents()
+    doclist = mcab.parts()
     assert_equal( list(doclist), ['valid_file'])
 
 @temprepo('simple')
@@ -81,7 +81,7 @@ def test_create_document(library):
 @temprepo('branched')
 def test_switch_branch(library):
     tester_cab = library.cabinet("valid_file", "tester", create=False)
-    assert_equal( list(tester_cab.documents()), ['valid_file'])
+    assert_equal( list(tester_cab.parts()), ['valid_file'])
 
 @raises(wlrepo.CabinetNotFound)
 @temprepo('branched')
@@ -232,5 +232,5 @@ def test_merge_personal_to_default(library):
 @temprepo('clean')
 def test_create_branch(library):   
     tester_cab = library.cabinet("anotherone", "tester", create=True)
-    assert_equal( list(tester_cab.documents()), ['anotherone'])  
+    assert_equal( list(tester_cab.parts()), ['anotherone'])
 

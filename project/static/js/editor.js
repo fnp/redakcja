@@ -152,9 +152,7 @@ Panel.prototype.connectToolbar = function()
     // move the extra
     var extra_buttons = $('span.panel-toolbar-extra button', toolbar);
     var placeholder = $('div.panel-toolbar span.panel-toolbar-extra > span', this.wrap);
-    placeholder.replaceWith(extra_buttons);    
-
-    var action_buttons = $('button', extra_buttons);
+    placeholder.replaceWith(extra_buttons);       
 
     // connect group-switch buttons
     var group_buttons = $('*.toolbar-tabs-container button', toolbar);
@@ -185,7 +183,7 @@ Panel.prototype.connectToolbar = function()
     });
 
     // connect action buttons
-    var allbuttons = $.makeArray(action_buttons);
+    var allbuttons = $.makeArray(extra_buttons);
     $.merge(allbuttons,
         $.makeArray($('*.toolbar-button-groups-container button', toolbar)) );
         

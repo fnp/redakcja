@@ -19,28 +19,28 @@ class PublicationsController < ApplicationController
     Publication.delete_all()
     repos = Repository.all
     if repos
-    repos.each do |repo|
-      repo_status = []
-      if repo.entries
-      repo.entries.each do |entry|
-        match = entry.path.match(regexp)
-        if match
-          Publication.find_or_create_by_name(:name => match[1],
-            :source_file => entry.path, :repository_id => repo.id)
-          repo_status += [{:path => entry.path, :match => match[1], :matched => true}]
-        else
-          repo_status += [{:path => entry.path, :match =>nil, :matched => false}]
+      repos.each do |repo|
+        repo_status = []
+        if repo.entries
+          repo.entries.each do |entry|
+            match = entry.path.match(regexp)
+            if match
+              Publication.find_or_create_by_name(:name => match[1],
+                :source_file => entry.path, :repository_id => repo.id)
+              repo_status += [{:path => entry.path, :match => match[1], :matched => true}]
+            else
+              repo_status += [{:path => entry.path, :match =>nil, :matched => false}]
+            end
+          end
+          @match_status += [{:repo => repo, :status => repo_status}]
         end
       end
-      @match_status += [{:repo => repo, :status => repo_status}]
-      end
-    end
 	
-    respond_to do |format|
-      format.html
-      format.xml { render :xml => @match_status}
-      format.json { render :json => @match_status }
-    end
+      respond_to do |format|
+        format.html
+        format.xml { render :xml => @match_status}
+        format.json { render :json => @match_status }
+      end
     end
   end
 
@@ -52,7 +52,7 @@ class PublicationsController < ApplicationController
     @issues = Issue.all(:joins => joins, :conditions =>  conditions)
 
     respond_to do |fmt| 
-       fmt.json { render :json => @issues, :callback => params[:callback] }
+      fmt.json { render :json => @issues, :callback => params[:callback] }
     end
   end
 

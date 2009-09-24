@@ -68,8 +68,8 @@ class MercurialLibrary(wlrepo.Library):
     def main_cabinet(self):
         return self._maincab
 
-    def document(self, docid, user):
-        return self.cabinet(docid, user, create=False).retrieve()
+    def document(self, docid, user, part=None, shelve=None):
+        return self.cabinet(docid, user, create=False).retrieve(part=part, shelve=shelve)
 
     def cabinet(self, docid, user, create=False):
         docid = self._sanitize_string(docid)
@@ -248,10 +248,10 @@ class MercurialCabinet(wlrepo.Cabinet):
         else:
             raise ValueError("Provide either doc/user or branchname")
 
-    def shelf(self, selector=None):
+    def shelf(self):
         return self._library.shelf(self._branchname)
 
-    def documents(self):        
+    def parts(self):
         return self._execute_in_branch(action=lambda l, c: (e[1] for e in l._filelist()))
 
     def retrieve(self, part=None, shelf=None):
@@ -305,18 +305,22 @@ class MercurialCabinet(wlrepo.Cabinet):
 
         return self._library._transaction(write_mode=write, action=switch_action)
 
-    def _filename(self, part):
+
+    def _filename(self, docid):
+        return self._partname(docid, 'xml')
+    
+    def _partname(self, docid, part):
+        docid = self._library._sanitize_string(part)
         part = self._library._sanitize_string(part)
-        docid = None
 
-        if self._maindoc == '':
-            if part is None: rreeturn [None, None]
-            docid = part
-        else:
-            docid = self._maindoc + (('$' + part) if part else '')
+        if part is None:
+            part = 'xml'
 
-        return docid, 'pub_' + docid + '.xml'
-
+        if self._maindoc == '' and docid is None:
+            return None
+            
+        return 'pub_' + docid + '.' + part
+            
     def _fileopener(self):
         return self._library._fileopener()
 
@@ -331,26 +335,33 @@ class MercurialCabinet(wlrepo.Cabinet):
 
 class MercurialDocument(wlrepo.Document):
 
-    def __init__(self, cabinet, name, fileid):
-        super(MercurialDocument, self).__init__(cabinet, name=name)
+    def __init__(self, cabinet, docid):
+        super(MercurialDocument, self).__init__(cabinet, name=docid)
         self._opener = self._cabinet._fileopener()
-        self._fileid = fileid
-        self.refresh()
+        self._docid = docid
+        self._ctxs = {}
 
-    def refresh(self):
-        self._filectx = self._cabinet._filectx(self._fileid)        
+    def _ctx(self, part):
+        if not self._ctxs.has_key(part):            
+            self._ctxs[part] = self._cabinet._filectx(self._fileid())
+        return self._ctxs[part]
 
-    def read(self):
-        return self._opener(self._filectx.path(), "r").read()
+    def _fileid(self, part='xml'):
+        return self._cabinet._partname(self._docid, part)
 
-    def write(self, data):
-        return self._opener(self._filectx.path(), "w").write(data)
+    def read(self, part='xml'):       
+        return self._opener(self._ctx(part).path(), "r").read()
+
+    def write(self, data, part='xml'):
+        return self._opener(self._ctx(part).path(), "w").write(data)
 
     def commit(self, message, user):
+        """Commit all parts of the document."""
         self.library._fileadd(self._fileid)
         self.library._commit(self._fileid, message, user)
 
     def update(self):
+        """Update parts of the document."""
         lock = self.library._lock()
         try:
             if self._cabinet.ismain():
@@ -453,15 +464,15 @@ class MercurialDocument(wlrepo.Document):
     def shared(self):
         return self.library.main_cabinet.retrieve(self._name)
 
-    def exists(self):
-        return self._cabinet.exists(self._fileid)
+    def exists(self, part='xml'):
+        return self._cabinet.exists(self._fileid(part))
 
     @property
     def size(self):
         return self._filectx.size()
     
     def shelf(self):
-        return MercurialShelf(self.library, self._filectx.node())
+        return self._cabinet.shelf()
 
     @property
     def last_modified(self):
