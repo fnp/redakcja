@@ -1,5 +1,5 @@
-/*global Class CodeMirror render_template panels */
-var XMLView = Class.extend({
+/*global View CodeMirror render_template panels */
+var XMLView = View.extend({
   element: null,
   model: null,
   template: 'xml-view-template',
@@ -12,12 +12,21 @@ var XMLView = Class.extend({
     this.template = template || this.template;
     this.element.html(render_template(this.template, {}));
     
-    var self = this;
+    $(this.model)
+      .bind('modelxmlfreeze.xmlview',
+        function() { this.freeze('Ładowanie danych z serwera...'); }.bind(this))
+      .bind('modelxmlunfreeze.xmlview',
+        this.unfreeze.bind(this));
+    
+    this.freeze('Ładowanie edytora...');
   	this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
       parserfile: 'parsexml.js',
       path: "/static/js/lib/codemirror/",
       stylesheet: "/static/css/xmlcolors.css",
       parserConfig: {useHTMLKludges: false},
+      textWrapping: false,
+      tabMode: 'spaces',
+      indentUnit: 0,
       // onChange: function() {
       //        self.fireEvent('contentChanged');
       // },
@@ -31,6 +40,7 @@ var XMLView = Class.extend({
     $(editor.frame).css({width: '100%', height: '100%'});
     this.editor.setCode(this.model.xml);
     $(this.model).bind('modelxmlchanged.xmlview', this.codeChanged.bind(this));
+    this.unfreeze();
     this.model.getXML();
     // editor.grabKeys(
     //   $.fbind(self, self.hotkeyPressed),
@@ -41,11 +51,16 @@ var XMLView = Class.extend({
   codeChanged: function() {
     console.log('setCode:', this.editor, this.model);
     this.editor.setCode(this.model.xml);
+    this.unfreeze();
   },
   
   dispose: function() {
-    $(this.model).unbind('modelxmlchanged.xmlview');
+    $(this.model)
+      .unbind('modelxmlchanged.xmlview')
+      .unbind('modelxmlfreeze.xmlview')
+      .unbind('modelxmlunfreeze.xmlview');
     $(this.editor.frame).remove();
+    this._super();
   }
 });
 

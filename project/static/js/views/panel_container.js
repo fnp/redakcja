@@ -1,6 +1,6 @@
-/*globals Class render_template panels*/
+/*globals View render_template panels*/
 
-var PanelContainerView = Class.extend({
+var PanelContainerView = View.extend({
   element: null,
   model: null,
   template: 'panel-container-view-template',
@@ -29,6 +29,7 @@ var PanelContainerView = Class.extend({
   
   dispose: function() {
     $('select', this.element.get(0)).unbind('change.panel-container-view');
+    this._super();
   }
 });
 

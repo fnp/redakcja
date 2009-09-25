@@ -384,3 +384,19 @@ text#commit-dialog-message {
 .xmlview {
     height: 100%;
 }
+
+.view-overlay {
+    z-index: 1000;
+    background: #FFF;
+    opacity: 0.8;
+    text-align: center;
+    text-valign: center;
+}
+
+.view-overlay p {
+    display: block;
+    position: relative;
+    top: auto;
+    bottom: auto;
+    height: 40px;
+}

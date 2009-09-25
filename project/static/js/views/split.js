@@ -1,7 +1,7 @@
-/*globals Class*/
+/*globals View*/
 
 // Split view inspired by jQuery Splitter Plugin http://methvin.com/splitter/
-var SplitView = Class.extend({
+var SplitView = View.extend({
   splitbarClass: 'splitview-splitbar',
   activeClass: 'splitview-active',
   overlayClass: 'splitview-overlay',
@@ -100,6 +100,7 @@ var SplitView = Class.extend({
   
   dispose: function() {
     this.splitter.unbind('mousedown.splitview');
+    this._super();
   }
 });
 

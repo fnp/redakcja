@@ -128,6 +128,7 @@ var DocumentModel = Class.extend({
   },
   
   getXML: function(callback) {
+      $(this).trigger('modelxmlfreeze');
     if (!this.data) {
       this.getData(this.getXML);
     } else {
@@ -147,6 +148,7 @@ var DocumentModel = Class.extend({
       this.modelChanged();
       $(this).trigger('modelxmlchanged');
     }
+    $(this).trigger('modelxmlunfreeze');
   },
   
   modelChanged: function() {

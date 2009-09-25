@@ -1,5 +1,5 @@
-/*global Class render_template panels */
-var HTMLView = Class.extend({
+/*global View render_template panels */
+var HTMLView = View.extend({
   element: null,
   model: null,
   template: 'html-view-template',
@@ -12,7 +12,7 @@ var HTMLView = Class.extend({
   },
   
   dispose: function() {
-    
+    this._super();
   }
 });
 
