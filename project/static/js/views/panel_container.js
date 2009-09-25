@@ -2,11 +2,13 @@
 
 var PanelContainerView = Class.extend({
   element: null,
+  model: null,
   template: 'panel-container-view-template',
   contentView: null,
   
-  init: function(element, template) {
+  init: function(element, model, template) {
     this.element = $(element);
+    this.model = model;
     this.template = template || this.template;
     
     this.element.html(render_template(this.template, {panels: panels}));
@@ -17,7 +19,11 @@ var PanelContainerView = Class.extend({
     var view = panels[$('select', this.element.get(0)).val()];
     var klass = view.klass;
     console.log(view, klass);
-    this.contentView = new klass($('.content-view', this.element.get(0)));
+    if (this.contentView) {
+      this.contentView.dispose();
+      this.contentView = null;
+    }
+    this.contentView = new klass($('.content-view', this.element.get(0)), this.model);
     console.log(this.contentView);
   },
   

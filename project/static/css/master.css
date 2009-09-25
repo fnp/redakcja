@@ -358,10 +358,27 @@ text#commit-dialog-message {
     border-right: 1px solid #999;
     height: 100%;
     background-color: #CCC;
+    z-index: 100;
+}
+
+.splitview-overlay {
+    z-index: 90;
+    background: #FFF;
+    opacity: 0.5;
 }
 
 .panel-container {
     height: 100%;
+    position: relative;
+}
+
+.content-view {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: none;
 }
 
 .xmlview {

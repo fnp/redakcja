@@ -100,8 +100,65 @@ var panel_hooks;
  
 var panels = [];
 
+var documentsUrl = '/api/documents/';
+
+var DocumentModel = Class.extend({
+  data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
+  xml: '',
+  html: '',
+  
+  init: function() {},
+  
+  getData: function(callback) {
+    console.log('get:', documentsUrl + fileId);
+    $.ajax({
+      cache: false,
+      url: documentsUrl + fileId,
+      dataType: 'json',
+      success: this.successfulGetData.bind(this, callback)
+    });
+  },
+  
+  successfulGetData: function(callback, data) {
+    this.data = data;
+    this.modelChanged();
+    if (callback) {
+      (callback.bind(this))(data);
+    }
+  },
+  
+  getXML: function(callback) {
+    if (!this.data) {
+      this.getData(this.getXML);
+    } else {
+      console.log('getXML:', this.data.text_url);
+      $.ajax({
+        cache: false,
+        url: this.data.text_url,
+        dataType: 'text',
+        success: this.successfulGetXML.bind(this, callback)
+      });
+    };
+  },
+  
+  successfulGetXML: function(callback, data) {
+    if (data != this.xml) {
+      this.xml = data;
+      this.modelChanged();
+      $(this).trigger('modelxmlchanged');
+    }
+  },
+  
+  modelChanged: function() {
+    $(this).trigger('modelchanged');
+  }
+});
+
+var leftPanelView, rightPanelContainer, doc;
+
 $(function() {
-  var splitView = new SplitView('#splitview');
-  var leftPanelView = new PanelContainerView('#left-panel-container');
-  var rightPanelContainer = new PanelContainerView('#right-panel-container');
+  doc = new DocumentModel();
+  var splitView = new SplitView('#splitview', doc);
+  leftPanelView = new PanelContainerView('#left-panel-container', doc);
+  rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
 });

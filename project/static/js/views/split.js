@@ -4,15 +4,18 @@
 var SplitView = Class.extend({
   splitbarClass: 'splitview-splitbar',
   activeClass: 'splitview-active',
+  overlayClass: 'splitview-overlay',
   element: null,
+  model: null,
   zombie: null,
   leftViewOffset: 0,
   
   // Cache
   _splitbarWidth: 0,
   
-  init: function(element) {
+  init: function(element, model) {
     this.element = $(element).css('position', 'relative');
+    this.model = model;
     this.views = $(">*", this.element[0]).css({
     	position: 'absolute', 			  // positioned inside splitter container
     	'z-index': 1,					        // splitbar is positioned above
@@ -44,6 +47,13 @@ var SplitView = Class.extend({
     
   beginResize: function(event) {
     this.zombie = this.zombie || this.splitbar.clone(false).insertAfter(this.leftView);
+    this.overlay = this.overlay || $('<div></div>').addClass(this.overlayClass).css({
+        position: 'absolute',
+        width: this.element.width(),
+        height: this.element.height(),
+        top: this.element.position().top,
+        left: this.element.position().left
+      }).appendTo(this.element);
     this.views.css("-webkit-user-select", "none"); // Safari selects A/B text on a move
     this.splitbar.addClass(this.activeClass);
     this.leftViewOffset = this.leftView[0].offsetWidth - event.pageX;
@@ -63,6 +73,8 @@ var SplitView = Class.extend({
     var newPosition = event.pageX + this.leftViewOffset;
     this.zombie.remove();
     this.zombie = null;
+    this.overlay.remove();
+    this.overlay = null;
     this.resplit(newPosition);
 
     $(document)
