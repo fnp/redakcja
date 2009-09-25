@@ -14,6 +14,26 @@ class ButtonGroup(models.Model):
     def __unicode__(self):
         return self.name
 
+
+#class ButtonGroupManager(models.Manager):
+#
+#    def with_buttons(self):
+#        from django.db import connection
+#        cursor = connection.cursor()
+#        cursor.execute("""
+#            SELECT g.name, g.slug, CONCAT(b.slug),
+#            FROM toolbar_buttongroup as g LEFT JOIN toolbar_button as b
+#
+#            WHERE p.id = r.poll_id
+#            GROUP BY 1, 2, 3
+#            ORDER BY 3 DESC""")
+#        result_list = []
+#        for row in cursor.fetchall():
+#            p = self.model(id=row[0], question=row[1], poll_date=row[2])
+#            p.num_responses = row[3]
+#            result_list.append(p)
+#        return result_list
+
 class Button(models.Model):
     label = models.CharField(max_length=32)
     slug = models.SlugField(unique=True) #unused

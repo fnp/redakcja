@@ -1,0 +1,7 @@
+{% if objects %}
+    {% for pullreq in objects %}
+    <p>{{ pullreq }}</p>
+    {% endfor %}
+{% else %}
+    <p>Brak żądań</p>
+{% endif %}

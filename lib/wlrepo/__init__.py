@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 __author__="Łukasz Rekucki"
 __date__ ="$2009-09-18 10:49:24$"
-
 __doc__ = """Main module for the Repository Abstraction Layer"""
 
 class Library(object):
@@ -9,157 +8,107 @@ class Library(object):
     def __init__(self, create=False):
         """Open an existing library, or create a new one. By default, fails if
         the library doesn't exist."""
-        self.create = create     
+        self.create = create      
+
+    def documents(self):
+        """List all documents in the library."""
+        pass
+
+    def document_for_rev(self, rev):
+        """Retrieve a document in the specified revision."""
+        pass
+
+    def document(self, docid, user=None):
+        """Retrieve a document from a library."""
+        pass
+
+    def get_revision(self, revid):
+        """Retrieve a handle to a specified revision."""
+        return None
+
+    def document_create(self, docid):
+        """Create a new document. The document will have it's own branch."""
         
-    def main_cabinet(self):
-        """Return the "main" cabinet of the library."""
-        pass
 
-    def cabinets(self):
-        """List all cabinets in the library."""
-        pass
+class Document(object):
+    """A class representing a document package boundled with a revision."""
 
-    def cabinet(self, document, user, create=False):
-        """Open a cabinet belonging to the _user_ for a given _document_.
-        If the _document_ is actually a sub-document, it's parent's cabinet is
-        opened istead.
-        
-        If the cabinet doesn't exists and create is False (the default), a 
-        CabinetNotFound exception is raised.
-        
-        If create is True, a new cabinet is created if it doesn't exist yet."""
-        pass
-
-
-    def document(self, docid, user, part=None, shelve=None):
-        pass
-
-
-class Cabinet(object):
-
-    def __init__(self, library, name=None, doc=None, user=None):
+    def __init__(self, library, revision):
+        """_library_ should be an instance of a Library."""
         self._library = library
-        if name:
-            self._name = name
-            self._maindoc = ''
-            self._user = self._document = None
-        elif doc and user:
-            self._user = user
-            self._document = doc
-            self._name = user + ':' + doc
-            self._maindoc = doc
+        if isinstance(revision, Revision):
+            self._revision = revision
         else:
-            raise ValueError("You must provide either name or doc and user.")
+            self._revision = library.get_revision(revision)
 
-        print "new cab:", self._name, self._user, self._document
 
-    @property
-    def username(self):
-        return self._user
-
-    def __str__(self):
-        return "Cabinet(%s)" % self._name
-
-    def parts(self):
-        """Lists all parts in this cabinet."""
-        pass
-    
-    def retrieve(self, part='xml', shelve=None):
-        """Retrieve a document from a given shelve in the cabinet. If no
-        part is given, the main document is retrieved. If no shelve is given,
-        the top-most shelve is used.
-
-        If parts is a list, all the given parts are retrieved atomicly. Use None
-        as the name for the main document"""
+    def take(self, user):
+        """Make a user copy of the document. This is persistant."""
         pass
 
-    def create(self, name, initial_data=''):
-        """Create a new part in the cabinet with the given name."""
+    def giveback(self):
+        """Informs the library, that the user no longer needs this document.
+        Should be called on the user version of document. If not, it doesn nothing."""
+       
+    def data(self, entry):
+        """Returns the specified entry as a file-like object."""
         pass
-
-    @property
-    def maindoc_name(self):
-        return self._maindoc
 
     @property
     def library(self):
         return self._library
 
     @property
-    def name(self):
-        return self._name
-
-    def shelf(self, selector=None):
-        pass
-
-class Document(object):
-    def __init__(self, cabinet, name):
-        self._cabinet = cabinet
-        self._name = name
-
-    def read(self):
-        pass
-
-    def write(self, data):
-        pass
+    def revision(self):
+        return self._revision
 
     @property
-    def cabinet(self):
-        return self._cabinet
+    def id(self):
+        return self._revision.document_name
 
     @property
-    def library(self):
-        return self._cabinet.library
-
-    @property
-    def name(self):
-        return self._name
-
-    def shelf(self):
-        return self._cabinet.shelf()
-
-    @property
-    def size(self):
-        raise NotImplemented()
-
-    @property
-    def parts(self):
-        raise NotImplemented()
+    def owner(self):
+        return self._revision.user_name
     
     def parentof(self, other):
-        return self.shelf().parentof(other.shelf())
+        return self._revision.parentof(other._revision)
 
     def ancestorof(self, other):
-        return self.shelf().ancestorof(other.shelf())
+        return self._revision.ancestorof(other._revision)
 
 
-class Shelf(object):
+class Revision(object):
 
     def __init__(self, lib):
         self._library = lib
 
-
     def parentof(self, other):
         return False
 
     def ancestorof(self, other):
         return False
-    
+
+    @property
+    def document_name(self):
+        raise ValueError()
+
+    @property
+    def user_name(self):
+        raise ValueError()
+
 #
 # Exception classes
 #
 
-class LibraryException(Exception):
-    
+class LibraryException(Exception):    
     def __init__(self, msg, cause=None):
         Exception.__init__(self, msg)
         self.cause = cause
 
-class CabinetNotFound(LibraryException):
-    def __init__(self, cabname):
-        LibraryException.__init__(self, "Cabinet '%s' not found." % cabname)
+class RevisionNotFound(LibraryException):
+    def __init__(self, rev):
+        LibraryException.__init__(self, "Revision %r not found." % rev)
     pass
 
-
 # import backends to local namespace
-from backend_mercurial import MercurialLibrary
+from mercurial_backend.library import MercurialLibrary
