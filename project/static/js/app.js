@@ -111,9 +111,9 @@ var Model = Class.extend({
   signal: function(event, data) {
     console.log('signal', this, event, data);
     if (this.observers[event]) {
-      for (var i=0; i < this.observers[event].length; i++) {
-        this.observers[event][i].handle(event, data);
-      };
+      for (observer in this.observers[event]) {
+        observer.handle(event, data);
+      }
     };
     return this;
   },
@@ -122,7 +122,7 @@ var Model = Class.extend({
     if (!this.observers[event]) {
       this.observers[event] = [];
     }
-    this.observers[event].push(observer);
+    this.observers[event][observer] = observer;
     return this;
   },
   
@@ -132,20 +132,41 @@ var Model = Class.extend({
         this.removeObserver(observer, e);
       }
     } else {
-      for (var i=0; i < this.observers[event].length; i++) {
-        if (this.observers[event][i] === observer) {
-          this.observers[event].splice(i, 1);
-        }
-      }
+      delete this.observers[event][observer];
     }
     return this;
   }
+});
+
+
+var XMLModel = Model.extend({
+  parent: null,
+  data: null,
+  serverURL: null,
+  
+  init: function(parent, serverURL) {
+    this.parent = parent;
+    this.serverURL = serverURL;
+  },
+  
+  reload: function() {
+    $.ajax({
+      url: this.serverURL,
+      dataType: 'text',
+      success: this.reloadSucceeded.bind(this)
+    });
+  },
+  
+  reloadSucceeded: function(data) {
+    this.data = data;
+    this.signal('reloaded');
+  },
 })
 
 var DocumentModel = Model.extend({
   data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
-  xml: '',
-  html: '',
+  xml: null,
+  html: null,
   
   init: function() {},
   
@@ -167,28 +188,38 @@ var DocumentModel = Model.extend({
     }
   },
   
-  getXML: function(callback) {
-    this.signal('xml-freeze');
+  load: function(key) {
     if (!this.data) {
-      this.getData(this.getXML);
+      this.getData(function() { this.load(key); }.bind(this));
     } else {
-      console.log('getXML:', this.data.text_url);
+      console.log('load', key, this.data[key + 'url']);
       $.ajax({
-        cache: false,
-        url: this.data.text_url,
+        url: this.data[key + '_url'],
         dataType: 'text',
-        success: this.successfulGetXML.bind(this, callback)
+        success: this.loadSucceeded.bind(this, key)
       });
-    };
+    }
   },
   
-  successfulGetXML: function(callback, data) {
-    if (data != this.xml) {
-      this.xml = data;
-      this.signal('changed');
-      this.signal('xml-changed');
+  loadSucceeded: function(key, data) {
+    console.log('loadSucceeded', key, data);
+    this.set(key, data);
+  },
+  
+  get: function(key) {
+    console.log(this[key]);
+    if (this[key]) {
+      return this[key]
+    } else {
+      this.load(key);
+      return '';
     }
-    this.signal('xml-unfreeze');
+  },
+  
+  set: function(key, value) {
+    this[key] = value;
+    this.signal(key + '-changed');
+    return this;
   }
 });
 
