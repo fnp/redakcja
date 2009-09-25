@@ -102,7 +102,47 @@ var panels = [];
 
 var documentsUrl = '/api/documents/';
 
-var DocumentModel = Class.extend({
+
+var Model = Class.extend({
+  observers: {},
+  
+  init: function() {},
+  
+  signal: function(event, data) {
+    console.log('signal', this, event, data);
+    if (this.observers[event]) {
+      for (var i=0; i < this.observers[event].length; i++) {
+        this.observers[event][i].handle(event, data);
+      };
+    };
+    return this;
+  },
+  
+  addObserver: function(observer, event) {
+    if (!this.observers[event]) {
+      this.observers[event] = [];
+    }
+    this.observers[event].push(observer);
+    return this;
+  },
+  
+  removeObserver: function(observer, event) {
+    if (!event) {
+      for (e in this.observers) {
+        this.removeObserver(observer, e);
+      }
+    } else {
+      for (var i=0; i < this.observers[event].length; i++) {
+        if (this.observers[event][i] === observer) {
+          this.observers[event].splice(i, 1);
+        }
+      }
+    }
+    return this;
+  }
+})
+
+var DocumentModel = Model.extend({
   data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
   xml: '',
   html: '',
@@ -121,14 +161,14 @@ var DocumentModel = Class.extend({
   
   successfulGetData: function(callback, data) {
     this.data = data;
-    this.modelChanged();
+    this.signal('changed');
     if (callback) {
       (callback.bind(this))(data);
     }
   },
   
   getXML: function(callback) {
-      $(this).trigger('modelxmlfreeze');
+    this.signal('xml-freeze');
     if (!this.data) {
       this.getData(this.getXML);
     } else {
@@ -145,14 +185,10 @@ var DocumentModel = Class.extend({
   successfulGetXML: function(callback, data) {
     if (data != this.xml) {
       this.xml = data;
-      this.modelChanged();
-      $(this).trigger('modelxmlchanged');
+      this.signal('changed');
+      this.signal('xml-changed');
     }
-    $(this).trigger('modelxmlunfreeze');
-  },
-  
-  modelChanged: function() {
-    $(this).trigger('modelchanged');
+    this.signal('xml-unfreeze');
   }
 });
 
