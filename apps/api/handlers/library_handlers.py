@@ -18,7 +18,7 @@ from wlrepo import MercurialLibrary, RevisionNotFound, DocumentAlreadyExists
 from librarian import dcparser
 
 import api.response as response
-from api.response import validate_form
+from api.utils import validate_form, hglibrary
 
 #
 # Document List Handlers
@@ -26,10 +26,9 @@ from api.response import validate_form
 class BasicLibraryHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
-    def read(self, request):
-        """Return the list of documents."""
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-
+    @hglibrary
+    def read(self, request, lib):
+        """Return the list of documents."""       
         document_list = [{
             'url': reverse('document_view', args=[docid]),
             'name': docid } for docid in lib.documents() ]
@@ -41,9 +40,9 @@ class LibraryHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
     anonymous = BasicLibraryHandler
 
-    def read(self, request):
+    @hglibrary
+    def read(self, request, lib):
         """Return the list of documents."""
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
 
         document_list = [{
             'url': reverse('document_view', args=[docid]),
@@ -52,14 +51,14 @@ class LibraryHandler(BaseHandler):
         return {'documents' : document_list }        
 
     @validate_form(forms.DocumentUploadForm, 'POST')
-    def create(self, request, form):
-        """Create a new document."""
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+    @hglibrary
+    def create(self, request, form, lib):
+        """Create a new document."""       
 
         if form.cleaned_data['ocr_data']:
             data = form.cleaned_data['ocr_data'].encode('utf-8')
         else:            
-            data = request.FILES['ocr'].read().decode('utf-8')
+            data = request.FILES['ocr_file'].read().decode('utf-8')
 
         if form.cleaned_data['generate_dc']:
             data = librarian.wrap_text(data, unicode(date.today()))
@@ -67,11 +66,10 @@ class LibraryHandler(BaseHandler):
         docid = form.cleaned_data['bookname']
         try:
             doc = lib.document_create(docid)
-            doc.quickwrite('xml', data, '$AUTO$ XML data uploaded.',
+            doc = doc.quickwrite('xml', data, '$AUTO$ XML data uploaded.',
                 user=request.user.username)
 
             url = reverse('document_view', args=[doc.id])
-
 
             return response.EntityCreated().django_response(\
                 body = {
@@ -91,17 +89,17 @@ class LibraryHandler(BaseHandler):
 class BasicDocumentHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
-    def read(self, request, docid):
-        try:
-            lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+    @hglibrary
+    def read(self, request, docid, lib):
+        try:    
             doc = lib.document(docid)
         except RevisionNotFound:
             return rc.NOT_FOUND
 
         result = {
             'name': doc.id,
-            'text_url': reverse('doctext_view', args=[doc.id]),
-            'dc_url': reverse('docdc_view', docid=doc.id),
+            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
+            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
             'public_revision': doc.revision,
         }
 
@@ -114,10 +112,9 @@ class DocumentHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
     anonymous = BasicDocumentHandler
 
-    def read(self, request, docid):
-        """Read document's meta data"""
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-        
+    @hglibrary
+    def read(self, request, docid, lib):
+        """Read document's meta data"""       
         try:
             doc = lib.document(docid)
             udoc = doc.take(request.user.username)
@@ -129,16 +126,16 @@ class DocumentHandler(BaseHandler):
 
         result = {
             'name': udoc.id,
-            'text_url': reverse('doctext_view', args=[udoc.id]),
-            'dc_url': reverse('docdc_view', args=[udoc.id]),
-            'parts_url': reverse('docparts_view', args=[udoc.id]),
+            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
+            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
             'user_revision': udoc.revision,
             'public_revision': doc.revision,            
         }       
 
         return result
 
-    def update(self, request, docid):
+    @hglibrary
+    def update(self, request, docid, lib):
         """Update information about the document, like display not"""
         return
 
@@ -148,27 +145,24 @@ class DocumentHandler(BaseHandler):
 class DocumentTextHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
 
-    @validate_form(forms.DocumentEntryRequest)
-    def read(self, request, form, docid):
-        """Read document as raw text"""        
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-        
+    @hglibrary
+    def read(self, request, docid, revision, lib):
+        """Read document as raw text"""               
         try:
-            if request.GET['revision'] == 'latest':
+            if revision == 'latest':
                 document = lib.document(docid)
             else:
-                document = lib.document_for_rev(request.GET['revision'])
+                document = lib.document_for_rev(revision)
             
             # TODO: some finer-grained access control
             return document.data('xml')
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 
-    def update(self, request, docid):
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+    @hglibrary
+    def update(self, request, docid, revision, lib):
         try:
-            data = request.PUT['contents']
-            prev = request.PUT['revision']
+            data = request.PUT['contents']            
 
             if request.PUT.has_key('message'):
                 msg = u"$USER$ " + request.PUT['message']
@@ -176,7 +170,7 @@ class DocumentTextHandler(BaseHandler):
                 msg = u"$AUTO$ XML content update."
 
             current = lib.document(docid, request.user.username)
-            orig = lib.document_for_rev(prev)
+            orig = lib.document_for_rev(revision)
 
             if current != orig:
                 return response.EntityConflict().django_response({
@@ -205,33 +199,31 @@ class DocumentTextHandler(BaseHandler):
 class DocumentDublinCoreHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
 
-    @validate_form(forms.DocumentEntryRequest)
-    def read(self, request, docid):
-        """Read document as raw text"""
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+    @hglibrary
+    def read(self, request, docid, revision, lib):
+        """Read document as raw text"""        
         try:
-            if request.GET['revision'] == 'latest':
+            if revision == 'latest':
                 document = lib.document(docid)
             else:
-                document = lib.document_for_rev(request.GET['revision'])                
+                document = lib.document_for_rev(revision)
             
             bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
             return bookinfo.serialize()
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 
-    def update(self, request, docid):
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+    @hglibrary
+    def update(self, request, docid, revision, lib):
         try:
-            bi_json = request.PUT['contents']
-            prev = request.PUT['revision']
+            bi_json = request.PUT['contents']            
             if request.PUT.has_key('message'):
                 msg = u"$USER$ " + request.PUT['message']
             else:
                 msg = u"$AUTO$ Dublin core update."
 
             current = lib.document(docid, request.user.username)
-            orig = lib.document_for_rev(prev)
+            orig = lib.document_for_rev(revision)
 
             if current != orig:
                 return response.EntityConflict().django_response({
@@ -255,3 +247,18 @@ class DocumentDublinCoreHandler(BaseHandler):
             }
         except (RevisionNotFound, KeyError):
             return response.EntityNotFound().django_response()
+
+
+class MergeHandler(BaseHandler):
+    allowed_methods = ('POST',)
+
+    @validate_form(forms.MergeRequestForm)
+    @hglibrary
+    def create(self, request, form, docid, lib):
+        """Create a new document revision from the information provided by user"""
+
+        pass
+
+        
+        
+        

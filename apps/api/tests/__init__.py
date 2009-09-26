@@ -63,32 +63,7 @@ class SimpleTest(TestCase):
         self.assert_json_response({                        
             u'documents': [],            
         })    
-
-    @temprepo('clean')
-    def test_documents_post(self):
-        self.assertTrue(self.client.login(username='admin', password='admin'))
-
-        infile = tempfile.NamedTemporaryFile("w+")
-        infile.write('0123456789')
-        infile.flush()
-        infile.seek(0)
-
-        self.response = self.client.post( reverse("document_list_view"),
-        data = {
-             'bookname': 'testbook',
-             'ocr': infile,
-             'generate_dc': False,
-        })
-
-        infile.close()
-
-        self.assert_json_response({
-            'url': reverse('document_view', args=['testbook']),
-            'name': 'testbook',
-            # 'size': 10,
-            # can't test revision number, 'cause it's random
-        },)
-
+    
     @temprepo('clean')
     def test_document_creation(self):
         self.assertTrue(self.client.login(username='admin', password='admin'))
@@ -101,23 +76,21 @@ class SimpleTest(TestCase):
         self.response = self.client.post( reverse("document_list_view"),
         data = {
              'bookname': 'testbook',
-             'ocr': infile,
+             'ocr_file': infile,
              'generate_dc': False,
         })
 
-        r = self.assert_json_response({
+        r = self.assert_json_response( {
             'url': reverse('document_view', args=['testbook']),
             'name': 'testbook',            
             # can't test revision number, 'cause it's random
-        })
+        }, code=201)
 
         created_rev = r['revision']
-
-        self.response = self.client.get( \
-            reverse("document_view", args=["testbook"]) )
-
+        self.response = self.client.get(r['url'])
+        
         result = self.assert_json_response({
-            u'latest_shared_rev': created_rev,
+            u'public_revision': created_rev,
             # u'size': 15,
         })
 
@@ -129,8 +102,10 @@ class SimpleTest(TestCase):
         self.response = self.client.get( reverse("document_list_view") )
         self.assert_json_response({
             # u'latest_rev': u'f94a263812dbe46a3a13d5209bb119988d0078d5',
-            u'documents': [{u'url': u'/api/documents/sample', u'name': u'sample'},
-                {u'url': u'/api/documents/sample_pl', u'name': u'sample_pl'}],
+            u'documents': [
+                {u'url': u'/api/documents/sample', u'name': u'sample'},
+                {u'url': u'/api/documents/sample_pl', u'name': u'sample_pl'}
+            ],
         })
 
         self.response = self.client.get( \
@@ -138,8 +113,8 @@ class SimpleTest(TestCase):
 
         self.assert_json_response({
             #u'latest_shared_rev': u'f94a263812dbe46a3a13d5209bb119988d0078d5',
-            u'text_url': reverse("doctext_view", args=[u'sample']),
-            u'dc_url': reverse("docdc_view", args=[u'sample']),
+            #u'text_url': reverse("doctext_view", args=[u'sample']),
+            #u'dc_url': reverse("docdc_view", args=[u'sample']),
             # u'parts_url': reverse("docparts_view", args=[u'sample']),
             u'name': u'sample',
             # u'size': 20,
@@ -155,8 +130,8 @@ class SimpleTest(TestCase):
 
         resp = self.assert_json_response({
             #u'latest_shared_rev': u'f94a263812dbe46a3a13d5209bb119988d0078d5',
-            u'text_url': reverse("doctext_view", args=[u'sample']),
-            u'dc_url': reverse("docdc_view", args=[u'sample']),
+            #u'text_url': reverse("doctext_view", args=[u'sample']),
+            #u'dc_url': reverse("docdc_view", args=[u'sample']),
             # u'parts_url': reverse("docparts_view", args=[u'sample']),
             u'name': u'sample',
             # u'size': 20,
@@ -181,8 +156,8 @@ class SimpleTest(TestCase):
 #        self.assertEqual(self.response.status_code, 200)
 #        self.assertEqual(self.response.content, TEXT)
 
-    def assert_json_response(self, must_have={}, exclude=[]):
-        self.assertEqual(self.response.status_code, 200)
+    def assert_json_response(self, must_have={}, exclude=[], code=200):
+        self.assertEqual(self.response.status_code, code)
         result = json.loads(self.response.content)
 
         for (k,v) in must_have.items():
