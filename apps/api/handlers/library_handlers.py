@@ -173,7 +173,7 @@ class DocumentHTMLHandler(BaseHandler):
             else:
                 document = lib.document_for_rev(revision)
 
-            return librarian.html.transform(document.data('xml'))
+            return librarian.html.transform(document.data('xml'), is_file=False)
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 

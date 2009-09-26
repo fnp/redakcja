@@ -39,6 +39,7 @@ __all__ = [
     'library_resource',
     'document_resource',
     'document_text_resource',
+    'document_html_resource',
     'document_dc_resource',
     'document_merge',
     'toolbar_buttons',

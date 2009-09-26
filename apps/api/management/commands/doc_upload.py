@@ -32,11 +32,12 @@ class Command(BaseCommand):
         bookname = args[1]
 
         print "Uploading '%s' as document '%s'" % (filename, bookname)
-        print "Wth DC template" if options['dc'] else ""
+        print options['dc']
+        print "With DC template" if options['dc'] is not None else ""
 
         print client.post( reverse("document_list_view"),\
         {
             'bookname': bookname,
             'ocr_file': open(filename),
-            'generate_dc': options['dc'] } )
+            'generate_dc': options['dc'] or False } )
                   
