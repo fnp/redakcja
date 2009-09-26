@@ -7,9 +7,6 @@ __doc__ = "Module documentation."
 from piston.resource import Resource
 from api.utils import DjangoAuth
 
-
-
-
 authdata = {'authentication': DjangoAuth()}
 
 #
@@ -24,12 +21,19 @@ document_html_resource = Resource(dh.DocumentHTMLHandler, **authdata)
 document_dc_resource = Resource(dh.DocumentDublinCoreHandler, **authdata)
 document_merge = Resource(dh.MergeHandler, **authdata)
 
+import api.handlers.manage_handlers as mh
+
+pullrequest_collection = Resource(mh.PullRequestListHandler, **authdata)
+pullrequest_rsrc = Resource(mh.PullRequestHandler, **authdata)
+
 #
 # Toolbar resources
 #
 import api.handlers.toolbar_handlers as th
 toolbar_buttons = Resource(th.ToolbarHandler, **authdata)
 scriptlets = Resource(th.ScriptletsHandler, **authdata)
+
+
 
 __all__ = [
     'library_resource',
@@ -38,5 +42,7 @@ __all__ = [
     'document_dc_resource',
     'document_merge',
     'toolbar_buttons',
-    'scriptlets'
+    'scriptlets',
+    'pullrequest_collection',
+    'pullrequest_rsrc',
 ]

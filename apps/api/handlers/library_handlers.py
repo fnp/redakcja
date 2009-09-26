@@ -70,6 +70,8 @@ class LibraryHandler(BaseHandler):
         try:
             lock = lib.lock()            
             try:
+                print "DOCID", docid
+                
                 doc = lib.document_create(docid)
                 # document created, but no content yet
 
@@ -226,11 +228,10 @@ class DocumentTextHandler(BaseHandler):
                     "updated_revision": ndoc.revision
                 }
             except Exception, e:
-                lib.rollback()
-                raise e
-        
-        except (RevisionNotFound, KeyError):
-            return response.EntityNotFound().django_response()
+                lib._rollback()
+                raise e        
+        except RevisionNotFound, e:
+            return response.EntityNotFound().django_response(e)
 
 #
 # Dublin Core handlers
@@ -245,9 +246,9 @@ class DocumentDublinCoreHandler(BaseHandler):
         """Read document as raw text"""        
         try:
             if revision == 'latest':
-                document = lib.document(docid)
+                doc = lib.document(docid)
             else:
-                document = lib.document_for_rev(revision)
+                doc = lib.document_for_rev(revision)
             
             bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
             return bookinfo.serialize()
@@ -280,20 +281,24 @@ class DocumentDublinCoreHandler(BaseHandler):
                 document.serialize().encode('utf-8'),\
                 message=msg, user=request.user.username)
 
-            return {
-                "document": ndoc.id,
-                "subview": "xml",
-                "previous_revision": prev,
-                "updated_revision": ndoc.revision
-            }
-        except (RevisionNotFound, KeyError):
+            try:
+                # return the new revision number
+                return {
+                    "document": ndoc.id,
+                    "subview": "dc",
+                    "previous_revision": current.revision,
+                    "updated_revision": ndoc.revision
+                }
+            except Exception, e:
+                lib._rollback()
+                raise e
+        except RevisionNotFound:
             return response.EntityNotFound().django_response()
-
 
 class MergeHandler(BaseHandler):
     allowed_methods = ('POST',)
 
-    @validate_form(forms.MergeRequestForm)
+    @validate_form(forms.MergeRequestForm, 'POST')
     @hglibrary
     def create(self, request, form, docid, lib):
         """Create a new document revision from the information provided by user"""
@@ -306,7 +311,7 @@ class MergeHandler(BaseHandler):
         if target_rev == 'latest':
             target_rev = udoc.revision
 
-        if udoc.revision != target_rev:
+        if str(udoc.revision) != target_rev:
             # user think doesn't know he has an old version
             # of his own branch.
             
@@ -328,22 +333,24 @@ class MergeHandler(BaseHandler):
             # update his internal state.
             return response.EntityConflict().django_response({
                     "reason": "out-of-date",
-                    "provided": target_revision,
+                    "provided": target_rev,
                     "latest": udoc.revision })
 
-        if not request.user.has_permission('explorer.pull_request.can_add'):
+        if not request.user.has_perm('explorer.book.can_share'):
             # User is not permitted to make a merge, right away
             # So we instead create a pull request in the database
             prq = PullRequest(
-                commiter=request.uset.username,
+                comitter=request.user,
                 document=docid,
-                source_revision = udoc.revision,
+                source_revision = str(udoc.revision),
                 status="N",
-                comment = form.cleaned_data['comment']
+                comment = form.cleaned_data['comment'] or '$AUTO$ Document shared.'
             )
 
             prq.save()
-            return response.RequestAccepted()
+            return response.RequestAccepted().django_response(\
+                ticket_status=prq.status, \
+                ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
 
         if form.cleanded_data['type'] == 'update':
             # update is always performed from the file branch

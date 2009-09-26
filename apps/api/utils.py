@@ -39,7 +39,7 @@ def validate_form(formclass, source='GET'):
             form = formclass(getattr(request, source), request.FILES)
 
             if not form.is_valid():
-                errorlist = [{'field': k, 'errors': e} for k, e in form.errors.items()]
+                errorlist = [{'field': k, 'errors': str(e)} for k, e in form.errors.items()]
                 return api.response.BadRequest().django_response(errorlist)
 
             kwargs['form'] = form

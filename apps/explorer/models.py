@@ -56,8 +56,8 @@ class EditorPanel(models.Model):
     
 class Book(models.Model):
     class Meta:
-        permissions = (
-            ("can_add_files", "Can do hg add."),
+        permissions = (            
+            ("can_share", "Can share documents without pull requests."),
         )
         abstract=True
     pass

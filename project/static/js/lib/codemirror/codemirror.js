@@ -132,6 +132,7 @@ var CodeMirror = (function(){
       var node = place;
       place = function(n){node.appendChild(n);};
     }
+    
     if (options.lineNumbers) place = wrapLineNumberDiv(place);
     place(frame);
 

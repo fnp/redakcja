@@ -10,7 +10,7 @@ from django import forms
 
 class MergeRequestForm(forms.Form):
     # should the target document revision be updated or shared
-    type = forms.ChoiceField(choices=('update', 'share'))
+    type = forms.ChoiceField(choices=(('update', 'Update'), ('share', 'Share')) )
 
     # which revision to update/share
     target_revision = forms.RegexField('[0-9a-f]{40}')
