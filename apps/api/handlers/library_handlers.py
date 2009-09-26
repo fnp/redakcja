@@ -7,18 +7,20 @@ __doc__ = "Module documentation."
 from piston.handler import BaseHandler, AnonymousBaseHandler
 
 
-import settings
 import librarian
+import librarian.html
 import api.forms as forms
 from datetime import date
 
 from django.core.urlresolvers import reverse
 
-from wlrepo import MercurialLibrary, RevisionNotFound, DocumentAlreadyExists
+from wlrepo import RevisionNotFound, LibraryException, DocumentAlreadyExists
 from librarian import dcparser
 
 import api.response as response
 from api.utils import validate_form, hglibrary
+
+from explorer.models import PullRequest
 
 #
 # Document List Handlers
@@ -56,7 +58,7 @@ class LibraryHandler(BaseHandler):
         """Create a new document."""       
 
         if form.cleaned_data['ocr_data']:
-            data = form.cleaned_data['ocr_data'].encode('utf-8')
+            data = form.cleaned_data['ocr_data']
         else:            
             data = request.FILES['ocr_file'].read().decode('utf-8')
 
@@ -64,20 +66,34 @@ class LibraryHandler(BaseHandler):
             data = librarian.wrap_text(data, unicode(date.today()))
 
         docid = form.cleaned_data['bookname']
+
         try:
-            doc = lib.document_create(docid)
-            doc = doc.quickwrite('xml', data, '$AUTO$ XML data uploaded.',
-                user=request.user.username)
+            lock = lib.lock()            
+            try:
+                doc = lib.document_create(docid)
+                # document created, but no content yet
 
-            url = reverse('document_view', args=[doc.id])
+                try:
+                    doc = doc.quickwrite('xml', data.encode('utf-8'),
+                        '$AUTO$ XML data uploaded.', user=request.user.username)
+                except Exception,e:
+                    # rollback branch creation
+                    lib._rollback()
+                    raise LibraryException("Exception occured:" + repr(e))
 
-            return response.EntityCreated().django_response(\
-                body = {
-                    'url': url,
-                    'name': doc.id,
-                    'revision': doc.revision },
-                url = url )
-                
+                url = reverse('document_view', args=[doc.id])
+
+                return response.EntityCreated().django_response(\
+                    body = {
+                        'url': url,
+                        'name': doc.id,
+                        'revision': doc.revision },
+                    url = url )            
+            finally:
+                lock.release()
+        except LibraryException, e:
+            return response.InternalError().django_response(\
+                {'exception': repr(e) })                
         except DocumentAlreadyExists:
             # Document is already there
             return response.EntityConflict().django_response(\
@@ -98,6 +114,7 @@ class BasicDocumentHandler(AnonymousBaseHandler):
 
         result = {
             'name': doc.id,
+            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
             'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
             'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
             'public_revision': doc.revision,
@@ -126,8 +143,9 @@ class DocumentHandler(BaseHandler):
 
         result = {
             'name': udoc.id,
-            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
-            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
+            'html_url': reverse('dochtml_view', args=[udoc.id,udoc.revision]),
+            'text_url': reverse('doctext_view', args=[udoc.id,udoc.revision]),
+            'dc_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
             'user_revision': udoc.revision,
             'public_revision': doc.revision,            
         }       
@@ -138,6 +156,25 @@ class DocumentHandler(BaseHandler):
     def update(self, request, docid, lib):
         """Update information about the document, like display not"""
         return
+#
+#
+#
+
+class DocumentHTMLHandler(BaseHandler):
+    allowed_methods = ('GET', 'PUT')
+
+    @hglibrary
+    def read(self, request, docid, revision, lib):
+        """Read document as html text"""
+        try:
+            if revision == 'latest':
+                document = lib.document(docid)
+            else:
+                document = lib.document_for_rev(revision)
+
+            return librarian.html.transform(document.data('xml'))
+        except RevisionNotFound:
+            return response.EntityNotFound().django_response()
 
 #
 # Document Text View
@@ -178,15 +215,19 @@ class DocumentTextHandler(BaseHandler):
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
 
-            ndoc = doc.quickwrite('xml', data, msg)
+            ndoc = current.quickwrite('xml', data, msg)
 
-            # return the new revision number
-            return {
-                "document": ndoc.id,
-                "subview": "xml",
-                "previous_revision": prev,
-                "updated_revision": ndoc.revision
-            }
+            try:
+                # return the new revision number
+                return {
+                    "document": ndoc.id,
+                    "subview": "xml",
+                    "previous_revision": current.revision,
+                    "updated_revision": ndoc.revision
+                }
+            except Exception, e:
+                lib.rollback()
+                raise e
         
         except (RevisionNotFound, KeyError):
             return response.EntityNotFound().django_response()
@@ -257,8 +298,72 @@ class MergeHandler(BaseHandler):
     def create(self, request, form, docid, lib):
         """Create a new document revision from the information provided by user"""
 
-        pass
+        target_rev = form.cleaned_data['target_revision']
 
-        
-        
-        
+        doc = lib.document(docid)
+        udoc = doc.take(request.user.username)
+
+        if target_rev == 'latest':
+            target_rev = udoc.revision
+
+        if udoc.revision != target_rev:
+            # user think doesn't know he has an old version
+            # of his own branch.
+            
+            # Updating is teorericly ok, but we need would
+            # have to force a refresh. Sharing may be not safe,
+            # 'cause it doesn't always result in update.
+
+            # In other words, we can't lie about the resource's state
+            # So we should just yield and 'out-of-date' conflict
+            # and let the client ask again with updated info.
+
+            # NOTE: this could result in a race condition, when there
+            # are 2 instances of the same user editing the same document.
+            # Instance "A" trying to update, and instance "B" always changing
+            # the document right before "A". The anwser to this problem is
+            # for the "A" to request a merge from 'latest' and then
+            # check the parent revisions in response, if he actually
+            # merge from where he thinks he should. If not, the client SHOULD
+            # update his internal state.
+            return response.EntityConflict().django_response({
+                    "reason": "out-of-date",
+                    "provided": target_revision,
+                    "latest": udoc.revision })
+
+        if not request.user.has_permission('explorer.pull_request.can_add'):
+            # User is not permitted to make a merge, right away
+            # So we instead create a pull request in the database
+            prq = PullRequest(
+                commiter=request.uset.username,
+                document=docid,
+                source_revision = udoc.revision,
+                status="N",
+                comment = form.cleaned_data['comment']
+            )
+
+            prq.save()
+            return response.RequestAccepted()
+
+        if form.cleanded_data['type'] == 'update':
+            # update is always performed from the file branch
+            # to the user branch
+            success, changed = udoc.update(request.user.username)
+
+        if form.cleanded_data['type'] == 'share':
+            success, changed = udoc.share(form.cleaned_data['comment'])
+
+        if not success:
+            return response.EntityConflict().django_response()
+
+        if not changed:
+            return response.SuccessNoContent().django_response()
+
+        new_udoc = udoc.latest()
+
+        return response.SuccessAllOk().django_response({
+            "name": udoc.id,
+            "parent_user_resivion": udoc.revision,
+            "parent_revision": doc.revision,
+            "revision": udoc.revision,
+        })

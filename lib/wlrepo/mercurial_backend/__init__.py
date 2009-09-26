@@ -6,8 +6,6 @@ __doc__ = "Module documentation."
 
 import wlrepo
 
-
-
 class MercurialRevision(wlrepo.Revision):
 
     def __init__(self, lib, changectx):
@@ -22,7 +20,7 @@ class MercurialRevision(wlrepo.Revision):
             idx = branchname.find("$doc:")
             if(idx < 0):
                 raise ValueError("Revision %s is not a valid document revision." % changectx.hex());
-            self._username = branchname[0:idx]
+            self._username = branchname[6:idx]
             self._docname = branchname[idx+5:]
         else:
             raise ValueError("Revision %s is not a valid document revision." % changectx.hex());
@@ -70,8 +68,12 @@ class MercurialRevision(wlrepo.Revision):
         lock = self._library._lock(True)
         try:
             self._library._checkout(self._changectx.node())
-            self._library._merge(other._changectx.node())
-            self._library._commit(user=user, message=message)
+            status = self._library._merge(other._changectx.node())
+            if status.is_clean():
+                self._library._commit(user=user, message=message)
+                return (True, True)
+            else:
+                return (False, False)
         finally:
             lock.release()
 

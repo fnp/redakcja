@@ -98,9 +98,12 @@ class EntityConflict(ResponseObject):
 #
 # Server side errors
 #
+class InternalError(ResponseObject):
+
+    def __init__(self, **kwargs):
+        ResponseObject.__init__(self, 500, **kwargs)
+
 class NotImplemented(ResponseObject):
 
     def __init__(self, **kwargs):
         ResponseObject.__init__(self, 501, **kwargs) 
-
-

@@ -64,20 +64,30 @@ class Book(models.Model):
 
 
 class PullRequest(models.Model):
-    comitter = models.ForeignKey(User) # the user who request the pull 
-    file = models.CharField(max_length=256) # the file to request
-    source_rev = models.CharField(max_length=40) # revision number of the commiter
 
+    REQUEST_STATUSES = (
+        ("N", "Pending for resolution"),
+        ("R", "Rejected"),
+        ("A", "Accepted & merged"),
+    )
+
+    comitter = models.ForeignKey(User) # the user who request the pull
     comment = models.TextField() # addtional comments to the request
 
-    # revision number in which the changes were merged (if any)
-    merged_rev = models.CharField(max_length=40, null=True) 
-    
-    def __unicode__(self):
-        return u"Pull request from %s, source: %s %s, status: %s." % \
-            (self.commiter, self.file, self.source_rev, \
-                (("merged into "+self.merged_rev) if self.merged_rev else "pending") )
+    # document to merge
+    document = models.CharField(max_length=255)
 
+    # revision to be merged into the main branch
+    source_revision = models.CharField(max_length=40)
+
+    # current status
+    status = models.CharField(max_length=1, choices=REQUEST_STATUSES)
+
+    # comment to the status change of request (if applicable)
+    response_comment = models.TextField(blank=True)
+
+    # revision number in which the changes were merged (if any)
+    merged_rev = models.CharField(max_length=40, blank=True, null=True)        
     
 def get_image_folders():
     return sorted(fn for fn in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR)) if not fn.startswith('.'))

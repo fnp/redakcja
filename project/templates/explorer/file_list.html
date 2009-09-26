@@ -81,10 +81,12 @@ $(function() {
 {% if perms.explorer.can_add_files %}
 <div class="upload-file-widget">
 <h2>Dodaj nowy utwór</h2>
+
 <form action="/api/documents" method="POST" enctype="multipart/form-data">
     {{ bookform }}
     <p><button type="submit">Dodaj książkę</button></p>
 </form>
+
 </div>
 {% endif %}
 

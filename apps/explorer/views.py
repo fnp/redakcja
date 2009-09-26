@@ -348,27 +348,26 @@ def file_dc(request, path, repo):
 # Display the main editor view
 
 @login_required
-@with_repo
-def display_editor(request, path, repo):    
-
+# @with_repo
+def display_editor(request, path):    
     # this is the only entry point where we create an autobranch for the user
     # if it doesn't exists. All other views SHOULD fail.
-    def ensure_branch_exists():
-        parent = repo.get_branch_tip('default')
-        repo._create_branch(file_branch(path, request.user), parent)
+    #def ensure_branch_exists():
+    #    parent = repo.get_branch_tip('default')
+    #    repo._create_branch(file_branch(path, request.user), parent)
         
-    try:
-        repo.with_wlock(ensure_branch_exists)
+#    try:
+    #    repo.with_wlock(ensure_branch_exists)
         
-        return direct_to_template(request, 'explorer/editor.html', extra_context={
-            'fileid': path,
-            'panel_list': ['lewy', 'prawy'],
-            'availble_panels': models.EditorPanel.objects.all(),
-            'scriptlets': toolbar_models.Scriptlet.objects.all()
-        })
-    except KeyError:
-        return direct_to_template(request, 'explorer/nofile.html', \
-            extra_context = { 'fileid': path })
+    return direct_to_template(request, 'explorer/editor.html', extra_context={
+        'fileid': path,
+        'panel_list': ['lewy', 'prawy'],
+        'availble_panels': models.EditorPanel.objects.all(),
+        # 'scriptlets': toolbar_models.Scriptlet.objects.all()
+    })
+#    except KeyError:
+#        return direct_to_template(request, 'explorer/nofile.html', \
+#            extra_context = { 'fileid': path })
 
 # ===============
 # = Panel views =

@@ -20,6 +20,7 @@ import api.handlers.library_handlers as dh
 library_resource = Resource(dh.LibraryHandler, **authdata)
 document_resource = Resource(dh.DocumentHandler, **authdata)
 document_text_resource = Resource(dh.DocumentTextHandler, **authdata)
+document_html_resource = Resource(dh.DocumentHTMLHandler, **authdata)
 document_dc_resource = Resource(dh.DocumentDublinCoreHandler, **authdata)
 document_merge = Resource(dh.MergeHandler, **authdata)
 

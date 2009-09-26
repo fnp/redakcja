@@ -15,6 +15,14 @@ class MercurialDocument(wlrepo.Document):
 
     def quickwrite(self, entry, data, msg, user=None):
         user = user or self.owner
+
+        if isinstance(data, unicode):
+            data = data.encode('utf-8')
+            
+        user = self._library._sanitize_string(user)
+        msg = self._library._sanitize_string(msg)
+        entry = self._library._sanitize_string(entry)
+
         if user is None:
             raise ValueError("Can't determine user.")
         
@@ -22,12 +30,13 @@ class MercurialDocument(wlrepo.Document):
             f = l._fileopen(r(entry), "w+")
             f.write(data)
             f.close()
-            l._fileadd(r(entry))
+            l._fileadd(r(entry))            
 
         return self.invoke_and_commit(write, lambda d: (msg, user))
 
-    def invoke_and_commit(self, ops, before_commit):
-        lock = self._library._lock()
+    def invoke_and_commit(self, ops,
+            before_commit, rollback=False):
+        lock = self._library.lock()
         try:            
             self._library._checkout(self._revision.hgrev())
 
@@ -37,11 +46,15 @@ class MercurialDocument(wlrepo.Document):
             ops(self._library, entry_path)
             message, user = before_commit(self)            
             self._library._commit(message, user)
-
-            return self._library.document(docid=self.id, user=self.owner)
+            try:
+                return self._library.document(docid=self.id, user=user)
+            except Exception, e:
+                # rollback the last commit
+                self._library.rollback()
+                raise e
         finally:
-            lock.release()            
-
+            lock.release()
+        
     # def commit(self, message, user):
     #    """Make a new commit."""
     #    self.invoke_and_commit(message, user, lambda *a: True)
@@ -52,7 +65,11 @@ class MercurialDocument(wlrepo.Document):
     def shared(self):
         if self.ismain():
             return self
-        return self._library.document(docid=self._revision.document_name())
+        
+        return self._library.document(docid=self.id)
+
+    def latest(self):
+        return self._library.document(docid=self.id, user=self.owner)
 
     def take(self, user):
         fullid = self._library.fulldocid(self.id, user)
@@ -69,37 +86,34 @@ class MercurialDocument(wlrepo.Document):
             
     def update(self, user):
         """Update parts of the document."""
-        lock = self.library._lock()
+        lock = self.library.lock()
         try:
             if self.ismain():
                 # main revision of the document
-                return True
+                return (True, False)
             
             if self._revision.has_children():
                 # can't update non-latest revision
-                return False
+                return (False, False)
 
             sv = self.shared()
             
             if not sv.ancestorof(self) and not self.parentof(sv):
-                self._revision.merge_with(sv._revision, user=user)
+                return self._revision.merge_with(sv._revision, user=user)
 
-            return True
+            return (False, False)
         finally:
             lock.release()  
 
     def share(self, message):
-        lock = self.library._lock()
+        lock = self.library.lock()
         try:            
             if self.ismain():
-                return True # always shared          
+                return (True, False) # always shared
 
             user = self._revision.user_name()
-
             main = self.shared()._revision
-            local = self._revision
-
-            no_changes = True
+            local = self._revision            
 
             # Case 1:
             #         * local
@@ -116,8 +130,7 @@ class MercurialDocument(wlrepo.Document):
 
             if main.ancestorof(local):
                 print "case 1"
-                main.merge_with(local, user=user, message=message)
-                no_changes = False
+                success, changed = main.merge_with(local, user=user, message=message)                
             # Case 2:
             #
             # main *  * local
@@ -131,8 +144,7 @@ class MercurialDocument(wlrepo.Document):
             elif local.has_common_ancestor(main):
                 print "case 2"
                 if not local.parentof(main):
-                    main.merge_with(local, user=user, message=message)
-                    no_changes = False
+                    success, changed = main.merge_with(local, user=user, message=message)
 
             # Case 3:
             # main *
@@ -151,16 +163,24 @@ class MercurialDocument(wlrepo.Document):
             elif local.ancestorof(main):
                 print "case 3"
                 if not local.parentof(main):
-                    local.merge_with(main, user=user, message='Local branch update.')
-                    no_changes = False
+                    success, changed = local.merge_with(main, user=user, \
+                        message='$AUTO$ Local branch update during share.')
+                    
             else:
                 print "case 4"
-                local.merge_with(main, user=user, message='Local branch update.')
-                local = self.shelf()
-                main.merge_with(local, user=user, message=message)
+                success, changed = local.merge_with(main, user=user, \
+                        message='$AUTO$ Local branch update during share.')
 
-            print "no_changes: ", no_changes
-            return no_changes
+                if not success:
+                    return False
+
+                if changed:
+                    local = local.latest()
+                    
+                success, changed = main.merge_with(local, user=user,\
+                    message=message)
+            
+            return success, changed
         finally:
             lock.release()     
 
