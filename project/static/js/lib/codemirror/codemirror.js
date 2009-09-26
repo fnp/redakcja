@@ -157,14 +157,18 @@ var CodeMirror = (function(){
     content_wrapper.appendChild(iframe_container);
     content_wrapper.style.position = 'relative';
     content_wrapper.className = 'CodeMirror-content-wrapper';
+    content_wrapper.style.width = options.width;
+    content_wrapper.style.height = options.height;
     
     iframe_container.style.position = 'absolute';
     iframe_container.style.top = '0px';
     iframe_container.style.right = '0px';
     iframe_container.style.bottom = '0px';
-    iframe_container.style.left = '28px';
+    iframe_container.style.left = '0px';
     
     if (options.lineNumbers) {
+       iframe_container.style.left = '28px';
+       
        var nums = document.createElement("DIV"),
           scroller = document.createElement("DIV");
 
