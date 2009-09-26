@@ -18,10 +18,15 @@ urlpatterns = patterns('',
 #    url(r'^hello\.(?P<emitter_format>.+)$', hello_resource),
 
     # Toolbar
-    url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'}),
-
-    # Toolbar
+    url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'}),    
     url(r'^toolbar/scriptlets$', scriptlets, {'emitter_format': 'json'}),
+
+    # Pull requests
+    url(r"^pull-requests$", pullrequest_collection,
+        {'emitter_format': 'json'} ),
+        
+    url(r"^pull-requests/(?P<prq_id>\d+)$", pullrequest_rsrc,
+        {'emitter_format': 'json'}, name="pullrequest_view" ),    
     
     # Documents
     url(r'^documents$', library_resource,
@@ -53,7 +58,7 @@ urlpatterns = patterns('',
         document_dc_resource, {'emitter_format': 'json'},
         name="docdc_view"),
 
-    url(urlpath(r'documents', DOC, 'revision'),
+    url(urlpath(r'documents', DOC, 'revision', format=False),
         document_merge, {'emitter_format': 'json'}, name="docmerge_view")
 
 #    url(r'^documents/(?P<docid>[^/]+)/parts$',

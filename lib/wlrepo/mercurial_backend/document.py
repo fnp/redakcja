@@ -32,7 +32,7 @@ class MercurialDocument(wlrepo.Document):
             f.close()
             l._fileadd(r(entry))            
 
-        return self.invoke_and_commit(write, lambda d: (msg, user))
+        return self.invoke_and_commit(write, lambda d: (msg, self.owner))
 
     def invoke_and_commit(self, ops,
             before_commit, rollback=False):
@@ -50,7 +50,7 @@ class MercurialDocument(wlrepo.Document):
                 return self._library.document(docid=self.id, user=user)
             except Exception, e:
                 # rollback the last commit
-                self._library.rollback()
+                self._library._rollback()
                 raise e
         finally:
             lock.release()
