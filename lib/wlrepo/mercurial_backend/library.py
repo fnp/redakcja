@@ -147,11 +147,11 @@ class MercurialLibrary(wlrepo.Library):
     # Locking
     #
 
-    def _lock(self, write_mode=False):
+    def lock(self, write_mode=False):
         return self._hgrepo.wlock() # no support for read/write mode yet
 
     def _transaction(self, write_mode, action):
-        lock = self._lock(write_mode)
+        lock = self.lock(write_mode)
         try:
             return action(self)
         finally:
@@ -198,6 +198,9 @@ class MercurialLibrary(wlrepo.Library):
 
     def _changectx(self, nodeid):
         return self._hgrepo.changectx(nodeid)
+
+    def _rollback(self):
+        return self._hgrepo.rollback()
 
     #
     # BASIC BRANCH routines
