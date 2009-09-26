@@ -5,7 +5,13 @@ from django.conf.urls.defaults import *
 
 from api.resources import *
 
-FORMAT_EXT = r"\.(?P<emitter_format>xml|json|yaml)$"
+FORMAT = r"\.(?P<emitter_format>xml|json|yaml)"
+DOC = r'(?P<docid>[^/]+)'
+REVISION = r'(?P<revision>latest|[0-9a-f]{40})'
+
+def urlpath(*args, **kwargs):
+    format = kwargs.get('format', True)
+    return r'^' + (r'/'.join(args)) + (FORMAT if format else '') + '$'
 
 urlpatterns = patterns('',
 #    url(r'^hello$', hello_resource, {'emitter_format': 'json'}),
@@ -21,31 +27,34 @@ urlpatterns = patterns('',
     url(r'^documents$', library_resource,
         {'emitter_format': 'json'}, name="document_list_view"),
 
-    url(r'^documents'+FORMAT_EXT, library_resource,
+    url(urlpath(r'documents'), library_resource,
         name="document_list_view_withformat"),
         
-    url(r'^documents/(?P<docid>[^/]+)'+FORMAT_EXT,
+    url(urlpath(r'documents', DOC),
         document_resource, name="document_view_withformat"),
 
-    url(r'^documents/(?P<docid>[^/]+)$',
+    url(urlpath(r'documents', DOC, format=False),
         document_resource, {'emitter_format': 'json'},
         name="document_view"),
     
-    url(r'^documents/(?P<docid>[^/]+)/text$',
+    url(urlpath(r'documents', DOC, 'text', REVISION, format=False),
         document_text_resource, {'emitter_format': 'rawxml'},
         name="doctext_view"),
 
-    url(r'^documents/(?P<docid>[^/]+)/dc' + FORMAT_EXT,
+    url(urlpath(r'documents', DOC, 'dc', REVISION),
         document_dc_resource,
         name="docdc_view_withformat"),
 
-    url(r'^documents/(?P<docid>[^/]+)/dc$',
+    url(urlpath(r'documents', DOC, 'dc', REVISION, format=False),
         document_dc_resource, {'emitter_format': 'json'},
         name="docdc_view"),
 
-    url(r'^documents/(?P<docid>[^/]+)/parts$',
-        document_resource, {'emitter_format': 'json'},
-        name="docparts_view"),
+    url(urlpath(r'documents', DOC, 'revision'),
+        document_merge, {'emitter_format': 'json'}, name="docmerge_view")
+
+#    url(r'^documents/(?P<docid>[^/]+)/parts$',
+#        document_resource, {'emitter_format': 'json'},
+#        name="docparts_view"),
         
   #  url(r'^posts/(?P<post_slug>[^/]+)/$', blogpost_resource),
   #  url(r'^other/(?P<username>[^/]+)/(?P<data>.+)/$', arbitrary_resource),

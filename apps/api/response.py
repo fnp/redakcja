@@ -101,26 +101,6 @@ class EntityConflict(ResponseObject):
 class NotImplemented(ResponseObject):
 
     def __init__(self, **kwargs):
-        ResponseObject.__init__(self, 501, **kwargs)
-
-def validate_form(formclass, source='GET'):
-    from functools import wraps
-
-    def decorator(func):
-        @wraps(func)
-        def decorated(self, request, *args, **kwargs):
-            form = formclass(getattr(request,  source), request.FILES)
-
-            if not form.is_valid():
-                errorlist = [{'field': k, 'errors': e} for k,e in form.errors]
-                return BadRequest().django_response(errorlist)
-            
-            return func(self, request, form, *args, **kwargs)
-        return decorated
-    return decorator
-       
-
-
-    
+        ResponseObject.__init__(self, 501, **kwargs) 
 
 

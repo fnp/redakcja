@@ -22,6 +22,8 @@ from toolbar import models as toolbar_models
 
 from django.forms.util import ErrorList
 
+import wlrepo
+
 #
 # Some useful decorators
 
@@ -36,7 +38,7 @@ def file_path(fileid):
 def with_repo(view):
     """Open a repository for this view"""
     def view_with_repo(request, *args, **kwargs):          
-        kwargs['repo'] = hg.Repository(settings.REPOSITORY_PATH)
+        kwargs['repo'] = wlrepo.MercurialLibrary(settings.REPOSITORY_PATH)
         return view(request, *args, **kwargs)
     return view_with_repo
 
@@ -55,20 +57,11 @@ def ajax_login_required(view):
 # View all files
 #
 @with_repo
-def file_list(request, repo):
-    #
-    latest_default = repo.get_branch_tip('default')
-
-    fl = []
-    for file in repo.repo[latest_default]:
-        m = re.match(u'^pub_([^/]+).xml$', file.decode('utf-8'), re.UNICODE)
-        if m is not None:
-            fl.append(m.group(1))
-            
-    bookform = forms.BookUploadForm()
-
+def file_list(request, repo):   
+    import api.forms
+    bookform = api.forms.DocumentUploadForm()
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'files': fl, 'bookform': bookform,
+        'files': repo.documents(), 'bookform': bookform,
     })
 
 @permission_required('explorer.can_add_files')

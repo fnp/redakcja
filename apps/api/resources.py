@@ -21,6 +21,7 @@ library_resource = Resource(dh.LibraryHandler, **authdata)
 document_resource = Resource(dh.DocumentHandler, **authdata)
 document_text_resource = Resource(dh.DocumentTextHandler, **authdata)
 document_dc_resource = Resource(dh.DocumentDublinCoreHandler, **authdata)
+document_merge = Resource(dh.MergeHandler, **authdata)
 
 #
 # Toolbar resources
@@ -34,6 +35,7 @@ __all__ = [
     'document_resource',
     'document_text_resource',
     'document_dc_resource',
+    'document_merge',
     'toolbar_buttons',
     'scriptlets'
 ]

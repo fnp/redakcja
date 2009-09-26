@@ -7,8 +7,16 @@ __doc__ = "Micro-forms for the API."
 
 from django import forms
 
-class DocumentEntryRequest(forms.Form):
-    revision = forms.RegexField(regex='latest|[0-9a-f]{40}')
+
+class MergeRequestForm(forms.Form):
+    # should the target document revision be updated or shared
+    type = forms.ChoiceField(choices=('update', 'share'))
+
+    # which revision to update/share
+    target_revision = forms.RegexField('[0-9a-f]{40}')
+
+    # any additional comments that user wants to add to the change
+    comment = forms.CharField(required=False)
 
 class DocumentUploadForm(forms.Form):
     ocr_file = forms.FileField(label='Source OCR file', required=False)
