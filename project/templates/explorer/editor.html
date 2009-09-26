@@ -27,8 +27,8 @@
 	{# JavaScript templates #}
 	<script type="text/html" charset="utf-8" id="panel-container-view-template">
 		<select>
-			<% for (var i = 0; i < panels.length; i++) { %>
-			<option value="<%= i %>"><%= panels[i].name %></option>
+			<% for (panel in panels) { %>
+			<option value="<%= panel %>"><%= panel %></option>
 			<% }; %>
 		</select>
 		<div class="content-view"></div>

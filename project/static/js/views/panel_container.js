@@ -16,15 +16,14 @@ var PanelContainerView = View.extend({
   },
   
   selectChanged: function(event) {
-    var view = panels[$('select', this.element.get(0)).val()];
-    var klass = view.klass;
-    console.log(view, klass);
+    var value = $('select', this.element.get(0)).val();
+    var klass = panels[value];
     if (this.contentView) {
       this.contentView.dispose();
       this.contentView = null;
     }
-    this.contentView = new klass($('.content-view', this.element.get(0)), this.model);
-    console.log(this.contentView);
+    this.contentView = new klass($('.content-view', 
+      this.element.get(0)), this.model.contentModels[value]);
   },
   
   dispose: function() {

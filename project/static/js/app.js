@@ -111,18 +111,18 @@ var Model = Class.extend({
   signal: function(event, data) {
     console.log('signal', this, event, data);
     if (this.observers[event]) {
-      for (observer in this.observers[event]) {
-        observer.handle(event, data);
+      for (key in this.observers[event]) {
+        this.observers[event][key](event, data);
       }
     };
     return this;
   },
   
-  addObserver: function(observer, event) {
+  addObserver: function(observer, event, callback) {
     if (!this.observers[event]) {
-      this.observers[event] = [];
+      this.observers[event] = {};
     }
-    this.observers[event][observer] = observer;
+    this.observers[event][observer.id] = callback;
     return this;
   },
   
@@ -132,7 +132,7 @@ var Model = Class.extend({
         this.removeObserver(observer, e);
       }
     } else {
-      delete this.observers[event][observer];
+      delete this.observers[event][observer.id];
     }
     return this;
   }
@@ -141,12 +141,25 @@ var Model = Class.extend({
 
 var XMLModel = Model.extend({
   parent: null,
-  data: null,
+  data: '',
   serverURL: null,
+  needsReload: false,
   
   init: function(parent, serverURL) {
     this.parent = parent;
     this.serverURL = serverURL;
+  },
+  
+  getData: function() {
+    if (!this.data) {
+      this.reload();
+    }
+    return this.data;
+  },
+  
+  setData: function(data) {
+    this.data = data;
+    this.dataChanged();
   },
   
   reload: function() {
@@ -161,65 +174,104 @@ var XMLModel = Model.extend({
     this.data = data;
     this.signal('reloaded');
   },
+  
+  dataChanged: function() {
+    this.parent.modelChanged('xml');
+    this.signal('dataChanged');
+  },
+  
+  needsReload: function() {
+    this.needsReload = true;
+    this.signal('needsReload');
+  }
 })
+
+
+
+var HTMLModel = Model.extend({
+  parent: null,
+  data: '',
+  serverURL: null,
+  needsReload: false,
+  
+  init: function(parent, serverURL) {
+    this.parent = parent;
+    this.serverURL = serverURL;
+  },
+  
+  getData: function() {
+    if (!this.data) {
+      this.reload();
+    }
+    return this.data;
+  },
+  
+  setData: function(data) {
+    console.log('setData');
+    if (this.data != data) {
+      this.data = data;
+      this.dataChanged();
+    }
+  },
+  
+  reload: function() {
+    $.ajax({
+      url: this.serverURL,
+      dataType: 'text',
+      success: this.reloadSucceeded.bind(this)
+    });
+  },
+  
+  reloadSucceeded: function(data) {
+    this.data = data;
+    this.signal('reloaded');
+  },
+  
+  dataChanged: function() {
+    this.parent.modelChanged('html');
+  },
+  
+  needsReload: function() {
+    this.needsReload = true;
+    this.signal('needsReload');
+  }
+})
+
 
 var DocumentModel = Model.extend({
   data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
   xml: null,
   html: null,
+  contentModels: {},
   
-  init: function() {},
+  init: function() {
+    this.getData();
+  },
   
-  getData: function(callback) {
-    console.log('get:', documentsUrl + fileId);
+  getData: function() {
+    console.log('DocumentModel#getData');
     $.ajax({
       cache: false,
       url: documentsUrl + fileId,
       dataType: 'json',
-      success: this.successfulGetData.bind(this, callback)
+      success: this.successfulGetData.bind(this)
     });
   },
   
-  successfulGetData: function(callback, data) {
+  successfulGetData: function(data) {
+    console.log('DocumentModel#successfulGetData:', data);
     this.data = data;
-    this.signal('changed');
-    if (callback) {
-      (callback.bind(this))(data);
+    this.contentModels = {
+      'xml': new XMLModel(this, data.text_url)
+    };
+  },
+  
+  modelChanged: function(contentModelName) {
+    for (modelName in this.contentModels) {
+      if (!(modelName == contentModelName)) {
+        this.contentModels[modelName].needsReload();
+      }
     }
-  },
-  
-  load: function(key) {
-    if (!this.data) {
-      this.getData(function() { this.load(key); }.bind(this));
-    } else {
-      console.log('load', key, this.data[key + 'url']);
-      $.ajax({
-        url: this.data[key + '_url'],
-        dataType: 'text',
-        success: this.loadSucceeded.bind(this, key)
-      });
-    }
-  },
-  
-  loadSucceeded: function(key, data) {
-    console.log('loadSucceeded', key, data);
-    this.set(key, data);
-  },
-  
-  get: function(key) {
-    console.log(this[key]);
-    if (this[key]) {
-      return this[key]
-    } else {
-      this.load(key);
-      return '';
-    }
-  },
-  
-  set: function(key, value) {
-    this[key] = value;
-    this.signal(key + '-changed');
-    return this;
   }
 });
 

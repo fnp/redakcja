@@ -5,7 +5,8 @@ var View = Class.extend({
   template: null,
   overlayClass: 'view-overlay',
   overlay: null,
-
+  id: null,
+  
   init: function(element, model, template) {
     this.element = $(element);
     this.model = model;
@@ -14,8 +15,16 @@ var View = Class.extend({
     if (this.template) {
       this.element.html(render_template(this.template, {}));
     }
+    
+    View.lastId = View.lastId + 1;
+    this.id = 'view-' + View.lastId;
   },
-
+  
+  // Identyczność
+  hash: function() {
+    
+  },
+  
   frozen: function() {
     return !!this.overlay;
   },
@@ -51,3 +60,6 @@ var View = Class.extend({
     this.element.contents().remove();
   }
 });
+
+
+View.lastId = 0;

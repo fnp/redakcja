@@ -6,14 +6,7 @@ var XMLView = View.extend({
   editor: null,
   
   init: function(element, model, template) {
-    this.element = $(element);
-    this.model = $(model).get(0);
-    this.template = template || this.template;
-    this.element.html(render_template(this.template, {}));
-    
-    this.model
-      .addObserver(this, 'xml-freeze')
-      .addObserver(this, 'xml-unfreeze');
+    this._super(element, model, template);
     
     this.freeze('Ładowanie edytora...');
   	this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
@@ -30,31 +23,31 @@ var XMLView = View.extend({
   },
   
   changed: function() {
-    this.model.set('text', this.editor.getCode());
+    this.model.setData(this.editor.getCode());
   },
   
   editorDidLoad: function(editor) {
     editor.setCode('Ładowanie edytora...');
     $(editor.frame).css({width: '100%', height: '100%'});
-    this.editor.setCode(this.model.get('text'));
-    this.model.addObserver(this, 'text-changed');
+    this.editor.setCode(this.model.getData());
     this.unfreeze();
+    this.model
+      .addObserver(this, 'reloaded', function() {
+        this.editor.setCode(this.model.getData()); this.unfreeze(); }.bind(this))
+      .addObserver(this, 'needsReload', function() { 
+        this.freeze('Niezsynchronizowany'); }.bind(this))
+      .addObserver(this, 'dataChanged', this.textDidChange.bind(this));
+
     // editor.grabKeys(
     //   $.fbind(self, self.hotkeyPressed),
     //   $.fbind(self, self.isHotkey)
     // );
   },
   
-  handle: function(event, data) {
-    console.log('handle', this, event, data);
-    if (event == 'text-changed') {
-      this.freeze('Niezsynchronizowany');
-      // this.unfreeze();      
-    } else if (event == 'xml-freeze') {
-      this.freeze('Ładowanie XMLa...');
-    } else if (event == 'xml-unfreeze') {
-      this.editor.setCode(this.model.get('text'));
-      this.unfreeze();
+  textDidChange: function(event) {
+    console.log('textDidChange!');
+    if (this.editor.getCode() != this.model.getData()) {
+      this.editor.setCode(this.model.getData());
     }
   },
   
@@ -66,4 +59,4 @@ var XMLView = View.extend({
 });
 
 // Register view
-panels.push({name: 'xml', klass: XMLView});
+panels['xml'] = XMLView;

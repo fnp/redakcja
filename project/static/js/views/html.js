@@ -5,10 +5,7 @@ var HTMLView = View.extend({
   template: 'html-view-template',
   
   init: function(element, model, template) {
-    this.element = $(element);
-    this.model = model;
-    this.template = template || this.template;
-    this.element.html(render_template(this.template, {}));
+    this._super(element, model, template);
   },
   
   dispose: function() {
@@ -17,4 +14,4 @@ var HTMLView = View.extend({
 });
 
 // Register view
-panels.push({name: 'html', klass: HTMLView});
+panels['html'] = HTMLView;
