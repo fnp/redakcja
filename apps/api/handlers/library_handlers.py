@@ -7,14 +7,14 @@ __doc__ = "Module documentation."
 from piston.handler import BaseHandler, AnonymousBaseHandler
 
 
-import settings
 import librarian
+import librarian.html
 import api.forms as forms
 from datetime import date
 
 from django.core.urlresolvers import reverse
 
-from wlrepo import MercurialLibrary, RevisionNotFound, DocumentAlreadyExists
+from wlrepo import RevisionNotFound, DocumentAlreadyExists
 from librarian import dcparser
 
 import api.response as response
@@ -98,6 +98,7 @@ class BasicDocumentHandler(AnonymousBaseHandler):
 
         result = {
             'name': doc.id,
+            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
             'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
             'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
             'public_revision': doc.revision,
@@ -126,6 +127,7 @@ class DocumentHandler(BaseHandler):
 
         result = {
             'name': udoc.id,
+            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
             'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
             'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
             'user_revision': udoc.revision,
@@ -138,6 +140,25 @@ class DocumentHandler(BaseHandler):
     def update(self, request, docid, lib):
         """Update information about the document, like display not"""
         return
+#
+#
+#
+
+class DocumentHTMLHandler(BaseHandler):
+    allowed_methods = ('GET', 'PUT')
+
+    @hglibrary
+    def read(self, request, docid, revision, lib):
+        """Read document as html text"""
+        try:
+            if revision == 'latest':
+                document = lib.document(docid)
+            else:
+                document = lib.document_for_rev(revision)
+
+            return librarian.html.transform(document.data('xml'))
+        except RevisionNotFound:
+            return response.EntityNotFound().django_response()
 
 #
 # Document Text View

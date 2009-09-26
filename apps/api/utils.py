@@ -18,8 +18,9 @@ class TextEmitter(Emitter):
     def render(self, request):
         return unicode(self.construct())
 
-Emitter.register('text', TextEmitter, 'text/plain; charset=utf-8')
-Emitter.register('rawxml', TextEmitter, 'application/xml; charset=UTF-8')
+Emitter.register('raw', TextEmitter, 'text/plain; charset=utf-8')
+Emitter.register('rawhtml', TextEmitter, 'text/html; charset=utf-8')
+Emitter.register('rawxml', TextEmitter, 'application/xml; charset=utf-8')
 
 class DjangoAuth(object):
 

@@ -41,6 +41,10 @@ urlpatterns = patterns('',
         document_text_resource, {'emitter_format': 'rawxml'},
         name="doctext_view"),
 
+    url(urlpath(r'documents', DOC, 'html', REVISION, format=False),
+        document_text_resource, {'emitter_format': 'rawhtml'},
+        name="dochtml_view"),
+
     url(urlpath(r'documents', DOC, 'dc', REVISION),
         document_dc_resource,
         name="docdc_view_withformat"),
