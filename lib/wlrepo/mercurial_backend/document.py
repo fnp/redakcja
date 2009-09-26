@@ -11,7 +11,7 @@ class MercurialDocument(wlrepo.Document):
     def data(self, entry):
         path = self._revision._docname + '.' + entry            
         return self._library._filectx(path, \
-            self._revision.hgrev()).data()
+            self._revision.hgrev()).data()   
 
     def quickwrite(self, entry, data, msg, user=None):
         user = user or self.owner
@@ -53,7 +53,6 @@ class MercurialDocument(wlrepo.Document):
         if self.ismain():
             return self
         return self._library.document(docid=self._revision.document_name())
-
 
     def take(self, user):
         fullid = self._library.fulldocid(self.id, user)

@@ -96,6 +96,8 @@ class MercurialLibrary(wlrepo.Library):
         return self.document_for_rev(self.fulldocid(docid, user))
 
     def get_revision(self, revid):
+        revid = self._sanitize_string(revid)
+        
         ctx = self._changectx(revid)
 
         if ctx is None:
@@ -107,6 +109,9 @@ class MercurialLibrary(wlrepo.Library):
         return MercurialRevision(self, ctx)
 
     def fulldocid(self, docid, user=None):
+        docid = self._sanitize_string(docid)
+        user = self._sanitize_string(user)
+        
         fulldocid = ''
         if user is not None:
             fulldocid += '$user:' + user
@@ -122,11 +127,13 @@ class MercurialLibrary(wlrepo.Library):
             return False
 
     def document_create(self, docid):
+        docid = self._sanitize_string(docid)
+        
         # check if it already exists
         fullid = self.fulldocid(docid)
 
         if self.has_revision(fullid):
-            raise LibraryException("Document already exists!");
+            raise wlrepo.DocumentAlreadyExists("Document %s already exists!" % docid);
 
         # doesn't exist
         self._create_branch(fullid)
@@ -241,6 +248,9 @@ class MercurialLibrary(wlrepo.Library):
 
     @staticmethod
     def _sanitize_string(s):
+        if s is None:
+            return None
+
         if isinstance(s, unicode):
             s = s.encode('utf-8')
 

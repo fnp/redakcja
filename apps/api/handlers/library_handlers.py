@@ -5,7 +5,7 @@ __date__ = "$2009-09-25 15:49:50$"
 __doc__ = "Module documentation."
 
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from piston.utils import rc
+
 
 import settings
 import librarian
@@ -13,9 +13,12 @@ import api.forms as forms
 from datetime import date
 
 from django.core.urlresolvers import reverse
-from wlrepo import MercurialLibrary, RevisionNotFound
 
+from wlrepo import MercurialLibrary, RevisionNotFound, DocumentAlreadyExists
 from librarian import dcparser
+
+import api.response as response
+from api.response import validate_form
 
 #
 # Document List Handlers
@@ -47,29 +50,39 @@ class LibraryHandler(BaseHandler):
 
         return {'documents' : document_list }
 
-    def create(self, request):
+    @validate_form(forms.DocumentUploadForm, 'POST')
+    def create(self, request, form):
         """Create a new document."""
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
 
-        form = forms.DocumentUploadForm(request.POST, request.FILES)
-        if not form.is_valid():
-            return rc.BAD_REQUEST
-
-        f = request.FILES['ocr']
-        data = f.read().decode('utf-8')
+        if form.cleaned_data['ocr_data']:
+            data = form.cleaned_data['ocr_data'].encode('utf-8')
+        else:            
+            data = request.FILES['ocr'].read().decode('utf-8')
 
         if form.cleaned_data['generate_dc']:
             data = librarian.wrap_text(data, unicode(date.today()))
 
-        # TODO: what if the file exists ?
-        doc = lib.document_create(form.cleaned_data['bookname'])
-        doc.quickwrite('xml', data, '$AUTO$ XML data uploaded.',
-            user=request.user.username)
+        docid = form.cleaned_data['bookname']
+        try:
+            doc = lib.document_create(docid)
+            doc.quickwrite('xml', data, '$AUTO$ XML data uploaded.',
+                user=request.user.username)
 
-        return {
-            'url': reverse('document_view', args=[doc.id]),
-            'name': doc.id,
-            'revision': doc.revision }
+            url = reverse('document_view', args=[doc.id])
+
+
+            return response.EntityCreated().django_response(\
+                body = {
+                    'url': url,
+                    'name': doc.id,
+                    'revision': doc.revision },
+                url = url )
+                
+        except DocumentAlreadyExists:
+            # Document is already there
+            return response.EntityConflict().django_response(\
+                {"reason": "Document %s already exists." % docid})
 
 #
 # Document Handlers
@@ -78,19 +91,17 @@ class BasicDocumentHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request, docid):
-        lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-
-        opts = forms.DocumentGetForm(request.GET)
-        if not opts.is_valid():
-            return rc.BAD_REQUEST
-
-        doc = lib.document(docid)
+        try:
+            lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+            doc = lib.document(docid)
+        except RevisionNotFound:
+            return rc.NOT_FOUND
 
         result = {
             'name': doc.id,
             'text_url': reverse('doctext_view', args=[doc.id]),
             'dc_url': reverse('docdc_view', docid=doc.id),
-            'latest_rev': doc.revision,
+            'public_revision': doc.revision,
         }
 
         return result
@@ -105,16 +116,12 @@ class DocumentHandler(BaseHandler):
     def read(self, request, docid):
         """Read document's meta data"""
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
-
-        opts = forms.DocumentGetForm(request.GET)
-        if not opts.is_valid():
-            return rc.BAD_REQUEST
-
+        
         try:
             doc = lib.document(docid)
             udoc = doc.take(request.user.username)
         except RevisionNotFound:
-            return rc.NOT_HERE
+            return request.EnityNotFound().django_response()
 
         # is_shared = udoc.ancestorof(doc)
         # is_uptodate = is_shared or shared.ancestorof(document)
@@ -124,14 +131,9 @@ class DocumentHandler(BaseHandler):
             'text_url': reverse('doctext_view', args=[udoc.id]),
             'dc_url': reverse('docdc_view', args=[udoc.id]),
             'parts_url': reverse('docparts_view', args=[udoc.id]),
-            'latest_rev': udoc.revision,
-            'latest_shared_rev': doc.revision,
-            # 'shared': is_shared,
-            # 'up_to_date': is_uptodate,
-        }
-
-        #if request.GET.get('with_part', 'no') == 'yes':
-        #    result['parts'] = document.parts()
+            'user_revision': udoc.revision,
+            'public_revision': doc.revision,            
+        }       
 
         return result
 
@@ -141,13 +143,21 @@ class DocumentHandler(BaseHandler):
 class DocumentTextHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
 
-    def read(self, request, docid):
-        """Read document as raw text"""
+    @validate_form(forms.DocumentEntryRequest)
+    def read(self, request, form, docid):
+        """Read document as raw text"""        
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
+        
         try:
-            return lib.document(docid, request.user.username).data('xml')
+            if request.GET['revision'] == 'latest':
+                document = lib.document(docid)
+            else:
+                document = lib.document_for_rev(request.GET['revision'])
+            
+            # TODO: some finer-grained access control
+            return document.data('xml')
         except RevisionNotFound:
-            return rc.NOT_HERE
+            return response.EntityNotFound().django_response()
 
     def update(self, request, docid):
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
@@ -164,13 +174,23 @@ class DocumentTextHandler(BaseHandler):
             orig = lib.document_for_rev(prev)
 
             if current != orig:
-                return rc.DUPLICATE_ENTRY
+                return response.EntityConflict().django_response({
+                        "reason": "out-of-date",
+                        "provided_revision": orig.revision,
+                        "latest_revision": current.revision })
 
-            doc.quickwrite('xml', data, msg)
+            ndoc = doc.quickwrite('xml', data, msg)
 
-            return rc.ALL_OK
+            # return the new revision number
+            return {
+                "document": ndoc.id,
+                "subview": "xml",
+                "previous_revision": prev,
+                "updated_revision": ndoc.revision
+            }
+        
         except (RevisionNotFound, KeyError):
-            return rc.NOT_HERE
+            return response.EntityNotFound().django_response()
 
 #
 # Dublin Core handlers
@@ -180,16 +200,20 @@ class DocumentTextHandler(BaseHandler):
 class DocumentDublinCoreHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
 
+    @validate_form(forms.DocumentEntryRequest)
     def read(self, request, docid):
         """Read document as raw text"""
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
         try:
-            doc = lib.document(docid, request.user.username).data('xml')
-            bookinfo = dcparser.BookInfo.from_string(doc.read())
-
+            if request.GET['revision'] == 'latest':
+                document = lib.document(docid)
+            else:
+                document = lib.document_for_rev(request.GET['revision'])                
+            
+            bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
             return bookinfo.serialize()
         except RevisionNotFound:
-            return rc.NOT_HERE
+            return response.EntityNotFound().django_response()
 
     def update(self, request, docid):
         lib = MercurialLibrary(path=settings.REPOSITORY_PATH)
@@ -205,15 +229,24 @@ class DocumentDublinCoreHandler(BaseHandler):
             orig = lib.document_for_rev(prev)
 
             if current != orig:
-                return rc.DUPLICATE_ENTRY
+                return response.EntityConflict().django_response({
+                        "reason": "out-of-date",
+                        "provided": orig.revision,
+                        "latest": current.revision })
 
             xmldoc = parser.WLDocument.from_string(current.data('xml'))
             document.book_info = dcparser.BookInfo.from_json(bi_json)
 
             # zapisz
-            current.quickwrite('xml', document.serialize().encode('utf-8'),\
+            ndoc = current.quickwrite('xml', \
+                document.serialize().encode('utf-8'),\
                 message=msg, user=request.user.username)
 
-            return rc.ALL_OK
+            return {
+                "document": ndoc.id,
+                "subview": "xml",
+                "previous_revision": prev,
+                "updated_revision": ndoc.revision
+            }
         except (RevisionNotFound, KeyError):
-            return rc.NOT_HERE
+            return response.EntityNotFound().django_response()

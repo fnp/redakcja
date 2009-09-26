@@ -110,5 +110,8 @@ class RevisionNotFound(LibraryException):
         LibraryException.__init__(self, "Revision %r not found." % rev)
     pass
 
+class DocumentAlreadyExists(LibraryException):
+    pass
+
 # import backends to local namespace
 from mercurial_backend.library import MercurialLibrary
