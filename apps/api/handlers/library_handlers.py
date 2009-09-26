@@ -143,9 +143,9 @@ class DocumentHandler(BaseHandler):
 
         result = {
             'name': udoc.id,
-            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
-            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
-            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
+            'html_url': reverse('dochtml_view', args=[udoc.id,udoc.revision]),
+            'text_url': reverse('doctext_view', args=[udoc.id,udoc.revision]),
+            'dc_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
             'user_revision': udoc.revision,
             'public_revision': doc.revision,            
         }       
@@ -215,15 +215,19 @@ class DocumentTextHandler(BaseHandler):
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
 
-            ndoc = doc.quickwrite('xml', data, msg)
+            ndoc = current.quickwrite('xml', data, msg)
 
-            # return the new revision number
-            return {
-                "document": ndoc.id,
-                "subview": "xml",
-                "previous_revision": prev,
-                "updated_revision": ndoc.revision
-            }
+            try:
+                # return the new revision number
+                return {
+                    "document": ndoc.id,
+                    "subview": "xml",
+                    "previous_revision": current.revision,
+                    "updated_revision": ndoc.revision
+                }
+            except Exception, e:
+                lib.rollback()
+                raise e
         
         except (RevisionNotFound, KeyError):
             return response.EntityNotFound().django_response()

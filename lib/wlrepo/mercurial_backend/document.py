@@ -15,6 +15,14 @@ class MercurialDocument(wlrepo.Document):
 
     def quickwrite(self, entry, data, msg, user=None):
         user = user or self.owner
+
+        if isinstance(data, unicode):
+            data = data.encode('utf-8')
+            
+        user = self._library._sanitize_string(user)
+        msg = self._library._sanitize_string(msg)
+        entry = self._library._sanitize_string(entry)
+
         if user is None:
             raise ValueError("Can't determine user.")
         
@@ -38,7 +46,12 @@ class MercurialDocument(wlrepo.Document):
             ops(self._library, entry_path)
             message, user = before_commit(self)            
             self._library._commit(message, user)
-            return self._library.document(docid=self.id, user=self.owner)       
+            try:
+                return self._library.document(docid=self.id, user=user)
+            except Exception, e:
+                # rollback the last commit
+                self._library.rollback()
+                raise e
         finally:
             lock.release()
         

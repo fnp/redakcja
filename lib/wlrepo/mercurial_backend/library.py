@@ -255,9 +255,6 @@ class MercurialLibrary(wlrepo.Library):
             return None
 
         if isinstance(s, unicode):
-            s = s.encode('utf-8')
-
-        if ' ' in s:
-            raise ValueError('Whitespace is forbidden!')
+            s = s.encode('utf-8')        
 
         return s
