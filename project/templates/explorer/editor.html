@@ -44,30 +44,7 @@
 	</script>
 {% endblock extrahead %}
 
-{% block extrabody %}
-    <script type="text/javascript" charset="utf-8">
-    $(function() {
-        {% for scriptlet in scriptlets %}
-        editor.registerScriptlet("{{scriptlet.name}}",
-            function(editor, panel, params) {
-                {{ scriptlet.code|safe }}
-            });
-        {% endfor %}
-     });  
-    </script>
-{% endblock extrabody %}
-
-{% load explorer_tags %}
-
-{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid|bookname }}{% endblock breadcrumbs %}
-
-{% block header-toolbar %}
-<button type="button" class="requires-save toolbar-button" id="toolbar-button-commit">Merge</button>
-<button type="button" class="requires-save toolbar-button" id="toolbar-button-update"
-        ui:ajax-action="{% url file_update fileid %}">Update</button>
-<button type="button" class="provides-save toolbar-button" id="toolbar-button-save" disabled="disabled">Commit</button>
-<button type="button" class="provides-save toolbar-button" id="toolbar-button-quick-save" disabled="disabled">Quick Save</button>
-{% endblock %}
+{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid }}{% endblock breadcrumbs %}
 
 {% block message-box %}
     <div class="msg-info" id="save-waiting"><p>Zapisuję dane na serwerze.</p><p class="data"></p></div>
