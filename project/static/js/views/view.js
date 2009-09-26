@@ -1,5 +1,5 @@
-/*globals Class render_template*/
-var View = Class.extend({
+/*globals Editor render_template*/
+var View = Editor.Object.extend({
   element: null,
   model: null,
   template: null,
@@ -13,7 +13,7 @@ var View = Class.extend({
     this.template = template || this.template;
     
     if (this.template) {
-      this.element.html(render_template(this.template, {}));
+      this.element.html(render_template(this.template, this));
     }
     
     View.lastId = View.lastId + 1;

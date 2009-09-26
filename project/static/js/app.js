@@ -70,6 +70,7 @@ var panel_hooks;
   };
 })();
 
+
 (function() {
   var slice = Array.prototype.slice;
   
@@ -97,189 +98,66 @@ var panel_hooks;
   }
   
 })();
- 
-var panels = [];
-
-var documentsUrl = '/api/documents/';
 
 
-var Model = Class.extend({
-  observers: {},
+var Editor = Editor || {};
+
+// Obiekt implementujący wzorzec KVC/KVO
+Editor.Object = Class.extend({
+  _observers: {},
   
-  init: function() {},
-  
-  signal: function(event, data) {
-    console.log('signal', this, event, data);
-    if (this.observers[event]) {
-      for (key in this.observers[event]) {
-        this.observers[event][key](event, data);
-      }
-    };
-    return this;
-  },
-  
-  addObserver: function(observer, event, callback) {
-    if (!this.observers[event]) {
-      this.observers[event] = {};
+  addObserver: function(observer, property, callback) {
+    if (!this._observers[property]) {
+      this._observers[property] = {}
     }
-    this.observers[event][observer.id] = callback;
+    this._observers[property][this.guid()] = callback;
     return this;
   },
   
-  removeObserver: function(observer, event) {
-    if (!event) {
-      for (e in this.observers) {
-        this.removeObserver(observer, e);
+  removeObserver: function(observer, property) {
+    if (!property) {
+      for (var property in this._observers) {
+        this.removeObserver(observer, property)
       }
     } else {
-      delete this.observers[event][observer.id];
+      delete this._observers[property][observer.guid()];
     }
     return this;
+  },
+  
+  notifyObservers: function(property) {
+    var currentValue = this[property];
+    for (var guid in this._observers[property]) {
+      this._observers[property][guid](property, currentValue);
+    }
+    return this;
+  },
+  
+  guid: function() {
+    if (!this._guid) {
+      this._guid = ('editor-' + Editor.Object._lastGuid++);
+    }
+    return this._guid;
+  },
+  
+  get: function(property) {
+    return this[property];
+  },
+  
+  set: function(property, value) {
+    if (this[property] != value) {
+      this[property] = value;
+      this.notifyObservers(property);
+    }
+    return this;
+  },
+  
+  dispose: function() {
+    delete this._observers;
   }
 });
 
-
-var XMLModel = Model.extend({
-  parent: null,
-  data: '',
-  serverURL: null,
-  needsReload: false,
-  
-  init: function(parent, serverURL) {
-    this.parent = parent;
-    this.serverURL = serverURL;
-  },
-  
-  getData: function() {
-    if (!this.data) {
-      this.reload();
-    }
-    return this.data;
-  },
-  
-  setData: function(data) {
-    this.data = data;
-    this.dataChanged();
-  },
-  
-  reload: function() {
-    $.ajax({
-      url: this.serverURL,
-      dataType: 'text',
-      success: this.reloadSucceeded.bind(this)
-    });
-  },
-  
-  reloadSucceeded: function(data) {
-    this.data = data;
-    this.signal('reloaded');
-  },
-  
-  dataChanged: function() {
-    this.parent.modelChanged('xml');
-    this.signal('dataChanged');
-  },
-  
-  needsReload: function() {
-    this.needsReload = true;
-    this.signal('needsReload');
-  }
-})
+Editor.Object._lastGuid = 0;
 
 
-
-var HTMLModel = Model.extend({
-  parent: null,
-  data: '',
-  serverURL: null,
-  needsReload: false,
-  
-  init: function(parent, serverURL) {
-    this.parent = parent;
-    this.serverURL = serverURL;
-  },
-  
-  getData: function() {
-    if (!this.data) {
-      this.reload();
-    }
-    return this.data;
-  },
-  
-  setData: function(data) {
-    console.log('setData');
-    if (this.data != data) {
-      this.data = data;
-      this.dataChanged();
-    }
-  },
-  
-  reload: function() {
-    $.ajax({
-      url: this.serverURL,
-      dataType: 'text',
-      success: this.reloadSucceeded.bind(this)
-    });
-  },
-  
-  reloadSucceeded: function(data) {
-    this.data = data;
-    this.signal('reloaded');
-  },
-  
-  dataChanged: function() {
-    this.parent.modelChanged('html');
-  },
-  
-  needsReload: function() {
-    this.needsReload = true;
-    this.signal('needsReload');
-  }
-})
-
-
-var DocumentModel = Model.extend({
-  data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
-  xml: null,
-  html: null,
-  contentModels: {},
-  
-  init: function() {
-    this.getData();
-  },
-  
-  getData: function() {
-    console.log('DocumentModel#getData');
-    $.ajax({
-      cache: false,
-      url: documentsUrl + fileId,
-      dataType: 'json',
-      success: this.successfulGetData.bind(this)
-    });
-  },
-  
-  successfulGetData: function(data) {
-    console.log('DocumentModel#successfulGetData:', data);
-    this.data = data;
-    this.contentModels = {
-      'xml': new XMLModel(this, data.text_url)
-    };
-  },
-  
-  modelChanged: function(contentModelName) {
-    for (modelName in this.contentModels) {
-      if (!(modelName == contentModelName)) {
-        this.contentModels[modelName].needsReload();
-      }
-    }
-  }
-});
-
-var leftPanelView, rightPanelContainer, doc;
-
-$(function() {
-  doc = new DocumentModel();
-  var splitView = new SplitView('#splitview', doc);
-  leftPanelView = new PanelContainerView('#left-panel-container', doc);
-  rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
-});
+var panels = [];
