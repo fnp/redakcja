@@ -81,10 +81,8 @@ $(function() {
 {% if perms.explorer.can_add_files %}
 <div class="upload-file-widget">
 <h2>Dodaj nowy utwór</h2>
-<form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
-    <p><label>{{bookform.file.label}}: {{ bookform.file }}</label></p>
-    <p><label>{{bookform.bookname.label}}: {{bookform.bookname}}</label></p>
-    <p><label>{{bookform.autoxml}} {{bookform.autoxml.label}}</label></p>
+<form action="/api/documents" method="POST" enctype="multipart/form-data">
+    {{ bookform }}
     <p><button type="submit">Dodaj książkę</button></p>
 </form>
 </div>
