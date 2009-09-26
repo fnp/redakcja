@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block extrahead %}
+<style type="text/css">
+    #loremIpsum {
+        position: relative;        
+    }
+
+    /* #lorepmIpsum * {
+        position: relative;
+    } */
+
+    .element-overlay {
+        position: absolute;
+        opacity: 1;
+        background: green;
+        z-index: 100;
+        padding: 0px;
+    }
+
+    .element-overlay textarea {
+        opacity: 1;
+        background: white;
+        color: black;
+        border: 1px dashed red;
+        margin: 0px;
+        
+        
+        width: 100%;
+        height: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block maincontent %}
+<h1>Wysiwyg editor</h1>
+<div>This part is not editable!</div>
+<div id="loremIpsum">
+
+<p>
+<p>Lorem <b>ipsum</b> dolor sit amet, consectetur adipiscing elit.
+    Suspendisse a urna eu enim rutrum elementum nec sed nibh. Quisque sed tortor
+    nulla, et euismod turpis. Morbi purus nulla, vulputate in vulputate id, gravida
+    id eros. In interdum est tempor est consequat imperdiet. Vivamus vitae ligula quam.
+    Proin nibh quam, tincidunt sit amet auctor eget, laoreet sit amet eros. Cras augue
+    lectus, euismod nec posuere ac, ultricies sed magna. Aliquam a lacinia sapien.
+    Cras imperdiet urna vel dui accumsan mollis. Suspendisse convallis tincidunt ornare.
+    Aenean convallis libero in lectus dictum vestibulum interdum ipsum suscipit.
+    Suspendisse sed justo sapien, eu egestas libero. Sed tincidunt sagittis sollicitudin.
+    Aliquam erat volutpat. Nullam egestas dolor id massa sagittis at sagittis ipsum
+    hendrerit.
+</p>
+
+<p>Phasellus sed purus non orci eleifend posuere ac eu elit. Etiam orci justo, porta vitae varius in, scelerisque sed metus. Phasellus faucibus lorem at metus scelerisque sit amet sollicitudin dolor dignissim. Aliquam eu justo in diam blandit posuere at a diam. Pellentesque tristique sem eu odio gravida eleifend. Phasellus cursus adipiscing metus, nec pharetra enim pharetra ac. Pellentesque faucibus volutpat lorem nec vulputate. Mauris in faucibus ipsum. Nulla ut urna nulla. Sed at tellus nec diam posuere porttitor. Duis faucibus, libero nec rhoncus facilisis, tortor ligula adipiscing massa, nec varius justo ante et magna. Donec orci mauris, ultrices nec blandit vel, lacinia in ante. Maecenas libero mi, pretium id ultricies eget, fringilla sit amet risus. Integer ut ante sem, et condimentum odio. Nam nec est erat. Etiam ut metus ligula. In vel condimentum orci.</p>
+
+<p>Suspendisse potenti. Proin in augue nibh. Curabitur in sollicitudin ipsum. In ut leo vel purus volutpat tempus. Proin ut neque at augue euismod ullamcorper nec ac dui. Vestibulum id quam nunc, eu porta augue. Pellentesque interdum neque eu nulla rhoncus vulputate. Sed viverra diam ac sem consectetur semper. Quisque consectetur fringilla quam, in feugiat nisl vulputate quis. Fusce vel ipsum lectus, eu interdum nunc. Donec luctus libero vitae mauris imperdiet at iaculis magna aliquet. Curabitur ullamcorper, diam nec pulvinar venenatis, nibh ante volutpat mauris, nec tristique lectus sem in urna. Aenean eu malesuada metus. Integer auctor nulla sit amet ligula sollicitudin ut accumsan velit ullamcorper. Donec nec auctor augue.</p>
+
+<p>Maecenas eget lacus vitae velit tincidunt bibendum quis et diam. In ullamcorper condimentum velit, et elementum felis vestibulum facilisis. Donec vitae cursus ipsum. Cras accumsan tincidunt aliquet. Nulla pellentesque mattis magna aliquet hendrerit. Pellentesque pellentesque odio enim. Duis viverra rhoncus tristique. In in risus ligula. Nullam dapibus lacinia facilisis. Ut eu neque neque, tristique laoreet nisl. Aliquam placerat dignissim leo, tristique tempor est vestibulum ut.</p>
+
+<p>Donec semper tempus ante, eget gravida erat varius et. Suspendisse aliquam rutrum nunc ac pulvinar. Aliquam erat volutpat. Nulla consectetur ultricies imperdiet. Nulla tincidunt est vitae augue porttitor a faucibus odio facilisis. In nec nisl odio. Aliquam et libero tortor, eu tincidunt mi. Vivamus suscipit erat sed mi hendrerit fringilla. Integer iaculis tempus nulla, at egestas velit faucibus ut. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum vel massa enim. Aliquam erat volutpat. In ligula tortor, fermentum eu suscipit at, posuere vel nunc. Nullam nibh magna, sollicitudin at semper et, mattis ut quam. Curabitur accumsan semper elit ac posuere. Sed sit amet lorem tortor, vel porttitor justo. Fusce odio metus, bibendum ut bibendum sit amet, luctus a ipsum. </p>
+</div>
+{% endblock %}
+
+{% block extrabody %}
+<script type="text/javascript">
+$(function() {
+    var lorem = $('#loremIpsum');
+    
+    var x = $('#loremIpsum *');
+    
+    x.click( function(event)
+    {
+        var e = $(this);
+        $.log("Overlaying element: ", this);        
+        var p = e.offsetParent();
+        var pos = e.position();
+        var marginTop = parseInt(e.css('margin-top'));
+
+        $.log("Offset: ", pos, p);
+        var overlay = $('<div class="element-overlay"><textarea></textarea></div>');
+        var text = $('textarea', overlay);
+        text.val(e.text());
+                
+        p.prepend(overlay);
+        
+        overlay.css({ top: pos.top+marginTop, left: pos.left, width: e.width(), height: e.height()});
+        
+        return false;
+    })
+});
+</script>
+{% endblock %}

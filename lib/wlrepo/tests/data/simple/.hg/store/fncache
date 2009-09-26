@@ -1,0 +1,6 @@
+data/$meta.i
+data/.hgignore.i
+data/sample.parts.i
+data/sample.xml.i
+data/sample_pl.xml.i
+data/.hgtags.i

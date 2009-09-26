@@ -17,8 +17,11 @@ panel_hooks = {
 	var texteditor = CodeMirror.fromTextArea(textareaId, {            
             parserfile: 'parsexml.js',
             path: "{{STATIC_URL}}js/lib/codemirror/",
+            width: 'auto',
             stylesheet: "{{STATIC_URL}}css/xmlcolors.css",
             parserConfig: {useHTMLKludges: false},
+            textWrapping: false,
+            lineNumbers: true,
             onChange: function() {
 		self.fireEvent('contentChanged');
             },
@@ -33,7 +36,9 @@ panel_hooks = {
             }
         })
 
-        $(texteditor.frame).css({width: '100%', height: '100%'});    
+        $('.CodeMirror-content-wrapper').css({
+            width: '100%', height: '100%' });
+                    
         this.texteditor = texteditor;
         self._endload();       
     },

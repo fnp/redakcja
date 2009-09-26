@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.conf import settings
@@ -42,7 +44,10 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
-    # Our uber-restful api
+    # Prototypes
+    url(r'^wysiwyg-proto/', include('wysiwyg.urls')),
+
+    # Our über-restful api
     url(r'^api/', include('api.urls') ),
 )
 

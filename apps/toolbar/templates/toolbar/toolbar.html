@@ -8,7 +8,7 @@
     {% endfor %} 
     </span>
 
-    <div class="toolbar-tabs-container">
+    <div class="toolbar-tabs-container toolbar-buttons-container">
     <p>
         {% for group in toolbar_groups %}
         <button ui:group="{{ group.slug }}" {% if forloop.first %}class="active"{% endif %}>

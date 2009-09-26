@@ -77,12 +77,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'explorer.middleware.EditorSettingsMiddleware',
     'django.middleware.doc.XViewMiddleware',
+
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    PROJECT_ROOT + '/templates'
+    PROJECT_ROOT + '/templates',    
 )
 
 # CSS and JS files to compress
@@ -114,6 +116,7 @@ INSTALLED_APPS = (
     'explorer',
     'toolbar',
     'api',
+    'wysiwyg',
 )
 
 

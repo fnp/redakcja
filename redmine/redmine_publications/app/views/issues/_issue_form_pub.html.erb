@@ -1,5 +1,5 @@
 <div>
-<p><label for="issue_source_files">Publication(s)</label>
+<p><label for="issue_source_files"><%= l(:field_publications) %>:</label>
 <input type='text' id='publications' name="publications" size="50"
 	value='<%= @issue.publication_names.join(', ') %>' />
 </div>

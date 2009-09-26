@@ -2,27 +2,28 @@ __author__="lreqc"
 __date__ ="$2009-09-17 16:16:54$"
 
 from django.conf.urls.defaults import *
-from piston.resource import Resource
 
-from api.handlers import *
-from api.utils import TextEmitter, DjangoAuth
+from api.resources import *
 
-authdata = {'authentication': DjangoAuth()}
-
-FORMAT_EXT = r"\.(?P<emitter_format>xml|json|yaml|django)$"
-
-library_resource = Resource(LibraryHandler, **authdata)
-document_resource = Resource(DocumentHandler, **authdata)
-document_text_resource = Resource(DocumentTextHandler, **authdata)
+FORMAT_EXT = r"\.(?P<emitter_format>xml|json|yaml)$"
 
 urlpatterns = patterns('',
 #    url(r'^hello$', hello_resource, {'emitter_format': 'json'}),
 #    url(r'^hello\.(?P<emitter_format>.+)$', hello_resource),
 
-    # Documents
-    url(r'^documents$', library_resource, {'emitter_format': 'json'},
-        name="document_list_view"),
+    # Toolbar
+    url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'}),
 
+    # Toolbar
+    url(r'^toolbar/scriptlets$', scriptlets, {'emitter_format': 'json'}),
+    
+    # Documents
+    url(r'^documents$', library_resource,
+        {'emitter_format': 'json'}, name="document_list_view"),
+
+    url(r'^documents'+FORMAT_EXT, library_resource,
+        name="document_list_view_withformat"),
+        
     url(r'^documents/(?P<docid>[^/]+)'+FORMAT_EXT,
         document_resource, name="document_view_withformat"),
 
@@ -34,8 +35,12 @@ urlpatterns = patterns('',
         document_text_resource, {'emitter_format': 'rawxml'},
         name="doctext_view"),
 
+    url(r'^documents/(?P<docid>[^/]+)/dc' + FORMAT_EXT,
+        document_dc_resource,
+        name="docdc_view_withformat"),
+
     url(r'^documents/(?P<docid>[^/]+)/dc$',
-        document_resource, {'emitter_format': 'json'},
+        document_dc_resource, {'emitter_format': 'json'},
         name="docdc_view"),
 
     url(r'^documents/(?P<docid>[^/]+)/parts$',
