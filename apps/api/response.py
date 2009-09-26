@@ -22,7 +22,7 @@ class ResponseObject(object):
         elif self._mime == MIME_JSON:
             data = json.dumps(body, default=lambda o: repr(o) )
         else:
-            data = u"%s\n%s" % (self.MESSAGE, unicode(self._info))
+            data = u"%s\n%s" % (self.MESSAGE, unicode(body))
             data = data.encode('utf-8')
             
         return HttpResponse(content=data, status=self._code, \
@@ -60,7 +60,6 @@ class SuccessNoContent(ResponseObject):
     def django_response(self):
         return ResponseObject.django_response(self, body=None)
 
-
 #
 # Client errors
 #
@@ -95,6 +94,14 @@ class EntityConflict(ResponseObject):
     def __init__(self, **kwargs):
         ResponseObject.__init__(self, 409, **kwargs)
 
+
+#
+# Server side errors
+#
+class NotImplemented(ResponseObject):
+
+    def __init__(self, **kwargs):
+        ResponseObject.__init__(self, 501, **kwargs)
 
 def validate_form(formclass, source='GET'):
     from functools import wraps

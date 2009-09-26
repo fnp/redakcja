@@ -35,6 +35,7 @@ class BasicLibraryHandler(AnonymousBaseHandler):
             'name': docid } for docid in lib.documents() ]
 
         return {'documents' : document_list}
+        
 
 class LibraryHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
@@ -48,7 +49,7 @@ class LibraryHandler(BaseHandler):
             'url': reverse('document_view', args=[docid]),
             'name': docid } for docid in lib.documents() ]
 
-        return {'documents' : document_list }
+        return {'documents' : document_list }        
 
     @validate_form(forms.DocumentUploadForm, 'POST')
     def create(self, request, form):
@@ -136,6 +137,10 @@ class DocumentHandler(BaseHandler):
         }       
 
         return result
+
+    def update(self, request, docid):
+        """Update information about the document, like display not"""
+        return
 
 #
 # Document Text View
