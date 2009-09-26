@@ -78,7 +78,7 @@ class PullRequest(models.Model):
     document = models.CharField(max_length=255)
 
     # revision to be merged into the main branch
-    source_revision = models.CharField(max_length=40)
+    source_revision = models.CharField(max_length=40, unique=True)
 
     # current status
     status = models.CharField(max_length=1, choices=REQUEST_STATUSES)
@@ -87,7 +87,11 @@ class PullRequest(models.Model):
     response_comment = models.TextField(blank=True)
 
     # revision number in which the changes were merged (if any)
-    merged_rev = models.CharField(max_length=40, blank=True, null=True)        
+    merged_rev = models.CharField(max_length=40, blank=True, null=True)
+
+
+    def __unicode__(self):
+        return unicode(self.comitter) + u':' + self.document
     
 def get_image_folders():
     return sorted(fn for fn in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR)) if not fn.startswith('.'))

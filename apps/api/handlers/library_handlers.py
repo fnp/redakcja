@@ -70,8 +70,7 @@ class LibraryHandler(BaseHandler):
         try:
             lock = lib.lock()            
             try:
-                print "DOCID", docid
-                
+                print "DOCID", docid                
                 doc = lib.document_create(docid)
                 # document created, but no content yet
 
