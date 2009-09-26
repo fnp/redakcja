@@ -1,17 +1,15 @@
 /*globals View render_template panels*/
 
 var PanelContainerView = View.extend({
+  _className: 'PanelContainerView',
   element: null,
   model: null,
   template: 'panel-container-view-template',
   contentView: null,
   
   init: function(element, model, template) {
-    this.element = $(element);
-    this.model = model;
-    this.template = template || this.template;
-    
-    this.element.html(render_template(this.template, {panels: panels}));
+    this._super(element, model, template);
+
     $('select', this.element.get(0)).bind('change.panel-container-view', this.selectChanged.bind(this));
   },
   
@@ -23,7 +21,7 @@ var PanelContainerView = View.extend({
       this.contentView = null;
     }
     this.contentView = new klass($('.content-view', 
-      this.element.get(0)), this.model.contentModels[value]);
+      this.element.get(0)), this.model.contentModels[value], this);
   },
   
   dispose: function() {

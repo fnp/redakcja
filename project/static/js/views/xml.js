@@ -1,15 +1,17 @@
 /*global View CodeMirror render_template panels */
 var XMLView = View.extend({
+  _className: 'XMLView',
   element: null,
   model: null,
   template: 'xml-view-template',
   editor: null,
   buttonToolbar: null,
   
-  init: function(element, model, template) {
+  init: function(element, model, parent, template) {
     this._super(element, model, template);
+    this.parent = parent;
     
-    this.freeze('Ładowanie edytora...');
+    this.parent.freeze('Ładowanie edytora...');
   	this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
       parserfile: 'parsexml.js',
       path: "/static/js/lib/codemirror/",
@@ -30,13 +32,14 @@ var XMLView = View.extend({
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
       .addObserver(this, 'synced', this.modelSyncChanged.bind(this));
     
+    this.parent.unfreeze();
+        
     if (!this.model.get('synced')) {
-      this.freeze('Niezsynchronizowany...');
+      this.parent.freeze('Niezsynchronizowany...');
       this.model.load();
     } else {
       this.editor.setCode(this.model.get('data'));
     }
-    this.unfreeze();
   
     // editor.grabKeys(
     //   $.fbind(self, self.hotkeyPressed),
@@ -56,9 +59,9 @@ var XMLView = View.extend({
   
   modelSyncChanged: function(property, value) {
     if (value) {
-      this.unfreeze();
+      this.parent.unfreeze();
     } else {
-      this.freeze('Niezsynchronizowany...');
+      this.parent.freeze('Niezsynchronizowany...');
     }
   },
     

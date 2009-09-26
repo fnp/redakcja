@@ -2,6 +2,7 @@
 
 // Split view inspired by jQuery Splitter Plugin http://methvin.com/splitter/
 var SplitView = View.extend({
+  _className: 'SplitView',
   splitbarClass: 'splitview-splitbar',
   activeClass: 'splitview-active',
   overlayClass: 'splitview-overlay',
@@ -14,8 +15,10 @@ var SplitView = View.extend({
   _splitbarWidth: 0,
   
   init: function(element, model) {
-    this.element = $(element).css('position', 'relative');
-    this.model = model;
+    this._super(element, model, null);
+    this.element.css('position', 'relative');
+    this._resizingSubviews = false;
+    
     this.views = $(">*", this.element[0]).css({
     	position: 'absolute', 			  // positioned inside splitter container
     	'z-index': 1,					        // splitbar is positioned above
@@ -82,6 +85,12 @@ var SplitView = View.extend({
       .unbind('mouseup.splitview');
   },
 
+  resized: function(event) {
+    if (!this._resizingSubviews) {
+      this.resplit(Math.min(this.leftView.width(), this.element.width() - this._splitbarWidth));
+    }
+  },
+  
   resplit: function(newPosition) {
     newPosition = Math.max(0, Math.min(newPosition, this.element.width() - this._splitbarWidth));
     this.splitbar.css('left', newPosition);
@@ -94,7 +103,9 @@ var SplitView = View.extend({
       width: this.element.width() - newPosition - this._splitbarWidth
     });
     if (!$.browser.msie) {
-		  this.views.trigger("resize");
+      this._resizingSubviews = true;
+		  $(window).trigger('resize');
+		  this._resizingSubviews = false;
 		}
   },
   

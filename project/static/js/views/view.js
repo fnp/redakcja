@@ -1,11 +1,11 @@
 /*globals Editor render_template*/
 var View = Editor.Object.extend({
+  _className: 'View',
   element: null,
   model: null,
   template: null,
   overlayClass: 'view-overlay',
   overlay: null,
-  id: null,
   
   init: function(element, model, template) {
     this.element = $(element);
@@ -16,13 +16,9 @@ var View = Editor.Object.extend({
       this.element.html(render_template(this.template, this));
     }
     
-    View.lastId = View.lastId + 1;
-    this.id = 'view-' + View.lastId;
-  },
-  
-  // Identyczność
-  hash: function() {
-    
+    this._resizeHandler = this.resized.bind(this);
+    $(window).bind('resize', this._resizeHandler);
+    $(this.element).bind('resize', this._resizeHandler);
   },
   
   frozen: function() {
@@ -38,8 +34,14 @@ var View = Editor.Object.extend({
               width: this.element.width(),
               height: this.element.height(),
               top: this.element.position().top,
-              left: this.element.position().left
+              left: this.element.position().left,
+              'user-select': 'none',
+              '-webkit-user-select': 'none',
+              '-khtml-user-select': 'none',
+              '-moz-user-select': 'none',
+              overflow: 'hidden'
             })
+            .attr('unselectable', 'on')
             .appendTo(this.element.parent());
             
     this.overlay.children('div').css({
@@ -55,11 +57,24 @@ var View = Editor.Object.extend({
     }
   },
 
+  resized: function(event) {
+    console.log('resized', this.description(), this.element);
+    if (this.frozen()) {
+      console.log('css!');
+      this.overlay.css({
+        position: 'absolute',
+        width: this.element.width(),
+        height: this.element.height(),
+        top: this.element.position().top,
+        left: this.element.position().left
+      });
+    }
+  },
+  
   dispose: function() {
+    $(window).unbind('resize', this._resizeHandler);
+    $(this.element).unbind('resize', this._resizeHandler);
     this.unfreeze();
     this.element.contents().remove();
   }
 });
-
-
-View.lastId = 0;

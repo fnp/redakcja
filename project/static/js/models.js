@@ -9,9 +9,11 @@ Editor.Model = Editor.Object.extend({
 
 
 Editor.XMLModel = Editor.Model.extend({
+  _className: 'Editor.XMLModel',
   serverURL: null,
   
   init: function(serverURL) {
+    this._super();
     this.serverURL = serverURL;
   },
   
@@ -20,11 +22,6 @@ Editor.XMLModel = Editor.Model.extend({
       this.reload();
     }
     return this.data;
-  },
-  
-  setData: function(data) {
-    this.data = data;
-    this.dataChanged();
   },
   
   load: function() {
@@ -45,9 +42,12 @@ Editor.XMLModel = Editor.Model.extend({
 
 
 Editor.HTMLModel = Editor.Model.extend({
+  _className: 'Editor.HTMLModel',
   serverURL: null,
+  data: '',
   
   init: function(serverURL) {
+    this._super();
     this.serverURL = serverURL;
   },
   
@@ -69,10 +69,12 @@ Editor.HTMLModel = Editor.Model.extend({
 
 
 Editor.DocumentModel = Editor.Model.extend({
+  _className: 'Editor.DocumentModel',
   data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
   contentModels: {},
   
   init: function() {
+    this._super();
     this.load();
   },
   
@@ -93,6 +95,19 @@ Editor.DocumentModel = Editor.Model.extend({
       'xml': new Editor.XMLModel(data.text_url),
       'html': new Editor.HTMLModel(data.html_url)
     };
+    for (var key in this.contentModels) {
+      this.contentModels[key].addObserver(this, 'data', this.contentModelDataChanged.bind(this));
+    }
+  },
+  
+  contentModelDataChanged: function(property, value, contentModel) {
+    console.log('data of', contentModel.description(), 'changed!');
+    for (var key in this.contentModels) {
+      if (this.contentModels[key].guid() != contentModel.guid()) {
+        console.log(this.contentModels[key].description(), 'frozen');
+        this.contentModels[key].set('synced', false);
+      }
+    }
   }
 });
 
