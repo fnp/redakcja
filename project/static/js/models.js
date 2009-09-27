@@ -11,6 +11,7 @@ Editor.Model = Editor.Object.extend({
 Editor.XMLModel = Editor.Model.extend({
   _className: 'Editor.XMLModel',
   serverURL: null,
+  data: '',
   
   init: function(serverURL) {
     this._super();

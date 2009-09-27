@@ -58,15 +58,16 @@ var View = Editor.Object.extend({
   },
 
   resized: function(event) {
-    console.log('resized', this.description(), this.element);
     if (this.frozen()) {
-      console.log('css!');
       this.overlay.css({
         position: 'absolute',
         width: this.element.width(),
         height: this.element.height(),
         top: this.element.position().top,
         left: this.element.position().left
+      }).children('div').css({
+        position: 'relative',
+        top: this.overlay.height() / 2 - 20
       });
     }
   },

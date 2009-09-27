@@ -33,14 +33,13 @@ var XMLView = View.extend({
       .addObserver(this, 'synced', this.modelSyncChanged.bind(this));
     
     this.parent.unfreeze();
-        
+      
+    this.editor.setCode(this.model.get('data'));
     if (!this.model.get('synced')) {
       this.parent.freeze('Niezsynchronizowany...');
       this.model.load();
-    } else {
-      this.editor.setCode(this.model.get('data'));
     }
-  
+    
     // editor.grabKeys(
     //   $.fbind(self, self.hotkeyPressed),
     //   $.fbind(self, self.isHotkey)
