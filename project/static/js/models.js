@@ -143,6 +143,7 @@ var leftPanelView, rightPanelContainer, doc;
 
 $(function() {
   doc = new Editor.DocumentModel();
+  var editor = new EditorView('body', doc);
   var splitView = new SplitView('#splitview', doc);
   leftPanelView = new PanelContainerView('#left-panel-container', doc);
   rightPanelContainer = new PanelContainerView('#right-panel-container', doc);

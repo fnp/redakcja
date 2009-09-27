@@ -12,6 +12,7 @@
 	{# App and views #}
 	<script src="{{STATIC_URL}}js/app.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/view.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/views/editor.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/button_toolbar.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/split.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/xml.js" type="text/javascript" charset="utf-8"></script>
@@ -82,6 +83,10 @@
     
 {% endblock %}
 
+{% block header-toolbar %}
+	<button>Merge</button> <button>Update</button>
+{% endblock %}
+
 {% block maincontent %}
 	<div id="splitview">
 		<div id="left-panel-container" class='panel-container'></div>
@@ -120,4 +125,4 @@
     {#         <p><button type="button" class="dialog-close-button">Close</button></p> #}
     {#     </div> #}
     {# </div> #}
-{% endblock maincontent %}    
+{% endblock maincontent %}
