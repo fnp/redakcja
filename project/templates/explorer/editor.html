@@ -12,6 +12,7 @@
 	{# App and views #}
 	<script src="{{STATIC_URL}}js/app.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/view.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/views/button_toolbar.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/split.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/xml.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/html.js" type="text/javascript" charset="utf-8"></script>
@@ -30,12 +31,37 @@
 	</script>
 	
 	<script type="text/html" charset="utf-8" id="xml-view-template">
+		<div class="xmlview-toolbar"></div>
 		<div class="xmlview">
+			
 		</div>
 	</script>
 	
 	<script type="text/html" charset="utf-8" id="html-view-template">
 		<div class="htmlview">
+		</div>
+	</script>
+	
+	<script type="text/javascript" charset="utf-8" id="button-toolbar-view-template">
+		<div class="buttontoolbarview">
+			<div class="buttontoolbarview-tabs">
+			<% for (var i=0; i < buttons.length; i++) { %>
+				<a href="#" class="buttontoolbarview-tab" ui:groupindex="<%= i %>"><%= buttons[i].name %></a>
+			<% }; %>
+			</div>
+			<div class="buttontoolbarview-groups">
+			<% for (var i=0; i < buttons.length; i++) { %>
+				<div class="buttontoolbarview-group" ui:groupIndex="<%= i %>" style="display: none">
+					<% for (var j=0; j < buttons[i].buttons.length; j++) { %>
+						<% if (buttons[i].buttons[j].scriptlet_id) { %>
+						<a href="#" class="buttontoolbarview-button" ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
+							<%= buttons[i].buttons[j].label %>
+						</a>
+						<% } %>
+					<% } %>
+				</div>
+			<% }; %>
+			</div>
 		</div>
 	</script>
 {% endblock extrahead %}

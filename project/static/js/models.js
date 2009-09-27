@@ -8,6 +8,31 @@ Editor.Model = Editor.Object.extend({
 });
 
 
+Editor.ToolbarButtonsModel = Editor.Model.extend({
+  _className: 'Editor.ToolbarButtonsModel',
+  serverURL: '/api/toolbar/buttons',
+  buttons: {},
+  
+  init: function() {
+    this._super();
+  },
+  
+  load: function() {
+    if (!this.get('buttons').length) {
+      $.ajax({
+        url: this.serverURL,
+        dataType: 'json',
+        success: this.loadSucceeded.bind(this)
+      });
+    }
+  },
+  
+  loadSucceeded: function(data) {
+    this.set('buttons', data);
+  }
+});
+
+
 Editor.XMLModel = Editor.Model.extend({
   _className: 'Editor.XMLModel',
   serverURL: null,
@@ -16,6 +41,7 @@ Editor.XMLModel = Editor.Model.extend({
   init: function(serverURL) {
     this._super();
     this.serverURL = serverURL;
+    this.toolbarButtonsModel = new Editor.ToolbarButtonsModel();
   },
   
   getData: function() {

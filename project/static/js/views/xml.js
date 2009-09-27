@@ -1,4 +1,4 @@
-/*global View CodeMirror render_template panels */
+/*global View CodeMirror ButtonToolbarView render_template panels */
 var XMLView = View.extend({
   _className: 'XMLView',
   element: null,
@@ -10,7 +10,10 @@ var XMLView = View.extend({
   init: function(element, model, parent, template) {
     this._super(element, model, template);
     this.parent = parent;
-    
+    this.buttonToolbar = new ButtonToolbarView(
+      $('.xmlview-toolbar', this.element), 
+      this.model.toolbarButtonsModel);
+
     this.parent.freeze('Ładowanie edytora...');
   	this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
       parserfile: 'parsexml.js',
@@ -27,7 +30,6 @@ var XMLView = View.extend({
   
   editorDidLoad: function(editor) {
     $(editor.frame).css({width: '100%', height: '100%'});
-    
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
       .addObserver(this, 'synced', this.modelSyncChanged.bind(this));
