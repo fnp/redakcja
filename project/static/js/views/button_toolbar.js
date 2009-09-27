@@ -39,14 +39,14 @@ var ButtonToolbarView = View.extend({
       $(self.element).trigger('resize');
     });
     
-    $('.buttontoolbarview-button', this.element).bind('click.buttontoolbarview', function() {
+    $('.buttontoolbarview-button', this.element).bind('click.buttontoolbarview', function(event) {
       var groupIndex = parseInt($(this).attr('ui:groupindex'), 10);
       var buttonIndex = parseInt($(this).attr('ui:buttonindex'), 10);
       var button = self.get('buttons')[groupIndex].buttons[buttonIndex];
       var scriptletId = button.scriptlet_id;
       var params = eval('(' + button.params + ')'); // To nie powinno być potrzebne
       console.log('Executing', scriptletId, 'with params', params);
-      scriptletCenter[scriptletId](self.parent, params);
+      scriptletCenter.scriptlets[scriptletId](self.parent, params);
     });
     
     $(this.element).trigger('resize');
