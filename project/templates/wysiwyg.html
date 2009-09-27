@@ -1,41 +1,14 @@
 {% extends 'base.html' %}
 
-{% block extrahead %}
-<style type="text/css">
-    #loremIpsum {
-        position: relative;        
-    }
-
-    /* #lorepmIpsum * {
-        position: relative;
-    } */
-
-    .element-overlay {
-        position: absolute;
-        opacity: 1;
-        background: green;
-        z-index: 100;
-        padding: 0px;
-    }
-
-    .element-overlay textarea {
-        opacity: 1;
-        background: white;
-        color: black;
-        border: 1px dashed red;
-        margin: 0px;
-        
-        
-        width: 100%;
-        height: 100%;
-    }
-</style>
-{% endblock %}
-
 {% block maincontent %}
 <h1>Wysiwyg editor</h1>
 <div>This part is not editable!</div>
 <div id="loremIpsum">
+
+ {% for a,b in listA,listB %}
+
+ {{ a }} / {{ b }}
+ {% endfor %}
 
 <p>
 <p>Lorem <b>ipsum</b> dolor sit amet, consectetur adipiscing elit.
@@ -59,34 +32,4 @@
 
 <p>Donec semper tempus ante, eget gravida erat varius et. Suspendisse aliquam rutrum nunc ac pulvinar. Aliquam erat volutpat. Nulla consectetur ultricies imperdiet. Nulla tincidunt est vitae augue porttitor a faucibus odio facilisis. In nec nisl odio. Aliquam et libero tortor, eu tincidunt mi. Vivamus suscipit erat sed mi hendrerit fringilla. Integer iaculis tempus nulla, at egestas velit faucibus ut. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum vel massa enim. Aliquam erat volutpat. In ligula tortor, fermentum eu suscipit at, posuere vel nunc. Nullam nibh magna, sollicitudin at semper et, mattis ut quam. Curabitur accumsan semper elit ac posuere. Sed sit amet lorem tortor, vel porttitor justo. Fusce odio metus, bibendum ut bibendum sit amet, luctus a ipsum. </p>
 </div>
-{% endblock %}
-
-{% block extrabody %}
-<script type="text/javascript">
-$(function() {
-    var lorem = $('#loremIpsum');
-    
-    var x = $('#loremIpsum *');
-    
-    x.click( function(event)
-    {
-        var e = $(this);
-        $.log("Overlaying element: ", this);        
-        var p = e.offsetParent();
-        var pos = e.position();
-        var marginTop = parseInt(e.css('margin-top'));
-
-        $.log("Offset: ", pos, p);
-        var overlay = $('<div class="element-overlay"><textarea></textarea></div>');
-        var text = $('textarea', overlay);
-        text.val(e.text());
-                
-        p.prepend(overlay);
-        
-        overlay.css({ top: pos.top+marginTop, left: pos.left, width: e.width(), height: e.height()});
-        
-        return false;
-    })
-});
-</script>
 {% endblock %}
