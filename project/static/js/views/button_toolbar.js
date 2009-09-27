@@ -23,21 +23,22 @@ var ButtonToolbarView = View.extend({
   render: function() {
     $('.buttontoolbarview-tab', this.element).unbind('click.buttontoolbarview');
     $('.buttontoolbarview-button', this.element).unbind('click.buttontoolbarview');
+    var self = this;
     
     this.element.html(render_template(this.template, this));
     
     $('.buttontoolbarview-tab', this.element).bind('click.buttontoolbarview', function() {
       var groupIndex = $(this).attr('ui:groupindex');
-      $('.buttontoolbarview-group', this.element).each(function() {
+      $('.buttontoolbarview-group', self.element).each(function() {
         if ($(this).attr('ui:groupindex') == groupIndex) {
           $(this).show();
         } else {
           $(this).hide();
         }
       });
+      $(self.element).trigger('resize');
     });
     
-    var self = this;
     $('.buttontoolbarview-button', this.element).bind('click.buttontoolbarview', function() {
       var groupIndex = parseInt($(this).attr('ui:groupindex'), 10);
       var buttonIndex = parseInt($(this).attr('ui:buttonindex'), 10);
@@ -47,6 +48,8 @@ var ButtonToolbarView = View.extend({
       console.log('Executing', scriptletId, 'with params', params);
       scriptletCenter[scriptletId](self.parent, params);
     });
+    
+    $(this.element).trigger('resize');
   },
   
   dispose: function() {

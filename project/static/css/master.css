@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font: 10pt Helvetica, Verdana, sans-serif;
+    font: 12px Helvetica, Verdana, sans-serif;
     overflow: hidden;
     background: #AAA;
 }
@@ -399,3 +399,14 @@ text#commit-dialog-message {
     top: auto;
     bottom: auto;
     height: 40px;
+}
+
+.buttontoolbarview {
+    display: block;
+    background-color: #CCC;
+}
+
+.buttontoolbarview a {
+    color: #000;
+    text-decoration: none;
+}

@@ -12,8 +12,10 @@ var XMLView = View.extend({
     this.parent = parent;
     this.buttonToolbar = new ButtonToolbarView(
       $('.xmlview-toolbar', this.element), 
-      this.model.toolbarButtonsModel);
+      this.model.toolbarButtonsModel, parent);
 
+    $('.xmlview-toolbar', this.element).bind('resize.xmlview', this.resized.bind(this));
+    
     this.parent.freeze('Ładowanie edytora...');
   	this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
       parserfile: 'parsexml.js',
@@ -26,6 +28,12 @@ var XMLView = View.extend({
       onChange: this.editorDataChanged.bind(this),
       initCallback: this.editorDidLoad.bind(this)
     });
+  },
+  
+  resized: function(event) {
+    var height = this.element.height() - $('.xmlview-toolbar', this.element).outerHeight();
+    console.log('.xmlview height =', height);
+    $('.xmlview', this.element).height(height);
   },
   
   editorDidLoad: function(editor) {
