@@ -1,4 +1,4 @@
-function SciptletCenter() {
+function ScriptletCenter() {
 
     this.scriptlets = {
         {% for scriptlet in scriptlets %}
