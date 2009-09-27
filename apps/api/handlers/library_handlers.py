@@ -268,6 +268,8 @@ class DocumentTextHandler(BaseHandler):
                     f.write(json.dumps(includes))
                     f.close()
 
+                    lib._fileadd(resolve('parts'))
+
                     # update the parts cache
                     PartCache.update_cache(docid, current.owner,\
                         stored_includes, includes)
