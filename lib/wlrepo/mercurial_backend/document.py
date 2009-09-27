@@ -35,7 +35,7 @@ class MercurialDocument(wlrepo.Document):
         return self.invoke_and_commit(write, lambda d: (msg, self.owner))
 
     def invoke_and_commit(self, ops,
-            before_commit, rollback=False):
+            commit_info):
         lock = self._library.lock()
         try:            
             self._library._checkout(self._revision.hgrev())
@@ -44,7 +44,7 @@ class MercurialDocument(wlrepo.Document):
                 return self.id + '.' + entry
             
             ops(self._library, entry_path)
-            message, user = before_commit(self)            
+            message, user = commit_info(self)
             self._library._commit(message, user)
             try:
                 return self._library.document(docid=self.id, user=user)
@@ -60,7 +60,7 @@ class MercurialDocument(wlrepo.Document):
     #    self.invoke_and_commit(message, user, lambda *a: True)
 
     def ismain(self):
-        return self._revision.user_name() is None
+        return self._revision.user_name is None
 
     def shared(self):
         if self.ismain():
@@ -111,7 +111,7 @@ class MercurialDocument(wlrepo.Document):
             if self.ismain():
                 return (True, False) # always shared
 
-            user = self._revision.user_name()
+            user = self._revision.user_name
             main = self.shared()._revision
             local = self._revision            
 

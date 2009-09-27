@@ -104,8 +104,8 @@ class SimpleTest(TestCase):
         self.assert_json_response({
             # u'latest_rev': u'f94a263812dbe46a3a13d5209bb119988d0078d5',
             u'documents': [
-                {u'url': u'/api/documents/sample', u'name': u'sample'},
-                {u'url': u'/api/documents/sample_pl', u'name': u'sample_pl'}
+                {u'url': u'/api/documents/sample', u'name': u'sample', u'parts': []},
+                {u'url': u'/api/documents/sample_pl', u'name': u'sample_pl', u'parts': []}
             ],
         })
 

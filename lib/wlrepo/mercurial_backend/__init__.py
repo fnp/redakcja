@@ -5,6 +5,7 @@ __date__ = "$2009-09-25 09:20:22$"
 __doc__ = "Module documentation."
 
 import wlrepo
+from mercurial.node import nullid
 
 class MercurialRevision(wlrepo.Revision):
 
@@ -65,11 +66,11 @@ class MercurialRevision(wlrepo.Revision):
         return (a.branch() == self._changectx.branch())
 
     def merge_with(self, other, user, message):
-        lock = self._library._lock(True)
+        lock = self._library.lock(True)
         try:
             self._library._checkout(self._changectx.node())
             status = self._library._merge(other._changectx.node())
-            if status.is_clean():
+            if status.isclean():
                 self._library._commit(user=user, message=message)
                 return (True, True)
             else:
