@@ -62,9 +62,7 @@ class Book(models.Model):
         abstract=True
     pass
 
-
-class PullRequest(models.Model):
-
+class PullRequest(models.Model):    
     REQUEST_STATUSES = (
         ("N", "Pending for resolution"),
         ("R", "Rejected"),

@@ -6,21 +6,24 @@ __doc__ = "Module documentation."
 
 from piston.handler import BaseHandler, AnonymousBaseHandler
 
-
-import librarian
-import librarian.html
-import api.forms as forms
+import re
 from datetime import date
 
 from django.core.urlresolvers import reverse
+from django.utils import simplejson as json
 
-from wlrepo import RevisionNotFound, LibraryException, DocumentAlreadyExists
+import librarian
+import librarian.html
 from librarian import dcparser
 
+from wlrepo import RevisionNotFound, LibraryException, DocumentAlreadyExists
+from explorer.models import PullRequest
+
+# internal imports
+import api.forms as forms
 import api.response as response
 from api.utils import validate_form, hglibrary
-
-from explorer.models import PullRequest
+from api.models import PartCache
 
 #
 # Document List Handlers
@@ -46,11 +49,36 @@ class LibraryHandler(BaseHandler):
     def read(self, request, lib):
         """Return the list of documents."""
 
-        document_list = [{
-            'url': reverse('document_view', args=[docid]),
-            'name': docid } for docid in lib.documents() ]
+        documents = {}
+        
+        for docid in lib.documents():
+            documents[docid] = {
+                'url': reverse('document_view', args=[docid]),
+                'name': docid,
+                'parts': []
+            }
 
-        return {'documents' : document_list }        
+        related = PartCache.objects.defer('part_id')\
+            .values_list('part_id', 'document_id').distinct()
+
+        for part, docid in related:
+            # this way, we won't display broken links
+            if not documents.has_key(part):
+                continue
+
+            child = documents[part]
+            parent = documents[docid]
+            
+            if isinstance(parent, dict): # the parent is top-level
+                documents.pop(part)                
+                parent['parts'].append(child)
+                documents[part] = child['parts']
+            else: # not top-level
+                parent.append(child)
+            
+        return {
+            'documents': [d for d in documents.itervalues() if isinstance(d, dict)]
+        }
 
     @validate_form(forms.DocumentUploadForm, 'POST')
     @hglibrary
@@ -160,7 +188,6 @@ class DocumentHandler(BaseHandler):
 #
 #
 #
-
 class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
 
@@ -177,8 +204,15 @@ class DocumentHTMLHandler(BaseHandler):
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 
+
+
+
 #
 # Document Text View
+#
+
+XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1]+?)\1\s*[^>]*?>"""
+#
 #
 class DocumentTextHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
@@ -216,7 +250,35 @@ class DocumentTextHandler(BaseHandler):
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
 
-            ndoc = current.quickwrite('xml', data, msg)
+            # try to find any Xinclude tags
+            includes = [m.groupdict()['link'] for m in (re.finditer(\
+                XINCLUDE_REGEXP, data, flags=re.UNICODE) or []) ]
+
+            # TODO: provide useful routines to make this simpler
+            def xml_update_action(lib, resolve):
+                try:
+                    f = lib._fileopen(resolve('parts'), 'r')
+                    stored_includes = json.loads(f.read())
+                    f.close()
+                except:
+                    stored_includes = []
+                
+                if stored_includes != includes:
+                    f = lib._fileopen(resolve('parts'), 'w+')
+                    f.write(json.dumps(includes))
+                    f.close()
+
+                    # update the parts cache
+                    PartCache.update_cache(docid, current.owner,\
+                        stored_includes, includes)
+
+                # now that the parts are ok, write xml
+                f = lib._fileopen(resolve('xml'), 'w+')
+                f.write(data)
+                f.close()
+                
+            ndoc = current.invoke_and_commit(\
+                xml_update_action, lambda d: (msg, current.owner) )
 
             try:
                 # return the new revision number
@@ -294,6 +356,8 @@ class DocumentDublinCoreHandler(BaseHandler):
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 
+
+
 class MergeHandler(BaseHandler):
     allowed_methods = ('POST',)
 
@@ -351,12 +415,12 @@ class MergeHandler(BaseHandler):
                 ticket_status=prq.status, \
                 ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
 
-        if form.cleanded_data['type'] == 'update':
+        if form.cleaned_data['type'] == 'update':
             # update is always performed from the file branch
             # to the user branch
             success, changed = udoc.update(request.user.username)
 
-        if form.cleanded_data['type'] == 'share':
+        if form.cleaned_data['type'] == 'share':
             success, changed = udoc.share(form.cleaned_data['comment'])
 
         if not success:
