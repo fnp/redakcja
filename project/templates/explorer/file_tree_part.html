@@ -1,0 +1,13 @@
+{% load explorer_tags %}
+
+<li class="file-tree-entry" title="{{document.name|bookname}}">
+    <a href="{% url editor_view document.name %}">{{ document.name|bookname }}</a>
+    {% if document.parts %}
+    <ul class="file-tree-part">
+        {% for part in document.parts %}
+        {% tree_part part %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>
+
