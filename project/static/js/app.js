@@ -110,7 +110,6 @@ Editor.Object = Class.extend({
   
   init: function() {
     this._observers = {};
-    console.log('Created', this.guid());
   },
   
   description: function() {
@@ -118,7 +117,7 @@ Editor.Object = Class.extend({
   },
   
   addObserver: function(observer, property, callback) {
-    console.log('Add observer', observer.description(), 'to', this.description(), '[', property, ']');
+    // console.log('Add observer', observer.description(), 'to', this.description(), '[', property, ']');
     if (!this._observers[property]) {
       this._observers[property] = {}
     }
@@ -132,7 +131,7 @@ Editor.Object = Class.extend({
         this.removeObserver(observer, property)
       }
     } else {
-      console.log('Remove observer', observer.description(), 'from', this.description(), '[', property, ']');
+      // console.log('Remove observer', observer.description(), 'from', this.description(), '[', property, ']');
       delete this._observers[property][observer.guid()];
     }
     return this;
@@ -141,8 +140,8 @@ Editor.Object = Class.extend({
   notifyObservers: function(property) {
     var currentValue = this[property];
     for (var guid in this._observers[property]) {
-      console.log(this._observers[property][guid]);
-      console.log('Notifying', guid, 'of', this.description(), '[', property, ']');
+      // console.log(this._observers[property][guid]);
+      // console.log('Notifying', guid, 'of', this.description(), '[', property, ']');
       this._observers[property][guid](property, currentValue, this);
     }
     return this;

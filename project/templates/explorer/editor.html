@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+	<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<script type="text/javascript" charset="utf-8">
 		var fileId = '{{ fileid }}';
 	</script>
@@ -84,7 +85,7 @@
 {% endblock %}
 
 {% block header-toolbar %}
-	<button>Merge</button> <button>Update</button>
+	<button id="action-update">Update</button> <button id="action-commit">Commit</button> <button id="action-quick-save">Quick Save</button>
 {% endblock %}
 
 {% block maincontent %}

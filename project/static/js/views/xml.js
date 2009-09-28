@@ -32,7 +32,6 @@ var XMLView = View.extend({
   
   resized: function(event) {
     var height = this.element.height() - $('.xmlview-toolbar', this.element).outerHeight();
-    console.log('.xmlview height =', height);
     $('.xmlview', this.element).height(height);
   },
   
@@ -40,16 +39,14 @@ var XMLView = View.extend({
     $(editor.frame).css({width: '100%', height: '100%'});
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
-      .addObserver(this, 'synced', this.modelSyncChanged.bind(this));
+      .addObserver(this, 'state', this.modelStateChanged.bind(this))
+      .load();
     
     this.parent.unfreeze();
       
     this.editor.setCode(this.model.get('data'));
-    if (!this.model.get('synced')) {
-      this.parent.freeze('Niezsynchronizowany...');
-      this.model.load();
-    }
-    
+    this.modelStateChanged('state', this.model.get('state'));
+        
     // editor.grabKeys(
     //   $.fbind(self, self.hotkeyPressed),
     //   $.fbind(self, self.isHotkey)
@@ -61,16 +58,21 @@ var XMLView = View.extend({
   },
   
   modelDataChanged: function(property, value) {
+    console.log('modelDataChanged');
     if (this.editor.getCode() != value) {
       this.editor.setCode(value);
     }
   },
   
-  modelSyncChanged: function(property, value) {
-    if (value) {
+  modelStateChanged: function(property, value) {
+    if (value == 'synced' || value == 'dirty') {
       this.parent.unfreeze();
-    } else {
+    } else if (value == 'unsynced') {
       this.parent.freeze('Niezsynchronizowany...');
+    } else if (value == 'loading') {
+      this.parent.freeze('Ładowanie...');
+    } else if (value == 'saving') {
+      this.parent.freeze('Zapisywanie...');
     }
   },
     
