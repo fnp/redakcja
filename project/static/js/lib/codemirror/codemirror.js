@@ -55,34 +55,20 @@ var CodeMirror = (function(){
 
   function wrapLineNumberDiv(place) {
     return function(node) {
-        
       var container = document.createElement("DIV"),
           nums = document.createElement("DIV"),
           scroller = document.createElement("DIV");
-      
+      container.style.position = "relative";
       nums.style.position = "absolute";
-      nums.style.height = "100%";      
+      nums.style.height = "100%";
       if (nums.style.setExpression) {
         try {nums.style.setExpression("height", "this.previousSibling.offsetHeight + 'px'");}
         catch(e) {} // Seems to throw 'Not Implemented' on some IE8 versions
       }
       nums.style.top = "0px";
-      nums.style.overflow = "hidden";      
-
-      container.style.position = "absolute";
-      container.style.left = "0px";
-      container.style.right = "0px";
-      container.style.bottom = "0px";
-      container.style.top = "0px";
-
-      node.style.position = "absolute";
-      node.style.top = "0px";
-      node.style.right = "0px";
-      node.style.bottom = "0px";
-      node.style.left = "16px"
-
+      nums.style.overflow = "hidden";
       place(container);
-      container.appendChild(node);     
+      container.appendChild(node);
       container.appendChild(nums);
       scroller.className = "CodeMirror-line-numbers";
       nums.appendChild(scroller);
@@ -91,22 +77,19 @@ var CodeMirror = (function(){
 
   function applyLineNumbers(frame) {
     var win = frame.contentWindow, doc = win.document,
-        nums = frame.parentNode.nextSibling, scroller = nums.firstChild;
+        nums = frame.nextSibling, scroller = nums.firstChild;
 
     var nextNum = 1, barWidth = null;
     function sizeBar() {
-      if (!frame.offsetWidth || !win.Editor) {
-        for (var cur = frame; cur.parentNode; cur = cur.parentNode) {
-          if (cur != document) {
-            clearInterval(sizeInterval);
-            return;
-          }
-        }
+      for (var root = frame; root.parentNode; root = root.parentNode);
+      if (root != document || !win.Editor) {
+        clearInterval(sizeInterval);
+        return;
       }
 
       if (nums.offsetWidth != barWidth) {
         barWidth = nums.offsetWidth;
-        // nums.style.left = "-" + (frame.parentNode.style.marginLeft = barWidth + "px");
+        nums.style.left = "-" + (frame.parentNode.style.marginLeft = barWidth + "px");
       }
     }
     function update() {
@@ -139,8 +122,8 @@ var CodeMirror = (function(){
     frame.frameBorder = 0;
     frame.src = "javascript:false;";
     frame.style.border = "0";
-    frame.style.width = "100%";
-    frame.style.height = "100%";
+    frame.style.width = options.width;
+    frame.style.height = options.height;
     // display: block occasionally suppresses some Firefox bugs, so we
     // always add it, redundant as it sounds.
     frame.style.display = "block";
@@ -149,44 +132,9 @@ var CodeMirror = (function(){
       var node = place;
       place = function(n){node.appendChild(n);};
     }
-
-    var iframe_container = document.createElement("DIV");
-    iframe_container.appendChild(frame);
-
-    var content_wrapper = document.createElement("DIV");
-    content_wrapper.appendChild(iframe_container);
-    content_wrapper.style.position = 'relative';
-    content_wrapper.className = 'CodeMirror-content-wrapper';
-    content_wrapper.style.width = options.width;
-    content_wrapper.style.height = options.height;
     
-    iframe_container.style.position = 'absolute';
-    iframe_container.style.top = '0px';
-    iframe_container.style.right = '0px';
-    iframe_container.style.bottom = '0px';
-    iframe_container.style.left = '0px';
-    
-    if (options.lineNumbers) {
-       iframe_container.style.left = '28px';
-       
-       var nums = document.createElement("DIV"),
-          scroller = document.createElement("DIV");
-
-        nums.style.position = "absolute";
-        nums.style.height = "100%";
-
-        nums.style.top = "0px";
-        nums.style.left = "0px";
-        nums.style.overflow = "hidden";
-
-        scroller.className = "CodeMirror-line-numbers";
-        nums.appendChild(scroller);
-        content_wrapper.appendChild(nums);
-
-        iframe_container.style.right = nums.width;        
-    }   
-    
-    place(content_wrapper);
+    if (options.lineNumbers) place = wrapLineNumberDiv(place);
+    place(frame);
 
     // Link back to this object, so that the editor can fetch options
     // and add a reference to itself.
@@ -225,10 +173,14 @@ var CodeMirror = (function(){
 
     getCode: function() {return this.editor.getCode();},
     setCode: function(code) {this.editor.importCode(code);},
-    selection: function() {return this.editor.selectedText();},
+    selection: function() {this.focusIfIE(); return this.editor.selectedText();},
     reindent: function() {this.editor.reindent();},
-    reindentSelection: function() {this.editor.reindentSelection(null);},
+    reindentSelection: function() {this.focusIfIE(); this.editor.reindentSelection(null);},
 
+    focusIfIE: function() {
+      // in IE, a lot of selection-related functionality only works when the frame is focused
+      if (this.win.select.ie_selection) this.focus();
+    },
     focus: function() {
       this.win.focus();
       if (this.editor.selectionSnapshot) // IE hack
@@ -256,10 +208,7 @@ var CodeMirror = (function(){
 
     setParser: function(name) {this.editor.setParser(name);},
 
-    cursorPosition: function(start) {
-      if (this.win.select.ie_selection) this.focus();
-      return this.editor.cursorPosition(start);
-    },
+    cursorPosition: function(start) {this.focusIfIE(); return this.editor.cursorPosition(start);},
     firstLine: function() {return this.editor.firstLine();},
     lastLine: function() {return this.editor.lastLine();},
     nextLine: function(line) {return this.editor.nextLine(line);},

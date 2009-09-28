@@ -320,30 +320,30 @@ Editor.prototype.loadConfig = function() {
 };
 
 Editor.prototype.loadPanelOptions = function() {
-    var self = this;
-    var totalWidth = 0;
-    
-    $('.panel-wrap', self.rootDiv).each(function(index) {
-        var panelWidth = self.fileOptions.panels[index].ratio * self.rootDiv.width();
-        if ($(this).hasClass('last-panel')) {
-            $(this).css({
-                left: totalWidth,
-                right: 0
-            });
-        } else {
-            $(this).css({
-                left: totalWidth,
-                width: panelWidth
-            });
-            totalWidth += panelWidth;               
-        }
-        $.log('panel:', this, $(this).css('left'));
-        $('.panel-toolbar option', this).each(function() {
-            if ($(this).attr('p:panel-name') == self.fileOptions.panels[index].name) {
-                $(this).parent('select').val($(this).attr('value'));
-            }
-        });
-    });   
+    // var self = this;
+    // var totalWidth = 0;
+    // 
+    // $('.panel-wrap', self.rootDiv).each(function(index) {
+    //     var panelWidth = self.fileOptions.panels[index].ratio * self.rootDiv.width();
+    //     if ($(this).hasClass('last-panel')) {
+    //         $(this).css({
+    //             left: totalWidth,
+    //             right: 0
+    //         });
+    //     } else {
+    //         $(this).css({
+    //             left: totalWidth,
+    //             width: panelWidth
+    //         });
+    //         totalWidth += panelWidth;               
+    //     }
+    //     $.log('panel:', this, $(this).css('left'));
+    //     $('.panel-toolbar option', this).each(function() {
+    //         if ($(this).attr('p:panel-name') == self.fileOptions.panels[index].name) {
+    //             $(this).parent('select').val($(this).attr('value'));
+    //         }
+    //     });
+    // });   
 };
 
 Editor.prototype.savePanelOptions = function() {

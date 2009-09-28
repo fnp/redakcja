@@ -52,7 +52,7 @@ var select = {};
     while (pos && pos.offsetParent) {
       y += pos.offsetTop;
       // Don't count X offset for <br> nodes
-      if (pos.nodeName != "BR")
+      if (!isBR(pos))
         x += pos.offsetLeft;
       pos = pos.offsetParent;
     }
@@ -238,7 +238,7 @@ var select = {};
       // Move the start of a range to the start of a node,
       // compensating for the fact that you can't call
       // moveToElementText with text nodes.
-      function moveToNodeStart(range, node) {        
+      function moveToNodeStart(range, node) {
         if (node.nodeType == 3) {
           var count = 0, cur = node.previousSibling;
           while (cur && cur.nodeType == 3) {
@@ -247,22 +247,26 @@ var select = {};
           }
           if (cur) {
             try{range.moveToElementText(cur);}
-            catch(e){alert(cur + " " + cur.nodeType + " " + (cur && cur.outerHTML));}
+            catch(e){return false;}
             range.collapse(false);
           }
           else range.moveToElementText(node.parentNode);
           if (count) range.move("character", count);
         }
-        else try{range.moveToElementText(node);} catch(e) {};
+        else {
+          try{range.moveToElementText(node);}
+          catch(e){return false;}
+        }
+        return true;
       }
 
       // Do a binary search through the container object, comparing
       // the start of each node to the selection
-      var start = 0, end = container.childNodes.length;
-      while (start != end) {
+      var start = 0, end = container.childNodes.length - 1;
+      while (start < end) {
         var middle = Math.ceil((end + start) / 2), node = container.childNodes[middle];
         if (!node) return false; // Don't ask. IE6 manages this sometimes.
-        moveToNodeStart(range2, node);
+        if (!moveToNodeStart(range2, node)) return false;
         if (range.compareEndPoints("StartToStart", range2) == 1)
           start = middle;
         else
@@ -314,7 +318,7 @@ var select = {};
       if (!selection) return null;
 
       var topNode = select.selectionTopNode(container, start);
-      while (topNode && topNode.nodeName != "BR")
+      while (topNode && !isBR(topNode))
         topNode = topNode.previousSibling;
 
       var range = selection.createRange(), range2 = range.duplicate();
@@ -407,7 +411,7 @@ var select = {};
       // ancestors with a suitable offset. This goes down the DOM tree
       // until a 'leaf' is reached (or is it *up* the DOM tree?).
       function normalize(point){
-        while (point.node.nodeType != 3 && point.node.nodeName != "BR") {
+        while (point.node.nodeType != 3 && !isBR(point.node)) {
           var newNode = point.node.childNodes[point.offset] || point.node.nextSibling;
           point.offset = 0;
           while (!newNode && point.node.parentNode) {
@@ -425,8 +429,9 @@ var select = {};
     };
 
     select.selectMarked = function () {
-      if (!currentSelection || !currentSelection.changed) return;
-      var win = currentSelection.window, range = win.document.createRange();
+      var cs = currentSelection;
+      if (!(cs && (cs.changed || (webkit && cs.start.node == cs.end.node)))) return;
+      var win = cs.window, range = win.document.createRange();
 
       function setPoint(point, which) {
         if (point.node) {
@@ -442,8 +447,8 @@ var select = {};
         }
       }
 
-      setPoint(currentSelection.end, "End");
-      setPoint(currentSelection.start, "Start");
+      setPoint(cs.end, "End");
+      setPoint(cs.start, "Start");
       selectRange(range, win);
     };
 
@@ -471,7 +476,7 @@ var select = {};
       var offset = start ? range.startOffset : range.endOffset;
       // Work around (yet another) bug in Opera's selection model.
       if (window.opera && !start && range.endContainer == container && range.endOffset == range.startOffset + 1 &&
-          container.childNodes[range.startOffset] && container.childNodes[range.startOffset].nodeName == "BR")
+          container.childNodes[range.startOffset] && isBR(container.childNodes[range.startOffset]))
         offset--;
 
       // For text nodes, we look at the node itself if the cursor is
@@ -486,7 +491,7 @@ var select = {};
       // Occasionally, browsers will return the HTML node as
       // selection. If the offset is 0, we take the start of the frame
       // ('after null'), otherwise, we take the last node.
-      else if (node.nodeName == "HTML") {
+      else if (node.nodeName.toUpperCase() == "HTML") {
         return (offset == 1 ? null : container.lastChild);
       }
       // If the given node is our 'container', we just look up the
@@ -557,7 +562,7 @@ var select = {};
       if (!range) return;
 
       var topNode = select.selectionTopNode(container, start);
-      while (topNode && topNode.nodeName != "BR")
+      while (topNode && !isBR(topNode))
         topNode = topNode.previousSibling;
 
       range = range.cloneRange();
