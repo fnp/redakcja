@@ -276,7 +276,7 @@ class DocumentTextHandler(BaseHandler):
 
                 # now that the parts are ok, write xml
                 f = lib._fileopen(resolve('xml'), 'w+')
-                f.write(data)
+                f.write(data.encode('utf-8'))
                 f.close()
 
             ndoc = None
