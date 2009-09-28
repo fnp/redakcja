@@ -11,6 +11,7 @@
         {% endblock %}
     </head>
     <body id="{% block bodyid %}base{% endblock %}">
+	<div id="body-wrap">
 	<div id="header">
 		<span id="breadcrumbs">{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a>{% endblock breadcrumbs %}</span>
 		<span id="header-right-toolbar">
@@ -22,5 +23,6 @@
     <div id="content">{% block maincontent %} {% endblock %}</div>
 
     {% block extrabody %}{% endblock %}
+	</div>
     </body>
 </html>

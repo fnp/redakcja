@@ -12,6 +12,7 @@ var EditorView = View.extend({
     $('#action-quick-save', this.element).bind('click.editorview', this.quickSave.bind(this));
     $('#action-commit', this.element).bind('click.editorview', this.commit.bind(this));
     $('#action-update', this.element).bind('click.editorview', this.update.bind(this));
+    this.freeze('Ładowanie');
   },
   
   quickSave: function(event) {

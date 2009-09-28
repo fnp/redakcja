@@ -11,24 +11,26 @@ var HTMLView = View.extend({
     
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
-      .addObserver(this, 'synced', this.modelSyncChanged.bind(this));
+      .addObserver(this, 'state', this.modelStateChanged.bind(this));
       
     $('.htmlview', this.element).html(this.model.get('data'));
-    if (!this.model.get('synced')) {
-      this.parent.freeze('Niezsynchronizowany...');
-      this.model.load();
-    }
+    this.modelStateChanged('state', this.model.get('state'));
+    this.model.load();
   },
   
   modelDataChanged: function(property, value) {
     $('.htmlview', this.element).html(value);
   },
   
-  modelSyncChanged: function(property, value) {
-    if (value) {
-      this.parent.unfreeze();
-    } else {
-      this.parent.freeze('Niezsynchronizowany...');
+  modelStateChanged: function(property, value) {
+    if (value == 'synced' || value == 'dirty') {
+      this.unfreeze();
+    } else if (value == 'unsynced') {
+      this.freeze('Niezsynchronizowany...');
+    } else if (value == 'loading') {
+      this.freeze('Ładowanie...');
+    } else if (value == 'saving') {
+      this.freeze('Zapisywanie...');
     }
   },
   
