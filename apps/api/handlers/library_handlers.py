@@ -175,6 +175,7 @@ class DocumentHandler(BaseHandler):
             'html_url': reverse('dochtml_view', args=[udoc.id,udoc.revision]),
             'text_url': reverse('doctext_view', args=[udoc.id,udoc.revision]),
             'dc_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
+            #'gallery_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
             'user_revision': udoc.revision,
             'public_revision': doc.revision,            
         }       
@@ -204,14 +205,12 @@ class DocumentHTMLHandler(BaseHandler):
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
 
-
-
-
 #
 # Document Text View
 #
 
 XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1]+?)\1\s*[^>]*?>"""
+#
 #
 #
 class DocumentTextHandler(BaseHandler):
@@ -296,7 +295,9 @@ class DocumentTextHandler(BaseHandler):
                 if ndoc: lib._rollback()
                 raise e        
         except RevisionNotFound, e:
-            return response.EntityNotFound().django_response(e)
+            return response.EntityNotFound(mimetype="text/plain").\
+                django_response(e.message)
+
 
 #
 # Dublin Core handlers
@@ -352,15 +353,14 @@ class DocumentDublinCoreHandler(BaseHandler):
                     "document": ndoc.id,
                     "subview": "dc",
                     "previous_revision": current.revision,
-                    "updated_revision": ndoc.revision
+                    "updated_revision": ndoc.revision,
+                    "url": reverse("docdc_view", args=[ndoc.id, ndoc.revision])
                 }
             except Exception, e:
-                lib._rollback()
+                if ndoc: lib._rollback()
                 raise e
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
-
-
 
 class MergeHandler(BaseHandler):
     allowed_methods = ('POST',)

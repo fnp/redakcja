@@ -97,11 +97,14 @@ class MercurialLibrary(wlrepo.Library):
 
     def get_revision(self, revid):
         revid = self._sanitize_string(revid)
-        
-        ctx = self._changectx(revid)
+
+        try:
+            ctx = self._changectx(revid)
+        except mercurial.error.RepoError, e:
+            raise wlrepo.RevisionNotFound(revid)
 
         if ctx is None:
-            raise RevisionNotFound(revid)
+            raise wlrepo.RevisionNotFound(revid)
 
         if self._revcache.has_key(ctx):
             return self._revcache[ctx]
@@ -123,7 +126,7 @@ class MercurialLibrary(wlrepo.Library):
         try:
             self._hgrepo[revid]
             return True
-        except error.RepoError:
+        except mercurial.error.RepoError:
             return False
 
     def document_create(self, docid):

@@ -53,8 +53,5 @@ def hglibrary(func):
         l = MercurialLibrary(settings.REPOSITORY_PATH)
         kwargs['lib'] = l
         return func(self, *args, **kwargs)
-    return decorated
-    
-            
-        
+    return decorated                   
 
