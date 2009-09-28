@@ -32,10 +32,11 @@ def temprepo(name):
             finally:
                 if not clean and self.response:
                     print "RESULT", func.__name__, ">>>"
-                    print self.response
+                    print self.response.content
                     print "<<<"
-
-                # shutil.rmtree(temp, True)
+                else:
+                    shutil.rmtree(temp, True)
+                
                 settings.REPOSITORY_PATH = ''
            
         return decorated
@@ -141,24 +142,26 @@ class SimpleTest(TestCase):
         self.response = self.client.get(resp['text_url'])
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response.content, "Ala ma kota\n")
-#
-#
-#    @temprepo('simple')
-#    def test_document_text_update(self):
-#        self.assertTrue(self.client.login(username='admin', password='admin'))
-#        TEXT = u"Ala ma kota i psa"
-#
-#        self.response = self.client.put( \
-#            reverse("doctext_view", args=['testfile']), {'contents': TEXT })
-#        self.assertEqual(self.response.status_code, 200)
-#
-#        self.response = self.client.get( \
-#            reverse("doctext_view", args=['testfile']) )
-#        self.assertEqual(self.response.status_code, 200)
-#        self.assertEqual(self.response.content, TEXT)
+
+
+    @temprepo('simple')
+    def test_document_text_update(self):
+        self.assertTrue(self.client.login(username='admin', password='admin'))
+        TEXT = u"Ala ma kota i psa"
+
+        self.response = self.client.get(
+            reverse("document_view", args=['sample']) )
+            
+        resp = self.assert_json_response()
+
+        self.response = self.client.put(resp['text_url'], {'contents': TEXT })
+        result = self.assert_json_response(must_have={u'document': u'sample'} )
+        
+        #self.response = self.client.get(result['url'])
+        #self.assertEqual(self.response.content, TEXT)
 
     def assert_json_response(self, must_have={}, exclude=[], code=200):
-        self.assertEqual(self.response.status_code, code)
+        self.assertEqual(self.response.status_code, code)        
         result = json.loads(self.response.content)
 
         for (k,v) in must_have.items():

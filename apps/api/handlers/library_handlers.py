@@ -276,20 +276,22 @@ class DocumentTextHandler(BaseHandler):
                 f = lib._fileopen(resolve('xml'), 'w+')
                 f.write(data)
                 f.close()
-                
+
+            ndoc = None
             ndoc = current.invoke_and_commit(\
                 xml_update_action, lambda d: (msg, current.owner) )
 
             try:
                 # return the new revision number
-                return {
+                return response.SuccessAllOk().django_response({
                     "document": ndoc.id,
                     "subview": "xml",
                     "previous_revision": current.revision,
-                    "updated_revision": ndoc.revision
-                }
+                    "updated_revision": ndoc.revision,
+                    "url": reverse("doctext_view", args=[ndoc.id, ndoc.revision])
+                })
             except Exception, e:
-                lib._rollback()
+                if ndoc: lib._rollback()
                 raise e        
         except RevisionNotFound, e:
             return response.EntityNotFound().django_response(e)
