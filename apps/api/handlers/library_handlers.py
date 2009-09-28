@@ -276,19 +276,21 @@ class DocumentTextHandler(BaseHandler):
 
                 # now that the parts are ok, write xml
                 f = lib._fileopen(resolve('xml'), 'w+')
-                f.write(data)
+                f.write(data.encode('utf-8'))
                 f.close()
-                
+
+            ndoc = None
             ndoc = current.invoke_and_commit(\
                 xml_update_action, lambda d: (msg, current.owner) )
 
             try:
                 # return the new revision number
-                return response.SuccessAllOk.django_response({
+                return response.SuccessAllOk().django_response({
                     "document": ndoc.id,
                     "subview": "xml",
                     "previous_revision": current.revision,
-                    "updated_revision": ndoc.revision
+                    "updated_revision": ndoc.revision,
+                    "url": reverse("doctext_view", args=[ndoc.id, ndoc.revision])
                 })
             except Exception, e:
                 if ndoc: lib._rollback()
