@@ -24,13 +24,13 @@ var HTMLView = View.extend({
   
   modelStateChanged: function(property, value) {
     if (value == 'synced' || value == 'dirty') {
-      this.unfreeze();
+      this.parent.unfreeze();
     } else if (value == 'unsynced') {
-      this.freeze('Niezsynchronizowany...');
+      this.parent.freeze('Niezsynchronizowany...');
     } else if (value == 'loading') {
-      this.freeze('Ładowanie...');
+      this.parent.freeze('Ładowanie...');
     } else if (value == 'saving') {
-      this.freeze('Zapisywanie...');
+      this.parent.freeze('Zapisywanie...');
     }
   },
   
