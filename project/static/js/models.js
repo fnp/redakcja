@@ -37,7 +37,7 @@ Editor.ToolbarButtonsModel = Editor.Model.extend({
 //
 // empty -> loading -> synced -> unsynced -> loading
 //                           \
-//                            -> dirty -> updating -> synced
+//                            -> dirty -> updating -> updated -> synced
 //
 Editor.XMLModel = Editor.Model.extend({
   _className: 'Editor.XMLModel',
@@ -61,7 +61,47 @@ Editor.XMLModel = Editor.Model.extend({
         dataType: 'text',
         success: this.loadingSucceeded.bind(this)
       });
+      return true;
     }
+    return false;
+  },
+  
+  update: function(message) {
+    if (this.get('state') == 'dirty') {
+      this.set('state', 'updating');
+      
+      var payload = {
+        contents: this.get('data')
+      };
+      if (message) {
+        payload.message = message;
+      }
+      
+      $.ajax({
+        url: this.serverURL,
+        type: 'put',
+        dataType: 'json',
+        data: payload,
+        success: this.updatingSucceeded.bind(this),
+        error: this.updatingFailed.bind(this)
+      });
+      return true;
+    }
+    return false;
+  },
+  
+  updatingSucceeded: function() {
+    if (this.get('state') != 'updating') {
+      alert('erroneous state:', this.get('state'));
+    }
+    this.set('state', 'updated');
+  },
+  
+  updatingFailed: function() {
+    if (this.get('state') != 'updating') {
+      alert('erroneous state:', this.get('state'));
+    }
+    this.set('state', 'dirty');
   },
   
   set: function(property, value) {
@@ -177,6 +217,15 @@ Editor.DocumentModel = Editor.Model.extend({
         }
       }
     }
+  },
+  
+  quickSave: function(message) {
+    for (var key in this.contentModels) {
+      if (this.contentModels[key].get('state') == 'dirty') {
+        this.contentModels[key].update(message);
+        break;
+      }
+    }
   }
 });
 
@@ -186,6 +235,7 @@ var leftPanelView, rightPanelContainer, doc;
 $(function() {
   doc = new Editor.DocumentModel();
   var editor = new EditorView('#body-wrap', doc);
+  editor.freeze();
   var splitView = new SplitView('#splitview', doc);
   leftPanelView = new PanelContainerView('#left-panel-container', doc);
   rightPanelContainer = new PanelContainerView('#right-panel-container', doc);

@@ -17,6 +17,7 @@ var EditorView = View.extend({
   
   quickSave: function(event) {
     console.log('quickSave');
+    this.model.quickSave();
   },
   
   commit: function(event) {
