@@ -382,6 +382,10 @@ text#commit-dialog-message {
     overflow: none;
 }
 
+.panel-container select {
+    z-index: 1100;
+}
+
 .xmlview {
     height: 100%;
 }
