@@ -268,6 +268,8 @@ class DocumentTextHandler(BaseHandler):
                     f.write(json.dumps(includes))
                     f.close()
 
+                    lib._fileadd(resolve('parts'))
+
                     # update the parts cache
                     PartCache.update_cache(docid, current.owner,\
                         stored_includes, includes)
@@ -282,14 +284,14 @@ class DocumentTextHandler(BaseHandler):
 
             try:
                 # return the new revision number
-                return {
+                return response.SuccessAllOk.django_response({
                     "document": ndoc.id,
                     "subview": "xml",
                     "previous_revision": current.revision,
                     "updated_revision": ndoc.revision
-                }
+                })
             except Exception, e:
-                lib._rollback()
+                if ndoc: lib._rollback()
                 raise e        
         except RevisionNotFound, e:
             return response.EntityNotFound().django_response(e)

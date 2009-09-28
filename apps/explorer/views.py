@@ -59,9 +59,16 @@ def ajax_login_required(view):
 @with_repo
 def file_list(request, repo):   
     import api.forms
+    from api.resources import library_resource
+
     bookform = api.forms.DocumentUploadForm()
+
+    # short-circut the api document list
+    doctree = library_resource.handler.read(request)
+    print doctree['documents']
+        
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'files': repo.documents(), 'bookform': bookform,
+        'filetree': doctree['documents'], 'bookform': bookform,
     })
 
 @permission_required('explorer.can_add_files')

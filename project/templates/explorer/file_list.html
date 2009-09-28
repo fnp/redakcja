@@ -64,12 +64,12 @@ $(function() {
         <input type="reset" value="Wyczyść" id="file-list-reset-button"/>
     </p>
     </form>
-    <div id="file-list">
     {% load explorer_tags %}
-    {% for file in files %}
-    <p title="{{file|bookname}}"><a href="{% url editor_view file %}">{{ file|bookname }}</a></p>
+    <ul class="file-tree-part file-tree-top">
+    {% for file in filetree %}    
+        {% tree_part file %}            
     {% endfor %}
-    </div>
+    </ul>
 </div>
 
 <div id="recent-file-list">
