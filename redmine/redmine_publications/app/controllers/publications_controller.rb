@@ -14,8 +14,6 @@ class PublicationsController < ApplicationController
 
   def refresh
     regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
-    Publication.delete_all()
-
     repo = Repository.find(:first, :conditions => ['project_id = ?', Setting.plugin_redmine_publications[:project]] )
 
     Rails.logger.info('[INFO] Importing changes from ' << repo.url)
