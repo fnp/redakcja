@@ -28,7 +28,7 @@ Redmine::Plugin.register :redmine_publications do
   # permission :view_issues_for_publication, :publications => :issues 
 
   settings :partial => 'settings/publications_settings',
-      :default => { :tracker => '1', :pattern => '.*/[a-z_].xml', :editorurl => 'http://localhost/:pubid'}
+      :default => { :project => '0', :pattern => '[^\$].xml', :editorurl => 'http://localhost/:pubid'}
 
   menu :application_menu, :publications, { :controller => 'publications', :action => 'index' }, :caption => 'Publikacje'
 

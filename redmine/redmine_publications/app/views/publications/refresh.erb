@@ -1,9 +1,6 @@
-<% @match_status.each do |repo_status| %>
-<h2>Repozytorium: <%= repo_status[:repo].url %></h2>
 <table>
 <tr><th>Ścieżka zasobu</th><th>Rozpoznano</th><th>ID zasobu</th></tr>
-
-<% repo_status[:status].each do |status| %>
+<% @repo_status.each do |status| %>
 <tr>
 <td><%= status[:path] %></td>
 <td><%= (status[:matched] && 'Tak') || 'Nie' %></td>
@@ -11,4 +8,3 @@
 </tr>
 <% end %>
 </table>
-<% end %>

@@ -21,12 +21,14 @@ module RedminePublications
     module InstanceMethods
 
       def update_publication
-        if self.action == 'A'
+        if (self.action == 'A') and (self.changeset.repository.project_id == Setting.plugin_redmine_publications[:project].to_i)
           regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
           match = self.path.match(regexp)
-          Rails.logger.info('[INFO] Adding publication: "' << match[1])
-          Publication.find_or_create_by_name(:name => match[1],
-            :source_file => self.path, :repository_id => self.changeset.repository.id )
+          if match
+            Rails.logger.info('[INFO] Adding publication: "' << match[1])
+            Publication.find_or_create_by_name(:name => match[1],
+              :source_file => self.path, :repository_id => self.changeset.repository.id )
+          end
         end      
       end
       

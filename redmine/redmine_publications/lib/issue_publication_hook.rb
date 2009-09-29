@@ -21,7 +21,7 @@ class IssuesPublicationHook < Redmine::Hook::ViewListener
   end
 
   def is_pticket?(context)
-    context[:issue].tracker_id == Setting.plugin_redmine_publications[:tracker].to_i
+    context[:issue].project_id == Setting.plugin_redmine_publications[:project].to_i
   end
 
   public

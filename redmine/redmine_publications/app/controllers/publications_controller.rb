@@ -13,34 +13,31 @@ class PublicationsController < ApplicationController
   end
 
   def refresh
-    @match_status = []
-
     regexp = Regexp.new(Setting.plugin_redmine_publications[:pattern])
     Publication.delete_all()
-    repos = Repository.all
-    if repos
-      repos.each do |repo|
-        repo_status = []
-        if repo.entries
-          repo.entries.each do |entry|
-            match = entry.path.match(regexp)
-            if match
-              Publication.find_or_create_by_name(:name => match[1],
-                :source_file => entry.path, :repository_id => repo.id)
-              repo_status += [{:path => entry.path, :match => match[1], :matched => true}]
-            else
-              repo_status += [{:path => entry.path, :match =>nil, :matched => false}]
-            end
-          end
-          @match_status += [{:repo => repo, :status => repo_status}]
+
+    repo = Repository.find(:first, :conditions => ['project_id = ?', Setting.plugin_redmine_publications[:project]] )
+
+    Rails.logger.info('[INFO] Importing changes from ' << repo.url)
+    Rails.logger.info('[INFO] Change list: ' << repo.changes.find(:all).inspect )
+
+    @repo_status = []
+    repo.changes.find(:all).each do |change|
+        Rails.logger.info('[INFO] Importing change ' << change.path)
+        match = change.path.match(regexp)
+        if match
+            Publication.find_or_create_by_name(:name => match[1],
+                :source_file => change.path, :repository_id => repo.id)
+              @repo_status += [{:path => change.path, :match => match[1], :matched => true}]
+        else
+              @repo_status += [{:path => change.path, :match => nil, :matched => false}]
         end
-      end
+    end
 	
-      respond_to do |format|
+    respond_to do |format|
         format.html
-        format.xml { render :xml => @match_status}
-        format.json { render :json => @match_status }
-      end
+        format.xml { render :xml => @repo_status}
+        format.json { render :json => @repo_status }
     end
   end
 

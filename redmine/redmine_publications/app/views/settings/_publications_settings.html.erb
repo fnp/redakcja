@@ -1,9 +1,8 @@
-<% @tracker = Tracker.find(@settings[:tracker] || 1) %>
-
+<% @project = Project.find(:first, :conditions => ["id = ?", @settings[:project]]) %>
 <fieldset>
 <p>
-  <label for="settings[tracker]">Typ zagadnienia: </label>
-  <%= collection_select(:tracker, :id, Tracker.all, :id, :name, {}, {:name => "settings[tracker]"}) %>
+  <label for="settings[project]">Użyj w projektcie: </label>
+  <%= collection_select(:project, :id, Project.all, :id, :name, {}, {:name => "settings[project]"}) %>
 </p>
 
 <p>
