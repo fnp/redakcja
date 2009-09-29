@@ -45,7 +45,19 @@ var EditorView = View.extend({
   },
   
   doCommit: function(message) {
-    this.model.updateDirtyContentModel(message);
+    this.model.saveDirtyContentModel(message);
+  },
+  
+  update: function(event) {
+    this.model.update();
+  },
+  
+  merge: function(event) {
+    $('#commit-dialog', this.element).jqmShow({callback: this.doMerge.bind(this)});
+  },
+  
+  doMerge: function(message) {
+    this.model.merge(message);
   },
   
   loadRelatedIssues: function(hash) {
@@ -73,26 +85,20 @@ var EditorView = View.extend({
     $("div.fatal-error-box", c).hide();
     $("div.container-box", c).hide();
     
-    // $.getJSON(c.attr('ui:ajax-src') + '?callback=?',
-    // function(data, status)
-    // {
-    //     var fmt = '';
-    //     $(data).each( function() {
-    //         fmt += '<label><input type="checkbox" checked="checked"'
-    //         fmt += ' value="' + this.id + '" />' + this.subject +'</label>\n'
-    //     });
-    //     $("div.container-box", c).html(fmt);
-    //     $("div.loading-box", c).hide();
-    //     $("div.container-box", c).show();        
-    // });   
+    $.getJSON(c.attr('ui:ajax-src') + '?callback=?',
+    function(data, status)
+    {
+        var fmt = '';
+        $(data).each( function() {
+            fmt += '<label><input type="checkbox" checked="checked"';
+            fmt += ' value="' + this.id + '" />' + this.subject +'</label>\n';
+        });
+        $("div.container-box", c).html(fmt);
+        $("div.loading-box", c).hide();
+        $("div.container-box", c).show();        
+    });   
     
     hash.w.show();
-  },
-  
-  update: function(event) {
-  },
-  
-  merge: function(event) {
   },
   
   modelStateChanged: function(property, value) {
