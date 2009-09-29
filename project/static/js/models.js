@@ -211,9 +211,9 @@ Editor.ImageGalleryModel = Editor.Model.extend({
 
     $.log('galleries:', data);
 
-    if (data.length == 0)
+    if (data.length === 0) {
         this.set('data', []);
-    else {
+    } else {
         $.log('dupa');
         this.set('data', data[0].pages);
     }  
@@ -319,7 +319,7 @@ Editor.DocumentModel = Editor.Model.extend({
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
       }
-    } else if (xhr.status == 202) { // Wygenerowano PullRequest
+    } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
     } else if (xhr.status == 204) { // Nic nie zmieniono
     } else if (xhr.status == 409) { // Konflikt podczas operacji
     } 
@@ -351,7 +351,7 @@ Editor.DocumentModel = Editor.Model.extend({
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
       }
-    } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
+    } else if (xhr.status == 202) { // Wygenerowano PullRequest
     } else if (xhr.status == 204) { // Nic nie zmieniono
     } else if (xhr.status == 409) { // Konflikt podczas operacji
     }
