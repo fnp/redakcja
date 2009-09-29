@@ -230,7 +230,7 @@ Editor.DocumentModel = Editor.Model.extend({
     }
   },
   
-  quickSave: function(message) {
+  updateDirtyContentModel: function(message) {
     for (var key in this.contentModels) {
       if (this.contentModels[key].get('state') == 'dirty') {
         this.contentModels[key].update(message);

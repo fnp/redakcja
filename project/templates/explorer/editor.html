@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+	<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.modal.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
 	<script type="text/javascript" charset="utf-8">
 		var fileId = '{{ fileid }}';
 	</script>
-    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
 	
+	{# Libraries #}
+    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/lib/jquery.modal.js" type="text/javascript" charset="utf-8"></script>
 	{# Scriptlets #}
 	<script src="http://localhost:8000/api/toolbar/scriptlets" type="text/javascript" charset="utf-8"></script>
 	
@@ -85,7 +89,7 @@
 {% endblock %}
 
 {% block header-toolbar %}
-	<button id="action-update">Update</button> <button id="action-commit">Commit</button> <button id="action-quick-save">Quick Save</button>
+	<button id="action-merge">Merge</button> <button id="action-update">Update</button> <button id="action-commit">Commit</button> <button id="action-quick-save">Quick Save</button>
 {% endblock %}
 
 {% block maincontent %}
@@ -95,35 +99,35 @@
     </div>
 
 
-    {# <div id="commit-dialog" class="jqmWindow"> #}
-    {#     <form action="{% url file_commit fileid %}" method="POST"> #}
-    {#         <label for="message">Commit message:</label> #}
-    {#         <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea> #}
-    {#         <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                 #}
-    {#         <fieldset id="commit-dialog-related-issues"  #}
-    {#                   ui:ajax-src="http://localhost:3000/publications/issues/{{fileid}}"> #}
-    {#             <legend>Related issues</legend> #}
-    {#             <div class="loading-box" style="display: none;"> #}
-    {#                 <p>Loading related issues...</p> #}
-    {#             </div> #}
-    {#             <div class="container-box">No related issues.</div> #}
-    {#         </fieldset> #}
-    {#         <p> #}
-    {#            <input type="button" value="Save" id="commit-dialog-save-button" /> #}
-    {#            <input type="reset" value="Cancel" id="commit-dialog-cancel-button" /> #}
-    {#         </p> #}
-    {#     </form> #}
-    {# </div> #}
-    {#  #}
-    {# <div id="split-dialog" class="jqmWindow"> #}
-    {#     <div class="container-box"> </div> #}
-    {#     <div class="loading-box" style="display: none;"> #}
-    {#         <p>Loading dialog contents...</p> #}
-    {#         <!-- <p><button type="button" class="dialog-close-button">Close</button></p> --> #}
-    {#     </div> #}
-    {#     <div class="fatal-error-box" style="display: none;"> #}
-    {#         <p>Server error, while loading dialog :(</p> #}
-    {#         <p><button type="button" class="dialog-close-button">Close</button></p> #}
-    {#     </div> #}
-    {# </div> #}
+    <div id="commit-dialog" class="jqmWindow" style="display:none">
+        <form action="{% url file_commit fileid %}" method="POST">
+            <label for="message">Commit message:</label>
+            <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
+            <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                
+            <fieldset id="commit-dialog-related-issues" 
+                      ui:ajax-src="http://localhost:3000/publications/issues/{{fileid}}">
+                <legend>Related issues</legend>
+                <div class="loading-box" style="display: none;">
+                    <p>Loading related issues...</p>
+                </div>
+                <div class="container-box">No related issues.</div>
+            </fieldset>
+            <p>
+               <input type="button" value="Save" id="commit-dialog-save-button" />
+               <input type="reset" value="Cancel" id="commit-dialog-cancel-button" />
+            </p>
+        </form>
+    </div>
+    
+    <div id="split-dialog" class="jqmWindow" style="display:none">
+        <div class="container-box"> </div>
+        <div class="loading-box" style="display: none;">
+            <p>Loading dialog contents...</p>
+            <!-- <p><button type="button" class="dialog-close-button">Close</button></p> -->
+        </div>
+        <div class="fatal-error-box" style="display: none;">
+            <p>Server error, while loading dialog :(</p>
+            <p><button type="button" class="dialog-close-button">Close</button></p>
+        </div>
+    </div>
 {% endblock maincontent %}

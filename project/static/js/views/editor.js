@@ -16,13 +16,77 @@ var EditorView = View.extend({
     
     this.model.addObserver(this, 'state', this.modelStateChanged.bind(this));
     this.modelStateChanged('state', this.model.get('state'));
+    
+    // Inicjalizacja okien jQuery Modal
+    $('#commit-dialog', this.element).
+    jqm({
+        modal: true,
+        onShow: this.loadRelatedIssues.bind(this)
+    });
+    
+    $('#commit-dialog-cancel-button', this.element).click(function() {
+        $('#commit-dialog-error-empty-message').hide();
+        $('#commit-dialog').jqmHide();
+    });   
+    
+    // $('#split-dialog').jqm({
+    //      modal: true,
+    //      onShow: $.fbind(self, self.loadSplitDialog)
+    //  }).
+    //  jqmAddClose('button.dialog-close-button');
   },
   
   quickSave: function(event) {
-    this.model.quickSave();
+    this.model.updateDirtyContentModel();
   },
   
   commit: function(event) {
+    $('#commit-dialog', this.element).jqmShow({callback: this.doCommit.bind(this)});
+  },
+  
+  doCommit: function(message) {
+    this.model.updateDirtyContentModel(message);
+  },
+  
+  loadRelatedIssues: function(hash) {
+    var self = this;
+    var c = $('#commit-dialog-related-issues');
+
+    $('#commit-dialog-save-button').click(function(event, data)
+    {
+      if ($('#commit-dialog-message').val().match(/^\s*$/)) {
+        $('#commit-dialog-error-empty-message').fadeIn();
+      } else {
+        $('#commit-dialog-error-empty-message').hide();
+        $('#commit-dialog').jqmHide();
+
+        var message = $('#commit-dialog-message').val();
+        $('#commit-dialog-related-issues input:checked')
+          .each(function() { message += ' refs #' + $(this).val(); });
+        console.log("COMMIT APROVED", hash.t);
+        hash.t.callback(message);
+      }
+      return false;
+    });
+
+    $("div.loading-box", c).show();
+    $("div.fatal-error-box", c).hide();
+    $("div.container-box", c).hide();
+    
+    // $.getJSON(c.attr('ui:ajax-src') + '?callback=?',
+    // function(data, status)
+    // {
+    //     var fmt = '';
+    //     $(data).each( function() {
+    //         fmt += '<label><input type="checkbox" checked="checked"'
+    //         fmt += ' value="' + this.id + '" />' + this.subject +'</label>\n'
+    //     });
+    //     $("div.container-box", c).html(fmt);
+    //     $("div.loading-box", c).hide();
+    //     $("div.container-box", c).show();        
+    // });   
+    
+    hash.w.show();
   },
   
   update: function(event) {
