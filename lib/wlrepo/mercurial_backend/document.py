@@ -50,6 +50,10 @@ class MercurialDocument(wlrepo.Document):
             
             ops(self._library, entry_path)
             message, user = commit_info(self)
+
+            message = self._library._sanitize_string(message)
+            user = self._library._sanitize_string(user)
+
             self._library._commit(message, user)
             try:
                 return self._library.document(docid=self.id, user=user)
