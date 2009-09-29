@@ -82,7 +82,7 @@ Editor.XMLModel = Editor.Model.extend({
       
       $.ajax({
         url: this.serverURL,
-        type: 'put',
+        type: 'post',
         dataType: 'json',
         data: payload,
         success: this.updatingSucceeded.bind(this),
