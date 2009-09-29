@@ -52,7 +52,7 @@
         <script type="text/html" charset="utf-8" id="image-gallery-view-template">
 	<div class="image-gallery-view-template">
 
-        <div class="image-gallery-panel-header">
+        <div class="image-gallery-header">
         <p>
         <button type="button" class="image-gallery-prev-button">Previous</button>
         <input type="input" class="image-gallery-current-page" />
@@ -61,8 +61,8 @@
         </div>
 
         <div>
-            <% for (page in model.pages) { %>
-                <p>page.url</p>
+            <% for(var i=0; i < model.data.length; i++) { %>
+                <p class="image-gallery-page-container"><%= model.data[i] %></p>
             <% }; %>
 	</div>
         

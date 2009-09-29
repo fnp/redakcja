@@ -176,7 +176,8 @@ Editor.HTMLModel = Editor.Model.extend({
 
 Editor.ImageGalleryModel = Editor.Model.extend({
   _className: 'Editor.ImageGalleryModel',
-  serverURL: null,  
+  serverURL: null,
+  data: [],
   state: 'empty',
 
   init: function(serverURL) {
@@ -203,7 +204,15 @@ Editor.ImageGalleryModel = Editor.Model.extend({
       alert('erroneous state:', this.get('state'));
     }
 
-    this.set('pages', data[0].pages)
+    $.log('galleries:', data);
+
+    if (data.length == 0)
+        this.set('data', []);
+    else {
+        $.log('dupa');
+        this.set('data', data[0].pages);
+    }
+    
     this.set('state', 'synced');
   },
 
