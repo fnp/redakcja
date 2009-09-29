@@ -19,6 +19,7 @@ document_resource = Resource(dh.DocumentHandler, **authdata)
 document_text_resource = Resource(dh.DocumentTextHandler, **authdata)
 document_html_resource = Resource(dh.DocumentHTMLHandler, **authdata)
 document_dc_resource = Resource(dh.DocumentDublinCoreHandler, **authdata)
+document_gallery = Resource(dh.DocumentGalleryHandler, **authdata)
 document_merge = Resource(dh.MergeHandler, **authdata)
 
 import api.handlers.manage_handlers as mh
@@ -41,6 +42,7 @@ __all__ = [
     'document_text_resource',
     'document_html_resource',
     'document_dc_resource',
+    'document_gallery',
     'document_merge',
     'toolbar_buttons',
     'scriptlets',

@@ -108,10 +108,21 @@ class LibraryException(Exception):
 class RevisionNotFound(LibraryException):
     def __init__(self, rev):
         LibraryException.__init__(self, "Revision %r not found." % rev)
-    pass
+    
+class EntryNotFound(LibraryException):
+    def __init__(self, rev, entry, guesses=[]):
+        LibraryException.__init__(self, \
+            u"Entry '%s' at revision %r not found. %s" % (entry, rev, \
+            (u"Posible values:\n" + u',\n'.join(guesses)) if len(guesses) else u'') )
 
 class DocumentAlreadyExists(LibraryException):
     pass
 
 # import backends to local namespace
-from mercurial_backend.library import MercurialLibrary
+
+def open_library(path, proto, *args, **kwargs):
+    if proto == 'hg':
+        import wlrepo.mercurial_backend
+        return wlrepo.mercurial_backend.MercurialLibrary(path, *args, **kwargs)
+
+    raise NotImplemented()

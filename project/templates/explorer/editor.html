@@ -22,6 +22,7 @@
 	<script src="{{STATIC_URL}}js/views/split.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/xml.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/html.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{{STATIC_URL}}js/views/gallery.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/panel_container.js" type="text/javascript" charset="utf-8"></script>
 	
 	<script src="{{STATIC_URL}}js/models.js" type="text/javascript" charset="utf-8"></script>
@@ -46,6 +47,26 @@
 	<script type="text/html" charset="utf-8" id="html-view-template">
 		<div class="htmlview">
 		</div>
+	</script>
+
+        <script type="text/html" charset="utf-8" id="image-gallery-view-template">
+	<div class="image-gallery-view-template">
+
+        <div class="image-gallery-panel-header">
+        <p>
+        <button type="button" class="image-gallery-prev-button">Previous</button>
+        <input type="input" class="image-gallery-current-page" />
+        <button type="button" class="image-gallery-next-button">Next</button>
+        </p>
+        </div>
+
+        <div>
+            <% for (page in model.pages) { %>
+                <p>page.url</p>
+            <% }; %>
+	</div>
+        
+        </div>
 	</script>
 	
 	<script type="text/html" charset="utf-8" id="button-toolbar-view-template">

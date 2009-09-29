@@ -1,3 +1,4 @@
+import os.path
 # -*- encoding: utf-8 -*-
 
 __author__= "Łukasz Rekucki"
@@ -16,14 +17,17 @@ import librarian
 import librarian.html
 from librarian import dcparser
 
-from wlrepo import RevisionNotFound, LibraryException, DocumentAlreadyExists
-from explorer.models import PullRequest
+from wlrepo import *
+from explorer.models import PullRequest, GalleryForDocument
 
 # internal imports
 import api.forms as forms
 import api.response as response
-from api.utils import validate_form, hglibrary
+from api.utils import validate_form, hglibrary, natural_order
 from api.models import PartCache
+
+#
+import settings
 
 #
 # Document List Handlers
@@ -52,33 +56,39 @@ class LibraryHandler(BaseHandler):
         documents = {}
         
         for docid in lib.documents():
+            docid = docid.decode('utf-8')
             documents[docid] = {
                 'url': reverse('document_view', args=[docid]),
                 'name': docid,
                 'parts': []
             }
 
-        related = PartCache.objects.defer('part_id')\
+        parts = PartCache.objects.defer('part_id')\
             .values_list('part_id', 'document_id').distinct()
+       
+        document_tree = dict(documents)
 
-        for part, docid in related:
+        for part, docid in parts:
             # this way, we won't display broken links
             if not documents.has_key(part):
+                print "NOT FOUND:", part
                 continue
 
-            child = documents[part]
             parent = documents[docid]
+            child = documents[part]
+
+            # not top-level anymore
+            document_tree.pop(part)
+            parent['parts'].append(child)
+
+        # sort the right way
+        
+
+        for doc in documents.itervalues():
+            doc['parts'].sort(key=natural_order(lambda d: d['name']))
             
-            if isinstance(parent, dict): # the parent is top-level
-                documents.pop(part)                
-                parent['parts'].append(child)
-                documents[part] = child['parts']
-            else: # not top-level
-                parent.append(child)
-            
-        return {
-            'documents': [d for d in documents.itervalues() if isinstance(d, dict)]
-        }
+        return {'documents': sorted(document_tree.itervalues(),
+            key=natural_order(lambda d: d['name']) ) }
 
     @validate_form(forms.DocumentUploadForm, 'POST')
     @hglibrary
@@ -143,9 +153,9 @@ class BasicDocumentHandler(AnonymousBaseHandler):
 
         result = {
             'name': doc.id,
-            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
-            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
-            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
+            'html_url': reverse('dochtml_view', args=[doc.id]),
+            'text_url': reverse('doctext_view', args=[doc.id]),
+            'dc_url': reverse('docdc_view', args=[doc.id]),
             'public_revision': doc.revision,
         }
 
@@ -164,19 +174,24 @@ class DocumentHandler(BaseHandler):
         try:
             doc = lib.document(docid)
             udoc = doc.take(request.user.username)
-        except RevisionNotFound:
-            return request.EnityNotFound().django_response()
+        except RevisionNotFound, e:
+            return response.EntityNotFound().django_response({
+                'exception': type(e), 'message': e.message})
 
         # is_shared = udoc.ancestorof(doc)
         # is_uptodate = is_shared or shared.ancestorof(document)
 
         result = {
             'name': udoc.id,
-            'html_url': reverse('dochtml_view', args=[udoc.id,udoc.revision]),
-            'text_url': reverse('doctext_view', args=[udoc.id,udoc.revision]),
-            'dc_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
+            'html_url': reverse('dochtml_view', args=[udoc.id]),
+            'text_url': reverse('doctext_view', args=[udoc.id]),
+            'dc_url': reverse('docdc_view', args=[udoc.id]),
+            'gallery_url': reverse('docgallery_view', args=[udoc.id]),
+            'merge_url': reverse('docmerge_view', args=[udoc.id]),
             'user_revision': udoc.revision,
-            'public_revision': doc.revision,            
+            'user_timestamp': udoc.revision.timestamp,
+            'public_revision': doc.revision,
+            'public_timestamp': doc.revision.timestamp,
         }       
 
         return result
@@ -189,23 +204,64 @@ class DocumentHandler(BaseHandler):
 #
 #
 class DocumentHTMLHandler(BaseHandler):
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
+    def read(self, request, docid, lib):
         """Read document as html text"""
         try:
+            revision = request.GET.get('revision', 'latest')
+
             if revision == 'latest':
                 document = lib.document(docid)
             else:
                 document = lib.document_for_rev(revision)
 
+            if document.id != docid:
+                return response.BadRequest().django_response({'reason': 'name-mismatch',
+                    'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
+
             return librarian.html.transform(document.data('xml'), is_file=False)
-        except RevisionNotFound:
-            return response.EntityNotFound().django_response()
+        except (EntryNotFound, RevisionNotFound), e:
+            return response.EntityNotFound().django_response({
+                'exception': type(e), 'message': e.message})
 
 
+#
+# Image Gallery
+#
+from django.core.files.storage import FileSystemStorage
 
+class DocumentGalleryHandler(BaseHandler):
+    allowed_methods = ('GET')
+    
+    def read(self, request, docid):
+        """Read meta-data about scans for gallery of this document."""
+        galleries = []
+
+        for assoc in GalleryForDocument.objects.filter(document=docid):
+            dirpath = os.path.join(settings.MEDIA_ROOT, assoc.subpath)
+
+            if not os.path.isdir(dirpath):
+                print u"[WARNING]: missing gallery %s" % dirpath
+                continue
+
+            gallery = {'name': assoc.name, 'pages': []}
+            
+            for file in sorted(os.listdir(dirpath), key=natural_order()):
+                print file
+                name, ext = os.path.splitext(os.path.basename(file))
+
+                if ext.lower() not in ['.png', '.jpeg', '.jpg']:
+                    print "Ignoring:", name, ext
+                    continue
+
+                url = settings.MEDIA_URL + assoc.subpath + u'/' + file.decode('utf-8');
+                gallery['pages'].append(url)
+                
+            galleries.append(gallery)
+
+        return galleries                      
 
 #
 # Document Text View
@@ -214,30 +270,38 @@ class DocumentHTMLHandler(BaseHandler):
 XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1]+?)\1\s*[^>]*?>"""
 #
 #
+#
 class DocumentTextHandler(BaseHandler):
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET', 'POST')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
-        """Read document as raw text"""               
+    def read(self, request, docid, lib):
+        """Read document as raw text"""
+        revision = request.GET.get('revision', 'latest')
         try:
             if revision == 'latest':
                 document = lib.document(docid)
             else:
                 document = lib.document_for_rev(revision)
+
+            if document.id != docid:
+                return response.BadRequest().django_response({'reason': 'name-mismatch',
+                    'message': 'Provided revision is not valid for this document'})
             
             # TODO: some finer-grained access control
             return document.data('xml')
-        except RevisionNotFound:
-            return response.EntityNotFound().django_response()
+        except (EntryNotFound, RevisionNotFound), e:
+            return response.EntityNotFound().django_response({
+                'exception': type(e), 'message': e.message})
 
     @hglibrary
-    def update(self, request, docid, revision, lib):
+    def create(self, request, docid, lib):
         try:
-            data = request.PUT['contents']            
+            data = request.POST['contents']
+            revision = request.POST['revision']
 
-            if request.PUT.has_key('message'):
-                msg = u"$USER$ " + request.PUT['message']
+            if request.POST.has_key('message'):
+                msg = u"$USER$ " + request.POST['message']
             else:
                 msg = u"$AUTO$ XML content update."
 
@@ -253,6 +317,8 @@ class DocumentTextHandler(BaseHandler):
             # try to find any Xinclude tags
             includes = [m.groupdict()['link'] for m in (re.finditer(\
                 XINCLUDE_REGEXP, data, flags=re.UNICODE) or []) ]
+
+            print "INCLUDES: ", includes
 
             # TODO: provide useful routines to make this simpler
             def xml_update_action(lib, resolve):
@@ -289,14 +355,17 @@ class DocumentTextHandler(BaseHandler):
                     "document": ndoc.id,
                     "subview": "xml",
                     "previous_revision": current.revision,
-                    "updated_revision": ndoc.revision,
-                    "url": reverse("doctext_view", args=[ndoc.id, ndoc.revision])
+                    "revision": ndoc.revision,
+                    'timestamp': ndoc.revision.timestamp,
+                    "url": reverse("doctext_view", args=[ndoc.id])
                 })
             except Exception, e:
                 if ndoc: lib._rollback()
                 raise e        
         except RevisionNotFound, e:
-            return response.EntityNotFound().django_response(e)
+            return response.EntityNotFound(mimetype="text/plain").\
+                django_response(e.message)
+
 
 #
 # Dublin Core handlers
@@ -304,27 +373,37 @@ class DocumentTextHandler(BaseHandler):
 # @requires librarian
 #
 class DocumentDublinCoreHandler(BaseHandler):
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET', 'POST')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
+    def read(self, request, docid, lib):
         """Read document as raw text"""        
         try:
+            revision = request.GET.get('revision', 'latest')
+
             if revision == 'latest':
                 doc = lib.document(docid)
             else:
                 doc = lib.document_for_rev(revision)
+
+
+            if document.id != docid:
+                return response.BadRequest().django_response({'reason': 'name-mismatch',
+                    'message': 'Provided revision is not valid for this document'})
             
             bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
             return bookinfo.serialize()
-        except RevisionNotFound:
-            return response.EntityNotFound().django_response()
+        except (EntryNotFound, RevisionNotFound), e:
+            return response.EntityNotFound().django_response({
+                'exception': type(e), 'message': e.message})
 
     @hglibrary
-    def update(self, request, docid, revision, lib):
+    def create(self, request, docid, lib):
         try:
-            bi_json = request.PUT['contents']            
-            if request.PUT.has_key('message'):
+            bi_json = request.POST['contents']
+            revision = request.POST['revision']
+            
+            if request.POST.has_key('message'):
                 msg = u"$USER$ " + request.PUT['message']
             else:
                 msg = u"$AUTO$ Dublin core update."
@@ -352,15 +431,15 @@ class DocumentDublinCoreHandler(BaseHandler):
                     "document": ndoc.id,
                     "subview": "dc",
                     "previous_revision": current.revision,
-                    "updated_revision": ndoc.revision
+                    "revision": ndoc.revision,
+                    'timestamp': ndoc.revision.timestamp,
+                    "url": reverse("docdc_view", args=[ndoc.id])
                 }
             except Exception, e:
-                lib._rollback()
+                if ndoc: lib._rollback()
                 raise e
         except RevisionNotFound:
             return response.EntityNotFound().django_response()
-
-
 
 class MergeHandler(BaseHandler):
     allowed_methods = ('POST',)
@@ -411,7 +490,7 @@ class MergeHandler(BaseHandler):
                 document=docid,
                 source_revision = str(udoc.revision),
                 status="N",
-                comment = form.cleaned_data['comment'] or '$AUTO$ Document shared.'
+                comment = form.cleaned_data['message'] or '$AUTO$ Document shared.'
             )
 
             prq.save()
@@ -425,10 +504,10 @@ class MergeHandler(BaseHandler):
             success, changed = udoc.update(request.user.username)
 
         if form.cleaned_data['type'] == 'share':
-            success, changed = udoc.share(form.cleaned_data['comment'])
+            success, changed = udoc.share(form.cleaned_data['message'])
 
         if not success:
-            return response.EntityConflict().django_response()
+            return response.EntityConflict().django_response({})
 
         if not changed:
             return response.SuccessNoContent().django_response()
@@ -439,5 +518,6 @@ class MergeHandler(BaseHandler):
             "name": udoc.id,
             "parent_user_resivion": udoc.revision,
             "parent_revision": doc.revision,
-            "revision": udoc.revision,
+            "revision": ndoc.revision,
+            'timestamp': ndoc.revision.timestamp,
         })

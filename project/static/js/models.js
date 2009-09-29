@@ -179,6 +179,48 @@ Editor.HTMLModel = Editor.Model.extend({
 });
 
 
+Editor.ImageGalleryModel = Editor.Model.extend({
+  _className: 'Editor.ImageGalleryModel',
+  serverURL: null,  
+  state: 'empty',
+
+  init: function(serverURL) {
+    this._super();
+    this.set('state', 'empty');
+    this.serverURL = serverURL;
+    // olewać data    
+    this.pages = [];
+  },
+
+  load: function() {
+    if (this.get('state') == 'empty') {
+      this.set('state', 'loading');
+      $.ajax({
+        url: this.serverURL,
+        dataType: 'json',
+        success: this.loadingSucceeded.bind(this)
+      });
+    }
+  },  
+
+  loadingSucceeded: function(data) {
+    if (this.get('state') != 'loading') {
+      alert('erroneous state:', this.get('state'));
+    }
+
+    this.set('pages', data[0].pages);
+    this.set('state', 'synced');
+  },
+
+  set: function(property, value) {
+    if (property == 'state') {
+      console.log(this.description(), ':', property, '=', value);
+    }
+    return this._super(property, value);
+  }
+});
+
+
 Editor.DocumentModel = Editor.Model.extend({
   _className: 'Editor.DocumentModel',
   data: null, // name, text_url, user_revision, latest_shared_rev, parts_url, dc_url, size, merge_url
@@ -208,7 +250,8 @@ Editor.DocumentModel = Editor.Model.extend({
     this.set('state', 'synced');
     this.contentModels = {
       'xml': new Editor.XMLModel(data.text_url, data.user_revision),
-      'html': new Editor.HTMLModel(data.html_url, data.user_revision)
+      'html': new Editor.HTMLModel(data.html_url, data.user_revision),
+      'gallery': new Editor.ImageGalleryModel(data.gallery_url)
     };
     for (var key in this.contentModels) {
       this.contentModels[key].addObserver(this, 'state', this.contentModelStateChanged.bind(this));

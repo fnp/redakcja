@@ -38,7 +38,7 @@ def file_path(fileid):
 def with_repo(view):
     """Open a repository for this view"""
     def view_with_repo(request, *args, **kwargs):          
-        kwargs['repo'] = wlrepo.MercurialLibrary(settings.REPOSITORY_PATH)
+        kwargs['repo'] = wlrepo.open_library(settings.REPOSITORY_PATH, 'hg')
         return view(request, *args, **kwargs)
     return view_with_repo
 
@@ -65,7 +65,7 @@ def file_list(request, repo):
 
     # short-circut the api document list
     doctree = library_resource.handler.read(request)
-    print doctree['documents']
+    print "DOCTREE:", doctree['documents']
         
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
         'filetree': doctree['documents'], 'bookform': bookform,

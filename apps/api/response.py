@@ -22,8 +22,8 @@ class ResponseObject(object):
         elif self._mime == MIME_JSON:
             data = json.dumps(body, default=lambda o: repr(o) )
         else:
-            data = u"%s\n%s" % (self.MESSAGE, unicode(body))
-            data = data.encode('utf-8')
+            # data = u"%s\n%s" % (self.MESSAGE, unicode(body))
+            data = unicode(body).encode('utf-8')
             
         return HttpResponse(content=data, status=self._code, \
                 content_type=self._mime+'; charset=utf-8' )        

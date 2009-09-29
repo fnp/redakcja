@@ -20,7 +20,8 @@ class EditorSettings(models.Model):
     Przykład:
     {
         'panels': [
-            {'name': 'htmleditor', 'ratio': 0.5},
+            {'name': 'htmleditor',
+            'ratio': 0.5},
             {'name': 'gallery', 'ratio': 0.5}
         ],
         'recentFiles': [
@@ -87,16 +88,18 @@ class PullRequest(models.Model):
     # revision number in which the changes were merged (if any)
     merged_rev = models.CharField(max_length=40, blank=True, null=True)
 
-
     def __unicode__(self):
         return unicode(self.comitter) + u':' + self.document
+
+# Yes, this is intentionally unnormalized !
+class GalleryForDocument(models.Model):
+    name = models.CharField(max_length=100)
     
-def get_image_folders():
-    return sorted(fn for fn in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR)) if not fn.startswith('.'))
+    # directory containing scans under MEDIA_ROOT/
+    subpath = models.CharField(max_length=255)
 
+    # document associated with the gallery
+    document = models.CharField(max_length=255)
 
-def get_images_from_folder(folder):
-    return sorted(settings.MEDIA_URL + settings.IMAGE_DIR + u'/' + folder + u'/' + fn.decode('utf-8') for fn
-            in os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, folder))
-            if not fn.decode('utf-8').startswith('.'))
-
+    def __unicode__(self):
+        return u"%s:%s" % self.subpath, self.document
