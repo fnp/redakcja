@@ -45,9 +45,10 @@ Editor.XMLModel = Editor.Model.extend({
   data: '',
   state: 'empty',
   
-  init: function(serverURL) {
+  init: function(serverURL, revision) {
     this._super();
     this.set('state', 'empty');
+    this.set('revision', revision);
     this.serverURL = serverURL;
     this.toolbarButtonsModel = new Editor.ToolbarButtonsModel();
     this.addObserver(this, 'data', this.dataChanged.bind(this));
@@ -59,6 +60,7 @@ Editor.XMLModel = Editor.Model.extend({
       $.ajax({
         url: this.serverURL,
         dataType: 'text',
+        data: {revision: this.get('revision')},
         success: this.loadingSucceeded.bind(this)
       });
       return true;
@@ -71,7 +73,8 @@ Editor.XMLModel = Editor.Model.extend({
       this.set('state', 'updating');
       
       var payload = {
-        contents: this.get('data')
+        contents: this.get('data'),
+        revision: this.get('revision')
       };
       if (message) {
         payload.message = message;
@@ -139,9 +142,10 @@ Editor.HTMLModel = Editor.Model.extend({
   data: '',
   state: 'empty',
   
-  init: function(serverURL) {
+  init: function(serverURL, revision) {
     this._super();
     this.set('state', 'empty');
+    this.set('revision', revision);
     this.serverURL = serverURL;
   },
   
@@ -151,6 +155,7 @@ Editor.HTMLModel = Editor.Model.extend({
       $.ajax({
         url: this.serverURL,
         dataType: 'text',
+        data: {revision: this.get('revision')},
         success: this.loadingSucceeded.bind(this)
       });
     }
@@ -185,7 +190,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
     this.set('state', 'empty');
     this.serverURL = serverURL;
     // olewać data    
-    this.pages = []
+    this.pages = [];
   },
 
   load: function() {
@@ -211,8 +216,8 @@ Editor.ImageGalleryModel = Editor.Model.extend({
     else {
         $.log('dupa');
         this.set('data', data[0].pages);
-    }
-    
+    }  
+
     this.set('state', 'synced');
   },
 
@@ -227,7 +232,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
 
 Editor.DocumentModel = Editor.Model.extend({
   _className: 'Editor.DocumentModel',
-  data: null, // name, text_url, latest_rev, latest_shared_rev, parts_url, dc_url, size
+  data: null, // name, text_url, user_revision, latest_shared_rev, parts_url, dc_url, size, merge_url
   contentModels: {},
   state: 'empty',
   
@@ -253,8 +258,8 @@ Editor.DocumentModel = Editor.Model.extend({
     this.set('data', data);
     this.set('state', 'synced');
     this.contentModels = {
-      'xml': new Editor.XMLModel(data.text_url),
-      'html': new Editor.HTMLModel(data.html_url),
+      'xml': new Editor.XMLModel(data.text_url, data.user_revision),
+      'html': new Editor.HTMLModel(data.html_url, data.user_revision),
       'gallery': new Editor.ImageGalleryModel(data.gallery_url)
     };
     for (var key in this.contentModels) {
@@ -292,11 +297,66 @@ Editor.DocumentModel = Editor.Model.extend({
   },
   
   update: function() {
-    
+    this.set('state', 'loading');
+    $.ajax({
+      url: this.data.merge_url,
+      dataType: 'json',
+      type: 'post',
+      data: {
+        type: 'update',
+        target_revision: this.data.user_revision
+      },
+      complete: this.updateCompleted.bind(this),
+      success: function(data) { this.set('updateData', data); }.bind(this)
+    });
   },
   
-  merge: function() {
-    
+  updateCompleted: function(xhr, textStatus) {
+    console.log(xhr.status, textStatus);
+    if (xhr.status == 200) { // Sukces
+      this.data.user_revision = this.get('updateData').revision;
+      for (var key in this.contentModels) {
+        this.contentModels[key].set('revision', this.data.user_revision);
+        this.contentModels[key].set('state', 'empty');
+      }
+    } else if (xhr.status == 202) { // Wygenerowano PullRequest
+    } else if (xhr.status == 204) { // Nic nie zmieniono
+    } else if (xhr.status == 409) { // Konflikt podczas operacji
+    } 
+    this.set('state', 'synced');
+    this.set('updateData', null);
+  },
+  
+  merge: function(message) {
+    this.set('state', 'loading');
+    $.ajax({
+      url: this.data.merge_url,
+      type: 'post',
+      dataType: 'json',
+      data: {
+        type: 'share',
+        target_revision: this.data.user_revision,
+        message: message
+      },
+      complete: this.mergeCompleted.bind(this),
+      success: function(data) { this.set('mergeData', data); }.bind(this)
+    });
+  },
+  
+  mergeCompleted: function(xhr, textStatus) {
+    console.log(xhr.status, textStatus);
+    if (xhr.status == 200) { // Sukces
+      this.data.user_revision = this.get('mergeData').revision;
+      for (var key in this.contentModels) {
+        this.contentModels[key].set('revision', this.data.user_revision);
+        this.contentModels[key].set('state', 'empty');
+      }
+    } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
+    } else if (xhr.status == 204) { // Nic nie zmieniono
+    } else if (xhr.status == 409) { // Konflikt podczas operacji
+    }
+    this.set('state', 'synced');
+    this.set('mergeData', null);
   },
   
   // For debbuging
