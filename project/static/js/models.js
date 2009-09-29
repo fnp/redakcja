@@ -209,12 +209,12 @@ Editor.ImageGalleryModel = Editor.Model.extend({
       alert('erroneous state:', this.get('state'));
     }
 
-    $.log('galleries:', data);
+    console.log('galleries:', data);
 
     if (data.length === 0) {
         this.set('data', []);
     } else {
-        $.log('dupa');
+        console.log('dupa');
         this.set('data', data[0].pages);
     }  
 
