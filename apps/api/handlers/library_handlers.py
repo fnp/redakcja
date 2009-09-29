@@ -52,33 +52,32 @@ class LibraryHandler(BaseHandler):
         documents = {}
         
         for docid in lib.documents():
+            docid = docid.decode('utf-8')
             documents[docid] = {
                 'url': reverse('document_view', args=[docid]),
                 'name': docid,
                 'parts': []
             }
 
-        related = PartCache.objects.defer('part_id')\
+        parts = PartCache.objects.defer('part_id')\
             .values_list('part_id', 'document_id').distinct()
+       
+        document_tree = dict(documents)
 
-        for part, docid in related:
+        for part, docid in parts:
             # this way, we won't display broken links
             if not documents.has_key(part):
+                print "NOT FOUND:", part
                 continue
 
-            child = documents[part]
             parent = documents[docid]
+            child = documents[part]
+
+            # not top-level anymore
+            document_tree.pop(part)
+            parent['parts'].append(child)
             
-            if isinstance(parent, dict): # the parent is top-level
-                documents.pop(part)                
-                parent['parts'].append(child)
-                documents[part] = child['parts']
-            else: # not top-level
-                parent.append(child)
-            
-        return {
-            'documents': [d for d in documents.itervalues() if isinstance(d, dict)]
-        }
+        return {'documents': sorted(document_tree.values()) }
 
     @validate_form(forms.DocumentUploadForm, 'POST')
     @hglibrary
@@ -252,6 +251,8 @@ class DocumentTextHandler(BaseHandler):
             # try to find any Xinclude tags
             includes = [m.groupdict()['link'] for m in (re.finditer(\
                 XINCLUDE_REGEXP, data, flags=re.UNICODE) or []) ]
+
+            print "INCLUDES: ", includes
 
             # TODO: provide useful routines to make this simpler
             def xml_update_action(lib, resolve):
