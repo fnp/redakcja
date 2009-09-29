@@ -507,7 +507,9 @@ class MergeHandler(BaseHandler):
             success, changed = udoc.share(form.cleaned_data['message'])
 
         if not success:
-            return response.EntityConflict().django_response({})
+            return response.EntityConflict().django_response({
+                'reason': 'merge-failure',
+            })
 
         if not changed:
             return response.SuccessNoContent().django_response()

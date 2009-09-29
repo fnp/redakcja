@@ -73,7 +73,9 @@ class MercurialRevision(wlrepo.Revision):
         return (a.branch() == self._changectx.branch())
 
     def has_children(self):
-        return bool( self._library._hgrepo.changelog.children(self.hgrev()) )   
+        children = self._library._hgrepo.changelog.children(self.hgrev())
+        print "C:", children, bool(children)
+        return bool(children)
 
     def merge_with(self, other, user, message):
         lock = self._library.lock(True)

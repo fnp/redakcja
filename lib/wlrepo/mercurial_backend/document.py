@@ -98,15 +98,20 @@ class MercurialDocument(wlrepo.Document):
                 return (True, False)
             
             if self._revision.has_children():
+                print 'Update failed: has children.'
                 # can't update non-latest revision
                 return (False, False)
 
             sv = self.shared()
-            
-            if not sv.ancestorof(self) and not self.parentof(sv):
-                return self._revision.merge_with(sv._revision, user=user)
 
-            return (False, False)
+            if self.parentof(sv):
+                return (True, False)
+
+            if sv.ancestorof(self):
+                return (True, False)
+
+
+            return self._revision.merge_with(sv._revision, user=user)
         finally:
             lock.release()  
 
