@@ -10,8 +10,8 @@ from mercurial import ui as hgui
 from mercurial import error
 import wlrepo
 
-from wlrepo.mercurial_backend.document import MercurialDocument
 from wlrepo.mercurial_backend import MercurialRevision
+from wlrepo.mercurial_backend.document import MercurialDocument
 
 class MergeStatus(object):
     def __init__(self, mstatus):
@@ -75,13 +75,14 @@ class MercurialLibrary(wlrepo.Library):
 
     @property
     def ospath(self):
-        return self._ospath
+        return self._ospath.decode('utf-8')
 
     def document_for_rev(self, revision):
         if revision is None:
             raise ValueError("Revision can't be None.")
         
         if not isinstance(revision, MercurialRevision):
+            revision = self._sanitize_string(unicode(revision))
             rev = self.get_revision(revision)
         else:
             rev = revision       
@@ -111,14 +112,11 @@ class MercurialLibrary(wlrepo.Library):
 
         return MercurialRevision(self, ctx)
 
-    def fulldocid(self, docid, user=None):
-        docid = self._sanitize_string(docid)
-        user = self._sanitize_string(user)
-        
-        fulldocid = ''
+    def fulldocid(self, docid, user=None):                
+        fulldocid = u''
         if user is not None:
-            fulldocid += '$user:' + user
-        fulldocid += '$doc:' + docid
+            fulldocid += u'$user:' + user
+        fulldocid += u'$doc:' + docid
         return fulldocid
 
 
@@ -130,16 +128,16 @@ class MercurialLibrary(wlrepo.Library):
             return False
 
     def document_create(self, docid):
-        docid = self._sanitize_string(docid)
+        
         
         # check if it already exists
         fullid = self.fulldocid(docid)
 
         if self.has_revision(fullid):
-            raise wlrepo.DocumentAlreadyExists("Document %s already exists!" % docid);
+            raise wlrepo.DocumentAlreadyExists(u"Document %s already exists!" % docid);
 
         # doesn't exist
-        self._create_branch(fullid)
+        self._create_branch(self._sanitize_string(fullid))
         return self.document_for_rev(fullid)
 
     #

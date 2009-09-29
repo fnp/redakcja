@@ -145,7 +145,7 @@ class SimpleTest(TestCase):
 
 
     @temprepo('simple')
-    def test_document_text_update(self):
+    def test_document_text_save(self):
         self.assertTrue(self.client.login(username='admin', password='admin'))
         TEXT = u"Ala ma kota i psa"
 

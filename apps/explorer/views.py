@@ -38,7 +38,7 @@ def file_path(fileid):
 def with_repo(view):
     """Open a repository for this view"""
     def view_with_repo(request, *args, **kwargs):          
-        kwargs['repo'] = wlrepo.MercurialLibrary(settings.REPOSITORY_PATH)
+        kwargs['repo'] = wlrepo.open_library(settings.REPOSITORY_PATH, 'hg')
         return view(request, *args, **kwargs)
     return view_with_repo
 

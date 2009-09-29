@@ -11,7 +11,7 @@ from piston.utils import rc
 
 import api.response
 
-from wlrepo import MercurialLibrary
+import wlrepo
 import settings
 
 class TextEmitter(Emitter):
@@ -50,8 +50,19 @@ def validate_form(formclass, source='GET'):
 def hglibrary(func):
     @wraps(func)
     def decorated(self, *args, **kwargs):
-        l = MercurialLibrary(settings.REPOSITORY_PATH)
+        l = wlrepo.open_library(settings.REPOSITORY_PATH, 'hg')
         kwargs['lib'] = l
         return func(self, *args, **kwargs)
-    return decorated                   
+    return decorated
+
+
+
+import re
+NAT_EXPR = re.compile(r'(\d+)', re.LOCALE | re.UNICODE)
+def natural_order(get_key=lambda x: x):
+    def getter(key):
+        key = [int(x) if n%2 else x for (n,x) in enumerate(NAT_EXPR.split(get_key(key))) ]
+        return key
+
+    return getter
 

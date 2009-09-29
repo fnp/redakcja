@@ -41,15 +41,22 @@ urlpatterns = patterns('',
     url(urlpath(r'documents', DOC, format=False),
         document_resource, {'emitter_format': 'json'},
         name="document_view"),
-    
+
+    url(urlpath(r'documents', DOC, 'gallery', format=False),
+        document_gallery, {'emitter_format': 'json'},
+        name="docgallery_view"),
+
+    # XML    
     url(urlpath(r'documents', DOC, 'text', REVISION, format=False),
         document_text_resource, {'emitter_format': 'rawxml'},
         name="doctext_view"),
 
+    # HTML
     url(urlpath(r'documents', DOC, 'html', REVISION, format=False),
         document_html_resource, {'emitter_format': 'rawhtml'},
         name="dochtml_view"),
 
+    # DC
     url(urlpath(r'documents', DOC, 'dc', REVISION),
         document_dc_resource,
         name="docdc_view_withformat"),
@@ -58,6 +65,7 @@ urlpatterns = patterns('',
         document_dc_resource, {'emitter_format': 'json'},
         name="docdc_view"),
 
+    # MERGE
     url(urlpath(r'documents', DOC, 'revision', format=False),
         document_merge, {'emitter_format': 'json'}, name="docmerge_view")
 

@@ -5,13 +5,18 @@ __date__ = "$2009-09-25 09:35:06$"
 __doc__ = "Module documentation."
 
 import wlrepo
+import mercurial.error
 
 class MercurialDocument(wlrepo.Document):
 
     def data(self, entry):
-        path = self._revision._docname + '.' + entry            
-        return self._library._filectx(path, \
-            self._revision.hgrev()).data()   
+        path = self._library._sanitize_string(self.id + u'.' + entry)
+        try:
+            return self._library._filectx(path, \
+                self._revision.hgrev()).data().decode('utf-8')
+        except mercurial.error.LookupError, e:
+            fl = [x.decode('utf-8') for x in self._revision._changectx]            
+            raise wlrepo.EntryNotFound(self._revision, path.decode('utf-8'), fl)
 
     def quickwrite(self, entry, data, msg, user=None):
         user = user or self.owner
@@ -32,16 +37,16 @@ class MercurialDocument(wlrepo.Document):
             f.close()
             l._fileadd(r(entry))            
 
-        return self.invoke_and_commit(write, lambda d: (msg, self.owner))
+        return self.invoke_and_commit(write, lambda d: (msg, \
+                self._library._sanitize_string(self.owner)) )
 
-    def invoke_and_commit(self, ops,
-            commit_info):
+    def invoke_and_commit(self, ops, commit_info):
         lock = self._library.lock()
         try:            
             self._library._checkout(self._revision.hgrev())
 
             def entry_path(entry):
-                return self.id + '.' + entry
+                return self._library._sanitize_string(self.id + u'.' + entry)
             
             ops(self._library, entry_path)
             message, user = commit_info(self)
@@ -184,9 +189,12 @@ class MercurialDocument(wlrepo.Document):
         finally:
             lock.release()     
 
-    def __str__(self):
+    def __unicode__(self):
         return u"Document(%s:%s)" % (self.name, self.owner)
 
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
+    
     def __eq__(self, other):
         return (self._revision == other._revision) and (self.name == other.name)
 

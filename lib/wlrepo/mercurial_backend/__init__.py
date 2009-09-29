@@ -28,11 +28,11 @@ class MercurialRevision(wlrepo.Revision):
         
     @property
     def document_name(self):
-        return self._docname
+        return self._docname.decode('utf-8')
 
     @property
     def user_name(self):
-        return self._username
+        return self._username.decode('utf-8')
 
     def hgrev(self):
         return self._changectx.node()
@@ -43,8 +43,15 @@ class MercurialRevision(wlrepo.Revision):
     def hgbranch(self):
         return self._changectx.branch()
 
+    @property
+    def timestamp(self):
+        return self._changectx.date()[0]
+
     def __unicode__(self):
         return u"%s" % self._changectx.hex()
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
 
     def __repr__(self):
         return "%s" % self._changectx.hex()

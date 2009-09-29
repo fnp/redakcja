@@ -16,14 +16,14 @@ class MergeRequestForm(forms.Form):
     target_revision = forms.RegexField('[0-9a-f]{40}')
 
     # any additional comments that user wants to add to the change
-    comment = forms.CharField(required=False)
+    message = forms.CharField(required=False)
 
 class DocumentUploadForm(forms.Form):
     ocr_file = forms.FileField(label='Source OCR file', required=False)
     ocr_data = forms.CharField(widget=forms.HiddenInput(), required=False)
     
     bookname = forms.RegexField(regex=r'[0-9\.\w_-]+',  \
-        label='Publication name', help_text='Example: slowacki-beniowski')
+        label='Publication name', help_text='Example: słowacki__beniowski__pieśń_1')
     
     generate_dc = forms.BooleanField(required=False, \
         initial=True, label=u"Generate DublinCore template")

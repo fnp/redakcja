@@ -20,6 +20,9 @@ class PartCache(models.Model):
 
         for part in created:
             me.objects.create(user_id=userid, document_id=docid, part_id=part)
+
+
+            
         
 
         
