@@ -100,3 +100,6 @@ class GalleryForDocument(models.Model):
 
     # document associated with the gallery
     document = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return u"%s:%s" % self.subpath, self.document

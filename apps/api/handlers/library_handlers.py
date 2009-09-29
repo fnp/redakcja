@@ -153,9 +153,9 @@ class BasicDocumentHandler(AnonymousBaseHandler):
 
         result = {
             'name': doc.id,
-            'html_url': reverse('dochtml_view', args=[doc.id,doc.revision]),
-            'text_url': reverse('doctext_view', args=[doc.id,doc.revision]),
-            'dc_url': reverse('docdc_view', args=[doc.id,doc.revision]),
+            'html_url': reverse('dochtml_view', args=[doc.id]),
+            'text_url': reverse('doctext_view', args=[doc.id]),
+            'dc_url': reverse('docdc_view', args=[doc.id]),
             'public_revision': doc.revision,
         }
 
@@ -183,9 +183,9 @@ class DocumentHandler(BaseHandler):
 
         result = {
             'name': udoc.id,
-            'html_url': reverse('dochtml_view', args=[udoc.id,udoc.revision]),
-            'text_url': reverse('doctext_view', args=[udoc.id,udoc.revision]),
-            'dc_url': reverse('docdc_view', args=[udoc.id,udoc.revision]),
+            'html_url': reverse('dochtml_view', args=[udoc.id]),
+            'text_url': reverse('doctext_view', args=[udoc.id]),
+            'dc_url': reverse('docdc_view', args=[udoc.id]),
             'gallery_url': reverse('docgallery_view', args=[udoc.id]),
             'merge_url': reverse('docmerge_view', args=[udoc.id]),
             'user_revision': udoc.revision,
@@ -207,9 +207,11 @@ class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
+    def read(self, request, docid, lib):
         """Read document as html text"""
         try:
+            revision = request.GET.get('revision', 'latest')
+
             if revision == 'latest':
                 document = lib.document(docid)
             else:
@@ -270,11 +272,12 @@ XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1
 #
 #
 class DocumentTextHandler(BaseHandler):
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET', 'POST')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
-        """Read document as raw text"""               
+    def read(self, request, docid, lib):
+        """Read document as raw text"""
+        revision = request.GET.get('revision', 'latest')
         try:
             if revision == 'latest':
                 document = lib.document(docid)
@@ -292,12 +295,13 @@ class DocumentTextHandler(BaseHandler):
                 'exception': type(e), 'message': e.message})
 
     @hglibrary
-    def update(self, request, docid, revision, lib):
+    def create(self, request, docid, lib):
         try:
-            data = request.PUT['contents']            
+            data = request.POST['contents']
+            revision = request.POST['revision']
 
-            if request.PUT.has_key('message'):
-                msg = u"$USER$ " + request.PUT['message']
+            if request.POST.has_key('message'):
+                msg = u"$USER$ " + request.POST['message']
             else:
                 msg = u"$AUTO$ XML content update."
 
@@ -353,7 +357,7 @@ class DocumentTextHandler(BaseHandler):
                     "previous_revision": current.revision,
                     "revision": ndoc.revision,
                     'timestamp': ndoc.revision.timestamp,
-                    "url": reverse("doctext_view", args=[ndoc.id, ndoc.revision])
+                    "url": reverse("doctext_view", args=[ndoc.id])
                 })
             except Exception, e:
                 if ndoc: lib._rollback()
@@ -369,12 +373,14 @@ class DocumentTextHandler(BaseHandler):
 # @requires librarian
 #
 class DocumentDublinCoreHandler(BaseHandler):
-    allowed_methods = ('GET', 'PUT')
+    allowed_methods = ('GET', 'POST')
 
     @hglibrary
-    def read(self, request, docid, revision, lib):
+    def read(self, request, docid, lib):
         """Read document as raw text"""        
         try:
+            revision = request.GET.get('revision', 'latest')
+
             if revision == 'latest':
                 doc = lib.document(docid)
             else:
@@ -392,10 +398,12 @@ class DocumentDublinCoreHandler(BaseHandler):
                 'exception': type(e), 'message': e.message})
 
     @hglibrary
-    def update(self, request, docid, revision, lib):
+    def create(self, request, docid, lib):
         try:
-            bi_json = request.PUT['contents']            
-            if request.PUT.has_key('message'):
+            bi_json = request.POST['contents']
+            revision = request.POST['revision']
+            
+            if request.POST.has_key('message'):
                 msg = u"$USER$ " + request.PUT['message']
             else:
                 msg = u"$AUTO$ Dublin core update."
@@ -425,7 +433,7 @@ class DocumentDublinCoreHandler(BaseHandler):
                     "previous_revision": current.revision,
                     "revision": ndoc.revision,
                     'timestamp': ndoc.revision.timestamp,
-                    "url": reverse("docdc_view", args=[ndoc.id, ndoc.revision])
+                    "url": reverse("docdc_view", args=[ndoc.id])
                 }
             except Exception, e:
                 if ndoc: lib._rollback()

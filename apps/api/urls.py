@@ -7,7 +7,7 @@ from api.resources import *
 
 FORMAT = r"\.(?P<emitter_format>xml|json|yaml)"
 DOC = r'(?P<docid>[^/]+)'
-REVISION = r'(?P<revision>latest|[0-9a-f]{40})'
+# REVISION = r'(?P<revision>latest|[0-9a-f]{40})'
 
 def urlpath(*args, **kwargs):
     format = kwargs.get('format', True)
@@ -35,8 +35,8 @@ urlpatterns = patterns('',
     url(urlpath(r'documents'), library_resource,
         name="document_list_view_withformat"),
         
-    url(urlpath(r'documents', DOC),
-        document_resource, name="document_view_withformat"),
+    #url(urlpath(r'documents', DOC),
+    #    document_resource, name="document_view_withformat"),
 
     url(urlpath(r'documents', DOC, format=False),
         document_resource, {'emitter_format': 'json'},
@@ -47,21 +47,21 @@ urlpatterns = patterns('',
         name="docgallery_view"),
 
     # XML    
-    url(urlpath(r'documents', DOC, 'text', REVISION, format=False),
+    url(urlpath(r'documents', DOC, 'text', format=False),
         document_text_resource, {'emitter_format': 'rawxml'},
         name="doctext_view"),
 
     # HTML
-    url(urlpath(r'documents', DOC, 'html', REVISION, format=False),
+    url(urlpath(r'documents', DOC, 'html', format=False),
         document_html_resource, {'emitter_format': 'rawhtml'},
         name="dochtml_view"),
 
     # DC
-    url(urlpath(r'documents', DOC, 'dc', REVISION),
-        document_dc_resource,
-        name="docdc_view_withformat"),
+    #url(urlpath(r'documents', DOC, 'dc'),
+    #    document_dc_resource,
+    #    name="docdc_view_withformat"),
 
-    url(urlpath(r'documents', DOC, 'dc', REVISION, format=False),
+    url(urlpath(r'documents', DOC, 'dc', format=False),
         document_dc_resource, {'emitter_format': 'json'},
         name="docdc_view"),
 

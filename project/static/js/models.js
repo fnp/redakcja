@@ -203,7 +203,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
       alert('erroneous state:', this.get('state'));
     }
 
-    this.set('pages', data.pages)      
+    this.set('pages', data[0].pages)
     this.set('state', 'synced');
   },
 
