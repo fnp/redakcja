@@ -9,29 +9,55 @@ var EditorView = View.extend({
     this._super(element, model, template);
     this.model.load();
     
-    $('#action-quick-save', this.element).bind('click.editorview', this.quickSave.bind(this));
-    $('#action-commit', this.element).bind('click.editorview', this.commit.bind(this));
-    $('#action-update', this.element).bind('click.editorview', this.update.bind(this));
-    this.freeze('Ładowanie');
+    this.quickSaveButton = $('#action-quick-save', this.element).bind('click.editorview', this.quickSave.bind(this));
+    this.commitButton = $('#action-commit', this.element).bind('click.editorview', this.commit.bind(this));
+    this.updateButton = $('#action-update', this.element).bind('click.editorview', this.update.bind(this));
+    this.mergeButton = $('#action-merge', this.element).bind('click.editorview', this.merge.bind(this));
+    
+    this.model.addObserver(this, 'state', this.modelStateChanged.bind(this));
+    this.modelStateChanged('state', this.model.get('state'));
   },
   
   quickSave: function(event) {
-    console.log('quickSave');
     this.model.quickSave();
   },
   
   commit: function(event) {
-    console.log('commit');
   },
   
   update: function(event) {
-    console.log('update');
+  },
+  
+  merge: function(event) {
+  },
+  
+  modelStateChanged: function(property, value) {
+    // Uaktualnia stan przycisków
+    if (value == 'dirty') {
+      this.quickSaveButton.attr('disabled', null);
+      this.commitButton.attr('disabled', null);
+      this.updateButton.attr('disabled', 'disabled');
+      this.mergeButton.attr('disabled', 'disabled');
+    } else if (value == 'synced') {
+      this.quickSaveButton.attr('disabled', 'disabled');
+      this.commitButton.attr('disabled', 'disabled');
+      this.updateButton.attr('disabled', null);
+      this.mergeButton.attr('disabled', null);      
+    } else if (value == 'empty') {
+      this.quickSaveButton.attr('disabled', 'disabled');
+      this.commitButton.attr('disabled', 'disabled');
+      this.updateButton.attr('disabled', 'disabled');
+      this.mergeButton.attr('disabled', 'disabled');
+    }
   },
   
   dispose: function() {
     $('#action-quick-save', this.element).unbind('click.editorview');
     $('#action-commit', this.element).unbind('click.editorview');
     $('#action-update', this.element).unbind('click.editorview');
+    $('#action-merge', this.element).unbind('click.editorview');
+
+    this.model.removeObserver(this);
     this._super();
   }
 });

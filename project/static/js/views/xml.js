@@ -58,7 +58,6 @@ var XMLView = View.extend({
   },
   
   modelDataChanged: function(property, value) {
-    console.log('modelDataChanged');
     if (this.editor.getCode() != value) {
       this.editor.setCode(value);
     }

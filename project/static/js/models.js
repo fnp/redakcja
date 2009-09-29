@@ -104,6 +104,7 @@ Editor.XMLModel = Editor.Model.extend({
     this.set('state', 'dirty');
   },
   
+  // For debbuging
   set: function(property, value) {
     if (property == 'state') {
       console.log(this.description(), ':', property, '=', value);
@@ -162,7 +163,8 @@ Editor.HTMLModel = Editor.Model.extend({
     this.set('data', data);
     this.set('state', 'synced');
   },
-  
+
+  // For debbuging
   set: function(property, value) {
     if (property == 'state') {
       console.log(this.description(), ':', property, '=', value);
@@ -210,10 +212,19 @@ Editor.DocumentModel = Editor.Model.extend({
   
   contentModelStateChanged: function(property, value, contentModel) {
     if (value == 'dirty') {
+      this.set('state', 'dirty');
       for (var key in this.contentModels) {
         if (this.contentModels[key].guid() != contentModel.guid()) {
-          // console.log(this.contentModels[key].description(), 'frozen');
           this.contentModels[key].set('state', 'unsynced');
+        }
+      }
+    } else if (value == 'updated') {
+      this.set('state', 'synced');
+      for (key in this.contentModels) {
+        if (this.contentModels[key].guid() == contentModel.guid()) {
+          this.contentModels[key].set('state', 'synced');
+        } else if (this.contentModels[key].get('state') == 'unsynced') {
+          this.contentModels[key].set('state', 'empty');
         }
       }
     }
@@ -226,6 +237,14 @@ Editor.DocumentModel = Editor.Model.extend({
         break;
       }
     }
+  },
+  
+  // For debbuging
+  set: function(property, value) {
+    if (property == 'state') {
+      console.log(this.description(), ':', property, '=', value);
+    }
+    return this._super(property, value);
   }
 });
 
