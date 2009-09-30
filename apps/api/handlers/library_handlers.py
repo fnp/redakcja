@@ -517,12 +517,12 @@ class MergeHandler(BaseHandler):
         if not changed:
             return response.SuccessNoContent().django_response()
 
-        new_udoc = udoc.latest()
+        nudoc = udoc.latest()
 
         return response.SuccessAllOk().django_response({
-            "name": udoc.id,
+            "name": nudoc.id,
             "parent_user_resivion": udoc.revision,
             "parent_revision": doc.revision,
-            "revision": ndoc.revision,
-            'timestamp': ndoc.revision.timestamp,
+            "revision": nudoc.revision,
+            'timestamp': nudoc.revision.timestamp,
         })
