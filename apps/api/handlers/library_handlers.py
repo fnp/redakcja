@@ -102,6 +102,9 @@ class LibraryHandler(BaseHandler):
         else:            
             data = request.FILES['ocr_file'].read().decode('utf-8')
 
+        if data is None:
+            return response.BadRequest().django_response('You must pass ocr_data or ocr_file.')
+
         if form.cleaned_data['generate_dc']:
             data = librarian.wrap_text(data, unicode(date.today()))
 
@@ -118,9 +121,10 @@ class LibraryHandler(BaseHandler):
                     doc = doc.quickwrite('xml', data.encode('utf-8'),
                         '$AUTO$ XML data uploaded.', user=request.user.username)
                 except Exception,e:
+                    import traceback
                     # rollback branch creation
                     lib._rollback()
-                    raise LibraryException("Exception occured:" + repr(e))
+                    raise LibraryException(traceback.format_exc())
 
                 url = reverse('document_view', args=[doc.id])
 
@@ -133,8 +137,9 @@ class LibraryHandler(BaseHandler):
             finally:
                 lock.release()
         except LibraryException, e:
+            import traceback
             return response.InternalError().django_response(\
-                {'exception': repr(e) })                
+                {'exception': traceback.format_exc()} )
         except DocumentAlreadyExists:
             # Document is already there
             return response.EntityConflict().django_response(\

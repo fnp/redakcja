@@ -154,7 +154,8 @@ class SimpleTest(TestCase):
             
         resp = self.assert_json_response()
 
-        self.response = self.client.put(resp['text_url'], {'contents': TEXT })
+        self.response = self.client.post(resp['text_url'], {
+            'revision': resp['user_revision'] ,'contents': TEXT })
         result = self.assert_json_response(must_have={u'document': u'sample'} )
         
         #self.response = self.client.get(result['url'])
