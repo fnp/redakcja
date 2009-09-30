@@ -16,7 +16,9 @@
 	
 	{# App and views #}
 	<script src="{{STATIC_URL}}js/app.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/messages.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/view.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/views/flash.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/editor.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/button_toolbar.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/views/split.js" type="text/javascript" charset="utf-8"></script>
@@ -49,7 +51,15 @@
 		</div>
 	</script>
 
-        <script type="text/html" charset="utf-8" id="image-gallery-view-template">
+	<script type="text/html" charset="utf-8" id="flash-view-template">
+		<div class="flashview" style="position: relative; margin-left: auto; margin-right: auto; width: 400px; background-color: yellow">
+		<% if (shownMessage) { %>
+			<p style="margin: 0; padding: 0.2em 0.5em; line-height: 1.8em" class="<%= shownMessage.type %>"><%= shownMessage.text %></p>
+		<% } %>
+		</div>
+	</script>
+	
+    <script type="text/html" charset="utf-8" id="image-gallery-view-template">
 	<div class="image-gallery-view-template">
 
         <div class="image-gallery-header">
@@ -152,3 +162,7 @@
         </div>
     </div>
 {% endblock maincontent %}
+
+{% block extrabody %}
+	<div style="position: absolute; left: 0; right: 0; top: 0; height: 20px; z-index: 1000" id="flashview"></div>
+{% endblock %}
