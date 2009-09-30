@@ -1,5 +1,6 @@
-import os.path
 # -*- encoding: utf-8 -*-
+import os.path
+import logging
 
 __author__= "Łukasz Rekucki"
 __date__ = "$2009-09-25 15:49:50$"
@@ -28,6 +29,10 @@ from api.models import PartCache
 
 #
 import settings
+
+
+log = logging.getLogger('platforma.api')
+
 
 #
 # Document List Handlers
@@ -71,7 +76,7 @@ class LibraryHandler(BaseHandler):
         for part, docid in parts:
             # this way, we won't display broken links
             if not documents.has_key(part):
-                print "NOT FOUND:", part
+                log.info("NOT FOUND: %s", part)
                 continue
 
             parent = documents[docid]
@@ -105,7 +110,7 @@ class LibraryHandler(BaseHandler):
         try:
             lock = lib.lock()            
             try:
-                print "DOCID", docid                
+                log.info("DOCID %s", docid)
                 doc = lib.document_create(docid)
                 # document created, but no content yet
 
@@ -168,6 +173,7 @@ class DocumentHandler(BaseHandler):
     @hglibrary
     def read(self, request, docid, lib):
         """Read document's meta data"""       
+        log.info("Read %s", docid)
         try:
             doc = lib.document(docid)
             udoc = doc.take(request.user.username)
@@ -218,7 +224,7 @@ class DocumentHTMLHandler(BaseHandler):
                 return response.BadRequest().django_response({'reason': 'name-mismatch',
                     'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
 
-            return librarian.html.transform(document.data('xml'), is_file=False)
+            return librarian.html.transform(document.data('xml'), is_file=False, parse_dublincore=False)
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
                 'exception': type(e), 'message': e.message})
@@ -240,17 +246,17 @@ class DocumentGalleryHandler(BaseHandler):
             dirpath = os.path.join(settings.MEDIA_ROOT, assoc.subpath)
 
             if not os.path.isdir(dirpath):
-                print u"[WARNING]: missing gallery %s" % dirpath
+                log.info(u"[WARNING]: missing gallery %s", dirpath)
                 continue
 
             gallery = {'name': assoc.name, 'pages': []}
             
             for file in sorted(os.listdir(dirpath), key=natural_order()):
-                print file
+                log.info(file)
                 name, ext = os.path.splitext(os.path.basename(file))
 
                 if ext.lower() not in ['.png', '.jpeg', '.jpg']:
-                    print "Ignoring:", name, ext
+                    log.info("Ignoring: %s %s", name, ext)
                     continue
 
                 url = settings.MEDIA_URL + assoc.subpath + u'/' + file.decode('utf-8');
@@ -315,7 +321,7 @@ class DocumentTextHandler(BaseHandler):
             includes = [m.groupdict()['link'] for m in (re.finditer(\
                 XINCLUDE_REGEXP, data, flags=re.UNICODE) or []) ]
 
-            print "INCLUDES: ", includes
+            log.info("INCLUDES: %s", includes)
 
             # TODO: provide useful routines to make this simpler
             def xml_update_action(lib, resolve):
