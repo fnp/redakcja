@@ -1,4 +1,4 @@
-/*globals Editor fileId SplitView PanelContainerView EditorView*/
+/*globals Editor fileId SplitView PanelContainerView EditorView FlashView messageCenter*/
 var documentsUrl = '/api/documents/';
 
 
@@ -375,6 +375,7 @@ $(function() {
   doc = new Editor.DocumentModel();
   var editor = new EditorView('#body-wrap', doc);
   editor.freeze();
+  var flashView = new FlashView('#flashview', messageCenter);
   var splitView = new SplitView('#splitview', doc);
   leftPanelView = new PanelContainerView('#left-panel-container', doc);
   rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
