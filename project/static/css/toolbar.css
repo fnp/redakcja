@@ -1,4 +1,4 @@
-.toolbar {
+/* .toolbar {
     overflow: hidden;
     z-index: 100;
     background: #AAA;
@@ -25,7 +25,7 @@
     background: green;
     margin: 0px;
     padding: 0px;
-}
+} */
 
 .toolbar-buttons-container {
     background: #DDD;
@@ -33,34 +33,32 @@
     padding-bottom: 2px;
 }
 
-.toolbar-buttons-container button {
+.toolbar-buttons-container a {
     background: #DDD;
     border: none;
     padding: 2px 0.5em;
     background: #AAA;
     font-family: Sans-Serif;
+    color: #000;
+    text-decoration: none;
 }
 
-.toolbar-buttons-container button:hover {
+.toolbar-buttons-container a:hover {
     background: #EEE;
 }
 
-.toolbar-buttons-container button:active {
+.toolbar-buttons-container a:active {
     background: yellow;
 }
 
-.panel-toolbar-extra button {
+.panel-toolbar-extra a {
     background: inherit;    
 }
 
-.toolbar-tabs-container > p {
+.toolbar-tabs-container a {
     background: #CCC;
 }
 
-.toolbar-tabs-container > p button {
-    background: #CCC;
-}
-
-.toolbar-tabs-container button.active {
+.toolbar-tabs-container a.active {
     background: #DDD;
 }

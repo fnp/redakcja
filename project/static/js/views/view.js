@@ -7,18 +7,23 @@ var View = Editor.Object.extend({
   overlayClass: 'view-overlay',
   overlay: null,
   
-  init: function(element, model, template) {
+  init: function(element, model, template) 
+  {
+    console.log("init for view");
     this.element = $(element);
     this.model = model;
     this.template = template || this.template;
     
-    if (this.template) {
-      this.element.html(render_template(this.template, this));
-    }
+    if (this.template) this.render();
     
     this._resizeHandler = this.resized.bind(this);
     $(window).bind('resize', this._resizeHandler);
     $(this.element).bind('resize', this._resizeHandler);
+  },
+
+  render: function() {
+      console.log('rendering:', this._className);
+      this.element.html(render_template(this.template, this));
   },
   
   frozen: function() {

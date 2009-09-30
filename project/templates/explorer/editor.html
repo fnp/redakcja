@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-	<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.modal.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.modal.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" charset="utf-8">
+      	<link rel="stylesheet" href="{{STATIC_URL}}css/toolbar.css" type="text/css" charset="utf-8">
+        <link rel="stylesheet" href="{{STATIC_URL}}css/autumn.css" type="text/css" media="screen" title="Autumn colors" charset="utf-8">
 	
 	<script type="text/javascript" charset="utf-8">
 		var fileId = '{{ fileid }}';
@@ -29,11 +31,13 @@
 	
 	{# JavaScript templates #}
 	<script type="text/html" charset="utf-8" id="panel-container-view-template">
-		<select>
+		<div class="panel-main-toolbar">
+                <p><select>
 			<% for (panel in panels) { %>
 			<option value="<%= panel %>"><%= panel %></option>
 			<% }; %>
-		</select>
+		</select></p>
+                </div>
 		<div class="content-view"></div>
 	</script>
 	
@@ -54,28 +58,37 @@
 
         <div class="image-gallery-header">
         <p>
-        <button type="button" class="image-gallery-prev-button">Previous</button>
-        <input type="input" class="image-gallery-current-page"
-            size="6"
-            value="<%= (currentPage + 1) %>" />
-        <button type="button" class="image-gallery-jump-button">Go</button>
-        <button type="button" class="image-gallery-next-button">Next</button>
+        <button type="button" class="image-gallery-prev-button">
+        <img alt="PPrevious" src="{{STATIC_URL}}/icons/go-previous.png" width="16" height="16" />
+        </button>
 
-        <button type="button" class="image-gallery-zoom-in">+</button>
-        <select class="image-gallery-current-zoom">
-            <option>50%</option>
-            <option selected="selected">100%</option>
-            <option>150%</option>
-            <option>200%</option>
-        </select>
-        <button type="button" class="image-gallery-zoom-out">-</button>
+        <input type="input" class="image-gallery-current-page"
+            size="5" value="<%= (currentPage + 1) %>" />
+
+
+        <button type="button" class="image-gallery-next-button">
+        <img alt="Next" src="{{STATIC_URL}}/icons/go-next.png" width="16" height="16" />
+        </button>
+
+        <button type="button" class="image-gallery-zoom-in">
+            <img alt="Zoom in" src="{{STATIC_URL}}/icons/zoom_in.png" width="16" height="16" />
+        </button>
+        <button type="button" class="image-gallery-zoom-out">
+            <img alt="Zoom out" src="{{STATIC_URL}}/icons/zoom_out.png" width="16" height="16" />
+        </button>
+        <button type="button" class="image-gallery-zoom-reset">
+            <img alt="Zoom reset" src="{{STATIC_URL}}/icons/zoom.png" width="16" height="16" />
+        </button>
         </p>
         </div>
 
         <div class="image-gallery-page-list">
             <% for(var i=0; i < model.data.length; i++) { %>
-                <div class="image-gallery-page-container" ui:model="<%= model.data[i] %>">
-                </div>
+                <div class="image-gallery-page-container"
+                    ui:model="<%= model.data[i] %>"
+                    ui:width="480"
+                    ui:height="752"
+                ></div>
             <% }; %>
 	</div>
         
@@ -83,15 +96,15 @@
 	</script>
 	
 	<script type="text/html" charset="utf-8" id="button-toolbar-view-template">
-		<div class="buttontoolbarview">
-			<div class="buttontoolbarview-tabs">
+		<div class="buttontoolbarview panel-toolbar">
+			<div class="buttontoolbarview-tabs toolbar-tabs-container toolbar-buttons-container">
 			<% for (var i=0; i < buttons.length; i++) { %>
 				<a href="#" class="buttontoolbarview-tab" ui:groupindex="<%= i %>"><%= buttons[i].name %></a>
 			<% }; %>
 			</div>
-			<div class="buttontoolbarview-groups">
+			<div class="buttontoolbarview-groups ">
 			<% for (var i=0; i < buttons.length; i++) { %>
-				<div class="buttontoolbarview-group" ui:groupIndex="<%= i %>" style="display: none">
+				<div class="buttontoolbarview-group toolbar-buttons-container" ui:groupIndex="<%= i %>" style="display: none">
 					<% for (var j=0; j < buttons[i].buttons.length; j++) { %>
 						<% if (buttons[i].buttons[j].scriptlet_id) { %>
 						<a href="#" class="buttontoolbarview-button" ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
@@ -107,20 +120,6 @@
 {% endblock extrahead %}
 
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid }}{% endblock breadcrumbs %}
-
-{% block message-box %}
-    <div class="msg-info" id="save-waiting"><p>Zapisuję dane na serwerze.</p><p class="data"></p></div>
-    <div class="msg-success" id="save-successful"><p>Zapisano :)</p><p class="data"></p></div>
-    <div class="msg-warning" id="save-warn"><p>Zapisano. Uwagi: (</p><p class="data"></p></div>
-    <div class="msg-error" id="save-error"><p>Błąd przy zapisie.</p> <p class="data"></p></div>
-
-    <div class="msg-success" id="generic-yes"><p class="data"></p></div>
-    <div class="msg-info" id="generic-info"><p class="data"></p></div>
-    <div class="msg-error" id="generic-error"><p class="data"></p></div>
-    
-    <div class="msg-warning" id="not-implemented"><p>Tej funkcji jeszcze nie ma :(</p><p class="data"></p></div>
-    
-{% endblock %}
 
 {% block header-toolbar %}
 	<button id="action-merge">Merge</button> <button id="action-update">Update</button> <button id="action-commit">Commit</button> <button id="action-quick-save">Quick Save</button>

@@ -1,0 +1,40 @@
+/* 
+    Document   : autumn
+    Created on : 2009-10-01, 00:23:51
+    Author     : lreqc
+    Description:
+        Autumn colors for PR.
+*/
+
+body {
+    background-color: #C28800;
+}
+
+#header {
+    background-color: #E2CF62;
+    border-bottom-color: #860000;
+}
+
+.panel-main-toolbar {
+    background-color: #412F1D;    
+}
+
+.splitview-splitbar {
+    /* border-color: #412F1D; */
+    border: none;
+    background-color: #860000;
+}
+
+.image-gallery-header {
+    background-color: #E2CF62;
+}
+
+a:link, a:visited, a:active {
+    color: #395428;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}

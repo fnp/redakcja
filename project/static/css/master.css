@@ -1,21 +1,50 @@
 body {
-    margin: 0;
+    margin: 0;    
+
     font: 12px Helvetica, Verdana, sans-serif;
     overflow: hidden;
     background: #AAA;
 }
 
+/*  fix icon buttons */
+
+button img {
+    vertical-align: middle;
+    margin: 0px;
+}
+
+/* default form style hacks */
+select {
+    border: none;
+    margin-left: 0.1em;    
+}
+
+#body-wrap {
+    margin: 0px;
+    padding: 0px;    
+}
+
 #header { 
     position: absolute;
-    padding: 0.2em 0.5em;
-    background-color: #CDCDCD;
-    border-bottom: 0.1px solid black;
-    height: 1.8em;
-    line-height: 1.8em;
+    padding: 2px 0.5em;
+    background-color: #CDCDCD; /* !unused */
+    border-bottom: 2px solid black;
+
+    font-size: 14px;
+
+    line-height: 26px;
     vertical-align: middle;
 
+    /* height: 30px; */
     top: 0px; left: 0px; right: 0px; 
     z-index: 300;
+}
+
+#content {
+    position: absolute;
+    top: 32px; left: 0px; right: 0px; bottom: 0px;
+    overflow: auto;
+    background-color: white;
 }
 
 #header #breadcrumbs {
@@ -30,106 +59,33 @@ body {
     vertical-align: middle;
 }
 
-#content {
-    position: absolute;
-    top: 2.4em; left: 0px; right: 0px; bottom: 0px;
-    overflow: auto;    
-    background-color: white;
-}
-
-/*
-ul {
-    margin: 20px;
-    padding: 0;
-}
-
-li {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-} */
-
-a {
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-li a {
-    display: block;
-    padding: 5px 20px;
-    width: 480px;
-}
-
-li a:hover {
-    background-color: #BCD6E9;
-}
-
-#tabs {
-    border-bottom: 1px solid #858585;
-    background-color: #B7B7B7;
-}
-
-#tabs a {
-    display: block;
-    border-right: 1px solid #858585;
-    float: left;
-    padding: 5px 10px;
-}
-
-#tabs a.active {
-    background-color: #909090;
-}
-
-.theme-begin {
-    display: none;
-}
-
-label {
-    display: block;
-}
-
-#text_id {
-    width: 480px;
-    height: 480px;
-}
-
-#file-text {
-    padding: 5px 10px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
 /* ========== */
 /* = Panels = */
 /* ========== */
 
-#panels {
+/* #panels {
     height: 100%;
     width: 100%;
 }
 
 .panel-wrap {
     overflow: hidden;
-    position: absolute; /* absolute to relation with #panels */
+    position: absolute; 
     top: 0px;
     bottom: 0px;
 }
 
 #left-panel-wrap {
     left: 0px;
-    width: 8px; /* initial width */
+    width: 8px; 
 }
 
 #right-panel-wrap {
     right: 0px;
     width: auto;
-    left: 8px; /* initial width of the left panel */
+    left: 8px; 
 }
 
-/* contents */
 .panel-content {
     position: absolute;
     overflow: auto;
@@ -160,47 +116,14 @@ label {
     display: none;
 }
 
-/* Toolbars with select box to change panel contents*/
 .panel-wrap .panel-toolbar {
     position: absolute;
     top: 0px; left:0px; right: 0px; height: 26px;
     padding: 0px;
 
-    /* border-top: 1px solid #AAA; */
     border-bottom: 1px solid #AAA;
     z-index: 80;
 }
-
-.panel-toolbar label {
-    display: inline;
-}
-
-.panel-toolbar p {
-    /* position: relative; */
-    font-size: 12px;
-    line-height: 26px;
-    background-color: #DDD;
-    white-space: nowrap;
-    overflow: hidden;
-    
-    margin: 0px;
-    padding: 0px 1em;
-
-    width: auto;
-    height: 26px;
-}
-
-.panel-toolbar .toolbar-button-groups-container .panel-toolbar-extra button {
-    /* this is uber specific */
-    font-size: 12px;
-    font-family: Sans-Serif;
-    padding: 2px 5px;
-    margin: 0px;
-    border: 0px solid black;
-    vertical-align: bottom;
-}
-
-/* Slider between panels */
 .panel-wrap .panel-slider {
     position: absolute;
     background-color: #DDD;
@@ -224,150 +147,9 @@ label {
     background-color: #DDD;
 }
 
-/* ================= */
-/* = Gallery panel = */
-/* ================= */
-.image-gallery-view-template {
-    position: absolute;
-    top: 0px; left: 0px; right: 0px; bottom: 0px;
-    overflow: hidden;
-}
-
-.image-gallery-header {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    height: 30px;
-
-    background: blue;
-    border: 1px solid green;
-}
-
-.image-gallery-header p {
-    margin: 0px;
-    padding: 3px 1em;
-    height: 30px;
-    line-height: 24px;
-    text-align: center;
-}
-
-.image-gallery-page-list {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 30px;
-    border: 1px solid red;
-    background: black;
-    z-index: 0;
-    
-    overflow: hidden;
-}
-.image-gallery-page-container {
-    display: none;        
-    border: none;
-
-    position: absolute;
-    top: 0px; left: 0px;
-        
-    text-align: center;    
-    padding: 0px;
-}
-
-.image-gallery-page-container img {
-    /* border: 2px solid green; */
-    margin: 0px;
-}
-
-
-/* =========================== */
-/* = DublinCore Editor panel = */
-/* =========================== */
-.panel-dceditor {
-    padding: 10px;
-}
-
-.panel-dceditor label {
-    display: block;
-    font-size: 12px;
-    margin-top: 10px;
-    color: #666;
-    font-weight: bold;
-}
-
-.panel-dceditor input, .panel-dceditor textarea {
-    width: 400px;
-    display: block;
-}
-
-div.isection {
-    margin: 1em auto;
-    border: 1px solid black;
-    padding: 0.5em 2em;
-    background: #9f9ffa;
-
-    width: 60%;
-}
-
-div.isection p {
-    margin: 0.5em 1em;
-}
-
-.change-notification {
-    color: red;
-}
-
-/*
- * Popups
 */
-#message-box {
-    position: fixed;
-    top: 2px;
-    left: 35%;
-    width: 33%;  
-}
 
-.msg-error, .msg-success, .msg-warning, .msg-info {
-    overflow: hidden;
-    padding: 0.1em 0.5em;
-    text-align: center;
-    border: 1px solid;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    font-size: 10pt;
-    line-height: 11pt;
-    display: none;
-
-    width: 100%;
-}
-
-#message-box * p {
-    padding: 0em;
-    margin: 0.1em;
-}
-
-.msg-error {
-    background-color: red;
-    border-color: red;
-    color: white;
-    font-weight: bold;
-}
-
-.msg-success {
-    background-color: lightgreen;
-    border-color: lightgreen;
-}
-
-.msg-info {
-    background-color: lightblue;
-    border-color: lightblue;
-}
-
-.msg-warning {
-    background-color: yellow;
-    border-color: yellow;   
-}
+/* OLD STUFF AGAIN */
 
 /* Commit dialog */
 #commit-dialog-error-empty-message {
@@ -388,6 +170,9 @@ text#commit-dialog-message {
 #split-dialog .container-box fieldset {
     margin: 0.5em;
 }
+
+
+
 
 /* ======= */
 /* = New = */
@@ -421,15 +206,33 @@ text#commit-dialog-message {
 
 .content-view {
     position: absolute;
-    top: 20px;
+    top: 25px;
     right: 0;
     bottom: 0;
     left: 0;
     overflow: none;
 }
 
-.panel-container select {
-    z-index: 1100;
+.panel-main-toolbar {
+    z-index: 1100;    
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    height: 24px;
+
+    border-bottom: 1px solid black;
+    background: gray;
+
+    padding: 0px;
+}
+
+.panel-main-toolbar p {
+    margin: 0px;
+    padding: 2px;
+    line-height: 20px;
+    font-size: 13px;    
 }
 
 .xmlview {
@@ -452,7 +255,7 @@ text#commit-dialog-message {
     height: 40px;
 }
 
-.buttontoolbarview {
+/* .buttontoolbarview {
     display: block;
     background-color: #CCC;
 }
@@ -460,4 +263,67 @@ text#commit-dialog-message {
 .buttontoolbarview a {
     color: #000;
     text-decoration: none;
+} */ /* Similar classes already exist in toolbar.css */
+
+
+/* ================= */
+/* = Gallery panel = */
+/* ================= */
+.image-gallery-view-template {
+    position: absolute;
+    top: 0px; left: 0px; right: 0px; bottom: 0px;
+    overflow: hidden;
+}
+
+.image-gallery-header {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+
+    background: gray;
+    border-top: 1px solid #780000;
+    z-index: 100;
+}
+
+input.image-gallery-current-page {
+    text-align: center;
+}
+
+.image-gallery-header p {
+    margin: 0px;
+    padding: 3px 1em;
+    height: 30px;
+    line-height: 24px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.image-gallery-page-list {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 31px;
+    background: black;
+    z-index: 0;
+
+    overflow: hidden;
+}
+
+.image-gallery-page-container {
+    display: none;
+    border: none;
+
+    position: absolute;
+    top: 0px; left: 0px;
+
+    text-align: center;
+    padding: 0px;
+}
+
+.image-gallery-page-container img {
+    /* border: 2px solid green; */
+    margin: 0px;
 }

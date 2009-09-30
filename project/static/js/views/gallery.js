@@ -3,22 +3,23 @@ var ImageGalleryView = View.extend({
   _className: 'ImageGalleryView',
   element: null,
   model: null,
+  currentPage: -1,
+  pageZoom: 1.0,
   template: 'image-gallery-view-template',
   
   init: function(element, model, parent, template) 
-  {
-    this.currentPage = -1;
-    
+  {    
+    console.log("init for gallery");
     this._super(element, model, template);
     this.parent = parent;
        
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
       .addObserver(this, 'state', this.modelStateChanged.bind(this));
-      
+   
     //$('.image-gallery-view', this.element).html(this.model.get('data'));
     this.modelStateChanged('state', this.model.get('state'));
-    this.model.load();
+    this.model.load();    
   },
   
   modelDataChanged: function(property, value) 
@@ -26,7 +27,7 @@ var ImageGalleryView = View.extend({
     if( property == 'data')
     {
         this.render();
-        this.gotoPage(this.currentPage);
+        this.gotoPage(this.currentPage);        
     }   
   },
 
@@ -51,7 +52,7 @@ var ImageGalleryView = View.extend({
      this.currentPage = index;
 
      cpage = this.$currentPage()
-     this.renderImage(cpage, cpage.attr('ui:model'));
+     this.renderImage(cpage);
 
      if(offset) {
          cpage.css({top: offset.y, left: offset.x});
@@ -78,15 +79,11 @@ var ImageGalleryView = View.extend({
       this.$pageInput.val( (this.currentPage+1) );
   },
   
-  modelStateChanged: function(property, value) {
-    if (value == 'synced' || value == 'dirty') {
-      this.parent.unfreeze();
-    } else if (value == 'unsynced') {
-      this.parent.freeze('Niezsynchronizowany...');
-    } else if (value == 'loading') {
+  modelStateChanged: function(property, value) {   
+    if (value == 'loading') {
       this.parent.freeze('Ładowanie...');
-    } else if (value == 'saving') {
-      this.parent.freeze('Zapisywanie...');
+    } else {
+      this.parent.unfreeze();
     }
   },
 
@@ -156,12 +153,14 @@ var ImageGalleryView = View.extend({
       // and correct
       var MARGIN = 30;
 
+
       var vp_width = this.$pageListRoot.width();
       var vp_height = this.$pageListRoot.height();
       
       var width = $page.outerWidth();
-      var height = $page.outerHeight();      
+      var height = $page.outerHeight();
 
+      // console.log(offset, vp_width, vp_height, width, height);
       if( offset.x+width-MARGIN < 0 ) {
         // console.log('too much on the left', offset.x, -width)
         offset.x = -width+MARGIN;
@@ -172,7 +171,6 @@ var ImageGalleryView = View.extend({
           offset.x = vp_width-MARGIN;
           // console.log('too much on the right', offset.x, vp_width, width)
       }
-
       
       if( offset.y+height-MARGIN < 0)
         offset.y = -height+MARGIN;      
@@ -183,26 +181,41 @@ var ImageGalleryView = View.extend({
       $page.css({left: offset.x, top: offset.y});           
   }, 
   
-  renderImage: function(target, source) {
-      target.html('<img src="'+source+'" />');
+  renderImage: function(target) 
+  {
+      var source = target.attr('ui:model');
+      var orig_width = parseInt(target.attr('ui:width'));
+      var orig_height = parseInt(target.attr('ui:height'));
+
+      target.html('<img src="' + source
+           + '" width="' + Math.floor(orig_width * this.pageZoom)
+           + '" height="' + Math.floor(orig_height * this.pageZoom)
+           + '" />');
+       
       $('img', target).
         css({
             'user-select': 'none',
             '-webkit-user-select': 'none',
             '-khtml-user-select': 'none',
-            '-moz-user-select': 'none',
+            '-moz-user-select': 'none'
         }).
         attr('unselectable', 'on').
-        mousedown(this.pageDragStart.bind(this));
+        mousedown(this.pageDragStart.bind(this));    
   },
 
-  render: function() {
-      /* first unbind all */
+  render: function() 
+  {
+      console.log('rendering:', this._className);
       
-      // this.pageListElement
+      /* first unbind all */    
       if(this.$nextButton) this.$nextButton.unbind();
       if(this.$prevButton) this.$prevButton.unbind();
       if(this.$jumpButton) this.$jumpButton.unbind();
+      if(this.$pageInput) this.$pageInput.unbind();
+
+      if(this.$zoomInButton) this.$zoomInButton.unbind();
+      if(this.$zoomOutButton) this.$zoomOutButton.unbind();
+      if(this.$zoomResetButton) this.$zoomResetButton.unbind();
 
       /* render */
       this.element.html(render_template(this.template, this));
@@ -215,11 +228,23 @@ var ImageGalleryView = View.extend({
       this.$prevButton = $('.image-gallery-prev-button', this.element);
       this.$pageInput = $('.image-gallery-current-page', this.element);
 
+      // this.$zoomSelect = $('.image-gallery-current-zoom', this.element);
+      this.$zoomInButton = $('.image-gallery-zoom-in', this.element);
+      this.$zoomOutButton = $('.image-gallery-zoom-out', this.element);
+      this.$zoomResetButton = $('.image-gallery-zoom-reset', this.element);
+
       /* re-bind events */
       this.$nextButton.click( this.nextPage.bind(this) );
       this.$prevButton.click( this.prevPage.bind(this) );
-
       this.$pageInput.change( this.jumpToPage.bind(this) );
+
+      // this.$zoomSelect.change( this.zoomChanged.bind(this) );
+      this.$zoomInButton.click( this.zoomInOneStep.bind(this) );
+      this.$zoomOutButton.click( this.zoomOutOneStep.bind(this) );
+      this.$zoomResetButton.click( this.zoomReset.bind(this) );
+
+      this.gotoPage(this.currentPage);
+      this.changePageZoom(this.pageZoom);
   },
 
   jumpToPage: function() {     
@@ -233,10 +258,58 @@ var ImageGalleryView = View.extend({
   prevPage: function() {
       this.gotoPage(this.currentPage - 1);
   },
+
+  zoomReset: function() {
+      this.changePageZoom(1.0);
+  },
+
+  zoomInOneStep: function() {
+      var zoom = this.pageZoom + 0.1;
+      if(zoom > 3.0) zoom = 3.0;
+      this.changePageZoom(zoom);
+  },
+
+  zoomOutOneStep: function() {
+      var zoom = this.pageZoom - 0.1;
+      if(zoom < 0.3) zoom = 0.3;
+      this.changePageZoom(zoom);
+  },
+
+  changePageZoom: function(value) {
+      var current = this.$currentPage();
+
+      if(!current) return;
+
+      var alpha = value/this.pageZoom;
+      this.pageZoom = value;
+
+      var nwidth = current.attr('ui:width') * this.pageZoom;
+      var nheight = current.attr('ui:height') * this.pageZoom;
+      var off_top = parseInt(current.css('top'));
+      var off_left = parseInt(current.css('left'));
+      
+      var vpx = this.$pageListRoot.width() * 0.5;
+      var vpy = this.$pageListRoot.height() * 0.5;
+      
+      var new_off_left = vpx - alpha*(vpx-off_left);
+      var new_off_top = vpy - alpha*(vpy-off_top);
+                 
+      $('img', current).attr('width', nwidth);
+      $('img', current).attr('height', nheight);
+      
+      this.setPageViewOffset(current, {
+          y: new_off_top, x: new_off_left
+      });
+
+      // this.$zoomSelect.val(this.pageZoom);
+      // console.log('Zoom is now', this.pageZoom);
+  },
   
-  dispose: function() {
-    this.model.removeObserver(this);
-    this._super();
+  dispose: function()
+  {
+      console.log("Disposing gallery.");
+      this.model.removeObserver(this);
+      this._super();
   }
 });
 
