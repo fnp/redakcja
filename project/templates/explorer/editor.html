@@ -52,9 +52,9 @@
 	</script>
 
 	<script type="text/html" charset="utf-8" id="flash-view-template">
-		<div class="flashview" style="position: relative; margin-left: auto; margin-right: auto; width: 400px; background-color: yellow">
+		<div class="flashview">
 		<% if (shownMessage) { %>
-			<p style="margin: 0; padding: 0.2em 0.5em; line-height: 1.8em" class="<%= shownMessage.type %>"><%= shownMessage.text %></p>
+			<p style="margin: 0; padding: 0.2em 0.5em; line-height: 1.8em; background-color: yellow" class="<%= shownMessage.type %>"><%= shownMessage.text %></p>
 		<% } %>
 		</div>
 	</script>
@@ -177,5 +177,5 @@
 {% endblock maincontent %}
 
 {% block extrabody %}
-	<div style="position: absolute; left: 0; right: 0; top: 0; height: 20px; z-index: 1000" id="flashview"></div>
+	<div style="position: absolute; left: 35%; right: 35%; top: 0; height: 20px; z-index: 1000" id="flashview"></div>
 {% endblock %}
