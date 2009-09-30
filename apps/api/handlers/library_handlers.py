@@ -227,7 +227,7 @@ class DocumentHTMLHandler(BaseHandler):
                 return response.BadRequest().django_response({'reason': 'name-mismatch',
                     'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
 
-            return librarian.html.transform(document.data('xml'), is_file=False)
+            return librarian.html.transform(document.data('xml'), is_file=False, parse_dublincore=False)
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
                 'exception': type(e), 'message': e.message})
