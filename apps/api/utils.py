@@ -58,10 +58,12 @@ def hglibrary(func):
 
 
 import re
+import locale
+
 NAT_EXPR = re.compile(r'(\d+)', re.LOCALE | re.UNICODE)
 def natural_order(get_key=lambda x: x):
     def getter(key):
-        key = [int(x) if n%2 else x for (n,x) in enumerate(NAT_EXPR.split(get_key(key))) ]
+        key = [int(x) if n%2 else locale.strxfrm(x.encode('utf-8')) for (n,x) in enumerate(NAT_EXPR.split(get_key(key))) ]
         return key
 
     return getter

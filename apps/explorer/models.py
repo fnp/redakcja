@@ -102,4 +102,4 @@ class GalleryForDocument(models.Model):
     document = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return u"%s:%s" % self.subpath, self.document
+        return u"%s:%s" % (self.subpath, self.document)

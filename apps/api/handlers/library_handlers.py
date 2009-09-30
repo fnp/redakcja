@@ -80,10 +80,7 @@ class LibraryHandler(BaseHandler):
             # not top-level anymore
             document_tree.pop(part)
             parent['parts'].append(child)
-
-        # sort the right way
         
-
         for doc in documents.itervalues():
             doc['parts'].sort(key=natural_order(lambda d: d['name']))
             
