@@ -85,10 +85,7 @@ class LibraryHandler(BaseHandler):
             # not top-level anymore
             document_tree.pop(part)
             parent['parts'].append(child)
-
-        # sort the right way
         
-
         for doc in documents.itervalues():
             doc['parts'].sort(key=natural_order(lambda d: d['name']))
             
@@ -104,6 +101,9 @@ class LibraryHandler(BaseHandler):
             data = form.cleaned_data['ocr_data']
         else:            
             data = request.FILES['ocr_file'].read().decode('utf-8')
+
+        if data is None:
+            return response.BadRequest().django_response('You must pass ocr_data or ocr_file.')
 
         if form.cleaned_data['generate_dc']:
             data = librarian.wrap_text(data, unicode(date.today()))
@@ -121,9 +121,10 @@ class LibraryHandler(BaseHandler):
                     doc = doc.quickwrite('xml', data.encode('utf-8'),
                         '$AUTO$ XML data uploaded.', user=request.user.username)
                 except Exception,e:
+                    import traceback
                     # rollback branch creation
                     lib._rollback()
-                    raise LibraryException("Exception occured:" + repr(e))
+                    raise LibraryException(traceback.format_exc())
 
                 url = reverse('document_view', args=[doc.id])
 
@@ -136,8 +137,9 @@ class LibraryHandler(BaseHandler):
             finally:
                 lock.release()
         except LibraryException, e:
+            import traceback
             return response.InternalError().django_response(\
-                {'exception': repr(e) })                
+                {'exception': traceback.format_exc()} )
         except DocumentAlreadyExists:
             # Document is already there
             return response.EntityConflict().django_response(\
@@ -520,12 +522,12 @@ class MergeHandler(BaseHandler):
         if not changed:
             return response.SuccessNoContent().django_response()
 
-        new_udoc = udoc.latest()
+        nudoc = udoc.latest()
 
         return response.SuccessAllOk().django_response({
-            "name": udoc.id,
+            "name": nudoc.id,
             "parent_user_resivion": udoc.revision,
             "parent_revision": doc.revision,
-            "revision": ndoc.revision,
-            'timestamp': ndoc.revision.timestamp,
+            "revision": nudoc.revision,
+            'timestamp': nudoc.revision.timestamp,
         })

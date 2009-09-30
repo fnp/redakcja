@@ -28,11 +28,11 @@ class MercurialRevision(wlrepo.Revision):
         
     @property
     def document_name(self):
-        return self._docname.decode('utf-8')
+        return self._docname and self._docname.decode('utf-8')
 
     @property
     def user_name(self):
-        return self._username.decode('utf-8')
+        return self._username and self._username.decode('utf-8')
 
     def hgrev(self):
         return self._changectx.node()
@@ -72,7 +72,7 @@ class MercurialRevision(wlrepo.Revision):
         a = self._changectx.ancestor(other._changectx)       
         return (a.branch() == self._changectx.branch())
 
-    def children(self):
+    def has_children(self):
         return bool(self._library._hgrepo.changelog.children(self.hgrev()))
 
     def merge_with(self, other, user, message):

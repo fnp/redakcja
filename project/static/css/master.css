@@ -224,16 +224,62 @@ label {
     background-color: #DDD;
 }
 
-
-
-
 /* ================= */
 /* = Gallery panel = */
 /* ================= */
-.images-wrap {
-    overflow-x: hidden;
-    overflow-y: scroll;
+.image-gallery-view-template {
+    position: absolute;
+    top: 0px; left: 0px; right: 0px; bottom: 0px;
+    overflow: hidden;
 }
+
+.image-gallery-header {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+
+    background: blue;
+    border: 1px solid green;
+}
+
+.image-gallery-header p {
+    margin: 0px;
+    padding: 3px 1em;
+    height: 30px;
+    line-height: 24px;
+    text-align: center;
+}
+
+.image-gallery-page-list {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 30px;
+    border: 1px solid red;
+    background: black;
+    z-index: 0;
+    
+    overflow: hidden;
+}
+.image-gallery-page-container {
+    display: none;        
+    border: none;
+
+    position: absolute;
+    top: 0px; left: 0px;
+        
+    text-align: center;    
+    padding: 0px;
+}
+
+.image-gallery-page-container img {
+    /* border: 2px solid green; */
+    margin: 0px;
+}
+
 
 /* =========================== */
 /* = DublinCore Editor panel = */

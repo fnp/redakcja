@@ -65,14 +65,27 @@
         <div class="image-gallery-header">
         <p>
         <button type="button" class="image-gallery-prev-button">Previous</button>
-        <input type="input" class="image-gallery-current-page" />
+        <input type="input" class="image-gallery-current-page"
+            size="6"
+            value="<%= (currentPage + 1) %>" />
+        <button type="button" class="image-gallery-jump-button">Go</button>
         <button type="button" class="image-gallery-next-button">Next</button>
+
+        <button type="button" class="image-gallery-zoom-in">+</button>
+        <select class="image-gallery-current-zoom">
+            <option>50%</option>
+            <option selected="selected">100%</option>
+            <option>150%</option>
+            <option>200%</option>
+        </select>
+        <button type="button" class="image-gallery-zoom-out">-</button>
         </p>
         </div>
 
-        <div>
+        <div class="image-gallery-page-list">
             <% for(var i=0; i < model.data.length; i++) { %>
-                <p class="image-gallery-page-container"><%= model.data[i] %></p>
+                <div class="image-gallery-page-container" ui:model="<%= model.data[i] %>">
+                </div>
             <% }; %>
 	</div>
         
