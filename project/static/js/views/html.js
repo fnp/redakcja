@@ -24,17 +24,19 @@ var HTMLView = View.extend({
   
   modelStateChanged: function(property, value) {
     if (value == 'synced' || value == 'dirty') {
-      this.parent.unfreeze();
+      this.unfreeze();
     } else if (value == 'unsynced') {
-      this.parent.freeze('Niezsynchronizowany...');
+      this.freeze('Niezsynchronizowany...');
     } else if (value == 'loading') {
-      this.parent.freeze('Ładowanie...');
+      this.freeze('Ładowanie...');
     } else if (value == 'saving') {
-      this.parent.freeze('Zapisywanie...');
+      this.freeze('Zapisywanie...');
     } else if (value == 'error') {
-      this.parent.freeze(this.model.get('error'));
+      this.freeze(this.model.get('error'));
     }
   },
+  
+  reload: function() {},
   
   dispose: function() {
     this.model.removeObserver(this);

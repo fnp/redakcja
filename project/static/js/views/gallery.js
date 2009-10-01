@@ -79,6 +79,8 @@ var ImageGalleryView = View.extend({
       this.$pageInput.val( (this.currentPage+1) );
   },
   
+  reload: function() {},
+  
   modelStateChanged: function(property, value) {   
     if (value == 'loading') {
       this.parent.freeze('Ładowanie...');

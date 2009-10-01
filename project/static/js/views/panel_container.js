@@ -10,7 +10,10 @@ var PanelContainerView = View.extend({
   init: function(element, model, template) {
     this._super(element, model, template);
 
-    $('select', this.element.get(0)).bind('change.panel-container-view', this.selectChanged.bind(this));
+    $('.panel-main-toolbar select', this.element.get(0)).bind('change.panel-container-view', this.selectChanged.bind(this));
+    $('.panel-main-toolbar .refresh', this.element.get(0))
+      .bind('click.panel-container-view', this.refreshButtonClicked.bind(this))
+      .attr('disabled', 'disabled');
   },
   
   selectChanged: function(event) {
@@ -22,10 +25,18 @@ var PanelContainerView = View.extend({
     }
     this.contentView = new klass($('.content-view', 
       this.element.get(0)), this.model.contentModels[value], this);
+    $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);
+  },
+  
+  refreshButtonClicked: function(event) {
+    if (this.contentView) {
+      this.contentView.reload();
+    }
   },
   
   dispose: function() {
-    $('select', this.element.get(0)).unbind('change.panel-container-view');
+    $('.panel-main-toolbar .refresh', this.element.get(0)).unbind('click.panel-container-view');
+    $('.panel-main-toolbar select', this.element.get(0)).unbind('change.panel-container-view');
     this._super();
   }
 });

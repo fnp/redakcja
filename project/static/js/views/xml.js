@@ -35,6 +35,8 @@ var XMLView = View.extend({
     $('.xmlview', this.element).height(height);
   },
   
+  reload: function() {},
+  
   editorDidLoad: function(editor) {
     $(editor.frame).css({width: '100%', height: '100%'});
     this.model
@@ -65,15 +67,15 @@ var XMLView = View.extend({
   
   modelStateChanged: function(property, value) {
     if (value == 'synced' || value == 'dirty') {
-      this.parent.unfreeze();
+      this.unfreeze();
     } else if (value == 'unsynced') {
-      this.parent.freeze('Niezsynchronizowany...');
+      this.freeze('Niezsynchronizowany...');
     } else if (value == 'loading') {
-      this.parent.freeze('Ładowanie...');
+      this.freeze('Ładowanie...');
     } else if (value == 'saving') {
-      this.parent.freeze('Zapisywanie...');
+      this.freeze('Zapisywanie...');
     } else if (value == 'error') {
-      this.parent.freeze(this.model.get('error'));
+      this.freeze(this.model.get('error'));
     }
   },
     
