@@ -56,8 +56,8 @@ Editor.XMLModel = Editor.Model.extend({
     this.addObserver(this, 'data', this.dataChanged.bind(this));
   },
   
-  load: function() {
-    if (this.get('state') == 'empty') {
+  load: function(force) {
+    if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
       $.ajax({
         url: this.serverURL,
@@ -162,8 +162,8 @@ Editor.HTMLModel = Editor.Model.extend({
     this.serverURL = serverURL;
   },
   
-  load: function() {
-    if (this.get('state') == 'empty') {
+  load: function(force) {
+    if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
       $.ajax({
         url: this.serverURL,
@@ -215,8 +215,8 @@ Editor.ImageGalleryModel = Editor.Model.extend({
     this.pages = [];
   },
 
-  load: function() {
-    if (this.get('state') == 'empty') {
+  load: function(force) {
+    if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
       $.ajax({
         url: this.serverURL,

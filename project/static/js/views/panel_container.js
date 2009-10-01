@@ -30,6 +30,7 @@ var PanelContainerView = View.extend({
   
   refreshButtonClicked: function(event) {
     if (this.contentView) {
+      console.log('refreshButtonClicked');
       this.contentView.reload();
     }
   },

@@ -35,7 +35,9 @@ var XMLView = View.extend({
     $('.xmlview', this.element).height(height);
   },
   
-  reload: function() {},
+  reload: function() {
+    this.model.load(true);
+  },
   
   editorDidLoad: function(editor) {
     $(editor.frame).css({width: '100%', height: '100%'});

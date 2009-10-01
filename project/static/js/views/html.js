@@ -36,7 +36,9 @@ var HTMLView = View.extend({
     }
   },
   
-  reload: function() {},
+  reload: function() {
+    this.model.load(true);
+  },
   
   dispose: function() {
     this.model.removeObserver(this);
