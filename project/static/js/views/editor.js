@@ -37,7 +37,7 @@ var EditorView = View.extend({
   },
   
   quickSave: function(event) {
-    this.model.updateDirtyContentModel();
+    this.model.saveDirtyContentModel();
   },
   
   commit: function(event) {

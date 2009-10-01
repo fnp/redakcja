@@ -72,6 +72,8 @@ var XMLView = View.extend({
       this.parent.freeze('Ładowanie...');
     } else if (value == 'saving') {
       this.parent.freeze('Zapisywanie...');
+    } else if (value == 'error') {
+      this.parent.freeze(this.model.get('error'));
     }
   },
     

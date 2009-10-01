@@ -35,6 +35,8 @@ Editor.ToolbarButtonsModel = Editor.Model.extend({
 
 // Stany modelu:
 //
+//                  -> error -> loading
+//                 /
 // empty -> loading -> synced -> unsynced -> loading
 //                           \
 //                            -> dirty -> updating -> updated -> synced
@@ -61,11 +63,28 @@ Editor.XMLModel = Editor.Model.extend({
         url: this.serverURL,
         dataType: 'text',
         data: {revision: this.get('revision')},
-        success: this.loadingSucceeded.bind(this)
+        success: this.loadingSucceeded.bind(this),
+        error: this.loadingFailed.bind(this)
       });
       return true;
     }
     return false;
+  },
+  
+  loadingSucceeded: function(data) {
+    if (this.get('state') != 'loading') {
+      alert('erroneous state:', this.get('state'));
+    }
+    this.set('data', data);
+    this.set('state', 'synced');
+  },
+  
+  loadingFailed: function() {
+    if (this.get('state') != 'loading') {
+      alert('erroneous state:', this.get('state'));
+    }
+    this.set('error', 'Nie udało się załadować panelu');
+    this.set('state', 'error');    
   },
   
   update: function(message) {
@@ -93,10 +112,11 @@ Editor.XMLModel = Editor.Model.extend({
     return false;
   },
   
-  updatingSucceeded: function() {
+  updatingSucceeded: function(data) {
     if (this.get('state') != 'updating') {
       alert('erroneous state:', this.get('state'));
     }
+    this.set('revision', data.revision);
     this.set('state', 'updated');
   },
   
@@ -104,6 +124,7 @@ Editor.XMLModel = Editor.Model.extend({
     if (this.get('state') != 'updating') {
       alert('erroneous state:', this.get('state'));
     }
+    messageCenter.addMessage('error', 'Uaktualnienie nie powiodło się', 'Uaktualnienie nie powiodło się');
     this.set('state', 'dirty');
   },
   
@@ -119,14 +140,6 @@ Editor.XMLModel = Editor.Model.extend({
     if (this.get('state') == 'synced') {
       this.set('state', 'dirty');
     }
-  },
-  
-  loadingSucceeded: function(data) {
-    if (this.get('state') != 'loading') {
-      alert('erroneous state:', this.get('state'));
-    }
-    this.set('data', data);
-    this.set('state', 'synced');
   },
   
   dispose: function() {
@@ -156,7 +169,8 @@ Editor.HTMLModel = Editor.Model.extend({
         url: this.serverURL,
         dataType: 'text',
         data: {revision: this.get('revision')},
-        success: this.loadingSucceeded.bind(this)
+        success: this.loadingSucceeded.bind(this),
+        error: this.loadingFailed.bind(this)
       });
     }
   },
@@ -167,6 +181,14 @@ Editor.HTMLModel = Editor.Model.extend({
     }
     this.set('data', data);
     this.set('state', 'synced');
+  },
+  
+  loadingFailed: function() {
+    if (this.get('state') != 'loading') {
+      alert('erroneous state:', this.get('state'));
+    }
+    this.set('error', 'Nie udało się załadować panelu');
+    this.set('state', 'error');    
   },
 
   // For debbuging
@@ -280,7 +302,14 @@ Editor.DocumentModel = Editor.Model.extend({
       for (key in this.contentModels) {
         if (this.contentModels[key].guid() == contentModel.guid()) {
           this.contentModels[key].set('state', 'synced');
-        } else if (this.contentModels[key].get('state') == 'unsynced') {
+          this.data.user_revision = this.contentModels[key].get('revision');
+          messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.data.user_revision,
+            'Uaktualnienie dokumentu do wersji ' + this.data.user_revision);
+        }
+      }
+      for (key in this.contentModels) {
+        if (this.contentModels[key].guid() != contentModel.guid()) {
+          this.contentModels[key].set('revision', this.data.user_revision);
           this.contentModels[key].set('state', 'empty');
         }
       }
@@ -315,6 +344,8 @@ Editor.DocumentModel = Editor.Model.extend({
     console.log(xhr.status, textStatus);
     if (xhr.status == 200) { // Sukces
       this.data.user_revision = this.get('updateData').revision;
+      messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision,
+        'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision);
       for (var key in this.contentModels) {
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
@@ -351,6 +382,8 @@ Editor.DocumentModel = Editor.Model.extend({
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
       }
+      messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.get('mergeData').revision,
+        'Uaktualnienie dokumentu do wersji ' + this.get('mergeData').revision);
     } else if (xhr.status == 202) { // Wygenerowano PullRequest
     } else if (xhr.status == 204) { // Nic nie zmieniono
     } else if (xhr.status == 409) { // Konflikt podczas operacji

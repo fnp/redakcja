@@ -31,6 +31,9 @@ var View = Editor.Object.extend({
   },
   
   freeze: function(message) {
+    if (this.frozen()) {
+      this.unfreeze();
+    }
     this.overlay = this.overlay 
       || $('<div><div>' + message + '</div></div>')
             .addClass(this.overlayClass)
