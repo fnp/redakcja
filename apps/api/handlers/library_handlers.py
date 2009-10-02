@@ -255,7 +255,9 @@ class DocumentGalleryHandler(BaseHandler):
 
             gallery = {'name': assoc.name, 'pages': []}
             
-            for file in sorted(os.listdir(dirpath)):
+            for file in sorted( os.listdir(dirpath) ):
+                file = file.encode('utf-8')
+                
                 log.info(file)
                 name, ext = os.path.splitext(os.path.basename(file))
 
