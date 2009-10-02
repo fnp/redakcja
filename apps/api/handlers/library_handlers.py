@@ -259,7 +259,7 @@ class DocumentGalleryHandler(BaseHandler):
             
             for file in os.listdir(dirpath):
                 if not isinstance(file, unicode):
-                    log.warn(u"File %s is gallery %s is not unicode. Ommiting."\
+                    log.warn(u"File %r is gallery %r is not unicode. Ommiting."\
                         % (file, dirpath) )
                     continue
                                
