@@ -49,6 +49,9 @@ urlpatterns = patterns('',
 
     # Our über-restful api
     url(r'^api/', include('api.urls') ),
+    
+    # django-cas-provider
+    url(r'^cas/', include('cas_provider.urls')),
 )
 
 
