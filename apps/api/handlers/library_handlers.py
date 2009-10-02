@@ -242,31 +242,35 @@ class DocumentHTMLHandler(BaseHandler):
 class DocumentGalleryHandler(BaseHandler):
     allowed_methods = ('GET')
     
+    
     def read(self, request, docid):
         """Read meta-data about scans for gallery of this document."""
         galleries = []
+        from urllib import quote
 
         for assoc in GalleryForDocument.objects.filter(document=docid):
             dirpath = os.path.join(settings.MEDIA_ROOT, assoc.subpath)
 
             if not os.path.isdir(dirpath):
-                log.info(u"[WARNING]: missing gallery %s", dirpath)
+                log.warn(u"[WARNING]: missing gallery %s", dirpath)
                 continue
 
             gallery = {'name': assoc.name, 'pages': []}
             
             for file in os.listdir(dirpath):
-                file = file.decode('utf-8')
-                
-                log.info(file)
+                if not isinstance(file, unicode):
+                    log.warn(u"File %s is gallery %s is not unicode. Ommiting."\
+                        % (file, dirpath) )
+                    continue
+                               
                 name, ext = os.path.splitext(os.path.basename(file))
 
                 if ext.lower() not in [u'.png', u'.jpeg', u'.jpg']:
-                    log.info("Ignoring: %s %s", name, ext)
+                    log.info(u"Ignoring: %s %s", name, ext)
                     continue
 
                 url = settings.MEDIA_URL + assoc.subpath + u'/' + file;
-                gallery['pages'].append(url)
+                gallery['pages'].append( quote(url.encode('utf-8')) )
 
             gallery['pages'].sort()
             galleries.append(gallery)
