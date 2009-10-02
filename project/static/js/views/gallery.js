@@ -12,6 +12,8 @@ var ImageGalleryView = View.extend({
     console.log("init for gallery");
     this._super(element, model, template);
     this.parent = parent;
+
+    console.log("galley model", this.model);
        
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
@@ -207,7 +209,7 @@ var ImageGalleryView = View.extend({
 
   render: function() 
   {
-      console.log('rendering:', this._className);
+      if(!this.model) return;            
       
       /* first unbind all */    
       if(this.$nextButton) this.$nextButton.unbind();
@@ -220,7 +222,7 @@ var ImageGalleryView = View.extend({
       if(this.$zoomResetButton) this.$zoomResetButton.unbind();
 
       /* render */
-      this.element.html(render_template(this.template, this));
+      this._super();
 
       /* fetch important parts */
       this.$pageListRoot = $('.image-gallery-page-list', this.element);

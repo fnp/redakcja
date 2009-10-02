@@ -181,5 +181,4 @@ Editor.Object = Class.extend({
 
 Editor.Object._lastGuid = 0;
 
-
 var panels = [];

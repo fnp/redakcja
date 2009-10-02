@@ -19,6 +19,7 @@ var PanelContainerView = View.extend({
   selectChanged: function(event) {
     var value = $('select', this.element.get(0)).val();
     var klass = panels[value];
+
     if (this.contentView) {
       this.contentView.dispose();
       this.contentView = null;
@@ -27,7 +28,7 @@ var PanelContainerView = View.extend({
     if( value != 'empty') {
     this.contentView = new klass($('.content-view', 
       this.element.get(0)), this.model.contentModels[value], this);
-    $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);
+    $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);    
     }
   },
   

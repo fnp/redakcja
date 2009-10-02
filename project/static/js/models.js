@@ -406,10 +406,12 @@ $(function()
   toolbarUrl = $('#api-toolbar-url').text();
 
   doc = new Editor.DocumentModel();
-  var editor = new EditorView('#body-wrap', doc);
+  var editor = new EditorView('#body-wrap', doc);  
   editor.freeze();
+
   var flashView = new FlashView('#flashview', messageCenter);
   var splitView = new SplitView('#splitview', doc);
+
   leftPanelView = new PanelContainerView('#left-panel-container', doc);
-  rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
+  rightPanelContainer = new PanelContainerView('#right-panel-container', doc); 
 });

@@ -7,7 +7,6 @@ var EditorView = View.extend({
   
   init: function(element, model, template) {
     this._super(element, model, template);
-    this.model.load();
     
     this.quickSaveButton = $('#action-quick-save', this.element).bind('click.editorview', this.quickSave.bind(this));
     this.commitButton = $('#action-commit', this.element).bind('click.editorview', this.commit.bind(this));
@@ -16,7 +15,7 @@ var EditorView = View.extend({
     
     this.model.addObserver(this, 'state', this.modelStateChanged.bind(this));
     this.modelStateChanged('state', this.model.get('state'));
-    
+      
     // Inicjalizacja okien jQuery Modal
     $('#commit-dialog', this.element).
     jqm({
@@ -34,6 +33,8 @@ var EditorView = View.extend({
     //      onShow: $.fbind(self, self.loadSplitDialog)
     //  }).
     //  jqmAddClose('button.dialog-close-button');
+    
+    this.model.load();
   },
   
   quickSave: function(event) {
