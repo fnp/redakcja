@@ -66,7 +66,7 @@ def natural_order(get_key=lambda x: x):
     def getter(key):
         nkey = get_key(key)
         if not isinstance(key, unicode):
-            ukey = key.decode('utf-8')
+            ukey = nkey.decode('utf-8')
         else:
             ukey = nkey
 
