@@ -14,7 +14,7 @@
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/lib/jquery.modal.js" type="text/javascript" charset="utf-8"></script>
 	{# Scriptlets #}
-	<script src="http://localhost:8000/api/toolbar/scriptlets" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
 	
 	{# App and views #}
 	<script src="{{STATIC_URL}}js/app.js" type="text/javascript" charset="utf-8"></script>
@@ -35,6 +35,7 @@
 	<script type="text/html" charset="utf-8" id="panel-container-view-template">
 		<div class="panel-main-toolbar">
                 <p><select>
+                        <option value="empty" selected="selected"> ---- </option>
 			<% for (panel in panels) { %>
 			<option value="<%= panel %>"><%= panel %></option>
 			<% }; %>
@@ -136,11 +137,13 @@
 {% endblock %}
 
 {% block maincontent %}
-	<div id="splitview">
-		<div id="left-panel-container" class='panel-container'></div>
-	    <div id="right-panel-container" class='panel-container'></div>
-    </div>
+    <p style="display: none;" id="api-base-url">{% url document_list_view %}</p>
+    <p style="display: none;" id="api-toolbar-url">{% url toolbar_buttons %}</p>
 
+    <div id="splitview">
+        <div id="left-panel-container" class='panel-container'></div>
+	<div id="right-panel-container" class='panel-container'></div>
+    </div>
 
     <div id="commit-dialog" class="jqmWindow" style="display:none">
         <form action="{% url file_commit fileid %}" method="POST">

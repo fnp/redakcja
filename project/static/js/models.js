@@ -1,7 +1,4 @@
 /*globals Editor fileId SplitView PanelContainerView EditorView FlashView messageCenter*/
-var documentsUrl = '/platforma/api/documents/';
-
-
 Editor.Model = Editor.Object.extend({
   synced: false,
   data: null
@@ -9,8 +6,8 @@ Editor.Model = Editor.Object.extend({
 
 
 Editor.ToolbarButtonsModel = Editor.Model.extend({
-  _className: 'Editor.ToolbarButtonsModel',
-  serverURL: '/platforma/api/toolbar/buttons',
+  className: 'Editor.ToolbarButtonsModel',
+  serverURL: '/api/toolbar/buttons',
   buttons: {},
   
   init: function() {
@@ -404,7 +401,11 @@ Editor.DocumentModel = Editor.Model.extend({
 
 var leftPanelView, rightPanelContainer, doc;
 
-$(function() {
+$(function()
+{
+  documentsUrl = $('#api-base-url').text() + '/';
+  Editor.ToolbarButtonsModel.serverURL = $('#api-toolbar-url').text();
+
   doc = new Editor.DocumentModel();
   var editor = new EditorView('#body-wrap', doc);
   editor.freeze();

@@ -17,8 +17,13 @@ urlpatterns = patterns('',
 #    url(r'^hello\.(?P<emitter_format>.+)$', hello_resource),
 
     # Toolbar
-    url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'}),    
-    url(r'^toolbar/scriptlets$', scriptlets, {'emitter_format': 'json'}),
+    url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'},
+        name="toolbar_buttons"
+    ),
+    
+    url(r'^toolbar/scriptlets$', scriptlets, {'emitter_format': 'json'},
+        name="toolbar_scriptlets"
+    ),
 
     # Pull requests
     url(r"^pull-requests$", pullrequest_collection,

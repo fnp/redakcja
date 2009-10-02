@@ -23,9 +23,12 @@ var PanelContainerView = View.extend({
       this.contentView.dispose();
       this.contentView = null;
     }
+
+    if( value != 'empty') {
     this.contentView = new klass($('.content-view', 
       this.element.get(0)), this.model.contentModels[value], this);
     $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);
+    }
   },
   
   refreshButtonClicked: function(event) {
