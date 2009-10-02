@@ -70,7 +70,7 @@ class MercurialLibrary(wlrepo.Library):
 
 
     def documents(self):
-        return [ key[5:] for key in \
+        return [ key[5:].decode('utf-8') for key in \
             self._hgrepo.branchmap() if key.startswith("$doc:") ]
 
     @property

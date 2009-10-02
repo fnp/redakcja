@@ -2,7 +2,6 @@ __author__="lreqc"
 __date__ ="$2009-09-17 16:16:54$"
 
 from django.conf.urls.defaults import *
-
 from api.resources import *
 
 FORMAT = r"\.(?P<emitter_format>xml|json|yaml)"

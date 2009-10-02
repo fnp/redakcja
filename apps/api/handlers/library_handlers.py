@@ -60,8 +60,7 @@ class LibraryHandler(BaseHandler):
 
         documents = {}
         
-        for docid in lib.documents():
-            docid = docid.decode('utf-8')
+        for docid in lib.documents():            
             documents[docid] = {
                 'url': reverse('document_view', args=[docid]),
                 'name': docid,
