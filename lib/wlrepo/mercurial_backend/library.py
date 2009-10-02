@@ -105,7 +105,7 @@ class MercurialLibrary(wlrepo.Library):
             # WHY DO ALL THE OTHER METHODS SIMPLY
             # FAIL WHEN GIVEN UNICODE, WHEN THIS WORKS ONLY!! WITH IT
 
-            ctx = self._changectx( revid.decode('utf-8') )
+            ctx = self._changectx( revid )
         except mercurial.error.RepoError, e:
             raise wlrepo.RevisionNotFound(revid)
 
