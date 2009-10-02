@@ -81,8 +81,7 @@ class MercurialLibrary(wlrepo.Library):
         if revision is None:
             raise ValueError("Revision can't be None.")
         
-        if not isinstance(revision, MercurialRevision):
-            revision = self._sanitize_string(unicode(revision))
+        if not isinstance(revision, MercurialRevision):            
             rev = self.get_revision(revision)
         else:
             rev = revision       
