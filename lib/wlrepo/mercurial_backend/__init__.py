@@ -7,6 +7,9 @@ __doc__ = "Module documentation."
 import wlrepo
 from mercurial.node import nullid
 
+from mercurial import encoding
+encoding.encoding = 'utf-8'
+
 class MercurialRevision(wlrepo.Revision):
 
     def __init__(self, lib, changectx):

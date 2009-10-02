@@ -96,10 +96,16 @@ class MercurialLibrary(wlrepo.Library):
         return self.document_for_rev(self.fulldocid(docid, user))
 
     def get_revision(self, revid):
-        revid = self._sanitize_string(revid)
+        revid = self._sanitize_string(revid).decode('utf-8')
+
+        print "Looking up rev %r (%s)" %(revid, type(revid))
 
         try:
-            ctx = self._changectx(revid)
+            # THIS IS THE MOST BRAIN-DEAD API I EVER SEEN
+            # WHY DO ALL THE OTHER METHODS SIMPLY
+            # FAIL WHEN GIVEN UNICODE, WHEN THIS WORKS ONLY!! WITH IT
+
+            ctx = self._changectx( revid.decode('utf-8') )
         except mercurial.error.RepoError, e:
             raise wlrepo.RevisionNotFound(revid)
 
@@ -117,7 +123,6 @@ class MercurialLibrary(wlrepo.Library):
             fulldocid += u'$user:' + user
         fulldocid += u'$doc:' + docid
         return fulldocid
-
 
     def has_revision(self, revid):
         try:

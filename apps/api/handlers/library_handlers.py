@@ -177,13 +177,14 @@ class DocumentHandler(BaseHandler):
     @hglibrary
     def read(self, request, docid, lib):
         """Read document's meta data"""       
-        log.info("Read %s", docid)
+        log.info(u"Read %s (%s)" % (docid, type(docid)) )
         try:
             doc = lib.document(docid)
             udoc = doc.take(request.user.username)
         except RevisionNotFound, e:
             return response.EntityNotFound().django_response({
-                'exception': type(e), 'message': e.message})
+                'exception': type(e), 'message': e.message,
+                'docid': docid })
 
         # is_shared = udoc.ancestorof(doc)
         # is_uptodate = is_shared or shared.ancestorof(document)

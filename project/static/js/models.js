@@ -6,8 +6,7 @@ Editor.Model = Editor.Object.extend({
 
 
 Editor.ToolbarButtonsModel = Editor.Model.extend({
-  className: 'Editor.ToolbarButtonsModel',
-  serverURL: '/api/toolbar/buttons',
+  className: 'Editor.ToolbarButtonsModel',  
   buttons: {},
   
   init: function() {
@@ -17,7 +16,7 @@ Editor.ToolbarButtonsModel = Editor.Model.extend({
   load: function() {
     if (!this.get('buttons').length) {
       $.ajax({
-        url: this.serverURL,
+        url: toolbarUrl,
         dataType: 'json',
         success: this.loadSucceeded.bind(this)
       });
@@ -404,7 +403,7 @@ var leftPanelView, rightPanelContainer, doc;
 $(function()
 {
   documentsUrl = $('#api-base-url').text() + '/';
-  Editor.ToolbarButtonsModel.serverURL = $('#api-toolbar-url').text();
+  toolbarUrl = $('#api-toolbar-url').text();
 
   doc = new Editor.DocumentModel();
   var editor = new EditorView('#body-wrap', doc);
