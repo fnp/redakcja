@@ -238,7 +238,6 @@ class DocumentHTMLHandler(BaseHandler):
 #
 # Image Gallery
 #
-from django.core.files.storage import FileSystemStorage
 
 class DocumentGalleryHandler(BaseHandler):
     allowed_methods = ('GET')
@@ -256,7 +255,7 @@ class DocumentGalleryHandler(BaseHandler):
 
             gallery = {'name': assoc.name, 'pages': []}
             
-            for file in sorted(os.listdir(dirpath), key=natural_order()):
+            for file in sorted(os.listdir(dirpath)):
                 log.info(file)
                 name, ext = os.path.splitext(os.path.basename(file))
 

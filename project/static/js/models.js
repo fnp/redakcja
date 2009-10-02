@@ -1,5 +1,5 @@
 /*globals Editor fileId SplitView PanelContainerView EditorView FlashView messageCenter*/
-var documentsUrl = '/platforma/api/documents/';
+var documentsUrl = '/api/documents/';
 
 
 Editor.Model = Editor.Object.extend({
@@ -10,7 +10,7 @@ Editor.Model = Editor.Object.extend({
 
 Editor.ToolbarButtonsModel = Editor.Model.extend({
   _className: 'Editor.ToolbarButtonsModel',
-  serverURL: '/platforma/api/toolbar/buttons',
+  serverURL: '/api/toolbar/buttons',
   buttons: {},
   
   init: function() {

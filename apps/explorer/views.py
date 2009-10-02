@@ -65,7 +65,7 @@ def file_list(request, repo):
 
     # short-circut the api document list
     doctree = library_resource.handler.read(request)
-    print "DOCTREE:", doctree['documents']
+    # print "DOCTREE:", doctree['documents']
         
     return direct_to_template(request, 'explorer/file_list.html', extra_context={
         'filetree': doctree['documents'], 'bookform': bookform,
