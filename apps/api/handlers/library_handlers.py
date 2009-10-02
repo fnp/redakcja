@@ -254,19 +254,20 @@ class DocumentGalleryHandler(BaseHandler):
 
             gallery = {'name': assoc.name, 'pages': []}
             
-            for file in sorted( os.listdir(dirpath) ):
-                file = file.encode('utf-8')
+            for file in os.listdir(dirpath):
+                file = file.decode('utf-8')
                 
                 log.info(file)
                 name, ext = os.path.splitext(os.path.basename(file))
 
-                if ext.lower() not in ['.png', '.jpeg', '.jpg']:
+                if ext.lower() not in [u'.png', u'.jpeg', u'.jpg']:
                     log.info("Ignoring: %s %s", name, ext)
                     continue
 
-                url = settings.MEDIA_URL + assoc.subpath + u'/' + file.decode('utf-8');
+                url = settings.MEDIA_URL + assoc.subpath + u'/' + file;
                 gallery['pages'].append(url)
-                
+
+            gallery['pages'].sort()
             galleries.append(gallery)
 
         return galleries                      
