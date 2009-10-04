@@ -87,7 +87,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    PROJECT_ROOT + '/templates',    
+    PROJECT_ROOT + '/templates',
 )
 
 # CSS and JS files to compress
@@ -116,8 +116,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     
-    'cas_provider',
-    'cas_consumer',
     'explorer',
     'toolbar',
     'api',
@@ -134,10 +132,6 @@ EDITOR_DEFAULT_SETTINGS = {
         {'name': 'gallery', 'ratio': 0.5}
     ],
 }
-
-# django-cas-provider
-LOGIN_URL = '/cas/login/'
-LOGOUT_URL = '/cas/logout/'
 
 # Python logging settings
 import logging

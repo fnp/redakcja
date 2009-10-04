@@ -40,20 +40,26 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 
-    # Authorization
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
-
     # Prototypes
     url(r'^wysiwyg-proto/', include('wysiwyg.urls')),
 
     # Our über-restful api
     url(r'^api/', include('api.urls') ),
     
-    # django-cas-provider
-    url(r'^cas/', include('cas_provider.urls')),
 )
 
+if 'cas_consumer' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        # django-cas-consumer
+        url(r'^accounts/login/$', 'cas_consumer.views.login', name='login'),
+        url(r'^accounts/logout/$', 'cas_consumer.views.logout', name='logout'),
+    )
+else:
+    urlpatterns += patterns('',
+        # Django auth
+        url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}, name='login'),
+        url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),    
+    )
 
 # Static files
 if settings.DEBUG and not hasattr(settings, 'DONT_SERVE_STATIC'):
@@ -63,3 +69,4 @@ if settings.DEBUG and not hasattr(settings, 'DONT_SERVE_STATIC'):
         url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
             {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
     )
+# 
