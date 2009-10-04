@@ -14,6 +14,7 @@ Wymagania
 * `Mercurial 1.3.1 <http://www.selenic.com/mercurial/>`_
 * `PIL 1.1.6 <http://www.pythonware.com/products/pil/>`_ (wymagane przez skrypt imgconv.py)
 * `pngnq <http://pngnq.sourceforge.net/>`_ (wymagane przez skrypt imgconv.py)
+* `zuber/django-cas-consumer <http://github.com/zuber/django-cas-consumer>`_ (wymagane do autoryzacji przez CAS)
 
 Instalacja
 **********
