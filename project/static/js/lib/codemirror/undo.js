@@ -250,7 +250,7 @@ History.prototype = {
     function buildLine(node) {
       var text = [];
       for (var cur = node ? node.nextSibling : self.container.firstChild;
-           cur && !isBR(cur); cur = cur.nextSibling)
+           cur && cur.nodeName != "BR"; cur = cur.nextSibling)
         if (cur.currentText) text.push(cur.currentText);
       return {from: node, to: cur, text: cleanText(text.join(""))};
     }
@@ -275,7 +275,7 @@ History.prototype = {
     // Get the BR element after/before the given node.
     function nextBR(node, dir) {
       var link = dir + "Sibling", search = node[link];
-      while (search && !isBR(search))
+      while (search && search.nodeName != "BR")
         search = search[link];
       return search;
     }

@@ -122,7 +122,10 @@
 				<div class="buttontoolbarview-group toolbar-buttons-container" ui:groupIndex="<%= i %>" style="display: none">
 					<% for (var j=0; j < buttons[i].buttons.length; j++) { %>
 						<% if (buttons[i].buttons[j].scriptlet_id) { %>
-						<button type="button" class="buttontoolbarview-button" ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
+						<button type="button" class="buttontoolbarview-button" 
+                                                    title="<%= buttons[i].buttons[j].key %>"
+                                                    ui:hotkey_mod="<%= buttons[i].buttons[j].key_mod %>"
+                                                    ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
 							<%= buttons[i].buttons[j].label %>
 						</button>
 						<% } %>
@@ -155,7 +158,7 @@
             <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
             <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                
             <fieldset id="commit-dialog-related-issues" 
-                      ui:ajax-src="http://localhost:3000/publications/issues/{{fileid}}">
+                      ui:ajax-src="{{REDMINE_URL}}/publications/issues/{{fileid}}">
                 <legend>Related issues</legend>
                 <div class="loading-box" style="display: none;">
                     <p>Loading related issues...</p>

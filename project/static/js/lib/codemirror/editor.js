@@ -80,13 +80,13 @@ var Editor = (function(){
         if (text.length) leaving = false;
         result.push(node);
       }
-      else if (isBR(node) && node.childNodes.length == 0) {
+      else if (node.nodeName == "BR" && node.childNodes.length == 0) {
         leaving = true;
         result.push(node);
       }
       else {
         forEach(node.childNodes, simplifyNode);
-        if (!leaving && newlineElements.hasOwnProperty(node.nodeName.toUpperCase())) {
+        if (!leaving && newlineElements.hasOwnProperty(node.nodeName)) {
           leaving = true;
           if (!atEnd || !top)
             result.push(doc.createElement("BR"));
@@ -175,7 +175,7 @@ var Editor = (function(){
         nodeQueue.push(node);
         return yield(node.currentText, c);
       }
-      else if (isBR(node)) {
+      else if (node.nodeName == "BR") {
         nodeQueue.push(node);
         return yield("\n", c);
       }
@@ -195,20 +195,23 @@ var Editor = (function(){
 
   // Determine the text size of a processed node.
   function nodeSize(node) {
-    return isBR(node) ? 1 : node.currentText.length;
+    if (node.nodeName == "BR")
+      return 1;
+    else
+      return node.currentText.length;
   }
 
   // Search backwards through the top-level nodes until the next BR or
   // the start of the frame.
   function startOfLine(node) {
-    while (node && !isBR(node)) node = node.previousSibling;
+    while (node && node.nodeName != "BR") node = node.previousSibling;
     return node;
   }
   function endOfLine(node, container) {
     if (!node) node = container.firstChild;
-    else if (isBR(node)) node = node.nextSibling;
+    else if (node.nodeName == "BR") node = node.nextSibling;
 
-    while (node && !isBR(node)) node = node.nextSibling;
+    while (node && node.nodeName != "BR") node = node.nextSibling;
     return node;
   }
 
@@ -363,6 +366,8 @@ var Editor = (function(){
     this.dirty = [];
     if (options.content)
       this.importCode(options.content);
+    else // FF acts weird when the editable document is completely empty
+      container.appendChild(this.doc.createElement("BR"));
 
     if (!options.readOnly) {
       if (options.continuousScanning !== false) {
@@ -501,7 +506,7 @@ var Editor = (function(){
       this.checkLine(line);
       var accum = [];
       for (line = line ? line.nextSibling : this.container.firstChild;
-           line && !isBR(line); line = line.nextSibling)
+           line && line.nodeName != "BR"; line = line.nextSibling)
         accum.push(nodeText(line));
       return cleanText(accum.join(""));
     },
@@ -526,7 +531,7 @@ var Editor = (function(){
             before = cur;
             break;
           }
-          var text = nodeText(cur);
+          var text = (cur.innerText || cur.textContent || cur.nodeValue || "");
           if (text.length > position) {
             before = cur.nextSibling;
             content = text.slice(0, position) + content + text.slice(position);
@@ -658,7 +663,7 @@ var Editor = (function(){
     // Intercept enter and tab, and assign their new functions.
     keyDown: function(event) {
       if (this.frozen == "leave") this.frozen = null;
-      if (this.frozen && (!this.keyFilter || this.keyFilter(event.keyCode))) {
+      if (this.frozen && (!this.keyFilter || this.keyFilter(event)) ) {
         event.stop();
         this.frozen(event);
         return;
@@ -838,10 +843,10 @@ var Editor = (function(){
 
     home: function() {
       var cur = select.selectionTopNode(this.container, true), start = cur;
-      if (cur === false || !(!cur || cur.isPart || isBR(cur)) || !this.container.firstChild)
+      if (cur === false || !(!cur || cur.isPart || cur.nodeName == "BR") || !this.container.firstChild)
         return false;
 
-      while (cur && !isBR(cur)) cur = cur.previousSibling;
+      while (cur && cur.nodeName != "BR") cur = cur.previousSibling;
       var next = cur ? cur.nextSibling : this.container.firstChild;
       if (next && next != start && next.isPart && hasClass(next, "whitespace"))
         select.focusAfterNode(next, this.container);
@@ -896,7 +901,7 @@ var Editor = (function(){
       function tryFindMatch() {
         var stack = [], ch, ok = true;;
         for (var runner = cursor; runner; runner = dir ? runner.nextSibling : runner.previousSibling) {
-          if (runner.className == className && isSpan(runner) && (ch = paren(runner))) {
+          if (runner.className == className && runner.nodeName == "SPAN" && (ch = paren(runner))) {
             if (forward(ch) == dir)
               stack.push(ch);
             else if (!stack.length)
@@ -905,7 +910,7 @@ var Editor = (function(){
               ok = false;
             if (!stack.length) break;
           }
-          else if (runner.dirty || !isSpan(runner) && !isBR(runner)) {
+          else if (runner.dirty || runner.nodeName != "SPAN" && runner.nodeName != "BR") {
             return {node: runner, status: "dirty"};
           }
         }
@@ -963,7 +968,7 @@ var Editor = (function(){
     // selection.
     indentRegion: function(start, end, direction) {
       var current = (start = startOfLine(start)), before = start && startOfLine(start.previousSibling);
-      if (!isBR(end)) end = endOfLine(end, this.container);
+      if (end.nodeName != "BR") end = endOfLine(end, this.container);
 
       do {
         var next = endOfLine(current, this.container);
@@ -1122,7 +1127,7 @@ var Editor = (function(){
       // Backtrack to the first node before from that has a partial
       // parse stored.
       while (from && (!from.parserFromHere || from.dirty)) {
-        if (maxBacktrack != null && isBR(from) && (--maxBacktrack) < 0)
+        if (maxBacktrack != null && from.nodeName == "BR" && (--maxBacktrack) < 0)
           return false;
         from = from.previousSibling;
       }
@@ -1203,7 +1208,7 @@ var Editor = (function(){
           // Allow empty nodes when they are alone on a line, needed
           // for the FF cursor bug workaround (see select.js,
           // insertNewlineAtCursor).
-          while (part && isSpan(part) && part.currentText == "") {
+          while (part && part.nodeName == "SPAN" && part.currentText == "") {
             var old = part;
             this.remove();
             part = this.get();
@@ -1225,7 +1230,7 @@ var Editor = (function(){
         if (token.value == "\n"){
           // The idea of the two streams actually staying synchronized
           // is such a long shot that we explicitly check.
-          if (!isBR(part))
+          if (part.nodeName != "BR")
             throw "Parser out of sync. Expected BR.";
 
           if (part.dirty || !part.indentation) lineDirty = true;
@@ -1253,7 +1258,7 @@ var Editor = (function(){
           parts.next();
         }
         else {
-          if (!isSpan(part))
+          if (part.nodeName != "SPAN")
             throw "Parser out of sync. Expected SPAN.";
           if (part.dirty)
             lineDirty = true;
