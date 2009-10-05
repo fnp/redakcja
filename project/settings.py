@@ -87,7 +87,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    PROJECT_ROOT + '/templates',    
+    PROJECT_ROOT + '/templates',
 )
 
 # CSS and JS files to compress

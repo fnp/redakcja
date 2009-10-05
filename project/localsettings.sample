@@ -1,0 +1,39 @@
+# 
+#  localsettings template for Platforma
+#
+#  Duplicate this file as localsettings.py and change it to your liking.
+#  Settings defined in localsettings.py will override settings from 
+#  settings.py file. localsettings.py should never be commited 
+#  to a version control system. Please make changes to settings.py 
+#  or localsettings.sample instead.
+#
+
+# Path to repository with managed documents
+REPOSITORY_PATH = '/home/user/repository'
+
+# Subdirectory of STATIC_ROOT containing images
+IMAGE_DIR = 'images'
+
+# Authentication via Central Authentication Server
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+    
+    'cas_consumer',
+    'explorer',
+    'toolbar',
+    'api',
+    'wysiwyg',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'cas_consumer.backends.CASBackend',
+)
+
+CAS_BASE = 'http://localhost:7000/'
+CAS_SERVICE = 'http://localhost:8000/accounts/login/'
+
