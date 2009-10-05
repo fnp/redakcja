@@ -98,20 +98,23 @@ var XMLView = View.extend({
 
     getHotkey: function(event) {
         var code = event.keyCode;
-        var ch = String.fromCharCode(code & 0xff).toLowerCase();
-        var button = $('.buttontoolbarview-button[title='+ch+']', this.element)[0]
+        if(!((code >= 97 && code <= 122)
+           || (code >= 65 && code <= 90)) ) return null;
 
-        console.log(ch, '#', button);       
+        var ch = String.fromCharCode(code & 0xff).toLowerCase();
+        console.log(ch.charCodeAt(0), '#', buttons);
+
+        var buttons = $('.buttontoolbarview-button[title='+ch+']', this.element);
         var mod = 0;
             
         if(event.altKey) mod |= 0x01;
         if(event.ctrlKey) mod |= 0x02;
         if(event.shiftKey) mod |= 0x04;
 
-        if(button) {
+        if(buttons.length) {
             var match = null;
 
-            $(button).each(function() {
+            buttons.each(function() {
                 if( parseInt($(this).attr('ui:hotkey_mod')) == mod ) {
                     match = this;
                     return;

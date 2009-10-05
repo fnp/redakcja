@@ -27,9 +27,14 @@ var FlashView = View.extend({
   
   modelFirstFlashMessageChanged: function(property, value) {
     this.element.fadeOut('slow', function() {
+      this.element.css({'z-index': 0});
       this.shownMessage = value;
       this.render();
-      this.element.fadeIn('slow');
+
+      if(this.shownMessage) {
+        this.element.css({'z-index': 1000});
+        this.element.fadeIn('slow');
+      }
     }.bind(this));
   }
 });

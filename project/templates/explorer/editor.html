@@ -140,7 +140,11 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
-	<button id="action-merge">Merge</button> <button id="action-update">Update</button> <button id="action-commit">Commit</button> <button id="action-quick-save">Quick Save</button>
+    <a href="http://stigma.nowoczesnapolska.org.pl/platforma-hg/ksiazki/log/tip/{{ fileid }}.xml" target="_new" >Historia</a>
+	<button id="action-merge">Merge</button>
+        <button id="action-update">Update</button>
+        <button id="action-commit">Commit</button>
+        <button id="action-quick-save">Quick Save</button>
 {% endblock %}
 
 {% block maincontent %}
@@ -186,5 +190,5 @@
 {% endblock maincontent %}
 
 {% block extrabody %}
-	<div style="position: absolute; left: 35%; right: 35%; top: 0; height: 20px; z-index: 1000" id="flashview"></div>
+	<div style="position: absolute; left: 35%; right: 35%; top: 0; height: 20px; z-index: 0" id="flashview"></div>
 {% endblock %}
