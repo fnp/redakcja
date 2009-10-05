@@ -1,6 +1,6 @@
 function ScriptletCenter()
 {
-    this.scriptlets = {}
+    this.scriptlets = {};
 
     this.scriptlets['insert_tag'] = function(context, params)
     {
@@ -9,15 +9,15 @@ function ScriptletCenter()
 
         for (var attr in params.attrs) {
             start_tag += ' '+attr+'="' + params.attrs[attr] + '"';
-        };
+        }
 
         start_tag += '>';
         var end_tag = '</'+params.tag+'>';
 
         if(text.length > 0) {
             // tokenize
-            var output = ''
-            var token = ''
+            var output = '';
+            var token = '';
             for(var index=0; index < text.length; index++)
             {
                 if (text[index].match(/\s/)) { // whitespace
@@ -26,7 +26,7 @@ function ScriptletCenter()
                 else { // character
                     output += token;
                     if(output == token) output += start_tag;
-                    token = ''
+                    token = '';
                     output += text[index];
                 }
             }
@@ -53,9 +53,9 @@ function ScriptletCenter()
 
         var exprs = $.map(params.exprs, function(expr) {
             var opts = "g";
-            if(expr.length > 2)
+            if(expr.length > 2) {
                 opts = expr[2];
-            return {
+            } return {
                 rx: new RegExp(expr[0], opts),
                 repl: expr[1]
                 };
@@ -67,7 +67,7 @@ function ScriptletCenter()
 
         var changed = 0;
         var lines = text.split('\n');
-        var lines = $.map(lines, function(line) {
+        lines = $.map(lines, function(line) {
             var old_line = line;
             $(exprs).each(function() {
                 var expr = this;
@@ -90,7 +90,7 @@ function ScriptletCenter()
             frameBody.css('font-size', params.fontSize);
         }
         else {
-            var old_size = parseInt(frameBody.css('font-size'));
+            var old_size = parseInt(frameBody.css('font-size'), 10);
             frameBody.css('font-size', old_size + (params.change || 0) );
         }
         
@@ -99,9 +99,9 @@ function ScriptletCenter()
     this.scriptlets['fulltextregexp'] = function(context, params) {
         var exprs = $.map(params.exprs, function(expr) {
             var opts = "mg";
-            if(expr.length > 2)
+            if(expr.length > 2) {
                 opts = expr[2];
-
+            }
             return {
                 rx: new RegExp(expr[0], opts),
                 repl: expr[1]
@@ -146,8 +146,8 @@ function ScriptletCenter()
                 if(this.length > 0) { 
                     return this[0].toUpperCase() + this.slice(1);
                 } else {
-                    return ''
-                    }
+                    return '';
+                }
             });
             repl = words.join(' ');
         }
@@ -161,11 +161,11 @@ function ScriptletCenter()
 
         if(text) {
             var verses = text.split('\n');
-            var text = ''; var buf = ''; var ebuf = '';
+            text = ''; var buf = ''; var ebuf = '';
             var first = true;
 
             for(var i=0;  i < verses.length; i++) {
-                verse = verses[i].replace(/^\s+/, "").replace(/\s+$/, "");
+                var verse = verses[i].replace(/^\s+/, "").replace(/\s+$/, "");
                 if(verse) {
                     text += (buf ? buf + '/\n' : '') + ebuf;
                     buf = (first ? '<strofa>\n' : '') + verses[i];
@@ -174,7 +174,7 @@ function ScriptletCenter()
                 } else {
                     ebuf += '\n' + verses[i];
                 }
-            };
+            }
             text = text + buf + '\n</strofa>' + ebuf;
             this.XMLEditorReplaceSelectedText(context, text);
         }
@@ -189,18 +189,21 @@ function ScriptletCenter()
 
 ScriptletCenter.prototype.XMLEditorSelectedText = function(panel) {
     return panel.contentView.editor.selection();
-}
+};
 
 ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(panel, replacement)
 {
     panel.contentView.editor.replaceSelection(replacement);
-/* TODO: fire the change event */
-}
+    // Tell XML view that it's data has changed
+    panel.contentView.editorDataChanged();
+};
 
 ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, n) {
     var pos = panel.contentView.editor.cursorPosition();
     panel.contentView.editor.selectLines(pos.line, pos.character + n);
-}
+};
+
+var scriptletCenter;
 
 $(function() {
     scriptletCenter = new ScriptletCenter();
