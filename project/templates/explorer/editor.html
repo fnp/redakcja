@@ -52,6 +52,10 @@
 	</script>
 	
 	<script type="text/html" charset="utf-8" id="html-view-template">
+                <div class="htmlview-toolbar">
+                    <a class="html-print-link" href="print" ui:baseref="{% url file_print fileid %}" target="_new">Wersja do druku</a>
+                </div>
+                
 		<div class="htmlview">
 		</div>
 	</script>
@@ -110,7 +114,7 @@
 		<div class="buttontoolbarview panel-toolbar">
 			<div class="buttontoolbarview-tabs toolbar-tabs-container toolbar-buttons-container">
 			<% for (var i=0; i < buttons.length; i++) { %>
-				<a href="#" class="buttontoolbarview-tab" ui:groupindex="<%= i %>"><%= buttons[i].name %></a>
+				<button type="button" class="buttontoolbarview-tab" ui:groupindex="<%= i %>"><%= buttons[i].name %></button>
 			<% }; %>
 			</div>
 			<div class="buttontoolbarview-groups ">
@@ -118,9 +122,9 @@
 				<div class="buttontoolbarview-group toolbar-buttons-container" ui:groupIndex="<%= i %>" style="display: none">
 					<% for (var j=0; j < buttons[i].buttons.length; j++) { %>
 						<% if (buttons[i].buttons[j].scriptlet_id) { %>
-						<a href="#" class="buttontoolbarview-button" ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
+						<button type="button" class="buttontoolbarview-button" ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
 							<%= buttons[i].buttons[j].label %>
-						</a>
+						</button>
 						<% } %>
 					<% } %>
 				</div>
@@ -146,7 +150,7 @@
     </div>
 
     <div id="commit-dialog" class="jqmWindow" style="display:none">
-        <form action="{% url file_commit fileid %}" method="POST">
+        <form action="" method="POST">
             <label for="message">Commit message:</label>
             <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
             <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                

@@ -232,8 +232,10 @@ class DocumentHTMLHandler(BaseHandler):
             return librarian.html.transform(document.data('xml'), is_file=False, parse_dublincore=False)
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
-                'exception': type(e), 'message': e.message})
-
+                'reason': 'not-found', 'message': e.message})
+        except librarian.ParseError, e:
+            return response.InternalError().django_response({
+                'reason': 'xml-parse-error', 'message': e.message })
 
 #
 # Image Gallery

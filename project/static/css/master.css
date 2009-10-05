@@ -325,7 +325,7 @@ input.image-gallery-current-page {
 
 .htmlview {
     position: absolute;
-    top: 0;
+    top: 25px;
     right: 0;
     bottom: 0;
     left: 0;
@@ -336,4 +336,17 @@ input.image-gallery-current-page {
 .image-gallery-page-container img {
     /* border: 2px solid green; */
     margin: 0px;
+}
+
+body#base button {
+    background-color: #DDD;
+    border-width: 1px;
+    padding: 0px 0.5em;    
+    font-family: Sans-Serif;
+    color: #000;
+    margin: 2px 4px;
+}
+
+body#base button:hover {
+    background-color: #EEE;
 }
