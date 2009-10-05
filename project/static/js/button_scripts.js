@@ -42,11 +42,11 @@ function ScriptletCenter()
             output = start_tag + end_tag;
         }
 
-        if (text.length == 0) {
-            this.XMLEditorMoveCursorForward(context, params.tag.length + 2);
-        }
-
         this.XMLEditorReplaceSelectedText(context, output);
+
+        if (text.length == 0) {
+            this.XMLEditorMoveCursorForward(context, -params.tag.length-3);
+        }        
     }.bind(this);
 
     this.scriptlets['lineregexp'] = function(context, params) {
