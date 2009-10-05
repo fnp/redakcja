@@ -167,7 +167,7 @@ function ScriptletCenter()
             for(var i=0;  i < verses.length; i++) {
                 verse = verses[i].replace(/^\s+/, "").replace(/\s+$/, "");
                 if(verse) {
-                    text += (buf ? buf + '\\\n' : '') + ebuf;
+                    text += (buf ? buf + '/\n' : '') + ebuf;
                     buf = (first ? '<strofa>\n' : '') + verses[i];
                     ebuf = '';
                     first = false;

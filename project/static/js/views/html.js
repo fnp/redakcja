@@ -35,6 +35,25 @@ var HTMLView = View.extend({
       this.freeze(this.model.get('error'));
     }
   },
+
+
+  render: function() {
+      $('.html-print-link', this.element).unbind();
+
+      this._super();
+
+      $('.html-print-link', this.element).mouseover(
+            this.printView.bind(this)
+      );
+  },
+
+
+  printView: function(event) {
+      var base = $(event.target).attr('ui:baseref');
+      $(event.target).attr('href', base + "?revision=" + this.model.get('revision') );
+
+      return true;
+  },
   
   reload: function() {
     this.model.load(true);
