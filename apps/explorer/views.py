@@ -74,43 +74,26 @@ def file_list(request, repo):
 @permission_required('explorer.can_add_files')
 @with_repo
 def file_upload(request, repo):
-    other_errors = []
-    if request.method == 'POST':
-        form = forms.BookUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                # prepare the data
-                f = request.FILES['file']
-                decoded = f.read().decode('utf-8')
-                fileid = form.cleaned_data['bookname'].lower()
-                rpath = file_path(fileid)
+    from api.resources import library_resource
+    from api.forms import DocumentUploadForm
+    from django.http import HttpRequest, HttpResponseRedirect
 
-                if form.cleaned_data['autoxml']:
-                    decoded = librarian.wrap_text(decoded, unicode(date.today()) )
-                
-                def upload_action():
-                    repo._add_file(rpath, decoded.encode('utf-8') )
-                    repo._commit(message="File %s uploaded by user %s" % \
-                        (rpath, request.user.username), user=request.user.username)
+    response = library_resource.handler.create(request)
 
-                repo.in_branch(upload_action, 'default')
-
-                # if everything is ok, redirect to the editor
-                return HttpResponseRedirect( reverse('editor_view',
-                        kwargs={'path': fileid}) )
-
-            except hg.RepositoryException, e:
-                other_errors.append(u'Błąd repozytorium: ' + unicode(e) )
-            #except UnicodeDecodeError, e:
-            #    other_errors.append(u'Niepoprawne kodowanie pliku: ' + e.reason \
-            #     + u'. Żądane kodowanie: ' + e.encoding)
-        # invalid form
-
-    # get
-    form = forms.BookUploadForm()
-    return direct_to_template(request, 'explorer/file_upload.html',\
-        extra_context = {'form' : form, 'other_errors': other_errors})
-   
+    if isinstance(response, HttpResponse):
+        data = json.loads(response.content)
+        
+        if response.status_code == 201:
+            return HttpResponseRedirect( \
+                reverse("editor_view", args=[ data['name'] ]) )
+        else:
+            bookform = DocumentUploadForm(request.POST, request.FILES)
+            bookform.is_valid()
+            
+            return direct_to_template(request, 'explorer/file_upload.html',
+                extra_context={'bookform': bookform } )
+    
+       
 #
 # Edit the file
 #

@@ -1,22 +1,17 @@
 {% extends "base.html" %}
 
 {% block maincontent %}
-
-
-
-
-
 <h2>Dodawanie nowego utworu:</h2>
 
-{% if other_errors %}
+{% if errors %}
 <div class="errorlist">
-{% for error in other_errors %}
-<p>{{ error }}</p>
+{% for error in errors %}
+<p>{{ error }}: {{ error.errors }}</p>
 {% endfor %}
 </div>
 {% endif %}
 <form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
-    {{ form.as_p }}
+    {{ bookform.as_p }}
     <p><button type="submit">Dodaj książkę</button></p>
 </form>
 {% endblock maincontent %}

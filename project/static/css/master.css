@@ -337,3 +337,16 @@ input.image-gallery-current-page {
     /* border: 2px solid green; */
     margin: 0px;
 }
+
+body#base button {
+    background-color: #DDD;
+    border-width: 1px;
+    padding: 0px 0.5em;    
+    font-family: Sans-Serif;
+    color: #000;
+    margin: 2px 4px;
+}
+
+body#base button:hover {
+    background-color: #EEE;
+}

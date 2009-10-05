@@ -30,7 +30,7 @@ body {
 }
 
 a:link, a:visited, a:active {
-    color: #395428;
+    color: #860000;
     text-decoration: none;
     font-weight: bold;
 }
@@ -38,3 +38,12 @@ a:link, a:visited, a:active {
 a:hover {
     text-decoration: underline;
 }
+
+.toolbar-buttons-container {
+    background-color: #E2CF62;
+}
+
+.toolbar-tabs-container {
+    background-color: #860000;
+}
+
