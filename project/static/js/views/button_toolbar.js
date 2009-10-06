@@ -39,22 +39,29 @@ var ButtonToolbarView = View.extend({
             $(self.element).trigger('resize');
         });
     
-        $('.buttontoolbarview-button', this.element).bind('click.buttontoolbarview', function(event) {
-            var groupIndex = parseInt($(this).attr('ui:groupindex'), 10);
-            var buttonIndex = parseInt($(this).attr('ui:buttonindex'), 10);
-            var button = self.get('buttons')[groupIndex].buttons[buttonIndex];
-            var scriptletId = button.scriptlet_id;
-            var params = eval('(' + button.params + ')'); // To nie powinno być potrzebne
-
-            console.log('Executing', scriptletId, 'with params', params);
-            try {
-                scriptletCenter.scriptlets[scriptletId](self.parent, params);
-            } catch(e) {
-                console.log("Scriptlet", scriptletId, "failed.");
-            }
-        });
-    
+        $('.buttontoolbarview-button', this.element).
+        bind('click.buttontoolbarview', this.buttonPressed.bind(this) );
+            
         $(this.element).trigger('resize');
+    },
+
+    buttonPressed: function(event)
+    {
+        var target = event.target;
+        
+        var groupIndex = parseInt($(target).attr('ui:groupindex'), 10);
+        var buttonIndex = parseInt($(target).attr('ui:buttonindex'), 10);
+        var button = this.get('buttons')[groupIndex].buttons[buttonIndex];
+        var scriptletId = button.scriptlet_id;
+        var params = eval('(' + button.params + ')'); // To nie powinno być potrzebne
+
+        console.log('Executing', scriptletId, 'with params', params);
+        try {
+            scriptletCenter.scriptlets[scriptletId](this.parent, params);
+        } catch(e) {
+            console.log("Scriptlet", scriptletId, "failed.");
+        }
+
     },
   
     dispose: function() {

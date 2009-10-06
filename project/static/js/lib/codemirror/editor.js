@@ -658,7 +658,7 @@ var Editor = (function(){
     // Intercept enter and tab, and assign their new functions.
     keyDown: function(event) {
       if (this.frozen == "leave") this.frozen = null;
-      if (this.frozen && (!this.keyFilter || this.keyFilter(event.keyCode))) {
+      if (this.frozen && (!this.keyFilter || this.keyFilter(event))) {
         event.stop();
         this.frozen(event);
         return;
