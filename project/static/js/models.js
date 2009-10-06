@@ -55,6 +55,7 @@ Editor.XMLModel = Editor.Model.extend({
   load: function(force) {
     if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
+      messageCenter.addMessage('info', 'Wczytuję XML...');
       $.ajax({
         url: this.serverURL,
         dataType: 'text',
@@ -73,6 +74,7 @@ Editor.XMLModel = Editor.Model.extend({
     }
     this.set('data', data);
     this.set('state', 'synced');
+    messageCenter.addMessage('success', 'Wczytałem XML :-)');
   },
   
   loadingFailed: function() {
@@ -81,11 +83,13 @@ Editor.XMLModel = Editor.Model.extend({
     }
     this.set('error', 'Nie udało się załadować panelu');
     this.set('state', 'error');    
+    messageCenter.addMessage('error', 'Nie udało mi się wczytać XML. Spróbuj ponownie :-(');
   },
   
   update: function(message) {
     if (this.get('state') == 'dirty') {
       this.set('state', 'updating');
+      messageCenter.addMessage('info', 'Zapisuję XML...');
       
       var payload = {
         contents: this.get('data'),
@@ -114,13 +118,14 @@ Editor.XMLModel = Editor.Model.extend({
     }
     this.set('revision', data.revision);
     this.set('state', 'updated');
+    messageCenter.addMessage('success', 'Zapisałem XML :-)');
   },
   
   updatingFailed: function() {
     if (this.get('state') != 'updating') {
       alert('erroneous state:', this.get('state'));
     }
-    messageCenter.addMessage('error', 'Uaktualnienie nie powiodło się', 'Uaktualnienie nie powiodło się');
+    messageCenter.addMessage('error', 'Nie udało mi się zapisać XML. Spróbuj ponownie :-(');
     this.set('state', 'dirty');
   },
   
@@ -161,6 +166,7 @@ Editor.HTMLModel = Editor.Model.extend({
   load: function(force) {
     if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
+      messageCenter.addMessage('info', 'Wczytuję HTML...');
       $.ajax({
         url: this.serverURL,
         dataType: 'text',
@@ -177,6 +183,7 @@ Editor.HTMLModel = Editor.Model.extend({
     }
     this.set('data', data);
     this.set('state', 'synced');
+    messageCenter.addMessage('success', 'Wczytałem HTML :-)');
   },
   
   loadingFailed: function() {
@@ -185,6 +192,7 @@ Editor.HTMLModel = Editor.Model.extend({
     }
     this.set('error', 'Nie udało się załadować panelu');
     this.set('state', 'error');    
+    messageCenter.addMessage('error', 'Nie udało mi się wczytać HTML. Spróbuj ponownie :-(');
   },
 
   // For debbuging
@@ -263,6 +271,7 @@ Editor.DocumentModel = Editor.Model.extend({
   load: function() {
     if (this.get('state') == 'empty') {
       this.set('state', 'loading');
+      messageCenter.addMessage('info', 'Ładuję dane dokumentu...');
       $.ajax({
         cache: false,
         url: documentsUrl + fileId,
@@ -283,6 +292,7 @@ Editor.DocumentModel = Editor.Model.extend({
     for (var key in this.contentModels) {
       this.contentModels[key].addObserver(this, 'state', this.contentModelStateChanged.bind(this));
     }
+    messageCenter.addMessage('success', 'Dane dokumentu zostały załadowane :-)');
   },
   
   contentModelStateChanged: function(property, value, contentModel) {
@@ -299,8 +309,6 @@ Editor.DocumentModel = Editor.Model.extend({
         if (this.contentModels[key].guid() == contentModel.guid()) {
           this.contentModels[key].set('state', 'synced');
           this.data.user_revision = this.contentModels[key].get('revision');
-          messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.data.user_revision,
-            'Uaktualnienie dokumentu do wersji ' + this.data.user_revision);
         }
       }
       for (key in this.contentModels) {
@@ -323,6 +331,7 @@ Editor.DocumentModel = Editor.Model.extend({
   
   update: function() {
     this.set('state', 'loading');
+    messageCenter.addMessage('info', 'Uaktualniam dokument...');
     $.ajax({
       url: this.data.merge_url,
       dataType: 'json',
@@ -346,9 +355,14 @@ Editor.DocumentModel = Editor.Model.extend({
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
       }
+      messageCenter.addMessage('success', 'Uaktualniłem dokument do najnowszej wersji :-)');
     } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
     } else if (xhr.status == 204) { // Nic nie zmieniono
+      messageCenter.addMessage('info', 'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
     } else if (xhr.status == 409) { // Konflikt podczas operacji
+      messageCenter.addMessage('error', 'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
+    } else if (xhr.status == 500) {
+      messageCenter.addMessage('critical', 'Błąd serwera. Pędź po programistów! :-(');
     } 
     this.set('state', 'synced');
     this.set('updateData', null);
@@ -356,6 +370,7 @@ Editor.DocumentModel = Editor.Model.extend({
   
   merge: function(message) {
     this.set('state', 'loading');
+    messageCenter.addMessage('info', 'Scalam dokument z głównym repozytorium...');
     $.ajax({
       url: this.data.merge_url,
       type: 'post',
@@ -378,11 +393,15 @@ Editor.DocumentModel = Editor.Model.extend({
         this.contentModels[key].set('revision', this.data.user_revision);
         this.contentModels[key].set('state', 'empty');
       }
-      messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.get('mergeData').revision,
-        'Uaktualnienie dokumentu do wersji ' + this.get('mergeData').revision);
+      messageCenter.addMessage('success', 'Scaliłem dokument z głównym repozytorium :-)');
     } else if (xhr.status == 202) { // Wygenerowano PullRequest
+      messageCenter.addMessage('success', 'Wysłałem prośbę o scalenie dokumentu z głównym repozytorium.');
     } else if (xhr.status == 204) { // Nic nie zmieniono
+      messageCenter.addMessage('info', 'Nic się nie zmieniło od ostatniego scalenia. Po co mam scalać?');
     } else if (xhr.status == 409) { // Konflikt podczas operacji
+      messageCenter.addMessage('error', 'Wystąpił konflikt podczas scalania. Pędź po programistów! :-(');
+    } else if (xhr.status == 500) {
+      messageCenter.addMessage('critical', 'Błąd serwera. Pędź po programistów! :-(');
     }
     this.set('state', 'synced');
     this.set('mergeData', null);

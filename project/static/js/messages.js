@@ -7,13 +7,14 @@ Editor.MessageCenter = Editor.Object.extend({
   },
   
   addMessage: function(type, text, flash) {
+    if (!flash) {
+      flash = text;
+    }
     this.messages.push({type: type, text: text});
-    if (flash) {
-      this.flashMessages.push({type: type, text: flash});
-      if (this.flashMessages.length == 1) {
-        this.set('firstFlashMessage', this.flashMessages[0]);
-        setTimeout(this.changeFlashMessage.bind(this), 1000 * 10);
-      }
+    this.flashMessages.push({type: type, text: flash});
+    if (this.flashMessages.length == 1) {
+      this.set('firstFlashMessage', this.flashMessages[0]);
+      setTimeout(this.changeFlashMessage.bind(this), 1000 * 10);
     }
   },
   
@@ -21,7 +22,7 @@ Editor.MessageCenter = Editor.Object.extend({
     this.flashMessages.splice(0, 1);
     if (this.flashMessages.length > 0) {
       this.set('firstFlashMessage', this.flashMessages[0]);
-      setTimeout(this.changeFlashMessage.bind(this), 1000 * 10);
+      setTimeout(this.changeFlashMessage.bind(this), 1000 * 3); // 3 seconds
     } else {
       this.set('firstFlashMessage', null);
     }

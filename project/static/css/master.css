@@ -350,3 +350,22 @@ body#base button {
 body#base button:hover {
     background-color: #EEE;
 }
+
+/* ================= */
+/* = Message boxes = */
+/* ================= */
+.info {
+    background-color: gray;
+}
+
+.success {
+    background-color: green;
+}
+
+.error {
+    background-color: yellow;
+}
+
+.critical {
+    background-color: red;
+}
