@@ -35,7 +35,7 @@
             
 
             $.ajax({
-                url: '{% url pullrequest_list  %}/'+id,
+                url: '{% url pullrequest_list %}/'+id,
                 data: {action: 'accept'},
                 dataType: 'json',
                 type: 'PUT',
