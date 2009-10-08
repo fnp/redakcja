@@ -161,6 +161,9 @@ class MercurialDocument(wlrepo.Document):
                 if not local.parentof(main):
                     success, changed = main.merge_with(local, user=user, message=message)
 
+                success = True
+                changed = False
+
             # Case 3:
             # main *
             #      |
@@ -180,6 +183,9 @@ class MercurialDocument(wlrepo.Document):
                 if not local.parentof(main):
                     success, changed = local.merge_with(main, user=user, \
                         message='$AUTO$ Local branch update during share.')
+
+                success = True
+                changed = False
                     
             else:
                 print "case 4"
