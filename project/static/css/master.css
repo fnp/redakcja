@@ -393,3 +393,23 @@ body#base button:hover {
 
     z-index: 100;
 }
+
+/* ================= */
+/* = Message boxes = */
+/* ================= */
+.info {
+    background-color: gray;
+}
+
+.success {
+    background-color: green;
+}
+
+.error {
+    background-color: yellow;
+}
+
+.critical {
+    background-color: red;
+}
+
