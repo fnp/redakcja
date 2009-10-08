@@ -30,7 +30,7 @@ urlpatterns = patterns('',
 
     # Pull requests
     url(r"^pull-requests$", pullrequest_collection,
-        {'emitter_format': 'json'} ),
+        {'emitter_format': 'json'}, name="pullrequest_list" ),
         
     url(r"^pull-requests/(?P<prq_id>\d+)$", pullrequest_rsrc,
         {'emitter_format': 'json'}, name="pullrequest_view" ),

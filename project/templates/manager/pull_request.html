@@ -35,7 +35,7 @@
             
 
             $.ajax({
-                url: "http://localhost:8000/api/pull-requests/" + id,
+                url: '{% url pullrequest_list  %}/'+id,
                 data: {action: 'accept'},
                 dataType: 'json',
                 type: 'PUT',
