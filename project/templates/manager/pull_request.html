@@ -11,7 +11,7 @@
             var row = $('#request-' +id);
 
             $.ajax({
-                url: "http://localhost:8000/api/pull-requests/" + id,                
+                url: '{% url pullrequest_list %}/'+id,
                 dataType: 'json',
                 type: 'GET',
                 success: function(data) {
