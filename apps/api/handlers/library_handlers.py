@@ -13,10 +13,11 @@ from datetime import date
 
 from django.core.urlresolvers import reverse
 from django.utils import simplejson as json
+from django.db import IntegrityError
 
 import librarian
 import librarian.html
-from librarian import dcparser
+from librarian import dcparser, parser
 
 from wlrepo import *
 from explorer.models import PullRequest, GalleryForDocument
@@ -229,7 +230,12 @@ class DocumentHTMLHandler(BaseHandler):
                 return response.BadRequest().django_response({'reason': 'name-mismatch',
                     'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
 
-            return librarian.html.transform(document.data('xml'), is_file=False, parse_dublincore=False)
+            return librarian.html.transform(document.data('xml'), is_file=False, \
+                parse_dublincore=False, stylesheet="partial",\
+                options={
+                    "with-paths": 'boolean(1)',                    
+                })
+                
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
                 'reason': 'not-found', 'message': e.message})
@@ -287,6 +293,7 @@ XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1
 #
 #
 #
+
 class DocumentTextHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
 
@@ -294,6 +301,8 @@ class DocumentTextHandler(BaseHandler):
     def read(self, request, docid, lib):
         """Read document as raw text"""
         revision = request.GET.get('revision', 'latest')
+        part = request.GET.get('part', False)
+        
         try:
             if revision == 'latest':
                 document = lib.document(docid)
@@ -305,21 +314,34 @@ class DocumentTextHandler(BaseHandler):
                     'message': 'Provided revision is not valid for this document'})
             
             # TODO: some finer-grained access control
-            return document.data('xml')
+            if part is False:
+                # we're done :)
+                return document.data('xml')
+            else:
+                xdoc = parser.WLDocument.from_string(document.data('xml'))
+                ptext = xdoc.part_as_text(part)
+
+                if ptext is None:
+                    return response.EntityNotFound().django_response({
+                      'reason': 'no-part-in-document'                     
+                    })
+
+                return ptext
+        except librarian.ParseError:
+            return response.EntityNotFound().django_response({
+                'reason': 'invalid-document-state',
+                'exception': type(e), 'message': e.message
+            })
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
-                'exception': type(e), 'message': e.message})
+                'reason': 'not-found',
+                'exception': type(e), 'message': e.message
+            })   
 
     @hglibrary
     def create(self, request, docid, lib):
         try:
-            data = request.POST['contents']
             revision = request.POST['revision']
-
-            if request.POST.has_key('message'):
-                msg = u"$USER$ " + request.POST['message']
-            else:
-                msg = u"$AUTO$ XML content update."
 
             current = lib.document(docid, request.user.username)
             orig = lib.document_for_rev(revision)
@@ -329,6 +351,33 @@ class DocumentTextHandler(BaseHandler):
                         "reason": "out-of-date",
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
+
+            if request.POST.has_key('message'):
+                msg = u"$USER$ " + request.POST['message']
+            else:
+                msg = u"$AUTO$ XML content update."
+
+            if request.POST.has_key('contents'):
+                data = request.POST['contents']
+            else:
+                if not request.POST.has_key('chunks'):
+                    # bad request
+                    return response.BadRequest().django_response({'reason': 'invalid-arguments',
+                        'message': 'No contents nor chunks specified.'})
+
+                    # TODO: validate
+                parts = json.loads(request.POST['chunks'])                    
+                xdoc = parser.WLDocument.from_string(current.data('xml'))
+                   
+                errors = xdoc.merge_chunks(parts)
+
+                if len(errors):
+                    return response.EntityConflict().django_response({
+                            "reason": "invalid-chunks",
+                            "message": "Unable to merge following parts into the document: %s " % ",".join(errors)
+                    })
+
+                data = xdoc.serialize()
 
             # try to find any Xinclude tags
             includes = [m.groupdict()['link'] for m in (re.finditer(\
@@ -498,21 +547,25 @@ class MergeHandler(BaseHandler):
                     "provided": target_rev,
                     "latest": udoc.revision })
 
-        if not request.user.has_perm('explorer.book.can_share'):
+        if not request.user.has_perm('explorer.document.can_share'):
             # User is not permitted to make a merge, right away
             # So we instead create a pull request in the database
-            prq = PullRequest(
-                comitter=request.user,
-                document=docid,
-                source_revision = str(udoc.revision),
-                status="N",
-                comment = form.cleaned_data['message'] or '$AUTO$ Document shared.'
-            )
+            try:
+                prq, created = PullRequest.get_or_create(                                        
+                    source_revision = str(udoc.revision),
+                    defaults = {
+                        'comitter': request.user,
+                        'document': docid,
+                        'status': "N",
+                        'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
+                    }
+                )
 
-            prq.save()
-            return response.RequestAccepted().django_response(\
-                ticket_status=prq.status, \
-                ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
+                return response.RequestAccepted().django_response(\
+                    ticket_status=prq.status, \
+                    ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
+            except IntegrityError, e:
+                return response.InternalError().django_response()
 
         if form.cleaned_data['type'] == 'update':
             # update is always performed from the file branch

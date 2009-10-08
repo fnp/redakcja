@@ -55,12 +55,12 @@ class EditorPanel(models.Model):
     def __unicode__(self):
         return self.display_name
     
-class Book(models.Model):
+class Document(models.Model):
     class Meta:
         permissions = (            
             ("can_share", "Can share documents without pull requests."),
         )
-        abstract=True
+        
     pass
 
 class PullRequest(models.Model):    

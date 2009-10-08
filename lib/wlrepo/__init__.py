@@ -51,7 +51,7 @@ class Document(object):
         Should be called on the user version of document. If not, it doesn nothing."""
        
     def data(self, entry):
-        """Returns the specified entry as a file-like object."""
+        """Returns the specified entry as a unicode data."""
         pass
 
     @property

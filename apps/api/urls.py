@@ -16,6 +16,9 @@ urlpatterns = patterns('',
 #    url(r'^hello$', hello_resource, {'emitter_format': 'json'}),
 #    url(r'^hello\.(?P<emitter_format>.+)$', hello_resource),
 
+    # HTML Renderer service
+    url(r'^render$', 'api.views.render'),
+    
     # Toolbar
     url(r'^toolbar/buttons$', toolbar_buttons, {'emitter_format': 'json'},
         name="toolbar_buttons"
@@ -52,12 +55,12 @@ urlpatterns = patterns('',
 
     # XML    
     url(urlpath(r'documents', DOC, 'text', format=False),
-        document_text_resource, {'emitter_format': 'rawxml'},
+        document_text_resource, {'emitter_format': 'raw'},
         name="doctext_view"),
 
     # HTML
     url(urlpath(r'documents', DOC, 'html', format=False),
-        document_html_resource, {'emitter_format': 'rawhtml'},
+        document_html_resource, {'emitter_format': 'raw'},
         name="dochtml_view"),
 
     # DC

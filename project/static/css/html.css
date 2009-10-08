@@ -3,7 +3,7 @@
     font-size: 16px;
     font: Georgia, "Times New Roman", serif;
     line-height: 1.5em;
-    padding: 3em;
+    padding: 3em;    
 }
 
 .htmlview div {
@@ -100,14 +100,14 @@
 /* = Numbering = */
 /* ============= */
 .htmlview .anchor {
-    position: absolute;
-    margin: -0.25em -0.5em;
-    left: 1em;
+    position: relative;
+    margin: 0em;
+    left: -2.2em;
     color: #777;
     font-size: 12px;
     width: 2em;
     text-align: center;
-    padding: 0.25em 0.5em;
+    padding: 0.25em 0.7em;
     line-height: 1.5em;
 }
 
@@ -119,45 +119,45 @@
 /* =================== */
 /* = Custom elements = */
 /* =================== */
-.htmlview span.author {
+.htmlview .autor_utwor {
     font-size: 0.5em;
     display: block;
     line-height: 1.5em;
     margin-bottom: 0.25em;
 }
 
-.htmlview span.collection {
+.htmlview .dzielo_nadrzedne {
     font-size: 0.375em;
     display: block;
     line-height: 1.5em;
     margin-bottom: -0.25em;
 }
 
-.htmlview span.subtitle {
+.htmlview .podtytul {
     font-size: 0.5em;
     display: block;
     line-height: 1.5em;
     margin-top: -0.25em;
 }
 
-.htmlview div.didaskalia {
+.htmlview .didaskalia {
     font-style: italic;
     margin: 0.5em 0 0 1.5em;
 }
 
-.htmlview div.kwestia {
+.htmlview .kwestia {
     margin: 0.5em 0 0;
 }
 
-.htmlview div.stanza {
+.htmlview .strofa {
     margin: 1.5em 0 0;
 }
 
-.htmlview div.kwestia div.stanza {
+.htmlview .kwestia .strofa {
     margin: 0;
 }
 
-.htmlview p.paragraph {
+.htmlview .akap, .htmlview .akap_cd, .htmlview .akap_dialog {
     text-align: justify;
     margin: 1.5em 0 0;
 }
@@ -178,48 +178,50 @@
     padding-bottom: 1.5em;
 }
 
-.htmlview div.note p, .htmlview div.dedication p,
-.htmlview div.note p.paragraph, .htmlview div.dedication p.paragraph {
+.htmlview div.nota p,
+.htmlview div.dedykacja p {
     text-align: right;
     font-style: italic;
 }
 
-.htmlview hr.spacer {
+.htmlview br.sekcja_swiatlo {
     height: 3em;
-    visibility: hidden;
+    /* visibility: hidden; */
 }
 
-.htmlview hr.spacer-line {
+.htmlview hr.separator_linia {
     margin: 1.5em 0;
     border: none;
     border-bottom: 0.1em solid #000;
 }
 
-.htmlview p.spacer-asterisk {
+.htmlview p.sekcja_asterysk {
     padding: 0;
     margin: 1.5em 0;
     text-align: center;
 }
 
-.htmlview div.person-list ol {
+.htmlview div.lista_osob ol {
     list-style: none;
     padding: 0 0 0 1.5em;
 }
 
-.htmlview p.place-and-time {
+.htmlview p.miejsce_czas {
     font-style: italic;
 }
 
-.htmlview em.math, .htmlview em.foreign-word,
-.htmlview em.book-title, .htmlview em.didaskalia {
+.htmlview .mat,
+.htmlview .slowo_obce,
+.htmlview .tytul_dziela,
+.htmlview .didaskalia {
     font-style: italic;
 }
 
-.htmlview em.author-emphasis {
+.htmlview .wyroznienie {
     letter-spacing: 0.1em;
 }
 
-.htmlview em.person {
+.htmlview .osoba {
     font-style: normal;
     font-variant: small-caps;
 }
