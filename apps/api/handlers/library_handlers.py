@@ -216,7 +216,7 @@ class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET')
 
     @hglibrary
-    def read(self, request, docid, lib):
+    def read(self, request, docid, lib, stylesheet='partial'):
         """Read document as html text"""
         try:
             revision = request.GET.get('revision', 'latest')
@@ -231,7 +231,7 @@ class DocumentHTMLHandler(BaseHandler):
                     'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
-                parse_dublincore=False, stylesheet="partial",\
+                parse_dublincore=False, stylesheet=stylesheet,\
                 options={
                     "with-paths": 'boolean(1)',                    
                 })

@@ -116,6 +116,8 @@ def file_upload(request, repo):
 @login_required
 def print_html(request, **kwargs):
     from api.resources import document_html_resource
+
+    kwargs['stylesheet'] = 'legacy'
     
     output = document_html_resource.handler.read(request, **kwargs)
 
