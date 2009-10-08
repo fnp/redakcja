@@ -8,6 +8,7 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     (u'Marek Stępniowski', 'marek@stepniowski.com'),
+    (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -30,8 +31,8 @@ TIME_ZONE = 'Europe/Warsaw Poland'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'pl'
 
-import locale
-locale.setlocale(locale.LC_ALL, '')
+#import locale
+#locale.setlocale(locale.LC_ALL, '')
 
 SITE_ID = 1
 
@@ -115,7 +116,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    
+
+    'piston',
     'explorer',
     'toolbar',
     'api',
