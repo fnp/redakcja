@@ -224,7 +224,7 @@ Editor.HTMLModel = Editor.Model.extend({
 
         $.ajax({
             url: this.dataURL,
-            dataType: 'text; charset=utf-8',
+            dataType: 'text',
             data: {
                 revision: this.get('revision'),
                 part: path
