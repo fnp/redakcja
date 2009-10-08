@@ -102,7 +102,7 @@ var XMLView = View.extend({
            || (code >= 65 && code <= 90)) ) return null;
 
         var ch = String.fromCharCode(code & 0xff).toLowerCase();
-        console.log(ch.charCodeAt(0), '#', buttons);
+        /* # console.log(ch.charCodeAt(0), '#', buttons); */
 
         var buttons = $('.buttontoolbarview-button[title='+ch+']', this.element);
         var mod = 0;
@@ -129,8 +129,7 @@ var XMLView = View.extend({
     },
 
     isHotkey: function() {
-        console.log(arguments);
-        
+        /* console.log(arguments); */
         if(this.getHotkey.apply(this, arguments))
             return true;
         else

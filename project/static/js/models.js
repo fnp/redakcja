@@ -147,22 +147,30 @@ Editor.XMLModel = Editor.Model.extend({
 
 Editor.HTMLModel = Editor.Model.extend({
   _className: 'Editor.HTMLModel',
-  serverURL: null,
-  data: '',
+  dataURL: null,
+  htmlURL: null,
+  renderURL: null,
+  displaData: '',
+  xmlParts: {},
   state: 'empty',
   
-  init: function(serverURL, revision) {
+  init: function(htmlURL, revision, dataURL) {
     this._super();
     this.set('state', 'empty');
     this.set('revision', revision);
-    this.serverURL = serverURL;
+    this.htmlURL = htmlURL;
+    this.dataURL = dataURL;
+    this.renderURL = "http://localhost:8000/api/render";
+    this.xmlParts = {};
   },
   
   load: function(force) {
     if (force || this.get('state') == 'empty') {
       this.set('state', 'loading');
+
+      // load the transformed data
       $.ajax({
-        url: this.serverURL,
+        url: this.htmlURL,
         dataType: 'text',
         data: {revision: this.get('revision')},
         success: this.loadingSucceeded.bind(this),
@@ -185,6 +193,109 @@ Editor.HTMLModel = Editor.Model.extend({
     }
     this.set('error', 'Nie udało się załadować panelu');
     this.set('state', 'error');    
+  },
+
+  getXMLPart: function(elem, callback)
+  {
+      var path = elem.attr('wl2o:path');
+      if(!this.xmlParts[path])
+          this.loadXMLPart(elem, callback);
+      else
+          callback(path, this.xmlParts[path]);
+  },
+
+  loadXMLPart: function(elem, callback)
+  {
+      var path = elem.attr('wl2o:path');
+      var self = this;
+
+      $.ajax({
+        url: this.dataURL,
+        dataType: 'text; charset=utf-8',
+        data: {
+            revision: this.get('revision'), 
+            part: path
+        },
+        success: function(data) {
+            self.xmlParts[path] = data;
+            callback(path, data);
+        },
+        // TODO: error handling
+        error: function(data) {
+            console.log('Failed to load fragment');            
+            callback(undefined, undefined);
+        }
+      });
+  },
+
+  putXMLPart: function(elem, data) {
+      var self = this;
+      
+      var path = elem.attr('wl2o:path');
+      this.xmlParts[path] = data;
+
+      this.set('state', 'unsynced');
+
+      /* re-render the changed fragment */
+      $.ajax({
+          url: this.renderURL,
+          type: "POST",
+          dataType: 'text; charset=utf-8',
+          data: {fragment: data, part: path},
+          success: function(htmldata) {
+              elem.replaceWith(htmldata);
+              self.set('state', 'dirty');
+          }
+      });
+  },
+
+  update: function(message) {
+      if (this.get('state') == 'dirty') {
+      this.set('state', 'updating');
+
+      var payload = {
+        chunks: $.toJSON(this.xmlParts),
+        revision: this.get('revision')
+      };
+
+      if (message) {
+        payload.message = message;
+      }
+
+      console.log(payload)
+
+      $.ajax({
+        url: this.dataURL,
+        type: 'post',
+        dataType: 'json',
+        data: payload,
+        success: this.updatingSucceeded.bind(this),
+        error: this.updatingFailed.bind(this)
+      });
+      return true;
+    }
+    return false;
+      
+  },
+
+  updatingSucceeded: function(data) {
+    if (this.get('state') != 'updating') {
+      alert('erroneous state:', this.get('state'));
+    }
+
+    // flush the cache
+    this.xmlParts = {};
+    
+    this.set('revision', data.revision);
+    this.set('state', 'updated');
+  },
+
+  updatingFailed: function() {
+    if (this.get('state') != 'updating') {
+      alert('erroneous state:', this.get('state'));
+    }
+    messageCenter.addMessage('error', 'Uaktualnienie nie powiodło się', 'Uaktualnienie nie powiodło się');
+    this.set('state', 'dirty');
   },
 
   // For debbuging
@@ -277,7 +388,7 @@ Editor.DocumentModel = Editor.Model.extend({
     this.set('state', 'synced');
     this.contentModels = {
       'xml': new Editor.XMLModel(data.text_url, data.user_revision),
-      'html': new Editor.HTMLModel(data.html_url, data.user_revision),
+      'html': new Editor.HTMLModel(data.html_url, data.user_revision, data.text_url),
       'gallery': new Editor.ImageGalleryModel(data.gallery_url)
     };
     for (var key in this.contentModels) {

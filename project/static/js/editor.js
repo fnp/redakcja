@@ -574,5 +574,5 @@ $(function() {
 
     // do the layout
     editor.loadConfig();
-    editor.setupUI();
+   editor.setupUI();
 });

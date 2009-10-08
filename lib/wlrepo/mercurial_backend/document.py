@@ -189,7 +189,7 @@ class MercurialDocument(wlrepo.Document):
                     return False
 
                 if changed:
-                    local = local.latest()
+                    local = self.latest()._revision
                     
                 success, changed = main.merge_with(local, user=user,\
                     message=message)
