@@ -1,7 +1,75 @@
+{% extends 'base.html' %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/managment.css" type="text/css" />
+<script type="text/javascript">
+
+    
+    $(function() {
+
+        function refreshRow(id) {
+            var row = $('#request-' +id);
+
+            $.ajax({
+                url: "http://localhost:8000/api/pull-requests/" + id,                
+                dataType: 'json',
+                type: 'GET',
+                success: function(data) {
+                    row.removeClass('status-N');
+                    row.removeClass('status-R');
+                    row.removeClass('status-A');
+                    row.addClass('status-'+ data.status);
+
+                    $('.column-doc', row).html(data.document);
+                    $('.column-status', row).html(data.status);
+
+                    alert('Merge accepted.');
+                }
+            });            
+            
+        }
+        
+        $('.accept-button').click(function()
+        {
+            var id = parseInt($(this).attr('title'));
+            
+
+            $.ajax({
+                url: "http://localhost:8000/api/pull-requests/" + id,
+                data: {action: 'accept'},
+                dataType: 'json',
+                type: 'PUT',
+                success: function(data) {
+                    refreshRow(id);
+                }
+            });
+            
+        });
+        
+    });
+</script>
+{% endblock %}
+
+{% block maincontent %}
+<table class="request-report" cellspacing="0">
+    <tr>
+        <th>Utwór</th><th>Użytkownik</th><th>Komentarz</th><th>Stan</th>
+        <th>Akcje</th>
+    </tr>
 {% if objects %}
     {% for pullreq in objects %}
-    <p>{{ pullreq }}</p>
+    <tr class="status-{{pullreq.status}}" id="request-{{pullreq.id}}">
+        <td class="column-doc">{{ pullreq.document }}</td>
+        <td class="column-user">{{ pullreq.comitter }}</td>
+        <td class="column-comment">{{ pullreq.comment }}</td>
+        <td class="column-status"> {{ pullreq.status }}</td>
+        <td><button type="button" class="accept-button" title="{{pullreq.id}}">Akceptuj</button></td>
+    </tr>
+    
     {% endfor %}
 {% else %}
-    <p>Brak żądań</p>
+    <tr><td colspan="*">Brak żądań</td></tr>
 {% endif %}
+</table>
+
+{% endblock %}

@@ -12,6 +12,9 @@ urlpatterns = patterns('',
     # Explorer:
     url(r'^$', 'explorer.views.file_list', name='file_list'),        
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
+
+
+    url(r'^managment/pull-requests$', 'explorer.views.pull_requests'),
     
 #    url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
 #    url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
@@ -37,7 +40,7 @@ urlpatterns = patterns('',
     url(r'^admin/(.*)', admin.site.root),
 
     # Prototypes
-    url(r'^wysiwyg-proto/', include('wysiwyg.urls')),
+#    url(r'^wysiwyg-proto/', include('wysiwyg.urls')),
 
     # Our über-restful api
     url(r'^api/', include('api.urls') ),

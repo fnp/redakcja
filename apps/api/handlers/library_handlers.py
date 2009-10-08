@@ -551,7 +551,7 @@ class MergeHandler(BaseHandler):
             # User is not permitted to make a merge, right away
             # So we instead create a pull request in the database
             try:
-                prq, created = PullRequest.get_or_create(                                        
+                prq, created = PullRequest.objects.get_or_create(
                     source_revision = str(udoc.revision),
                     defaults = {
                         'comitter': request.user,
