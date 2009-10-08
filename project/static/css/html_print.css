@@ -99,15 +99,19 @@
 /* ============= */
 /* = Numbering = */
 /* ============= */
-.htmlview .anchor {
+.htmlview p {
     position: relative;
+}
+
+.htmlview .anchor {
+    position: absolute;
     margin: 0em;
-    left: -2.2em;
+    left: -3em;
     color: #777;
     font-size: 12px;
     width: 2em;
     text-align: center;
-    padding: 0.25em 0.7em;
+    padding: 0.25em 0.5em;
     line-height: 1.5em;
 }
 
