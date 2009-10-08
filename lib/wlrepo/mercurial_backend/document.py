@@ -115,7 +115,8 @@ class MercurialDocument(wlrepo.Document):
                 return (True, False)
 
 
-            return self._revision.merge_with(sv._revision, user=user)
+            return self._revision.merge_with(sv._revision, user=user,
+                message="$AUTO$ Personal branch update.")
         finally:
             lock.release()  
 
