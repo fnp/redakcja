@@ -46,6 +46,9 @@ var HTMLView = View.extend({
         this._super();
         this.$printLink = $('.html-print-link', this.element);
 
+        var base = this.$printLink.attr('ui:baseref');
+        this.$printLink.attr('href', base + "?revision=" + this.model.get('revision'));
+
         this.element.bind('click', this.itemClicked.bind(this));
     },
   
