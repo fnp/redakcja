@@ -176,7 +176,7 @@ Editor.HTMLModel = Editor.Model.extend({
             this.set('state', 'loading');
 
             // load the transformed data
-            messageCenter.addMessage('info', 'Wczytuję HTML...');
+            // messageCenter.addMessage('info', 'Wczytuję HTML...');
 
             $.ajax({
                 url: this.htmlURL,
@@ -196,16 +196,42 @@ Editor.HTMLModel = Editor.Model.extend({
         }
         this.set('data', data);
         this.set('state', 'synced');
-        messageCenter.addMessage('success', 'Wczytałem HTML :-)');
+        // messageCenter.addMessage('success', 'Wczytałem HTML :-)');
     },
   
-    loadingFailed: function() {
+    loadingFailed: function(response) {
         if (this.get('state') != 'loading') {
             alert('erroneous state:', this.get('state'));
         }
-        this.set('error', 'Nie udało się załadować panelu');
+
+        var json_response = null;
+        var message = "";
+
+        try {
+            json_response = $.evalJSON(response.responseText);
+
+            if(json_response.reason == 'xml-parse-error') {
+
+                message = json_response.message.replace(/(line\s+)(\d+)(\s+)/i,
+                    "<a class='xml-editor-ref' href='#xml-$2-1'>$1$2$3</a>");
+
+                message = message.replace(/(line\s+)(\d+)(\,\s*column\s+)(\d+)/i,
+                    "<a class='xml-editor-ref' href='#xml-$2-$4'>$1$2$3$4</a>");
+
+                
+            }
+            else {
+                message = json_response.message || json_response.reason || "nieznany błąd.";
+            }
+        }
+        catch (e) {
+            message = response.statusText;
+        }
+
+        this.set('error', '<p>Nie udało się wczytać widoku HTML: </p>' + message);
+
         this.set('state', 'error');
-        messageCenter.addMessage('error', 'Nie udało mi się wczytać HTML. Spróbuj ponownie :-(');
+        // messageCenter.addMessage('error', 'Nie udało mi się wczytać HTML. Spróbuj ponownie :-(');
     },
 
     getXMLPart: function(elem, callback)
@@ -548,12 +574,12 @@ $(function()
     toolbarUrl = $('#api-toolbar-url').text();
 
     doc = new Editor.DocumentModel();
-    var editor = new EditorView('#body-wrap', doc);
-    editor.freeze();
 
-    var flashView = new FlashView('#flashview', messageCenter);
-    var splitView = new SplitView('#splitview', doc);
+    EditorView = new EditorView('#body-wrap', doc);
+    EditorView.freeze();
 
     leftPanelView = new PanelContainerView('#left-panel-container', doc);
     rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
+
+    var flashView = new FlashView('#flashview', messageCenter);   
 });

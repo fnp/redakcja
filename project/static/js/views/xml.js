@@ -1,4 +1,4 @@
-/*global View CodeMirror ButtonToolbarView render_template panels */
+/*global View CodeMirror ToolbarView render_template panels */
 var XMLView = View.extend({
     _className: 'XMLView',
     element: null,
@@ -18,8 +18,11 @@ var XMLView = View.extend({
         var self = this;
 
         $('.xmlview-toolbar', this.element).bind('resize.xmlview', this.resized.bind(this));
-   
-    
+
+        // scroll to the given position (if availble)
+        this.scrollCallback = this.scrollOnRequest.bind(this);
+        $(document).bind('xml-scroll-request', this.scrollCallback);
+       
         this.parent.freeze('Ładowanie edytora...');
         this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
             parserfile: 'parsexml.js',
@@ -28,7 +31,7 @@ var XMLView = View.extend({
             parserConfig: {
                 useHTMLKludges: false
             },
-            textWrapping: false,
+            textWrapping: true,
             tabMode: 'spaces',
             indentUnit: 0,
             onChange: this.editorDataChanged.bind(this),
@@ -91,6 +94,8 @@ var XMLView = View.extend({
     },
     
     dispose: function() {
+        $(document).unbind('xml-scroll-request', this.scrollCallback);
+        
         this.model.removeObserver(this);
         $(this.editor.frame).remove();
         this._super();
@@ -104,7 +109,7 @@ var XMLView = View.extend({
         var ch = String.fromCharCode(code & 0xff).toLowerCase();
         /* # console.log(ch.charCodeAt(0), '#', buttons); */
 
-        var buttons = $('.buttontoolbarview-button[title='+ch+']', this.element);
+        var buttons = $('.buttontoolbarview-button[hotkey='+ch+']', this.element);
         var mod = 0;
             
         if(event.altKey) mod |= 0x01;
@@ -141,6 +146,16 @@ var XMLView = View.extend({
         this.buttonToolbar.buttonPressed({
             target: button
         });
+    },
+
+    scrollOnRequest: function(event, data) 
+    {
+        try {
+            var line = this.editor.nthLine(data.line);
+            this.editor.selectLines(line, (data.column-1));
+        } catch(e) {
+            console.log('Exception in scrollOnRequest:', e);
+        }
     }
 
 });

@@ -123,8 +123,9 @@
 				<div class="buttontoolbarview-group toolbar-buttons-container" ui:groupIndex="<%= i %>" style="display: none">
 					<% for (var j=0; j < buttons[i].buttons.length; j++) { %>
 						<% if (buttons[i].buttons[j].scriptlet_id) { %>
-						<button type="button" class="buttontoolbarview-button" 
-                                                    title="<%= buttons[i].buttons[j].key %>"
+						<button type="button" class="buttontoolbarview-button"
+                                                    title="<%= buttons[i].buttons[j].tooltip %>"
+                                                    hotkey="<%= buttons[i].buttons[j].key %>"
                                                     ui:hotkey_mod="<%= buttons[i].buttons[j].key_mod %>"
                                                     ui:groupindex="<%= i %>" ui:buttonindex="<%= j %>">
 							<%= buttons[i].buttons[j].label %>

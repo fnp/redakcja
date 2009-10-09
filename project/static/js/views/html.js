@@ -25,7 +25,10 @@ var HTMLView = View.extend({
         this.$printLink.attr('href', base + "?revision=" + this.model.get('revision'));
     },
   
-    modelStateChanged: function(property, value) {
+    modelStateChanged: function(property, value) 
+    {
+        var self = $(this);
+
         if (value == 'synced' || value == 'dirty') {
             this.unfreeze();
         } else if (value == 'unsynced') {
@@ -36,6 +39,21 @@ var HTMLView = View.extend({
             this.freeze('Zapisywanie...');
         } else if (value == 'error') {
             this.freeze(this.model.get('error'));
+            $('.xml-editor-ref', this.overlay).click(
+            function(event) {
+                console.log("Sending scroll rq.", this);
+                try {
+                    var href = $(this).attr('href').split('-');
+                    var line = parseInt(href[1]);
+                    var column = parseInt(href[2]);
+                    
+                    $(document).trigger('xml-scroll-request', {line:line, column:column});
+                } catch(e) {
+                    console.log(e);
+                }
+                
+                return false;
+            });
         }
     },
 

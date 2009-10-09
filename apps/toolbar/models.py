@@ -14,6 +14,13 @@ class ButtonGroup(models.Model):
     def __unicode__(self):
         return self.name
 
+    def to_dict(self, with_buttons=False):
+        d = {'name': self.name, 'position': self.position}
+
+        if with_buttons:
+            d['buttons'] = [ b.to_dict() for b in self.button_set.all() ]
+
+        return d
 
 #class ButtonGroupManager(models.Manager):
 #
@@ -67,8 +74,18 @@ class Button(models.Model):
         if self.key_mod & 0x01: mods.append('Alt')
         if self.key_mod & 0x02: mods.append('Ctrl')
         if self.key_mod & 0x04: mods.append('Shift')
-        mods.append('"'+self.key+'"')
-        return '+'.join(mods)
+        mods.append(str(self.key))
+        return '[' + '+'.join(mods) + ']'
+
+    def to_dict(self):
+        return {
+            'label': self.label,
+            'tooltip': (self.tooltip or '') + self.hotkey_name(),
+            'key': self.key,
+            'key_mod': self.key_mod,
+            'params': self.params,
+            'scriptlet_id': self.scriptlet_id
+        }
     
     def __unicode__(self):
         return self.label

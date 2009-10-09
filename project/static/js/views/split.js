@@ -17,7 +17,7 @@ var SplitView = View.extend({
   init: function(element, model) {
     this._super(element, model, null);
     this.element.css('position', 'relative');
-    this._resizingSubviews = false;
+    this._resizingSubviews = false;    
     
     this.views = $(">*", this.element[0]).css({
     	position: 'absolute', 			  // positioned inside splitter container
@@ -28,6 +28,7 @@ var SplitView = View.extend({
     
     this.leftView = $(this.views[0]);
     this.rightView = $(this.views[1]);
+    
     this.splitbar = $(this.views[2] || '<div></div>')
       .insertAfter(this.leftView)
       .css({
