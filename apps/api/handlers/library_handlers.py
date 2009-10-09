@@ -216,7 +216,7 @@ class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET')
 
     @hglibrary
-    def read(self, request, docid, lib, stylesheet='full'):
+    def read(self, request, docid, lib, stylesheet='partial'):
         """Read document as html text"""
         try:
             revision = request.GET.get('revision', 'latest')
