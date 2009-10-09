@@ -23,7 +23,15 @@ Editor.ToolbarButtonsModel = Editor.Model.extend({
         }
     },
   
-    loadSucceeded: function(data) {
+    loadSucceeded: function(data)
+    {
+        // do some escaping
+        $.each(data, function() {
+            $.each(this.buttons, function() {
+                //do some lame escapes
+                this.tooltip = this.tooltip.replace(/"/g, "&#34;");
+            });
+        });
         this.set('buttons', data);
     }
 });
