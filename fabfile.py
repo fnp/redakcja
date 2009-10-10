@@ -1,12 +1,13 @@
-from fabric.api import run, env, cd
+from fabric.api import run, local, settings, abort, env, cd, require, abort
 
 def staging():
-    '''Add staging server to hosts'''
+    '''Use staging server'''
     env.hosts = ['platforma@stigma.nowoczesnapolska.org.pl:2222']
     env.project_dir = '/home/platforma/platforma'
 
 def deploy():
     '''Deploy server'''
+    require('project_dir', provided_by=['staging'])
     with cd(env.project_dir):
         run('git pull')
         run('./project/manage.py syncdb')
