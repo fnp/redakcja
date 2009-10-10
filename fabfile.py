@@ -1,4 +1,6 @@
-from fabric.api import run, local, settings, abort, env, cd, require, abort
+from __future__ import with_statement
+from fabric.api import *
+
 
 def staging():
     '''Use staging server'''

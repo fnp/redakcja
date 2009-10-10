@@ -17,9 +17,7 @@ class ToolbarHandler(BaseHandler):
 
     def read(self, request):
         groups = toolbar.models.ButtonGroup.objects.all()
-        return [ {'name': g.name, 'position': g.position,\
-            'buttons': g.button_set.all()} for g in groups ]
-            
+        return [g.to_dict(with_buttons=True) for g in groups]
             
 class ScriptletsHandler(BaseHandler):
     allowed_methods = ('GET',)

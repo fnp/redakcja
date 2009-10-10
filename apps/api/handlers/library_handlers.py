@@ -38,6 +38,7 @@ log = logging.getLogger('platforma.api')
 #
 # Document List Handlers
 #
+# TODO: security check
 class BasicLibraryHandler(AnonymousBaseHandler):
     allowed_methods = ('GET',)
 
@@ -51,9 +52,13 @@ class BasicLibraryHandler(AnonymousBaseHandler):
         return {'documents' : document_list}
         
 
+#
+# This handler controlls the document collection
+#
 class LibraryHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
     anonymous = BasicLibraryHandler
+
 
     @hglibrary
     def read(self, request, lib):
@@ -138,12 +143,15 @@ class LibraryHandler(BaseHandler):
                 lock.release()
         except LibraryException, e:
             import traceback
-            return response.InternalError().django_response(\
-                {'exception': traceback.format_exc()} )
+            return response.InternalError().django_response({
+                "reason": traceback.format_exc()
+            })
         except DocumentAlreadyExists:
             # Document is already there
-            return response.EntityConflict().django_response(\
-                {"reason": "Document %s already exists." % docid})
+            return response.EntityConflict().django_response({
+                "reason": "already-exists",
+                "message": "Document already exists." % docid
+            })
 
 #
 # Document Handlers
@@ -216,7 +224,7 @@ class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET')
 
     @hglibrary
-    def read(self, request, docid, lib):
+    def read(self, request, docid, lib, stylesheet='partial'):
         """Read document as html text"""
         try:
             revision = request.GET.get('revision', 'latest')
@@ -231,7 +239,7 @@ class DocumentHTMLHandler(BaseHandler):
                     'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
-                parse_dublincore=False, stylesheet="partial",\
+                parse_dublincore=False, stylesheet=stylesheet,\
                 options={
                     "with-paths": 'boolean(1)',                    
                 })
@@ -318,7 +326,8 @@ class DocumentTextHandler(BaseHandler):
                 # we're done :)
                 return document.data('xml')
             else:
-                xdoc = parser.WLDocument.from_string(document.data('xml'))
+                xdoc = parser.WLDocument.from_string(document.data('xml'),\
+                    parse_dublincore=False)
                 ptext = xdoc.part_as_text(part)
 
                 if ptext is None:
@@ -547,33 +556,35 @@ class MergeHandler(BaseHandler):
                     "provided": target_rev,
                     "latest": udoc.revision })
 
-        if not request.user.has_perm('explorer.document.can_share'):
-            # User is not permitted to make a merge, right away
-            # So we instead create a pull request in the database
-            try:
-                prq, created = PullRequest.get_or_create(                                        
-                    source_revision = str(udoc.revision),
-                    defaults = {
-                        'comitter': request.user,
-                        'document': docid,
-                        'status': "N",
-                        'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
-                    }
-                )
-
-                return response.RequestAccepted().django_response(\
-                    ticket_status=prq.status, \
-                    ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
-            except IntegrityError, e:
-                return response.InternalError().django_response()
-
         if form.cleaned_data['type'] == 'update':
             # update is always performed from the file branch
             # to the user branch
             success, changed = udoc.update(request.user.username)
 
-        if form.cleaned_data['type'] == 'share':
-            success, changed = udoc.share(form.cleaned_data['message'])
+        if form.cleaned_data['type'] == 'share':        
+            if not request.user.has_perm('explorer.document.can_share'):
+                # User is not permitted to make a merge, right away
+                # So we instead create a pull request in the database
+                try:
+                    prq, created = PullRequest.objects.get_or_create(
+                        source_revision = str(udoc.revision),
+                        defaults = {
+                            'comitter': request.user,
+                            'document': docid,
+                            'status': "N",
+                            'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
+                        }
+                    )
+
+                    return response.RequestAccepted().django_response(\
+                        ticket_status=prq.status, \
+                        ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
+                except IntegrityError:
+                    return response.EntityConflict().django_response({
+                        'reason': 'request-already-exist'
+                    })
+            else:
+                success, changed = udoc.share(form.cleaned_data['message'])
 
         if not success:
             return response.EntityConflict().django_response({

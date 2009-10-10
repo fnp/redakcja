@@ -47,6 +47,7 @@ var ButtonToolbarView = View.extend({
 
     buttonPressed: function(event)
     {
+        var self = this;
         var target = event.target;
         
         var groupIndex = parseInt($(target).attr('ui:groupindex'), 10);
@@ -57,9 +58,13 @@ var ButtonToolbarView = View.extend({
 
         console.log('Executing', scriptletId, 'with params', params);
         try {
-            scriptletCenter.scriptlets[scriptletId](this.parent, params);
+            self.parent.freeze('Wykonuję akcję...');
+            setTimeout(function() {
+                scriptletCenter.scriptlets[scriptletId](self.parent, params);
+                self.parent.unfreeze();
+            }, 10);
         } catch(e) {
-            console.log("Scriptlet", scriptletId, "failed.");
+            console.log("Scriptlet", scriptletId, "failed.", e);
         }
 
     },

@@ -115,7 +115,8 @@ class MercurialDocument(wlrepo.Document):
                 return (True, False)
 
 
-            return self._revision.merge_with(sv._revision, user=user)
+            return self._revision.merge_with(sv._revision, user=user,
+                message="$AUTO$ Personal branch update.")
         finally:
             lock.release()  
 
@@ -160,6 +161,9 @@ class MercurialDocument(wlrepo.Document):
                 if not local.parentof(main):
                     success, changed = main.merge_with(local, user=user, message=message)
 
+                success = True
+                changed = False
+
             # Case 3:
             # main *
             #      |
@@ -179,6 +183,9 @@ class MercurialDocument(wlrepo.Document):
                 if not local.parentof(main):
                     success, changed = local.merge_with(main, user=user, \
                         message='$AUTO$ Local branch update during share.')
+
+                success = True
+                changed = False
                     
             else:
                 print "case 4"

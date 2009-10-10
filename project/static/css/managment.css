@@ -1,0 +1,36 @@
+table.request-report 
+{
+    border: 2px groove black;
+    font-size: 12pt;
+
+    margin-top: 3em;
+    margin-bottom: 2em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.request-report td, .request-report th  {
+    vertical-align: top;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+
+    padding: 0.4em 1em;
+    margin: 0em;
+}
+
+.request-report th {
+    background-color: black;
+    color: white;
+}
+
+.request-report .status-N {
+    background-color: teal;
+}
+
+.request-report .status-R {
+    background-color: red;
+}
+
+.request-report .status-A {
+    background-color: gray;
+}

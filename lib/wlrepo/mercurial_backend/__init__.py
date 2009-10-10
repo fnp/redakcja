@@ -79,6 +79,7 @@ class MercurialRevision(wlrepo.Revision):
         return bool(self._library._hgrepo.changelog.children(self.hgrev()))
 
     def merge_with(self, other, user, message):
+        message = self._library._sanitize_string(message)
         lock = self._library.lock(True)
         try:
             self._library._checkout(self._changectx.node())
