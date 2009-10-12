@@ -1,5 +1,5 @@
-Django==1.1
-django-piston==0.2.3rc1
+Django==1.1.1
+-e hg+http://https://zuber@bitbucket.org/jespern/django-piston/#egg=django-piston
 librarian==1.2.6
 lxml==2.2.2
 mercurial==1.3.1
