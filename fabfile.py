@@ -1,5 +1,6 @@
 from __future__ import with_statement # needed for python 2.5
 from fabric.api import *
+from fabric.contrib.files import upload_template
 
 import os
 
@@ -65,6 +66,7 @@ def deploy():
     upload_tar_from_git()
     upload_pybundle()
     install_requirements()
+    upload_wsgi_script_sample()
     symlink_current_release()
     migrate()
     restart_webserver()
@@ -133,6 +135,12 @@ def upload_pybundle():
     if requirements_mtime > bundle_mtime:
         local('pip bundle requirements.pybundle %(pip_options)s -r requirements.txt' % env)
         put('requirements.pybundle', '%(path)s' % env)
+
+def upload_wsgi_script_sample():
+    "Create and upload a wsgi script sample"
+    print ">>> upload wsgi script sample"
+    print dict(env)
+    upload_template('%(project_name)s.wsgi.template' % env, '%(path)s/%(project_name)s.wsgi.sample' % env, context=env)
 
 def symlink_current_release():
     "Symlink our current release"
