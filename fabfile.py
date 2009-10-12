@@ -48,6 +48,7 @@ def setup():
 
     run('mkdir -p %(path)s; cd %(path)s; %(virtualenv)s --no-site-packages .;' % env, pty=True)
     run('cd %(path)s; mkdir releases; mkdir shared; mkdir packages;' % env, pty=True)
+    run('cd %(path)s/releases; ln -s . current; ln -s . previous' % env, pty=True)
     deploy()
 
 def deploy():
