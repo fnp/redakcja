@@ -1,9 +1,10 @@
+{% load django_version_tags %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://platforma.wolnelektury.pl/">
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <title>{% block title %}Platforma Redakcyjna{% block subtitle %}{% endblock subtitle %}{% endblock title%}</title>
+        <title>{% block title %}Platforma Redakcyjna - {% version %}{% block subtitle %}{% endblock subtitle %}{% endblock title%}</title>
         <link rel="stylesheet" href="{{ STATIC_URL }}css/master.css" type="text/css" />
         <script src="{{ STATIC_URL }}js/lib/jquery.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ STATIC_URL }}js/lib/jquery.logging.js" type="text/javascript" charset="utf-8"></script>
