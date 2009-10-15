@@ -1,6 +1,6 @@
 from __future__ import with_statement # needed for python 2.5
 from fabric.api import *
-from fabric.contrib.files import upload_template
+from fabric.contrib import files
 
 import os
 
@@ -64,9 +64,10 @@ def deploy():
     env.release = time.strftime('%Y-%m-%dT%H%M')
 
     upload_tar_from_git()
-    upload_pybundle()
+    upload_wsgi_script()
+    upload_vhost_sample()
     install_requirements()
-    upload_wsgi_script_sample()
+    copy_localsettings()
     symlink_current_release()
     migrate()
     restart_webserver()
@@ -108,39 +109,31 @@ def upload_tar_from_git():
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env, pty=True)
     local('rm %(release)s.tar.gz' % env)
 
+def upload_vhost_sample():
+    "Create and upload Apache virtual host configuration sample"
+    print ">>> upload vhost sample"
+    files.upload_template('%(project_name)s.vhost.template' % env, '%(path)s/%(project_name)s.vhost.sample' % env, context=env)
+
+def upload_wsgi_script():
+    "Create and upload a wsgi script sample"
+    print ">>> upload wsgi script sample"
+    files.upload_template('%(project_name)s.wsgi.template' % env, '%(path)s/%(project_name)s.wsgi' % env, context=env)
+    run('chmod ug+x %(path)s/%(project_name)s.wsgi' % env)
+
 def install_requirements():
     "Install the required packages from the requirements file using pip"
     print '>>> install requirements'
     require('release', provided_by=[deploy])
-    run('cd %(path)s; %(pip)s install -E . requirements.pybundle' % env)
-
-def upload_pybundle():
-    "Create pybundle with required libraries and upload it"
-    print ">>> upload pybundle"
+    run('cd %(path)s; %(pip)s install -E . -r %(path)s/releases/%(release)s/requirements.txt' % env, pty=True)
+    
+def copy_localsettings():
+    "Copy localsettings.py from root directory to release directory (if this file exists)"
+    print ">>> copy localsettings"
     require('release', provided_by=[deploy])
+    require('path', provided_by=[staging, production])
+
     with settings(warn_only=True):
-        pip_options = run('cat %(path)s/releases/%(release)s/pip-options.txt' % env)
-        if pip_options.failed:
-            env.pip_options = ''
-        else:
-            env.pip_options = pip_options
-            
-    requirements_mtime = os.path.getmtime('requirements.txt')
-    bundle_mtime = 0
-    try:
-        bundle_mtime = os.path.getmtime('requirements.pybundle')
-    except os.error:
-        pass
-
-    if requirements_mtime > bundle_mtime:
-        local('pip bundle requirements.pybundle %(pip_options)s -r requirements.txt' % env)
-        put('requirements.pybundle', '%(path)s' % env)
-
-def upload_wsgi_script_sample():
-    "Create and upload a wsgi script sample"
-    print ">>> upload wsgi script sample"
-    print dict(env)
-    upload_template('%(project_name)s.wsgi.template' % env, '%(path)s/%(project_name)s.wsgi.sample' % env, context=env)
+        run('cp %(path)s/localsettings.py %(path)s/releases/%(release)s/%(project_name)s' % env)
 
 def symlink_current_release():
     "Symlink our current release"
