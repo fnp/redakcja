@@ -1,10 +1,17 @@
 localsettings.py
 dev.sqlite
+requirements.pybundle
+
+# Python garbage
 *.pyc
-.*.swp
+.coverage
+
+# Mac OS X garbage
 .DS_Store
-media
-files
+
+# Windows garbage
+thumbs.db
+
+# Netbeans garbage
 nbproject
 nbproject/*
-.coverage
