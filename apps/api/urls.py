@@ -68,9 +68,9 @@ urlpatterns = patterns('',
     #    document_dc_resource,
     #    name="docdc_view_withformat"),
 
-    url(urlpath(r'documents', DOC, 'dc', format=False),
-        document_dc_resource, {'emitter_format': 'json'},
-        name="docdc_view"),
+#    url(urlpath(r'documents', DOC, 'dc', format=False),
+#        document_dc_resource, {'emitter_format': 'json'},
+#        name="docdc_view"),
 
     # MERGE
     url(urlpath(r'documents', DOC, 'revision', format=False),

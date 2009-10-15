@@ -35,7 +35,7 @@ def validate_form(formclass, source='GET'):
   
     def decorator(func):
         @wraps(func)
-        def decorated(self, request, * args, ** kwargs):
+        def decorated(self, request, *args, **kwargs):
             form = formclass(getattr(request, source), request.FILES)
 
             if not form.is_valid():

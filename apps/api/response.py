@@ -73,10 +73,7 @@ class AccessDenied(ResponseObject):
 
     def __init__(self, **kwargs):
         ResponseObject.__init__(self, 403, **kwargs)
-
-    def django_response(self, reason):
-        return ResponseObject.django_response(self, \
-            body={'reason': reason})
+    
 
 class EntityNotFound(ResponseObject):
 

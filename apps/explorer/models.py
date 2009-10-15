@@ -54,42 +54,7 @@ class EditorPanel(models.Model):
 
     def __unicode__(self):
         return self.display_name
-    
-class Document(models.Model):
-    class Meta:
-        permissions = (            
-            ("can_share", "Can share documents without pull requests."),
-        )
-        
-    pass
-
-class PullRequest(models.Model):    
-    REQUEST_STATUSES = (
-        ("N", "Pending for resolution"),
-        ("R", "Rejected"),
-        ("A", "Accepted & merged"),
-    )
-
-    comitter = models.ForeignKey(User) # the user who request the pull
-    comment = models.TextField() # addtional comments to the request
-
-    # document to merge
-    document = models.CharField(max_length=255)
-
-    # revision to be merged into the main branch
-    source_revision = models.CharField(max_length=40, unique=True)
-
-    # current status
-    status = models.CharField(max_length=1, choices=REQUEST_STATUSES)
-
-    # comment to the status change of request (if applicable)
-    response_comment = models.TextField(blank=True)
-
-    # revision number in which the changes were merged (if any)
-    merged_rev = models.CharField(max_length=40, blank=True, null=True)
-
-    def __unicode__(self):
-        return unicode(self.comitter) + u':' + self.document
+  
 
 # Yes, this is intentionally unnormalized !
 class GalleryForDocument(models.Model):

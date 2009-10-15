@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+import logging
+log = logging.getLogger('ral.mercurial')
+
 __author__= "Łukasz Rekucki"
 __date__ = "$2009-09-25 09:33:02$"
 __doc__ = "Module documentation."
@@ -92,13 +95,23 @@ class MercurialLibrary(wlrepo.Library):
         # every revision is a document
         return self._doccache[str(rev)]
 
-    def document(self, docid, user=None):       
-        return self.document_for_rev(self.fulldocid(docid, user))
+    def document(self, docid, user=None, rev=u'latest'):
+        rev = self._sanitize_string(rev)
+        
+        if rev != u'latest':
+            doc = self.document_for_rev(rev)
+
+            if doc.id != docid or (doc.owner != user):
+                raise wlrepo.RevisionMismatch(self.fulldocid(docid, user)+u'@'+unicode(rev))
+            
+            return doc
+        else:
+            return self.document_for_rev(self.fulldocid(docid, user))
 
     def get_revision(self, revid):
         revid = self._sanitize_string(revid)
 
-        print "Looking up rev %r (%s)" %(revid, type(revid))
+        log.info("Looking up rev %r (%s)" %(revid, type(revid)) )
 
         try:           
             ctx = self._changectx( revid )
@@ -220,7 +233,7 @@ class MercurialLibrary(wlrepo.Library):
         name = self._sanitize_string(name)
         return self._hgrepo.branchtags()[name]    
 
-    def _create_branch(self, name, parent=None, before_commit=None):
+    def _create_branch(self, name, parent=None, before_commit=None, message=None):
         name = self._sanitize_string(name)
 
         if self._has_branch(name): return # just exit
@@ -231,11 +244,16 @@ class MercurialLibrary(wlrepo.Library):
             parentrev = parent.hgrev()
 
         self._checkout(parentrev)
-        self._hgrepo.dirstate.setbranch(name)
+        self._set_branchname(name)
 
         if before_commit: before_commit(self)
 
-        self._commit("$ADMN$ Initial commit for branch '%s'." % name, user='$library')        
+        message = message or "$ADMN$ Initial commit for branch '%s'." % name
+        self._commit(message, user='$library')
+
+    def _set_branchname(self, name):
+        name = self._sanitize_string(name)
+        self._hgrepo.dirstate.setbranch(name)
 
     def _switch_to_branch(self, branchname):
         current = self._hgrepo[None].branch()

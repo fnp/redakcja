@@ -4,7 +4,6 @@ Editor.Model = Editor.Object.extend({
     data: null
 });
 
-
 Editor.ToolbarButtonsModel = Editor.Model.extend({
     className: 'Editor.ToolbarButtonsModel',
     buttons: {},
@@ -16,7 +15,7 @@ Editor.ToolbarButtonsModel = Editor.Model.extend({
     load: function() {
         if (!this.get('buttons').length) {
             $.ajax({
-                url: toolbarUrl,
+                url: documentInfo.toolbarURL,
                 dataType: 'json',
                 success: this.loadSucceeded.bind(this)
             });
@@ -51,10 +50,11 @@ Editor.XMLModel = Editor.Model.extend({
     data: '',
     state: 'empty',
   
-    init: function(serverURL, revision) {
+    init: function(document, serverURL) {
         this._super();
         this.set('state', 'empty');
-        this.set('revision', revision);
+        this.set('revision', document.get('revision'));
+        this.document = document;
         this.serverURL = serverURL;
         this.toolbarButtonsModel = new Editor.ToolbarButtonsModel();
         this.addObserver(this, 'data', this.dataChanged.bind(this));
@@ -63,12 +63,13 @@ Editor.XMLModel = Editor.Model.extend({
     load: function(force) {
         if (force || this.get('state') == 'empty') {
             this.set('state', 'loading');
-            messageCenter.addMessage('info', 'Wczytuję XML...');
+            messageCenter.addMessage('info', 'xmlload', 'Wczytuję XML...');
             $.ajax({
                 url: this.serverURL,
                 dataType: 'text',
                 data: {
-                    revision: this.get('revision')
+                    revision: this.get('revision'),
+                    user: this.document.get('user')
                     },
                 success: this.loadingSucceeded.bind(this),
                 error: this.loadingFailed.bind(this)
@@ -84,26 +85,29 @@ Editor.XMLModel = Editor.Model.extend({
         }
         this.set('data', data);
         this.set('state', 'synced');
-        messageCenter.addMessage('success', 'Wczytałem XML :-)');
+        messageCenter.addMessage('success', 'xmlload', 'Wczytałem XML :-)');
     },
   
     loadingFailed: function() {
         if (this.get('state') != 'loading') {
             alert('erroneous state:', this.get('state'));
         }
-        this.set('error', 'Nie udało się załadować panelu');
+        var message = parseXHRError(response);
+        
+        this.set('error', '<h2>Błąd przy ładowaniu XML</h2><p>'+message+'</p>');
         this.set('state', 'error');
-        messageCenter.addMessage('error', 'Nie udało mi się wczytać XML. Spróbuj ponownie :-(');
+        messageCenter.addMessage('error', 'xmlload', 'Nie udało mi się wczytać XML. Spróbuj ponownie :-(');
     },
   
-    update: function(message) {
+    save: function(message) {
         if (this.get('state') == 'dirty') {
             this.set('state', 'updating');
-            messageCenter.addMessage('info', 'Zapisuję XML...');
+            messageCenter.addMessage('info', 'xmlsave', 'Zapisuję XML...');
       
             var payload = {
                 contents: this.get('data'),
-                revision: this.get('revision')
+                revision: this.get('revision'),
+                user: this.document.get('user')
             };
             if (message) {
                 payload.message = message;
@@ -114,28 +118,28 @@ Editor.XMLModel = Editor.Model.extend({
                 type: 'post',
                 dataType: 'json',
                 data: payload,
-                success: this.updatingSucceeded.bind(this),
-                error: this.updatingFailed.bind(this)
+                success: this.saveSucceeded.bind(this),
+                error: this.saveFailed.bind(this)
             });
             return true;
         }
         return false;
     },
   
-    updatingSucceeded: function(data) {
+    saveSucceeded: function(data) {
         if (this.get('state') != 'updating') {
             alert('erroneous state:', this.get('state'));
         }
         this.set('revision', data.revision);
         this.set('state', 'updated');
-        messageCenter.addMessage('success', 'Zapisałem XML :-)');
+        messageCenter.addMessage('success', 'xmlsave', 'Zapisałem XML :-)');
     },
   
-    updatingFailed: function() {
+    saveFailed: function() {
         if (this.get('state') != 'updating') {
             alert('erroneous state:', this.get('state'));
         }
-        messageCenter.addMessage('error', 'Nie udało mi się zapisać XML. Spróbuj ponownie :-(');
+        messageCenter.addMessage('error', 'xmlsave', 'Nie udało mi się zapisać XML. Spróbuj ponownie :-(');
         this.set('state', 'dirty');
     },
   
@@ -169,13 +173,15 @@ Editor.HTMLModel = Editor.Model.extend({
     xmlParts: {},
     state: 'empty',
   
-    init: function(htmlURL, revision, dataURL) {
+    init: function(document, dataURL, htmlURL) {
         this._super();
         this.set('state', 'empty');
-        this.set('revision', revision);
+        this.set('revision', document.get('revision'));        
+        
+        this.document = document;
         this.htmlURL = htmlURL;
         this.dataURL = dataURL;
-        this.renderURL = "http://localhost:8000/api/render";
+        this.renderURL = documentInfo.renderURL;
         this.xmlParts = {};
     },
   
@@ -190,13 +196,14 @@ Editor.HTMLModel = Editor.Model.extend({
                 url: this.htmlURL,
                 dataType: 'text',
                 data: {
-                    revision: this.get('revision')
+                    revision: this.get('revision'),
+                    user: this.document.get('user')
                     },
                 success: this.loadingSucceeded.bind(this),
                 error: this.loadingFailed.bind(this)
             });
         }
-    },
+    },    
   
     loadingSucceeded: function(data) {
         if (this.get('state') != 'loading') {
@@ -204,42 +211,17 @@ Editor.HTMLModel = Editor.Model.extend({
         }
         this.set('data', data);
         this.set('state', 'synced');
-        // messageCenter.addMessage('success', 'Wczytałem HTML :-)');
     },
   
     loadingFailed: function(response) {
         if (this.get('state') != 'loading') {
             alert('erroneous state:', this.get('state'));
         }
-
-        var json_response = null;
-        var message = "";
-
-        try {
-            json_response = $.evalJSON(response.responseText);
-
-            if(json_response.reason == 'xml-parse-error') {
-
-                message = json_response.message.replace(/(line\s+)(\d+)(\s+)/i,
-                    "<a class='xml-editor-ref' href='#xml-$2-1'>$1$2$3</a>");
-
-                message = message.replace(/(line\s+)(\d+)(\,\s*column\s+)(\d+)/i,
-                    "<a class='xml-editor-ref' href='#xml-$2-$4'>$1$2$3$4</a>");
-
-                
-            }
-            else {
-                message = json_response.message || json_response.reason || "nieznany błąd.";
-            }
-        }
-        catch (e) {
-            message = response.statusText;
-        }
-
+        
+        var message = parseXHRError(response);
+        
         this.set('error', '<p>Nie udało się wczytać widoku HTML: </p>' + message);
-
-        this.set('state', 'error');
-        // messageCenter.addMessage('error', 'Nie udało mi się wczytać HTML. Spróbuj ponownie :-(');
+        this.set('state', 'error');        
     },
 
     getXMLPart: function(elem, callback)
@@ -261,6 +243,7 @@ Editor.HTMLModel = Editor.Model.extend({
             dataType: 'text',
             data: {
                 revision: this.get('revision'),
+                user: this.document.get('user'),
                 part: path
             },
             success: function(data) {
@@ -299,13 +282,14 @@ Editor.HTMLModel = Editor.Model.extend({
         });
     },
 
-    update: function(message) {
+    save: function(message) {
         if (this.get('state') == 'dirty') {
             this.set('state', 'updating');
 
             var payload = {
                 chunks: $.toJSON(this.xmlParts),
-                revision: this.get('revision')
+                revision: this.get('revision'),
+                user: this.document.get('user')
             };
 
             if (message) {
@@ -319,8 +303,8 @@ Editor.HTMLModel = Editor.Model.extend({
                 type: 'post',
                 dataType: 'json',
                 data: payload,
-                success: this.updatingSucceeded.bind(this),
-                error: this.updatingFailed.bind(this)
+                success: this.saveSucceeded.bind(this),
+                error: this.saveFailed.bind(this)
             });
             return true;
         }
@@ -328,7 +312,7 @@ Editor.HTMLModel = Editor.Model.extend({
       
     },
 
-    updatingSucceeded: function(data) {
+    saveSucceeded: function(data) {
         if (this.get('state') != 'updating') {
             alert('erroneous state:', this.get('state'));
         }
@@ -340,11 +324,10 @@ Editor.HTMLModel = Editor.Model.extend({
         this.set('state', 'updated');
     },
 
-    updatingFailed: function() {
+    saveFailed: function() {
         if (this.get('state') != 'updating') {
             alert('erroneous state:', this.get('state'));
-        }
-        messageCenter.addMessage('error', 'Uaktualnienie nie powiodło się', 'Uaktualnienie nie powiodło się');
+        }        
         this.set('state', 'dirty');
     },
 
@@ -392,8 +375,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
 
         if (data.length === 0) {
             this.set('data', []);
-        } else {
-            console.log('dupa');
+        } else {            
             this.set('data', data[0].pages);
         }
 
@@ -414,22 +396,25 @@ Editor.DocumentModel = Editor.Model.extend({
     data: null, // name, text_url, user_revision, latest_shared_rev, parts_url, dc_url, size, merge_url
     contentModels: {},
     state: 'empty',
+    errors: '',
+    revision: '',
+    user: '',
   
     init: function() {
         this._super();
-        this.set('state', 'empty');
-        this.load();
+        this.set('state', 'empty');        
     },
   
     load: function() {
         if (this.get('state') == 'empty') {
             this.set('state', 'loading');
-            messageCenter.addMessage('info', 'Ładuję dane dokumentu...');
+            messageCenter.addMessage('info', 'docload', 'Ładuję dane dokumentu...');
             $.ajax({
                 cache: false,
-                url: documentsUrl + fileId,
+                url: documentInfo.docURL,
                 dataType: 'json',
-                success: this.successfulLoad.bind(this)
+                success: this.successfulLoad.bind(this),
+                error: this.failedLoad.bind(this)
             });
         }
     },
@@ -437,15 +422,33 @@ Editor.DocumentModel = Editor.Model.extend({
     successfulLoad: function(data) {
         this.set('data', data);
         this.set('state', 'synced');
+
+        this.set('revision', data.user_revision);
+        this.set('user', data.user);
+
         this.contentModels = {
-            'xml': new Editor.XMLModel(data.text_url, data.user_revision),
-            'html': new Editor.HTMLModel(data.html_url, data.user_revision, data.text_url),
-            'gallery': new Editor.ImageGalleryModel(data.gallery_url)
-        };
+            'xml': new Editor.XMLModel(this, data.text_url),
+            'html': new Editor.HTMLModel(this, data.text_url, data.html_url),
+            'gallery': new Editor.ImageGalleryModel(this, data.gallery_url)
+        };        
+
         for (var key in this.contentModels) {
             this.contentModels[key].addObserver(this, 'state', this.contentModelStateChanged.bind(this));
         }
-        messageCenter.addMessage('success', 'Dane dokumentu zostały załadowane :-)');
+
+        this.error = '';
+
+        messageCenter.addMessage('success', 'docload', 'Dokument załadowany poprawnie :-)');
+    },
+
+    failedLoad: function(response) {
+        if (this.get('state') != 'loading') {
+            alert('erroneous state:', this.get('state'));
+        }
+        
+        var message = parseXHRError(response);        
+        this.set('error', '<h2>Nie udało się wczytać dokumentu</h2><p>'+message+"</p>");
+        this.set('state', 'error');
     },
   
     contentModelStateChanged: function(property, value, contentModel) {
@@ -476,7 +479,7 @@ Editor.DocumentModel = Editor.Model.extend({
     saveDirtyContentModel: function(message) {
         for (var key in this.contentModels) {
             if (this.contentModels[key].get('state') == 'dirty') {
-                this.contentModels[key].update(message);
+                this.contentModels[key].save(message);
                 break;
             }
         }
@@ -491,7 +494,8 @@ Editor.DocumentModel = Editor.Model.extend({
             type: 'post',
             data: {
                 type: 'update',
-                target_revision: this.data.user_revision
+                revision: this.revision,
+                user: this.user
             },
             complete: this.updateCompleted.bind(this),
             success: function(data) {
@@ -503,21 +507,24 @@ Editor.DocumentModel = Editor.Model.extend({
     updateCompleted: function(xhr, textStatus) {
         console.log(xhr.status, textStatus);
         if (xhr.status == 200) { // Sukces
-            this.data.user_revision = this.get('updateData').revision;
-            messageCenter.addMessage('info', 'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision,
+            this.data = this.get('updateData');
+            this.revision = this.data.user_revision;
+            this.user = this.data.user;
+            
+            messageCenter.addMessage('info', null, 'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision,
                 'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision);
             for (var key in this.contentModels) {
                 this.contentModels[key].set('revision', this.data.user_revision);
                 this.contentModels[key].set('state', 'empty');
             }
-            messageCenter.addMessage('success', 'Uaktualniłem dokument do najnowszej wersji :-)');
+            messageCenter.addMessage('success', null, 'Uaktualniłem dokument do najnowszej wersji :-)');
         } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
         } else if (xhr.status == 204) { // Nic nie zmieniono
-            messageCenter.addMessage('info', 'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
+            messageCenter.addMessage('info', null, 'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
         } else if (xhr.status == 409) { // Konflikt podczas operacji
-            messageCenter.addMessage('error', 'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
+            messageCenter.addMessage('error', null, 'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
         } else if (xhr.status == 500) {
-            messageCenter.addMessage('critical', 'Błąd serwera. Pędź po programistów! :-(');
+            messageCenter.addMessage('critical', null, 'Błąd serwera. Pędź po programistów! :-(');
         }
         this.set('state', 'synced');
         this.set('updateData', null);
@@ -525,14 +532,15 @@ Editor.DocumentModel = Editor.Model.extend({
   
     merge: function(message) {
         this.set('state', 'loading');
-        messageCenter.addMessage('info', 'Scalam dokument z głównym repozytorium...');
+        messageCenter.addMessage('info', null, 'Scalam dokument z głównym repozytorium...');
         $.ajax({
             url: this.data.merge_url,
             type: 'post',
             dataType: 'json',
             data: {
                 type: 'share',
-                target_revision: this.data.user_revision,
+                revision: this.revision,
+                user: this.user,
                 message: message
             },
             complete: this.mergeCompleted.bind(this),
@@ -545,20 +553,24 @@ Editor.DocumentModel = Editor.Model.extend({
     mergeCompleted: function(xhr, textStatus) {
         console.log(xhr.status, textStatus);
         if (xhr.status == 200) { // Sukces
-            this.data.user_revision = this.get('mergeData').revision;
+            this.data = this.get('updateData');
+            this.revision = this.data.user_revision;
+            this.user = this.data.user;
+            
             for (var key in this.contentModels) {
-                this.contentModels[key].set('revision', this.data.user_revision);
+                this.contentModels[key].set('revision', this.revision);
                 this.contentModels[key].set('state', 'empty');
             }
-            messageCenter.addMessage('success', 'Scaliłem dokument z głównym repozytorium :-)');
+
+            messageCenter.addMessage('success', null, 'Scaliłem dokument z głównym repozytorium :-)');
         } else if (xhr.status == 202) { // Wygenerowano PullRequest
-            messageCenter.addMessage('success', 'Wysłałem prośbę o scalenie dokumentu z głównym repozytorium.');
+            messageCenter.addMessage('success', null, 'Wysłałem prośbę o scalenie dokumentu z głównym repozytorium.');
         } else if (xhr.status == 204) { // Nic nie zmieniono
-            messageCenter.addMessage('info', 'Nic się nie zmieniło od ostatniego scalenia. Po co mam scalać?');
+            messageCenter.addMessage('info', null, 'Nic się nie zmieniło od ostatniego scalenia. Po co mam scalać?');
         } else if (xhr.status == 409) { // Konflikt podczas operacji
-            messageCenter.addMessage('error', 'Wystąpił konflikt podczas scalania. Pędź po programistów! :-(');
+            messageCenter.addMessage('error', null, 'Wystąpił konflikt podczas scalania. Pędź po programistów! :-(');
         } else if (xhr.status == 500) {
-            messageCenter.addMessage('critical', 'Błąd serwera. Pędź po programistów! :-(');
+            messageCenter.addMessage('critical', null, 'Błąd serwera. Pędź po programistów! :-(');
         }
         this.set('state', 'synced');
         this.set('mergeData', null);
@@ -578,16 +590,15 @@ var leftPanelView, rightPanelContainer, doc;
 
 $(function()
 {
-    documentsUrl = $('#api-base-url').text() + '/';
-    toolbarUrl = $('#api-toolbar-url').text();
-
+    var flashView = new FlashView('#flashview', messageCenter);
+    
     doc = new Editor.DocumentModel();
 
     EditorView = new EditorView('#body-wrap', doc);
-    EditorView.freeze();
+    EditorView.freeze("<h1>Wczytuję dokument...</h1>");
 
     leftPanelView = new PanelContainerView('#left-panel-container', doc);
     rightPanelContainer = new PanelContainerView('#right-panel-container', doc);
 
-    var flashView = new FlashView('#flashview', messageCenter);   
+    
 });

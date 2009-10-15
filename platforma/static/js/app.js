@@ -180,6 +180,28 @@ Editor.Object = Class.extend({
   }
 });
 
+// Handle JSON error responses in uniform way
+function parseXHRError(response)
+{
+    var message = ""
+    try {
+      var json = $.evalJSON(response.responseText);
+
+      if(json.reason == 'xml-parse-error') {
+          message = json_response.message.replace(/(line\s+)(\d+)(\s+)/i,
+            "<a class='xml-editor-ref' href='#xml-$2-1'>$1$2$3</a>");
+
+          message = message.replace(/(line\s+)(\d+)(\,\s*column\s+)(\d+)/i,
+            "<a class='xml-editor-ref' href='#xml-$2-$4'>$1$2$3$4</a>");
+      }
+      message = json_response.message || json_response.reason || "Nieznany błąd :((";
+    } catch(e) {
+        // not a valid JSON response
+        message = response.statusText;
+    }
+    return message;
+}
+
 Editor.Object._lastGuid = 0;
 
 var panels = [];

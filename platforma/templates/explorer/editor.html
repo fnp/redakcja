@@ -7,13 +7,21 @@
         <link rel="stylesheet" href="{{STATIC_URL}}css/autumn.css" type="text/css" media="screen" title="Autumn colors" charset="utf-8">
 	
 	<script type="text/javascript" charset="utf-8">
-		var fileId = '{{ fileid }}';
+            var documentInfo = {
+                docID: '{{ fileid }}',
+                userID: '{{ euser }}',
+                docURL: '{% url document_view fileid %}{% if euser %}?user={{ euser|urlencode }}{% endif %}',
+                toolbarURL: '{% url toolbar_buttons %}',
+                renderURL: '{% url api.views.render %}'
+            }		
+                
 	</script>
 	
 	{# Libraries #}
-    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{STATIC_URL}}js/lib/jquery.modal.js" type="text/javascript" charset="utf-8"></script>
         <script src="{{STATIC_URL}}js/lib/jquery.json.js" type="text/javascript" charset="utf-8"></script>
+        
 	{# Scriptlets #}
 	<script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
 	
@@ -139,7 +147,7 @@
 	</script>
 {% endblock extrahead %}
 
-{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a> &gt; {{ fileid }}{% endblock breadcrumbs %}
+{% block breadcrumbs %}<a href="{% url file_list %}">Platforma</a> &gt; {{euser}} &gt; {{ fileid }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
     <a href="http://stigma.nowoczesnapolska.org.pl/platforma-hg/ksiazki/log/tip/{{ fileid }}.xml" target="_new" >Historia</a>
@@ -149,9 +157,8 @@
         <button id="action-quick-save">Quick Save</button>
 {% endblock %}
 
-{% block maincontent %}
-    <p style="display: none;" id="api-base-url">{% url document_list_view %}</p>
-    <p style="display: none;" id="api-toolbar-url">{% url toolbar_buttons %}</p>
+{% block maincontent %}    
+    
 
     <div id="splitview">
         <div id="left-panel-container" class='panel-container'></div>

@@ -24,6 +24,9 @@ var XMLView = View.extend({
         $(document).bind('xml-scroll-request', this.scrollCallback);
        
         this.parent.freeze('Ładowanie edytora...');
+
+        setTimeout((function(){
+
         this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
             parserfile: 'parsexml.js',
             path: "/static/js/lib/codemirror/",
@@ -37,6 +40,8 @@ var XMLView = View.extend({
             onChange: this.editorDataChanged.bind(this),
             initCallback: this.editorDidLoad.bind(this)
         });
+
+        }).bind(this), 0);
     },
   
     resized: function(event) {
@@ -56,9 +61,7 @@ var XMLView = View.extend({
         this.model
         .addObserver(this, 'data', this.modelDataChanged.bind(this))
         .addObserver(this, 'state', this.modelStateChanged.bind(this))
-        .load();
-    
-        this.parent.unfreeze();
+        .load();           
       
         this.editor.setCode(this.model.get('data'));
         this.modelStateChanged('state', this.model.get('state'));
@@ -66,7 +69,9 @@ var XMLView = View.extend({
         editor.grabKeys(
             this.hotkeyPressed.bind(this),
             this.isHotkey.bind(this)
-            );
+        );
+
+        this.parent.unfreeze();
     },
   
     editorDataChanged: function() {
@@ -85,7 +90,7 @@ var XMLView = View.extend({
         } else if (value == 'unsynced') {
             this.freeze('Niezsynchronizowany...');
         } else if (value == 'loading') {
-            this.freeze('Ładowanie...');
+            this.freeze('Ładowanie danych...');
         } else if (value == 'saving') {
             this.freeze('Zapisywanie...');
         } else if (value == 'error') {

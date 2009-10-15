@@ -54,7 +54,7 @@
 <table class="request-report" cellspacing="0">
     <tr>
         <th>Utwór</th><th>Użytkownik</th><th>Komentarz</th><th>Stan</th>
-        <th>Akcje</th>
+        <th>Zgłoszono</th><th>Akcje</th>
     </tr>
 {% if objects %}
     {% for pullreq in objects %}
@@ -63,12 +63,16 @@
         <td class="column-user">{{ pullreq.comitter }}</td>
         <td class="column-comment">{{ pullreq.comment }}</td>
         <td class="column-status"> {{ pullreq.status }}</td>
-        <td><button type="button" class="accept-button" title="{{pullreq.id}}">Akceptuj</button></td>
+        <td class="column-data">{{ pullreq.timestamp }}</td>
+        <td>
+            <button type="button" class="accept-button" title="{{pullreq.id}}">Akceptuj</button>
+            <a href="{% url editor_view pullreq.document %}?user=$prq-{{pullreq.id}}">Zobacz</a>
+        </td>
     </tr>
     
     {% endfor %}
 {% else %}
-    <tr><td colspan="*">Brak żądań</td></tr>
+    <tr><td colspan="6">Brak żądań</td></tr>
 {% endif %}
 </table>
 

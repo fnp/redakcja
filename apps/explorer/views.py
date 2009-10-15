@@ -1,48 +1,20 @@
 # -*- coding: utf-8 -*-
 import urllib2
-import hg, re
-from datetime import date
 
-import librarian
-
-from librarian import html, parser, dcparser
-from librarian import ParseError, ValidationError
+import logging
+log = logging.getLogger('platforma.explorer.views')
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
 from django.contrib.auth.decorators import login_required
 
-from explorer import forms, models
-from toolbar import models as toolbar_models
+from api.models import PullRequest
 
-from django.forms.util import ErrorList
-
-import wlrepo
-
-#
-# Some useful decorators
-
-def file_branch(fileid, user=None):
-    parts = fileid.split('$')
-    return ('personal_'+ user.username + '_' if user is not None else '') \
-        + 'file_' + parts[0]
-
-def file_path(fileid):
-    return 'pub_'+fileid+'.xml'
-
-def with_repo(view):
-    """Open a repository for this view"""
-    def view_with_repo(request, *args, **kwargs):          
-        kwargs['repo'] = wlrepo.open_library(settings.REPOSITORY_PATH, 'hg')
-        return view(request, *args, **kwargs)
-    return view_with_repo
-
-#
 def ajax_login_required(view):
     """Similar ro @login_required, but instead of redirect, 
     just return some JSON stuff with error."""
@@ -54,29 +26,19 @@ def ajax_login_required(view):
     return view_with_auth
 
 @login_required
-# @with_repo
 def display_editor(request, path):
-    # this is the only entry point where we create an autobranch for the user
-    # if it doesn't exists. All other views SHOULD fail.
-    #def ensure_branch_exists():
-    #    parent = repo.get_branch_tip('default')
-    #    repo._create_branch(file_branch(path, request.user), parent)
-
-#    try:
-    #    repo.with_wlock(ensure_branch_exists)
-
+    user = request.GET.get('user', request.user.username)
+    log.info(user)
+    
     return direct_to_template(request, 'explorer/editor.html', extra_context={
-        'fileid': path,
-        'panel_list': ['lewy', 'prawy'],
-        'availble_panels': models.EditorPanel.objects.all(),
-        # 'scriptlets': toolbar_models.Scriptlet.objects.all()
+            'fileid': path,
+            'euser': user
     })
     
 #
 # View all files
 #
-@with_repo
-def file_list(request, repo):   
+def file_list(request):   
     import api.forms
     from api.resources import library_resource
 
@@ -90,8 +52,7 @@ def file_list(request, repo):
         'filetree': doctree['documents'], 'bookform': bookform,
     })
 
-@permission_required('explorer.can_add_files')
-@with_repo
+@permission_required('api.document.can_add')
 def file_upload(request, repo):
     from api.resources import library_resource
     from api.forms import DocumentUploadForm
@@ -147,9 +108,7 @@ def _get_issues_for_file(fileid):
 # =================
 # = Pull requests =
 # =================
-def pull_requests(request):
-    from explorer.models import PullRequest
-
+def pull_requests(request):    
     objects = PullRequest.objects.order_by('status')
 
     if not request.user.has_perm('explorer.book.can_share'):

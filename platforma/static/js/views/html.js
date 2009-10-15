@@ -20,9 +20,12 @@ var HTMLView = View.extend({
 
     modelDataChanged: function(property, value) {
         $('.htmlview', this.element).html(value);
+        this.updatePrintLink();
+    },
 
+    updatePrintLink: function() {
         var base = this.$printLink.attr('ui:baseref');
-        this.$printLink.attr('href', base + "?revision=" + this.model.get('revision'));
+        this.$printLink.attr('href', base + "?user="+this.model.document.get('user')+"&revision=" + this.model.get('revision'));
     },
   
     modelStateChanged: function(property, value) 
@@ -63,9 +66,7 @@ var HTMLView = View.extend({
         if(this.$printLink) this.$printLink.unbind();
         this._super();
         this.$printLink = $('.html-print-link', this.element);
-
-        var base = this.$printLink.attr('ui:baseref');
-        this.$printLink.attr('href', base + "?revision=" + this.model.get('revision'));
+        this.updatePrintLink();
 
         this.element.bind('click', this.itemClicked.bind(this));
     },
