@@ -261,8 +261,8 @@ class DocumentHandler(BaseHandler):
             # 'dc_url': reverse('docdc_view', args=[doc.id]),
             'gallery_url': reverse('docgallery_view', args=[doc.id]),
             'merge_url': reverse('docmerge_view', args=[doc.id]),
-            'user_revision': doc.revision,
-            'user_timestamp': doc.revision.timestamp,
+            'revision': doc.revision,
+            'timestamp': doc.revision.timestamp,
             # 'public_revision': doc.revision,
             # 'public_timestamp': doc.revision.timestamp,
         }   
@@ -691,9 +691,16 @@ class MergeHandler(BaseHandler):
         return response.SuccessAllOk().django_response({
             "name": user_doc_new.id,
             "user": user_doc_new.owner,
-            "parent_revision": user_doc_new.revision,
-            "parent_shared_revision": doc.revision,
+
             "revision": user_doc_new.revision,
-            "shared_revision": doc_new.revision,
             'timestamp': user_doc_new.revision.timestamp,
+
+            "parent_revision": user_doc_new.revision,
+            "parent_timestamp": user_doc_new.revision.timestamp,
+
+            "shared_revision": doc_new.revision,
+            "shared_timestamp": doc_new.revision.timestamp,
+
+            "shared_parent_revision": doc.revision,
+            "shared_parent_timestamp": doc.revision.timestamp,
         })

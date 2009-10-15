@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block extrahead %}
 	<link rel="stylesheet" href="{{STATIC_URL}}css/jquery.modal.css" type="text/css" media="screen" charset="utf-8">
@@ -49,7 +50,7 @@
 			<% for (panel in panels) { %>
 			<option value="<%= panel %>"><%= panel %></option>
 			<% }; %>
-		</select> <button class="refresh">Odśwież panel</button></p>
+		</select> <button class="refresh">{% trans "Refresh panel" noop %}</button></p>
                 </div>
 		<div class="content-view"></div>
 	</script>
@@ -63,7 +64,7 @@
 	
 	<script type="text/html" charset="utf-8" id="html-view-template">
                 <div class="htmlview-toolbar">
-                    <a class="html-print-link" href="print" ui:baseref="{% url file_print fileid %}" target="_new">Wersja do druku</a>
+                    <a class="html-print-link" href="print" ui:baseref="{% url file_print fileid %}" target="_new">{% trans "Print version" noop %}</a>
                 </div>
                 
 		<div class="htmlview">
@@ -92,17 +93,17 @@
 
 
         <button type="button" class="image-gallery-next-button">
-        <img alt="Next" src="{{STATIC_URL}}/icons/go-next.png" width="16" height="16" />
+        <img alt="{% trans 'Next page' noop %}" src="{{STATIC_URL}}/icons/go-next.png" width="16" height="16" />
         </button>
 
         <button type="button" class="image-gallery-zoom-in">
-            <img alt="Zoom in" src="{{STATIC_URL}}/icons/zoom_in.png" width="16" height="16" />
+            <img alt="{% trans 'Zoom in' noop %}" src="{{STATIC_URL}}/icons/zoom_in.png" width="16" height="16" />
         </button>
         <button type="button" class="image-gallery-zoom-out">
-            <img alt="Zoom out" src="{{STATIC_URL}}/icons/zoom_out.png" width="16" height="16" />
+            <img alt="{% trans 'Zoom out' noop %}" src="{{STATIC_URL}}/icons/zoom_out.png" width="16" height="16" />
         </button>
         <button type="button" class="image-gallery-zoom-reset">
-            <img alt="Zoom reset" src="{{STATIC_URL}}/icons/zoom.png" width="16" height="16" />
+            <img alt="{% trans 'Reset zoom' noop %}" src="{{STATIC_URL}}/icons/zoom.png" width="16" height="16" />
         </button>
         </p>
         </div>
@@ -151,11 +152,11 @@
 {% block breadcrumbs %}<a href="{% url file_list %}">Platforma</a> &gt; {{euser}} &gt; {{ fileid }}{% endblock breadcrumbs %}
 
 {% block header-toolbar %}
-    <a href="http://stigma.nowoczesnapolska.org.pl/platforma-hg/ksiazki/log/tip/{{ fileid }}.xml" target="_new" >Historia</a>
-	<button id="action-merge">Merge</button>
-        <button id="action-update">Update</button>
-        <button id="action-commit">Commit</button>
-        <button id="action-quick-save">Quick Save</button>
+    <a href="http://stigma.nowoczesnapolska.org.pl/platforma-hg/ksiazki/log/tip/{{ fileid }}.xml" target="_new" >{% trans 'History' noop %}</a>
+	<button id="action-merge">{% trans 'Push' noop %}</button>
+        <button id="action-update">{% trans 'Pull' noop %}</button>
+        <button id="action-commit">{% trans 'Save' noop %}</button>
+        <button id="action-quick-save">{% trans 'Quick save' noop %}</button>
 {% endblock %}
 
 {% block maincontent %}    
