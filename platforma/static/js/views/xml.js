@@ -29,8 +29,8 @@ var XMLView = View.extend({
 
         this.editor = new CodeMirror($('.xmlview', this.element).get(0), {
             parserfile: 'parsexml.js',
-            path: "/static/js/lib/codemirror/",
-            stylesheet: "/static/css/xmlcolors.css",
+            path: documentInfo.staticURL + "js/lib/codemirror/",
+            stylesheet: documentInfo.staticURL + "css/xmlcolors.css",
             parserConfig: {
                 useHTMLKludges: false
             },

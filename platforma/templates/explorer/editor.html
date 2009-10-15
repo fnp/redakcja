@@ -12,7 +12,8 @@
                 userID: '{{ euser }}',
                 docURL: '{% url document_view fileid %}{% if euser %}?user={{ euser|urlencode }}{% endif %}',
                 toolbarURL: '{% url toolbar_buttons %}',
-                renderURL: '{% url api.views.render %}'
+                renderURL: '{% url api.views.render %}',
+				staticURL: '{{ STATIC_URL }}'
             }		
                 
 	</script>
