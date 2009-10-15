@@ -23,18 +23,20 @@ var FlashView = View.extend({
   
   render: function() {
     this.element.html(render_template(this.template, this));
+    setTimeout(function() {}, 0);
   },
   
-  modelFirstFlashMessageChanged: function(property, value) {
-    this.element.fadeOut('slow', function() {
-      this.element.css({'z-index': 0});
-      this.shownMessage = value;
-      this.render();
+  modelFirstFlashMessageChanged: function(property, value) {    
+    this.element.fadeOut(200, (function() {
+    
+    this.element.css({'z-index': 0});
+    this.shownMessage = value;
+    this.render();
 
-      if(this.shownMessage) {
+    if(this.shownMessage) {
         this.element.css({'z-index': 1000});
-        this.element.fadeIn('slow');
-      }
-    }.bind(this));
+        this.element.fadeIn();
+    };
+    }).bind(this));
   }
 });

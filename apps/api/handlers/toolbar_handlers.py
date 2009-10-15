@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+import logging
+log = logging.getLogger('platforma.api.toolbar')
+
 __author__= "Łukasz Rekucki"
 __date__ = "$2009-09-25 15:55:33$"
 __doc__ = "Module documentation."

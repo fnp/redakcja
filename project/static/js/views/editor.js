@@ -29,6 +29,7 @@ var EditorView = View.extend({
             $('#commit-dialog-error-empty-message').hide();
             $('#commit-dialog').jqmHide();
         });
+        
     
         // $('#split-dialog').jqm({
         //      modal: true,
@@ -117,16 +118,24 @@ var EditorView = View.extend({
             this.commitButton.attr('disabled', null);
             this.updateButton.attr('disabled', 'disabled');
             this.mergeButton.attr('disabled', 'disabled');
-        } else if (value == 'synced') {
+        } else if (value == 'synced') {            
             this.quickSaveButton.attr('disabled', 'disabled');
             this.commitButton.attr('disabled', 'disabled');
             this.updateButton.attr('disabled', null);
             this.mergeButton.attr('disabled', null);
+            this.unfreeze();
         } else if (value == 'empty') {
             this.quickSaveButton.attr('disabled', 'disabled');
             this.commitButton.attr('disabled', 'disabled');
             this.updateButton.attr('disabled', 'disabled');
             this.mergeButton.attr('disabled', 'disabled');
+        } else if (value == 'error') {
+            this.freeze(this.model.get('error'));
+            this.quickSaveButton.attr('disabled', 'disabled');
+            this.commitButton.attr('disabled', 'disabled');
+            this.updateButton.attr('disabled', 'disabled');
+            this.mergeButton.attr('disabled', 'disabled');
+            
         }
     },
   

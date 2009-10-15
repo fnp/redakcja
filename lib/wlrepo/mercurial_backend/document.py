@@ -1,11 +1,18 @@
 # -*- encoding: utf-8 -*-
 
+import logging
+log = logging.getLogger('ral.mercurial')
+
 __author__ = "Łukasz Rekucki"
 __date__ = "$2009-09-25 09:35:06$"
 __doc__ = "Module documentation."
 
 import wlrepo
 import mercurial.error
+import re
+
+import logging
+log = logging.getLogger('wlrepo.document')
 
 class MercurialDocument(wlrepo.Document):
 
@@ -71,6 +78,9 @@ class MercurialDocument(wlrepo.Document):
     def ismain(self):
         return self._revision.user_name is None
 
+    def islatest(self):
+        return (self == self.latest())
+
     def shared(self):
         if self.ismain():
             return self
@@ -85,13 +95,20 @@ class MercurialDocument(wlrepo.Document):
 
         def take_action(library, resolve):
             # branch from latest 
-            library._create_branch(fullid, parent=self._revision)            
+            library._set_branchname(fullid)
 
         if not self._library.has_revision(fullid):
+            log.info("Checking out document %s" % fullid)
+
             self.invoke_and_commit(take_action, \
                 lambda d: ("$AUTO$ File checkout.", user) )
 
         return self._library.document_for_rev(fullid)
+
+    def up_to_date(self):
+        return self.ismain() or (\
+            self.shared().ancestorof(self) )
+        
             
     def update(self, user):
         """Update parts of the document."""
@@ -102,7 +119,7 @@ class MercurialDocument(wlrepo.Document):
                 return (True, False)
             
             if self._revision.has_children():
-                print 'Update failed: has children.'
+                log.info('Update failed: has children.')
                 # can't update non-latest revision
                 return (False, False)
 
@@ -114,7 +131,6 @@ class MercurialDocument(wlrepo.Document):
             if sv.ancestorof(self):
                 return (True, False)
 
-
             return self._revision.merge_with(sv._revision, user=user,
                 message="$AUTO$ Personal branch update.")
         finally:
@@ -124,7 +140,7 @@ class MercurialDocument(wlrepo.Document):
         lock = self.library.lock()
         try:            
             if self.ismain():
-                return (True, False) # always shared
+                return False # always shared
 
             user = self._revision.user_name
             main = self.shared()._revision
@@ -142,29 +158,17 @@ class MercurialDocument(wlrepo.Document):
             # so we don't need to update yet again, but we need to
             # merge down to default branch, even if there was
             # no commit's since last update
-
+            #
+            # This is actually the only good case!
             if main.ancestorof(local):
-                print "case 1"
-                success, changed = main.merge_with(local, user=user, message=message)                
+                success, changed = main.merge_with(local, user=user, message=message)
+
+                if not success:
+                    raise LibraryException("Merge failed.")
+
+                return changed
+            
             # Case 2:
-            #
-            # main *  * local
-            #      |\ |
-            #      | \|
-            #      |  *
-            #      |  |
-            #
-            # Default has no changes, to update from this branch
-            # since the last merge of local to default.
-            elif local.has_common_ancestor(main):
-                print "case 2"
-                if not local.parentof(main):
-                    success, changed = main.merge_with(local, user=user, message=message)
-
-                success = True
-                changed = False
-
-            # Case 3:
             # main *
             #      |
             #      * <- this case overlaps with previos one
@@ -176,41 +180,27 @@ class MercurialDocument(wlrepo.Document):
             # There was a recent merge to the defaul branch and
             # no changes to local branch recently.
             #
-            # Use the fact, that user is prepared to see changes, to
-            # update his branch if there are any
-            elif local.ancestorof(main):
-                print "case 3"
-                if not local.parentof(main):
-                    success, changed = local.merge_with(main, user=user, \
-                        message='$AUTO$ Local branch update during share.')
+            # Nothing to do
+            elif local.ancestorof(main):                
+                return False
 
-                success = True
-                changed = False
-                    
-            else:
-                print "case 4"
-                success, changed = local.merge_with(main, user=user, \
-                        message='$AUTO$ Local branch update during share.')
-
-                if not success:
-                    return False
-
-                if changed:
-                    local = self.latest()._revision
-                    
-                success, changed = main.merge_with(local, user=user,\
-                    message=message)
-            
-            return success, changed
+            # In all other cases, the local needs an update
+            # and possibly conflict resolution, so fail
+            raise LibraryExcepton("Document not prepared for sharing.")
+        
         finally:
-            lock.release()     
+            lock.release()
+
+
+    def has_conflict_marks(self):
+        return re.search("^(?:<<<<<<< .*|=======|>>>>>>> .*)$", self.data('xml'), re.MULTILINE)        
 
     def __unicode__(self):
-        return u"Document(%s:%s)" % (self.name, self.owner)
+        return u"Document(%s:%s)" % (self.id, self.owner)
 
     def __str__(self):
         return self.__unicode__().encode('utf-8')
     
     def __eq__(self, other):
-        return (self._revision == other._revision) and (self.name == other.name)
+        return (self._revision == other._revision)
 

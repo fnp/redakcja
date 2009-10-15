@@ -16,12 +16,17 @@ button img {
 /* default form style hacks */
 select {
     border: none;
-    margin-left: 0.1em;    
+    margin-left: 0.1em;f
 }
 
 #body-wrap {
     margin: 0px;
-    padding: 0px;    
+    padding: 0px;
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
 }
 
 #header { 
@@ -58,98 +63,6 @@ select {
 #header button {
     vertical-align: middle;
 }
-
-/* ========== */
-/* = Panels = */
-/* ========== */
-
-/* #panels {
-    height: 100%;
-    width: 100%;
-}
-
-.panel-wrap {
-    overflow: hidden;
-    position: absolute; 
-    top: 0px;
-    bottom: 0px;
-}
-
-#left-panel-wrap {
-    left: 0px;
-    width: 8px; 
-}
-
-#right-panel-wrap {
-    right: 0px;
-    width: auto;
-    left: 8px; 
-}
-
-.panel-content {
-    position: absolute;
-    overflow: auto;
-    overflow-x: hidden;
-    top: 25px; left: 0px; bottom:0px; right: 0px;
-}
-
-.panel-overlay {
-    position: absolute;
-    top: 0px; bottom: 0px; left: 0px; right: 0px;
-    z-index: 100;
-    background: gray;
-    opacity: 0.8;
-    text-align: center;
-    overflow: hidden;
-    display: none;
-    cursor: col-resize;
-}
-
-.panel-content-overlay {
-}
-
-.panel-wrap.last-panel .panel-content {
-    right: 0px;
-}
-
-.panel-wrap.last-panel .panel-slider {
-    display: none;
-}
-
-.panel-wrap .panel-toolbar {
-    position: absolute;
-    top: 0px; left:0px; right: 0px; height: 26px;
-    padding: 0px;
-
-    border-bottom: 1px solid #AAA;
-    z-index: 80;
-}
-.panel-wrap .panel-slider {
-    position: absolute;
-    background-color: #DDD;
-
-    top: 0px; bottom: 0px; right: 0px; width: 4px;
-
-    border-left: 1px solid #999;
-    border-right: 1px solid #999;
-    border-top: none;
-    border-bottom: none;
-
-    z-index: 90;
-    cursor: col-resize;
-}
-
-.panel-wrap .panel-slider:hover {
-    background-color: #999;
-}
-
-.panel-content-overlay.panel-wrap .panel-slider {
-    background-color: #DDD;
-}
-
-*/
-
-/* OLD STUFF AGAIN */
 
 /* Commit dialog */
 #commit-dialog-error-empty-message {
@@ -244,15 +157,23 @@ text#commit-dialog-message {
     background: #FFF;
     opacity: 0.8;
     text-align: center;
-    text-valign: center;
+    vertical-align: middle;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    user-select: 'none';
+    -webkit-user-select: 'none';
+    -khtml-user-select: 'none';
+    -moz-user-select: 'none';
+    overflow: 'hidden';    
 }
 
-.view-overlay p {
-    display: block;
-    position: relative;
-    top: auto;
-    bottom: auto;
-    height: 40px;
+.view-overlay div {
+    position: absolute;
 }
 
 /* .buttontoolbarview {

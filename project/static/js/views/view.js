@@ -34,28 +34,22 @@ var View = Editor.Object.extend({
         if (this.frozen()) {
             this.unfreeze();
         }
-        this.overlay = this.overlay
-        || $('<div><div>' + message + '</div></div>')
-        .addClass(this.overlayClass)
+        this.overlay = this.overlay || $('<div><div>' + message + '</div></div>');
+
+        this.overlay.addClass(this.overlayClass)
         .css({
-            position: 'absolute',
-            width: this.element.width(),
-            height: this.element.height(),
-            top: this.element.position().top,
-            left: this.element.position().left,
-            'user-select': 'none',
-            '-webkit-user-select': 'none',
-            '-khtml-user-select': 'none',
-            '-moz-user-select': 'none',
-            overflow: 'hidden'
-        })
-        .attr('unselectable', 'on')
-        .appendTo(this.element.parent());
             
+        }).attr('unselectable', 'on')
+
+        this.overlay.appendTo(this.element);
+
+        var ovc = this.overlay.children('div');        
+        var padV = (this.overlay.height() - ovc.outerHeight())/2;
+        var padH = (this.overlay.width() - ovc.outerWidth())/2;
+                   
         this.overlay.children('div').css({
-            position: 'relative',
-            top: this.overlay.height() / 2 - 20
-        });
+            top: padV, left: padH
+        });    
     },
   
     unfreeze: function() {
@@ -66,16 +60,14 @@ var View = Editor.Object.extend({
     },
 
     resized: function(event) {
-        if (this.frozen()) {
-            this.overlay.css({
-                position: 'absolute',
-                width: this.element.width(),
-                height: this.element.height(),
-                top: this.element.position().top,
-                left: this.element.position().left
-            }).children('div').css({
-                position: 'relative',
-                top: this.overlay.height() / 2 - 20
+        if(this.overlay) {
+            var ovc = this.overlay.children('div');
+            var padV = (this.overlay.height() - ovc.outerHeight())/2;
+            var padH = (this.overlay.width() - ovc.outerWidth())/2;
+
+            this.overlay.children('div').css({
+                top: padV,
+                left: padH
             });
         }
     },

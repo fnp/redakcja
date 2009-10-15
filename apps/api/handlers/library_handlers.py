@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 import os.path
+
 import logging
+log = logging.getLogger('platforma.api.library')
 
 __author__= "Łukasz Rekucki"
 __date__ = "$2009-09-25 15:49:50$"
@@ -20,7 +22,8 @@ import librarian.html
 from librarian import dcparser, parser
 
 from wlrepo import *
-from explorer.models import PullRequest, GalleryForDocument
+from api.models import PullRequest
+from explorer.models import GalleryForDocument
 
 # internal imports
 import api.forms as forms
@@ -32,8 +35,26 @@ from api.models import PartCache
 import settings
 
 
-log = logging.getLogger('platforma.api')
+def is_prq(username):
+    return username.startswith('$prq-')
 
+def check_user(request, user):
+    log.info("user: %r, perm: %r" % (request.user, request.user.get_all_permissions()) )
+    #pull request
+    if is_prq(user):
+        if not request.user.has_perm('api.pullrequest.can_view'):
+            yield response.AccessDenied().django_response({
+                'reason': 'access-denied',
+                'message': "You don't have enough priviliges to view pull requests."
+            })
+    # other users
+    elif request.user.username != user:
+        if not request.user.has_perm('api.document.can_view_other'):
+            yield response.AccessDenied().django_response({
+                'reason': 'access-denied',
+                'message': "You don't have enough priviliges to view other people's document."
+            })
+    pass
 
 #
 # Document List Handlers
@@ -48,17 +69,14 @@ class BasicLibraryHandler(AnonymousBaseHandler):
         document_list = [{
             'url': reverse('document_view', args=[docid]),
             'name': docid } for docid in lib.documents() ]
-
         return {'documents' : document_list}
         
-
 #
 # This handler controlls the document collection
 #
 class LibraryHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
     anonymous = BasicLibraryHandler
-
 
     @hglibrary
     def read(self, request, lib):
@@ -96,6 +114,7 @@ class LibraryHandler(BaseHandler):
             
         return {'documents': sorted(document_tree.itervalues(),
             key=natural_order(lambda d: d['name']) ) }
+
 
     @validate_form(forms.DocumentUploadForm, 'POST')
     @hglibrary
@@ -183,60 +202,105 @@ class DocumentHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
     anonymous = BasicDocumentHandler
 
+    @validate_form(forms.DocumentRetrieveForm, 'GET')
     @hglibrary
-    def read(self, request, docid, lib):
+    def read(self, request, form, docid, lib):
         """Read document's meta data"""       
-        log.info(u"Read %s (%s)" % (docid, type(docid)) )
+        log.info(u"User '%s' wants to %s(%s) as %s" % \
+            (request.user.username, docid, form.cleaned_data['revision'], form.cleaned_data['user']) )
+
+        user = form.cleaned_data['user'] or request.user.username
+        rev = form.cleaned_data['revision'] or 'latest'
+
+        for error in check_user(request, user):
+            return error
+            
         try:
-            doc = lib.document(docid)
-            udoc = doc.take(request.user.username)
-        except RevisionNotFound, e:
+            doc = lib.document(docid, user, rev=rev)
+        except RevisionMismatch, e:
+            # the document exists, but the revision is bad
             return response.EntityNotFound().django_response({
-                'exception': type(e), 'message': e.message,
-                'docid': docid })
+                'reason': 'revision-mismatch',
+                'message': e.message,
+                'docid': docid,
+                'user': user,
+            })
+        except RevisionNotFound, e:
+            # the user doesn't have this document checked out
+            # or some other weird error occured
+            # try to do the checkout
+            if is_prq(user) or (user == request.user.username):
+                try:
+                    mdoc = lib.document(docid)
+                    doc = mdoc.take(user)
 
-        # is_shared = udoc.ancestorof(doc)
-        # is_uptodate = is_shared or shared.ancestorof(document)
+                    if is_prq(user):
+                        # source revision, should probably change
+                        # but there are no changes yet, so...
+                        pass
+                    
+                except RevisionNotFound, e:
+                    return response.EntityNotFound().django_response({
+                        'reason': 'document-not-found',
+                        'message': e.message,
+                        'docid': docid
+                    })
+            else:
+                return response.EntityNotFound().django_response({
+                    'reason': 'document-not-found',
+                    'message': e.message,
+                    'docid': docid,
+                    'user': user,
+                })
 
-        result = {
-            'name': udoc.id,
-            'html_url': reverse('dochtml_view', args=[udoc.id]),
-            'text_url': reverse('doctext_view', args=[udoc.id]),
-            'dc_url': reverse('docdc_view', args=[udoc.id]),
-            'gallery_url': reverse('docgallery_view', args=[udoc.id]),
-            'merge_url': reverse('docmerge_view', args=[udoc.id]),
-            'user_revision': udoc.revision,
-            'user_timestamp': udoc.revision.timestamp,
-            'public_revision': doc.revision,
-            'public_timestamp': doc.revision.timestamp,
-        }       
+        return {
+            'name': doc.id,
+            'user': user,
+            'html_url': reverse('dochtml_view', args=[doc.id]),
+            'text_url': reverse('doctext_view', args=[doc.id]),
+            # 'dc_url': reverse('docdc_view', args=[doc.id]),
+            'gallery_url': reverse('docgallery_view', args=[doc.id]),
+            'merge_url': reverse('docmerge_view', args=[doc.id]),
+            'user_revision': doc.revision,
+            'user_timestamp': doc.revision.timestamp,
+            # 'public_revision': doc.revision,
+            # 'public_timestamp': doc.revision.timestamp,
+        }   
 
-        return result
-
-    @hglibrary
-    def update(self, request, docid, lib):
-        """Update information about the document, like display not"""
-        return
+    
+#    @hglibrary
+#    def update(self, request, docid, lib):
+#        """Update information about the document, like display not"""
+#        return
 #
 #
 #
 class DocumentHTMLHandler(BaseHandler):
     allowed_methods = ('GET')
 
+    @validate_form(forms.DocumentRetrieveForm, 'GET')
     @hglibrary
-    def read(self, request, docid, lib, stylesheet='partial'):
+    def read(self, request, form, docid, lib, stylesheet='partial'):
         """Read document as html text"""
         try:
-            revision = request.GET.get('revision', 'latest')
-
-            if revision == 'latest':
-                document = lib.document(docid)
-            else:
-                document = lib.document_for_rev(revision)
+            revision = form.cleaned_data['revision']
+            user = form.cleaned_data['user'] or request.user.username
+            document = lib.document_for_rev(revision)
 
             if document.id != docid:
-                return response.BadRequest().django_response({'reason': 'name-mismatch',
-                    'message': 'Provided revision refers, to document "%s", but provided "%s"' % (document.id, docid) })
+                return response.BadRequest().django_response({
+                    'reason': 'name-mismatch',
+                    'message': 'Provided revision is not valid for this document'
+                })
+
+            if document.owner != user:
+                return response.BadRequest().django_response({
+                    'reason': 'user-mismatch',
+                    'message': "Provided revision doesn't belong to user %s" % user
+                })
+
+            for error in check_user(request, user):
+                return error
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
                 parse_dublincore=False, stylesheet=stylesheet,\
@@ -273,22 +337,30 @@ class DocumentGalleryHandler(BaseHandler):
 
             gallery = {'name': assoc.name, 'pages': []}
             
-            for file in os.listdir(dirpath):
+            for file in sorted(os.listdir(dirpath)):
                 if not isinstance(file, unicode):
-                    log.warn(u"File %r is gallery %r is not unicode. Ommiting."\
-                        % (file, dirpath) )
-                    continue
-                               
-                name, ext = os.path.splitext(os.path.basename(file))
+                    try:
+                        file = file.decode('utf-8')
+                    except:
+                        log.warn(u"File %r in gallery %r is not unicode. Ommiting."\
+                            % (file, dirpath) )
+                        file = None
 
-                if ext.lower() not in [u'.png', u'.jpeg', u'.jpg']:
-                    log.info(u"Ignoring: %s %s", name, ext)
-                    continue
+                if file is not None:
+                    name, ext = os.path.splitext(os.path.basename(file))
 
-                url = settings.MEDIA_URL + assoc.subpath + u'/' + file;
+                    if ext.lower() not in [u'.png', u'.jpeg', u'.jpg']:
+                        log.warn(u"Ignoring: %s %s", name, ext)
+                        url = None
+
+                    url = settings.MEDIA_URL + assoc.subpath + u'/' + file
+                
+                if url is None:
+                    url = settings.MEDIA_URL + u'/missing.png'
+                    
                 gallery['pages'].append( quote(url.encode('utf-8')) )
 
-            gallery['pages'].sort()
+#            gallery['pages'].sort()
             galleries.append(gallery)
 
         return galleries                      
@@ -305,41 +377,50 @@ XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1
 class DocumentTextHandler(BaseHandler):
     allowed_methods = ('GET', 'POST')
 
+    @validate_form(forms.TextRetrieveForm, 'GET')
     @hglibrary
-    def read(self, request, docid, lib):
-        """Read document as raw text"""
-        revision = request.GET.get('revision', 'latest')
-        part = request.GET.get('part', False)
-        
+    def read(self, request, form, docid, lib):
+        """Read document as raw text"""        
         try:
-            if revision == 'latest':
-                document = lib.document(docid)
-            else:
-                document = lib.document_for_rev(revision)
-
-            if document.id != docid:
-                return response.BadRequest().django_response({'reason': 'name-mismatch',
-                    'message': 'Provided revision is not valid for this document'})
+            revision = form.cleaned_data['revision']
+            part = form.cleaned_data['part']
+            user = form.cleaned_data['user'] or request.user.username            
             
-            # TODO: some finer-grained access control
-            if part is False:
-                # we're done :)
+            document = lib.document_for_rev(revision)
+            
+            if document.id != docid:
+                return response.BadRequest().django_response({
+                    'reason': 'name-mismatch',
+                    'message': 'Provided revision is not valid for this document'
+                })
+
+            if document.owner != user:
+                return response.BadRequest().django_response({
+                    'reason': 'user-mismatch',
+                    'message': "Provided revision doesn't belong to user %s" % user
+                })
+
+            for error in check_user(request, user):
+                return error
+            
+            if not part:                
                 return document.data('xml')
-            else:
-                xdoc = parser.WLDocument.from_string(document.data('xml'),\
-                    parse_dublincore=False)
-                ptext = xdoc.part_as_text(part)
+            
+            xdoc = parser.WLDocument.from_string(document.data('xml'),\
+                parse_dublincore=False)
+            ptext = xdoc.part_as_text(part)
 
-                if ptext is None:
-                    return response.EntityNotFound().django_response({
+            if ptext is None:
+                return response.EntityNotFound().django_response({
                       'reason': 'no-part-in-document'                     
-                    })
+                })
 
-                return ptext
-        except librarian.ParseError:
+            return ptext
+        except librarian.ParseError, e:
             return response.EntityNotFound().django_response({
                 'reason': 'invalid-document-state',
-                'exception': type(e), 'message': e.message
+                'exception': type(e),
+                'message': e.message
             })
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
@@ -347,12 +428,24 @@ class DocumentTextHandler(BaseHandler):
                 'exception': type(e), 'message': e.message
             })   
 
+    @validate_form(forms.TextUpdateForm, 'POST')
     @hglibrary
-    def create(self, request, docid, lib):
+    def create(self, request, form, docid, lib):
         try:
-            revision = request.POST['revision']
+            revision = form.cleaned_data['revision']
+            msg = form.cleaned_data['message']
+            user = form.cleaned_data['user'] or request.user.username
 
-            current = lib.document(docid, request.user.username)
+            # do not allow changing not owned documents
+            # (for now... )
+            
+            
+            if user != request.user.username:
+                return response.AccessDenied().django_response({
+                    'reason': 'insufficient-priviliges',
+                })
+            
+            current = lib.document(docid, user)
             orig = lib.document_for_rev(revision)
 
             if current != orig:
@@ -360,25 +453,13 @@ class DocumentTextHandler(BaseHandler):
                         "reason": "out-of-date",
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
-
-            if request.POST.has_key('message'):
-                msg = u"$USER$ " + request.POST['message']
-            else:
-                msg = u"$AUTO$ XML content update."
-
-            if request.POST.has_key('contents'):
-                data = request.POST['contents']
-            else:
-                if not request.POST.has_key('chunks'):
-                    # bad request
-                    return response.BadRequest().django_response({'reason': 'invalid-arguments',
-                        'message': 'No contents nor chunks specified.'})
-
-                    # TODO: validate
-                parts = json.loads(request.POST['chunks'])                    
+            
+            if form.cleaned_data.has_key('contents'):
+                data = form.cleaned_data['contents']
+            else:                               
+                chunks = form.cleaned_data['chunks']
                 xdoc = parser.WLDocument.from_string(current.data('xml'))
-                   
-                errors = xdoc.merge_chunks(parts)
+                errors = xdoc.merge_chunks(chunks)
 
                 if len(errors):
                     return response.EntityConflict().django_response({
@@ -421,12 +502,13 @@ class DocumentTextHandler(BaseHandler):
 
             ndoc = None
             ndoc = current.invoke_and_commit(\
-                xml_update_action, lambda d: (msg, current.owner) )
+                xml_update_action, lambda d: (msg, user) )
 
             try:
                 # return the new revision number
                 return response.SuccessAllOk().django_response({
                     "document": ndoc.id,
+                    "user": user,
                     "subview": "xml",
                     "previous_revision": current.revision,
                     "revision": ndoc.revision,
@@ -446,74 +528,74 @@ class DocumentTextHandler(BaseHandler):
 #
 # @requires librarian
 #
-class DocumentDublinCoreHandler(BaseHandler):
-    allowed_methods = ('GET', 'POST')
-
-    @hglibrary
-    def read(self, request, docid, lib):
-        """Read document as raw text"""        
-        try:
-            revision = request.GET.get('revision', 'latest')
-
-            if revision == 'latest':
-                doc = lib.document(docid)
-            else:
-                doc = lib.document_for_rev(revision)
-
-
-            if document.id != docid:
-                return response.BadRequest().django_response({'reason': 'name-mismatch',
-                    'message': 'Provided revision is not valid for this document'})
-            
-            bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
-            return bookinfo.serialize()
-        except (EntryNotFound, RevisionNotFound), e:
-            return response.EntityNotFound().django_response({
-                'exception': type(e), 'message': e.message})
-
-    @hglibrary
-    def create(self, request, docid, lib):
-        try:
-            bi_json = request.POST['contents']
-            revision = request.POST['revision']
-            
-            if request.POST.has_key('message'):
-                msg = u"$USER$ " + request.PUT['message']
-            else:
-                msg = u"$AUTO$ Dublin core update."
-
-            current = lib.document(docid, request.user.username)
-            orig = lib.document_for_rev(revision)
-
-            if current != orig:
-                return response.EntityConflict().django_response({
-                        "reason": "out-of-date",
-                        "provided": orig.revision,
-                        "latest": current.revision })
-
-            xmldoc = parser.WLDocument.from_string(current.data('xml'))
-            document.book_info = dcparser.BookInfo.from_json(bi_json)
-
-            # zapisz
-            ndoc = current.quickwrite('xml', \
-                document.serialize().encode('utf-8'),\
-                message=msg, user=request.user.username)
-
-            try:
-                # return the new revision number
-                return {
-                    "document": ndoc.id,
-                    "subview": "dc",
-                    "previous_revision": current.revision,
-                    "revision": ndoc.revision,
-                    'timestamp': ndoc.revision.timestamp,
-                    "url": reverse("docdc_view", args=[ndoc.id])
-                }
-            except Exception, e:
-                if ndoc: lib._rollback()
-                raise e
-        except RevisionNotFound:
-            return response.EntityNotFound().django_response()
+#class DocumentDublinCoreHandler(BaseHandler):
+#    allowed_methods = ('GET', 'POST')
+#
+#    @hglibrary
+#    def read(self, request, docid, lib):
+#        """Read document as raw text"""
+#        try:
+#            revision = request.GET.get('revision', 'latest')
+#
+#            if revision == 'latest':
+#                doc = lib.document(docid)
+#            else:
+#                doc = lib.document_for_rev(revision)
+#
+#
+#            if document.id != docid:
+#                return response.BadRequest().django_response({'reason': 'name-mismatch',
+#                    'message': 'Provided revision is not valid for this document'})
+#
+#            bookinfo = dcparser.BookInfo.from_string(doc.data('xml'))
+#            return bookinfo.serialize()
+#        except (EntryNotFound, RevisionNotFound), e:
+#            return response.EntityNotFound().django_response({
+#                'exception': type(e), 'message': e.message})
+#
+#    @hglibrary
+#    def create(self, request, docid, lib):
+#        try:
+#            bi_json = request.POST['contents']
+#            revision = request.POST['revision']
+#
+#            if request.POST.has_key('message'):
+#                msg = u"$USER$ " + request.PUT['message']
+#            else:
+#                msg = u"$AUTO$ Dublin core update."
+#
+#            current = lib.document(docid, request.user.username)
+#            orig = lib.document_for_rev(revision)
+#
+#            if current != orig:
+#                return response.EntityConflict().django_response({
+#                        "reason": "out-of-date",
+#                        "provided": orig.revision,
+#                        "latest": current.revision })
+#
+#            xmldoc = parser.WLDocument.from_string(current.data('xml'))
+#            document.book_info = dcparser.BookInfo.from_json(bi_json)
+#
+#            # zapisz
+#            ndoc = current.quickwrite('xml', \
+#                document.serialize().encode('utf-8'),\
+#                message=msg, user=request.user.username)
+#
+#            try:
+#                # return the new revision number
+#                return {
+#                    "document": ndoc.id,
+#                    "subview": "dc",
+#                    "previous_revision": current.revision,
+#                    "revision": ndoc.revision,
+#                    'timestamp': ndoc.revision.timestamp,
+#                    "url": reverse("docdc_view", args=[ndoc.id])
+#                }
+#            except Exception, e:
+#                if ndoc: lib._rollback()
+#                raise e
+#        except RevisionNotFound:
+#            return response.EntityNotFound().django_response()
 
 class MergeHandler(BaseHandler):
     allowed_methods = ('POST',)
@@ -522,59 +604,68 @@ class MergeHandler(BaseHandler):
     @hglibrary
     def create(self, request, form, docid, lib):
         """Create a new document revision from the information provided by user"""
+        revision = form.cleaned_data['revision']
 
-        target_rev = form.cleaned_data['target_revision']
-
+        # fetch the main branch document
         doc = lib.document(docid)
-        udoc = doc.take(request.user.username)
 
-        if target_rev == 'latest':
-            target_rev = udoc.revision
+        # fetch the base document
+        user_doc = lib.document_for_rev(revision)
+        base_doc = user_doc.latest()
 
-        if str(udoc.revision) != target_rev:
-            # user think doesn't know he has an old version
-            # of his own branch.
-            
-            # Updating is teorericly ok, but we need would
-            # have to force a refresh. Sharing may be not safe,
-            # 'cause it doesn't always result in update.
-
-            # In other words, we can't lie about the resource's state
-            # So we should just yield and 'out-of-date' conflict
-            # and let the client ask again with updated info.
-
-            # NOTE: this could result in a race condition, when there
-            # are 2 instances of the same user editing the same document.
-            # Instance "A" trying to update, and instance "B" always changing
-            # the document right before "A". The anwser to this problem is
-            # for the "A" to request a merge from 'latest' and then
-            # check the parent revisions in response, if he actually
-            # merge from where he thinks he should. If not, the client SHOULD
-            # update his internal state.
+        if base_doc != user_doc:
             return response.EntityConflict().django_response({
-                    "reason": "out-of-date",
-                    "provided": target_rev,
-                    "latest": udoc.revision })
+                "reason": "out-of-date",
+                "provided": str(user_doc.revision),
+                "latest": str(base_doc.revision)
+            })      
 
         if form.cleaned_data['type'] == 'update':
             # update is always performed from the file branch
             # to the user branch
-            success, changed = udoc.update(request.user.username)
+            changed, clean = base_doc.update(request.user.username)
 
-        if form.cleaned_data['type'] == 'share':        
-            if not request.user.has_perm('explorer.document.can_share'):
+            # update user document
+            if changed:
+                user_doc_new = user_doc.latest()
+                
+            # shared document is the same
+            doc_new = doc
+
+        if form.cleaned_data['type'] == 'share':
+            if not base_doc.up_to_date():
+                return response.BadRequest().django_response({
+                    "reason": "not-fast-forward",
+                    "message": "You must first update yout branch to the latest version."
+                })
+
+            # check for unresolved conflicts            
+            if base_doc.has_conflict_marks():
+                return response.BadRequest().django_response({
+                    "reason": "unresolved-conflicts",
+                    "message": "There are unresolved conflicts in your file. Fix them, and try again."
+                })
+
+            if not request.user.has_perm('api.document.can_share'):
                 # User is not permitted to make a merge, right away
                 # So we instead create a pull request in the database
                 try:
                     prq, created = PullRequest.objects.get_or_create(
-                        source_revision = str(udoc.revision),
+                        comitter = request.user,
+                        document = docid,
+                        status = "N",
                         defaults = {
-                            'comitter': request.user,
-                            'document': docid,
-                            'status': "N",
+                            'source_revision': str(base_doc.revision),
                             'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
                         }
                     )
+
+                    # there can't be 2 pending request from same user
+                    # for the same document
+                    if not created:
+                        prq.source_revision = str(base_doc.revision)
+                        prq.comment = prq.comment + 'u\n\n' + (form.cleaned_data['message'] or u'')
+                        prq.save()
 
                     return response.RequestAccepted().django_response(\
                         ticket_status=prq.status, \
@@ -583,23 +674,26 @@ class MergeHandler(BaseHandler):
                     return response.EntityConflict().django_response({
                         'reason': 'request-already-exist'
                     })
-            else:
-                success, changed = udoc.share(form.cleaned_data['message'])
 
-        if not success:
-            return response.EntityConflict().django_response({
-                'reason': 'merge-failure',
-            })
+            changed = base_doc.share(form.cleaned_data['message'])
 
-        if not changed:
-            return response.SuccessNoContent().django_response()
+            # update shared version if needed
+            if changed:
+                doc_new = doc.latest()
 
-        nudoc = udoc.latest()
+            # the user wersion is the same
+            user_doc_new = base_doc
 
+        # The client can compare parent_revision to revision
+        # to see if he needs to update user's view        
+        # Same goes for shared view
+        
         return response.SuccessAllOk().django_response({
-            "name": nudoc.id,
-            "parent_user_resivion": udoc.revision,
-            "parent_revision": doc.revision,
-            "revision": nudoc.revision,
-            'timestamp': nudoc.revision.timestamp,
+            "name": user_doc_new.id,
+            "user": user_doc_new.owner,
+            "parent_revision": user_doc_new.revision,
+            "parent_shared_revision": doc.revision,
+            "revision": user_doc_new.revision,
+            "shared_revision": doc_new.revision,
+            'timestamp': user_doc_new.revision.timestamp,
         })

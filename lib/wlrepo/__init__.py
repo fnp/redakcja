@@ -18,7 +18,7 @@ class Library(object):
         """Retrieve a document in the specified revision."""
         pass
 
-    def document(self, docid, user=None):
+    def document(self, docid, user=None, rev='latest'):
         """Retrieve a document from a library."""
         pass
 
@@ -108,6 +108,10 @@ class LibraryException(Exception):
 class RevisionNotFound(LibraryException):
     def __init__(self, rev):
         LibraryException.__init__(self, "Revision %r not found." % rev)
+
+class RevisionMismatch(LibraryException):
+    def __init__(self, fdi, rev):
+        LibraryException.__init__(self, "No revision %r for document %r." % (rev, fdi))
     
 class EntryNotFound(LibraryException):
     def __init__(self, rev, entry, guesses=[]):
