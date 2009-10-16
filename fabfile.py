@@ -16,7 +16,7 @@ env.use_south = False
 def staging():
     """Use staging server"""
     env.hosts = ['stigma.nowoczesnapolska.org.pl:2222']
-    env.user = 'zuber'
+    env.user = 'platforma'
     env.path = '/var/services/platforma'
     env.python = '/usr/bin/python'
     env.virtualenv = '/usr/bin/virtualenv'
