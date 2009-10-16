@@ -393,7 +393,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
 
 Editor.DocumentModel = Editor.Model.extend({
     _className: 'Editor.DocumentModel',
-    data: null, // name, text_url, user_revision, latest_shared_rev, parts_url, dc_url, size, merge_url
+    data: null, // name, text_url, revision, latest_shared_rev, parts_url, dc_url, size, merge_url
     contentModels: {},
     state: 'empty',
     errors: '',
@@ -423,7 +423,7 @@ Editor.DocumentModel = Editor.Model.extend({
         this.set('data', data);
         this.set('state', 'synced');
 
-        this.set('revision', data.user_revision);
+        this.set('revision', data.revision);
         this.set('user', data.user);
 
         this.contentModels = {
@@ -464,12 +464,13 @@ Editor.DocumentModel = Editor.Model.extend({
             for (key in this.contentModels) {
                 if (this.contentModels[key].guid() == contentModel.guid()) {
                     this.contentModels[key].set('state', 'synced');
-                    this.data.user_revision = this.contentModels[key].get('revision');
+                    this.revision = this.contentModels[key].get('revision');
+
                 }
             }
             for (key in this.contentModels) {
                 if (this.contentModels[key].guid() != contentModel.guid()) {
-                    this.contentModels[key].set('revision', this.data.user_revision);
+                    this.contentModels[key].set('revision', this.revision);
                     this.contentModels[key].set('state', 'empty');
                 }
             }
@@ -487,60 +488,76 @@ Editor.DocumentModel = Editor.Model.extend({
   
     update: function() {
         this.set('state', 'loading');
-        messageCenter.addMessage('info', 'Uaktualniam dokument...');
+
+        messageCenter.addMessage('info', 'doc_update',
+            'Uaktualniam dokument...');
+            
         $.ajax({
             url: this.data.merge_url,
             dataType: 'json',
             type: 'post',
             data: {
                 type: 'update',
-                revision: this.revision,
-                user: this.user
+                revision: this.get('revision'),
+                user: this.get('user')
             },
             complete: this.updateCompleted.bind(this),
             success: function(data) {
                 this.set('updateData', data);
+                console.log("new data:", data)
             }.bind(this)
         });
     },
   
     updateCompleted: function(xhr, textStatus) {
         console.log(xhr.status, textStatus);
-        if (xhr.status == 200) { // Sukces
-            this.data = this.get('updateData');
-            this.revision = this.data.user_revision;
-            this.user = this.data.user;
-            
-            messageCenter.addMessage('info', null, 'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision,
-                'Uaktualnienie dokumentu do wersji ' + this.get('updateData').revision);
-            for (var key in this.contentModels) {
-                this.contentModels[key].set('revision', this.data.user_revision);
-                this.contentModels[key].set('state', 'empty');
+        
+        if (xhr.status == 200) 
+        {
+            var udata = this.get('updateData');
+            if(udata.timestamp == udata.parent_timestamp)
+            {
+                // no change
+                messageCenter.addMessage('info', 'doc_update',
+                    'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
+
             }
-            messageCenter.addMessage('success', null, 'Uaktualniłem dokument do najnowszej wersji :-)');
-        } else if (xhr.status == 202) { // Wygenerowano PullRequest (tutaj?)
-        } else if (xhr.status == 204) { // Nic nie zmieniono
-            messageCenter.addMessage('info', null, 'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
+            else {
+                this.set('revision', udata.revision);
+                this.set('user', udata.user);
+                messageCenter.addMessage('info', 'doc_update', 
+                    'Uaktualnienie dokumentu do wersji ' + udata.revision);
+
+                for (var key in this.contentModels) {
+                    this.contentModels[key].set('revision', this.get('revision') );
+                    this.contentModels[key].set('state', 'empty');
+                }
+            }        
         } else if (xhr.status == 409) { // Konflikt podczas operacji
-            messageCenter.addMessage('error', null, 'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
-        } else if (xhr.status == 500) {
-            messageCenter.addMessage('critical', null, 'Błąd serwera. Pędź po programistów! :-(');
+            messageCenter.addMessage('error', 'doc_update',
+                'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
+        } else {
+            messageCenter.addMessage('critical', 'doc_update',
+                'Nieoczekiwany błąd. Pędź po programistów! :-(');
         }
+        
         this.set('state', 'synced');
         this.set('updateData', null);
     },
   
     merge: function(message) {
         this.set('state', 'loading');
-        messageCenter.addMessage('info', null, 'Scalam dokument z głównym repozytorium...');
+        messageCenter.addMessage('info', null, 
+            'Scalam dokument z głównym repozytorium...');
+            
         $.ajax({
             url: this.data.merge_url,
             type: 'post',
             dataType: 'json',
             data: {
                 type: 'share',
-                revision: this.revision,
-                user: this.user,
+                revision: this.get('revision'),
+                user: this.get('user'),
                 message: message
             },
             complete: this.mergeCompleted.bind(this),
@@ -553,12 +570,11 @@ Editor.DocumentModel = Editor.Model.extend({
     mergeCompleted: function(xhr, textStatus) {
         console.log(xhr.status, textStatus);
         if (xhr.status == 200) { // Sukces
-            this.data = this.get('updateData');
-            this.revision = this.data.user_revision;
-            this.user = this.data.user;
+            this.set('revision', this.get('updateData').revision);
+            this.set('user', this.get('updateData').user);
             
             for (var key in this.contentModels) {
-                this.contentModels[key].set('revision', this.revision);
+                this.contentModels[key].set('revision', this.get('revision'));
                 this.contentModels[key].set('state', 'empty');
             }
 

@@ -1,10 +1,11 @@
+{% load i18n %}
+
 {% if user.is_authenticated %}
 <span class="user_name">{{ user.username }}</span> | 
-<a href='{% url logout %}?next={{request.get_full_path}}'>Wyloguj</a>
+<a href='{% url logout %}?next={{request.get_full_path}}'>{% trans "Log Out" noop %}</a>
 {% else %}
 {% url login as login_url %}
 {% ifnotequal login_url request.path %}
-    <a href='{{ login_url }}?next={{request.get_full_path}}'>Logowanie</a>
+    <a href='{{ login_url }}?next={{request.get_full_path}}'>{% trans "Log In" noop %}</a>
 {% endifnotequal %}
-
 {% endif %}
