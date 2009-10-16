@@ -363,7 +363,7 @@ class DocumentGalleryHandler(BaseHandler):
 #            gallery['pages'].sort()
             galleries.append(gallery)
 
-        return galleries                      
+        return galleries
 
 #
 # Document Text View
