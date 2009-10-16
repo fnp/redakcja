@@ -628,6 +628,8 @@ class MergeHandler(BaseHandler):
             # update user document
             if changed:
                 user_doc_new = user_doc.latest()
+            else:
+                user_doc_new = user_doc
                 
             # shared document is the same
             doc_new = doc
@@ -680,6 +682,8 @@ class MergeHandler(BaseHandler):
             # update shared version if needed
             if changed:
                 doc_new = doc.latest()
+            else:
+                doc_new = doc
 
             # the user wersion is the same
             user_doc_new = base_doc
