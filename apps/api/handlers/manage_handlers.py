@@ -18,7 +18,7 @@ class PullRequestListHandler(BaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
-        if request.user.has_perm('api.pullrequest.can_change'):
+        if request.user.has_perm('change_pullrequest'):
             return PullRequest.objects.all()
         else:
             return PullRequest.objects.filter(commiter=request.user)
@@ -33,7 +33,7 @@ class PullRequestHandler(BaseHandler):
     def update(self, request, prq_id):
         """Change the status of request"""
 
-        if not request.user.has_perm('api.pullrequest.can_change'):
+        if not request.user.has_perm('change_pullrequest'):
             return AccessDenied().django_response("Insufficient priviliges")
         
         prq = PullRequest.objects.get(id=prq_id)
