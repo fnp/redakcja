@@ -100,7 +100,7 @@ class TextUpdateForm(DocumentRetrieveForm):
         value = self.cleaned_data['message']
 
         if value:
-            return u"$USER$ " + request.POST['message']
+            return u"$USER$ " + value
         else:
             return u"$AUTO$ XML content update."
 
