@@ -105,6 +105,9 @@ class LibraryException(Exception):
         Exception.__init__(self, msg)
         self.cause = cause
 
+class UpdateException(LibraryException):
+    pass
+
 class RevisionNotFound(LibraryException):
     def __init__(self, rev):
         LibraryException.__init__(self, "Revision %r not found." % rev)

@@ -29,7 +29,7 @@ from explorer.models import GalleryForDocument
 import api.forms as forms
 import api.response as response
 from api.utils import validate_form, hglibrary, natural_order
-from api.models import PartCache
+from api.models import PartCache, PullRequest
 
 #
 import settings
@@ -38,18 +38,24 @@ import settings
 def is_prq(username):
     return username.startswith('$prq-')
 
+def prq_for_user(username):
+    try:
+        return PullRequest.objects.get(id=int(username[5:]))
+    except:
+        return None
+
 def check_user(request, user):
     log.info("user: %r, perm: %r" % (request.user, request.user.get_all_permissions()) )
     #pull request
     if is_prq(user):
-        if not request.user.has_perm('api.pullrequest.can_view'):
+        if not request.user.has_perm('api.view_prq'):
             yield response.AccessDenied().django_response({
                 'reason': 'access-denied',
                 'message': "You don't have enough priviliges to view pull requests."
             })
     # other users
     elif request.user.username != user:
-        if not request.user.has_perm('api.document.can_view_other'):
+        if not request.user.has_perm('api.view_other_document'):
             yield response.AccessDenied().django_response({
                 'reason': 'access-denied',
                 'message': "You don't have enough priviliges to view other people's document."
@@ -140,7 +146,6 @@ class LibraryHandler(BaseHandler):
                 log.info("DOCID %s", docid)
                 doc = lib.document_create(docid)
                 # document created, but no content yet
-
                 try:
                     doc = doc.quickwrite('xml', data.encode('utf-8'),
                         '$AUTO$ XML data uploaded.', user=request.user.username)
@@ -229,28 +234,28 @@ class DocumentHandler(BaseHandler):
             # the user doesn't have this document checked out
             # or some other weird error occured
             # try to do the checkout
-            if is_prq(user) or (user == request.user.username):
-                try:
+            try:
+                if user == request.user.username:
                     mdoc = lib.document(docid)
                     doc = mdoc.take(user)
-
-                    if is_prq(user):
-                        # source revision, should probably change
-                        # but there are no changes yet, so...
-                        pass
-                    
-                except RevisionNotFound, e:
+                elif is_prq(user):
+                    prq = prq_for_user(user)
+                    # commiter's document
+                    prq_doc = lib.document_for_rev(prq.source_revision)
+                    doc = prq_doc.take(user)
+                else:
                     return response.EntityNotFound().django_response({
                         'reason': 'document-not-found',
                         'message': e.message,
-                        'docid': docid
+                        'docid': docid,
+                        'user': user,
                     })
-            else:
+            except RevisionNotFound, e:
                 return response.EntityNotFound().django_response({
                     'reason': 'document-not-found',
                     'message': e.message,
                     'docid': docid,
-                    'user': user,
+                    'user': user
                 })
 
         return {
@@ -337,7 +342,7 @@ class DocumentGalleryHandler(BaseHandler):
 
             gallery = {'name': assoc.name, 'pages': []}
             
-            for file in sorted(os.listdir(dirpath)):
+            for file in os.listdir(dirpath):
                 if not isinstance(file, unicode):
                     try:
                         file = file.decode('utf-8')
@@ -363,7 +368,7 @@ class DocumentGalleryHandler(BaseHandler):
 #            gallery['pages'].sort()
             galleries.append(gallery)
 
-        return galleries                      
+        return galleries
 
 #
 # Document Text View
@@ -623,13 +628,7 @@ class MergeHandler(BaseHandler):
         if form.cleaned_data['type'] == 'update':
             # update is always performed from the file branch
             # to the user branch
-            changed, clean = base_doc.update(request.user.username)
-
-            # update user document
-            if changed:
-                user_doc_new = user_doc.latest()
-            else:
-                user_doc_new = user_doc
+            user_doc_new = base_doc.update(request.user.username)
                 
             # shared document is the same
             doc_new = doc
@@ -648,7 +647,7 @@ class MergeHandler(BaseHandler):
                     "message": "There are unresolved conflicts in your file. Fix them, and try again."
                 })
 
-            if not request.user.has_perm('api.document.can_share'):
+            if not request.user.has_perm('api.share_document'):
                 # User is not permitted to make a merge, right away
                 # So we instead create a pull request in the database
                 try:
@@ -699,8 +698,8 @@ class MergeHandler(BaseHandler):
             "revision": user_doc_new.revision,
             'timestamp': user_doc_new.revision.timestamp,
 
-            "parent_revision": user_doc_new.revision,
-            "parent_timestamp": user_doc_new.revision.timestamp,
+            "parent_revision": user_doc.revision,
+            "parent_timestamp": user_doc.revision.timestamp,
 
             "shared_revision": doc_new.revision,
             "shared_timestamp": doc_new.revision.timestamp,

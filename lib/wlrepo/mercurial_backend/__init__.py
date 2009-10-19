@@ -89,9 +89,9 @@ class MercurialRevision(wlrepo.Revision):
             status = self._library._merge(other._changectx.node())
             if status.isclean():
                 self._library._commit(user=user, message=message)
-                return (True, True)
+                return True
             else:
-                return (False, False)
+                return False
         finally:
             lock.release()
 

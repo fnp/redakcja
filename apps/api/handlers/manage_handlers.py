@@ -8,17 +8,18 @@ __date__ = "$2009-09-25 15:49:50$"
 __doc__ = "Module documentation."
 
 from piston.handler import BaseHandler
+from wlrepo import UpdateException
 
 from api.utils import hglibrary
 from api.models import PullRequest
 from api.response import *
-from datetime import datetime
+import datetime
 
 class PullRequestListHandler(BaseHandler):
     allowed_methods = ('GET',)
 
     def read(self, request):
-        if request.user.has_perm('api.pullrequest.can_change'):
+        if request.user.has_perm('change_pullrequest'):
             return PullRequest.objects.all()
         else:
             return PullRequest.objects.filter(commiter=request.user)
@@ -33,7 +34,7 @@ class PullRequestHandler(BaseHandler):
     def update(self, request, prq_id):
         """Change the status of request"""
 
-        if not request.user.has_perm('api.pullrequest.can_change'):
+        if not request.user.has_perm('change_pullrequest'):
             return AccessDenied().django_response("Insufficient priviliges")
         
         prq = PullRequest.objects.get(id=prq_id)
@@ -59,7 +60,7 @@ class PullRequestHandler(BaseHandler):
                 'message': "This pull request is alredy resolved. Can't accept."
             })
             
-        src_doc = lib.document( prq.source_revision )
+        src_doc = lib.document_for_rev( prq.source_revision )
 
         lock = lib.lock()
         try:
@@ -69,30 +70,28 @@ class PullRequestHandler(BaseHandler):
                 #
                 #  Q: where to put the updated revision ?
                 #  A: create a special user branch named prq-#prqid
-                prq_doc = src_doc.take("$prq-%d" % prd.id)
+                prq_doc = src_doc.take("$prq-%d" % prq.id)
 
                 # This could be not the first time we try this,
                 # so the prq_doc could already be there
                 # and up to date
 
-                success, changed = prq_doc.update(user.username)
-                prq.status = 'E'
-
-                if not success:
-                    prq.save()
+                try:
+                    prq_doc = prq_doc.update(user.username)
+                    prq.source_revision = str(prq_doc.revision)
+                    src_doc = prq_doc
+                except UpdateException, e:
                     # this can happen only if the merge program
                     # is misconfigured - try returning an entity conflict
                     # TODO: put some useful infor here
-                    return EntityConflict().django_response()
-
-                if changed:
-                    prq_doc = prq_doc.latest()
-
-                prq.source_revision = str(prq_doc.revision)
-                src_doc = prq_doc
+                    prq.status = 'E'
+                    prq.save()
+                    return EntityConflict().django_response({
+                        'reason': 'update-failed',
+                        'message': e.message })                
 
             # check if there are conflicts
-            if prq_doc.has_conflict_marks():
+            if src_doc.has_conflict_marks():
                 prq.status = 'E'
                 prq.save()
                 # Now, the user must resolve the conflict
@@ -111,7 +110,7 @@ class PullRequestHandler(BaseHandler):
             # sync state with repository
             prq.status = 'A'
             prq.merged_revision = str(src_doc.shared().revision)
-            prq.merged_timestamp = datetime()
+            prq.merged_timestamp = datetime.now()
             prq.save()
 
             return SuccessAllOk().django_response({

@@ -13,7 +13,7 @@ var ImageGalleryView = View.extend({
     this._super(element, model, template);
     this.parent = parent;
 
-    console.log("galley model", this.model);
+    console.log("gallery model", this.model);
        
     this.model
       .addObserver(this, 'data', this.modelDataChanged.bind(this))
@@ -85,9 +85,9 @@ var ImageGalleryView = View.extend({
   
   modelStateChanged: function(property, value) {   
     if (value == 'loading') {
-      this.parent.freeze('Ładowanie...');
+      // this.freeze('Ładowanie...');
     } else {
-      this.parent.unfreeze();
+      this.unfreeze();
     }
   },
 
@@ -102,8 +102,7 @@ var ImageGalleryView = View.extend({
     $page.hide();
     $('img', $page).unbind();
     
-    $page.empty();
-    
+    $page.empty();    
     this.setPageViewOffset($page, {x:0, y:0});
   },
 
@@ -183,7 +182,11 @@ var ImageGalleryView = View.extend({
           offset.y = vp_height-MARGIN;               
       
       $page.css({left: offset.x, top: offset.y});           
-  }, 
+  },
+
+  reload: function() {
+    this.model.load(true);
+  },
   
   renderImage: function(target) 
   {

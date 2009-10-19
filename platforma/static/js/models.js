@@ -347,7 +347,7 @@ Editor.ImageGalleryModel = Editor.Model.extend({
     data: [],
     state: 'empty',
 
-    init: function(serverURL) {
+    init: function(document, serverURL) {
         this._super();
         this.set('state', 'empty');
         this.serverURL = serverURL;
@@ -357,16 +357,22 @@ Editor.ImageGalleryModel = Editor.Model.extend({
 
     load: function(force) {
         if (force || this.get('state') == 'empty') {
+            console.log("setting state");
             this.set('state', 'loading');
+            console.log("going ajax");
             $.ajax({
                 url: this.serverURL,
                 dataType: 'json',
-                success: this.loadingSucceeded.bind(this)
+                success: this.loadingSucceeded.bind(this),
+                error: this.loadingFailed.bind(this)
             });
         }
     },
 
-    loadingSucceeded: function(data) {
+    loadingSucceeded: function(data) 
+    {
+        console.log("success");        
+        
         if (this.get('state') != 'loading') {
             alert('erroneous state:', this.get('state'));
         }
@@ -380,6 +386,16 @@ Editor.ImageGalleryModel = Editor.Model.extend({
         }
 
         this.set('state', 'synced');
+    },
+
+    loadingFailed: function(data) {
+        console.log("failed");
+
+        if (this.get('state') != 'loading') {
+            alert('erroneous state:', this.get('state'));
+        }       
+
+        this.set('state', 'error');
     },
 
     set: function(property, value) {

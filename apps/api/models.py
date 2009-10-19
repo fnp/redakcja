@@ -59,7 +59,7 @@ class PullRequest(models.Model):
 
     class Meta:
         permissions = (           
-            ("pullrequest.can_view", "Can view pull request's contents."),
+            ("view_prq", "Can view pull request's contents."),
         )
 
 
@@ -68,6 +68,6 @@ class PullRequest(models.Model):
 class Document(models.Model):
     class Meta:
         permissions = (
-            ("document.can_share", "Can share documents without pull requests."),
-            ("document.can_view_other", "Can view other's documents."),
+            ("share_document", "Can share documents without pull requests."),
+            ("view_other_document", "Can view other's documents."),
         )    
