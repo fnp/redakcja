@@ -182,7 +182,11 @@ var ImageGalleryView = View.extend({
           offset.y = vp_height-MARGIN;               
       
       $page.css({left: offset.x, top: offset.y});           
-  }, 
+  },
+
+  reload: function() {
+    this.model.load(true);
+  },
   
   renderImage: function(target) 
   {

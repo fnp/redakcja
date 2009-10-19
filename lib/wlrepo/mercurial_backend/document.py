@@ -116,23 +116,24 @@ class MercurialDocument(wlrepo.Document):
         try:
             if self.ismain():
                 # main revision of the document
-                return (True, False)
+                return self
             
-            if self._revision.has_children():
-                log.info('Update failed: has children.')
-                # can't update non-latest revision
-                return (False, False)
+            if self._revision.has_children():                
+                raise UpdateException("Revision has children.")
 
             sv = self.shared()
 
             if self.parentof(sv):
-                return (True, False)
+                return self
 
             if sv.ancestorof(self):
-                return (True, False)
+                return self
 
-            return self._revision.merge_with(sv._revision, user=user,
-                message="$AUTO$ Personal branch update.")
+            if self._revision.merge_with(sv._revision, user=user,\
+                message="$AUTO$ Personal branch update."):
+                return self.latest()
+            else:
+                raise UpdateException("Merge failed.")
         finally:
             lock.release()  
 
