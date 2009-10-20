@@ -21,6 +21,7 @@ document_html_resource = Resource(dh.DocumentHTMLHandler, **authdata)
 # document_dc_resource = Resource(dh.DocumentDublinCoreHandler, **authdata)
 document_gallery = Resource(dh.DocumentGalleryHandler, **authdata)
 document_merge = Resource(dh.MergeHandler, **authdata)
+diff_resource = Resource(dh.DiffHandler, **authdata)
 
 import api.handlers.manage_handlers as mh
 
@@ -48,4 +49,5 @@ __all__ = [
     'scriptlets',
     'pullrequest_collection',
     'pullrequest_rsrc',
+    'diff_resource',
 ]
