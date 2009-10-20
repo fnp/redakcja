@@ -88,10 +88,12 @@ Editor.XMLModel = Editor.Model.extend({
         messageCenter.addMessage('success', 'xmlload', 'Wczytałem XML :-)');
     },
   
-    loadingFailed: function() {
+    loadingFailed: function(response)
+    {
         if (this.get('state') != 'loading') {
             alert('erroneous state:', this.get('state'));
         }
+        
         var message = parseXHRError(response);
         
         this.set('error', '<h2>Błąd przy ładowaniu XML</h2><p>'+message+'</p>');
@@ -218,9 +220,9 @@ Editor.HTMLModel = Editor.Model.extend({
             alert('erroneous state:', this.get('state'));
         }
         
-        var message = parseXHRError(response);
+        var err = parseXHRError(response);
         
-        this.set('error', '<p>Nie udało się wczytać widoku HTML: </p>' + message);
+        this.set('error', '<p>Nie udało się wczytać widoku HTML: </p>' + err.error_message);
         this.set('state', 'error');        
     },
 
@@ -244,10 +246,12 @@ Editor.HTMLModel = Editor.Model.extend({
             data: {
                 revision: this.get('revision'),
                 user: this.document.get('user'),
-                part: path
+                chunk: path,
+                format: 'nl'
             },
             success: function(data) {
                 self.xmlParts[path] = data;
+                console.log(data);
                 callback(path, data);
             },
             // TODO: error handling
@@ -273,7 +277,8 @@ Editor.HTMLModel = Editor.Model.extend({
             dataType: 'text; charset=utf-8',
             data: {
                 fragment: data,
-                part: path
+                chunk: path,
+                format: 'nl'
             },
             success: function(htmldata) {
                 elem.replaceWith(htmldata);
@@ -462,8 +467,8 @@ Editor.DocumentModel = Editor.Model.extend({
             alert('erroneous state:', this.get('state'));
         }
         
-        var message = parseXHRError(response);        
-        this.set('error', '<h2>Nie udało się wczytać dokumentu</h2><p>'+message+"</p>");
+        var err = parseXHRError(response);
+        this.set('error', '<h2>Nie udało się wczytać dokumentu</h2><p>'+err.error_message+"</p>");
         this.set('state', 'error');
     },
   
@@ -517,53 +522,58 @@ Editor.DocumentModel = Editor.Model.extend({
                 revision: this.get('revision'),
                 user: this.get('user')
             },
-            complete: this.updateCompleted.bind(this),
-            success: function(data) {
-                this.set('updateData', data);
-                console.log("new data:", data)
-            }.bind(this)
+            complete: this.updateCompleted.bind(this),            
         });
     },
   
-    updateCompleted: function(xhr, textStatus) {
-        console.log(xhr.status, textStatus);
-        
-        if (xhr.status == 200) 
+    updateCompleted: function(xhr, textStatus)
+    {
+        console.log(xhr.status, xhr.responseText);
+        var response = parseXHRResponse(xhr);
+        if(response.success)
         {
-            var udata = this.get('updateData');
-            if(udata.timestamp == udata.parent_timestamp)
+            if( (response.data.result == 'no-op')
+             || (response.data.timestamp == response.data.parent_timestamp))
             {
-                // no change
-                messageCenter.addMessage('info', 'doc_update',
-                    'Nic się nie zmieniło od ostatniej aktualizacji. Po co mam uaktualniać?');
-
-            }
-            else {
-                this.set('revision', udata.revision);
-                this.set('user', udata.user);
-                messageCenter.addMessage('info', 'doc_update', 
-                    'Uaktualnienie dokumentu do wersji ' + udata.revision);
-
-                for (var key in this.contentModels) {
-                    this.contentModels[key].set('revision', this.get('revision') );
-                    this.contentModels[key].set('state', 'empty');
+                if( (response.data.revision) && (response.data.revision != this.get('revision')) )
+                {
+                    // we're out of sync
+                    this.set('state', 'unsynced');
+                    return;
                 }
-            }        
-        } else if (xhr.status == 409) { // Konflikt podczas operacji
-            messageCenter.addMessage('error', 'doc_update',
-                'Wystąpił konflikt podczas aktualizacji. Pędź po programistów! :-(');
-        } else {
-            messageCenter.addMessage('critical', 'doc_update',
-                'Nieoczekiwany błąd. Pędź po programistów! :-(');
+                
+                messageCenter.addMessage('info', 'doc_update',
+                    'Już posiadasz najbardziej aktualną wersję.');
+                    this.set('state', 'synced');
+                return;
+            }
+
+            // result: success
+            this.set('revision', response.data.revision);
+            this.set('user', response.data.user);
+
+            messageCenter.addMessage('info', 'doc_update',
+                'Uaktualnienie dokumentu do wersji ' + response.data.revision);
+
+            for (var key in this.contentModels) {
+                this.contentModels[key].set('revision', this.get('revision') );
+                this.contentModels[key].set('state', 'empty');
+            }
+
+            this.set('state', 'synced');
+            return;
         }
+
+        // no success means trouble
+        messageCenter.addMessage(response.error_level, 'doc_update', 
+            response.error_message);       
         
-        this.set('state', 'synced');
-        this.set('updateData', null);
+        this.set('state', 'unsynced');
     },
   
     merge: function(message) {
         this.set('state', 'loading');
-        messageCenter.addMessage('info', null, 
+        messageCenter.addMessage('info', 'doc_merge',
             'Scalam dokument z głównym repozytorium...');
             
         $.ajax({
@@ -584,28 +594,50 @@ Editor.DocumentModel = Editor.Model.extend({
     },
   
     mergeCompleted: function(xhr, textStatus) {
-        console.log(xhr.status, textStatus);
-        if (xhr.status == 200) { // Sukces
-            this.set('revision', this.get('updateData').revision);
-            this.set('user', this.get('updateData').user);
-            
-            for (var key in this.contentModels) {
-                this.contentModels[key].set('revision', this.get('revision'));
-                this.contentModels[key].set('state', 'empty');
+        console.log(xhr.status, xhr.responseText);
+        var response = parseXHRResponse(xhr);
+        if(response.success)
+        {
+            if( (response.data.result == 'no-op')
+             || (response.data.shared_timestamp == response.data.shared_parent_timestamp))
+            {
+                if( (response.data.revision) && (response.data.revision != this.get('revision')) )
+                {
+                    // we're out of sync
+                    this.set('state', 'unsynced');
+                    return;
+                }
+
+                messageCenter.addMessage('info', 'doc_merge',
+                    'Twoja aktualna wersja nie różni się od ostatnio zatwierdzonej.');
+                this.set('state', 'synced');
+                return;
             }
 
-            messageCenter.addMessage('success', null, 'Scaliłem dokument z głównym repozytorium :-)');
-        } else if (xhr.status == 202) { // Wygenerowano PullRequest
-            messageCenter.addMessage('success', null, 'Wysłałem prośbę o scalenie dokumentu z głównym repozytorium.');
-        } else if (xhr.status == 204) { // Nic nie zmieniono
-            messageCenter.addMessage('info', null, 'Nic się nie zmieniło od ostatniego scalenia. Po co mam scalać?');
-        } else if (xhr.status == 409) { // Konflikt podczas operacji
-            messageCenter.addMessage('error', null, 'Wystąpił konflikt podczas scalania. Pędź po programistów! :-(');
-        } else if (xhr.status == 500) {
-            messageCenter.addMessage('critical', null, 'Błąd serwera. Pędź po programistów! :-(');
+            if( response.data.result == 'accepted')
+            {
+                messageCenter.addMessage('info', 'doc_merge',
+                    'Prośba o zatwierdzenie została przyjęta i oczekuję na przyjęcie.');
+                this.set('state', 'synced');
+                return;
+            }
+
+            // result: success
+            this.set('revision', response.data.revision);
+            this.set('user', response.data.user);
+
+            messageCenter.addMessage('info', 'doc_merge',
+                'Twoja wersja dokumentu została zatwierdzona.');
+            
+            this.set('state', 'synced');
+            return;
         }
-        this.set('state', 'synced');
-        this.set('mergeData', null);
+
+        // no success means trouble
+        messageCenter.addMessage(response.error_level, 'doc_merge',
+            response.error_message);
+
+        this.set('state', 'unsynced');
     },
   
     // For debbuging

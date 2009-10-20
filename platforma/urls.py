@@ -13,9 +13,8 @@ urlpatterns = patterns('',
     url(r'^$', 'explorer.views.file_list', name='file_list'),        
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
 
-
-    url(r'^managment/pull-requests$', 'explorer.views.pull_requests'),
-        
+    url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
+  
     # Editor panels
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
     url(r'^editor/$', 'explorer.views.file_list', name='editor_base'),

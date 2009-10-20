@@ -1,7 +1,7 @@
 /* Style widoku HTML. Nie należy tu ustawiać position ani marginesów */
 .htmlview {
     font-size: 16px;
-    font: Georgia, "Times New Roman", serif;
+    font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
     padding: 3em;    
 }
@@ -224,4 +224,16 @@
 .htmlview .osoba {
     font-style: normal;
     font-variant: small-caps;
+}
+
+.htmlview .parse-warning {
+    display: block;
+    font-size: 10pt;
+    background: #C0C0C0;
+    margin: 1em;
+}
+
+.parse-warning .message {
+    color: purple;
+    font-weight: bold;
 }

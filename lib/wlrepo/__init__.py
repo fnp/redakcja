@@ -73,6 +73,9 @@ class Document(object):
     def parentof(self, other):
         return self._revision.parentof(other._revision)
 
+    def has_parent_from(self, other):
+        return self._revision.has_parent_from(other._revision)
+
     def ancestorof(self, other):
         return self._revision.ancestorof(other._revision)
 
@@ -129,7 +132,7 @@ class DocumentAlreadyExists(LibraryException):
 
 def open_library(path, proto, *args, **kwargs):
     if proto == 'hg':
-        import wlrepo.mercurial_backend
-        return wlrepo.mercurial_backend.MercurialLibrary(path, *args, **kwargs)
+        import wlrepo.mercurial_backend.library
+        return wlrepo.mercurial_backend.library.MercurialLibrary(path, *args, **kwargs)
 
     raise NotImplemented()

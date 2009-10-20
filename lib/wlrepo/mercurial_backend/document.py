@@ -106,10 +106,19 @@ class MercurialDocument(wlrepo.Document):
         return self._library.document_for_rev(fullid)
 
     def up_to_date(self):
-        return self.ismain() or (\
-            self.shared().ancestorof(self) )
+        if self.ismain():
+            return True
+
+        shared = self.shared()
         
-            
+        if shared.parentof(self):
+            return True
+
+        if shared.has_parent_from(self):
+            return True
+
+        return False
+                    
     def update(self, user):
         """Update parts of the document."""
         lock = self.library.lock()
@@ -117,78 +126,69 @@ class MercurialDocument(wlrepo.Document):
             if self.ismain():
                 # main revision of the document
                 return self
-            
-            if self._revision.has_children():                
-                raise UpdateException("Revision has children.")
 
-            sv = self.shared()
+            # check for children in this branch
+            if self._revision.has_children(limit_branch=True):
+                raise wlrepo.UpdateException("Revision %s has children." % self.revision)
 
-            if self.parentof(sv):
+            shared = self.shared()
+
+            # the shared version comes from our version
+            if self.parentof(self.shared()):
                 return self
 
-            if sv.ancestorof(self):
+            # no changes since last update
+            if shared.ancestorof(self):
+                return self
+
+            # last share was from this branch
+            if shared.has_parent_from(self):
                 return self
 
             if self._revision.merge_with(sv._revision, user=user,\
                 message="$AUTO$ Personal branch update."):
                 return self.latest()
             else:
-                raise UpdateException("Merge failed.")
+                raise wlrepo.UpdateException("Merge failed.")
         finally:
             lock.release()  
 
     def share(self, message):
         lock = self.library.lock()
         try:            
+
+            # nothing to do
             if self.ismain():
-                return False # always shared
+                return self
 
-            user = self._revision.user_name
-            main = self.shared()._revision
-            local = self._revision            
+            shared = self.shared()
 
-            # Case 1:
+            # we just did this - move on
+            if self.parentof(shared):
+                return shared
+
+            # No changes since update
+            if shared.parentof(self):
+                return shared
+
+            # The good situation
+            #
             #         * local
             #         |
-            #         * <- can also be here!
-            #        /|
+            #        >* 
+            #        ||
             #       / |
             # main *  *
             #      |  |
-            # The local branch has been recently updated,
-            # so we don't need to update yet again, but we need to
-            # merge down to default branch, even if there was
-            # no commit's since last update
-            #
-            # This is actually the only good case!
-            if main.ancestorof(local):
-                success, changed = main.merge_with(local, user=user, message=message)
+            if shared.ancestorof(self):               
+                success = shared._revision.merge_with(self._revision, user=self.owner, message=message)
 
                 if not success:
-                    raise LibraryException("Merge failed.")
+                    raise wlrepo.LibraryException("Merge failed.")
+                
+                return shared.latest()
 
-                return changed
-            
-            # Case 2:
-            # main *
-            #      |
-            #      * <- this case overlaps with previos one
-            #      |\
-            #      | \
-            #      |  * local
-            #      |  |
-            #
-            # There was a recent merge to the defaul branch and
-            # no changes to local branch recently.
-            #
-            # Nothing to do
-            elif local.ancestorof(main):                
-                return False
-
-            # In all other cases, the local needs an update
-            # and possibly conflict resolution, so fail
-            raise LibraryExcepton("Document not prepared for sharing.")
-        
+            raise wlrepo.LibraryException("Unrecognized share-state.")
         finally:
             lock.release()
 

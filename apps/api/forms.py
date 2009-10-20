@@ -11,7 +11,6 @@ from django.contrib.auth.models import User
 import re
 from django.utils import simplejson as json
 
-
 class MergeRequestForm(forms.Form):
     # should the target document revision be updated or shared
     type = forms.ChoiceField(choices=(('update', 'Update'), ('share', 'Share')) )
@@ -63,9 +62,9 @@ PRQ_USER_RE = re.compile(r"^\$prq-(\d{1,10})$", re.UNICODE)
 class DocumentRetrieveForm(forms.Form):    
     revision = forms.RegexField(regex=r'latest|[0-9a-z]{40}', required=False)
     user = forms.CharField(required=False)
-
+        
     def clean_user(self):
-        # why, oh why does django doesn't implement this!!!
+        # why, oh why doesn't django implement this!!!
         # value = super(DocumentRetrieveForm, self).clean_user()
         value = self.cleaned_data['user']        
         
@@ -89,12 +88,33 @@ class DocumentRetrieveForm(forms.Form):
            
 
 class TextRetrieveForm(DocumentRetrieveForm):
-    part = forms.CharField(required=False)
+    chunk = forms.CharField(required=False)
+    format = forms.CharField(required=False)
+
+    def clean_format(self):
+        value = self.cleaned_data['format']
+        if not value:
+            return 'raw'
+
+        if value not in ('nl', 'raw'):
+            raise forms.ValidationError("Invalid text format")
+        return value
 
 class TextUpdateForm(DocumentRetrieveForm):
     message = forms.CharField(required=False)
     contents = forms.CharField(required=False)
     chunks = forms.CharField(required=False)
+
+    format = forms.CharField(required=False)
+
+    def clean_format(self):
+        value = self.cleaned_data['format']
+        if not value:
+            return 'raw'
+
+        if value not in ('nl', 'raw'):
+            raise forms.ValidationError("Invalid text format")
+        return value
 
     def clean_message(self):
         value = self.cleaned_data['message']
