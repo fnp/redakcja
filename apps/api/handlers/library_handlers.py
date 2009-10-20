@@ -10,16 +10,13 @@ __doc__ = "Module documentation."
 
 from piston.handler import BaseHandler, AnonymousBaseHandler
 
-import re
 from datetime import date
 
 from django.core.urlresolvers import reverse
-from django.utils import simplejson as json
 from django.db import IntegrityError
 
 import librarian
 import librarian.html
-from librarian import dcparser, parser
 
 from wlrepo import *
 from api.models import PullRequest
@@ -370,162 +367,6 @@ class DocumentGalleryHandler(BaseHandler):
 
         return galleries
 
-#
-# Document Text View
-#
-
-XINCLUDE_REGEXP = r"""<(?:\w+:)?include\s+[^>]*?href=("|')wlrepo://(?P<link>[^\1]+?)\1\s*[^>]*?>"""
-#
-#
-#
-
-class DocumentTextHandler(BaseHandler):
-    allowed_methods = ('GET', 'POST')
-
-    @validate_form(forms.TextRetrieveForm, 'GET')
-    @hglibrary
-    def read(self, request, form, docid, lib):
-        """Read document as raw text"""        
-        try:
-            revision = form.cleaned_data['revision']
-            part = form.cleaned_data['part']
-            user = form.cleaned_data['user'] or request.user.username            
-            
-            document = lib.document_for_rev(revision)
-            
-            if document.id != docid:
-                return response.BadRequest().django_response({
-                    'reason': 'name-mismatch',
-                    'message': 'Provided revision is not valid for this document'
-                })
-
-            if document.owner != user:
-                return response.BadRequest().django_response({
-                    'reason': 'user-mismatch',
-                    'message': "Provided revision doesn't belong to user %s" % user
-                })
-
-            for error in check_user(request, user):
-                return error
-            
-            if not part:                
-                return document.data('xml')
-            
-            xdoc = parser.WLDocument.from_string(document.data('xml'),\
-                parse_dublincore=False)
-            ptext = xdoc.part_as_text(part)
-
-            if ptext is None:
-                return response.EntityNotFound().django_response({
-                      'reason': 'no-part-in-document'                     
-                })
-
-            return ptext
-        except librarian.ParseError, e:
-            return response.EntityNotFound().django_response({
-                'reason': 'invalid-document-state',
-                'exception': type(e),
-                'message': e.message
-            })
-        except (EntryNotFound, RevisionNotFound), e:
-            return response.EntityNotFound().django_response({
-                'reason': 'not-found',
-                'exception': type(e), 'message': e.message
-            })   
-
-    @validate_form(forms.TextUpdateForm, 'POST')
-    @hglibrary
-    def create(self, request, form, docid, lib):
-        try:
-            revision = form.cleaned_data['revision']
-            msg = form.cleaned_data['message']
-            user = form.cleaned_data['user'] or request.user.username
-
-            # do not allow changing not owned documents
-            # (for now... )
-            
-            
-            if user != request.user.username:
-                return response.AccessDenied().django_response({
-                    'reason': 'insufficient-priviliges',
-                })
-            
-            current = lib.document(docid, user)
-            orig = lib.document_for_rev(revision)
-
-            if current != orig:
-                return response.EntityConflict().django_response({
-                        "reason": "out-of-date",
-                        "provided_revision": orig.revision,
-                        "latest_revision": current.revision })
-            
-            if form.cleaned_data.has_key('contents'):
-                data = form.cleaned_data['contents']
-            else:                               
-                chunks = form.cleaned_data['chunks']
-                xdoc = parser.WLDocument.from_string(current.data('xml'))
-                errors = xdoc.merge_chunks(chunks)
-
-                if len(errors):
-                    return response.EntityConflict().django_response({
-                            "reason": "invalid-chunks",
-                            "message": "Unable to merge following parts into the document: %s " % ",".join(errors)
-                    })
-
-                data = xdoc.serialize()
-
-            # try to find any Xinclude tags
-            includes = [m.groupdict()['link'] for m in (re.finditer(\
-                XINCLUDE_REGEXP, data, flags=re.UNICODE) or []) ]
-
-            log.info("INCLUDES: %s", includes)
-
-            # TODO: provide useful routines to make this simpler
-            def xml_update_action(lib, resolve):
-                try:
-                    f = lib._fileopen(resolve('parts'), 'r')
-                    stored_includes = json.loads(f.read())
-                    f.close()
-                except:
-                    stored_includes = []
-                
-                if stored_includes != includes:
-                    f = lib._fileopen(resolve('parts'), 'w+')
-                    f.write(json.dumps(includes))
-                    f.close()
-
-                    lib._fileadd(resolve('parts'))
-
-                    # update the parts cache
-                    PartCache.update_cache(docid, current.owner,\
-                        stored_includes, includes)
-
-                # now that the parts are ok, write xml
-                f = lib._fileopen(resolve('xml'), 'w+')
-                f.write(data.encode('utf-8'))
-                f.close()
-
-            ndoc = None
-            ndoc = current.invoke_and_commit(\
-                xml_update_action, lambda d: (msg, user) )
-
-            try:
-                # return the new revision number
-                return response.SuccessAllOk().django_response({
-                    "document": ndoc.id,
-                    "user": user,
-                    "subview": "xml",
-                    "previous_revision": current.revision,
-                    "revision": ndoc.revision,
-                    'timestamp': ndoc.revision.timestamp,
-                    "url": reverse("doctext_view", args=[ndoc.id])
-                })
-            except Exception, e:
-                if ndoc: lib._rollback()
-                raise e        
-        except RevisionNotFound, e:
-            return response.EntityNotFound(mimetype="text/plain").\
-                django_response(e.message)
 
 
 #
@@ -629,6 +470,11 @@ class MergeHandler(BaseHandler):
             # update is always performed from the file branch
             # to the user branch
             user_doc_new = base_doc.update(request.user.username)
+
+            if user_doc_new == user_doc:
+                return response.SuccessAllOk().django_response({
+                    "result": "no-op"
+                })
                 
             # shared document is the same
             doc_new = doc
@@ -637,12 +483,17 @@ class MergeHandler(BaseHandler):
             if not base_doc.up_to_date():
                 return response.BadRequest().django_response({
                     "reason": "not-fast-forward",
-                    "message": "You must first update yout branch to the latest version."
+                    "message": "You must first update your branch to the latest version."
+                })
+
+            if base_doc.parentof(doc) or base_doc.has_parent_from(doc):
+                return response.SuccessAllOk().django_response({
+                    "result": "no-op"
                 })
 
             # check for unresolved conflicts            
             if base_doc.has_conflict_marks():
-                return response.BadRequest().django_response({
+                return response.BadRequest().django_response({                    
                     "reason": "unresolved-conflicts",
                     "message": "There are unresolved conflicts in your file. Fix them, and try again."
                 })
@@ -692,6 +543,7 @@ class MergeHandler(BaseHandler):
         # Same goes for shared view
         
         return response.SuccessAllOk().django_response({
+            "result": "success",
             "name": user_doc_new.id,
             "user": user_doc_new.owner,
 

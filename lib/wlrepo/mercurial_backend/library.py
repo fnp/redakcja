@@ -13,7 +13,7 @@ from mercurial import ui as hgui
 from mercurial import error
 import wlrepo
 
-from wlrepo.mercurial_backend import MercurialRevision
+from wlrepo.mercurial_backend.revision import MercurialRevision
 from wlrepo.mercurial_backend.document import MercurialDocument
 
 class MergeStatus(object):

@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
 
 
-    url(r'^managment/pull-requests$', 'explorer.views.pull_requests'),
+    url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
     
 #    url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
 #    url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),

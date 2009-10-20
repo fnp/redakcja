@@ -183,7 +183,9 @@ Editor.Object = Class.extend({
 // Handle JSON error responses in uniform way
 function parseXHRError(response)
 {
-    var message = ""
+    var message = "";
+    var level = "";
+    
     try {
       var json = $.evalJSON(response.responseText);
 
@@ -193,16 +195,38 @@ function parseXHRError(response)
 
           message = message.replace(/(line\s+)(\d+)(\,\s*column\s+)(\d+)/i,
             "<a class='xml-editor-ref' href='#xml-$2-$4'>$1$2$3$4</a>");
+
+          level = "warning";
       }
       else {
-        message = json.message || json.reason || "Nieznany błąd :((";
+         message = json.message || json.reason || "Nieznany błąd :((";
+         level = "error";
       }
-
     } catch(e) {
         // not a valid JSON response
-        message = response.statusText;
+        message = response.statusText || 'Brak połączenia z serwerem';
+        level = "error";
     }
-    return message;
+    
+    return {error_message: message, error_level: level};
+}
+
+function parseXHRResponse(xhr) {
+    var response = {}
+    
+    if(xhr.status >= 200 && xhr.status < 300) 
+    {
+        response.success = true;
+        try {
+            response.data = $.evalJSON(xhr.responseText);
+        } catch(e) {
+            response.data = {};
+        }
+
+        return response;
+    }
+
+    return parseXHRError(xhr);
 }
 
 Editor.Object._lastGuid = 0;

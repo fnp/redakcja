@@ -30,6 +30,27 @@ var EditorView = View.extend({
             $('#commit-dialog').jqmHide();
         });
         
+        $('#commit-dialog-save-button').click(function(event, data)
+        {
+            if ($('#commit-dialog-message').val().match(/^\s*$/)) {
+                $('#commit-dialog-error-empty-message').fadeIn();
+            } else {
+                $('#commit-dialog-error-empty-message').hide();
+                $('#commit-dialog').jqmHide();
+
+                var message = $('#commit-dialog-message').val();
+                $('#commit-dialog-related-issues input:checked')
+                .each(function() {
+                    message += ' refs #' + $(this).val();
+                });
+                
+                var ctx = $('#commit-dialog').data('context');
+                console.log("COMMIT APROVED", ctx);
+                ctx.callback(message);
+            }
+            return false;
+        });
+        
     
         // $('#split-dialog').jqm({
         //      modal: true,
@@ -71,25 +92,8 @@ var EditorView = View.extend({
     loadRelatedIssues: function(hash) {
         var self = this;
         var c = $('#commit-dialog-related-issues');
-
-        $('#commit-dialog-save-button').click(function(event, data)
-        {
-            if ($('#commit-dialog-message').val().match(/^\s*$/)) {
-                $('#commit-dialog-error-empty-message').fadeIn();
-            } else {
-                $('#commit-dialog-error-empty-message').hide();
-                $('#commit-dialog').jqmHide();
-
-                var message = $('#commit-dialog-message').val();
-                $('#commit-dialog-related-issues input:checked')
-                .each(function() {
-                    message += ' refs #' + $(this).val();
-                });
-                console.log("COMMIT APROVED", hash.t);
-                hash.t.callback(message);
-            }
-            return false;
-        });
+        
+        $('#commit-dialog').data('context', hash.t);
 
         $("div.loading-box", c).show();
         $("div.fatal-error-box", c).hide();
@@ -118,7 +122,7 @@ var EditorView = View.extend({
             this.commitButton.attr('disabled', null);
             this.updateButton.attr('disabled', 'disabled');
             this.mergeButton.attr('disabled', 'disabled');
-        } else if (value == 'synced') {            
+        } else if (value == 'synced' || value == 'unsynced') {
             this.quickSaveButton.attr('disabled', 'disabled');
             this.commitButton.attr('disabled', 'disabled');
             this.updateButton.attr('disabled', null);

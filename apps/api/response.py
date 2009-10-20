@@ -49,6 +49,7 @@ class RequestAccepted(ResponseObject):
 
     def django_response(self, ticket_status, ticket_uri):
         return ResponseObject.django_response(self, {
+            'result': 'accepted',
             'status': ticket_status,
             'refer_to': ticket_uri })     
         
