@@ -23,7 +23,7 @@ Instalacja i użycie
 #. Przejdź do katalogu serwisu w konsoli
 #. Zainstaluj wymagane biblioteki (patrz sekcja wymagania_) komendą::
 
-	pip install -f http://redmine.nowoczesnapolska.org.pl/projects/librarian/files -r requirements.txt
+	pip install -r requirements.txt
 
 #. Wypełnij bazę danych (Django poprosi o utworzenie pierwszego użytkownika)::
 

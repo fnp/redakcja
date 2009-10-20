@@ -13,37 +13,20 @@ urlpatterns = patterns('',
     url(r'^$', 'explorer.views.file_list', name='file_list'),        
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
 
-
     url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
-    
-#    url(r'^images/(?P<folder>[^/]+)/$', 'explorer.views.folder_images', name='folder_image'),
-#    url(r'^images/$', 'explorer.views.folder_images', {'folder': '.'}, name='folder_image_ajax'),
-    
+  
     # Editor panels
- #   url(r'^editor/'+PATH_SEC+'/panel/(?P<name>[a-z]+)/$', 'explorer.views.panel_view', name='panel_view'),
     url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
     url(r'^editor/$', 'explorer.views.file_list', name='editor_base'),
 
- #   url(r'^editor/'+PATH_SEC+'/split$', 'explorer.views.split_text'),
- #   url(r'^editor/'+PATH_SEC+'/split-success',
- #       'explorer.views.split_success', name='split-success'),
-
- #   url(r'^editor/'+PATH_SEC+'/print/html$', 'explorer.views.print_html'),
- #   url(r'^editor/'+PATH_SEC+'/print/xml$', 'explorer.views.print_xml'),
-
     url(r'^file/(?P<docid>[^/]+)/print$', 'explorer.views.print_html', name="file_print"),
-    # Task managment
-    # url(r'^manager/pull-requests$', 'explorer.views.pull_requests'),
 
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 
-    # Prototypes
-#    url(r'^wysiwyg-proto/', include('wysiwyg.urls')),
-
     # Our über-restful api
-    url(r'^api/', include('api.urls') ),
+    url(r'^api/', include('api.urls')),
     
 )
 
