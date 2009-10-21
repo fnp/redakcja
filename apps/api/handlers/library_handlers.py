@@ -305,7 +305,7 @@ class DocumentHTMLHandler(BaseHandler):
                 return error
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
-                parse_dublincore=False, stylesheet=stylesheet,\
+                parse_dublincore=False, stylesheet='full',\
                 options={
                     "with-paths": 'boolean(1)',                    
                 })
@@ -313,6 +313,9 @@ class DocumentHTMLHandler(BaseHandler):
         except (EntryNotFound, RevisionNotFound), e:
             return response.EntityNotFound().django_response({
                 'reason': 'not-found', 'message': e.message})
+        except librarian.ValidationError, e:
+            return response.InternalError().django_response({
+                'reason': 'xml-non-valid', 'message': e.message })
         except librarian.ParseError, e:
             return response.InternalError().django_response({
                 'reason': 'xml-parse-error', 'message': e.message })

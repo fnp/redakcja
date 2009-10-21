@@ -53,7 +53,7 @@ def file_list(request):
     })
 
 @permission_required('api.document.can_add')
-def file_upload(request, repo):
+def file_upload(request):
     from api.resources import library_resource
     from api.forms import DocumentUploadForm
     from django.http import HttpRequest, HttpResponseRedirect

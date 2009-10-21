@@ -71,7 +71,7 @@ class DocumentTextHandler(BaseHandler):
 
             if xchunk is None:
                 return response.EntityNotFound().django_response({
-                      'reason': 'no-part-in-document',
+                      'reason': 'no-chunk-in-document',
                       'path': chunk
                 })
 

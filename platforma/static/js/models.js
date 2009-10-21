@@ -246,8 +246,8 @@ Editor.HTMLModel = Editor.Model.extend({
             data: {
                 revision: this.get('revision'),
                 user: this.document.get('user'),
-                chunk: path,
-                format: 'nl'
+                chunk: path
+                // format: 'nl'
             },
             success: function(data) {
                 self.xmlParts[path] = data;
@@ -268,7 +268,7 @@ Editor.HTMLModel = Editor.Model.extend({
         var path = elem.attr('wl2o:path');
         this.xmlParts[path] = data;
 
-        this.set('state', 'unsynced');
+        this.set('state', 'dirty');
 
         /* re-render the changed fragment */
         $.ajax({
@@ -277,11 +277,11 @@ Editor.HTMLModel = Editor.Model.extend({
             dataType: 'text; charset=utf-8',
             data: {
                 fragment: data,
-                chunk: path,
-                format: 'nl'
+                chunk: path
+                // format: 'nl'
             },
             success: function(htmldata) {
-                elem.replaceWith(htmldata);
+                elem.html(htmldata);
                 self.set('state', 'dirty');
             }
         });
