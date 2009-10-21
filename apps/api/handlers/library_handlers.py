@@ -9,6 +9,7 @@ __date__ = "$2009-09-25 15:49:50$"
 __doc__ = "Module documentation."
 
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from django.http import HttpResponse
 
 from datetime import date
 
@@ -17,6 +18,8 @@ from django.db import IntegrityError
 
 import librarian
 import librarian.html
+import difflib
+from librarian import dcparser, parser
 
 from wlrepo import *
 from api.models import PullRequest
@@ -196,6 +199,26 @@ class BasicDocumentHandler(AnonymousBaseHandler):
         }
 
         return result
+
+
+class DiffHandler(BaseHandler):
+    allowed_methods = ('GET',)
+    
+    @hglibrary
+    def read(self, request, source_revision, target_revision, lib):
+        '''Return diff between source_revision and target_revision)'''
+        source_document = lib.document_for_rev(source_revision)
+        target_document = lib.document_for_rev(target_revision)
+        print source_document,
+        print target_document
+        diff = difflib.unified_diff(
+            source_document.data('xml').splitlines(True),
+            target_document.data('xml').splitlines(True),
+            'source',
+            'target')
+        
+        return ''.join(list(diff))
+
 
 #
 # Document Meta Data
