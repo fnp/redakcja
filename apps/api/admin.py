@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-import api.models
+from api import models
 
-admin.site.register(api.models.PullRequest)
-admin.site.register(api.models.PartCache)
+class PullRequestAdmin(admin.ModelAdmin):
+    list_display = ('comitter', 'timestamp', 'comment', 'document', 'source_revision')
+
+admin.site.register(models.PullRequest, PullRequestAdmin)
+admin.site.register(models.PartCache)
