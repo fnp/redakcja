@@ -118,7 +118,7 @@
 }
 
 .htmlview .dzielo_nadrzedne {
-    font-size: 0.375em;
+    font-size: 1.5em;
     display: block;
     line-height: 1.5em;
     margin-bottom: -0.25em;
@@ -242,10 +242,6 @@
 .htmlview span.annotation:before {
     content: "[" counter(main) "]";
     counter-increment: main;
-}
-
-.htmlview *[wl2o\:editable] {
-    background-color: pink;
 }
 
 .htmlview *[wl2o\:editable] *[wl2o\:editable] {
