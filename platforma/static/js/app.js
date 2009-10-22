@@ -198,6 +198,10 @@ function parseXHRError(response)
 
           level = "warning";
       }
+      else if(json.reason == 'xml-non-valid') {
+          message = json.message;
+          level = "warning";
+      }
       else {
          message = json.message || json.reason || "Nieznany błąd :((";
          level = "error";
