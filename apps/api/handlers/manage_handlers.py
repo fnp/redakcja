@@ -110,7 +110,7 @@ class PullRequestHandler(BaseHandler):
             # sync state with repository
             prq.status = 'A'
             prq.merged_revision = str(src_doc.shared().revision)
-            prq.merged_timestamp = datetime.now()
+            prq.merged_timestamp = datetime.datetime.now()
             prq.save()
 
             return SuccessAllOk().django_response({
