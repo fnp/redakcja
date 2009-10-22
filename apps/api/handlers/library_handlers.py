@@ -385,7 +385,7 @@ class DocumentGalleryHandler(BaseHandler):
                     
                 gallery['pages'].append( quote(url.encode('utf-8')) )
 
-#            gallery['pages'].sort()
+            gallery['pages'].sort()
             galleries.append(gallery)
 
         return galleries
