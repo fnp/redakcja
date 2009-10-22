@@ -244,9 +244,9 @@
     counter-increment: main;
 }
 
-.htmlview *[wl2o\:editable] {
+/* .htmlview *[wl2o\:editable] {
     background-color: pink;
-}
+} */
 
 .htmlview *[wl2o\:editable] *[wl2o\:editable] {
     background-color: red;
