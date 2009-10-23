@@ -111,7 +111,7 @@ class MercurialDocument(wlrepo.Document):
 
         shared = self.shared()
         
-        if shared.parentof(self):
+        if shared.ancestorof(self):
             return True
 
         if shared.has_parent_from(self):
@@ -132,45 +132,74 @@ class MercurialDocument(wlrepo.Document):
                 raise wlrepo.UpdateException("Revision %s has children." % self.revision)
 
             shared = self.shared()
-
-            # the shared version comes from our version
-            if self.parentof(self.shared()):
-                return self
-
-            # no changes since last update
+            #     *
+            #    /|
+            #   * |
+            #   | |
+            #
+            # we carry the latest version
             if shared.ancestorof(self):
+               return self
+
+            #   *
+            #   |\
+            #   | *
+            #   | |
+            #
+            # We just shared
+            if self.parentof(shared):
                 return self
 
-            # last share was from this branch
-            if shared.has_parent_from(self):
-                return self
+            #  s     s  S
+            #  |     |  |
+            #  *<-S  *<-*
+            #  |  |  |  .
+            #
+            #  This is ok (s - shared, S - self)
 
-            if self._revision.merge_with(sv._revision, user=user,\
+            if self._revision.merge_with(shared._revision, user=user,\
                 message="$AUTO$ Personal branch update."):
                 return self.latest()
             else:
                 raise wlrepo.UpdateException("Merge failed.")
         finally:
-            lock.release()  
+            lock.release()
+
+
+    def would_share(self):
+        if self.ismain():
+            return False
+
+        shared = self.shared()
+
+        # we just did this - move on
+        if self.parentof(shared):
+            return False
+
+        #     *
+        #    /|
+        #   * *
+        #   |\|
+        #   | *
+        #   | |
+        # Situation above is ok - what we don't want, is:
+        #     *
+        #    /|
+        #   * |
+        #   |\|
+        #   | *
+        #   | |
+        # We want to prevent stuff like this.
+        if self.parent().parentof(shared):
+            return False
 
     def share(self, message):
         lock = self.library.lock()
-        try:            
+        try:
 
-            # nothing to do
-            if self.ismain():
-                return self
-
-            shared = self.shared()
-
-            # we just did this - move on
-            if self.parentof(shared):
-                return shared
-
-            # No changes since update
-            if shared.parentof(self):
-                return shared
-
+            if not self.would_share():
+                return self.shared()          
+      
             # The good situation
             #
             #         * local

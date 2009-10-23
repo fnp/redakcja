@@ -24,7 +24,7 @@ def render(request):
 
     style = etree.parse(style_filename)
 
-    data = u'<chunk>%s</chunk>' % LINE_SWAP_EXPR.sub(u'<br />\n', data)
+    data = u'<chunk><%s>%s</%s></chunk>' % (tag, LINE_SWAP_EXPR.sub(u'<br />\n', data), tag)
     log.info(data)    
     doc = etree.parse( StringIO(data) )
 
@@ -35,6 +35,4 @@ def render(request):
     }
 
     result = doc.xslt(style, **opts)
-    log.info( str(doc), str(result) )
-        
-    return HttpResponse( librarian.serialize_children(result.getroot()) )
+    return HttpResponse( librarian.serialize_children(result.getroot()[0]) )

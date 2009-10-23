@@ -15,12 +15,17 @@ var HTMLView = View.extend({
       
         $('.htmlview', this.element).html(this.model.get('data'));
         this.modelStateChanged('state', this.model.get('state'));
-        this.model.load();
+        this.model.load();       
     },
 
     modelDataChanged: function(property, value) {
         $('.htmlview', this.element).html(value);
         this.updatePrintLink();
+
+        $("*[x-editable]").each(function() {
+            var e = $('<span class="context-menu"><span class="edit-button">Edytuj</span><span>Przypisy</span></span>');
+            e.appendTo(this);
+        });
     },
 
     updatePrintLink: function() {
@@ -69,6 +74,7 @@ var HTMLView = View.extend({
         this.updatePrintLink();
 
         this.element.bind('click', this.itemClicked.bind(this));
+        // this.element.bind('mouseover', this.itemHover.bind(this));
     },
   
     reload: function() {
@@ -80,6 +86,16 @@ var HTMLView = View.extend({
         this._super();
     },
 
+    itemHover: function(event)
+    {
+        var $e = $(event.target);
+        if( $e.attr('x-editable') == 'editable' ) {
+            console.log('over:', $e[0]);
+            $e.css({'background-color': 'grey'});
+        }
+
+    },
+
     itemClicked: function(event) 
     {
         var self = this;
@@ -88,9 +104,15 @@ var HTMLView = View.extend({
         var editableContent = null;
         var $e = $(event.target);
 
-        var n = 0;
+        if($e.hasClass('edit-button'))
+            this.openForEdit($e);
+    },
 
-        while( ($e[0] != this.element[0]) && !($e.attr('wl2o:editable'))
+    openForEdit: function($e)
+    {
+        var n = 0;        
+
+        while( ($e[0] != this.element[0]) && !($e.attr('x-editable'))
             && n < 50)
         {
             // console.log($e, $e.parent(), this.element);
@@ -98,12 +120,13 @@ var HTMLView = View.extend({
             n += 1;
         }
       
-        if(!$e.attr('wl2o:editable'))
+        if(!$e.attr('x-editable'))
             return true;
-    
-        // start edition on this node
-        
 
+        var $origin = $e;
+        console.log("editable: ", $e);
+    
+        // start edition on this node       
         var $overlay = $(
         '<div class="html-editarea">\n\
             <p class="html-editarea-toolbar">\n\
@@ -117,13 +140,12 @@ var HTMLView = View.extend({
         var y = $e[0].offsetTop;
         var w = $e.outerWidth();
         var h = $e.innerHeight();
-        $overlay.css({position: 'absolute', height: h, left: "5%", top: y, width: "90%"});
-        $e.offsetParent().append($overlay);
+        $overlay.css({position: 'absolute', height: 1.2*h, left: x, top: y, width: w});
+        // $e.offsetParent().append($overlay);
 
-        // load the original XML content
-        console.log($e, $e.offsetParent(), $overlay);
+        
                         
-        $('.html-editarea-cancel-button', $overlay).click(function() {
+        /* $('.html-editarea-cancel-button', $overlay).click(function() {
             $overlay.remove();
         });
 
@@ -132,18 +154,13 @@ var HTMLView = View.extend({
 
             // put the part back to the model
             self.model.putXMLPart($e, $('textarea', $overlay).val());
-        });
-
-        $('textarea', $overlay).focus(function() {
-            $overlay.css('z-index', 3000);
-        }).blur(function() {
-            $overlay.css('z-index', 2000);
-        });
+        }); */
 
         this.model.getXMLPart($e, function(path, data) {
             $('textarea', $overlay).val(data);
         });
-        
+
+        $origin.attr('x-open', 'open');
         return false;
     }
   

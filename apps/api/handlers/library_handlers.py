@@ -512,7 +512,7 @@ class MergeHandler(BaseHandler):
                     "message": "You must first update your branch to the latest version."
                 })
 
-            if base_doc.parentof(doc) or base_doc.has_parent_from(doc):
+            if not base_doc.would_share():
                 return response.SuccessAllOk().django_response({
                     "result": "no-op"
                 })

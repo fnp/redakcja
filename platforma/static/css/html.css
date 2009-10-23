@@ -1,13 +1,15 @@
 /* Style widoku HTML. Nie należy tu ustawiać position ani marginesów */
 
-@namespace wl2o "";
-
 .htmlview {
     counter-reset: main;
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
     padding: 3em;    
+}
+
+.htmlview * {
+    position: relative;
 }
 
 .htmlview div {
@@ -244,14 +246,65 @@
     counter-increment: main;
 }
 
-/* .htmlview *[wl2o\:editable] {
-    background-color: pink;
+.htmlview *[x-editable] {
+    border: 2px solid white;
+    padding: 5px;
 }
 
-.htmlview *[wl2o\:editable] *[wl2o\:editable] {
-    background-color: red;
-} */
+/* focused editable element */
+.htmlview *[x-editable]:hover,
+.htmlview *[x-editable][x-open]
+{
+    background-color: #dfdfdf;
+    border: 2px solid black;
+}
 
+.htmlview *[x-editable] *.context-menu {
+    position: absolute;
+    top: -24px;
+    left: -2px;
+    height: 24px;
+    
+    text-align: center;
+
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: normal;
+    font-style: normal;
+
+    background-color: #dfdfdf;
+    margin: 0px;
+    padding: 0px;
+
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;    
+    
+    display: none;
+    overflow: hidden;
+    
+    -moz-border-radius-topright: 5px;
+    -moz-border-radius-topleft: 5px;
+
+    -webkit-border-top-right-radius: 5px;
+    -webkit-border-top-left-radius: 5px;
+}
+
+.htmlview *[x-editable] *.context-menu * {
+    padding: 5px;
+}
+
+.htmlview *[x-editable] *.context-menu *:hover {
+    background-color: yellow;
+}
+
+.htmlview *[x-editable]:hover *.context-menu {
+    display: block;
+}
+
+.htmlview *[x-editable][x-open] *.context-menu {
+    display: none;
+}
 
 .htmlview .annotation:hover {
     background-color: #dfdfdf;

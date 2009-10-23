@@ -14,7 +14,7 @@ class Library(object):
         """List all documents in the library."""
         pass
 
-    def document_for_rev(self, rev):
+    def document_for_revision(self, rev):
         """Retrieve a document in the specified revision."""
         pass
 
@@ -72,6 +72,9 @@ class Document(object):
     
     def parentof(self, other):
         return self._revision.parentof(other._revision)
+
+    def parent(self):
+        return self._library.document_for_revision(self._revision.parent())
 
     def has_parent_from(self, other):
         return self._revision.has_parent_from(other._revision)

@@ -80,7 +80,7 @@ class MercurialLibrary(wlrepo.Library):
     def ospath(self):
         return self._ospath.decode('utf-8')
 
-    def document_for_rev(self, revision):
+    def document_for_revision(self, revision):
         if revision is None:
             raise ValueError("Revision can't be None.")
         

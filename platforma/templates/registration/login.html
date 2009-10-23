@@ -8,7 +8,7 @@
 <form method="POST" action="{% url django.contrib.auth.views.login %}">
 {{ form.as_p }}
 <p><input type="submit" value="Login" /></p>
-<input type="hidden" name="next" value="{{ next }}" />
+<input type="hidden" name="next" value="{{ next|urlencode }}" />
 </form>
 </div>
 

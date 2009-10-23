@@ -228,7 +228,7 @@ Editor.HTMLModel = Editor.Model.extend({
 
     getXMLPart: function(elem, callback)
     {
-        var path = elem.attr('wl2o:path');
+        var path = elem.attr('x-pointer');
         if(!this.xmlParts[path])
             this.loadXMLPart(elem, callback);
         else
@@ -237,7 +237,7 @@ Editor.HTMLModel = Editor.Model.extend({
 
     loadXMLPart: function(elem, callback)
     {
-        var path = elem.attr('wl2o:path');
+        var path = elem.attr('x-pointer');
         var self = this;
 
         $.ajax({
@@ -265,7 +265,7 @@ Editor.HTMLModel = Editor.Model.extend({
     putXMLPart: function(elem, data) {
         var self = this;
       
-        var path = elem.attr('wl2o:path');
+        var path = elem.attr('x-pointer');
         this.xmlParts[path] = data;
 
         this.set('state', 'dirty');
