@@ -596,10 +596,13 @@ Editor.DocumentModel = Editor.Model.extend({
     mergeCompleted: function(xhr, textStatus) {
         console.log(xhr.status, xhr.responseText);
         var response = parseXHRResponse(xhr);
-        if(response.success)
-        {
-            if( (response.data.result == 'no-op')
-             || (response.data.shared_timestamp == response.data.shared_parent_timestamp))
+        
+        if(response.success) {
+        
+            if( (response.data.result == 'no-op') ||             
+             ( response.data.shared_parent_timestamp
+               && response.data.shared_timestamp
+               && (response.data.shared_timestamp == response.data.shared_parent_timestamp)) )
             {
                 if( (response.data.revision) && (response.data.revision != this.get('revision')) )
                 {

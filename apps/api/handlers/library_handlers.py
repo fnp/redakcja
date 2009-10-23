@@ -207,8 +207,8 @@ class DiffHandler(BaseHandler):
     @hglibrary
     def read(self, request, source_revision, target_revision, lib):
         '''Return diff between source_revision and target_revision)'''
-        source_document = lib.document_for_rev(source_revision)
-        target_document = lib.document_for_rev(target_revision)
+        source_document = lib.document_for_revision(source_revision)
+        target_document = lib.document_for_revision(target_revision)
         print source_document,
         print target_document
         diff = difflib.unified_diff(
@@ -261,7 +261,7 @@ class DocumentHandler(BaseHandler):
                 elif is_prq(user):
                     prq = prq_for_user(user)
                     # commiter's document
-                    prq_doc = lib.document_for_rev(prq.source_revision)
+                    prq_doc = lib.document_for_revision(prq.source_revision)
                     doc = prq_doc.take(user)
                 else:
                     return response.EntityNotFound().django_response({
@@ -310,7 +310,7 @@ class DocumentHTMLHandler(BaseHandler):
         try:
             revision = form.cleaned_data['revision']
             user = form.cleaned_data['user'] or request.user.username
-            document = lib.document_for_rev(revision)
+            document = lib.document_for_revision(revision)
 
             if document.id != docid:
                 return response.BadRequest().django_response({
@@ -412,7 +412,7 @@ class DocumentGalleryHandler(BaseHandler):
 #            if revision == 'latest':
 #                doc = lib.document(docid)
 #            else:
-#                doc = lib.document_for_rev(revision)
+#                doc = lib.document_for_revision(revision)
 #
 #
 #            if document.id != docid:
@@ -437,7 +437,7 @@ class DocumentGalleryHandler(BaseHandler):
 #                msg = u"$AUTO$ Dublin core update."
 #
 #            current = lib.document(docid, request.user.username)
-#            orig = lib.document_for_rev(revision)
+#            orig = lib.document_for_revision(revision)
 #
 #            if current != orig:
 #                return response.EntityConflict().django_response({
@@ -482,7 +482,7 @@ class MergeHandler(BaseHandler):
         doc = lib.document(docid)
 
         # fetch the base document
-        user_doc = lib.document_for_rev(revision)
+        user_doc = lib.document_for_revision(revision)
         base_doc = user_doc.latest()
 
         if base_doc != user_doc:
@@ -512,9 +512,11 @@ class MergeHandler(BaseHandler):
                     "message": "You must first update your branch to the latest version."
                 })
 
-            if not base_doc.would_share():
+            anwser, info = base_doc.would_share()
+                
+            if not anwser:
                 return response.SuccessAllOk().django_response({
-                    "result": "no-op"
+                    "result": "no-op", "message": info
                 })
 
             # check for unresolved conflicts            

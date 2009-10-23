@@ -99,14 +99,14 @@ class MercurialLibrary(wlrepo.Library):
         rev = self._sanitize_string(rev)
         
         if rev != u'latest':
-            doc = self.document_for_rev(rev)
+            doc = self.document_for_revision(rev)
 
             if doc.id != docid or (doc.owner != user):
                 raise wlrepo.RevisionMismatch(self.fulldocid(docid, user)+u'@'+unicode(rev))
             
             return doc
         else:
-            return self.document_for_rev(self.fulldocid(docid, user))
+            return self.document_for_revision(self.fulldocid(docid, user))
 
     def get_revision(self, revid):
         revid = self._sanitize_string(revid)
@@ -121,9 +121,12 @@ class MercurialLibrary(wlrepo.Library):
         if ctx is None:
             raise wlrepo.RevisionNotFound(revid)
 
+        return self._revision(ctx)       
+
+    def _revision(self, ctx):
         if self._revcache.has_key(ctx):
             return self._revcache[ctx]
-
+        
         return MercurialRevision(self, ctx)
 
     def fulldocid(self, docid, user=None):                
@@ -140,8 +143,7 @@ class MercurialLibrary(wlrepo.Library):
         except mercurial.error.RepoError:
             return False
 
-    def document_create(self, docid):
-        
+    def document_create(self, docid):       
         
         # check if it already exists
         fullid = self.fulldocid(docid)
@@ -151,7 +153,7 @@ class MercurialLibrary(wlrepo.Library):
 
         # doesn't exist
         self._create_branch(self._sanitize_string(fullid))
-        return self.document_for_rev(fullid)
+        return self.document_for_revision(fullid)
 
     #
     # Private methods

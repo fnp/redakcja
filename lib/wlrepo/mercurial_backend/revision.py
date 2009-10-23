@@ -103,9 +103,12 @@ class MercurialRevision(wlrepo.Revision):
         parents = self._changectx.parents()
 
         if len(parents) == 1:
-            return parents[0]
-
-        return parents[0] if (parents[0].branch() == self.branch()) else parents[1]
+            return self._library._revision(parents[0])
+        
+        if parents[0].branch() == self.branch():
+            return self._library._revision(parents[0])
+        else:
+            return self._library._revision(parents[1]) 
         
     def __eq__(self, other):
         return self._changectx.node() == other._changectx.node()

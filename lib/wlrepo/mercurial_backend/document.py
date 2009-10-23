@@ -168,13 +168,13 @@ class MercurialDocument(wlrepo.Document):
 
     def would_share(self):
         if self.ismain():
-            return False
+            return False, "Main version is always shared"
 
         shared = self.shared()
 
         # we just did this - move on
         if self.parentof(shared):
-            return False
+            return False, "Document has been recetly shared - no changes"
 
         #     *
         #    /|
@@ -191,13 +191,17 @@ class MercurialDocument(wlrepo.Document):
         #   | |
         # We want to prevent stuff like this.
         if self.parent().parentof(shared):
-            return False
+            return False, "Preventing zig-zag"
+
+        return True, "OK"
+
 
     def share(self, message):
         lock = self.library.lock()
         try:
+            result, info = self.would_share()
 
-            if not self.would_share():
+            if not result:
                 return self.shared()          
       
             # The good situation
@@ -209,6 +213,8 @@ class MercurialDocument(wlrepo.Document):
             #       / |
             # main *  *
             #      |  |
+            shared = self.shared()
+
             if shared.ancestorof(self):               
                 success = shared._revision.merge_with(self._revision, user=self.owner, message=message)
 
