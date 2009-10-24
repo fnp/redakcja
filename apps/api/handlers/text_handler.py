@@ -44,7 +44,7 @@ class DocumentTextHandler(BaseHandler):
             user = form.cleaned_data['user'] or request.user.username
             format = form.cleaned_data['format']
 
-            document = lib.document_for_rev(revision)
+            document = lib.document_for_revision(revision)
 
             if document.id != docid:
                 return response.BadRequest().django_response({

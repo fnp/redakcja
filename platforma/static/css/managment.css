@@ -9,18 +9,41 @@ table.request-report
     margin-right: auto;
 }
 
-.request-report td, .request-report th  {
-    vertical-align: top;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-
-    padding: 0.4em 1em;
-    margin: 0em;
+.pull-request {
+    padding: 20px 20px 10px 20px;
+    border-bottom: 1px dotted #CCC;
 }
 
-.request-report th {
-    background-color: black;
-    color: white;
+.pull-request h2 {
+    padding: 0;
+    margin: 0;
+    font-size: 22px;
+}
+
+.pull-request .request-info {
+    color: #999;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pull-request .request-info li {
+    float: left;
+    padding-right: 20px;
+}
+
+.pull-request p.comment {
+    clear: left;
+    padding: 20px 0;
+}
+
+.pull-request p {
+    margin: 0;
+    padding: 0;
+}
+
+.awesome.button {
+    margin-right: 10px;
 }
 
 .request-report .status-N {
@@ -33,4 +56,8 @@ table.request-report
 
 .request-report .status-A {
     background-color: gray;
+}
+
+.pull-request .diff {
+    white-space: pre;
 }

@@ -76,7 +76,7 @@ urlpatterns = patterns('',
     url(urlpath(r'documents', DOC, 'revision', format=False),
         document_merge, {'emitter_format': 'json'}, name="docmerge_view"),
         
-    url(r'diffs/(?P<source_revision>latest|[0-9a-fA-F]+)/(?P<target_revision>latest|[0-9a-fA-F]+)/$',
+    url(r'documents/(?P<docid>[^/]+)/diff$',
         diff_resource, {'emitter_format': 'raw'}, name="diff_resource"),
     
 
