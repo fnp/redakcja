@@ -85,11 +85,13 @@
             <li>data: {{ pullreq.timestamp }}</li>
         </ul>
         <p class="comment">{{ pullreq.comment }}</p>
+        {% ifnotequal pullreq.status 'A' %}
         <p class="buttons">
             <button type="button" class="awesome button green accept-button" title="{{pullreq.id}}">Akceptuj</button>
             <button type="button" class="awesome button show-diff" title="{{pullreq.id}}">Zmiany</button>
             <a class="awesome button" href="{% url editor_view pullreq.document %}?user=$prq-{{pullreq.id}}">Zobacz</a>
         </p>
+        {% endifnotequal %}
     </div>
     {% endfor %}
 {% else %}

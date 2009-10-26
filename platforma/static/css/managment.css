@@ -46,18 +46,25 @@ table.request-report
     margin-right: 10px;
 }
 
-.request-report .status-N {
-    background-color: teal;
+.pull-request.status-N {
+    background-color: #FFF;
 }
 
-.request-report .status-R {
+.pull-request.status-R {
     background-color: red;
 }
 
-.request-report .status-A {
-    background-color: gray;
+.pull-request.status-A {
+    background-color: #DDD;
 }
 
 .pull-request .diff {
     white-space: pre;
+    height: 360px;
+    width: 960px;
+    overflow: auto;
+    border: 1px solid #CCC;
+    margin-top: 10px;
+    background-color: #F9F9F9;
+    padding: 2px;
 }
