@@ -246,22 +246,41 @@
     counter-increment: main;
 }
 
+.htmlview .annotation:hover {
+    background-color: #dfdfdf;
+}
+
+.parse-warning .message {
+    color: purple;
+    font-weight: bold;
+}
+
+
+/*
+ * EDITABLE ELEMENTS
+ */
+
 .htmlview *[x-editable] {
     border: 2px solid white;
     padding: 5px;
 }
 
 /* focused editable element */
-.htmlview *[x-editable]:hover,
-.htmlview *[x-editable][x-open]
+.htmlview *[x-editable]:hover
 {
     background-color: #dfdfdf;
     border: 2px solid black;
+    z-index: 100;
 }
 
-.htmlview *[x-editable] *.context-menu {
+.htmlview *[x-editable][x-open]
+{
+    visibility: hidden;
+}
+
+.htmlview *[x-editable] .context-menu {
     position: absolute;
-    top: -24px;
+    top: -28px;
     left: -2px;
     height: 24px;
     
@@ -281,6 +300,7 @@
     border-right: 2px solid black;    
     
     display: none;
+    visibility: visible;
     overflow: hidden;
     
     -moz-border-radius-topright: 5px;
@@ -288,6 +308,8 @@
 
     -webkit-border-top-right-radius: 5px;
     -webkit-border-top-left-radius: 5px;
+
+    z-index: 3000;
 }
 
 .htmlview *[x-editable] *.context-menu * {
@@ -296,21 +318,62 @@
 
 .htmlview *[x-editable] *.context-menu *:hover {
     background-color: yellow;
+    z-index: 3100;
 }
 
-.htmlview *[x-editable]:hover *.context-menu {
+/*
+ * VISIBILITY RULES
+ */
+.htmlview *[x-editable]:hover *.default-menu {
     display: block;
 }
 
-.htmlview *[x-editable][x-open] *.context-menu {
+.htmlview *[x-editable][x-open] *.default-menu {
     display: none;
 }
 
-.htmlview .annotation:hover {
-    background-color: #dfdfdf;
+.htmlview *[x-editable][x-open] *.edit-menu {
+    display: block;
 }
 
-.parse-warning .message {
-    color: purple;
-    font-weight: bold;
+.html-editarea {
+    border: 2px solid black;
+    background-color: gray;
+    padding: 1px;
+
+    z-index: 2000;
 }
+
+.html-editarea textarea
+{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 0;
+    font-size: 10pt;
+    background-color: ivory;
+}
+
+.html-editarea p.html-editarea-toolbar {
+    position: absolute;
+    background: gray;
+
+    bottom: -26px;
+    height: 24px;
+
+    left: 0px;
+    right: 0px;
+
+    border: 2px solid black;
+
+    margin: 0px;
+    padding: 0px;
+
+    z-index: 100;
+}
+
+

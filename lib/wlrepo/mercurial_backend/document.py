@@ -103,7 +103,7 @@ class MercurialDocument(wlrepo.Document):
             self.invoke_and_commit(take_action, \
                 lambda d: ("$AUTO$ File checkout.", user) )
 
-        return self._library.document_for_rev(fullid)
+        return self._library.document_for_revision(fullid)
 
     def up_to_date(self):
         if self.ismain():

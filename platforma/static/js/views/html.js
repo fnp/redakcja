@@ -14,17 +14,22 @@ var HTMLView = View.extend({
         .addObserver(this, 'state', this.modelStateChanged.bind(this));
       
         $('.htmlview', this.element).html(this.model.get('data'));
+
+        this.$menuTemplate = $(render_template('html-view-frag-menu-template', this));
+        
         this.modelStateChanged('state', this.model.get('state'));
-        this.model.load();       
+        this.model.load();
+
+        this.currentOpen = null;
     },
 
     modelDataChanged: function(property, value) {
         $('.htmlview', this.element).html(value);
         this.updatePrintLink();
-
+        var self = this;
+        
         $("*[x-editable]").each(function() {
-            var e = $('<span class="context-menu"><span class="edit-button">Edytuj</span><span>Przypisy</span></span>');
-            e.appendTo(this);
+            $(this).append( self.$menuTemplate.clone() );
         });
     },
 
@@ -40,6 +45,7 @@ var HTMLView = View.extend({
         if (value == 'synced' || value == 'dirty') {
             this.unfreeze();
         } else if (value == 'unsynced') {
+            if(this.currentOpen) this.closeWithoutSave(this.currentOpen);
             this.freeze('Niezsynchronizowany...');
         } else if (value == 'loading') {
             this.freeze('Ładowanie...');
@@ -86,81 +92,93 @@ var HTMLView = View.extend({
         this._super();
     },
 
-    itemHover: function(event)
-    {
-        var $e = $(event.target);
-        if( $e.attr('x-editable') == 'editable' ) {
-            console.log('over:', $e[0]);
-            $e.css({'background-color': 'grey'});
-        }
-
-    },
-
     itemClicked: function(event) 
     {
         var self = this;
         
-        console.log('click:', event, event.ctrlKey, event.target);
-        var editableContent = null;
+        console.log('click:', event, event.ctrlKey, event.target);        
         var $e = $(event.target);
 
         if($e.hasClass('edit-button'))
-            this.openForEdit($e);
+            this.openForEdit( this.editableFor($e) );
+
+        if($e.hasClass('accept-button'))
+            this.closeWithSave( this.editableFor($e) );
+
+        if($e.hasClass('reject-button'))
+            this.closeWithoutSave( this.editableFor($e) );
     },
 
-    openForEdit: function($e)
-    {
-        var n = 0;        
+    closeWithSave: function($e) {
+        var $edit = $e.data('edit-overlay');
+        var newText = $('textarea', $edit).val();
 
-        while( ($e[0] != this.element[0]) && !($e.attr('x-editable'))
-            && n < 50)
+        this.model.putXMLPart($e, newText, function($e, html) {
+            this.renderPart($e, html);
+            $edit.remove();
+            $e.removeAttr('x-open');            
+        }.bind(this) );
+        this.currentOpen = null;
+    },
+
+    closeWithoutSave: function($e) {
+        var $edit = $e.data('edit-overlay');
+        $edit.remove();
+        $e.removeAttr('x-open');
+        this.currentOpen = null;
+    },
+
+    renderPart: function($e, html) {
+            $e.html(html);
+            $e.append( this.$menuTemplate.clone() );
+    },
+
+    editableFor: function($button) 
+    {
+        var $e = $button;
+        var n = 0;
+        
+        while( ($e[0] != this.element[0]) && !($e.attr('x-editable')) && n < 50)
         {
             // console.log($e, $e.parent(), this.element);
             $e = $e.parent();
             n += 1;
         }
-      
-        if(!$e.attr('x-editable'))
-            return true;
 
-        var $origin = $e;
-        console.log("editable: ", $e);
+        if(!$e.attr('x-editable'))
+            throw Exception("Click outside of editable")
+
+        return $e;
+    },
+
+    openForEdit: function($origin)
+    {       
+        if(this.currentOpen && this.currentOpen != $origin) {
+            this.closeWithSave(this.currentOpen);
+            
+        }
     
         // start edition on this node       
-        var $overlay = $(
-        '<div class="html-editarea">\n\
-            <p class="html-editarea-toolbar">\n\
-                <button class="html-editarea-save-button" type="button">Zapisz</button>\n\
-                <button class="html-editarea-cancel-button" type="button">Anuluj</button>\n\
-            </p>\n\
-            <textarea></textarea>\n\
-        </div>');
+        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
 
-        var x = $e[0].offsetLeft;
-        var y = $e[0].offsetTop;
-        var w = $e.outerWidth();
-        var h = $e.innerHeight();
-        $overlay.css({position: 'absolute', height: 1.2*h, left: x, top: y, width: w});
-        // $e.offsetParent().append($overlay);
-
+        var x = $origin[0].offsetLeft;
+        var y = $origin[0].offsetTop;
+        var w = $origin.outerWidth();
+        var h = $origin.innerHeight();
         
-                        
-        /* $('.html-editarea-cancel-button', $overlay).click(function() {
-            $overlay.remove();
-        });
+        $overlay.css({position: 'absolute', height: h, left: x, top: y, width: '95%'});
+        
+            $origin.offsetParent().append($overlay);
+            $origin.data('edit-overlay', $overlay);
+                     
+            this.model.getXMLPart($origin, function(path, data) {
+                $('textarea', $overlay).val(data);
+            });
 
-        $('.html-editarea-save-button', $overlay).click(function() {
-            $overlay.remove();
-
-            // put the part back to the model
-            self.model.putXMLPart($e, $('textarea', $overlay).val());
-        }); */
-
-        this.model.getXMLPart($e, function(path, data) {
-            $('textarea', $overlay).val(data);
-        });
-
-        $origin.attr('x-open', 'open');
+            this.currentOpen = $origin;
+            $origin.attr('x-open', 'open');
+        
+        
         return false;
     }
   

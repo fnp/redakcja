@@ -44,7 +44,7 @@ class DocumentTextHandler(BaseHandler):
             user = form.cleaned_data['user'] or request.user.username
             format = form.cleaned_data['format']
 
-            document = lib.document_for_rev(revision)
+            document = lib.document_for_revision(revision)
 
             if document.id != docid:
                 return response.BadRequest().django_response({
@@ -92,6 +92,7 @@ class DocumentTextHandler(BaseHandler):
     @validate_form(forms.TextUpdateForm, 'POST')
     @hglibrary
     def create(self, request, form, docid, lib):
+        lock = lib.lock();
         try:
             revision = form.cleaned_data['revision']
             msg = form.cleaned_data['message']
@@ -100,14 +101,13 @@ class DocumentTextHandler(BaseHandler):
             # do not allow changing not owned documents
             # (for now... )
 
-
             if user != request.user.username:
                 return response.AccessDenied().django_response({
                     'reason': 'insufficient-priviliges',
                 })
 
             current = lib.document(docid, user)
-            orig = lib.document_for_rev(revision)
+            orig = lib.document_for_revision(revision)
 
             if current != orig:
                 return response.EntityConflict().django_response({
@@ -115,11 +115,15 @@ class DocumentTextHandler(BaseHandler):
                         "provided_revision": orig.revision,
                         "latest_revision": current.revision })
 
-            if form.cleaned_data.has_key('contents'):
+            if form.cleaned_data['contents']:
                 data = form.cleaned_data['contents']
             else:
                 chunks = form.cleaned_data['chunks']
-                xdoc = parser.WLDocument.from_string(current.data('xml'))
+                data = current.data('xml')
+                log.info(data[:600])
+                log.info(chunks)
+
+                xdoc = parser.WLDocument.from_string(data)               
                 errors = xdoc.merge_chunks(chunks)
 
                 if len(errors):
@@ -129,6 +133,7 @@ class DocumentTextHandler(BaseHandler):
                     })
 
                 data = xdoc.serialize()
+
 
             # try to find any Xinclude tags
             includes = [m.groupdict()['link'] for m in (re.finditer(\
@@ -182,3 +187,5 @@ class DocumentTextHandler(BaseHandler):
         except RevisionNotFound, e:
             return response.EntityNotFound(mimetype="text/plain").\
                 django_response(e.message)
+        finally:
+                lock.release()

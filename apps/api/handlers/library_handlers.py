@@ -231,7 +231,7 @@ class DocumentHandler(BaseHandler):
     @hglibrary
     def read(self, request, form, docid, lib):
         """Read document's meta data"""       
-        log.info(u"User '%s' wants to %s(%s) as %s" % \
+        log.info(u"User '%s' wants to edit %s(%s) as %s" % \
             (request.user.username, docid, form.cleaned_data['revision'], form.cleaned_data['user']) )
 
         user = form.cleaned_data['user'] or request.user.username
@@ -338,10 +338,10 @@ class DocumentHTMLHandler(BaseHandler):
                 'reason': 'not-found', 'message': e.message})
         except librarian.ValidationError, e:
             return response.InternalError().django_response({
-                'reason': 'xml-non-valid', 'message': e.message })
+                'reason': 'xml-non-valid', 'message': e.message or u''})
         except librarian.ParseError, e:
             return response.InternalError().django_response({
-                'reason': 'xml-parse-error', 'message': e.message })
+                'reason': 'xml-parse-error', 'message': e.message or u'' })
 
 #
 # Image Gallery
