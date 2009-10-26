@@ -55,6 +55,7 @@
                 button.attr('disabled', 'disabled');
                 var id = parseInt(button.attr('title'));
                 var docid = $('h2', button.parents('.pull-request')).html();
+                var diffUrl = button.parents('.pull-request').attr('data-diff-url');
                 var revision = $('.pull-request-revision', button.parents('.pull-request')).html();
                 
                 $('.diff').slideUp(function() { $(this).remove() });
@@ -62,7 +63,7 @@
                     .hide()
                     .appendTo($(this).parents('.pull-request'))
                     .slideDown('slow')
-                    .load('/api/documents/' + docid + '/diff?revision=' + revision, null, function() {
+                    .load(diffUrl + '?revision=' + revision, null, function() {
                         button.attr('disabled', null);
                     });
             }
@@ -75,7 +76,7 @@
 {% block maincontent %}
 {% if objects %}
     {% for pullreq in objects %}
-    <div class="status-{{ pullreq.status }} pull-request" id="request-{{ pullreq.id }}">
+    <div class="status-{{ pullreq.status }} pull-request" id="request-{{ pullreq.id }}" data-diff-url="{% url diff_resource pullreq.document %}">
         <h2>{{ pullreq.document }}</h2>
         <ul class="request-info">
             <li>commiter: {{ pullreq.comitter }}</li>
