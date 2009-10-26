@@ -190,18 +190,22 @@ class MercurialDocument(wlrepo.Document):
         #   | *
         #   | |
         # We want to prevent stuff like this.
-        if self.parent().parentof(shared):
+        if self.parent().parentof(shared) and shared.parentof(self):
             return False, "Preventing zig-zag"
 
-        return True, "OK"
-
+        return True, "All ok"
 
     def share(self, message):
         lock = self.library.lock()
         try:
-            result, info = self.would_share()
+            # check if the document is in "updated" state
+            if not self.up_to_date():
+                raise wlrepo.OutdatedException("You must update your document before share.")
 
-            if not result:
+            # now check if there is anything to do
+            need_work, info = self.would_share()
+            
+            if not need_work:
                 return self.shared()          
       
             # The good situation
@@ -215,15 +219,14 @@ class MercurialDocument(wlrepo.Document):
             #      |  |
             shared = self.shared()
 
-            if shared.ancestorof(self):               
+            try:
                 success = shared._revision.merge_with(self._revision, user=self.owner, message=message)
-
                 if not success:
                     raise wlrepo.LibraryException("Merge failed.")
                 
                 return shared.latest()
-
-            raise wlrepo.LibraryException("Unrecognized share-state.")
+            except Abort, e:
+                raise wlrepo.LibraryException( repr(e) )
         finally:
             lock.release()
 

@@ -64,8 +64,7 @@ class DocumentTextHandler(BaseHandler):
             if not chunk:
                 return document.data('xml')
 
-            xdoc = parser.WLDocument.from_string(document.data('xml'),\
-                parse_dublincore=False)
+            xdoc = parser.WLDocument.from_string(document.data('xml'), parse_dublincore=False)
 
             xchunk = xdoc.chunk(chunk)
 
@@ -123,7 +122,7 @@ class DocumentTextHandler(BaseHandler):
                 log.info(data[:600])
                 log.info(chunks)
 
-                xdoc = parser.WLDocument.from_string(data)               
+                xdoc = parser.WLDocument.from_string(data, parse_dublincore=False)
                 errors = xdoc.merge_chunks(chunks)
 
                 if len(errors):

@@ -476,114 +476,125 @@ class MergeHandler(BaseHandler):
     @hglibrary
     def create(self, request, form, docid, lib):
         """Create a new document revision from the information provided by user"""
-        revision = form.cleaned_data['revision']
+        try:
+            revision = form.cleaned_data['revision']
 
-        # fetch the main branch document
-        doc = lib.document(docid)
+            # fetch the main branch document
+            doc = lib.document(docid)
 
-        # fetch the base document
-        user_doc = lib.document_for_revision(revision)
-        base_doc = user_doc.latest()
+            # fetch the base document
+            user_doc = lib.document_for_revision(revision)
+            base_doc = user_doc.latest()
 
-        if base_doc != user_doc:
-            return response.EntityConflict().django_response({
-                "reason": "out-of-date",
-                "provided": str(user_doc.revision),
-                "latest": str(base_doc.revision)
-            })      
-
-        if form.cleaned_data['type'] == 'update':
-            # update is always performed from the file branch
-            # to the user branch
-            user_doc_new = base_doc.update(request.user.username)
-
-            if user_doc_new == user_doc:
-                return response.SuccessAllOk().django_response({
-                    "result": "no-op"
-                })
-                
-            # shared document is the same
-            doc_new = doc
-
-        if form.cleaned_data['type'] == 'share':
-            if not base_doc.up_to_date():
-                return response.BadRequest().django_response({
-                    "reason": "not-fast-forward",
-                    "message": "You must first update your branch to the latest version."
+            if base_doc != user_doc:
+                return response.EntityConflict().django_response({
+                    "reason": "out-of-date",
+                    "provided": str(user_doc.revision),
+                    "latest": str(base_doc.revision)
                 })
 
-            anwser, info = base_doc.would_share()
-                
-            if not anwser:
-                return response.SuccessAllOk().django_response({
-                    "result": "no-op", "message": info
-                })
+            if form.cleaned_data['type'] == 'update':
+                # update is always performed from the file branch
+                # to the user branch
+                user_doc_new = base_doc.update(request.user.username)
 
-            # check for unresolved conflicts            
-            if base_doc.has_conflict_marks():
-                return response.BadRequest().django_response({                    
-                    "reason": "unresolved-conflicts",
-                    "message": "There are unresolved conflicts in your file. Fix them, and try again."
-                })
-
-            if not request.user.has_perm('api.share_document'):
-                # User is not permitted to make a merge, right away
-                # So we instead create a pull request in the database
-                try:
-                    prq, created = PullRequest.objects.get_or_create(
-                        comitter = request.user,
-                        document = docid,
-                        status = "N",
-                        defaults = {
-                            'source_revision': str(base_doc.revision),
-                            'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
-                        }
-                    )
-
-                    # there can't be 2 pending request from same user
-                    # for the same document
-                    if not created:
-                        prq.source_revision = str(base_doc.revision)
-                        prq.comment = prq.comment + 'u\n\n' + (form.cleaned_data['message'] or u'')
-                        prq.save()
-
-                    return response.RequestAccepted().django_response(\
-                        ticket_status=prq.status, \
-                        ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
-                except IntegrityError:
-                    return response.EntityConflict().django_response({
-                        'reason': 'request-already-exist'
+                if user_doc_new == user_doc:
+                    return response.SuccessAllOk().django_response({
+                        "result": "no-op"
                     })
 
-            changed = base_doc.share(form.cleaned_data['message'])
-
-            # update shared version if needed
-            if changed:
-                doc_new = doc.latest()
-            else:
+                # shared document is the same
                 doc_new = doc
 
-            # the user wersion is the same
-            user_doc_new = base_doc
+            if form.cleaned_data['type'] == 'share':
+                if not base_doc.up_to_date():
+                    return response.BadRequest().django_response({
+                        "reason": "not-fast-forward",
+                        "message": "You must first update your branch to the latest version."
+                    })
 
-        # The client can compare parent_revision to revision
-        # to see if he needs to update user's view        
-        # Same goes for shared view
-        
-        return response.SuccessAllOk().django_response({
-            "result": "success",
-            "name": user_doc_new.id,
-            "user": user_doc_new.owner,
+                anwser, info = base_doc.would_share()
 
-            "revision": user_doc_new.revision,
-            'timestamp': user_doc_new.revision.timestamp,
+                if not anwser:
+                    return response.SuccessAllOk().django_response({
+                        "result": "no-op", "message": info
+                    })
 
-            "parent_revision": user_doc.revision,
-            "parent_timestamp": user_doc.revision.timestamp,
+                # check for unresolved conflicts
+                if base_doc.has_conflict_marks():
+                    return response.BadRequest().django_response({
+                        "reason": "unresolved-conflicts",
+                        "message": "There are unresolved conflicts in your file. Fix them, and try again."
+                    })
 
-            "shared_revision": doc_new.revision,
-            "shared_timestamp": doc_new.revision.timestamp,
+                if not request.user.has_perm('api.share_document'):
+                    # User is not permitted to make a merge, right away
+                    # So we instead create a pull request in the database
+                    try:
+                        prq, created = PullRequest.objects.get_or_create(
+                            comitter = request.user,
+                            document = docid,
+                            status = "N",
+                            defaults = {
+                                'source_revision': str(base_doc.revision),
+                                'comment': form.cleaned_data['message'] or '$AUTO$ Document shared.',
+                            }
+                        )
 
-            "shared_parent_revision": doc.revision,
-            "shared_parent_timestamp": doc.revision.timestamp,
-        })
+                        # there can't be 2 pending request from same user
+                        # for the same document
+                        if not created:
+                            prq.source_revision = str(base_doc.revision)
+                            prq.comment = prq.comment + 'u\n\n' + (form.cleaned_data['message'] or u'')
+                            prq.save()
+
+                        return response.RequestAccepted().django_response(\
+                            ticket_status=prq.status, \
+                            ticket_uri=reverse("pullrequest_view", args=[prq.id]) )
+                    except IntegrityError:
+                        return response.EntityConflict().django_response({
+                            'reason': 'request-already-exist'
+                        })
+
+                changed = base_doc.share(form.cleaned_data['message'])
+
+                # update shared version if needed
+                if changed:
+                    doc_new = doc.latest()
+                else:
+                    doc_new = doc
+
+                # the user wersion is the same
+                user_doc_new = base_doc
+
+            # The client can compare parent_revision to revision
+            # to see if he needs to update user's view
+            # Same goes for shared view
+
+            return response.SuccessAllOk().django_response({
+                "result": "success",
+                "name": user_doc_new.id,
+                "user": user_doc_new.owner,
+
+                "revision": user_doc_new.revision,
+                'timestamp': user_doc_new.revision.timestamp,
+
+                "parent_revision": user_doc.revision,
+                "parent_timestamp": user_doc.revision.timestamp,
+
+                "shared_revision": doc_new.revision,
+                "shared_timestamp": doc_new.revision.timestamp,
+
+                "shared_parent_revision": doc.revision,
+                "shared_parent_timestamp": doc.revision.timestamp,
+            })
+        except wlrepo.OutdatedException, e:
+            return response.BadRequest().django_response({
+                        "reason": "not-fast-forward",
+                        "message": e.message
+                    })
+        except wlrepo.LibraryException, e:
+            return response.InternalError().django_response({
+                        "reason": "merge-error",
+                        "message": e.message
+                    })
