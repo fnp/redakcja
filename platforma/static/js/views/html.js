@@ -21,16 +21,35 @@ var HTMLView = View.extend({
         this.model.load();
 
         this.currentOpen = null;
+        this.themeBoxes = [];
     },
 
     modelDataChanged: function(property, value) {
         $('.htmlview', this.element).html(value);
         this.updatePrintLink();
         var self = this;
-        
+
+        /* upgrade editable elements */
         $("*[x-editable]").each(function() {
             $(this).append( self.$menuTemplate.clone() );
         });
+
+        var n = 5001;
+
+        var doc_base = $('.htmlview .utwor', this.element);
+
+        /* mark themes */
+        $(".theme-ref").each(function() {
+            var id = $(this).attr('x-theme-class');
+
+            var end = $("span.theme-end[x-theme-class = " + id+"]");
+            var begin = $("span.theme-begin[x-theme-class = " + id+"]");
+
+            var h = $(this).outerHeight();
+
+            h = Math.max(h, end.offset().top - begin.offset().top);
+            $(this).css('height', h);
+        }); 
     },
 
     updatePrintLink: function() {

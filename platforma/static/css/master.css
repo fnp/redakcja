@@ -165,10 +165,10 @@ text#commit-dialog-message {
     top: 0;
     bottom: 0;
 
-    user-select: 'none';
+    /* user-select: 'none';
     -webkit-user-select: 'none';
     -khtml-user-select: 'none';
-    -moz-user-select: 'none';
+    -moz-user-select: 'none'; */
     overflow: 'hidden';    
 }
 

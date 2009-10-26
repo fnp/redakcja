@@ -5,7 +5,8 @@
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
-    padding: 3em;    
+    padding: 3em;
+    padding-left: 55px;
 }
 
 .htmlview * {
@@ -31,6 +32,8 @@
     text-align: center;
     line-height: 1.5em;
     font-weight: bold;
+
+    text-transform: capitalize;
 }
 
 .htmlview h2 {
@@ -55,25 +58,6 @@
 
 .htmlview p {
     margin: 0;
-}
-
-/* ======================== */
-/* = Footnotes and themes = */
-/* ======================== */
-.htmlview .theme-begin {
-    border-left: 0.1em solid #DDDDDD;
-    color: #777;
-    padding: 0 0.5em;
-    width: 7.5em;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    float: right;
-    margin-right: -9.5em;
-    clear: both;
-    left: 40em;
-    line-height: 1.5em;
-    text-align: left;
 }
 
 .htmlview #footnotes div {
@@ -226,6 +210,37 @@
     margin: 1em;
 }
 
+
+/* Motywy */
+/* ======================== */
+/* = Footnotes and themes = */
+/* ======================== */
+
+.htmlview .theme-begin, .htmlview .theme-end {
+    background: green;
+}
+
+.htmlview .theme-ref {
+    position: absolute;
+    right: -8em;
+    
+    min-width: 5em;
+    max-width: 8em;
+
+    font-weight: normal;
+    font-size: 10pt;
+    font-variant: normal;
+    text-decoration: none;
+
+    padding: 0.2em 0.2em 0.2em 0.5em;
+    
+    border: 1px solid gray;
+    border-left: 2px dotted gray;
+    border-right: none;
+    
+    z-index: 1;
+}
+
 /* Przypisy */
 .htmlview .annotation {    
     vertical-align: super;
@@ -240,6 +255,30 @@
 /* .htmlview .annotation:before {
     content: "[\2217]";
 } */
+
+.htmlview .annotations-block {
+    counter-reset: secondary;
+}
+
+.htmlview .annotations-block .annotation-body {
+    position: relative;
+    padding-left: 2.5em;
+    padding-top: 0.2em;
+}
+
+.htmlview .annotations-block .annotation-backref {
+    position: absolute;
+    top: 0.4em;
+    left: -0.4em;
+    width: 2.5em;
+    text-align: right;
+
+}
+
+.htmlview .annotations-block .annotation-backref:before {
+    content: "[" counter(secondary) "]";
+    counter-increment: secondary;
+}
 
 .htmlview span.annotation:before {
     content: "[" counter(main) "]";
@@ -260,17 +299,14 @@
  * EDITABLE ELEMENTS
  */
 
-.htmlview *[x-editable] {
-    border: 2px solid white;
-    padding: 5px;
+.htmlview *[x-editable] {    
+    padding-left: 3px;
 }
 
 /* focused editable element */
 .htmlview *[x-editable]:hover
-{
-    background-color: #dfdfdf;
-    border: 2px solid black;
-    z-index: 100;
+{    
+    
 }
 
 .htmlview *[x-editable][x-open]
@@ -280,52 +316,68 @@
 
 .htmlview *[x-editable] .context-menu {
     position: absolute;
-    top: -28px;
-    left: -2px;
-    height: 24px;
+    top: 0px;
+    left: -50px;
+    width: 50px;
     
     text-align: center;
-
-    font-size: 14px;
-    line-height: 24px;
+    font-size: 11px;
+    line-height: 15px;
+    
     font-weight: normal;
     font-style: normal;
 
     background-color: #dfdfdf;
+
     margin: 0px;
     padding: 0px;
 
-    border-top: 2px solid black;
-    border-left: 2px solid black;
-    border-right: 2px solid black;    
-    
     display: none;
     visibility: visible;
+
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    
     overflow: hidden;
     
-    -moz-border-radius-topright: 5px;
-    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-bottomleft: 2px;
 
-    -webkit-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
 
     z-index: 3000;
 }
 
 .htmlview *[x-editable] *.context-menu * {
-    padding: 5px;
+    margin: 0px;
+    display: block;
+
+    padding: 2px;
+    cursor: pointer;
+    border-bottom: 1px solid black;
+}
+
+.htmlview *[x-editable] *.context-menu *:last-child {    
+    cursor: pointer;
+    border-bottom: none;
 }
 
 .htmlview *[x-editable] *.context-menu *:hover {
-    background-color: yellow;
-    z-index: 3100;
+    background-color: orange;
 }
 
 /*
  * VISIBILITY RULES
  */
-.htmlview *[x-editable]:hover *.default-menu {
+.htmlview *[x-editable] *.default-menu {
     display: block;
+    opacity: 0.4;
+}
+
+.htmlview *[x-editable] *.default-menu:hover {
+    opacity: 1;
 }
 
 .htmlview *[x-editable][x-open] *.default-menu {
