@@ -114,6 +114,9 @@ class LibraryException(Exception):
 class UpdateException(LibraryException):
     pass
 
+class OutdatedException(LibraryException):
+    pass
+
 class RevisionNotFound(LibraryException):
     def __init__(self, rev):
         LibraryException.__init__(self, "Revision %r not found." % rev)
