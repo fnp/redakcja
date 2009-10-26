@@ -105,7 +105,7 @@ class MercurialRevision(wlrepo.Revision):
         if len(parents) == 1:
             return self._library._revision(parents[0])
         
-        if parents[0].branch() == self.branch():
+        if parents[0].branch() == self.hgbranch():
             return self._library._revision(parents[0])
         else:
             return self._library._revision(parents[1]) 
