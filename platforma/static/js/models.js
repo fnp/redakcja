@@ -262,7 +262,7 @@ Editor.HTMLModel = Editor.Model.extend({
         });
     },
 
-    putXMLPart: function(elem, data) {
+    putXMLPart: function(elem, data, callback) {
         var self = this;
       
         var path = elem.attr('x-pointer');
@@ -281,7 +281,7 @@ Editor.HTMLModel = Editor.Model.extend({
                 // format: 'nl'
             },
             success: function(htmldata) {
-                elem.html(htmldata);
+                callback(elem, htmldata);
                 self.set('state', 'dirty');
             }
         });

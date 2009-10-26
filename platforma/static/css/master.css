@@ -103,11 +103,11 @@ text#commit-dialog-message {
     border-right: 1px solid #999;
     height: 100%;
     background-color: #CCC;
-    z-index: 100;
+    z-index: 5100;
 }
 
 .splitview-overlay {
-    z-index: 90;
+    z-index: 5000;
     background: #FFF;
     opacity: 0.5;
 }
@@ -272,48 +272,7 @@ body#base button:hover {
     background-color: #EEE;
 }
 
-/* HTML editor interactive elements */
 
-.html-editarea {
-    border: 2px solid black;
-    background-color: gray;
-    padding: 1px;
-
-    z-index: 2000;
-}
-
-.html-editarea textarea
-{   
-   
-    border: 0px;
-    margin: 0px;    
-    padding: 0px;
-    
-    width: 100%;
-    height: 100%;
-    
-    z-index: 0;
-    font-size: 10pt;
-    background-color: ivory;
-}
-
-.html-editarea p.html-editarea-toolbar {
-    position: absolute;
-    background: gray;
-
-    bottom: -26px;
-    height: 24px;
-    
-    left: 0px;
-    right: 0px;    
-        
-    border: 2px solid black;
-
-    margin: 0px;
-    padding: 0px;
-
-    z-index: 100;
-}
 
 /* ================= */
 /* = Message boxes = */

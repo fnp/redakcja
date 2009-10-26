@@ -137,6 +137,8 @@ class MercurialLibrary(wlrepo.Library):
         return fulldocid
 
     def has_revision(self, revid):
+        revid = self._sanitize_string(revid)
+        
         try:
             self._hgrepo[revid]
             return True
