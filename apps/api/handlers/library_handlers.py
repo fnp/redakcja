@@ -4,12 +4,7 @@ import os.path
 import logging
 log = logging.getLogger('platforma.api.library')
 
-__author__= "Łukasz Rekucki"
-__date__ = "$2009-09-25 15:49:50$"
-__doc__ = "Module documentation."
-
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from django.http import HttpResponse
 
 from datetime import date
 
@@ -19,10 +14,8 @@ from django.db import IntegrityError
 import librarian
 import librarian.html
 import difflib
-from librarian import dcparser, parser
 
 from wlrepo import *
-from api.models import PullRequest
 from explorer.models import GalleryForDocument
 
 # internal imports
@@ -184,27 +177,6 @@ class LibraryHandler(BaseHandler):
 #
 # Document Handlers
 #
-class BasicDocumentHandler(AnonymousBaseHandler):
-    allowed_methods = ('GET',)
-
-    @hglibrary
-    def read(self, request, docid, lib):
-        try:    
-            doc = lib.document(docid)
-        except RevisionNotFound:
-            return rc.NOT_FOUND
-
-        result = {
-            'name': doc.id,
-            'html_url': reverse('dochtml_view', args=[doc.id]),
-            'text_url': reverse('doctext_view', args=[doc.id]),
-            'dc_url': reverse('docdc_view', args=[doc.id]),
-            'public_revision': doc.revision,
-        }
-
-        return result
-
-
 class DiffHandler(BaseHandler):
     allowed_methods = ('GET',)
     
@@ -233,7 +205,6 @@ class DiffHandler(BaseHandler):
 #
 class DocumentHandler(BaseHandler):
     allowed_methods = ('GET', 'PUT')
-    anonymous = BasicDocumentHandler
 
     @validate_form(forms.DocumentRetrieveForm, 'GET')
     @hglibrary
