@@ -109,11 +109,10 @@ def _get_issues_for_file(fileid):
 # = Pull requests =
 # =================
 def pull_requests(request):    
-    objects = PullRequest.objects.order_by('status')
+    objects = PullRequest.objects.order_by('-status', 'timestamp')
 
     if not request.user.has_perm('explorer.book.can_share'):
         objects = objects.filter(comitter=request.user)
 
-    
     return direct_to_template(request, 'manager/pull_request.html', 
         extra_context = {'objects': objects} )
