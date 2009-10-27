@@ -60,7 +60,7 @@ class PullRequestHandler(BaseHandler):
                 'message': "This pull request is alredy resolved. Can't accept."
             })
             
-        src_doc = lib.document_for_rev( prq.source_revision )
+        src_doc = lib.document_for_revision( prq.source_revision )
 
         lock = lib.lock()
         try:

@@ -31,6 +31,10 @@ import api.response as response
 from api.utils import validate_form, hglibrary, natural_order
 from api.models import PartCache, PullRequest
 
+from pygments import highlight
+from pygments.lexers import DiffLexer
+from pygments.formatters import HtmlFormatter
+
 #
 import settings
 
@@ -205,19 +209,23 @@ class DiffHandler(BaseHandler):
     allowed_methods = ('GET',)
     
     @hglibrary
-    def read(self, request, source_revision, target_revision, lib):
-        '''Return diff between source_revision and target_revision)'''
-        source_document = lib.document_for_revision(source_revision)
-        target_document = lib.document_for_revision(target_revision)
-        print source_document,
-        print target_document
+    def read(self, request, docid, lib):
+        '''Return diff between source_revision and target_revision)'''        
+        revision = request.GET.get('revision')
+        if not revision:
+            return ''
+        source_document = lib.document(docid)
+        target_document = lib.document_for_revision(revision)
+        print source_document, target_document
+        
         diff = difflib.unified_diff(
             source_document.data('xml').splitlines(True),
             target_document.data('xml').splitlines(True),
             'source',
             'target')
         
-        return ''.join(list(diff))
+        s =  ''.join(list(diff))
+        return highlight(s, DiffLexer(), HtmlFormatter(cssclass="pastie"))
 
 
 #
@@ -305,7 +313,7 @@ class DocumentHTMLHandler(BaseHandler):
 
     @validate_form(forms.DocumentRetrieveForm, 'GET')
     @hglibrary
-    def read(self, request, form, docid, lib, stylesheet='partial'):
+    def read(self, request, form, docid, lib, stylesheet='full'):
         """Read document as html text"""
         try:
             revision = form.cleaned_data['revision']
@@ -328,7 +336,7 @@ class DocumentHTMLHandler(BaseHandler):
                 return error
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
-                parse_dublincore=False, stylesheet='full',\
+                parse_dublincore=False, stylesheet=stylesheet,\
                 options={
                     "with-paths": 'boolean(1)',                    
                 })

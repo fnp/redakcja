@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 
+{% block bodyid %}management{% endblock %}
+
 {% block extrahead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/managment.css" type="text/css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/pygments.css" type="text/css" />
 <script type="text/javascript">
 
     
@@ -32,7 +35,6 @@
         $('.accept-button').click(function()
         {
             var id = parseInt($(this).attr('title'));
-            
 
             $.ajax({
                 url: '{% url pullrequest_list %}/'+id,
@@ -46,34 +48,55 @@
             
         });
         
+        $('.show-diff').click(function() {
+            var button = $(this);
+            
+            if (button.attr('disabled') != 'disabled') {
+                button.attr('disabled', 'disabled');
+                var id = parseInt(button.attr('title'));
+                var docid = $('h2', button.parents('.pull-request')).html();
+                var diffUrl = button.parents('.pull-request').attr('data-diff-url');
+                var revision = $('.pull-request-revision', button.parents('.pull-request')).html();
+                
+                $('.diff').slideUp(function() { $(this).remove() });
+                $('<div class="diff"></div>')
+                    .hide()
+                    .appendTo($(this).parents('.pull-request'))
+                    .slideDown('slow')
+                    .load(diffUrl + '?revision=' + revision, null, function() {
+                        button.attr('disabled', null);
+                    });
+            }
+        });
+        
     });
 </script>
 {% endblock %}
 
 {% block maincontent %}
-<table class="request-report" cellspacing="0">
-    <tr>
-        <th>Utwór</th><th>Użytkownik</th><th>Komentarz</th><th>Stan</th>
-        <th>Zgłoszono</th><th>Akcje</th>
-    </tr>
 {% if objects %}
     {% for pullreq in objects %}
-    <tr class="status-{{pullreq.status}}" id="request-{{pullreq.id}}">
-        <td class="column-doc">{{ pullreq.document }}</td>
-        <td class="column-user">{{ pullreq.comitter }}</td>
-        <td class="column-comment">{{ pullreq.comment }}</td>
-        <td class="column-status"> {{ pullreq.status }}</td>
-        <td class="column-data">{{ pullreq.timestamp }}</td>
-        <td>
-            <button type="button" class="accept-button" title="{{pullreq.id}}">Akceptuj</button>
-            <a href="{% url editor_view pullreq.document %}?user=$prq-{{pullreq.id}}">Zobacz</a>
-        </td>
-    </tr>
-    
+    <div class="status-{{ pullreq.status }} pull-request" id="request-{{ pullreq.id }}" data-diff-url="{% url diff_resource pullreq.document %}">
+        <h2>{{ pullreq.document }}</h2>
+        <ul class="request-info">
+            <li>commiter: {{ pullreq.comitter }}</li>
+            <li>revision: <span class="pull-request-revision">{{ pullreq.source_revision }}</span></li>
+            <li>status: {{ pullreq.status }}</li>
+            <li>data: {{ pullreq.timestamp }}</li>
+        </ul>
+        <p class="comment">{{ pullreq.comment }}</p>
+        {% ifnotequal pullreq.status 'A' %}
+        <p class="buttons">
+            <button type="button" class="awesome button green accept-button" title="{{pullreq.id}}">Akceptuj</button>
+            <button type="button" class="awesome button show-diff" title="{{pullreq.id}}">Zmiany</button>
+            <a class="awesome button" href="{% url editor_view pullreq.document %}?user=$prq-{{pullreq.id}}">Zobacz</a>
+        </p>
+        {% endifnotequal %}
+    </div>
     {% endfor %}
 {% else %}
-    <tr><td colspan="6">Brak żądań</td></tr>
+    {# <tr><td colspan="6">Brak żądań</td></tr> #}
 {% endif %}
-</table>
+{# </table> #}
 
 {% endblock %}
