@@ -305,7 +305,7 @@ class DocumentHTMLHandler(BaseHandler):
 
     @validate_form(forms.DocumentRetrieveForm, 'GET')
     @hglibrary
-    def read(self, request, form, docid, lib, stylesheet='partial'):
+    def read(self, request, form, docid, lib, stylesheet='full'):
         """Read document as html text"""
         try:
             revision = form.cleaned_data['revision']
@@ -328,7 +328,7 @@ class DocumentHTMLHandler(BaseHandler):
                 return error
 
             return librarian.html.transform(document.data('xml'), is_file=False, \
-                parse_dublincore=False, stylesheet='full',\
+                parse_dublincore=False, stylesheet=stylesheet,\
                 options={
                     "with-paths": 'boolean(1)',                    
                 })
