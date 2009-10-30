@@ -270,11 +270,6 @@
     background-color: #dfdfdf;
 }
 
-.htmlview .annotation-inline-box[x-focused] > .annotation {
-    background-color: #860000;
-    color: #dfdfdf;
-}
-
 *.htmlview *.annotation-inline-box {
     position: static;
 }
@@ -302,11 +297,6 @@
 
      text-decoration: none;
      z-index: 10;
- }
-
-.htmlview .annotation-inline-box[x-focused] > span[x-annotation-box],
-.htmlview .annotation-inline-box:hover > span[x-annotation-box] {
-    display: block;
  }
  
 
@@ -337,15 +327,9 @@
     counter-increment: secondary;
 }
 
-
-
-
-
 /*
  * EDITABLE ELEMENTS
  */
-
-
 
 .htmlview *[x-editable] {    
     padding-left: 3px;
@@ -424,6 +408,10 @@
 }
 
 .htmlview *[x-editable] > .default-menu:hover {
+    opacity: 1;
+}
+
+.htmlview *[x-annotation-box][x-editable] > .default-menu {
     opacity: 1;
 }
 

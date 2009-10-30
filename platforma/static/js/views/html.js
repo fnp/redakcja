@@ -121,11 +121,13 @@ var HTMLView = View.extend({
 
         if($e.hasClass('annotation'))
         {
-            var $box = $e.parent();
-
+            if(this.currentOpen) return false;
+            
+            var $p = $e.parent();
             if(this.currentFocused) 
             {
-                if($box[0] == this.currentFocused[0]) {
+                console.log(this.currentFocused, $p);
+                if($p[0] == this.currentFocused[0]) {
                     console.log('unfocus of current');
                     this.unfocusAnnotation();
                     return false;
@@ -135,7 +137,7 @@ var HTMLView = View.extend({
                 this.unfocusAnnotation();                
             }
 
-            this.focusAnnotation($box);
+            this.focusAnnotation($p);
             return false;
         }
 
@@ -155,22 +157,35 @@ var HTMLView = View.extend({
             this.closeWithoutSave( this.editableFor($e) );        
     },
 
-    unfocusAnnotation: function() {
+    unfocusAnnotation: function()
+    {
         if(!this.currentFocused)
+        {
+            console.log('Redundant unfocus');
             return false;
+        }
 
         if(this.currentOpen 
           && this.currentOpen.is("*[x-annotation-box]")
           && this.currentOpen.parent()[0] == this.currentFocused[0])
+        {
+            console.log("Can't unfocus open box");
             return false;
-        
-        this.currentFocused.removeAttr('x-focused');
+        }
+
+        var $box = $("*[x-annotation-box]", this.currentFocused);
+        $box.css({'display': 'none'});
+        // this.currentFocused.removeAttr('x-focused');
+        // this.currentFocused.hide();
         this.currentFocused = null;
     },
 
     focusAnnotation: function($e) {
         this.currentFocused = $e;
-        $e.attr('x-focused', 'focused');
+        var $box = $("*[x-annotation-box]", $e);
+        $box.css({'display': 'block'});
+        
+        // $e.attr('x-focused', 'focused');        
     },
 
     closeWithSave: function($e) {
@@ -193,8 +208,25 @@ var HTMLView = View.extend({
     },
 
     renderPart: function($e, html) {
-            $e.html(html);
-            $e.append( this.$menuTemplate.clone() );
+        // exceptions aren't good, but I don't have a better idea right now
+        if($e.attr('x-annotation-box')) {
+            // replace the whole annotation
+            var $p = $e.parent();
+            $p.html(html);
+            var $box = $('*[x-annotation-box]', $p);
+            $box.append( this.$menuTemplate.clone() );
+            
+            if(this.currentFocused && $p[0] == this.currentFocused[0])
+            {                
+                this.currentFocused = $p;
+                $box.css({'display': 'block'});
+            }
+            
+            return;
+        }
+
+        $e.html(html);
+        $e.append( this.$menuTemplate.clone() );
     },
 
     editableFor: function($button) 
@@ -239,24 +271,29 @@ var HTMLView = View.extend({
 
         this.model.getXMLPart($origin, function(path, data) {
             $('textarea', $overlay).val(data);
-        });
-
-        this.currentOpen = $origin;
-        $origin.attr('x-open', 'open');
+        });      
 
         if($origin.is("*[x-annotation-box]"))
         {
             var $b =  $origin.parent();
             if(this.currentFocused) {
-                if($b[0] != this.currentFocused[0])
+                // if some other is focused
+                if($b[0] != this.currentFocused[0]) {
                     this.unfocusAnnotation();
+                    this.focusAnnotation($b);
+                }
+                // already focues
             }
-            
-            this.focusAnnotation($origin);
+            else { // nothing was focused
+                this.focusAnnotation($b);
+            }
         }
-        else {
+        else { // this item is not focusable
             if(this.currentFocused) this.unfocusAnnotation();
         }
+
+        this.currentOpen = $origin;
+        $origin.attr('x-open', 'open');
                 
         return false;
     }
