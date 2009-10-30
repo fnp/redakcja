@@ -522,7 +522,7 @@ Editor.DocumentModel = Editor.Model.extend({
                 revision: this.get('revision'),
                 user: this.get('user')
             },
-            complete: this.updateCompleted.bind(this),            
+            complete: this.updateCompleted.bind(this)           
         });
     },
   

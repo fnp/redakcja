@@ -6,6 +6,7 @@ function ScriptletCenter()
     {
         var text = this.XMLEditorSelectedText(context);
         var start_tag = '<'+params.tag;
+        var move_cursor = false;
 
         for (var attr in params.attrs) {
             start_tag += ' '+attr+'="' + params.attrs[attr] + '"';
@@ -39,14 +40,23 @@ function ScriptletCenter()
             output += token;
         }
         else {
-            output = start_tag + end_tag;
+            if(params.nocontent) {
+                output = "<"+params.tag +" />";
+            }
+            else {
+                output = start_tag + end_tag;
+                move_cursor = true;
+            }
         }
 
         this.XMLEditorReplaceSelectedText(context, output);
 
-        if (text.length == 0) {
-            this.XMLEditorMoveCursorForward(context, -params.tag.length-3);
-        }        
+        try {
+            if (move_cursor) {
+                this.XMLEditorMoveCursorForward(context, params.tag.length+2);
+            }
+        } catch(e) {}
+
     }.bind(this);
 
     this.scriptlets['lineregexp'] = function(context, params) {

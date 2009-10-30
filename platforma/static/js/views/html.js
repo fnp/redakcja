@@ -21,6 +21,7 @@ var HTMLView = View.extend({
         this.model.load();
 
         this.currentOpen = null;
+        this.currentFocused = null;
         this.themeBoxes = [];
     },
 
@@ -118,6 +119,32 @@ var HTMLView = View.extend({
         console.log('click:', event, event.ctrlKey, event.target);        
         var $e = $(event.target);
 
+        if($e.hasClass('annotation'))
+        {
+            var $box = $e.parent();
+
+            if(this.currentFocused) 
+            {
+                if($box[0] == this.currentFocused[0]) {
+                    console.log('unfocus of current');
+                    this.unfocusAnnotation();
+                    return false;
+                }
+
+                console.log('switch unfocus');
+                this.unfocusAnnotation();                
+            }
+
+            this.focusAnnotation($box);
+            return false;
+        }
+
+        /*
+         * Clicking outside of focused area doesn't unfocus by default
+         *  - this greatly simplifies the whole click check
+         */
+
+        /* other buttons */
         if($e.hasClass('edit-button'))
             this.openForEdit( this.editableFor($e) );
 
@@ -125,7 +152,25 @@ var HTMLView = View.extend({
             this.closeWithSave( this.editableFor($e) );
 
         if($e.hasClass('reject-button'))
-            this.closeWithoutSave( this.editableFor($e) );
+            this.closeWithoutSave( this.editableFor($e) );        
+    },
+
+    unfocusAnnotation: function() {
+        if(!this.currentFocused)
+            return false;
+
+        if(this.currentOpen 
+          && this.currentOpen.is("*[x-annotation-box]")
+          && this.currentOpen.parent()[0] == this.currentFocused[0])
+            return false;
+        
+        this.currentFocused.removeAttr('x-focused');
+        this.currentFocused = null;
+    },
+
+    focusAnnotation: function($e) {
+        this.currentFocused = $e;
+        $e.attr('x-focused', 'focused');
     },
 
     closeWithSave: function($e) {
@@ -167,37 +212,52 @@ var HTMLView = View.extend({
         if(!$e.attr('x-editable'))
             throw Exception("Click outside of editable")
 
+        console.log("Trigger", $button, " yields editable: ", $e);
         return $e;
     },
 
     openForEdit: function($origin)
     {       
         if(this.currentOpen && this.currentOpen != $origin) {
-            this.closeWithSave(this.currentOpen);
-            
+            this.closeWithSave(this.currentOpen);    
         }
-    
-        // start edition on this node       
-        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
-
+        
         var x = $origin[0].offsetLeft;
         var y = $origin[0].offsetTop;
         var w = $origin.outerWidth();
         var h = $origin.innerHeight();
-        
-        $overlay.css({position: 'absolute', height: h, left: x, top: y, width: '95%'});
-        
-            $origin.offsetParent().append($overlay);
-            $origin.data('edit-overlay', $overlay);
-                     
-            this.model.getXMLPart($origin, function(path, data) {
-                $('textarea', $overlay).val(data);
-            });
 
-            this.currentOpen = $origin;
-            $origin.attr('x-open', 'open');
+        console.log("Editable:", $origin, " offsetParent:", $origin[0].offsetParent);
+        console.log("Dimensions: ", x, y, w , h);
+
+        // start edition on this node
+        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
         
-        
+        $overlay.css({position: 'absolute', height: h, left: x, top: y, width: '95%'});        
+        $($origin[0].offsetParent).append($overlay);
+        $origin.data('edit-overlay', $overlay);
+
+        this.model.getXMLPart($origin, function(path, data) {
+            $('textarea', $overlay).val(data);
+        });
+
+        this.currentOpen = $origin;
+        $origin.attr('x-open', 'open');
+
+        if($origin.is("*[x-annotation-box]"))
+        {
+            var $b =  $origin.parent();
+            if(this.currentFocused) {
+                if($b[0] != this.currentFocused[0])
+                    this.unfocusAnnotation();
+            }
+            
+            this.focusAnnotation($origin);
+        }
+        else {
+            if(this.currentFocused) this.unfocusAnnotation();
+        }
+                
         return false;
     }
   

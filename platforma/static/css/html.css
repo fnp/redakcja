@@ -26,6 +26,10 @@
     text-decoration: none;
 }
 
+.htmlview a:hover {
+    text-decoration: none;
+}
+
 .htmlview h1 {
     font-size: 3em;
     margin: 1.5em 0;
@@ -210,6 +214,11 @@
     margin: 1em;
 }
 
+ .parse-warning .message {
+    color: purple;
+    font-weight: bold;
+}
+
 
 /* Motywy */
 /* ======================== */
@@ -241,21 +250,69 @@
     z-index: 1;
 }
 
-/* Przypisy */
+/* 
+ * Przypisy
+ */
+
+/* Znaczniki w tekście */
 .htmlview .annotation {    
     vertical-align: super;
     text-decoration: none;
-    font-size: 0.66em;
+    font-size: 0.66em;    
 }
 
-.htmlview a:hover {
-    text-decoration: none;
+.htmlview .annotation:before {
+    content: "[" counter(main) "]";
+    counter-increment: main;
 }
 
-/* .htmlview .annotation:before {
-    content: "[\2217]";
-} */
+.htmlview .annotation:hover {
+    background-color: #dfdfdf;
+}
 
+.htmlview .annotation-inline-box[x-focused] > .annotation {
+    background-color: #860000;
+    color: #dfdfdf;
+}
+
+*.htmlview *.annotation-inline-box {
+    position: static;
+}
+
+/*
+ * Przypisy w tekście
+ */
+ .htmlview .annotation-inline-box > span[x-annotation-box]
+ {
+     display: none;
+     position: absolute;
+
+     max-width: 36em;
+     
+     font-size: 8pt;
+     line-height: 12pt;
+     font-weight: normal;
+     font-style: normal;
+
+     background: white;
+     border-color: gray;
+     border-width: 2px;
+     border-style: outset;
+     padding: 3px 5px;
+
+     text-decoration: none;
+     z-index: 10;
+ }
+
+.htmlview .annotation-inline-box[x-focused] > span[x-annotation-box],
+.htmlview .annotation-inline-box:hover > span[x-annotation-box] {
+    display: block;
+ }
+ 
+
+/*
+ * Przypisy na końcu utworu (aktualnie nieuzywane)
+ */
 .htmlview .annotations-block {
     counter-reset: secondary;
 }
@@ -280,41 +337,32 @@
     counter-increment: secondary;
 }
 
-.htmlview span.annotation:before {
-    content: "[" counter(main) "]";
-    counter-increment: main;
-}
 
-.htmlview .annotation:hover {
-    background-color: #dfdfdf;
-}
 
-.parse-warning .message {
-    color: purple;
-    font-weight: bold;
-}
 
 
 /*
  * EDITABLE ELEMENTS
  */
 
+
+
 .htmlview *[x-editable] {    
     padding-left: 3px;
 }
 
 /* focused editable element */
-.htmlview *[x-editable]:hover
+/* .htmlview *[x-editable]:hover
 {    
     
-}
+} */
 
 .htmlview *[x-editable][x-open]
 {
     visibility: hidden;
 }
 
-.htmlview *[x-editable] .context-menu {
+.htmlview *[x-editable] > .context-menu {
     position: absolute;
     top: 0px;
     left: -50px;
@@ -331,9 +379,8 @@
 
     margin: 0px;
     padding: 0px;
-
-    display: none;
-    visibility: visible;
+    visibility: inherit;
+    display: block;
 
     border-top: 1px solid black;
     border-left: 1px solid black;
@@ -350,7 +397,7 @@
     z-index: 3000;
 }
 
-.htmlview *[x-editable] *.context-menu * {
+.htmlview *[x-editable] > .context-menu * {
     margin: 0px;
     display: block;
 
@@ -359,33 +406,37 @@
     border-bottom: 1px solid black;
 }
 
-.htmlview *[x-editable] *.context-menu *:last-child {    
+.htmlview *[x-editable] > .context-menu *:last-child {
     cursor: pointer;
     border-bottom: none;
 }
 
-.htmlview *[x-editable] *.context-menu *:hover {
+.htmlview *[x-editable] > .context-menu *:hover {
     background-color: orange;
 }
 
 /*
  * VISIBILITY RULES
  */
-.htmlview *[x-editable] *.default-menu {
-    display: block;
+.htmlview *[x-editable] > .default-menu {
+    visibility: inherit;
     opacity: 0.4;
 }
 
-.htmlview *[x-editable] *.default-menu:hover {
+.htmlview *[x-editable] > .default-menu:hover {
     opacity: 1;
 }
 
-.htmlview *[x-editable][x-open] *.default-menu {
-    display: none;
+.htmlview *[x-editable][x-open] > .default-menu {
+    visibility: hidden;
 }
 
-.htmlview *[x-editable][x-open] *.edit-menu {
-    display: block;
+.htmlview *[x-editable] > .edit-menu {
+    visibility: hidden;
+}
+
+.htmlview *[x-editable][x-open] > .edit-menu {
+    visibility: visible;
 }
 
 .html-editarea {
