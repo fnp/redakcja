@@ -385,6 +385,9 @@
     margin: 0px;
     display: block;
 
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+
     padding: 2px;
     cursor: pointer;
     border-bottom: 1px solid black;

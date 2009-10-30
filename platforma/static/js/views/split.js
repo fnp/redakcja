@@ -59,6 +59,7 @@ var SplitView = View.extend({
         left: this.element.position().left
       }).appendTo(this.element);
     this.views.css("-webkit-user-select", "none"); // Safari selects A/B text on a move
+
     this.splitbar.addClass(this.activeClass);
     this.leftViewOffset = this.leftView[0].offsetWidth - event.pageX;
     
@@ -84,6 +85,11 @@ var SplitView = View.extend({
     $(document)
       .unbind('mousemove.splitview')
       .unbind('mouseup.splitview');
+
+   //from beginResize:
+   //    this.views.css("-webkit-user-select", "none"); // Safari selects A/B text on a move
+   // Restore it!
+   this.views.css("-webkit-user-select", "auto");
   },
 
   resized: function(event) {

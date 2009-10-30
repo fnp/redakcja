@@ -12,12 +12,12 @@ var HTMLView = View.extend({
         this.model
         .addObserver(this, 'data', this.modelDataChanged.bind(this))        
         .addObserver(this, 'state', this.modelStateChanged.bind(this));
-      
-        $('.htmlview', this.element).html(this.model.get('data'));
+
 
         this.$menuTemplate = $(render_template('html-view-frag-menu-template', this));
-        
         this.modelStateChanged('state', this.model.get('state'));
+        this.modelDataChanged('data', this.model.get('data'));
+                
         this.model.load();
 
         this.currentOpen = null;
@@ -33,9 +33,7 @@ var HTMLView = View.extend({
         /* upgrade editable elements */
         $("*[x-editable]").each(function() {
             $(this).append( self.$menuTemplate.clone() );
-        });
-
-        var n = 5001;
+        });        
 
         var doc_base = $('.htmlview .utwor', this.element);
 

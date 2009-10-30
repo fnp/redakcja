@@ -153,9 +153,9 @@ text#commit-dialog-message {
 }
 
 .view-overlay {
-    z-index: 1000;
-    background: #FFF;
-    opacity: 0.8;
+    display: none;
+    z-index: 0;
+    background: #FFF;    
     text-align: center;
     vertical-align: middle;
 
@@ -169,6 +169,7 @@ text#commit-dialog-message {
     -webkit-user-select: 'none';
     -khtml-user-select: 'none';
     -moz-user-select: 'none'; */
+
     overflow: 'hidden';    
 }
 
