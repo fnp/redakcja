@@ -248,6 +248,9 @@
     border-right: none;
     
     z-index: 1;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* 

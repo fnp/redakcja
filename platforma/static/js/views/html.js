@@ -13,7 +13,6 @@ var HTMLView = View.extend({
         .addObserver(this, 'data', this.modelDataChanged.bind(this))        
         .addObserver(this, 'state', this.modelStateChanged.bind(this));
 
-
         this.$menuTemplate = $(render_template('html-view-frag-menu-template', this));
         this.modelStateChanged('state', this.model.get('state'));
         this.modelDataChanged('data', this.model.get('data'));
@@ -31,14 +30,12 @@ var HTMLView = View.extend({
         var self = this;
 
         /* upgrade editable elements */
-        $("*[x-editable]").each(function() {
+        $("*[x-editable]", this.$docbase).each(function() {
             $(this).append( self.$menuTemplate.clone() );
-        });        
-
-        var doc_base = $('.htmlview .utwor', this.element);
-
+        });
+        
         /* mark themes */
-        $(".theme-ref").each(function() {
+        /* $(".theme-ref", this.$docbase).each(function() {
             var id = $(this).attr('x-theme-class');
 
             var end = $("span.theme-end[x-theme-class = " + id+"]");
@@ -48,7 +45,7 @@ var HTMLView = View.extend({
 
             h = Math.max(h, end.offset().top - begin.offset().top);
             $(this).css('height', h);
-        }); 
+        }); */
     },
 
     updatePrintLink: function() {
@@ -90,15 +87,46 @@ var HTMLView = View.extend({
     },
 
     render: function() {
-        this.element.unbind('click');
+        if(this.$docbase)
+            this.$docbase.unbind('click');
 
-        if(this.$printLink) this.$printLink.unbind();
+        if(this.$printLink) 
+            this.$printLink.unbind();
+
+        if(this.$addThemeButton)
+            this.$addThemeButton.unbind();
+
         this._super();
-        this.$printLink = $('.html-print-link', this.element);
-        this.updatePrintLink();
 
-        this.element.bind('click', this.itemClicked.bind(this));
-        // this.element.bind('mouseover', this.itemHover.bind(this));
+        this.$printLink = $('.htmlview-toolbar .html-print-link', this.element);
+        this.$docbase = $('.htmlview', this.element);
+        this.$addThemeButton = $('.htmlview-toolbar .html-add-motive', this.element);
+
+        this.updatePrintLink();
+        this.$docbase.bind('click', this.itemClicked.bind(this));
+        this.$addThemeButton.click( this.addTheme.bind(this) );
+    },
+
+    renderPart: function($e, html) {
+        // exceptions aren't good, but I don't have a better idea right now
+        if($e.attr('x-annotation-box')) {
+            // replace the whole annotation
+            var $p = $e.parent();
+            $p.html(html);
+            var $box = $('*[x-annotation-box]', $p);
+            $box.append( this.$menuTemplate.clone() );
+
+            if(this.currentFocused && $p[0] == this.currentFocused[0])
+            {
+                this.currentFocused = $p;
+                $box.css({'display': 'block'});
+            }
+
+            return;
+        }
+
+        $e.html(html);
+        $e.append( this.$menuTemplate.clone() );
     },
   
     reload: function() {
@@ -143,6 +171,12 @@ var HTMLView = View.extend({
          * Clicking outside of focused area doesn't unfocus by default
          *  - this greatly simplifies the whole click check
          */
+
+        if( $e.hasClass('theme-ref') )
+        {
+            console.log($e);
+            this.selectTheme($e.attr('x-theme-class'));
+        }
 
         /* other buttons */
         if($e.hasClass('edit-button'))
@@ -203,28 +237,6 @@ var HTMLView = View.extend({
         $edit.remove();
         $e.removeAttr('x-open');
         this.currentOpen = null;
-    },
-
-    renderPart: function($e, html) {
-        // exceptions aren't good, but I don't have a better idea right now
-        if($e.attr('x-annotation-box')) {
-            // replace the whole annotation
-            var $p = $e.parent();
-            $p.html(html);
-            var $box = $('*[x-annotation-box]', $p);
-            $box.append( this.$menuTemplate.clone() );
-            
-            if(this.currentFocused && $p[0] == this.currentFocused[0])
-            {                
-                this.currentFocused = $p;
-                $box.css({'display': 'block'});
-            }
-            
-            return;
-        }
-
-        $e.html(html);
-        $e.append( this.$menuTemplate.clone() );
     },
 
     editableFor: function($button) 
@@ -294,8 +306,70 @@ var HTMLView = View.extend({
         $origin.attr('x-open', 'open');
                 
         return false;
+    },
+
+    addTheme: function() 
+    {
+        var selection = document.getSelection();
+        var n = selection.rangeCount;
+        
+        if(n == 0)
+            window.alert("Nie zaznaczono żadnego obszaru");
+
+        // for now allow only 1 range
+        if(n > 1)
+            window.alert("Zaznacz jeden obszar");
+
+        // from this point, we will assume that the ranges are disjoint
+        for(var i=0; i < n; i++) {
+            var range = selection.getRangeAt(i);
+            console.log(i, range.startContainer, range.endContainer);
+            var date = Date.now();
+            var random = Math.floor(4000000000*Math.random());
+            var id = (''+date) + '-' + (''+random);
+
+            var ipoint = document.createRange();
+            
+            
+
+            // Firefox alters the later node when inserting, so
+            // insert from end
+            ipoint.setStart(range.endContainer, range.endOffset);
+            elem = $('<span class="theme-end" x-theme-class="'+id+'" id="e'+id+'"></span>')[0];
+            ipoint.insertNode(elem);
+
+            // insert theme-ref
+            ipoint.setStart(range.startContainer, range.startOffset);
+            var elem = $('<span class="theme-ref" x-theme-class="'+id+'" id="m'+id+'">Nowy motyw</span>')[0];
+            ipoint.insertNode(elem);
+            ipoint.setStartBefore(elem);
+
+            // insert theme-begin
+            elem = $('<span class="theme-begin" x-theme-class="'+id+'" id="b'+id+'"></span>')[0];
+            ipoint.insertNode(elem);            
+        }
+
+        selection.removeAllRanges();
+    },
+
+    selectTheme: function(themeId)
+    {
+        var selection = document.getSelection();
+        
+        // remove current selection
+        selection.removeAllRanges();
+
+        var range = document.createRange();
+        var s = $('#m'+themeId)[0];
+        var e = $('#e'+themeId)[0];
+        console.log('Selecting range:', themeId, range, s, e);
+
+        if(s && e) {
+            range.setStartAfter(s);
+            range.setEndBefore(e);
+            selection.addRange(range);
+        }
     }
-  
 });
 
 // Register view
