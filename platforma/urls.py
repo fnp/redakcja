@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     url(r'^$', 'explorer.views.file_list', name='file_list'),        
     url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
 
+    url(r'^renderer$', 'explorer.views.renderer_test'),
+
     url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
   
     # Editor panels
@@ -24,6 +26,8 @@ urlpatterns = patterns('',
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
+
+
 
     # Our über-restful api
     url(r'^api/', include('api.urls')),

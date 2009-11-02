@@ -21,7 +21,7 @@ import librarian.html
 import difflib
 from librarian import dcparser, parser
 
-from wlrepo import *
+import wlrepo
 from api.models import PullRequest
 from explorer.models import GalleryForDocument
 
@@ -157,7 +157,7 @@ class LibraryHandler(BaseHandler):
                     import traceback
                     # rollback branch creation
                     lib._rollback()
-                    raise LibraryException(traceback.format_exc())
+                    raise wlrepo.LibraryException(traceback.format_exc())
 
                 url = reverse('document_view', args=[doc.id])
 
@@ -169,12 +169,12 @@ class LibraryHandler(BaseHandler):
                     url = url )            
             finally:
                 lock.release()
-        except LibraryException, e:
+        except wlrepo.LibraryException, e:
             import traceback
             return response.InternalError().django_response({
                 "reason": traceback.format_exc()
             })
-        except DocumentAlreadyExists:
+        except wlrepo.DocumentAlreadyExists:
             # Document is already there
             return response.EntityConflict().django_response({
                 "reason": "already-exists",
@@ -191,7 +191,7 @@ class BasicDocumentHandler(AnonymousBaseHandler):
     def read(self, request, docid, lib):
         try:    
             doc = lib.document(docid)
-        except RevisionNotFound:
+        except wlrepo.RevisionNotFound:
             return rc.NOT_FOUND
 
         result = {
@@ -250,7 +250,7 @@ class DocumentHandler(BaseHandler):
             
         try:
             doc = lib.document(docid, user, rev=rev)
-        except RevisionMismatch, e:
+        except wlrepo.RevisionMismatch, e:
             # the document exists, but the revision is bad
             return response.EntityNotFound().django_response({
                 'reason': 'revision-mismatch',
@@ -258,7 +258,7 @@ class DocumentHandler(BaseHandler):
                 'docid': docid,
                 'user': user,
             })
-        except RevisionNotFound, e:
+        except wlrepo.RevisionNotFound, e:
             # the user doesn't have this document checked out
             # or some other weird error occured
             # try to do the checkout
@@ -278,7 +278,7 @@ class DocumentHandler(BaseHandler):
                         'docid': docid,
                         'user': user,
                     })
-            except RevisionNotFound, e:
+            except wlrepo.RevisionNotFound, e:
                 return response.EntityNotFound().django_response({
                     'reason': 'document-not-found',
                     'message': e.message,
@@ -341,7 +341,7 @@ class DocumentHTMLHandler(BaseHandler):
                     "with-paths": 'boolean(1)',                    
                 })
                 
-        except (EntryNotFound, RevisionNotFound), e:
+        except (wlrepo.EntryNotFound, wlrepo.RevisionNotFound), e:
             return response.EntityNotFound().django_response({
                 'reason': 'not-found', 'message': e.message})
         except librarian.ValidationError, e:

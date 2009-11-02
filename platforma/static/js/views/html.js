@@ -328,10 +328,8 @@ var HTMLView = View.extend({
             var random = Math.floor(4000000000*Math.random());
             var id = (''+date) + '-' + (''+random);
 
-            var ipoint = document.createRange();
+            var ipoint = document.createRange();            
             
-            
-
             // Firefox alters the later node when inserting, so
             // insert from end
             ipoint.setStart(range.endContainer, range.endOffset);

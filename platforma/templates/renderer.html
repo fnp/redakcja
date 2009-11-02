@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" charset="utf-8">
+{% endblock %}
+
+{% block maincontent %}
+
+<p>Source</p>
+<textarea id="source" cols="80" rows="10" ></textarea>
+
+<p>Rendered</p>
+<textarea id="dest" cols="80" rows="10" ></textarea>
+
+<button type="button" id="render">Render</button>
+<button type="button" id="unrender">Unrender</button>
+
+<div style="position: fixed; right: 0px; top: 0px; width: 640px; height: 300px; background: blue;">
+<div id="preview" class="htmlview">
+</div>
+</div>
+{% endblock %}
+
+{% block extrabody %}
+<script type="text/javascript">
+
+    function serializeAttribute(attr, acc) {
+        return acc + ' ' + attr.nodeName + '="'+ attr.nodeValue + '"';
+    }
+
+    function serializeElement(element, acc, level)
+    {
+        var isBlock = false;
+
+        if(element.nodeName != 'span' && element.nodeName != 'p')
+            isBlock = true;
+
+        if(isBlock) {
+            for(var i=0; i < level; i++)
+                acc += '  ';
+        }
+        
+        acc += "<" + element.nodeName;
+        for(var i=0; i < element.attributes.length; i++)
+            acc = serializeAttribute(element.attributes.item(i), acc);
+
+        if(element.firstChild)
+        {
+            acc += ">\n";
+
+            if(element.firstChild)
+                acc = serializeNode(element.firstChild, acc, level+1);
+
+            acc += "\n";
+            
+            for(var i=0; i < level; i++)
+                acc += '  ';
+
+            acc += "</"+element.nodeName + ">";            
+        }
+        else {
+            acc += " />";
+        }
+
+        if(isBlock) acc += "\n";
+        
+        return acc;
+    }
+
+
+    // step-by-step serializer
+    function serializeNode(node, acc, level)
+    {
+        
+
+        if(node.nodeType == 11)
+            return serializeNode(node.firstChild, acc, level);
+
+        if(node.nodeType == 1)
+            acc = serializeElement(node, acc, level);
+        
+        else if(node.nodeType == 3)
+            acc += node.nodeValue;
+
+        if(node.nextSibling)
+            return serializeNode(node.nextSibling, acc, level);
+        else
+            return acc;
+    }
+
+    function serializeXML(element) {
+        return serializeNode(element, '', 0);
+    }
+
+    // w3c version first
+    var xslt = new XSLTProcessor();
+
+    $.ajax({
+        url: "/static/xsl/wl2html_client.xsl",
+        dataType: 'xml',
+        success: function(data) {
+            xslt.importStylesheet(data);
+            console.log('XSL loaded successfully');
+        },
+        async: false
+    });
+    
+    $('#render').click(function() {
+        
+        var src = '<?xml version="1.0"?><chunk>'+$('#source').val()+'</chunk>';
+        src = src.replace(/\/\s+/g, '<br />');
+        var doc = (new DOMParser()).parseFromString(src, "text/xml");
+        // var string = (new XMLSerializer()).serializeToString(doc);
+        // console.log('rendering', string);
+        
+        var result = xslt.transformToFragment(doc, document);
+        var string =  serializeXML(result);
+        var dest = $('#dest');
+        dest.val( string );
+        $('#preview').html(string);
+    });    
+</script>
+{% endblock %}

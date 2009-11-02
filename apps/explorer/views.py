@@ -116,3 +116,11 @@ def pull_requests(request):
 
     return direct_to_template(request, 'manager/pull_request.html', 
         extra_context = {'objects': objects} )
+
+
+#
+# Testing
+#
+def renderer_test(request):
+    return direct_to_template(request, 'renderer.html', mimetype="text/html",
+        extra_context = {} )
