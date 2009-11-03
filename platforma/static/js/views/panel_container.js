@@ -26,9 +26,8 @@ var PanelContainerView = View.extend({
     }
 
     if( value != 'empty') {
-    this.contentView = new klass($('.content-view', 
-      this.element.get(0)), this.model.contentModels[value], this);
-    $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);    
+        this.contentView = new klass($('.content-view', this.element.get(0)), this.model, this);
+        $('.panel-main-toolbar .refresh', this.element.get(0)).attr('disabled', null);    
     }
   },
   

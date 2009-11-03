@@ -349,7 +349,7 @@
     visibility: hidden;
 }
 
-.htmlview *[x-editable] > .context-menu {
+.context-menu {
     position: absolute;
     top: 0px;
     left: -50px;
@@ -384,7 +384,7 @@
     z-index: 3000;
 }
 
-.htmlview *[x-editable] > .context-menu * {
+.context-menu * {
     margin: 0px;
     display: block;
 
@@ -396,45 +396,54 @@
     border-bottom: 1px solid black;
 }
 
-.htmlview *[x-editable] > .context-menu *:last-child {
+.context-menu *:last-child {
     cursor: pointer;
     border-bottom: none;
 }
 
-.htmlview *[x-editable] > .context-menu *:hover {
+.context-menu *:hover {
     background-color: orange;
 }
 
 /*
  * VISIBILITY RULES
  */
-.htmlview *[x-editable] > .default-menu {
+.default-menu {
     visibility: inherit;
-    opacity: 0.4;
+    opacity: 0.2;
 }
 
-.htmlview *[x-editable] > .default-menu:hover {
+.default-menu:hover {
     opacity: 1;
 }
 
-.htmlview *[x-annotation-box][x-editable] > .default-menu {
+.htmlview *[x-annotation-box] > .default-menu {
     opacity: 1;
 }
 
 .htmlview *[x-editable][x-open] > .default-menu {
     visibility: hidden;
 }
+.htmlview *[x-editable][x-open] *[x-annotation-box] > .default-menu {
+    visibility: hidden;
+}
 
 .htmlview *[x-editable] > .edit-menu {
+    visibility: hidden;
+}
+.htmlview *[x-editable] *[x-annotation-box] > .edit-menu {
     visibility: hidden;
 }
 
 .htmlview *[x-editable][x-open] > .edit-menu {
     visibility: visible;
 }
+.htmlview *[x-editable][x-open] *[x-annotation-box] > .edit-menu {
+    visibility: visible;
+}
 
 .html-editarea {
-    border: 2px solid black;
+    border: 0px;
     background-color: gray;
     padding: 1px;
 
@@ -443,7 +452,8 @@
 
 .html-editarea textarea
 {
-    border: 0px;
+    border: 2px solid black;
+    
     margin: 0px;
     padding: 0px;
 
@@ -454,23 +464,3 @@
     font-size: 10pt;
     background-color: ivory;
 }
-
-.html-editarea p.html-editarea-toolbar {
-    position: absolute;
-    background: gray;
-
-    bottom: -26px;
-    height: 24px;
-
-    left: 0px;
-    right: 0px;
-
-    border: 2px solid black;
-
-    margin: 0px;
-    padding: 0px;
-
-    z-index: 100;
-}
-
-

@@ -8,8 +8,11 @@ var XMLView = View.extend({
     buttonToolbar: null,
   
     init: function(element, model, parent, template) {
-        this._super(element, model, template);
+        var submodel = model.contentModels['xml'];
+        this._super(element, submodel, template);
+
         this.parent = parent;
+
         this.buttonToolbar = new ButtonToolbarView(
             $('.xmlview-toolbar', this.element),
             this.model.toolbarButtonsModel, parent);

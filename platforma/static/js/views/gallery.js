@@ -10,7 +10,8 @@ var ImageGalleryView = View.extend({
   init: function(element, model, parent, template) 
   {    
     console.log("init for gallery");
-    this._super(element, model, template);
+    var submodel = model.contentModels['gallery'];
+    this._super(element, submodel, template);
     this.parent = parent;
 
     console.log("gallery model", this.model);

@@ -6,14 +6,14 @@ var HTMLView = View.extend({
     template: 'html-view-template',
   
     init: function(element, model, parent, template) {
-        this._super(element, model, template);
-        this.parent = parent;
+        var submodel = model.contentModels['html'];
+        this._super(element, submodel, template);
+        this.parent = parent;                
     
         this.model
-        .addObserver(this, 'data', this.modelDataChanged.bind(this))        
+        .addObserver(this, 'data', this.modelDataChanged.bind(this))
         .addObserver(this, 'state', this.modelStateChanged.bind(this));
-
-        this.$menuTemplate = $(render_template('html-view-frag-menu-template', this));
+        
         this.modelStateChanged('state', this.model.get('state'));
         this.modelDataChanged('data', this.model.get('data'));
                 
@@ -24,18 +24,19 @@ var HTMLView = View.extend({
         this.themeBoxes = [];
     },
 
-    modelDataChanged: function(property, value) {
-        $('.htmlview', this.element).html(value);
-        this.updatePrintLink();
-        var self = this;
-
-        /* upgrade editable elements */
-        $("*[x-editable]", this.$docbase).each(function() {
-            $(this).append( self.$menuTemplate.clone() );
-        });
+    modelDataChanged: function(property, value)
+    {
+        if(!value) return;
+       
+        // the xml model changed
+        var container = $('.htmlview', this.element);
+        container.empty();
+        container.append(value);
         
-        /* mark themes */
-        /* $(".theme-ref", this.$docbase).each(function() {
+        this.updatePrintLink();
+        
+    /* mark themes */
+    /* $(".theme-ref", this.$docbase).each(function() {
             var id = $(this).attr('x-theme-class');
 
             var end = $("span.theme-end[x-theme-class = " + id+"]");
@@ -69,20 +70,23 @@ var HTMLView = View.extend({
         } else if (value == 'error') {
             this.freeze(this.model.get('error'));
             $('.xml-editor-ref', this.overlay).click(
-            function(event) {
-                console.log("Sending scroll rq.", this);
-                try {
-                    var href = $(this).attr('href').split('-');
-                    var line = parseInt(href[1]);
-                    var column = parseInt(href[2]);
+                function(event) {
+                    console.log("Sending scroll rq.", this);
+                    try {
+                        var href = $(this).attr('href').split('-');
+                        var line = parseInt(href[1]);
+                        var column = parseInt(href[2]);
                     
-                    $(document).trigger('xml-scroll-request', {line:line, column:column});
-                } catch(e) {
-                    console.log(e);
-                }
+                        $(document).trigger('xml-scroll-request', {
+                            line:line,
+                            column:column
+                        });
+                    } catch(e) {
+                        console.log(e);
+                    }
                 
-                return false;
-            });
+                    return false;
+                });
         }
     },
 
@@ -119,7 +123,9 @@ var HTMLView = View.extend({
             if(this.currentFocused && $p[0] == this.currentFocused[0])
             {
                 this.currentFocused = $p;
-                $box.css({'display': 'block'});
+                $box.css({
+                    'display': 'block'
+                });
             }
 
             return;
@@ -176,17 +182,24 @@ var HTMLView = View.extend({
         {
             console.log($e);
             this.selectTheme($e.attr('x-theme-class'));
+            return false;
         }
 
         /* other buttons */
-        if($e.hasClass('edit-button'))
-            this.openForEdit( this.editableFor($e) );
+        try {
+            if($e.hasClass('edit-button'))
+                this.openForEdit( this.editableFor($e) );
 
-        if($e.hasClass('accept-button'))
-            this.closeWithSave( this.editableFor($e) );
+            if($e.hasClass('accept-button'))
+                this.closeWithSave( this.editableFor($e) );
 
-        if($e.hasClass('reject-button'))
-            this.closeWithoutSave( this.editableFor($e) );        
+            if($e.hasClass('reject-button'))
+                this.closeWithoutSave( this.editableFor($e) );
+        } catch(e) {
+            messageCenter.addMessage('error', "wlsave", 'Błąd:' + e.text);
+        }
+        
+        return false;
     },
 
     unfocusAnnotation: function()
@@ -198,15 +211,17 @@ var HTMLView = View.extend({
         }
 
         if(this.currentOpen 
-          && this.currentOpen.is("*[x-annotation-box]")
-          && this.currentOpen.parent()[0] == this.currentFocused[0])
-        {
+            && this.currentOpen.is("*[x-annotation-box]")
+            && this.currentOpen.parent()[0] == this.currentFocused[0])
+            {
             console.log("Can't unfocus open box");
             return false;
         }
 
         var $box = $("*[x-annotation-box]", this.currentFocused);
-        $box.css({'display': 'none'});
+        $box.css({
+            'display': 'none'
+        });
         // this.currentFocused.removeAttr('x-focused');
         // this.currentFocused.hide();
         this.currentFocused = null;
@@ -215,21 +230,20 @@ var HTMLView = View.extend({
     focusAnnotation: function($e) {
         this.currentFocused = $e;
         var $box = $("*[x-annotation-box]", $e);
-        $box.css({'display': 'block'});
+        $box.css({
+            'display': 'block'
+        });
         
-        // $e.attr('x-focused', 'focused');        
+    // $e.attr('x-focused', 'focused');
     },
 
     closeWithSave: function($e) {
         var $edit = $e.data('edit-overlay');
         var newText = $('textarea', $edit).val();
 
-        this.model.putXMLPart($e, newText, function($e, html) {
-            this.renderPart($e, html);
-            $edit.remove();
-            $e.removeAttr('x-open');            
-        }.bind(this) );
-        this.currentOpen = null;
+        this.model.updateWithWLML($e, newText);
+        $edit.remove();
+        this.currentOpen = null;        
     },
 
     closeWithoutSave: function($e) {
@@ -264,54 +278,74 @@ var HTMLView = View.extend({
             this.closeWithSave(this.currentOpen);    
         }
         
-        var x = $origin[0].offsetLeft;
-        var y = $origin[0].offsetTop;
-        var w = $origin.outerWidth();
-        var h = $origin.innerHeight();
+        var $box = null
 
-        console.log("Editable:", $origin, " offsetParent:", $origin[0].offsetParent);
+        // annotations overlay their sub box - not their own box //
+        if($origin.is(".annotation-inline-box"))
+            $box = $("*[x-annotation-box]", $origin);
+        else
+            $box = $origin;
+        
+        var x = $box[0].offsetLeft;
+        var y = $box[0].offsetTop;
+        var w = $box.outerWidth();
+        var h = $box.innerHeight();
+
+        console.log("Edit origin:", $origin, " box:", $box);
+        console.log("offsetParent:", $box[0].offsetParent);
         console.log("Dimensions: ", x, y, w , h);
 
         // start edition on this node
         var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
         
-        $overlay.css({position: 'absolute', height: h, left: x, top: y, width: '95%'});        
-        $($origin[0].offsetParent).append($overlay);
-        $origin.data('edit-overlay', $overlay);
+        $overlay.css({
+            position: 'absolute',
+            height: h,
+            left: x,
+            top: y,
+            width: '95%'
+        });
+        
+        try {
+            $('textarea', $overlay).val( this.model.asWLML($origin[0]) );
 
-        this.model.getXMLPart($origin, function(path, data) {
-            $('textarea', $overlay).val(data);
-        });      
-
-        if($origin.is("*[x-annotation-box]"))
-        {
-            var $b =  $origin.parent();
-            if(this.currentFocused) {
-                // if some other is focused
-                if($b[0] != this.currentFocused[0]) {
-                    this.unfocusAnnotation();
-                    this.focusAnnotation($b);
-                }
+            if($origin.is(".annotation-inline-box"))
+            {                
+                if(this.currentFocused) {
+                    // if some other is focused
+                    if($origin[0] != this.currentFocused[0]) {
+                        this.unfocusAnnotation();
+                        this.focusAnnotation($origin);
+                    }
                 // already focues
+                }
+                else { // nothing was focused
+                    this.focusAnnotation($origin);
+                }
             }
-            else { // nothing was focused
-                this.focusAnnotation($b);
+            else { // this item is not focusable
+                if(this.currentFocused) this.unfocusAnnotation();
             }
-        }
-        else { // this item is not focusable
-            if(this.currentFocused) this.unfocusAnnotation();
-        }
 
-        this.currentOpen = $origin;
-        $origin.attr('x-open', 'open');
+            $($box[0].offsetParent).append($overlay);
+            $origin.data('edit-overlay', $overlay);
+        
+            this.currentOpen = $origin;
+            $origin.attr('x-open', 'open');
+        }
+        catch(e) {
+            console.log("Can't open", e);
+        }
                 
         return false;
     },
 
     addTheme: function() 
     {
-        var selection = document.getSelection();
+        var selection = window.getSelection();
         var n = selection.rangeCount;
+
+        console.log("Range count:", n);
         
         if(n == 0)
             window.alert("Nie zaznaczono żadnego obszaru");
@@ -320,34 +354,39 @@ var HTMLView = View.extend({
         if(n > 1)
             window.alert("Zaznacz jeden obszar");
 
+
         // from this point, we will assume that the ranges are disjoint
-        for(var i=0; i < n; i++) {
+        for(var i=0; i < n; i++) 
+        {
             var range = selection.getRangeAt(i);
             console.log(i, range.startContainer, range.endContainer);
             var date = Date.now();
             var random = Math.floor(4000000000*Math.random());
             var id = (''+date) + '-' + (''+random);
 
-            var ipoint = document.createRange();            
-            
-            // Firefox alters the later node when inserting, so
-            // insert from end
-            ipoint.setStart(range.endContainer, range.endOffset);
-            elem = $('<span class="theme-end" x-theme-class="'+id+'" id="e'+id+'"></span>')[0];
-            ipoint.insertNode(elem);
+            var spoint = document.createRange();
+            var epoint = document.createRange();
+
+            spoint.setStart(range.startContainer, range.startOffset);
+            epoint.setStart(range.endContainer, range.endOffset);
 
             // insert theme-ref
-            ipoint.setStart(range.startContainer, range.startOffset);
-            var elem = $('<span class="theme-ref" x-theme-class="'+id+'" id="m'+id+'">Nowy motyw</span>')[0];
-            ipoint.insertNode(elem);
-            ipoint.setStartBefore(elem);
+            
+            var elem = $('<span x-node="motyw" class="theme-ref">Nowy motyw</span>');
+            elem.attr('x-attrib-id', 'm'+id);
+            spoint.insertNode(elem[0]);
 
             // insert theme-begin
-            elem = $('<span class="theme-begin" x-theme-class="'+id+'" id="b'+id+'"></span>')[0];
-            ipoint.insertNode(elem);            
+            elem = $('<span x-node="begin"></span>');
+            elem.attr('x-attrib-id', 'b'+id);
+            spoint.insertNode(elem[0]);
+            
+            elem = $('<span x-node="end" class="theme-end"></span>');
+            elem.attr('x-attrib-id', 'e'+id);
+            epoint.insertNode(elem[0]);
         }
 
-        selection.removeAllRanges();
+    //selection.removeAllRanges();
     },
 
     selectTheme: function(themeId)
