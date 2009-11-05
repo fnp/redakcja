@@ -21,9 +21,9 @@ var View = Editor.Object.extend({
         $(this.element).bind('resize', this._resizeHandler);
     },
 
-    render: function() {
+    render: function(template) {
         console.log('rendering:', this._className);
-        this.element.html(render_template(this.template, this));
+        this.element.html(render_template(template || this.template, this));
     },
   
     frozen: function() {

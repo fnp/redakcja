@@ -25,12 +25,15 @@ var ImageGalleryView = View.extend({
   },
   
   modelDataChanged: function(property, value) 
-  {    
-    if( property == 'data')
-    {
-        this.render();
-        this.gotoPage(this.currentPage);        
-    }   
+  {   
+    console.log(this.model.get('state'), value, value.length);
+    if ((this.model.get('state') == 'synced') && (value.length == 0)) {
+      console.log('tutaj');
+      this.render('image-gallery-empty-template');
+    } else {
+      this.render();
+      this.gotoPage(this.currentPage);
+    }
   },
 
   gotoPage: function(index) 
@@ -85,8 +88,11 @@ var ImageGalleryView = View.extend({
   
   modelStateChanged: function(property, value) {   
     if (value == 'loading') {
-      // this.freeze('Ładowanie...');
+      this.freeze('Ładowanie...');
     } else {
+      if ((value == 'synced') && (this.model.get('data').length == 0)) {
+        this.render('image-gallery-empty-template');
+      }
       this.unfreeze();
     }
   },
@@ -210,7 +216,7 @@ var ImageGalleryView = View.extend({
         mousedown(this.pageDragStart.bind(this));    
   },
 
-  render: function() 
+  render: function(template) 
   {
       if(!this.model) return;            
       
@@ -225,7 +231,7 @@ var ImageGalleryView = View.extend({
       if(this.$zoomResetButton) this.$zoomResetButton.unbind();
 
       /* render */
-      this._super();
+      this._super(template);
 
       /* fetch important parts */
       this.$pageListRoot = $('.image-gallery-page-list', this.element);
