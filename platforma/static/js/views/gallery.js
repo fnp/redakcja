@@ -218,21 +218,22 @@ var ImageGalleryView = View.extend({
 
   render: function(template) 
   {
-      if(!this.model) return;            
-      
-      /* first unbind all */    
-      if(this.$nextButton) this.$nextButton.unbind();
-      if(this.$prevButton) this.$prevButton.unbind();
-      if(this.$jumpButton) this.$jumpButton.unbind();
-      if(this.$pageInput) this.$pageInput.unbind();
+    if(!this.model) return;            
+    
+    /* first unbind all */    
+    if(this.$nextButton) this.$nextButton.unbind();
+    if(this.$prevButton) this.$prevButton.unbind();
+    if(this.$jumpButton) this.$jumpButton.unbind();
+    if(this.$pageInput) this.$pageInput.unbind();
 
-      if(this.$zoomInButton) this.$zoomInButton.unbind();
-      if(this.$zoomOutButton) this.$zoomOutButton.unbind();
-      if(this.$zoomResetButton) this.$zoomResetButton.unbind();
-
+    if(this.$zoomInButton) this.$zoomInButton.unbind();
+    if(this.$zoomOutButton) this.$zoomOutButton.unbind();
+    if(this.$zoomResetButton) this.$zoomResetButton.unbind();
+    
+    if (!template) {
       /* render */
-      this._super(template);
-
+      this._super();
+      
       /* fetch important parts */
       this.$pageListRoot = $('.image-gallery-page-list', this.element);
       this.$pages = $('.image-gallery-page-container', this.$pageListRoot);
@@ -258,6 +259,9 @@ var ImageGalleryView = View.extend({
 
       this.gotoPage(this.currentPage);
       this.changePageZoom(this.pageZoom);
+    } else {
+      this._super(template);
+    }
   },
 
   jumpToPage: function() {     
