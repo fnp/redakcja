@@ -15,7 +15,7 @@ class GalleryAdminForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(GalleryAdminForm, self).__init__(*args, **kwargs)
-        self.fields['subpath'].choices = [(x, x) for x in os.listdir(settings.MEDIA_ROOT + settings.IMAGE_DIR)]
+        self.fields['subpath'].choices = [(settings.IMAGE_DIR + '/' + x, x) for x in os.listdir(settings.MEDIA_ROOT + settings.IMAGE_DIR)]
         
     class Meta:
         mode = explorer.models.GalleryForDocument
