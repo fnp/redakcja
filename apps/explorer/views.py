@@ -13,7 +13,9 @@ from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
 from django.contrib.auth.decorators import login_required
 
+from explorer import forms
 from api.models import PullRequest
+
 
 def ajax_login_required(view):
     """Similar ro @login_required, but instead of redirect, 
@@ -28,11 +30,12 @@ def ajax_login_required(view):
 @login_required
 def display_editor(request, path):
     user = request.GET.get('user', request.user.username)
-    log.info(user)
+    gallery_form = forms.GalleryChoiceForm()
     
     return direct_to_template(request, 'explorer/editor.html', extra_context={
             'fileid': path,
-            'euser': user
+            'euser': user,
+            'gallery_form': gallery_form,
     })
     
 #

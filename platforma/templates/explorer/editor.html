@@ -135,7 +135,14 @@
 	
 	<script type="text/html" charset="utf-8" id="image-gallery-empty-template">
 	    <div class="image-gallery-empty-template">
-            Galeria jest pusta
+            <div class="empty-gallery-info">Galeria dla tego dokumentu nie istnieje i/lub jest pusta.</div>
+            
+            {% if user.is_superuser %}
+            <div class="choose-gallery">
+                <p>Dołącz galerię do dokumentu:</p>
+                <p>{{ gallery_form.subpath }} <input id="choose-gallery" type="submit" value="Dołącz"></p>
+            </div>
+            {% endif %}
         </div>
 	</script>
 	

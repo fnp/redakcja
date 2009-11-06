@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from django import forms
-
-from lxml import etree
+import os
 from librarian import dcparser
+
+from django import forms
+from django.conf import settings
 import django.utils
 
 from explorer import models
+
 
 class PersonField(forms.CharField):
     def clean(self, value):
@@ -79,6 +81,17 @@ class SplitForm(forms.Form):
     fulltext = forms.CharField(widget=forms.HiddenInput(), required=False)
     splittext = forms.CharField(widget=forms.HiddenInput(), required=False)
 
+class GalleryChoiceForm(forms.ModelForm):
+    subpath = forms.ChoiceField(choices=())
+
+    def __init__(self, *args, **kwargs):
+        super(GalleryChoiceForm, self).__init__(*args, **kwargs)
+        self.fields['subpath'].choices = [(settings.IMAGE_DIR + '/' + x, x) for x in os.listdir(settings.MEDIA_ROOT + settings.IMAGE_DIR)]
+
+    class Meta:
+        model = models.GalleryForDocument
+        fields = ('document', 'subpath',)
+
 class DublinCoreForm(forms.Form):
     about = forms.URLField(verify_exists=False)
     author = PersonField()
@@ -110,3 +123,4 @@ class DublinCoreForm(forms.Form):
             for name in self.fields.keys():
                 if vdict.has_key(name):
                     self.fields[name].initial = vdict[name]
+
