@@ -220,6 +220,8 @@ var ImageGalleryView = View.extend({
   {
     if(!this.model) return;            
     
+    $('.choose-gallery-button', this.element).unbind();
+    
     /* first unbind all */    
     if(this.$nextButton) this.$nextButton.unbind();
     if(this.$prevButton) this.$prevButton.unbind();
@@ -261,6 +263,12 @@ var ImageGalleryView = View.extend({
       this.changePageZoom(this.pageZoom);
     } else {
       this._super(template);
+      
+      var self = this;
+      $('.choose-gallery-button', self.element).click(function() {
+        console.log('CLICK CLICK')
+        self.model.setGallery($('#id_subpath', self.element).val());
+      });
     }
   },
 

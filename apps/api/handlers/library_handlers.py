@@ -5,6 +5,7 @@ import logging
 log = logging.getLogger('platforma.api.library')
 
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.utils import rc
 
 from datetime import date
 
@@ -327,7 +328,7 @@ class DocumentHTMLHandler(BaseHandler):
 #
 
 class DocumentGalleryHandler(BaseHandler):
-    allowed_methods = ('GET')
+    allowed_methods = ('GET', 'POST')
     
     
     def read(self, request, docid):
@@ -372,7 +373,27 @@ class DocumentGalleryHandler(BaseHandler):
 
         return galleries
 
+    def create(self, request, docid):
+        if not request.user.is_superuser:
+            return rc.FORBIDDEN
+        
+        new_path = request.POST.get('path')
+        
+        if new_path:
+            gallery, created = GalleryForDocument.objects.get_or_create(
+                document = docid,
+                defaults = {
+                    'subpath': new_path,
+                }
+            )
 
+            if not created:
+                gallery.subpath = new_path
+                gallery.save()
+
+            return rc.CREATED
+        
+        return rc.BAD_REQUEST
 
 #
 # Dublin Core handlers

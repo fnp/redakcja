@@ -360,6 +360,22 @@ Editor.ImageGalleryModel = Editor.Model.extend({
         this.pages = [];
     },
 
+    setGallery: function(path) {
+      $.ajax({
+          url: this.serverURL,
+          type: 'post',
+          data: {
+              path: path,
+          },
+          success: this.settingGallerySucceeded.bind(this)           
+      });
+    },
+    
+    settingGallerySucceeded: function(data) {
+      console.log('settingGallerySucceeded');
+      this.load(true);
+    },
+    
     load: function(force) {
         if (force || this.get('state') == 'empty') {
             console.log("setting state");
