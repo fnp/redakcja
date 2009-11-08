@@ -122,6 +122,19 @@
         </div>
 	</script>
 	
+	<script type="text/html" charset="utf-8" id="image-gallery-empty-template">
+	    <div class="image-gallery-empty-template">
+            <div class="empty-gallery-info">Galeria dla tego dokumentu nie istnieje i/lub jest pusta.</div>
+            
+            {% if user.is_superuser %}
+            <div class="choose-gallery">
+                <p>Dołącz galerię do dokumentu:</p>
+                <p>{{ gallery_form.subpath }} <input class="choose-gallery-button" type="submit" value="Dołącz"></p>
+            </div>
+            {% endif %}
+        </div>
+	</script>
+	
 	<script type="text/html" charset="utf-8" id="button-toolbar-view-template">
 		<div class="buttontoolbarview panel-toolbar">
 			<div class="buttontoolbarview-tabs toolbar-tabs-container toolbar-buttons-container">

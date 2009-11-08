@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^file/(?P<docid>[^/]+)/print$', 'explorer.views.print_html', name="file_print"),
 
     # Admin panel
+    (r'^admin/filebrowser/', include('filebrowser.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 

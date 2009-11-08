@@ -15,7 +15,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
+from explorer import forms
 from api.models import PullRequest
+
 
 def ajax_login_required(view):
     """Similar ro @login_required, but instead of redirect, 
@@ -30,15 +32,16 @@ def ajax_login_required(view):
 @login_required
 def display_editor(request, path):
     user = request.GET.get('user', request.user.username)
-    log.info(user)
-
+    gallery_form = forms.GalleryChoiceForm()
+    
     return render_to_response('explorer/editor.html',
-        mimetype="text/html",
+        # mimetype="text/html",
         dictionary = {
             'fileid': path,
-            'euser': user
+            'euser': user,
+            'gallery_from': gallery_form,
         }, context_instance=RequestContext(request))
-    
+
 #
 # View all files
 #

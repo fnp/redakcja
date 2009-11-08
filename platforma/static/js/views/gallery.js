@@ -26,12 +26,15 @@ var ImageGalleryView = View.extend({
   },
   
   modelDataChanged: function(property, value) 
-  {    
-    if( property == 'data')
-    {
-        this.render();
-        this.gotoPage(this.currentPage);        
-    }   
+  {   
+    console.log(this.model.get('state'), value, value.length);
+    if ((this.model.get('state') == 'synced') && (value.length == 0)) {
+      console.log('tutaj');
+      this.render('image-gallery-empty-template');
+    } else {
+      this.render();
+      this.gotoPage(this.currentPage);
+    }
   },
 
   gotoPage: function(index) 
@@ -86,8 +89,11 @@ var ImageGalleryView = View.extend({
   
   modelStateChanged: function(property, value) {   
     if (value == 'loading') {
-      // this.freeze('Ładowanie...');
+      this.freeze('Ładowanie...');
     } else {
+      if ((value == 'synced') && (this.model.get('data').length == 0)) {
+        this.render('image-gallery-empty-template');
+      }
       this.unfreeze();
     }
   },
@@ -211,23 +217,26 @@ var ImageGalleryView = View.extend({
         mousedown(this.pageDragStart.bind(this));    
   },
 
-  render: function() 
+  render: function(template) 
   {
-      if(!this.model) return;            
-      
-      /* first unbind all */    
-      if(this.$nextButton) this.$nextButton.unbind();
-      if(this.$prevButton) this.$prevButton.unbind();
-      if(this.$jumpButton) this.$jumpButton.unbind();
-      if(this.$pageInput) this.$pageInput.unbind();
+    if(!this.model) return;            
+    
+    $('.choose-gallery-button', this.element).unbind();
+    
+    /* first unbind all */    
+    if(this.$nextButton) this.$nextButton.unbind();
+    if(this.$prevButton) this.$prevButton.unbind();
+    if(this.$jumpButton) this.$jumpButton.unbind();
+    if(this.$pageInput) this.$pageInput.unbind();
 
-      if(this.$zoomInButton) this.$zoomInButton.unbind();
-      if(this.$zoomOutButton) this.$zoomOutButton.unbind();
-      if(this.$zoomResetButton) this.$zoomResetButton.unbind();
-
+    if(this.$zoomInButton) this.$zoomInButton.unbind();
+    if(this.$zoomOutButton) this.$zoomOutButton.unbind();
+    if(this.$zoomResetButton) this.$zoomResetButton.unbind();
+    
+    if (!template) {
       /* render */
       this._super();
-
+      
       /* fetch important parts */
       this.$pageListRoot = $('.image-gallery-page-list', this.element);
       this.$pages = $('.image-gallery-page-container', this.$pageListRoot);
@@ -253,6 +262,15 @@ var ImageGalleryView = View.extend({
 
       this.gotoPage(this.currentPage);
       this.changePageZoom(this.pageZoom);
+    } else {
+      this._super(template);
+      
+      var self = this;
+      $('.choose-gallery-button', self.element).click(function() {
+        console.log('CLICK CLICK')
+        self.model.setGallery($('#id_subpath', self.element).val());
+      });
+    }
   },
 
   jumpToPage: function() {     

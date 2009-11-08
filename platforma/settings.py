@@ -118,11 +118,18 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'piston',
+    'sorl.thumbnail',
+    'filebrowser',
     'explorer',
     'toolbar',
     'api',
 )
 
+
+FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
+FILEBROWSER_DIRECTORY = 'images/'
+FILEBROWSER_ADMIN_VERSIONS = []
+FILEBROWSER_VERSIONS_BASEDIR = 'thumbnails/'
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'

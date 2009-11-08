@@ -58,13 +58,14 @@ class EditorPanel(models.Model):
 
 # Yes, this is intentionally unnormalized !
 class GalleryForDocument(models.Model):
-    name = models.CharField(max_length=100)
-    
+    name = models.CharField(max_length=100, blank=True)
+
+    # document associated with the gallery
+    document = models.CharField(max_length=255, unique=True)
+        
     # directory containing scans under MEDIA_ROOT/
     subpath = models.CharField(max_length=255)
 
-    # document associated with the gallery
-    document = models.CharField(max_length=255)
-
     def __unicode__(self):
         return u"%s:%s" % (self.subpath, self.document)
+

@@ -41,7 +41,7 @@ class PullRequest(models.Model):
 
     # revision to be merged into the main branch
     source_revision = models.CharField(max_length=40, unique=True)
-    target_revision = models.CharField(max_length=40)
+    target_revision = models.CharField(max_length=40, blank=True)
 
     # current status
     status = models.CharField(max_length=1, choices=REQUEST_STATUSES.items())
