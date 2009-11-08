@@ -1,29 +1,46 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" charset="utf-8">
+<link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" charset="utf-8" />
+<script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 
 {% block maincontent %}
 
-<p>Source</p>
-<textarea id="source" cols="80" rows="10" ></textarea>
+<!-- <button type="button" id="render">Render</button>
 
-<p>Rendered</p>
-<textarea id="dest" cols="80" rows="10" ></textarea>
-
-<button type="button" id="render">Render</button>
-<button type="button" id="unrender">Unrender</button>
-
-<div style="position: fixed; right: 0px; top: 0px; width: 640px; height: 300px; background: blue;">
-<div id="preview" class="htmlview">
-</div>
-</div>
+<table width="100%" align="center">
+    <tr>
+        <td width="50%">
+                <textarea id="source" cols="70" rows="30" ></textarea>
+        </td>
+        <td width="50%">
+                <textarea id="dest" cols="70" rows="30" ></textarea>
+        </td>
+    </tr>
+</table>
+<iframe>
+    
+</iframe> -->
+<div id="target"> </div>
 {% endblock %}
 
 {% block extrabody %}
-<script type="text/javascript">
 
+<script type="text/javascript">
+<![CDATA[
+    var editor = new CodeMirror(CodeMirror.replace("target"), {
+  parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
+  path: "{{STATIC_URL}}js/lib/codemirror",
+  stylesheet: "{{STATIC_URL}}css/xmlcolors.css",
+  content: "Hello world!"
+});
+]]>
+</script>
+
+{% comment %}
+<script type="text/javascript">
+<![CDATA[
     function serializeAttribute(attr, acc) {
         return acc + ' ' + attr.nodeName + '="'+ attr.nodeValue + '"';
     }
@@ -41,6 +58,7 @@
         }
         
         acc += "<" + element.nodeName;
+        
         for(var i=0; i < element.attributes.length; i++)
             acc = serializeAttribute(element.attributes.item(i), acc);
 
@@ -93,31 +111,43 @@
     }
 
     // w3c version first
-    var xslt = new XSLTProcessor();
+    var there = new XSLTProcessor();
+    var here = new XSLTProcessor();
 
     $.ajax({
         url: "/static/xsl/wl2html_client.xsl",
         dataType: 'xml',
         success: function(data) {
-            xslt.importStylesheet(data);
-            console.log('XSL loaded successfully');
+            there.importStylesheet(data);
+            console.log('There XSL loaded successfully');
+        },
+        async: false
+    });
+
+    $.ajax({
+        url: "/static/xsl/html2wl_client.xsl",
+        dataType: 'xml',
+        success: function(data) {
+            here.importStylesheet(data);
+            console.log('Here XSL loaded successfully');
         },
         async: false
     });
     
-    $('#render').click(function() {
-        
-        var src = '<?xml version="1.0"?><chunk>'+$('#source').val()+'</chunk>';
+    $('#render').click(function()
+    {
+        src = $('#source').val();
         src = src.replace(/\/\s+/g, '<br />');
         var doc = (new DOMParser()).parseFromString(src, "text/xml");
-        // var string = (new XMLSerializer()).serializeToString(doc);
-        // console.log('rendering', string);
-        
-        var result = xslt.transformToFragment(doc, document);
-        var string =  serializeXML(result);
-        var dest = $('#dest');
-        dest.val( string );
-        $('#preview').html(string);
-    });    
+        // console.log("Parsed", doc);
+        var along = there.transformToDocument(doc).documentElement;
+        // console.log("HTML", along, serializeXML(along) );
+        var xfrm = here.transformToDocument(along).documentElement;
+        // console.log("WLML", xfrm, serializeXML(xfrm) );
+        var out = (new XMLSerializer()).serializeToString(xfrm);
+        $('#dest').val(out);
+    });
+]]>
 </script>
+{% endcomment %}
 {% endblock %}

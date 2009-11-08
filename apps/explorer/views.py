@@ -11,6 +11,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
 from api.models import PullRequest
@@ -29,11 +31,13 @@ def ajax_login_required(view):
 def display_editor(request, path):
     user = request.GET.get('user', request.user.username)
     log.info(user)
-    
-    return direct_to_template(request, 'explorer/editor.html', extra_context={
+
+    return render_to_response('explorer/editor.html',
+        mimetype="text/html",
+        dictionary = {
             'fileid': path,
             'euser': user
-    })
+        }, context_instance=RequestContext(request))
     
 #
 # View all files
@@ -122,5 +126,5 @@ def pull_requests(request):
 # Testing
 #
 def renderer_test(request):
-    return direct_to_template(request, 'renderer.html', mimetype="text/html",
+    return direct_to_template(request, 'renderer.html', mimetype="application/xhtml+xml",
         extra_context = {} )

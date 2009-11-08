@@ -99,16 +99,19 @@ Editor.HTMLModel = Editor.Model.extend({
     },
 
     asWLML: function(element) 
-    {        
-        var result = this.wlmlXSL.transformToFragment(element, document);
+    {
+        console.log("Source", element);
+        var doc = this.parser.parseFromString(this.serializer.serializeToString(element), 'text/xml');
+
+        var result = this.wlmlXSL.transformToDocument(doc);
 
         if(!result) {
-            console.log(this.wlmlXSL.transformToDocument(element));
+            console.log("Failed", this.wlmlXSL, doc);
             throw "Failed to transform fragment";
         }
         
-        console.log("Transform result:", result);
-        return this.serializer.serializeToString(result);
+        console.log("Transformed", doc, " to: ", result.documentElement);
+        return this.serializer.serializeToString(result.documentElement);
     },
 
     updateWithWLML: function($element, text)
@@ -131,6 +134,7 @@ Editor.HTMLModel = Editor.Model.extend({
             throw "WLML->HTML transformation failed.";
         
         $element.replaceWith(result);
+        this.set('state', 'dirty');
     },
 
     createXSLT: function(xslt_doc) {
@@ -201,20 +205,23 @@ Editor.HTMLModel = Editor.Model.extend({
 
     save: function(message) {
         if (this.get('state') == 'dirty') {
-            this.set('state', 'updating');
-            messageCenter.addMessage('info', 'xmlsave', 'Zapisuję XML...');
+            this.set('state', 'saving');
+            
+            messageCenter.addMessage('info', 'htmlsave', 'Zapisuję HTML...');
+            var wlml = this.asWLML(this.get('data'));
 
             var payload = {
-                contents: this.get('data'),
+                contents: wlml,
                 revision: this.get('revision'),
                 user: this.document.get('user')
             };
+
             if (message) {
                 payload.message = message;
             }
 
             $.ajax({
-                url: this.serverURL,
+                url: this.textURL,
                 type: 'post',
                 dataType: 'json',
                 data: payload,
@@ -227,19 +234,19 @@ Editor.HTMLModel = Editor.Model.extend({
     },
 
     saveSucceeded: function(data) {
-        if (this.get('state') != 'updating') {
+        if (this.get('state') != 'saving') {
             alert('erroneous state:', this.get('state'));
         }
         this.set('revision', data.revision);
         this.set('state', 'updated');
-        messageCenter.addMessage('success', 'xmlsave', 'Zapisałem XML :-)');
+        messageCenter.addMessage('success', 'htmlsave', 'Zapisałem :-)');
     },
 
     saveFailed: function() {
-        if (this.get('state') != 'updating') {
+        if (this.get('state') != 'saving') {
             alert('erroneous state:', this.get('state'));
         }
-        messageCenter.addMessage('error', 'xmlsave', 'Nie udało mi się zapisać XML. Spróbuj ponownie :-(');
+        messageCenter.addMessage('error', 'htmlsave', 'Nie udało mi się zapisać.');
         this.set('state', 'dirty');
     },
 

@@ -55,9 +55,9 @@ var CodeMirror = (function(){
 
   function wrapLineNumberDiv(place) {
     return function(node) {
-      var container = document.createElement("DIV"),
-          nums = document.createElement("DIV"),
-          scroller = document.createElement("DIV");
+      var container = document.createElement("div"),
+          nums = document.createElement("div"),
+          scroller = document.createElement("div");
       container.style.position = "relative";
       nums.style.position = "absolute";
       nums.style.height = "100%";
@@ -98,7 +98,7 @@ var CodeMirror = (function(){
     function update() {
       var diff = 20 + Math.max(doc.body.offsetHeight, frame.offsetHeight) - scroller.offsetHeight;
       for (var n = Math.ceil(diff / 10); n > 0; n--) {
-        var div = document.createElement("DIV");
+        var div = document.createElement("div");
         div.appendChild(document.createTextNode(nextNum++));
         scroller.appendChild(div);
       }
@@ -120,7 +120,7 @@ var CodeMirror = (function(){
     this.options = options = options || {};
     setDefaults(options, CodeMirrorConfig);
 
-    var frame = this.frame = document.createElement("IFRAME");
+    var frame = this.frame = document.createElement("iframe");
     if (options.iframeClass) frame.className = options.iframeClass;
     frame.frameBorder = 0;
     frame.src = "javascript:false;";

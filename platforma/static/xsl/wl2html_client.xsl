@@ -5,7 +5,7 @@
     <!--
         Dokument ten opisuje jednoznaczne przekształcenie WLML 0.1 -> XHTML.
     -->        
-    <xsl:output method="html" encoding="utf-8" indent="yes" />
+    <xsl:output method="xml" encoding="utf-8" indent="no" />
 
     <xsl:template match="/">
         <xsl:apply-templates select="chunk|utwor" />
@@ -25,9 +25,12 @@
     -->
 
     <xsl:template match="utwor">
-        <xsl:apply-templates select="child::*[name() = local-name()]">
-            <xsl:with-param name="mixed" select="false()" />
-        </xsl:apply-templates>
+        <div>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::*">
+                <xsl:with-param name="mixed" select="false()" />
+            </xsl:apply-templates>
+        </div>
     </xsl:template>    
     
     <!-- 
@@ -42,7 +45,8 @@
 
     <xsl:template match="opowiadanie|powiesc">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -51,7 +55,8 @@
 
     <xsl:template match="liryka_l|liryka_lp">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -60,7 +65,8 @@
 
     <xsl:template match="dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -69,7 +75,8 @@
 
     <xsl:template match="wywiad">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -92,7 +99,8 @@
     -->
     <xsl:template match="autor_utworu">
         <xsl:param name="mixed" />
-        <h2 class="{name()}" x-editable="true" x-node="{name()}">
+        <h2 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -110,7 +118,8 @@
     -->
     <xsl:template match="nazwa_utworu">
         <xsl:param name="mixed" />
-        <h1 class="{name()}" x-editable="true" x-node="{name()}">
+        <h1 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -133,7 +142,8 @@
     -->
     <xsl:template match="dzielo_nadrzedne">
         <xsl:param name="mixed" />
-        <h2 class="{name()}" x-editable="true" x-node="{name()}">
+        <h2 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -157,7 +167,8 @@
     -->
     <xsl:template match="podtytul">
         <xsl:param name="mixed" />
-        <h3 class="{name()}" x-editable="true" x-node="{name()}">
+        <h3 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -173,7 +184,8 @@
 
     <xsl:template match="nota">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -186,7 +198,8 @@
     -->
     <xsl:template match="dedykacja">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -199,16 +212,18 @@
     -->
     <xsl:template match="motto">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="false()" />
+                <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
         </div>
     </xsl:template>
 
     <xsl:template match="motto_podpis">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -224,7 +239,8 @@
     -->
     <xsl:template match="lista_osob">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -233,7 +249,8 @@
 
     <xsl:template match="naglowek_listy">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -243,7 +260,24 @@
 
     <xsl:template match="lista_osoba">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:call-template name="context-menu" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+        </p>
+    </xsl:template>
+
+    <!--  Tagi obejmujące inne komentarze wprowadzające
+        przed tekstem dramatu (składane razem z listą osób):
+
+        <miejsce_czas> komentarze-wprowadzające </miejsce_czas>
+    -->
+    <xsl:template match="miejsce_czas">
+        <xsl:param name="mixed" />
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -264,7 +298,8 @@
     -->
     <xsl:template match="naglowek_czesc">
         <xsl:param name="mixed" />
-        <h2 class="{name()}" x-editable="true" x-node="{name()}">
+        <h2 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -278,7 +313,8 @@
     -->
     <xsl:template match="naglowek_rozdzial">
         <xsl:param name="mixed" />
-        <h3 class="{name()}" x-editable="true" x-node="{name()}">
+        <h3 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -292,7 +328,8 @@
     -->
     <xsl:template match="naglowek_podrozdzial">
         <xsl:param name="mixed" />
-        <h4 class="{name()}" x-editable="true" x-node="{name()}">
+        <h4 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -310,7 +347,8 @@
 
     <xsl:template match="srodtytul">
         <xsl:param name="mixed" />
-        <h2 class="{name()}" x-editable="true" x-node="{name()}">
+        <h2 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -320,7 +358,8 @@
 
     <xsl:template match="naglowek_akt">
         <xsl:param name="mixed" />
-        <h2 class="{name()}" x-editable="true" x-node="{name()}">
+        <h2 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -335,7 +374,8 @@
 
     <xsl:template match="naglowek_scena">
         <xsl:param name="mixed" />
-        <h3 class="{name()}" x-editable="true" x-node="{name()}">
+        <h3 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -345,7 +385,8 @@
     
     <xsl:template match="naglowek_osoba">
         <xsl:param name="mixed" />
-        <h4 class="{name()}" x-editable="true" x-node="{name()}">
+        <h4 x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -361,7 +402,8 @@
     
     <xsl:template match="dlugi_cytat">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -370,7 +412,8 @@
     
     <xsl:template match="poezja_cyt">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -379,7 +422,8 @@
 
     <xsl:template match="kwestia">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -388,16 +432,18 @@
 
     <xsl:template match="didaskalia">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="false()" />
+                <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
         </div>
     </xsl:template>
 
     <xsl:template match="wywiad_pyt">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -406,7 +452,8 @@
 
     <xsl:template match="wywiad_odp">
         <xsl:param name="mixed" />
-        <div class="{name()}" x-node="{name()}">
+        <div>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
@@ -421,7 +468,8 @@
 
     <xsl:template match="akap">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -431,7 +479,8 @@
 
     <xsl:template match="akap_cd">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -441,7 +490,8 @@
 
     <xsl:template match="akap_dialog">
         <xsl:param name="mixed" />
-        <p class="{name()}" x-editable="true" x-node="{name()}">
+        <p x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -455,8 +505,10 @@
         ********
     -->
     <xsl:template match="strofa">
-        <div class="{name()}" x-editable="true" x-node="{name()}">
+        <div x-editable="true">
+            <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
+         
             <xsl:choose>
                 <xsl:when test="count(br) > 0">
                     <xsl:variable name="first-verse" select="br[1]/preceding-sibling::node()" />                    
@@ -485,42 +537,41 @@
     <xsl:template name="verse">
         <!-- the verse contents including the last br (if any) -->
         <xsl:param name="verse-content" />
-        
         <xsl:variable name="first-tag-name" select="name($verse-content/self::*)" />
         <!-- name of text nodes is '' == false -->
 
+        <!-- THIS IS A HORROR!!! -->
+        <!-- Possible variants: -->
         <xsl:choose>
-            <xsl:when test="starts-with($first-tag-name, 'wers')">
-                <p class="{$first-tag-name}" x-node="{$first-tag-name}">
-                <xsl:for-each select="$verse-content[name(.) != 'br']">
-                <xsl:apply-templates select=".">
+            <!-- Simple verse == not wers_ tags anywhere until the ending br -->
+            <xsl:when test="not($verse-content[starts-with(name(), 'wers_')])">
+                <p class="wers" x-node="wers">
+                <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
                     <xsl:with-param name="mixed" select="true()" />
                 </xsl:apply-templates>
-                </xsl:for-each>
                 </p>
             </xsl:when>
 
             <xsl:otherwise>
-                <p class="wers" x-node="wers">
-                <xsl:for-each select="$verse-content[name(.) != 'br']">
-                    <xsl:apply-templates select=".">
-                    <xsl:with-param name="mixed" select="true()" />
-                    </xsl:apply-templates>
-                </xsl:for-each>
-                </p>                
-            </xsl:otherwise>          
-            
-        </xsl:choose>       
+            <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
+                <xsl:with-param name="mixed" select="false()" />
+            </xsl:apply-templates>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="wers_cd|wers_akap|wers_wciety">
         <xsl:param name="mixed" />
-        <xsl:call-template name="copy-attributes" />
-        <xsl:apply-templates select="child::node()">
+        <p>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
+        </p>
     </xsl:template>
-    
+
+    <xsl:template match="br"><xsl:text>/</xsl:text></xsl:template>
+
 
     <!--
         *************
@@ -536,7 +587,8 @@
     -->
     <xsl:template match="tytul_dziela">
         <xsl:param name="mixed" />
-        <em class="{name()}" x-node="{name()}">
+        <em>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
@@ -545,7 +597,8 @@
 
     <xsl:template match="wyroznienie|slowo_obce|mat|didask_tekst|osoba|wyp_osoba|www">
         <xsl:param name="mixed" />
-        <em class="{name()}" x-node="{name()}">
+        <em>
+            <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
@@ -559,22 +612,22 @@
     -->
     <xsl:template match="sekcja_swiatlo">
         <xsl:param name="mixed" />
-        <br class="{name()}" x-node="{name()}" />
+        <br><xsl:call-template name="standard-attributes" /></br>
     </xsl:template>
 
     <xsl:template match="sekcja_asterysk">
         <xsl:param name="mixed" />
-        <hr class="{name()}" x-node="{name()}" />
+        <hr><xsl:call-template name="standard-attributes" /></hr>
     </xsl:template>
 
     <xsl:template match="separator_linia">
         <xsl:param name="mixed" />
-        <hr class="{name()}" x-node="{name()}" />
+        <hr><xsl:call-template name="standard-attributes" /></hr>
     </xsl:template>
 
     <xsl:template match="zastepnik_wersu">
         <xsl:param name="mixed" />
-        <hr class="{name()}" x-node="{name()}" />
+        <hr><xsl:call-template name="standard-attributes" /></hr>
     </xsl:template>
 
     <!--
@@ -587,7 +640,10 @@
         Przypisy i motywy
     -->
     <xsl:template match="pr|pa|pe|pt">       
-        <span class="annotation-inline-box" x-node="{name()}" x-editable="true">
+        <span x-editable="true">
+            <xsl:call-template name="standard-attributes">
+                <xsl:with-param name="extra-class" select="'annotation-inline-box'" />
+            </xsl:call-template>
             <a name="anchor-{generate-id(.)}" />
             <!-- the link to the non-inline version -->
             <a href="#annotation-{generate-id(.)}" class="annotation"></a>
@@ -602,21 +658,29 @@
     </xsl:template>
 
     <xsl:template match="begin">        
-        <span class="theme-begin" x-node="begin">
-            <xsl:call-template name="copy-attributes" />
+        <span>
+            <xsl:call-template name="standard-attributes" />
+        </span>
+    </xsl:template>
+
+    <xsl:template match="extra|uwaga">
+        <span>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="node()" />
         </span>
     </xsl:template>
 
     <xsl:template match="motyw">
-        <span class="theme-ref" x-node="motyw">
-            <xsl:call-template name="copy-attributes" />
+        <span x-editable="true">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:call-template name="context-menu" />
             <xsl:value-of select="." />
         </span>
     </xsl:template>
 
     <xsl:template match="end">
-        <span class="theme-end" x-node="end">
-            <xsl:call-template name="copy-attributes" />
+        <span>
+            <xsl:call-template name="standard-attributes" />           
         </span>
     </xsl:template>
 
@@ -631,18 +695,29 @@
         <xsl:param name="mixed" />
         <xsl:choose>
             <xsl:when test="normalize-space(.) = ''" />
-            <xsl:when test="not($mixed)">
-                <span x-node="text" class="out-of-flow-text"
-                    x-content="{normalize-space(.)}"></span>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="." />
-            </xsl:otherwise>
+            <xsl:when test="not($mixed)"><span x-node="out-of-flow-text" class="out-of-flow-text"
+                    x-content="{.}"></span></xsl:when>
+            <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template match="comment()">
+        <xsl:comment><xsl:value-of select="." /></xsl:comment>
+    </xsl:template>
+
+    <xsl:template match="*[name() != local-name()]">
+        <div>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+        </div>
+    </xsl:template>
+
     <xsl:template match="*">
-        <div x-node="error" x-content="{name()}" />
+        <xsl:message terminate="no">
+        Unmatched tag <xsl:value-of select="name()" />
+        </xsl:message>
     </xsl:template>
 
     <xsl:template name="context-menu">
@@ -655,9 +730,24 @@
         </span>
     </xsl:template>
 
-    <xsl:template name="copy-attributes">
+    <xsl:template name="standard-attributes">
+        <xsl:param name="extra-class" />
+        <xsl:attribute name="class"><xsl:value-of select="local-name()" /><xsl:text>&#x0020;</xsl:text><xsl:value-of select="$extra-class" /></xsl:attribute>
+
+        <!-- we use upper-case attribute names, so we don't have to wory about HTML parsers -->
+        <xsl:attribute name="x-node"><xsl:value-of select="name()" /></xsl:attribute>
+
+        <xsl:if test="local-name() != name()">
+            <xsl:attribute name="x-ns"><xsl:value-of select="namespace-uri()" /></xsl:attribute>
+        </xsl:if>
+
         <xsl:for-each select="@*">
-            <xsl:attribute name="x-attrib-{name(.)}"><xsl:value-of select="."/></xsl:attribute>
+            <xsl:variable name="id" select="generate-id()" />
+            <xsl:attribute name="x-attr-value-{$id}"><xsl:value-of select="."/></xsl:attribute>
+            <xsl:attribute name="x-attr-qname-{$id}"><xsl:value-of select="name()"/></xsl:attribute>
+            <xsl:if test="namespace-uri()">
+                <xsl:attribute name="x-attr-ns-{$id}"><xsl:value-of select="namespace-uri()"/></xsl:attribute>
+            </xsl:if>               
         </xsl:for-each>
     </xsl:template>
     

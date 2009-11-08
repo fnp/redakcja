@@ -106,9 +106,17 @@ var HTMLView = View.extend({
         this.$docbase = $('.htmlview', this.element);
         this.$addThemeButton = $('.htmlview-toolbar .html-add-motive', this.element);
 
+        this.$debugButton = $('.htmlview-toolbar .html-serialize', this.element);
+
         this.updatePrintLink();
         this.$docbase.bind('click', this.itemClicked.bind(this));
         this.$addThemeButton.click( this.addTheme.bind(this) );
+        this.$debugButton.click( this.serialized.bind(this) );
+    },
+
+    serialized: function() {
+        this.model.set('state', 'dirty');
+        console.log( this.model.serializer.serializeToString(this.model.get('data')) );        
     },
 
     renderPart: function($e, html) {
@@ -360,7 +368,7 @@ var HTMLView = View.extend({
         {
             var range = selection.getRangeAt(i);
             console.log(i, range.startContainer, range.endContainer);
-            var date = Date.now();
+            var date = (new Date()).getTime();
             var random = Math.floor(4000000000*Math.random());
             var id = (''+date) + '-' + (''+random);
 
@@ -372,17 +380,20 @@ var HTMLView = View.extend({
 
             // insert theme-ref
             
-            var elem = $('<span x-node="motyw" class="theme-ref">Nowy motyw</span>');
-            elem.attr('x-attrib-id', 'm'+id);
+            var elem = $('<span x-editable="true" x-node="motyw" class="motyw">Nowy motyw</span>');
+            elem.attr('x-attr-qname-'+id, 'id');
+            elem.attr('x-attr-value-'+id, 'm'+id);
             spoint.insertNode(elem[0]);
 
             // insert theme-begin
-            elem = $('<span x-node="begin"></span>');
-            elem.attr('x-attrib-id', 'b'+id);
+            elem = $('<span x-node="begin" class="begin"></span>');
+            elem.attr('x-attr-qname-'+id, 'id');
+            elem.attr('x-attr-value-'+id, 'b'+id);
             spoint.insertNode(elem[0]);
             
-            elem = $('<span x-node="end" class="theme-end"></span>');
-            elem.attr('x-attrib-id', 'e'+id);
+            elem = $('<span x-node="end" class="end"></span>');
+            elem.attr('x-attr-qname-'+id, 'id');
+            elem.attr('x-attr-value-'+id, 'e'+id);
             epoint.insertNode(elem[0]);
         }
 
