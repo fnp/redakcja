@@ -7,11 +7,10 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/"
 >
 
-    <xsl:output method="xml" encoding="utf-8" indent="yes"/>
+    <xsl:output method="xml" encoding="utf-8" indent="yes" omit-xml-declaration="yes" />
     <!--
         Ten dokument definiuję przekształcenie odwrotne do wl2html
     -->
-
 
     <xsl:template match="comment()"><xsl:copy /></xsl:template>
 
@@ -86,8 +85,8 @@
         <xsl:element name="{@X-NODE}" namespace="{@X-NS}"><xsl:apply-templates select="@*|node()" /></xsl:element>
         <xsl:if test="count(following-sibling::*[starts-with(@X-NODE, 'wers')]) > 0"><xsl:text>/&#x000a;</xsl:text></xsl:if>
     </xsl:template>
-
-    
-    
+        
     <xsl:template match="*" />
+        
+    
 </xsl:stylesheet>

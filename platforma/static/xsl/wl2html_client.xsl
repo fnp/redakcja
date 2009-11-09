@@ -5,7 +5,7 @@
     <!--
         Dokument ten opisuje jednoznaczne przekształcenie WLML 0.1 -> XHTML.
     -->        
-    <xsl:output method="xml" encoding="utf-8" indent="no" />
+    <xsl:output method="xml" encoding="utf-8" indent="no" omit-xml-declaration="yes" />
 
     <xsl:template match="/">
         <xsl:apply-templates select="chunk|utwor" />
@@ -660,6 +660,9 @@
     <xsl:template match="begin">        
         <span>
             <xsl:call-template name="standard-attributes" />
+            <xsl:attribute name="theme-class">
+                <xsl:value-of select="substring-after(@id, 'b')" />
+            </xsl:attribute>
         </span>
     </xsl:template>
 
@@ -673,6 +676,9 @@
     <xsl:template match="motyw">
         <span x-editable="true">
             <xsl:call-template name="standard-attributes" />
+            <xsl:attribute name="theme-class">
+                <xsl:value-of select="substring-after(@id, 'm')" />
+            </xsl:attribute>
             <xsl:call-template name="context-menu" />
             <xsl:value-of select="." />
         </span>
@@ -680,7 +686,10 @@
 
     <xsl:template match="end">
         <span>
-            <xsl:call-template name="standard-attributes" />           
+            <xsl:call-template name="standard-attributes" />
+            <xsl:attribute name="theme-class">
+                <xsl:value-of select="substring-after(@id, 'e')" />
+            </xsl:attribute>
         </span>
     </xsl:template>
 
@@ -715,18 +724,17 @@
     </xsl:template>
 
     <xsl:template match="*">
-        <xsl:message terminate="no">
-        Unmatched tag <xsl:value-of select="name()" />
-        </xsl:message>
+        <error>Unknown tag: <xsl:value-of select="name()" /></error>
     </xsl:template>
 
     <xsl:template name="context-menu">
         <span class="default-menu context-menu">
             <span class="edit-button">Edit</span>
+            <span class="delete-button">Delete</span>
         </span>
         <span class="edit-menu context-menu">
-            <span class="accept-button">OK</span>
-            <span class="reject-button">Cancel</span>
+            <span class="accept-button">Accept</span>
+            <span class="reject-button">Close</span>
         </span>
     </xsl:template>
 

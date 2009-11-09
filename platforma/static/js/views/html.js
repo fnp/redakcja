@@ -105,19 +105,18 @@ var HTMLView = View.extend({
         this.$printLink = $('.htmlview-toolbar .html-print-link', this.element);
         this.$docbase = $('.htmlview', this.element);
         this.$addThemeButton = $('.htmlview-toolbar .html-add-motive', this.element);
-
-        this.$debugButton = $('.htmlview-toolbar .html-serialize', this.element);
+        // this.$debugButton = $('.htmlview-toolbar .html-serialize', this.element);
 
         this.updatePrintLink();
         this.$docbase.bind('click', this.itemClicked.bind(this));
         this.$addThemeButton.click( this.addTheme.bind(this) );
-        this.$debugButton.click( this.serialized.bind(this) );
+        // this.$debugButton.click( this.serialized.bind(this) );
     },
 
-    serialized: function() {
+    /* serialized: function() {
         this.model.set('state', 'dirty');
         console.log( this.model.serializer.serializeToString(this.model.get('data')) );        
-    },
+    }, */
 
     renderPart: function($e, html) {
         // exceptions aren't good, but I don't have a better idea right now
@@ -186,15 +185,18 @@ var HTMLView = View.extend({
          *  - this greatly simplifies the whole click check
          */
 
-        if( $e.hasClass('theme-ref') )
+        if( $e.hasClass('motyw') )
         {
             console.log($e);
-            this.selectTheme($e.attr('x-theme-class'));
+            this.selectTheme($e.attr('theme-class'));
             return false;
         }
 
         /* other buttons */
         try {
+            if($e.hasClass('delete-button'))
+                this.deleteElement( this.editableFor($e) );
+
             if($e.hasClass('edit-button'))
                 this.openForEdit( this.editableFor($e) );
 
@@ -204,7 +206,7 @@ var HTMLView = View.extend({
             if($e.hasClass('reject-button'))
                 this.closeWithoutSave( this.editableFor($e) );
         } catch(e) {
-            messageCenter.addMessage('error', "wlsave", 'Błąd:' + e.text);
+            messageCenter.addMessage('error', "wlsave", 'Błąd:' + e.toString());
         }
         
         return false;
@@ -248,10 +250,16 @@ var HTMLView = View.extend({
     closeWithSave: function($e) {
         var $edit = $e.data('edit-overlay');
         var newText = $('textarea', $edit).val();
-
-        this.model.updateWithWLML($e, newText);
-        $edit.remove();
-        this.currentOpen = null;        
+        var errors = null;
+        
+        errors = this.model.updateInnerWithWLML($e, newText);
+        
+        if(errors)
+            messageCenter.addMessage('error', 'render', errors);
+        else {
+            $edit.remove();
+            this.currentOpen = null;
+        }
     },
 
     closeWithoutSave: function($e) {
@@ -305,6 +313,8 @@ var HTMLView = View.extend({
 
         // start edition on this node
         var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
+
+        h = Math.max(h, 2*parseInt($box.css('line-height')));
         
         $overlay.css({
             position: 'absolute',
@@ -315,7 +325,7 @@ var HTMLView = View.extend({
         });
         
         try {
-            $('textarea', $overlay).val( this.model.asWLML($origin[0]) );
+            $('textarea', $overlay).val( this.model.innerAsWLML($origin[0]) );
 
             if($origin.is(".annotation-inline-box"))
             {                
@@ -347,6 +357,62 @@ var HTMLView = View.extend({
                 
         return false;
     },
+    
+    deleteElement: function($editable)
+    {
+        var relatedThemes = $("*[x-node='begin'], *[x-node='end']", $editable);
+
+        var themeMarks = relatedThemes.map(function() {
+            return $(".motyw[theme-class='"+$(this).attr('theme-class')+"']");
+        });
+
+        if($editable.is("*.motyw"))
+        {
+            console.log($editable);
+            var selector = "[theme-class='"+$editable.attr('theme-class')+"']";
+            relatedThemes = relatedThemes.add("*[x-node='begin']"+selector+", *[x-node='end']"+selector);
+        }
+        
+        console.log(relatedThemes, themeMarks);
+
+        var del = confirm("Usunięcie elementu jest nieodwracalne.\n"
+        +" Czy na pewno chcesz usunąć ten element, wraz z zawartymi motywami ?\n");
+        
+        if(del) {
+            relatedThemes.remove();
+            themeMarks.remove();
+            $editable.remove();
+        }
+    },
+
+    // Theme related stuff
+    verifyThemeInsertPoint: function(node) {
+
+        if(node.nodeType == 3) { // Text Node
+            node = node.parentNode;
+        }
+
+        if(node.nodeType != 1) return false;
+
+        console.log('Selection point:', node);
+        
+        node = $(node);
+        var xtype = node.attr('x-node');
+
+        if(!xtype || (xtype.search(':') >= 0) ||
+                xtype == 'motyw' || xtype == 'begin' || xtype == 'end')
+            return false;
+
+        // this is hopefully redundant
+        //if(! node.is('*.utwor *') )
+        //    return false;
+        
+        // don't allow themes inside annotations
+        if( node.is('*[x-annotation-box] *') )
+            return false;
+
+        return true;
+    },
 
     addTheme: function() 
     {
@@ -355,19 +421,37 @@ var HTMLView = View.extend({
 
         console.log("Range count:", n);
         
-        if(n == 0)
+        if(n == 0) {
             window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
 
         // for now allow only 1 range
-        if(n > 1)
+        if(n > 1) {
             window.alert("Zaznacz jeden obszar");
-
+            return false;
+        }
 
         // from this point, we will assume that the ranges are disjoint
         for(var i=0; i < n; i++) 
         {
             var range = selection.getRangeAt(i);
             console.log(i, range.startContainer, range.endContainer);
+
+            // verify if the start/end points make even sense -
+            // they must be inside a x-node (otherwise they will be discarded)
+            // and the x-node must be a main text
+            if(! this.verifyThemeInsertPoint(range.startContainer) ) {
+                window.alert("Motyw nie może się zaczynać w tym miejscu.");
+                return false;
+            }
+
+            if(! this.verifyThemeInsertPoint(range.endContainer) ) {
+                window.alert("Motyw nie może się kończyć w tym miejscu.");
+                return false;
+            }
+
+            
             var date = (new Date()).getTime();
             var random = Math.floor(4000000000*Math.random());
             var id = (''+date) + '-' + (''+random);
@@ -378,38 +462,52 @@ var HTMLView = View.extend({
             spoint.setStart(range.startContainer, range.startOffset);
             epoint.setStart(range.endContainer, range.endOffset);
 
-            // insert theme-ref
-            
-            var elem = $('<span x-editable="true" x-node="motyw" class="motyw">Nowy motyw</span>');
-            elem.attr('x-attr-qname-'+id, 'id');
-            elem.attr('x-attr-value-'+id, 'm'+id);
-            spoint.insertNode(elem[0]);
+            var mtag, btag, etag, errors;
+
+            // insert theme-ref            
+            mtag = $('<span></span>');
+            spoint.insertNode(mtag[0]);
+            errors = this.model.updateWithWLML(mtag, '<motyw id="m'+id+'">Nowy Motyw</motyw>');
+            if(errors) {
+                messageCenter.addMessage('error', null, 'Błąd przy dodawaniu motywu :' + errors);
+                return false;
+            }
 
             // insert theme-begin
-            elem = $('<span x-node="begin" class="begin"></span>');
-            elem.attr('x-attr-qname-'+id, 'id');
-            elem.attr('x-attr-value-'+id, 'b'+id);
-            spoint.insertNode(elem[0]);
+            btag = $('<span></span>');
+            spoint.insertNode(btag[0]);
+            errors = this.model.updateWithWLML(btag, '<begin id="b'+id+'" />');
+            if(errors) {
+                mtag.remove();
+                messageCenter.addMessage('error', null, 'Błąd przy dodawaniu motywu :' + errors);
+                return false;
+            }
+
             
-            elem = $('<span x-node="end" class="end"></span>');
-            elem.attr('x-attr-qname-'+id, 'id');
-            elem.attr('x-attr-value-'+id, 'e'+id);
-            epoint.insertNode(elem[0]);
+            etag = $('<span></span>');
+            epoint.insertNode(etag[0]);
+            result = this.model.updateWithWLML(etag, '<end id="e'+id+'" />');
+            if(errors) {
+                btag.remove();
+                mtag.remove();
+                messageCenter.addMessage('error', null, 'Błąd przy dodawaniu motywu :' + errors);
+                return false;
+            }
         }
 
-    //selection.removeAllRanges();
+        selection.removeAllRanges();
     },
 
     selectTheme: function(themeId)
     {
-        var selection = document.getSelection();
+        var selection = window.getSelection();
         
         // remove current selection
         selection.removeAllRanges();
 
         var range = document.createRange();
-        var s = $('#m'+themeId)[0];
-        var e = $('#e'+themeId)[0];
+        var s = $(".motyw[theme-class='"+themeId+"']")[0];
+        var e = $(".end[theme-class='"+themeId+"']")[0];
         console.log('Selecting range:', themeId, range, s, e);
 
         if(s && e) {

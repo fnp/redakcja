@@ -98,7 +98,7 @@ Editor.HTMLModel = Editor.Model.extend({
         return false;
     },
 
-    asWLML: function(element) 
+    asWLML: function(element, inner)
     {
         console.log("Source", element);
         var doc = this.parser.parseFromString(this.serializer.serializeToString(element), 'text/xml');
@@ -111,30 +111,81 @@ Editor.HTMLModel = Editor.Model.extend({
         }
         
         console.log("Transformed", doc, " to: ", result.documentElement);
-        return this.serializer.serializeToString(result.documentElement);
+        if(inner) {
+            var children = result.documentElement.childNodes;
+            var buf = '';
+            
+            for(var i=0; i < children.length; i++)
+                buf += this.serializer.serializeToString(children.item(i));
+            
+            return buf;
+         }
+          
+         return this.serializer.serializeToString(result.documentElement);
+    },
+
+    innerAsWLML: function(elem)
+    {
+        return this.asWLML(elem, true);
+    },
+
+    updateInnerWithWLML: function($element, innerML)
+    {
+        var e = $element.clone().html('<span x-node="out-of-flow-text" x-content="%"></span>')[0];
+        var s = this.asWLML(e);
+        // hurray for dirty hacks :P
+        s = s.replace(/>%<\//, '>'+innerML+'</');
+        return this.updateWithWLML($element, s);
     },
 
     updateWithWLML: function($element, text)
     {
         // filter the string
         text = text.replace(/\/\s+/g, '<br />');
-        var chunk = this.parser.parseFromString("<chunk>"+text+"</chunk>", "text/xml");
+        try {
+            var chunk = this.parser.parseFromString("<chunk>"+text+"</chunk>", "text/xml");
+        } catch(e) {
+            console.log('Caught parse exception.');
+            return "<p>Źle sformatowana zawartość:" + e.toString() + "</p>";
+        }
 
-        var errors = $('parsererror', chunk);
+        var parseError = chunk.getElementsByTagName('parsererror');
+        console.log("Errors:", parseError);
+        
+        if(parseError.length > 0)
+        {
+            console.log("Parse errors.")
+            return this.serializer.serializeToString(parseError.item(0));
+        }
 
-        // check if chunk is parsable
+        console.log("Transforming to HTML");        
+        var result = this.htmlXSL.transformToFragment(chunk, $element[0].ownerDocument).firstChild;
+
+        if(!result) {
+            return "Błąd aplikacji - nie udało się wygenerować nowego widoku HTML.";
+        }
+
+        var errors = result.getElementsByTagName('error');
         if(errors.length > 0)
-            throw {text: errors.text(), html: errors.html()};
-        
-        var result = this.htmlXSL.transformToFragment(chunk, document);
+        {
+            var errorMessage = 'Wystąpiły błędy:<ul>';
+            for(var i=0; i < errors.length; i++)
+            {
+                var estr = this.serializer.serializeToString(errors.item(i));
+                console.log("XFRM error:", estr);
+                errorMessage += "<li>"+estr+"</li>";
+            }
+            errorMessage += "</ul>";
+            return errorMessage;
+        }
 
-        console.log("RESULT", this.serializer.serializeToString(result));
-
-        if(!result)
-            throw "WLML->HTML transformation failed.";
-        
-        $element.replaceWith(result);
-        this.set('state', 'dirty');
+        try {
+            $element.replaceWith(result);
+            this.set('state', 'dirty');
+            return false;
+        } catch(e) {
+            return "Błąd podczas wstawiania tekstu: '" + e.toString() + "'";
+        }
     },
 
     createXSLT: function(xslt_doc) {
@@ -151,7 +202,9 @@ Editor.HTMLModel = Editor.Model.extend({
             if(this.wlmlXSL && this.htmlXSL && this.rawText)
                 this.loadSuccess();
         } catch(e) {
-            this.loadingFailed();
+            console.log(e);
+            this.set('error', e.toString() );
+            this.set('state', 'error');
         }
     },
 
@@ -163,7 +216,9 @@ Editor.HTMLModel = Editor.Model.extend({
             if(this.wlmlXSL && this.htmlXSL && this.rawText)
                 this.loadSuccess();
         } catch(e) {
-            this.loadingFailed();
+            console.log(e);
+            this.set('error', e.toString() );
+            this.set('state', 'error');
         }
     },
 

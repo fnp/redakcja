@@ -9,6 +9,10 @@
     padding-left: 55px;
 }
 
+.htmlview *[x-node='rdf:RDF'] {
+    display: none;
+}
+
 .htmlview * {
     position: relative;
 }
@@ -230,18 +234,22 @@
 }
 
 .htmlview .motyw {
-    position: absolute;
-    right: -8em;
+    /* position: absolute; */
     
-    min-width: 5em;
-    max-width: 8em;
-
+    float: right;
+    left: auto;
+    clear: right;
+    
+    width: 10em;
+    
     font-weight: normal;
     font-size: 10pt;
     font-variant: normal;
     text-decoration: none;
 
-    padding: 0.2em 0.2em 0.2em 0.5em;
+    padding: 0.2em;
+
+    background-color: #efefef;
     
     border: 1px solid gray;
     border-left: 2px dotted gray;
@@ -299,7 +307,7 @@
      padding: 3px 5px;
 
      text-decoration: none;
-     z-index: 11;
+     z-index: 1000;
  }
  
 
@@ -339,10 +347,10 @@
 }
 
 /* focused editable element */
-/* .htmlview *[x-editable]:hover
-{    
-    
-} */
+.htmlview *[x-editable]:hover
+{
+    z-index: 900;
+} 
 
 .htmlview *[x-editable][x-open]
 {
@@ -394,6 +402,7 @@
     padding: 2px;
     cursor: pointer;
     border-bottom: 1px solid black;
+
 }
 
 .context-menu *:last-child {
@@ -402,7 +411,7 @@
 }
 
 .context-menu *:hover {
-    background-color: orange;
+    background-color: orange;    
 }
 
 /*
@@ -415,6 +424,7 @@
 
 .default-menu:hover {
     opacity: 1;
+    z-index: 5000;
 }
 
 .htmlview *[x-annotation-box] > .default-menu {
