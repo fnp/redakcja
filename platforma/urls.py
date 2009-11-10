@@ -28,7 +28,8 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 
-
+    # Theme database
+    url(r'themes/', include('bookthemes.urls')),
 
     # Our über-restful api
     url(r'^api/', include('api.urls')),

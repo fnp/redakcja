@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'filebrowser',
     'explorer',
     'toolbar',
+    'bookthemes',
     'api',
 )
 

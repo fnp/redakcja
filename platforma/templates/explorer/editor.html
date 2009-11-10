@@ -132,7 +132,7 @@
             </div>
             {% endif %}
         </div>
-	</script>
+        </script>
 	
 	<script type="text/html" charset="utf-8" id="button-toolbar-view-template">
 		<div class="buttontoolbarview panel-toolbar">
@@ -183,9 +183,11 @@
     <div id="commit-dialog" class="jqmWindow" style="display:none">
         <form action="" method="POST">
             <label for="message">Commit message:</label>
-            <textarea cols="60" rows="10" name="message" id="commit-dialog-message"></textarea>
-            <p id="commit-dialog-error-empty-message">Wiadomość nie może być pusta.</p>                
-            <fieldset id="commit-dialog-related-issues" ui:ajax-src="{{REDMINE_URL}}/publications/issues/{{fileid}}">
+            
+            <textarea cols="60" rows="10" name="message" class="commit-message"></textarea>
+            <div class="error-messages-box"> </div>
+
+            <fieldset class="related-issues-fields" >
                 <legend>Related issues</legend>
                 <div class="loading-box" style="display: none;">
                     <p>Loading related issues...</p>
@@ -193,10 +195,49 @@
                 <div class="container-box">No related issues.</div>
             </fieldset>
             <p>
-               <input type="button" value="Save" id="commit-dialog-save-button" />
-               <input type="reset" value="Cancel" id="commit-dialog-cancel-button" />
+               <input type="button" value="Save" class="save-button" />
+               <input type="button" value="Cancel" class="cancel-button" />               
             </p>
         </form>
+    </div>
+
+    <div id="theme-edit-dialog" class="jqmWindow" style="display:none">
+        <div class="data-area">        
+        <table class="theme-multi-list">
+            <tbody class="unknown-themes">
+                <tr class="header"><th colspan="5">Unknown themes</th></tr>
+            </tbody>
+            
+            <tbody>
+                <tr><th colspan="5">Themes in the database</th></tr>
+            {% regroup availble_themes by first_letter as grouped_themes %}
+
+            {% for letter in grouped_themes %}
+            <tr><th colspan="5" class="letter-heading">{{ letter.grouper }}</th></tr>
+
+            {% for theme in letter.list %}
+            {% if forloop.first %}
+            <tr>
+            {% else %}
+            {% if forloop.counter0|divisibleby:"5" %}
+                </tr><tr>
+            {% endif %}
+            {% endif %}            
+            <td width="18%"><label><input class="theme-list-item" type="checkbox" value="{{theme.name}}"/>{{ theme.name }}</label></td>
+            {% if forloop.last %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+            
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <p class="action-area">
+            <input type="button" value="Accept" class="save-button" />
+            <input type="button" value="Cancel" class="cancel-button" />
+            <span class="error-messages-inline-box"></span>
+        </p>
     </div>
     
     <div id="split-dialog" class="jqmWindow" style="display:none">

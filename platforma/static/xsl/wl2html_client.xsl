@@ -680,7 +680,7 @@
                 <xsl:value-of select="substring-after(@id, 'm')" />
             </xsl:attribute>
             <xsl:call-template name="context-menu" />
-            <xsl:value-of select="." />
+            <span class="theme-text-list"><xsl:value-of select="." /></span>
         </span>
     </xsl:template>
 

@@ -19,37 +19,7 @@ var EditorView = View.extend({
         this.splitView = new SplitView('#splitview', doc);
         
         // Inicjalizacja okien jQuery Modal
-        $('#commit-dialog', this.element).
-        jqm({
-            modal: true,
-            onShow: this.loadRelatedIssues.bind(this)
-        });
-    
-        $('#commit-dialog-cancel-button', this.element).click(function() {
-            $('#commit-dialog-error-empty-message').hide();
-            $('#commit-dialog').jqmHide();
-        });
-        
-        $('#commit-dialog-save-button').click(function(event, data)
-        {
-            if ($('#commit-dialog-message').val().match(/^\s*$/)) {
-                $('#commit-dialog-error-empty-message').fadeIn();
-            } else {
-                $('#commit-dialog-error-empty-message').hide();
-                $('#commit-dialog').jqmHide();
-
-                var message = $('#commit-dialog-message').val();
-                $('#commit-dialog-related-issues input:checked')
-                .each(function() {
-                    message += ' refs #' + $(this).val();
-                });
-                
-                var ctx = $('#commit-dialog').data('context');
-                console.log("COMMIT APROVED", ctx);
-                ctx.callback(message);
-            }
-            return false;
-        });
+        this.commitDialog = new CommitDialog( $('#commit-dialog') );                  
         
     
         // $('#split-dialog').jqm({
@@ -65,10 +35,10 @@ var EditorView = View.extend({
         this.model.saveDirtyContentModel();
     },
   
-    commit: function(event) {
-        $('#commit-dialog', this.element).jqmShow({
-            callback: this.doCommit.bind(this)
-            });
+    commit: function(event) 
+    {
+        this.commitDialog.show( this.doCommit.bind(this) )
+        
     },
   
     doCommit: function(message) {
@@ -80,16 +50,14 @@ var EditorView = View.extend({
     },
   
     merge: function(event) {
-        $('#commit-dialog', this.element).jqmShow({
-            callback: this.doMerge.bind(this)
-            });
+        this.commitDialog.show( this.doMerge.bind(this) )        
     },
   
     doMerge: function(message) {
         this.model.merge(message);
     },
   
-    loadRelatedIssues: function(hash) {
+    /*loadRelatedIssues: function(hash) {
         var self = this;
         var c = $('#commit-dialog-related-issues');
         
@@ -113,7 +81,7 @@ var EditorView = View.extend({
             });
     
         hash.w.show();
-    },
+    }, */
   
     modelStateChanged: function(property, value) {
         // Uaktualnia stan przycisków
@@ -153,3 +121,121 @@ var EditorView = View.extend({
         this._super();
     }    
 });
+
+
+var AbstractDialog = Class.extend({
+    _className: 'AbstractDialog',
+
+    init: function($element, modal, overlay)
+    {
+        this.$window = $element;
+        this.$window.jqm({
+            modal: modal || true,
+            overlay: overlay || 80,
+            // toTop: true,
+            onShow: this.onShow.bind(this),
+            onHide: this.onHide.bind(this)
+        });
+
+        this.reset();        
+
+        $('.cancel-button', this.$window).click(this.cancel.bind(this));
+        $('.save-button', this.$window).click(this.accept.bind(this));
+    },
+
+    onShow: function(hash)
+    {
+        hash.w.show();
+    },
+
+    onHide: function(hash)
+    {
+        hash.w.hide();
+        hash.o.remove();
+    },
+
+    reset: function() {
+        this.acceptCallback = null;
+        this.cancelCallback = null;
+        this.errors = [];
+        
+        $('.error-messages-box', this.$window).html('').hide();
+
+        this.userData = {};
+    },
+
+    show: function(acall, ccall) {
+        this.acceptCallback = acall;
+        this.cancelCallback = ccall;
+
+        // do the show
+        this.$window.jqmShow();
+    },
+
+    cancel: function() {
+        this.$window.jqmHide();
+        if(this.cancelCallback) this.cancelCallback(this);
+        this.reset();
+    },
+
+    accept: function()
+    {
+        this.errors = [];
+        
+        if(!this.validate()) {
+            this.displayErrors();
+            return;
+        }
+
+        this.$window.jqmHide();
+
+        if(this.acceptCallback) 
+            this.acceptCallback(this);
+
+        this.reset();        
+    },
+
+    validate: function() {
+        return true;
+    },
+
+    displayErrors: function() {
+        var errorDiv = $('.error-messages-box', this.$window);
+        if(errorDiv.length > 0) {
+            var html = '';
+            $.each(this.errors, function() {
+                html += '<li>' + this + '</li>';
+            });
+            errorDiv.html('<ul>' + html + '</ul>');
+            errorDiv.show();
+            console.log('Validation errors:', html);
+        }
+        else
+            throw this.errors;
+    }
+
+});
+
+var CommitDialog = AbstractDialog.extend({
+    _className: 'CommitDialog',
+
+    validate: function()
+    {
+        var message = $('textarea.commit-message', this.$window).val();
+
+        if( message.match(/^\s*$/) ) {
+            this.errors.push("Message can't be empty.");
+            return false;
+        }
+
+        // append refs
+        $('.related-issues-fields input:checked', this.$window).each(function() {
+            message += ' refs #' + $(this).val();
+        });
+
+        this.userData.message = message;
+        return this._super();
+     }
+ });
+
+ 

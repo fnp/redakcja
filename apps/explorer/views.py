@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 
 from explorer import forms
 from api.models import PullRequest
-
+from bookthemes.models import Theme
 
 def ajax_login_required(view):
     """Similar ro @login_required, but instead of redirect, 
@@ -40,6 +40,7 @@ def display_editor(request, path):
             'fileid': path,
             'euser': user,
             'gallery_from': gallery_form,
+            'availble_themes': ({'first_letter': t.name[0].upper(), 'name': t.name} for t in Theme.objects.order_by('name')),
         }, context_instance=RequestContext(request))
 
 #

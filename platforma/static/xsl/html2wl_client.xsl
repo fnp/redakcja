@@ -22,7 +22,7 @@
     <xsl:template match="@*" priority="0" />
 
     <!-- Specjalne reguły dla przypisów -->
-    <xsl:template match="*[@x-annotation-box]">
+    <xsl:template match="*[@x-annotation-box]|*[@class='theme-text-list']">
         <xsl:apply-templates select="node()" />
     </xsl:template>
 

@@ -8,7 +8,9 @@ var HTMLView = View.extend({
     init: function(element, model, parent, template) {
         var submodel = model.contentModels['html'];
         this._super(element, submodel, template);
-        this.parent = parent;                
+        this.parent = parent;
+
+        this.themeEditor = new ThemeEditDialog( $('#theme-edit-dialog') );
     
         this.model
         .addObserver(this, 'data', this.modelDataChanged.bind(this))
@@ -118,30 +120,6 @@ var HTMLView = View.extend({
         console.log( this.model.serializer.serializeToString(this.model.get('data')) );        
     }, */
 
-    renderPart: function($e, html) {
-        // exceptions aren't good, but I don't have a better idea right now
-        if($e.attr('x-annotation-box')) {
-            // replace the whole annotation
-            var $p = $e.parent();
-            $p.html(html);
-            var $box = $('*[x-annotation-box]', $p);
-            $box.append( this.$menuTemplate.clone() );
-
-            if(this.currentFocused && $p[0] == this.currentFocused[0])
-            {
-                this.currentFocused = $p;
-                $box.css({
-                    'display': 'block'
-                });
-            }
-
-            return;
-        }
-
-        $e.html(html);
-        $e.append( this.$menuTemplate.clone() );
-    },
-  
     reload: function() {
         this.model.load(true);
     },
@@ -185,26 +163,39 @@ var HTMLView = View.extend({
          *  - this greatly simplifies the whole click check
          */
 
-        if( $e.hasClass('motyw') )
-        {
-            console.log($e);
+        if( $e.hasClass('motyw'))
+        {            
             this.selectTheme($e.attr('theme-class'));
+            return false;
+        }
+        
+        if( $e.hasClass('theme-text-list') )
+        {            
+            this.selectTheme($e.parent().attr('theme-class'));
             return false;
         }
 
         /* other buttons */
         try {
+            var editable = this.editableFor($e);
+
             if($e.hasClass('delete-button'))
-                this.deleteElement( this.editableFor($e) );
+                this.deleteElement(editable);
 
             if($e.hasClass('edit-button'))
-                this.openForEdit( this.editableFor($e) );
+            {
+                if( editable.hasClass('motyw') )
+                    this.editTheme(editable);
+                else
+                    this.openForEdit(editable);
+            }
 
             if($e.hasClass('accept-button'))
-                this.closeWithSave( this.editableFor($e) );
+                this.closeWithSave(editable);
 
             if($e.hasClass('reject-button'))
-                this.closeWithoutSave( this.editableFor($e) );
+                this.closeWithoutSave(editable);
+            
         } catch(e) {
             messageCenter.addMessage('error', "wlsave", 'Błąd:' + e.toString());
         }
@@ -414,13 +405,28 @@ var HTMLView = View.extend({
         return true;
     },
 
-    addTheme: function() 
+
+    editTheme: function($element)
+    {
+        var themeTextSpan = $('.theme-text-list', $element);
+        this.themeEditor.setFromString( themeTextSpan.text() );
+
+        function _editThemeFinish(dialog) {
+            themeTextSpan.text( dialog.userData.themes.join(', ') );
+        };
+        
+        this.themeEditor.show(_editThemeFinish);
+    },
+
+    //
+    // Special stuff for themes
+    //
+    addTheme: function()
     {
         var selection = window.getSelection();
         var n = selection.rangeCount;
 
         console.log("Range count:", n);
-        
         if(n == 0) {
             window.alert("Nie zaznaczono żadnego obszaru");
             return false;
@@ -432,26 +438,25 @@ var HTMLView = View.extend({
             return false;
         }
 
-        // from this point, we will assume that the ranges are disjoint
-        for(var i=0; i < n; i++) 
-        {
-            var range = selection.getRangeAt(i);
-            console.log(i, range.startContainer, range.endContainer);
+        // remember the selected range
+        var range = selection.getRangeAt(0);
+        console.log(range.startContainer, range.endContainer);
 
-            // verify if the start/end points make even sense -
-            // they must be inside a x-node (otherwise they will be discarded)
-            // and the x-node must be a main text
-            if(! this.verifyThemeInsertPoint(range.startContainer) ) {
-                window.alert("Motyw nie może się zaczynać w tym miejscu.");
-                return false;
-            }
+        // verify if the start/end points make even sense -
+        // they must be inside a x-node (otherwise they will be discarded)
+        // and the x-node must be a main text
+        if(! this.verifyThemeInsertPoint(range.startContainer) ) {
+            window.alert("Motyw nie może się zaczynać w tym miejscu.");
+            return false;
+        }
 
-            if(! this.verifyThemeInsertPoint(range.endContainer) ) {
-                window.alert("Motyw nie może się kończyć w tym miejscu.");
-                return false;
-            }
+        if(! this.verifyThemeInsertPoint(range.endContainer) ) {
+            window.alert("Motyw nie może się kończyć w tym miejscu.");
+            return false;
+        }
 
-            
+        function _addThemeFinish(dialog)
+        {            
             var date = (new Date()).getTime();
             var random = Math.floor(4000000000*Math.random());
             var id = (''+date) + '-' + (''+random);
@@ -463,11 +468,13 @@ var HTMLView = View.extend({
             epoint.setStart(range.endContainer, range.endOffset);
 
             var mtag, btag, etag, errors;
+            var themesStr = dialog.userData.themes.join(', ');
 
-            // insert theme-ref            
+            // insert theme-ref
             mtag = $('<span></span>');
             spoint.insertNode(mtag[0]);
-            errors = this.model.updateWithWLML(mtag, '<motyw id="m'+id+'">Nowy Motyw</motyw>');
+            errors = this.model.updateWithWLML(mtag, '<motyw id="m'+id+'">'+themesStr+'</motyw>');
+
             if(errors) {
                 messageCenter.addMessage('error', null, 'Błąd przy dodawaniu motywu :' + errors);
                 return false;
@@ -483,7 +490,6 @@ var HTMLView = View.extend({
                 return false;
             }
 
-            
             etag = $('<span></span>');
             epoint.insertNode(etag[0]);
             result = this.model.updateWithWLML(etag, '<end id="e'+id+'" />');
@@ -493,11 +499,16 @@ var HTMLView = View.extend({
                 messageCenter.addMessage('error', null, 'Błąd przy dodawaniu motywu :' + errors);
                 return false;
             }
-        }
 
-        selection.removeAllRanges();
+            selection.removeAllRanges();
+            return true;
+        };
+
+        // show the modal
+        this.themeEditor.setFromString('');
+        this.themeEditor.show(_addThemeFinish.bind(this));
     },
-
+    
     selectTheme: function(themeId)
     {
         var selection = window.getSelection();
@@ -517,6 +528,83 @@ var HTMLView = View.extend({
         }
     }
 });
+
+var ThemeEditDialog = AbstractDialog.extend({
+
+     validate: function()
+     {
+         var active = $('input.theme-list-item:checked', this.$window);
+
+         if(active.length < 1) {
+             this.errors.push("You must select at least one theme.");
+             return false;
+         }
+
+         console.log("Active:", active);
+         this.userData.themes = $.makeArray(active.map(function() { return this.value; }) );
+         console.log('After validate:', this.userData);
+         return this._super();
+     },
+
+     setFromString: function(string)
+     {
+         var $unmatchedList = $('tbody.unknown-themes', this.$window);
+
+         $("tr:not(.header)", $unmatchedList).remove();
+         $unmatchedList.hide();
+
+         $('input.theme-list-item', this.$window).removeAttr('checked');
+
+         var unmatched = [];
+
+         $.each(string.split(','), function() {             
+             var name = $.trim(this);
+             if(!name) return;
+             
+             console.log('Selecting:', name);
+             var checkbox = $("input.theme-list-item[value='"+name+"']", this.$window);
+
+             if(checkbox.length > 0)
+                 checkbox.attr('checked', 'checked');
+             else
+                 unmatched.push(name);
+         });         
+         
+         if(unmatched.length > 0) 
+         {
+             $.each(unmatched, function() {
+                 $('<tr><td colspan="5"><label><input type="checkbox"'+
+                     ' checked="checked" class="theme-list-item" value="'
+                     + this+ '" />"'+this+'"</label></td></tr>').
+                 appendTo($unmatchedList);
+             });
+
+             $unmatchedList.show();
+         }
+     },
+
+     displayErrors: function() {
+        var errorP = $('.error-messages-inline-box', this.$window);
+        if(errorP.length > 0) {
+            var html = '';
+            $.each(this.errors, function() {
+                html += '<span>' + this + '</span>';
+            });
+            errorP.html(html);
+            errorP.show();
+            console.log('Validation errors:', html);
+        }
+        else
+            this._super();
+    },
+
+    reset: function()
+    {
+        this._super();
+        $('.error-messages-inline-box', this.$window).html('').hide();
+    }
+
+ });
 
 // Register view
 panels['html'] = HTMLView;
