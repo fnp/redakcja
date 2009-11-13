@@ -102,16 +102,21 @@ var HTMLView = View.extend({
         if(this.$addThemeButton)
             this.$addThemeButton.unbind();
 
+        if(this.$addAnnotation)
+            this.$addAnnotation.unbind();
+
         this._super();
 
         this.$printLink = $('.htmlview-toolbar .html-print-link', this.element);
         this.$docbase = $('.htmlview', this.element);
-        this.$addThemeButton = $('.htmlview-toolbar .html-add-motive', this.element);
+        this.$addThemeButton = $('.htmlview-toolbar .html-add-theme', this.element);
+        this.$addAnnotation = $('.htmlview-toolbar .html-add-annotation', this.element);
         // this.$debugButton = $('.htmlview-toolbar .html-serialize', this.element);
 
         this.updatePrintLink();
         this.$docbase.bind('click', this.itemClicked.bind(this));
         this.$addThemeButton.click( this.addTheme.bind(this) );
+        this.$addAnnotation.click( this.addAnnotation.bind(this) );
         // this.$debugButton.click( this.serialized.bind(this) );
     },
 
@@ -178,6 +183,9 @@ var HTMLView = View.extend({
         /* other buttons */
         try {
             var editable = this.editableFor($e);
+
+            if(!editable)
+                return false;
 
             if($e.hasClass('delete-button'))
                 this.deleteElement(editable);
@@ -273,7 +281,7 @@ var HTMLView = View.extend({
         }
 
         if(!$e.attr('x-editable'))
-            throw Exception("Click outside of editable")
+            return null;
 
         console.log("Trigger", $button, " yields editable: ", $e);
         return $e;
@@ -376,6 +384,10 @@ var HTMLView = View.extend({
         }
     },
 
+    //
+    // Special stuff for themes
+    //
+    
     // Theme related stuff
     verifyThemeInsertPoint: function(node) {
 
@@ -418,9 +430,7 @@ var HTMLView = View.extend({
         this.themeEditor.show(_editThemeFinish);
     },
 
-    //
-    // Special stuff for themes
-    //
+
     addTheme: function()
     {
         var selection = window.getSelection();
@@ -526,6 +536,46 @@ var HTMLView = View.extend({
             range.setEndBefore(e);
             selection.addRange(range);
         }
+    },
+
+    addAnnotation: function()
+    {
+        var selection = window.getSelection();
+        var n = selection.rangeCount;
+
+        console.log("Range count:", n);
+        if(n == 0) {
+            window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
+
+        // for now allow only 1 range
+        if(n > 1) {
+            window.alert("Zaznacz jeden obszar");
+            return false;
+        }
+
+        // remember the selected range
+        var range = selection.getRangeAt(0);
+
+        if(! this.verifyThemeInsertPoint(range.endContainer) ) {
+            window.alert("Nie można wstawić w to miejsce przypisu.");
+            return false;
+        }
+
+        var text = range.toString();        
+        var tag = $('<span></span>');
+        range.collapse(false);
+        range.insertNode(tag[0]);
+        var errors = this.model.updateWithWLML(tag, '<pr><slowo_obce>'+text+"</slowo_obce> </pr>");
+
+        if(errors) {
+                tag.remove();
+                messageCenter.addMessage('error', null, 'Błąd przy dodawaniu przypisu:' + errors);
+                return false;
+        }
+
+        return true;
     }
 });
 
