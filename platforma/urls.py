@@ -11,9 +11,7 @@ PATH_END = PATH_SEC + "/$"
 urlpatterns = patterns('',
     # Explorer:
     url(r'^$', 'explorer.views.file_list', name='file_list'),        
-    url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),
-
-    url(r'^renderer$', 'explorer.views.renderer_test'),
+    url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),    
 
     url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
   
@@ -50,11 +48,15 @@ else:
     )
 
 # Static files
-if settings.DEBUG and not hasattr(settings, 'DONT_SERVE_STATIC'):
+if settings.DEBUG:
     urlpatterns += patterns('',
-        url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
-            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-        url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
-            {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+        url(r'^renderer$', 'explorer.views.renderer_test'),
     )
-# 
+
+    if not hasattr(settings, 'DONT_SERVE_STATIC'):
+        urlpatterns += patterns('',
+            url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
+                {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+            url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
+                {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+        )

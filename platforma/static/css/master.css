@@ -6,19 +6,6 @@ body {
     background: #AAA;
 }
 
-/*  fix icon buttons */
-
-button img {
-    vertical-align: middle;
-    margin: 0px;
-}
-
-/* default form style hacks */
-select {
-    border: none;
-    margin-left: 0.1em;f
-}
-
 #body-wrap {
     margin: 0px;
     padding: 0px;
@@ -58,10 +45,6 @@ select {
 #header-right-toolbar {
     position: absolute;
     right: 1em;
-}
-
-#header button {
-    vertical-align: middle;
 }
 
 /* Commit dialog */
@@ -260,20 +243,6 @@ input.image-gallery-current-page {
     margin: 0px;
 }
 
-body#base button {
-    background-color: #DDD;
-    border-width: 1px;
-    padding: 0px 0.5em;    
-    font-family: Sans-Serif;
-    /* color: #000; */
-    margin: 2px 4px;
-}
-
-body#base button:hover {
-    background-color: #EEE;
-}
-
-
 
 /* ================= */
 /* = Message boxes = */
@@ -292,5 +261,73 @@ body#base button:hover {
 
 .critical {
     background-color: red;
+}
+
+
+
+/*
+ *
+ * Buttons
+ *
+ */
+*.button {
+    /* reset margin and padding and see what happens */
+    padding: 0;
+    margin: 0;
+    border: 2px solid blue;
+
+    /*
+     * Borders and padding:
+    */
+    
+    /* observation 1: Firefox doesn't apply top/bottom borders to spans in button */
+    /* observation 2: Webkit leaves out some padding to left/right 
+        also: it cuts the top/bottom margin to 1px max */
+
+    /* observation 3: Opera does the oposite then WK and FF ->
+        span has all borders, button has only left/right 
+    */
+
+    /* Line Height */
+
+    /* 1. Wszystkie przeglądarki, domyślnie ustawiają vertical-align: baseline */
+    vertical-align: baseline;
+
+    /* 2. Opera ustawia rozmiar przycisku, na rozmiar line-height obiektu, który go zawiera */
+    
+    display: inline-block;
+    position: relative;
+    background: yellow;
+    padding: 2px 4px;
+
+    font-size: 16pt;
+    text-decoration: none;
+}
+
+*.button:active {
+    background: aqua;
+}
+
+*.button > span.upper-bg {
+    position: absolute;
+    top: 0px; 
+    left: 2px;
+    right: 0px;
+    bottom: 5px;
+
+    margin: 0px;
+    
+    background-color: white;
+    z-index: 0;
+    display: block;
+}
+
+*.button > span.button-text {
+    position: relative;
+    margin: 0px;
+    display: inline-block;
+    z-index: 2;
+    background: blue;
+    opacity: 0.5;
 }
 

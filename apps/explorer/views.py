@@ -130,5 +130,5 @@ def pull_requests(request):
 # Testing
 #
 def renderer_test(request):
-    return direct_to_template(request, 'renderer.html', mimetype="application/xhtml+xml",
+    return direct_to_template(request, 'renderer.html', mimetype="text/html",
         extra_context = {} )

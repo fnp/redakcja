@@ -2,39 +2,74 @@
 
 {% block extrahead %}
 <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" charset="utf-8" />
-<script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+<style type="text/css">
+    #target {
+        border: 2px solid red;              
+        background-color: aqua;
+        padding: 10px;
+        
+    }
+
+    #cursor {
+        background: black;
+        color: white;        
+        margin: 0em;
+        margin-right: -1px;
+        padding: 0em;
+        border-right: 1px solid black;
+    }
+</style>
 {% endblock %}
 
 {% block maincontent %}
-
-<!-- <button type="button" id="render">Render</button>
-
-<table width="100%" align="center">
-    <tr>
-        <td width="50%">
-                <textarea id="source" cols="70" rows="30" ></textarea>
-        </td>
-        <td width="50%">
-                <textarea id="dest" cols="70" rows="30" ></textarea>
-        </td>
-    </tr>
-</table>
-<iframe>
-    
-</iframe> -->
-<div id="target"> </div>
+<div>
+    <p>
+        Przykładowy tekst, bo ala ma
+        <a href="#" class="button"><span class="button-text">Przycisk</span>
+            <span class="upper-bg"></span><span class="lower-bg"></span></a>
+        ślicznego kotka i burego psa.
+    </p>
+    <p style="border: 1px solid fuchsia; line-height: 20pt; font-size: 12pt;">
+        Ta linijka ma 2pt wysokości, oraz czcionkę 12pt. <button type="button" ><span>Przycisk 2</span></button>  jest super.
+    </p>
+</div>
 {% endblock %}
 
 {% block extrabody %}
 
 <script type="text/javascript">
-<![CDATA[
-    var editor = new CodeMirror(CodeMirror.replace("target"), {
-  parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
-  path: "{{STATIC_URL}}js/lib/codemirror",
-  stylesheet: "{{STATIC_URL}}css/xmlcolors.css",
-  content: "Hello world!"
-});
+<![CDATA[    
+    $('#target').bind('keydown', function(event) {
+        console.log("Keydown:", String.fromCharCode(event.keyCode), event);
+        console.log("Selection:", window.getSelection() );
+        if(event.keyCode == 37 
+         || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40)
+            return true;
+
+        if(event.keyCode == 8)
+        {
+            var selection = window.getSelection();
+            if(selection.anchorOffset == 0)
+            {
+                var r = selection.getRangeAt(0);
+                r.setStartBefore( $("#elem")[0] );                
+
+                return true;
+            }
+            return true;
+        }
+        
+        return true;
+    }).
+        bind('dragstart', function() { console.log('dragstart'); }).
+        bind('dragenter', function() { console.log('dragenter'); }).
+        bind('dragover', function() { console.log('dragover'); }).
+        bind('dragover', function() { console.log('dragend'); }).
+        bind('drag', function() { console.log('drag'); });
+
+    $('*').bind('drop', function(event) { console.log('drop on:', event.target, 'received on', this); });
+        
+
 ]]>
 </script>
 
