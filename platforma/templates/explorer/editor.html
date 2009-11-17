@@ -211,7 +211,7 @@
             
             <tbody>
                 <tr><th colspan="5">Themes in the database</th></tr>
-            {% regroup availble_themes by first_letter as grouped_themes %}
+            {% regroup available_themes by first_letter as grouped_themes %}
 
             {% for letter in grouped_themes %}
             <tr><th colspan="5" class="letter-heading">{{ letter.grouper }}</th></tr>
