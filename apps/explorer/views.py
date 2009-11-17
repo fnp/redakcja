@@ -40,7 +40,7 @@ def display_editor(request, path):
             'fileid': path,
             'euser': user,
             'gallery_from': gallery_form,
-            'availble_themes': ({'first_letter': t.name[0].upper(), 'name': t.name} for t in Theme.objects.order_by('name')),
+            'available_themes': ({'first_letter': t.name[0].upper(), 'name': t.name} for t in Theme.objects.order_by('name')),
         }, context_instance=RequestContext(request))
 
 #
