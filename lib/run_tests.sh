@@ -1,1 +1,2 @@
-PYTYONPATH=./lib:$PYTHONPATH nosetests --detailed-errors --with-doctest --with-coverage --cover-package=wlrepo
+#!/bin/sh
+nosetests -v --with-doctest --with-coverage --cover-package=vstorage --detailed-errors

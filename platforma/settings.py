@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
+    'wiki',
     'piston',
     'sorl.thumbnail',
     'filebrowser',
