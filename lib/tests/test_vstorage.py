@@ -55,7 +55,7 @@ class TestMercurialStorage(object):
         self.repo.save_text(title, text, author, comment, parent=-1)
         saved = self.repo.open_page(title).read()
         assert saved == text
-
+    
     def test_save_merge_line_conflict(self):
         text = u"test\ntest\n"
         text1 = u"test\ntext\n"
@@ -90,5 +90,11 @@ text
     @raises(vstorage.DocumentNotFound)
     def test_document_not_found(self):
         self.repo.open_page(u'unknown entity')
+
+    def test_open_existing_repository(self):
+        self.repo.save_text(u'Python!', u'ham and spam')
+        current_repo_revision = self.repo.repo_revision()
+        same_repo = vstorage.VersionedStorage(self.repo_path)
+        assert same_repo.repo_revision() == current_repo_revision
 
 

@@ -5,8 +5,6 @@ import datetime
 import mimetypes
 import urllib
 
-import sys
-
 # Note: we have to set these before importing Mercurial
 os.environ['HGENCODING'] = 'utf-8'
 os.environ['HGMERGE'] = "internal:merge"
@@ -137,11 +135,8 @@ class VersionedStorage(object):
         if p1 == p2:
             return text
         
-        try:
-            unresolved = mercurial.merge.update(self.repo, tip_node, True, False, partial)
-        except mercurial.util.Abort:
-            raise
-            unresolved = 1, 1, 1, 1
+        # TODO: Check if merge was successful
+        mercurial.merge.update(self.repo, tip_node, True, False, partial)
 
         self.repo.dirstate.setparents(tip_node, node)
         # Mercurial 1.1 and later need updating the merge state
