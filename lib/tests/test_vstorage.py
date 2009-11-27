@@ -20,7 +20,7 @@ def clear_directory(top):
         pass
 
 
-class TestMercurialStorage(object):
+class TestVersionedStorage(object):
     def setUp(self):
         self.repo_path = tempfile.mkdtemp()
         self.repo = vstorage.VersionedStorage(self.repo_path)
@@ -96,5 +96,4 @@ text
         current_repo_revision = self.repo.repo_revision()
         same_repo = vstorage.VersionedStorage(self.repo_path)
         assert same_repo.repo_revision() == current_repo_revision
-
 
