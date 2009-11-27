@@ -22,7 +22,8 @@ def urlquote(url, safe='/'):
     'Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84'
     """
     return urllib.quote(url.replace(' ', '_').encode('utf-8', 'ignore'), safe)
-    
+
+
 def urlunquote(url):
     """Unqotes URL 
     
@@ -31,6 +32,7 @@ def urlunquote(url):
     """
     return unicode(urllib.unquote(url), 'utf-8', 'ignore').replace('_', ' ')
 
+
 def find_repo_path(path):
     """Go up the directory tree looking for a Mercurial repository (a directory containing a .hg subdirectory)."""
     while not os.path.isdir(os.path.join(path, ".hg")):
@@ -38,6 +40,7 @@ def find_repo_path(path):
         if path == old_path:
             return None
     return path
+
 
 def locked_repo(func):
     """A decorator for locking the repository when calling a method."""
@@ -54,6 +57,33 @@ def locked_repo(func):
             wlock.release()
 
     return new_func
+
+
+def guess_mime(file_name):
+    """
+    Guess file's mime type based on extension.
+    Default ot text/x-wiki for files without an extension.
+
+    >>> guess_mime('something.txt')
+    'text/plain'
+    >>> guess_mime('SomePage')
+    'text/x-wiki'
+    >>> guess_mime(u'ąęśUnicodePage')
+    'text/x-wiki'
+    >>> guess_mime('image.png')
+    'image/png'
+    >>> guess_mime('style.css')
+    'text/css'
+    >>> guess_mime('archive.tar.gz')
+    'archive/gzip'
+    """
+
+    mime, encoding = mimetypes.guess_type(file_name, strict=False)
+    if encoding:
+        mime = 'archive/%s' % encoding
+    if mime is None:
+        mime = 'text/x-wiki'
+    return mime
 
 
 class DocumentNotFound(Exception):
@@ -266,30 +296,10 @@ class VersionedStorage(object):
 
     def page_mime(self, title):
         """
-        Guess page's mime type ased on corresponding file name.
+        Guess page's mime type based on corresponding file name.
         Default ot text/x-wiki for files without an extension.
-
-        # >>> page_mime('something.txt')
-        # 'text/plain'
-        # >>> page_mime('SomePage')
-        # 'text/x-wiki'
-        # >>> page_mime(u'ąęśUnicodePage')
-        # 'text/x-wiki'
-        # >>> page_mime('image.png')
-        # 'image/png'
-        # >>> page_mime('style.css')
-        # 'text/css'
-        # >>> page_mime('archive.tar.gz')
-        # 'archive/gzip'
         """
-
-        addr = self._file_path(title)
-        mime, encoding = mimetypes.guess_type(addr, strict=False)
-        if encoding:
-            mime = 'archive/%s' % encoding
-        if mime is None:
-            mime = 'text/x-wiki'
-        return mime
+        return guess_type(self._file_path(title))
 
     def _changectx(self):
         """Get the changectx of the tip."""
