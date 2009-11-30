@@ -2,6 +2,7 @@
 
 {% block extrahead %}
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/lib/jquery.splitter.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         $(function() {
             var editor = CodeMirror.fromTextArea('id_text', {
@@ -15,13 +16,114 @@
                 tabMode: 'spaces',
                 indentUnit: 0,
             });
+            
+            $('#splitter').splitter({
+                type: "v",
+                outline: true,
+                minLeft: 480,
+                sizeRight: 0,
+                anchorToWindow: true,
+                resizeToWidth: true,
+            });
+            
+            $(window).resize(function() {
+                $('iframe').height($(window).height() - $('#tabs').outerHeight());
+            });
+            
+            $(window).resize();
         });
     </script>
+    
+    <style type="text/css" media="screen">
+    
+        body {
+            margin: 0;
+        }
+        .vsplitbar {
+            width: 15px;
+            background: #C1C1C1 url(/static/img/gallery.png) no-repeat scroll 2px 2px;
+            border-left: 1px solid #777;
+        }
+        
+        .active {
+            background-color: #DDD;
+        }
+        
+        #splitter {
+/*          height: 200px;*/
+/*          width: 500px;*/
+/*          border: 2px solid #B3B3B3;*/
+        }
+        
+        #sidebar {
+            overflow: auto;
+        }
+        
+        #sidebar {
+            background: #989944;
+        }
+        
+        #tabs {
+            margin: 0;
+            padding: 0;
+            background-color: #C1C1C1;
+            width: 100%;
+            height: 22px;
+            padding-top: 2px;
+            border-bottom: 1px solid #777;
+        }
+        
+        #tabs li {
+            display: block;
+            float: left;
+/*            width: 140px;*/
+            padding: 5px 12px 3px 12px;
+            border: 1px solid #999;
+            -webkit-border-radius: 4px;
+            -webkit-border-bottom-left-radius: 0;
+            -webkit-border-bottom-right-radius: 0;
+            font: 11px Helvetica, Verdana, sans-serif;
+            font-weight: bold;
+            color: #222;
+/*            text-shadow: #CCC 1px 1px 1px;*/
+            height: 13px;
+            background-color: #A2A2A2;
+            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.25, #A2A2A2), to(#C1C1C1));
+/*            -webkit-box-shadow: 2px 0px 2px #888;*/
+            margin-left: 4px;
+            margin-bottom: -1px;
+        }
+        
+        #tabs li.active {
+            background-color: #FFF;
+            background-image: none;
+/*            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.25, #C1C1C1), to(#FFFFFF));            */
+            border-bottom: 1px solid #FFF;
+        }
+    </style>
 {% endblock %}
 
 {% block maincontent %}
-    <form action="{% url wiki.views.document_detail document.name|urlencode %}" method="post" accept-charset="utf-8">
-        {{ form.as_p }}
-        <p><input type="submit" value="Continue &rarr;"></p>
-    </form>
+    <div id="header">
+        <ol id="tabs">
+            <li>Widok prosty</li>
+            <li class="active">Widok zaawansowany</li>
+        </ol>
+        <div style="clear: both"></div>
+    </div>
+    <div id="splitter">
+        <div id="editor">
+            <form action="{% url wiki.views.document_detail document.name|urlencode %}" method="post" accept-charset="utf-8">
+                {{ form.text }}
+                {#  #}
+                {# <p>Autor: {{ form.author }}</p> #}
+                {# <p>Komentarz: {{ form.comment }}</p> #}
+                {# <p><input type="submit" value="Continue &rarr;"></p> #}
+            </form>
+        </div>
+
+        <div id="sidebar" style="width: 200px">
+            <p>Cokolwiek tutaj :-)</p>
+        </div>
+    </div>
 {% endblock %}
