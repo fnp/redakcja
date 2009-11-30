@@ -30,7 +30,15 @@ urlpatterns = patterns('',
     url(r'themes/', include('bookthemes.urls')),
 
     # Our über-restful api
-    url(r'^api/', include('api.urls')),
+    # url(r'^api/', include('api.urls')),
+    
+    # Static files (should be served by Apache)
+    url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
+        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+    url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
+        {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+        
+    url(r'^(?P<name>(.*))$', 'wiki.views.document_detail'),
     
 )
 
@@ -46,17 +54,3 @@ else:
         url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}, name='login'),
         url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),    
     )
-
-# Static files
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^renderer$', 'explorer.views.renderer_test'),
-    )
-
-    if not hasattr(settings, 'DONT_SERVE_STATIC'):
-        urlpatterns += patterns('',
-            url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
-                {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-            url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
-                {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
-        )

@@ -124,7 +124,7 @@ INSTALLED_APPS = (
     'explorer',
     'toolbar',
     'bookthemes',
-    'api',
+    # 'api',
 )
 
 

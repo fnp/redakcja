@@ -16,7 +16,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
 from explorer import forms
-from api.models import PullRequest
+# from api.models import PullRequest
 from bookthemes.models import Theme
 
 def ajax_login_required(view):
@@ -47,18 +47,17 @@ def display_editor(request, path):
 # View all files
 #
 def file_list(request):   
-    import api.forms
-    from api.resources import library_resource
-
-    bookform = api.forms.DocumentUploadForm()
+    from wiki.views import document_list
 
     # short-circut the api document list
-    doctree = library_resource.handler.read(request)
+    # doctree = library_resource.handler.read(request)
     # print "DOCTREE:", doctree['documents']
         
-    return direct_to_template(request, 'explorer/file_list.html', extra_context={
-        'filetree': doctree['documents'], 'bookform': bookform,
-    })
+    return document_list(request, 'explorer/file_list.html')
+    
+    # return direct_to_template(request, 'explorer/file_list.html', extra_context={
+    #     'files': files, 'bookform': bookform,
+    # })
 
 @permission_required('api.document.can_add')
 def file_upload(request):

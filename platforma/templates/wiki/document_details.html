@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(function() {
+            var editor = CodeMirror.fromTextArea('id_text', {
+                parserfile: 'parsexml.js',
+                path: "{{ STATIC_URL }}js/lib/codemirror/",
+                stylesheet: "{{ STATIC_URL }}css/xmlcolors.css",
+                parserConfig: {
+                    useHTMLKludges: false
+                },
+                textWrapping: true,
+                tabMode: 'spaces',
+                indentUnit: 0,
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block maincontent %}
+    <form action="{% url wiki.views.document_detail document.name|urlencode %}" method="post" accept-charset="utf-8">
+        {{ form.as_p }}
+        <p><input type="submit" value="Continue &rarr;"></p>
+    </form>
+{% endblock %}
