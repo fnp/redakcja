@@ -58,7 +58,7 @@
                 result.push('>');
             }
             
-            if (element.tagName == 'akap' || element.tagName == 'akap_dialog') {
+            if (element.tagName == 'akap' || element.tagName == 'akap_dialog' || element.tagName == 'akap_cd') {
                 result.push('\n\n\n');
             } else if (element.tagName == 'rdf:RDF') {
                 result.push('\n\n\n\n\n');
@@ -222,6 +222,7 @@
             margin: 0;
             overflow: hidden;
             padding: 0;
+            min-width: 960px;
         }
         
         .vsplitbar {
@@ -262,6 +263,7 @@
             float: left;
             padding: 3px 6px 2px 6px;
             color: #222;
+            line-height: 20px;
         }
         
         #tabs {
@@ -335,6 +337,12 @@
             -webkit-border-radius: 10px;
             -moz-border-radius: 10px;
             border-radius: 10px;
+        }
+        
+        /* Remove extra padding in Firefox */
+        button::-moz-focus-inner { 
+            border: 0;
+            padding: 0;
         }
         
         p { margin: 0;}
