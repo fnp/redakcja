@@ -1,3 +1,32 @@
+(function() {
+  var slice = Array.prototype.slice;
+  
+  function update(array, args) {
+    var arrayLength = array.length, length = args.length;
+    while (length--) array[arrayLength + length] = args[length];
+    return array;
+  };
+  
+  function merge(array, args) {
+    array = slice.call(array, 0);
+    return update(array, args);
+  };
+  
+  Function.prototype.bind = function(context) {
+    if (arguments.length < 2 && typeof arguments[0] === 'undefined') {
+      return this;
+    } 
+    var __method = this;
+    var args = slice.call(arguments, 1);
+    return function() {
+      var a = merge(args, arguments);
+      return __method.apply(context, a);
+    }
+  }
+  
+})();
+
+
 function ScriptletCenter()
 {
     this.scriptlets = {};
@@ -198,19 +227,19 @@ function ScriptletCenter()
 }
 
 ScriptletCenter.prototype.XMLEditorSelectedText = function(panel) {
-    return panel.contentView.editor.selection();
+    return panel.selection();
 };
 
 ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(panel, replacement)
 {
-    panel.contentView.editor.replaceSelection(replacement);
+    panel.replaceSelection(replacement);
     // Tell XML view that it's data has changed
-    panel.contentView.editorDataChanged();
+    // panel.contentView.editorDataChanged();
 };
 
 ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, n) {
-    var pos = panel.contentView.editor.cursorPosition();
-    panel.contentView.editor.selectLines(pos.line, pos.character + n);
+    var pos = panel.cursorPosition();
+    panel.selectLines(pos.line, pos.character + n);
 };
 
 var scriptletCenter;

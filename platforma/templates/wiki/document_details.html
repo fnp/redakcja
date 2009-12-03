@@ -1,21 +1,27 @@
 {% extends "base.html" %}
+{% load toolbar_tags %}
 
 {% block extrahead %}
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/lib/jquery.splitter.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/lib/jquery.form.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
     
         function serialize(element) {
-            if (element.nodeType == 3) {
+            if (element.nodeType == 3) { // tekst
                 return [$.trim(element.nodeValue)];
+            } else if (element.nodeType != 1) { // pomijamy węzły nie będące elementami XML ani tekstem
+                return [];
             }
             
             var result = [];
+            var hasContent = false;
             
             result.push('<');
             result.push(element.tagName);
             
+            // Mozilla nie uważa deklaracji namespace za atrybuty
             var ns = element.tagName.indexOf(':');
             if (ns != -1 && $.browser.mozilla) {
                 result.push(' xmlns:');
@@ -33,21 +39,25 @@
                     result.push('="');
                     result.push(attr.value);
                     result.push('"');
+                    hasContent = true;
                 }
             }
             
-            result.push('>');
+            if (element.childNodes.length == 0) {
+                result.push(' />');
+            } else {
+                result.push('>');
     
-            for (var i=0; i < element.childNodes.length; i++) {
-                var child = element.childNodes[i];
-                result = result.concat(serialize(child));
+                for (var i=0; i < element.childNodes.length; i++) {
+                    result = result.concat(serialize(element.childNodes[i]));
+                }
+    
+                result.push('</');
+                result.push(element.tagName);
+                result.push('>');
             }
-    
-            result.push('</');
-            result.push(element.tagName);
-            result.push('>');
-    
-            if (element.tagName == 'akap') {
+            
+            if (element.tagName == 'akap' || element.tagName == 'akap_dialog') {
                 result.push('\n\n\n');
             } else if (element.tagName == 'rdf:RDF') {
                 result.push('\n\n\n\n\n');
@@ -146,6 +156,7 @@
                         doc = serializer.serializeToString($('#simple-editor div').get(0))
                         doc = parser.parseFromString(doc, 'text/xml');
                         console.log('xml',doc, doc.documentElement);
+                        // TODO: Sprawdzenie błędów
                         doc = xsl.transformToDocument(doc);
                         console.log('after transform', doc, doc.documentElement);
                         doc = serialize(doc.documentElement).join('');
@@ -166,6 +177,9 @@
             });
             
             $('#simple-view-tab').click(function() {
+                if ($(this).hasClass('active')) {
+                    return;
+                }
                 $(this).addClass('active');
                 $('#source-view-tab').removeClass('active');
                 $('#source-editor').hide();
@@ -174,12 +188,30 @@
             });
             
             $('#source-view-tab').click(function() {
+                if ($(this).hasClass('active')) {
+                    return;
+                }
                 $(this).addClass('active');
                 $('#simple-view-tab').removeClass('active');
                 $('#simple-editor').hide();
                 $('#source-editor').show();
                 reverseTransform();
             });
+            
+            $('.toolbar button').click(function(event) {
+                event.preventDefault();
+                var params = eval("(" + $(this).attr('ui:action-params') + ")");
+                scriptletCenter.scriptlets[$(this).attr('ui:action')](editor, params);
+            });
+            
+            $('.toolbar select').change(function() {
+                var slug = $(this).val();
+                
+                $('.toolbar-buttons-container').hide().filter('[data-group=' + slug + ']').show();
+            });
+            
+            $('.toolbar-buttons-container').hide();
+            $('.toolbar select').change();
         });
     </script>
     
@@ -209,7 +241,7 @@
         
         #sidebar {
             overflow: auto;
-            padding: 5px;
+/*            padding: 5px; */
         }
         
         #header {
@@ -262,11 +294,49 @@
         }
         
         #tabs li.active {
-            background-color: #FFF;
+            background-color: #FEFCDF;
             background-image: none;
 /*            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.25, #C1C1C1), to(#FFFFFF));            */
-            border-bottom: 1px solid #FFF;
+            border-bottom: 1px solid #FEFCDF;
         }
+        
+        .toolbar {
+            border-bottom: 1px solid #777;
+            background-color: #FEFCDF;
+            margin: 0;
+            padding: 2px;
+        }
+        
+        .toolbar select {
+            float: left;
+            margin: 2px 5px 2px 0;
+            background: none;
+            border: 1px solid #999;
+            padding: 1px;
+        }
+        
+        .toolbar button {
+            display: block;
+            float: left;
+            margin: 4px 0 2px 0;
+            padding: 0 5px 2px 5px;
+            border: none;
+            background: none;
+        }
+        
+        .toolbar-end {
+            clear: both;
+        }
+        
+        .toolbar button:hover, .toolbar button:active {
+            background: #A2A2A2;
+            color: #FFF;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+        
+        p { margin: 0;}
     </style>
 {% endblock %}
 
@@ -284,6 +354,7 @@
         <div id="splitter">
             <div id="editor">
                 <div id="source-editor">
+                    {% toolbar %}
                     {{ form.text }}
                     <input type="hidden" name="name" value="{{ document.name }}" />
                     <input type="hidden" name="author" value="annonymous" />

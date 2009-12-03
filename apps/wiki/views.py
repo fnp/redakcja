@@ -1,5 +1,5 @@
 from django.views.generic.simple import direct_to_template
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 
 from wiki.models import storage, Document, DocumentNotFound
 from wiki.forms import DocumentForm
@@ -21,7 +21,9 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
         form = DocumentForm(request.POST, instance=document)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/')
+            return HttpResponse('OK')
+        else:
+            print form.errors
     else:
         form = DocumentForm(instance=document)
     

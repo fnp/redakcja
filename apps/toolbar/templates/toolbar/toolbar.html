@@ -1,32 +1,20 @@
 {% load toolbar_tags %}
 <div class="toolbar" xmlns:ui="http://nowoczesnapolska.org.pl/platforma/ui">
-    
-    {# This div will be connected to the right place #}
-    <span class="panel-toolbar-extra">
-    {% for button in toolbar_extra_group.button_set.all %}
-    {% toolbar_button button %}
-    {% endfor %} 
-    </span>
-
-    <div class="toolbar-tabs-container toolbar-buttons-container">
-    <p>
+    <select name="button_group" id="toolbar-button-group-select" size="1">
         {% for group in toolbar_groups %}
-        <button ui:group="{{ group.slug }}" {% if forloop.first %}class="active"{% endif %}>
-            {{ group.name }}
-        </button>
+        <option value="{{ group.slug }}" {% if forloop.first %}selected="selected"{% endif %}>{{ group.name }}</option>
         {% endfor %}
-    </p>
-    </div>
-
+    </select>
+    
     <div class="toolbar-button-groups-container">
         {% for group in toolbar_groups %}
-        <p ui:group="{{group.slug}}" class="toolbar-buttons-container" {% if not forloop.first %}style="display:none;"{% endif %}>
+        <div data-group="{{group.slug}}" class="toolbar-buttons-container">
             {# buttons for this group #}            
             {% for button in group.button_set.all %}
             {% toolbar_button button %}
             {% endfor %}
-        </p>
+        </div>
         {% endfor %}
     </div>
-
+    <div class="toolbar-end"></div>
 </div>
