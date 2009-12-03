@@ -2,6 +2,7 @@
 {% load toolbar_tags %}
 
 {% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8">
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/lib/jquery.splitter.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/lib/jquery.form.js" type="text/javascript" charset="utf-8"></script>
@@ -361,7 +362,7 @@
                     <input type="hidden" name="comment" value="no comment" />
                     <input type="hidden" name="revision" value="{{ document.revision }}" />
                 </div>
-                <div id="simple-editor" style="display: none">
+                <div id="simple-editor" class="htmlview" style="display: none">
                 </div>
             </div>
 
