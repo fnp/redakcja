@@ -1,333 +1,135 @@
 body {
-    margin: 0;    
-
-    font: 12px Helvetica, Verdana, sans-serif;
+    margin: 0;
     overflow: hidden;
-    background: #AAA;
+    padding: 0;
+    min-width: 960px;
 }
 
-#body-wrap {
-    margin: 0px;
-    padding: 0px;
-    position: fixed;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    top: 0px;
+.vsplitbar {
+    width: 14px;
+    background: #EEE url(/static/img/gallery.png) no-repeat scroll center center;
+    border-left: 1px solid #999;
+    cursor: col-resize;
 }
 
-#header { 
-    position: absolute;
-    padding: 2px 0.5em;
-    background-color: #CDCDCD; /* !unused */
-    border-bottom: 2px solid black;
-
-    font-size: 14px;
-
-    line-height: 26px;
-    vertical-align: middle;
-
-    /* height: 30px; */
-    top: 0px; left: 0px; right: 0px; 
-    z-index: 300;
+.active {
+    background-color: #DDD;
 }
 
-#content {
-    position: absolute;
-    top: 32px; left: 0px; right: 0px; bottom: 0px;
+#simple-editor {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+#html-view {
     overflow: auto;
-    background-color: white;
-}
-
-#header #breadcrumbs {
-}
-
-#header-right-toolbar {
     position: absolute;
-    right: 1em;
+    top: 27px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
-/* Commit dialog */
-#commit-dialog-error-empty-message {
-    color: red;
-    display: none;
+#sidebar {
+    overflow: auto;
+}
+
+#header {
+    margin: 0;
+    padding: 0;
+    background-color: #C1C1C1;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#C1C1C1), color-stop(0.9, #A2A2A2));
+    font: 11px Helvetica, Verdana, sans-serif;
     font-weight: bold;
 }
 
-text#commit-dialog-message {
-    width: 80%;
-    margin: auto;
-}
-
-#split-dialog .container-box form {
-    margin: 0.2em 1em;
-}
-
-#split-dialog .container-box fieldset {
-    margin: 0.5em;
-}
-
-
-
-
-/* ======= */
-/* = New = */
-/* ======= */
-#splitview {
-    width: 100%;
-    height: 100%;
-    padding: 0;
+#header h1 {
     margin: 0;
-}
-
-.splitview-splitbar {
-    width: 5px;
-    border-left: 1px solid #999;
-    border-right: 1px solid #999;
-    height: 100%;
-    background-color: #CCC;
-    z-index: 5100;
-}
-
-.splitview-overlay {
-    z-index: 5000;
-    background: #FFF;
-    opacity: 0.5;
-}
-
-.panel-container {
-    height: 100%;
-    position: relative;
-}
-
-.content-view {
-    position: absolute;
-    top: 25px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-}
-
-.panel-main-toolbar {
-    z-index: 1100;    
-    position: absolute;
-
-    top: 0px;
-    right: 0px;
-    left: 0px;
-    height: 24px;
-
-    border-bottom: 1px solid black;
-    background: gray;
-
-    padding: 0px;
-}
-
-.panel-main-toolbar p {
-    margin: 0px;
-    padding: 2px;
+    padding: 0;
+    font: 17px Helvetica, Verdana, sans-serif;
+    font-weight: bold;
+    float: left;
+    padding: 3px 6px 2px 6px;
+    color: #222;
     line-height: 20px;
-    font-size: 13px;    
 }
 
-.xmlview {
-    height: 100%;
-}
-
-.view-overlay {
-    display: none;
-    z-index: 0;
-    background: #FFF;    
-    text-align: center;
-    vertical-align: middle;
-
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-
-    /* user-select: 'none';
-    -webkit-user-select: 'none';
-    -khtml-user-select: 'none';
-    -moz-user-select: 'none'; */
-
-    overflow: 'hidden';    
-}
-
-.view-overlay div {
-    position: absolute;
-}
-
-/* .buttontoolbarview {
-    display: block;
-    background-color: #CCC;
-}
-
-.buttontoolbarview a {
-    color: #000;
-    text-decoration: none;
-} */ /* Similar classes already exist in toolbar.css */
-
-
-/* ================= */
-/* = Gallery panel = */
-/* ================= */
-.image-gallery-view-template {
-    position: absolute;
-    top: 0px; left: 0px; right: 0px; bottom: 0px;
-    overflow: hidden;
-}
-
-.image-gallery-header {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    height: 30px;
-
-    background: gray;
-    border-top: 1px solid #780000;
-    z-index: 100;
-}
-
-input.image-gallery-current-page {
-    text-align: center;
-}
-
-.image-gallery-header p {
-    margin: 0px;
-    padding: 3px 1em;
-    height: 30px;
-    line-height: 24px;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.image-gallery-page-list {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 31px;
-    background: black;
-    z-index: 0;
-
-    overflow: hidden;
-}
-
-.image-gallery-page-container {
-    display: none;
-    border: none;
-
-    position: absolute;
-    top: 0px; left: 0px;
-
-    text-align: center;
-    padding: 0px;
-}
-
-.htmlview {
-    position: absolute;
-    top: 25px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
+#tabs {
     margin: 0;
-}
-
-.image-gallery-page-container img {
-    /* border: 2px solid green; */
-    margin: 0px;
-}
-
-
-/* ================= */
-/* = Message boxes = */
-/* ================= */
-.info {
-    background-color: gray;
-}
-
-.success {
-    background-color: green;
-}
-
-.error {
-    background-color: yellow;
-}
-
-.critical {
-    background-color: red;
-}
-
-
-
-/*
- *
- * Buttons
- *
- */
-*.button {
-    /* reset margin and padding and see what happens */
     padding: 0;
-    margin: 0;
-    border: 2px solid blue;
-
-    /*
-     * Borders and padding:
-    */
     
-    /* observation 1: Firefox doesn't apply top/bottom borders to spans in button */
-    /* observation 2: Webkit leaves out some padding to left/right 
-        also: it cuts the top/bottom margin to 1px max */
-
-    /* observation 3: Opera does the oposite then WK and FF ->
-        span has all borders, button has only left/right 
-    */
-
-    /* Line Height */
-
-    /* 1. Wszystkie przeglądarki, domyślnie ustawiają vertical-align: baseline */
-    vertical-align: baseline;
-
-    /* 2. Opera ustawia rozmiar przycisku, na rozmiar line-height obiektu, który go zawiera */
-    
-    display: inline-block;
-    position: relative;
-    background: yellow;
-    padding: 2px 4px;
-
-    font-size: 16pt;
-    text-decoration: none;
+    width: 100%;
+    height: 22px;
+    padding-top: 2px;
+    border-bottom: 1px solid #999;
 }
 
-*.button:active {
-    background: aqua;
-}
-
-*.button > span.upper-bg {
-    position: absolute;
-    top: 0px; 
-    left: 2px;
-    right: 0px;
-    bottom: 5px;
-
-    margin: 0px;
-    
-    background-color: white;
-    z-index: 0;
+#tabs li {
+    -webkit-user-select: none;
+    cursor: default;
     display: block;
+    float: left;
+    padding: 5px 12px 3px 12px;
+    border: 1px solid #999;
+    -webkit-border-radius: 4px;
+    -webkit-border-bottom-left-radius: 0;
+    -webkit-border-bottom-right-radius: 0;
+    font-weight: bold;
+    color: #222;
+    height: 13px;
+    -webkit-box-shadow: 1px -1px 2px rgba(127, 127, 127, 0.25);
+    margin-left: 4px;
+    margin-bottom: -1px;
+    background-color: #A2A2A2;
 }
 
-*.button > span.button-text {
-    position: relative;
-    margin: 0px;
-    display: inline-block;
-    z-index: 2;
-    background: blue;
-    opacity: 0.5;
+#tabs li.active {
+    background-color: #C1C1C1;
+    border-bottom: 1px solid #C1C1C1;
 }
 
+.toolbar {
+    border-bottom: 1px solid #777;
+    background-color: #C1C1C1;
+    margin: 0;
+    padding: 2px;
+    height: 22px;
+}
+
+.toolbar select {
+    float: left;
+    margin: 2px 5px 2px 0;
+    background: none;
+    border: 1px solid #999;
+    padding: 1px;
+}
+
+.toolbar button {
+    display: block;
+    float: left;
+    margin: 4px 0 2px 0;
+    padding: 0 5px 2px 5px;
+    border: none;
+    background: none;
+}
+
+.toolbar-end {
+    clear: both;
+}
+
+.toolbar button:hover, .toolbar button:active {
+    background: #777;
+    color: #FFF;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Remove extra padding in Firefox */
+button::-moz-focus-inner { 
+    border: 0;
+    padding: 0;
+}
+
+p { margin: 0;}

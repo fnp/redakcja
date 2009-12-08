@@ -728,14 +728,14 @@
     </xsl:template>
 
     <xsl:template name="context-menu">
-        <span class="default-menu context-menu">
-            <span class="edit-button">Edit</span>
-            <span class="delete-button">Delete</span>
-        </span>
-        <span class="edit-menu context-menu">
+        <!-- <span class="default-menu context-menu"> -->
+        <button class="edit-button">Edytuj</button>
+            <!-- <span class="delete-button">Delete</span> -->
+        <!-- </span> -->
+        <!-- <span class="edit-menu context-menu">
             <span class="accept-button">Accept</span>
             <span class="reject-button">Close</span>
-        </span>
+        </span> -->
     </xsl:template>
 
     <xsl:template name="standard-attributes">
