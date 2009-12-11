@@ -28,7 +28,7 @@ body {
 #html-view {
     overflow: auto;
     position: absolute;
-    top: 27px;
+    top: 26px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -107,14 +107,6 @@ body {
 /*    height: 22px;*/
 }
 
-.toolbar select {
-    float: left;
-    margin: 2px 5px 2px 0;
-    background: none;
-    border: 1px solid #999;
-    padding: 1px;
-}
-
 .toolbar button {
     display: block;
     float: left;
@@ -122,6 +114,20 @@ body {
     padding: 0 5px 2px 5px;
     border: none;
     background: none;
+}
+
+.toolbar select {
+    float: left;
+    margin: 1px 5px 1px 0;
+    background: none;
+    border: 1px solid #999;
+    padding: 1px;
+}
+
+.toolbar input {
+    font-size: 11px;
+    padding: 0;
+    margin: 2px 5px 0 5px;
 }
 
 .toolbar-end {

@@ -523,4 +523,5 @@
 .out-of-flow-text {
     border: 1px solid #C8B849;
     background-color: #D4CB9C;
+    white-space: pre;
 }
