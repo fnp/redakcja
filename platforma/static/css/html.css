@@ -519,3 +519,8 @@
 #theme-edit-dialog .theme-mutli-list input:checked + label {
     font-weight: bold;
 }*/
+
+.out-of-flow-text {
+    border: 1px solid #C8B849;
+    background-color: #D4CB9C;
+}

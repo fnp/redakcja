@@ -27,7 +27,7 @@
     <xsl:template match="utwor">
         <div>
             <xsl:call-template name="standard-attributes" />
-            <xsl:apply-templates select="child::*">
+            <xsl:apply-templates select="child::* | text()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
         </div>
@@ -701,11 +701,11 @@
     -->
 
     <xsl:template match="text()">
+        <!-- <xsl:value-of select="." /> -->
         <xsl:param name="mixed" />
         <xsl:choose>
             <xsl:when test="normalize-space(.) = ''" />
-            <xsl:when test="not($mixed)"><span x-node="out-of-flow-text" class="out-of-flow-text"
-                    x-content="{.}"></span></xsl:when>
+            <xsl:when test="not($mixed)"><div x-node="out-of-flow-text" class="out-of-flow-text"><xsl:value-of select="." /></div></xsl:when>
             <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
         </xsl:choose>
     </xsl:template>

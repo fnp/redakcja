@@ -33,7 +33,7 @@
         </xsl:element>
     </xsl:template>   
 
-    <xsl:template match="*[@x-node = 'out-of-flow-text']"><xsl:value-of select="@x-content" /></xsl:template>
+    <xsl:template match="*[@x-node = 'out-of-flow-text']"><xsl:value-of select="." /></xsl:template>
 
     <!-- Specjalne reguły dla wersów -->
     <xsl:template match="*[@x-node = 'wers']">
