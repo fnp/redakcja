@@ -212,7 +212,7 @@
     -->
     <xsl:template match="motto">
         <xsl:param name="mixed" />
-        <div>
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -432,7 +432,7 @@
 
     <xsl:template match="didaskalia">
         <xsl:param name="mixed" />
-        <div>
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -729,7 +729,7 @@
 
     <xsl:template name="context-menu">
         <!-- <span class="default-menu context-menu"> -->
-        <button class="edit-button">Edytuj</button>
+        <!-- <button class="edit-button">Edytuj</button> -->
             <!-- <span class="delete-button">Delete</span> -->
         <!-- </span> -->
         <!-- <span class="edit-menu context-menu">

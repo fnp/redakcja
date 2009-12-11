@@ -6,20 +6,23 @@ body {
 }
 
 .vsplitbar {
+    position: absolute;
+    top: 25px;
+    bottom: 0;
+    right: 0;;
     width: 14px;
     background: #EEE url(/static/img/gallery.png) no-repeat scroll center center;
     border-left: 1px solid #999;
     cursor: col-resize;
 }
 
-.active {
-    background-color: #DDD;
-}
-
-#simple-editor {
-    height: 100%;
+#source-editor, #simple-editor {
+    position: absolute;
+    top: 25px;
+    bottom: 0;
+    left: 0;
+    right: 15px;
     overflow: hidden;
-    position: relative;
 }
 
 #html-view {
@@ -32,7 +35,14 @@ body {
 }
 
 #sidebar {
+    position: absolute;
     overflow: auto;
+    top: 25px;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    display: none;
+    background-color: #FFF;
 }
 
 #header {
@@ -94,7 +104,7 @@ body {
     background-color: #C1C1C1;
     margin: 0;
     padding: 2px;
-    height: 22px;
+/*    height: 22px;*/
 }
 
 .toolbar select {
@@ -133,3 +143,13 @@ button::-moz-focus-inner {
 }
 
 p { margin: 0;}
+
+.htmlview *[x-editable] {
+    background-color: white;
+}
+
+.htmlview .active[x-editable] {
+    background-color: #FAFAFA;
+    border: 1px solid #DDD;
+/*    -webkit-transition: all 1s linear;*/
+}

@@ -247,18 +247,26 @@
     font-variant: normal;
     text-decoration: none;
 
-    padding: 0.2em;
 
-    background-color: #efefef;
+    background-color: #fff;
     
-    border: 1px solid gray;
-    border-left: 2px dotted gray;
+/*    border: 1px solid gray;
+
     border-right: none;
-    
+*/    
     z-index: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
     user-select: none;
+    margin-right: -12em;
+    text-align: left;
+}
+
+.htmlview .motyw[x-editable] {
+    border-left: 4px solid #DDD;
+    padding: 0.2em 0.2em 0.2em 0.5em;
+    margin-top: 0.2em;
+
 }
 
 /* 
@@ -269,7 +277,7 @@
 .htmlview .annotation {    
     vertical-align: super;
     text-decoration: none;
-    font-size: 0.66em;    
+/*    font-size: 10px;    */
 }
 
 .htmlview .annotation:before {
@@ -344,6 +352,9 @@
 
 .htmlview *[x-editable] {    
     position: relative;
+    padding: 2px;
+    margin-left: 0;
+    border: 1px solid #FFF;
 }
 
 /* focused editable element */
@@ -359,29 +370,27 @@
 
 .edit-button {
     position: absolute;
-    top: auto;
-    bottom: auto;
-    left: -50px;
+    top: -21px;
+    left: -1px;
     width: 50px;
-    height: 16px;
+    height: 21px;
     
     display: block;
 /*    margin: 4px 0 2px 0;*/
-    padding: 0 5px 2px 5px;
+    padding: 5px 5px 2px 5px;
     border: none;
-    background: none;
+    background-color: #FAFAFA;
     
-    z-index: 3000;
-    color: #777;
+/*    z-index: 3000;*/
+/*    color: #FFF;
+    z-index: 1500;
+*/    border: 1px solid #DDD;
+    border-bottom: none;
 }
 
 
 .edit-button:hover, .edit-button:active {
-    background: #A2A2A2;
     color: #FFF;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
 }
 
 /*
