@@ -10,9 +10,10 @@ body {
     top: 25px;
     bottom: 0;
     right: 0;;
-    width: 14px;
-    background: #EEE url(/static/img/gallery.png) no-repeat scroll center center;
+    width: 13px;
+    background: #C1C1C1 url(/static/img/gallery.png) no-repeat scroll center center;
     border-left: 1px solid #999;
+    border-right: 1px solid #999;
     cursor: col-resize;
 }
 
@@ -28,7 +29,7 @@ body {
 #html-view {
     overflow: auto;
     position: absolute;
-    top: 26px;
+    top: 27px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -36,7 +37,7 @@ body {
 
 #sidebar {
     position: absolute;
-    overflow: auto;
+    overflow: hidden;
     top: 25px;
     right: 0;
     bottom: 0;
@@ -100,10 +101,12 @@ body {
 }
 
 .toolbar {
+    width: 100%;
     border-bottom: 1px solid #777;
     background-color: #C1C1C1;
     margin: 0;
     padding: 2px;
+    z-index: 10;
 /*    height: 22px;*/
 }
 
@@ -125,6 +128,7 @@ body {
 }
 
 .toolbar input {
+    float: left;
     font-size: 11px;
     padding: 0;
     margin: 2px 5px 0 5px;
@@ -158,4 +162,29 @@ p { margin: 0;}
     background-color: #FAFAFA;
     border: 1px solid #DDD;
 /*    -webkit-transition: all 1s linear;*/
+}
+
+/* =========== */
+/* = Gallery = */
+/* =========== */
+.gallery-image {
+    position: absolute;
+    top: 27px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    border: none;
+    background-color: #000;
+    overflow: hidden;
+}
+
+img {
+    position: absolute;
+    -moz-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    cursor: pointer;
 }

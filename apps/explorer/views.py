@@ -8,14 +8,15 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
-from explorer import forms
+from explorer import forms, models
+import os
 # from api.models import PullRequest
 from bookthemes.models import Theme
 
@@ -131,3 +132,13 @@ def pull_requests(request):
 def renderer_test(request):
     return direct_to_template(request, 'renderer.html', mimetype="text/html",
         extra_context = {} )
+
+
+def document_gallery(request, document):
+    assocs = models.GalleryForDocument.objects.filter(document=document)
+    directory = assocs[0].subpath
+    try:
+        images = ['/media/%s/%s' % (directory, f) for f in os.listdir(os.path.join(settings.MEDIA_ROOT, directory)) if f.lower().endswith('.jpg')]
+        return HttpResponse(json.dumps(images))
+    except IndexError:
+        raise Http404

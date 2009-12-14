@@ -524,4 +524,8 @@
     border: 1px solid #C8B849;
     background-color: #D4CB9C;
     white-space: pre;
+    overflow: auto;
+    margin: 1.5em 0 0;
+    font-family: monospace;
+    font-size: 10pt;
 }
