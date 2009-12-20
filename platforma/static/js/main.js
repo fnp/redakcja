@@ -1,3 +1,4 @@
+// Serializuje XML, wstawiając odpowiednie ilości białych znaków między elementami
 function serialize(element) {
     if (element.nodeType == 3) { // tekst
         return [$.trim(element.nodeValue)];
@@ -58,6 +59,8 @@ function serialize(element) {
     return result;
 };
 
+
+// Teraz nieużywane
 function highlight(colour) {
     var range, sel;
     if (window.getSelection) {
@@ -83,27 +86,6 @@ function highlight(colour) {
     }
 }
 
-function selectTheme(themeId)
-{
-    var selection = window.getSelection();
-    
-    // remove current selection
-    selection.removeAllRanges();
-
-    var range = document.createRange();
-    var s = $(".motyw[theme-class='"+themeId+"']")[0];
-    var e = $(".end[theme-class='"+themeId+"']")[0];
-    // console.log('Selecting range:', themeId, range, s, e);
-    
-    if(s && e) {
-        range.setStartAfter(s);
-        range.setEndBefore(e);
-        selection.addRange(range);
-        // highlight('yellow');
-        // selection.removeAllRanges();
-    }
-};
-
 // function unselectThemes(themeId) {
 //     $('.Apple-style-span').each(function() {
 //         $(this).after($(this).html());
@@ -113,6 +95,7 @@ function selectTheme(themeId)
 
 function gallery(element) {
     var element = $(element);
+    var imageDimensions = {};
     
     function changePage(pageNumber) {        
         $('img', element).attr('src', element.data('images')[pageNumber - 1]);
@@ -158,22 +141,100 @@ function gallery(element) {
                 pn.change();
             });
             
+            
             var image = $('img', element).attr('unselectable', 'on');
             var origin = {};
             var imageOrigin = {};
-            var imageDimensions = {};
+            var zoomFactor = 1;
+            
+            $('.zoom-in', element).click(function() {
+                zoomFactor = Math.min(2, zoomFactor + 0.2);
+                zoom();
+            });
+            $('.zoom-out', element).click(function() {
+                zoomFactor = Math.max(0.2, zoomFactor - 0.2);
+                zoom();
+            });
+            
+            $('img', element).load(function() {
+                image.css({width: null, height: null});
+                imageDimensions = {
+                    width: $(this).width() * zoomFactor,
+                    height: $(this).height() * zoomFactor,
+                    originWidth: $(this).width(),
+                    originHeight: $(this).height(),
+                    galleryWidth: $(this).parent().width(),
+                    galleryHeight: $(this).parent().height()
+                };
+                console.log('load', imageDimensions)
+                var position = normalizePosition(
+                    image.position().left,
+                    image.position().top, 
+                    imageDimensions.galleryWidth,
+                    imageDimensions.galleryHeight,
+                    imageDimensions.width,
+                    imageDimensions.height
+                );
+                image.css({left: position.x, top: position.y, width: $(this).width() * zoomFactor, height: $(this).height() * zoomFactor});
+            });
+
+            $(window).resize(function() {
+                imageDimensions.galleryWidth = image.parent().width();
+                imageDimensions.galleryHeight = image.parent().height();
+            });
+            
+            function bounds(galleryWidth, galleryHeight, imageWidth, imageHeight) {
+                return {
+                    maxX: 0,
+                    maxY: 0,
+                    minX: galleryWidth - imageWidth,
+                    minY: galleryHeight - imageHeight
+                }
+            }
+            
+            function normalizePosition(x, y, galleryWidth, galleryHeight, imageWidth, imageHeight) {
+                var b = bounds(galleryWidth, galleryHeight, imageWidth, imageHeight);
+                return {
+                    x: Math.min(b.maxX, Math.max(b.minX, x)),
+                    y: Math.min(b.maxY, Math.max(b.minY, y))
+                }
+            }
             
             function onMouseMove(event) {
-                var delta = {
-                    x: event.clientX - origin.x,
-                    y: event.clientY - origin.y
-                };
-                
-                var newTop = Math.min(0, Math.max(imageOrigin.top + delta.y, imageDimensions.galleryHeight - imageDimensions.height));
-                var newLeft = Math.min(0, Math.max(imageOrigin.left + delta.x, imageDimensions.galleryWidth - imageDimensions.width));
-                image.css({position: 'absolute', top: newTop, left: newLeft});
+                var position = normalizePosition(
+                    event.clientX - origin.x + imageOrigin.left,
+                    event.clientY - origin.y + imageOrigin.top, 
+                    imageDimensions.galleryWidth,
+                    imageDimensions.galleryHeight,
+                    imageDimensions.width,
+                    imageDimensions.height
+                );
+                image.css({position: 'absolute', top: position.y, left: position.x});
                 return false;
             }
+            
+            function setZoom(factor) {
+                zoomFactor = factor;
+            }
+            
+            function zoom() {
+                imageDimensions.width = imageDimensions.originWidth * zoomFactor;
+                imageDimensions.height = imageDimensions.originHeight * zoomFactor;
+                var position = normalizePosition(
+                    image.position().left,
+                    image.position().top, 
+                    imageDimensions.galleryWidth,
+                    imageDimensions.galleryHeight,
+                    imageDimensions.width,
+                    imageDimensions.height
+                );
+                console.log(image.position(), imageDimensions, position);
+                image.css({width: imageDimensions.width, height: imageDimensions.height,
+                    left: position.x, top: position.y});
+
+            }
+            
+            window.setZoom = setZoom;
             
             function onMouseUp(event) {
                 $(document)
@@ -188,12 +249,6 @@ function gallery(element) {
                     y: event.clientY
                 };
                 imageOrigin = image.position();
-                imageDimensions = {
-                    width: image.width(),
-                    height: image.height(),
-                    galleryWidth: image.parent().width(),
-                    galleryHeight: image.parent().height()
-                };
                 $(document)
                     .bind('mousemove.gallery', onMouseMove)
                     .bind('mouseup.gallery', onMouseUp);
@@ -203,8 +258,49 @@ function gallery(element) {
     });
 }
 
+
+function html(element) {
+    var element = $(element);
+    
+    function selectTheme(themeId)
+    {
+        var selection = window.getSelection();
+
+        // remove current selection
+        selection.removeAllRanges();
+
+        var range = document.createRange();
+        var s = $(".motyw[theme-class='"+themeId+"']")[0];
+        var e = $(".end[theme-class='"+themeId+"']")[0];
+        // console.log('Selecting range:', themeId, range, s, e);
+
+        if(s && e) {
+            range.setStartAfter(s);
+            range.setEndBefore(e);
+            selection.addRange(range);
+            // highlight('yellow');
+            // selection.removeAllRanges();
+        }
+    };
+    
+    var button = $('<button class="edit-button">Edytuj</button>');
+    $(element).bind('mousemove', function(event) {
+        var editable = $(event.target).closest('*[x-editable]');
+        $('.active[x-editable]', element).not(editable).removeClass('active').children('.edit-button').remove();
+        if (!editable.hasClass('active')) {
+            editable.addClass('active').append(button);
+        }
+    });
+
+    $('.motyw').live('click', function() {
+        selectTheme($(this).attr('theme-class'));
+    });
+}
+
+
 $(function() {
     gallery('#sidebar');
+    html('#html-view');
     
     CodeMirror.fromTextArea('id_text', {
         parserfile: 'parsexml.js',
@@ -317,21 +413,7 @@ $(function() {
             $('.toolbar-buttons-container').hide();
             $('.toolbar select').change();
 
-            var button = $('<button class="edit-button">Edytuj</button>');
-            $('#html-view').bind('mousemove', function(event) {
-                var editable = $(event.target).closest('*[x-editable]');
-                $('#html-view .active[x-editable]').not(editable).removeClass('active').children('.edit-button').remove();
-                if (!editable.hasClass('active')) {
-                    editable.addClass('active').append(button);
-                }
-            });
-
-            $('.motyw').live('click', function() {
-                selectTheme($(this).attr('theme-class'));
-            });
-            
             $('#simple-view-tab').click();
-            
         }
     });
     

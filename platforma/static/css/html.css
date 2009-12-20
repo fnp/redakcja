@@ -390,6 +390,8 @@
 
 
 .edit-button:hover, .edit-button:active {
+/*    color: #FFF;*/
+    background-color: #999;
     color: #FFF;
 }
 
