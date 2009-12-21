@@ -48,8 +48,10 @@ function serialize(element) {
         result.push('>');
     }
     
-    if (element.tagName == 'akap' || element.tagName == 'akap_dialog' || element.tagName == 'akap_cd') {
+    if (element.tagName == 'akap' || element.tagName == 'akap_dialog' || element.tagName == 'akap_cd' || element.tagName == 'strofa') {
         result.push('\n\n\n');
+    } else if (element.tagName == 'naglowek_rozdzial') {
+        result.push('\n\n');
     } else if (element.tagName == 'rdf:RDF') {
         result.push('\n\n\n\n\n');
     } else if (element.tagName.indexOf('dc:') != -1) {
@@ -322,57 +324,94 @@ $(function() {
             }
 
             function transform() {
-                $.ajax({
-                    url: '/static/xsl/wl2html_client.xsl',
-                    dataType: 'xml',
-                    success: function(data) {
-                        var doc = null;
-                        var parser = new DOMParser();
-                        var serializer = new XMLSerializer();
-                        var htmlXSL = createXSLT(data);
+                $('#simple-editor').block({message: 'Ładowanie...'});
+                setTimeout(function() {
+                    $.ajax({
+                        url: '/static/xsl/wl2html_client.xsl',
+                        dataType: 'xml',
+                        success: function(data) {
+                            var doc = null;
+                            var parser = new DOMParser();
+                            var serializer = new XMLSerializer();
+                            var htmlXSL = createXSLT(data);
 
-                        doc = editor.getCode().replace(/\/\s+/g, '<br />');
-                        doc = parser.parseFromString(doc, 'text/xml');
-                        console.log('xml', doc);
-                        doc = htmlXSL.transformToFragment(doc, document);
-                        console.log('after transform', doc);
-                        $('#html-view').html(doc.firstChild);
-                    },
-                    error: function() {alert('Error loading XSL!')}
-                });        
+                            doc = editor.getCode().replace(/\/\s+/g, '<br />');
+                            doc = parser.parseFromString(doc, 'text/xml');
+                            console.log('xml', doc);
+                            doc = htmlXSL.transformToFragment(doc, document);
+                            console.log('after transform', doc);
+                            $('#html-view').html(doc.firstChild);
+                            $('#simple-editor').unblock();
+                        },
+                        error: function() {alert('Error loading XSL!')}
+                    });
+                }, 200);
             };
 
             function reverseTransform () {
-                $.ajax({
-                    url: '/static/xsl/html2wl_client.xsl',
-                    dataType: 'xml',
-                    success: function(data) {
-                        var doc = null;
-                        var parser = new DOMParser();
-                        var serializer = new XMLSerializer();
-                        var xsl = createXSLT(data);
+                $('#source-editor').block({message: 'Ładowanie...'});
+                setTimeout(function() {
+                    $.ajax({
+                        url: '/static/xsl/html2wl_client.xsl',
+                        dataType: 'xml',
+                        success: function(data) {
+                            var doc = null;
+                            var parser = new DOMParser();
+                            var serializer = new XMLSerializer();
+                            var xsl = createXSLT(data);
 
-                        doc = serializer.serializeToString($('#html-view div').get(0))
-                        doc = parser.parseFromString(doc, 'text/xml');
-                        console.log('xml',doc, doc.documentElement);
-                        // TODO: Sprawdzenie błędów
-                        doc = xsl.transformToDocument(doc);
-                        console.log('after transform', doc, doc.documentElement);
-                        doc = serialize(doc.documentElement).join('');
-                        // doc = serializer.serializeToString(doc.documentElement)
-                        editor.setCode(doc);
-                    },
-                    error: function() {alert('Error loading XSL!')}
-                });
+                            doc = serializer.serializeToString($('#html-view div').get(0))
+                            doc = parser.parseFromString(doc, 'text/xml');
+                            console.log('xml',doc, doc.documentElement);
+                            // TODO: Sprawdzenie błędów
+                            doc = xsl.transformToDocument(doc);
+                            console.log('after transform', doc, doc.documentElement);
+                            doc = serialize(doc.documentElement).join('');
+                            // doc = serializer.serializeToString(doc.documentElement)
+                            editor.setCode(doc);
+                            $('#source-editor').unblock();
+                        },
+                        error: function() {alert('Error loading XSL!')}
+                    });                    
+                }, 200);
             };
 
             $('#save-button').click(function(event) {
                 event.preventDefault();
-                console.log(editor.getCode(), $('form input[name=text]').get(0));
-                $('form textarea[name=text]').val(editor.getCode());
-                $('form').ajaxSubmit(function() {
-                    alert('Udało się!');
-                });
+                $.blockUI({message: $('#save-dialog')});
+                
+                // console.log(editor.getCode(), $('form input[name=text]').get(0));
+                //                 $('form textarea[name=text]').val(editor.getCode());
+                //                 $('form').ajaxSubmit(function() {
+                //                     alert('Udało się!');
+                //                 });
+            });
+            
+            $('#save-ok').click(function() {
+                $.blockUI({message: 'Zapisywanie...'});
+                
+                var data = {
+                    name: $('#document-name').html(),
+                    text: editor.getCode(),
+                    revision: $('#document-revision').html(),
+                    author: 'annonymous',
+                    comment: $('#komentarz').val()
+                };
+                
+                console.log(data);
+                
+                $.ajax({
+                    url: document.location.href,
+                    type: "POST",
+                    dataType: "html",
+                    data: data,                
+                    success: function() {
+                        $.unblockUI();
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert('error: ' + textStatus + ' ' + errorThrown);
+                    },
+                })
             });
 
             $('#simple-view-tab').click(function() {
@@ -427,12 +466,12 @@ $(function() {
         if ($('#sidebar').width() == 0) {
             $('#sidebar').width(480).css({right: 0}).show();
             $('#source-editor, #simple-editor').css({right: 495});
-            $('.vsplitbar').css({right: 480})
+            $('.vsplitbar').css({right: 480}).addClass('active');
             // $('#splitter').trigger('resize', [$(window).width() - 480]);
         } else {
             $('#sidebar').width(0).hide();
             $('#source-editor, #simple-editor').css({right: 15});
-            $('.vsplitbar').css({right: 0});
+            $('.vsplitbar').css({right: 0}).removeClass('active');
             // $('#splitter').trigger('resize', [$(window).width()]);
         }
         $(window).resize();

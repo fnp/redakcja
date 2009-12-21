@@ -14,7 +14,11 @@ body {
     background: #C1C1C1 url(/static/img/gallery.png) no-repeat scroll center center;
     border-left: 1px solid #999;
     border-right: 1px solid #999;
-    cursor: col-resize;
+    cursor: w-resize;
+}
+
+.vsplitbar.active {
+    cursor: e-resize;
 }
 
 #source-editor, #simple-editor {

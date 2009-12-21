@@ -5,19 +5,18 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/master.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8" />
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/lib/jquery.form.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/main.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 
 {% block maincontent %}
-    {# <form action="{% url wiki.views.document_detail document.name|urlencode %}" method="post" accept-charset="utf-8"> #}
         <div id="header">
-            <div id="tools" style="float: right;">Wersja: {{ document.revision }}<button style="margin-left: 6px" id="save-button">Zapisz</button></div>
-            <h1>{{ document.name }}</h1>
+            <div id="tools" style="float: right;">Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
+            <h1>Platforma</h1>
             <ol id="tabs">
-                <li id="simple-view-tab">Widok prosty</li>
-                <li id="source-view-tab" class="active">Widok zaawansowany</li>
+                <li id="simple-view-tab"><span id="document-name">{{ document.name }}</span></li>
+                <li id="source-view-tab" class="active">Kod źródłowy</li>
             </ol>
             <div style="clear: both"></div>
         </div>
@@ -55,5 +54,9 @@
                 </div>
             </div>
         </div>
-    {# </form> #}
+        <div id="save-dialog" style="display: none">
+            <p>Zapisywanie</p>
+            <label for="komentarz">Komentarz</label><input type="text" name="komentarz" value="" id="komentarz" />
+            <button id="save-ok">Ok</button>
+        </div>
 {% endblock %}
