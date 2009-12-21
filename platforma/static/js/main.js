@@ -379,12 +379,6 @@ $(function() {
             $('#save-button').click(function(event) {
                 event.preventDefault();
                 $.blockUI({message: $('#save-dialog')});
-                
-                // console.log(editor.getCode(), $('form input[name=text]').get(0));
-                //                 $('form textarea[name=text]').val(editor.getCode());
-                //                 $('form').ajaxSubmit(function() {
-                //                     alert('Udało się!');
-                //                 });
             });
             
             $('#save-ok').click(function() {
@@ -403,15 +397,26 @@ $(function() {
                 $.ajax({
                     url: document.location.href,
                     type: "POST",
-                    dataType: "html",
+                    dataType: "json",
                     data: data,                
-                    success: function() {
+                    success: function(data) {
+                        if (data.text) {
+                            editor.setCode(data.text);
+                            $('#document-revision').html(data.revision);
+                        } else {
+                            console.log(data.errors);
+                            alert(data.errors);
+                        }
                         $.unblockUI();
                     },
                     error: function(xhr, textStatus, errorThrown) {
                         alert('error: ' + textStatus + ' ' + errorThrown);
                     },
                 })
+            });
+            
+            $('#save-cancel').click(function() {
+                $.unblockUI();
             });
 
             $('#simple-view-tab').click(function() {

@@ -24,4 +24,5 @@ class DocumentForm(forms.Form):
         document = Document(self.get_storage(), name=self.cleaned_data['name'], text=self.cleaned_data['text'])
         storage.put(document, self.cleaned_data['author'], self.cleaned_data['comment'],
             self.cleaned_data['revision'])
+        return storage.get(self.cleaned_data['name'])
 
