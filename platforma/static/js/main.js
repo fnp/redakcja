@@ -337,10 +337,21 @@ $(function() {
 
                             doc = editor.getCode().replace(/\/\s+/g, '<br />');
                             doc = parser.parseFromString(doc, 'text/xml');
+                            var error = $('parsererror', doc);
+                            console.log(error);
+                            if (error.length == 0) {
+                                doc = htmlXSL.transformToFragment(doc, document);
+                                error = $('parsererror', doc);
+                            }
                             console.log('xml', doc);
-                            doc = htmlXSL.transformToFragment(doc, document);
-                            console.log('after transform', doc);
-                            $('#html-view').html(doc.firstChild);
+                            if (error.length > 0) {
+                                console.log(error);
+                                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + error.text() + '</pre>');
+                            } else {
+                                console.log('after transform', doc);
+                                $('#html-view').html(doc.firstChild);                          
+                            }
+
                             $('#simple-editor').unblock();
                         },
                         error: function() {alert('Error loading XSL!')}
@@ -360,15 +371,30 @@ $(function() {
                             var serializer = new XMLSerializer();
                             var xsl = createXSLT(data);
 
+                            if ($('#html-view .error').length > 0) {
+                                $('#source-editor').unblock();
+                                return;
+                            }
                             doc = serializer.serializeToString($('#html-view div').get(0))
                             doc = parser.parseFromString(doc, 'text/xml');
                             console.log('xml',doc, doc.documentElement);
                             // TODO: Sprawdzenie błędów
-                            doc = xsl.transformToDocument(doc);
+                            var error = $('parsererror', doc.documentElement);
+                            console.log(error);
+                            if (error.length == 0) {
+                                doc = xsl.transformToDocument(doc, document);
+                                error = $('parsererror', doc.documentElement);
+                            }
+                            
+                            if (error.length > 0) {
+                                console.log(error);
+                                $('#source-editor').html('<p>Wystąpił błąd:</p>' + error.text());
+                            } else {
+                                doc = serialize(doc.documentElement).join('');
+                                editor.setCode(doc);                                
+                            }
+                            
                             console.log('after transform', doc, doc.documentElement);
-                            doc = serialize(doc.documentElement).join('');
-                            // doc = serializer.serializeToString(doc.documentElement)
-                            editor.setCode(doc);
                             $('#source-editor').unblock();
                         },
                         error: function() {alert('Error loading XSL!')}
