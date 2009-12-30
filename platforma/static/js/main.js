@@ -1,13 +1,72 @@
+var MARGIN = {
+    dramat_wierszowany_l: 4,
+    dramat_wierszowany_lp: 4,
+    dramat_wspolczesny: 4,
+    wywiad: 4,
+    opowiadanie: 4,
+    powiesc: 4,
+    liryka_l: 4,
+    liryka_lp: 4,
+    naglowek_czesc: 4,
+    naglowek_akt: 4,
+    naglowek_rozdzial: 4,
+    naglowek_osoba: 4,
+    lista_osob: 4,
+    
+    akap: 3,
+    akap_cd: 3,
+    akap_dialog: 3,
+    strofa: 3,
+    motto: 3, 
+    miejsce_czas: 3,
+        
+    autor_utworu: 2,
+    nazwa_utworu: 2,
+    dzielo_nadrzedne: 2,
+    didaskalia: 2,
+    motto_podpis: 2,
+    naglowek_listy: 2,
+    
+    kwestia: 1,
+    lista_osoba: 1
+}
+
+MARGIN['rdf:RDF'] = 3;
+MARGIN['rdf:Description'] = 2;
+
+function elementType(element) {
+    if ($.inArray(element.tagName, ['akap', 'akap_cd', 'akap_dialog', 'strofa', 'didaskalia', 'wers', 'wers_cd', 'wers_akap', 'wers_wciety', 'autor_utworu', 'nazwa_utworu', 'dzielo_nadrzedne', 'podpis'])) {
+        return 'inline';
+    } else {
+        return 'block';
+    }
+}
 // Serializuje XML, wstawiając odpowiednie ilości białych znaków między elementami
-function serialize(element) {
+function serialize(element, mode) {
+    if (!mode) {
+        mode = 'block';
+    }
+    
     if (element.nodeType == 3) { // tekst
-        return [$.trim(element.nodeValue)];
+        if (mode == 'block') {
+            return [$.trim(element.nodeValue)];
+        } else {
+            return [element.nodeValue];
+        }
     } else if (element.nodeType != 1) { // pomijamy węzły nie będące elementami XML ani tekstem
         return [];
     }
     
     var result = [];
     var hasContent = false;
+    
+    if (MARGIN[element.tagName]) {
+        for (var i=0; i < MARGIN[element.tagName]; i++) {
+            result.push('\n');
+        };
+    } else if (element.tagName.indexOf('dc:') != -1) {
+        result.push('\n');
+    }
     
     result.push('<');
     result.push(element.tagName);
@@ -40,22 +99,13 @@ function serialize(element) {
         result.push('>');
 
         for (var i=0; i < element.childNodes.length; i++) {
-            result = result.concat(serialize(element.childNodes[i]));
+            result = result.concat(serialize(element.childNodes[i], 
+                mode == 'inline' ? 'inline' : elementType(element.childNodes[i])));
         }
 
         result.push('</');
         result.push(element.tagName);
         result.push('>');
-    }
-    
-    if (element.tagName == 'akap' || element.tagName == 'akap_dialog' || element.tagName == 'akap_cd' || element.tagName == 'strofa') {
-        result.push('\n\n\n');
-    } else if (element.tagName == 'naglowek_rozdzial') {
-        result.push('\n\n');
-    } else if (element.tagName == 'rdf:RDF') {
-        result.push('\n\n\n\n\n');
-    } else if (element.tagName.indexOf('dc:') != -1) {
-        result.push('\n');
     }
     
     return result;
@@ -274,17 +324,60 @@ function html(element) {
         var range = document.createRange();
         var s = $(".motyw[theme-class='"+themeId+"']")[0];
         var e = $(".end[theme-class='"+themeId+"']")[0];
-        // console.log('Selecting range:', themeId, range, s, e);
 
         if(s && e) {
             range.setStartAfter(s);
             range.setEndBefore(e);
             selection.addRange(range);
-            // highlight('yellow');
-            // selection.removeAllRanges();
         }
     };
     
+    // function openForEdit($origin)
+    // {       
+    //     // if(this.currentOpen && this.currentOpen != $origin) {
+    //     //     this.closeWithSave(this.currentOpen);
+    //     // }
+    //     
+    //     var $box = null
+    // 
+    //     // annotations overlay their sub box - not their own box //
+    //     if($origin.is(".annotation-inline-box"))
+    //         $box = $("*[x-annotation-box]", $origin);
+    //     else
+    //         $box = $origin;
+    //     
+    //     var x = $box[0].offsetLeft;
+    //     var y = $box[0].offsetTop;
+    //     var w = $box.outerWidth();
+    //     var h = $box.innerHeight();
+    // 
+    //     console.log("Edit origin:", $origin, " box:", $box);
+    //     console.log("offsetParent:", $box[0].offsetParent);
+    //     console.log("Dimensions: ", x, y, w , h);
+    // 
+    //     // start edition on this node
+    //     var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
+    // 
+    //     h = Math.max(h - 20, 2*parseInt($box.css('line-height')));
+    //     
+    //     console.log(h);
+    //     
+    //     $overlay.css({
+    //         position: 'absolute',
+    //         height: h,
+    //         left: x,
+    //         top: y,
+    //         right: 0
+    //     });
+    //     
+    //     $($box[0].offsetParent).append($overlay);
+    //     console.log($overlay);
+    // }
+    // 
+    // $('.edit-button').live('click', function() {
+    //     openForEdit($(this).parent());
+    // });
+    // 
     var button = $('<button class="edit-button">Edytuj</button>');
     $(element).bind('mousemove', function(event) {
         var editable = $(event.target).closest('*[x-editable]');

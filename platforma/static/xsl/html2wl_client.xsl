@@ -7,7 +7,7 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/"
 >
 
-    <xsl:output method="xml" encoding="utf-8" indent="yes" omit-xml-declaration="yes" />
+    <xsl:output method="xml" encoding="utf-8" indent="no" omit-xml-declaration="yes" />
     <!--
         Ten dokument definiuję przekształcenie odwrotne do wl2html
     -->

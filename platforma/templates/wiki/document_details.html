@@ -54,9 +54,9 @@
                 </div>
             </div>
         </div>
-        <div id="save-dialog" style="display: none">
-            <label for="komentarz">Komentarz</label><input type="text" name="komentarz" value="" id="komentarz" />
-            <button id="save-ok">Zapisz</button>
-            <button id="save-cancel">Anuluj</button>
+        <div id="save-dialog" style="display: none; text-align: left">
+            <label for="komentarz" style="display: block">Opis zmian:</label>
+            <textarea name="komentarz" id="komentarz" style="display: block; width: 100%"></textarea>
+            <button id="save-ok">Zapisz</button> <button id="save-cancel">Anuluj</button>
         </div>
 {% endblock %}
