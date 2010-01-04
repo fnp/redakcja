@@ -172,6 +172,15 @@ p { margin: 0;}
 /* =========== */
 /* = Gallery = */
 /* =========== */
+.change-gallery-panel {
+    width: 100%;
+    border-bottom: 1px solid #777;
+    background-color: #C1C1C1;
+    margin: 0;
+    padding: 2px;
+    z-index: 10;
+}
+
 .gallery-image {
     position: absolute;
     top: 27px;

@@ -151,72 +151,49 @@ function withStylesheets(block, onError) {
     })
 }
 
-function transform(editor) {
-    $.blockUI({message: 'Ładowanie...'});
+
+function xml2html(options) {
     withStylesheets(function() {
-        setTimeout(function() {
-            var doc = null;
-            var parser = new DOMParser();
-            var serializer = new XMLSerializer();
-
-            doc = editor.getCode().replace(/\/\s+/g, '<br />');
-            doc = parser.parseFromString(doc, 'text/xml');
-            var error = $('parsererror', doc);
-            console.log(error);
-            if (error.length == 0) {
-                doc = xml2htmlStylesheet.transformToFragment(doc, document);
-                error = $('parsererror', doc);
-            }
-            console.log('xml', doc);
-            if (error.length > 0) {
-                console.log(error);
-                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + error.text() + '</pre>');
-            } else {
-                console.log('after transform', doc);
-                $('#html-view').html(doc.firstChild);                          
-            }
-
-            $.unblockUI();
-        }, 200);
-    }, function() { alert('Nie udało się załadować XSLT!'); });
-};
+        var xml = options.xml.replace(/\/\s+/g, '<br />');
+        var parser = new DOMParser();
+        var serializer = new XMLSerializer();
+        var doc = parser.parseFromString(xml, 'text/xml');
+        var error = $('parsererror', doc);
+        
+        if (error.length == 0) {
+            doc = xml2htmlStylesheet.transformToFragment(doc, document);
+            error = $('parsererror', doc);
+        }
+        
+        if (error.length > 0 && options.error) {
+            options.error(error.text());
+        } else {
+            options.success(doc.firstChild);
+        }
+    }, function() { options.error && options.success('Nie udało się załadować XSLT'); });
+}
 
 
-function reverseTransform(editor) {
-    $.blockUI({message: 'Ładowanie...'});
+function html2xml(options) {
     withStylesheets(function() {
-        setTimeout(function() {
-            var doc = null;
-            var parser = new DOMParser();
-            var serializer = new XMLSerializer();
-
-            if ($('#html-view .error').length > 0) {
-                $('#source-editor').unblock();
-                return;
-            }
-            
-            doc = serializer.serializeToString($('#html-view div').get(0))
-            doc = parser.parseFromString(doc, 'text/xml');
-            console.log('xml',doc, doc.documentElement);
-            // TODO: Sprawdzenie błędów
-            var error = $('parsererror', doc.documentElement);
+        var xml = options.xml;
+        var parser = new DOMParser();
+        var serializer = new XMLSerializer();
+        var doc = parser.parseFromString(xml, 'text/xml');
+        var error = $('parsererror', doc.documentElement);
+        
+        if (error.length == 0) {
+            doc = html2xmlStylesheet.transformToDocument(doc, document);
+            error = $('parsererror', doc.documentElement);
+        }
+        
+        if (error.length > 0 && options.error) {
+            options.error(error.text());
             console.log(error);
-            if (error.length == 0) {
-                doc = html2xmlStylesheet.transformToDocument(doc, document);
-                error = $('parsererror', doc.documentElement);
-            }
-            
-            if (error.length > 0) {
-                console.log(error);
-                $('#source-editor').html('<p>Wystąpił błąd:</p>' + error.text());
-            } else {
-                doc = serialize(doc.documentElement).join('');
-                editor.setCode(doc);                                
-            }
-            
-            console.log('after transform', doc, doc.documentElement);
-            $.unblockUI();
-        }, 200)
-    }, function() { alert('Nie udało się załadować XSLT!')});
+            $('#source-editor').html('<p>Wystąpił błąd:</p>' + error.text());
+        } else {
+            options.success(serialize(doc.documentElement).join(''));                              
+        }
+    }, function() { options.error && options.success('Nie udało się załadować XSLT'); });
 };
 

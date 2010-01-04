@@ -31,13 +31,10 @@ function highlight(colour) {
 //     });
 // }
 
-function gallery(element, url) {
-    if (!url) {
-        return
-    }
-    
+function gallery(element, url) {    
     var element = $(element);
     var imageDimensions = {};
+    element.data('images', []);
     
     function changePage(pageNumber) {        
         $('img', element).attr('src', element.data('images')[pageNumber - 1]);
@@ -59,145 +56,214 @@ function gallery(element, url) {
         }
     }
     
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json',
-    
-        success: function(data) {
-            element.data('images', data);
-            var pn = $('.page-number', element);
-            pn.change(function(event) {
-                console.log('change!', $(this).val());
-                event.preventDefault();
-                var n = normalizeNumber(pn.val());
-                pn.val(n);
-                changePage(n);
-            });
-            $('.previous-page', element).click(function() {
-                pn.val(normalizeNumber(pn.val()) - 1);
-                pn.change();
-            });
-            $('.next-page', element).click(function() {
-                pn.val(normalizeNumber(pn.val()) + 1);
-                pn.change();
-            });
-            
-            
-            var image = $('img', element).attr('unselectable', 'on');
-            var origin = {};
-            var imageOrigin = {};
-            var zoomFactor = 1;
-            
-            $('.zoom-in', element).click(function() {
-                zoomFactor = Math.min(2, zoomFactor + 0.2);
-                zoom();
-            });
-            $('.zoom-out', element).click(function() {
-                zoomFactor = Math.max(0.2, zoomFactor - 0.2);
-                zoom();
-            });
-            
-            $('img', element).load(function() {
-                image.css({width: null, height: null});
-                imageDimensions = {
-                    width: $(this).width() * zoomFactor,
-                    height: $(this).height() * zoomFactor,
-                    originWidth: $(this).width(),
-                    originHeight: $(this).height(),
-                    galleryWidth: $(this).parent().width(),
-                    galleryHeight: $(this).parent().height()
-                };
-                console.log('load', imageDimensions)
-                var position = normalizePosition(
-                    image.position().left,
-                    image.position().top, 
-                    imageDimensions.galleryWidth,
-                    imageDimensions.galleryHeight,
-                    imageDimensions.width,
-                    imageDimensions.height
-                );
-                image.css({left: position.x, top: position.y, width: $(this).width() * zoomFactor, height: $(this).height() * zoomFactor});
-            });
-
-            $(window).resize(function() {
-                imageDimensions.galleryWidth = image.parent().width();
-                imageDimensions.galleryHeight = image.parent().height();
-            });
-            
-            function bounds(galleryWidth, galleryHeight, imageWidth, imageHeight) {
-                return {
-                    maxX: 0,
-                    maxY: 0,
-                    minX: galleryWidth - imageWidth,
-                    minY: galleryHeight - imageHeight
-                }
-            }
-            
-            function normalizePosition(x, y, galleryWidth, galleryHeight, imageWidth, imageHeight) {
-                var b = bounds(galleryWidth, galleryHeight, imageWidth, imageHeight);
-                return {
-                    x: Math.min(b.maxX, Math.max(b.minX, x)),
-                    y: Math.min(b.maxY, Math.max(b.minY, y))
-                }
-            }
-            
-            function onMouseMove(event) {
-                var position = normalizePosition(
-                    event.clientX - origin.x + imageOrigin.left,
-                    event.clientY - origin.y + imageOrigin.top, 
-                    imageDimensions.galleryWidth,
-                    imageDimensions.galleryHeight,
-                    imageDimensions.width,
-                    imageDimensions.height
-                );
-                image.css({position: 'absolute', top: position.y, left: position.x});
-                return false;
-            }
-            
-            function setZoom(factor) {
-                zoomFactor = factor;
-            }
-            
-            function zoom() {
-                imageDimensions.width = imageDimensions.originWidth * zoomFactor;
-                imageDimensions.height = imageDimensions.originHeight * zoomFactor;
-                var position = normalizePosition(
-                    image.position().left,
-                    image.position().top, 
-                    imageDimensions.galleryWidth,
-                    imageDimensions.galleryHeight,
-                    imageDimensions.width,
-                    imageDimensions.height
-                );
-                console.log(image.position(), imageDimensions, position);
-                image.css({width: imageDimensions.width, height: imageDimensions.height,
-                    left: position.x, top: position.y});
-
-            }
-            
-            window.setZoom = setZoom;
-            
-            function onMouseUp(event) {
-                $(document)
-                    .unbind('mousemove.gallery')
-                    .unbind('mouseup.gallery');
-                return false;
-            }
-            
-            image.bind('mousedown', function(event) {
-                origin = {
-                    x: event.clientX,
-                    y: event.clientY
-                };
-                imageOrigin = image.position();
-                $(document)
-                    .bind('mousemove.gallery', onMouseMove)
-                    .bind('mouseup.gallery', onMouseUp);
-                return false;
-            });
-        }
+    var pn = $('.page-number', element);
+    pn.change(function(event) {
+        console.log('change!', $(this).val());
+        event.preventDefault();
+        var n = normalizeNumber(pn.val());
+        pn.val(n);
+        changePage(n);
     });
+    $('.previous-page', element).click(function() {
+        pn.val(normalizeNumber(pn.val()) - 1);
+        pn.change();
+    });
+    $('.next-page', element).click(function() {
+        pn.val(normalizeNumber(pn.val()) + 1);
+        pn.change();
+    });
+    
+    
+    var image = $('img', element).attr('unselectable', 'on');
+    var origin = {};
+    var imageOrigin = {};
+    var zoomFactor = 1;
+    
+    $('.zoom-in', element).click(function() {
+        zoomFactor = Math.min(2, zoomFactor + 0.2);
+        zoom();
+    });
+    $('.zoom-out', element).click(function() {
+        zoomFactor = Math.max(0.2, zoomFactor - 0.2);
+        zoom();
+    });
+    $('.change-gallery', element).click(function() {
+        $('.chosen-gallery').val($('#document-meta .gallery').html() || '/gallery/');
+        $('.gallery-image').animate({top: 53}, 200);
+        $('.chosen-gallery').focus();
+    });
+    $('.change-gallery-ok', element).click(function() {
+        if ($('#document-meta .gallery').length == 0) {
+            $('<div class="gallery"></div>').appendTo('#document-meta');
+        }
+        $('#document-meta .gallery').html($('.chosen-gallery').val());
+        updateGallery($('.chosen-gallery').val());
+        $('.gallery-image').animate({top: 27}, 200);
+    });
+    $('.change-gallery-cancel', element).click(function() {
+        $('.gallery-image').animate({top: 27}, 200);
+    });
+    
+    $('img', element).load(function() {
+        image.css({width: null, height: null});
+        imageDimensions = {
+            width: $(this).width() * zoomFactor,
+            height: $(this).height() * zoomFactor,
+            originWidth: $(this).width(),
+            originHeight: $(this).height(),
+            galleryWidth: $(this).parent().width(),
+            galleryHeight: $(this).parent().height()
+        };
+        console.log('load', imageDimensions)
+        var position = normalizePosition(
+            image.position().left,
+            image.position().top, 
+            imageDimensions.galleryWidth,
+            imageDimensions.galleryHeight,
+            imageDimensions.width,
+            imageDimensions.height
+        );
+        image.css({left: position.x, top: position.y, width: $(this).width() * zoomFactor, height: $(this).height() * zoomFactor});
+    });
+
+    $(window).resize(function() {
+        imageDimensions.galleryWidth = image.parent().width();
+        imageDimensions.galleryHeight = image.parent().height();
+    });
+    
+    function bounds(galleryWidth, galleryHeight, imageWidth, imageHeight) {
+        return {
+            maxX: 0,
+            maxY: 0,
+            minX: galleryWidth - imageWidth,
+            minY: galleryHeight - imageHeight
+        }
+    }
+    
+    function normalizePosition(x, y, galleryWidth, galleryHeight, imageWidth, imageHeight) {
+        var b = bounds(galleryWidth, galleryHeight, imageWidth, imageHeight);
+        return {
+            x: Math.min(b.maxX, Math.max(b.minX, x)),
+            y: Math.min(b.maxY, Math.max(b.minY, y))
+        }
+    }
+    
+    function onMouseMove(event) {
+        var position = normalizePosition(
+            event.clientX - origin.x + imageOrigin.left,
+            event.clientY - origin.y + imageOrigin.top, 
+            imageDimensions.galleryWidth,
+            imageDimensions.galleryHeight,
+            imageDimensions.width,
+            imageDimensions.height
+        );
+        image.css({position: 'absolute', top: position.y, left: position.x});
+        return false;
+    }
+    
+    function setZoom(factor) {
+        zoomFactor = factor;
+    }
+    
+    function zoom() {
+        imageDimensions.width = imageDimensions.originWidth * zoomFactor;
+        imageDimensions.height = imageDimensions.originHeight * zoomFactor;
+        var position = normalizePosition(
+            image.position().left,
+            image.position().top, 
+            imageDimensions.galleryWidth,
+            imageDimensions.galleryHeight,
+            imageDimensions.width,
+            imageDimensions.height
+        );
+        console.log(image.position(), imageDimensions, position);
+        image.css({width: imageDimensions.width, height: imageDimensions.height,
+            left: position.x, top: position.y});
+
+    }
+    
+    function onMouseUp(event) {
+        $(document)
+            .unbind('mousemove.gallery')
+            .unbind('mouseup.gallery');
+        return false;
+    }
+    
+    image.bind('mousedown', function(event) {
+        origin = {
+            x: event.clientX,
+            y: event.clientY
+        };
+        imageOrigin = image.position();
+        $(document)
+            .bind('mousemove.gallery', onMouseMove)
+            .bind('mouseup.gallery', onMouseUp);
+        return false;
+    });
+    
+    function updateGallery(url) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+
+            success: function(data) {
+                element.data('images', data);
+                pn.val(1);
+                pn.change();
+                $('img', element).show();
+            },
+            
+            error: function(data) {
+                element.data('images', []);
+                pn.val(1);
+                pn.change();
+                $('img', element).hide();
+            }
+        });
+    }
+    
+    if (url) {
+        updateGallery(url);
+    }
+}
+
+
+function transform(editor) {
+    $.blockUI({message: 'Ładowanie...'});
+    setTimeout(function() {
+        xml2html({
+            xml: editor.getCode(),
+            success: function(element) {
+                $('#html-view').html(element);
+                $.unblockUI();
+            }, error: function(text) {
+                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + text + '</pre>');
+                $.unblockUI();
+            }
+        });
+    }, 200);
+};
+
+
+function reverseTransform(editor) {
+    var serializer = new XMLSerializer();
+    if ($('#html-view .error').length > 0) {
+        return;
+    }
+    $.blockUI({message: 'Ładowanie...'});
+    setTimeout(function() {
+        html2xml({
+            xml: serializer.serializeToString($('#html-view div').get(0)),
+            success: function(text) {
+                editor.setCode(text);
+                $.unblockUI();
+            }, error: function(text) {
+                $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                $.unblockUI();
+            }
+        });
+    }, 200);
 }
 
 
@@ -370,7 +436,7 @@ $(function() {
                 reverseTransform(editor);
             });
 
-            $('.toolbar button').click(function(event) {
+            $('#source-editor .toolbar button').click(function(event) {
                 event.preventDefault();
                 var params = eval("(" + $(this).attr('ui:action-params') + ")");
                 scriptletCenter.scriptlets[$(this).attr('ui:action')](editor, params);
