@@ -1,3 +1,9 @@
+if (!console) {
+    console = {
+        log: function() {}
+    }
+}
+
 // Teraz nieużywane
 function highlight(colour) {
     var range, sel;
