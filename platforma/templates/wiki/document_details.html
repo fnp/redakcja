@@ -7,10 +7,16 @@
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/xslt.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/main.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 
 {% block maincontent %}
+        <div id="document-meta" style="display:none">
+        {% for k, v in document.meta.items %}
+            <div class="{{ k }}">{{ v}}</div>
+        {% endfor %}
+        </div>
         <div id="header">
             <div id="tools" style="float: right;">Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
             <h1>Platforma</h1>
@@ -24,7 +30,7 @@
             <div id="editor">
                 <div id="source-editor">
                     {% toolbar %}
-                    {{ form.text }}
+                    <textarea name="text" id="id_text">{{ document.plain_text }}</textarea>
                     <input type="hidden" name="name" value="{{ document.name }}" />
                     <input type="hidden" name="author" value="annonymous" />
                     <input type="hidden" name="comment" value="no comment" />

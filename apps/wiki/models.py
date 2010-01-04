@@ -1,3 +1,4 @@
+import re
 import vstorage
 from vstorage import DocumentNotFound
 from wiki import settings
@@ -28,6 +29,8 @@ class DocumentStorage(object):
 
 
 class Document(object):
+    META_REGEX = re.compile(r'\s*<!--\s(.*?)\s-->', re.DOTALL | re.MULTILINE)
+    
     def __init__(self, storage, **kwargs):
         self.storage = storage
         for attr, value in kwargs.iteritems():
@@ -38,6 +41,23 @@ class Document(object):
             return self.storage._info(self.name)[0]
         except DocumentNotFound:
             return -1
+
+    def plain_text(self):
+        return re.sub(self.META_REGEX, '', self.text, 1)
+    
+    def meta(self):
+        result = {}
+        
+        m = re.match(self.META_REGEX, self.text)
+        if m:
+            for line in m.group(1).split('\n'):
+                try:
+                    k, v = line.split(':', 1)
+                    result[k.strip()] = v.strip()
+                except ValueError:
+                    continue
+        
+        return result
 
 
 storage = DocumentStorage(settings.REPOSITORY_PATH)

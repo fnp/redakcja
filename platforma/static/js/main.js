@@ -1,117 +1,3 @@
-var MARGIN = {
-    dramat_wierszowany_l: 4,
-    dramat_wierszowany_lp: 4,
-    dramat_wspolczesny: 4,
-    wywiad: 4,
-    opowiadanie: 4,
-    powiesc: 4,
-    liryka_l: 4,
-    liryka_lp: 4,
-    naglowek_czesc: 4,
-    naglowek_akt: 4,
-    naglowek_rozdzial: 4,
-    naglowek_osoba: 4,
-    lista_osob: 4,
-    
-    akap: 3,
-    akap_cd: 3,
-    akap_dialog: 3,
-    strofa: 3,
-    motto: 3, 
-    miejsce_czas: 3,
-        
-    autor_utworu: 2,
-    nazwa_utworu: 2,
-    dzielo_nadrzedne: 2,
-    didaskalia: 2,
-    motto_podpis: 2,
-    naglowek_listy: 2,
-    
-    kwestia: 1,
-    lista_osoba: 1
-}
-
-MARGIN['rdf:RDF'] = 3;
-MARGIN['rdf:Description'] = 2;
-
-function elementType(element) {
-    if ($.inArray(element.tagName, ['akap', 'akap_cd', 'akap_dialog', 'strofa', 'didaskalia', 'wers', 'wers_cd', 'wers_akap', 'wers_wciety', 'autor_utworu', 'nazwa_utworu', 'dzielo_nadrzedne', 'podpis'])) {
-        return 'inline';
-    } else {
-        return 'block';
-    }
-}
-// Serializuje XML, wstawiając odpowiednie ilości białych znaków między elementami
-function serialize(element, mode) {
-    if (!mode) {
-        mode = 'block';
-    }
-    
-    if (element.nodeType == 3) { // tekst
-        if (mode == 'block') {
-            return [$.trim(element.nodeValue)];
-        } else {
-            return [element.nodeValue];
-        }
-    } else if (element.nodeType != 1) { // pomijamy węzły nie będące elementami XML ani tekstem
-        return [];
-    }
-    
-    var result = [];
-    var hasContent = false;
-    
-    if (MARGIN[element.tagName]) {
-        for (var i=0; i < MARGIN[element.tagName]; i++) {
-            result.push('\n');
-        };
-    } else if (element.tagName.indexOf('dc:') != -1) {
-        result.push('\n');
-    }
-    
-    result.push('<');
-    result.push(element.tagName);
-    
-    // Mozilla nie uważa deklaracji namespace za atrybuty
-    var ns = element.tagName.indexOf(':');
-    if (ns != -1 && $.browser.mozilla) {
-        result.push(' xmlns:');
-        result.push(element.tagName.substring(0, ns));
-        result.push('="');
-        result.push(element.namespaceURI);
-        result.push('"');
-    }
-    
-    if (element.attributes) {
-        for (var i=0; i < element.attributes.length; i++) {
-            var attr = element.attributes[i];
-            result.push(' ');
-            result.push(attr.name);
-            result.push('="');
-            result.push(attr.value);
-            result.push('"');
-            hasContent = true;
-        }
-    }
-    
-    if (element.childNodes.length == 0) {
-        result.push(' />');
-    } else {
-        result.push('>');
-
-        for (var i=0; i < element.childNodes.length; i++) {
-            result = result.concat(serialize(element.childNodes[i], 
-                mode == 'inline' ? 'inline' : elementType(element.childNodes[i])));
-        }
-
-        result.push('</');
-        result.push(element.tagName);
-        result.push('>');
-    }
-    
-    return result;
-};
-
-
 // Teraz nieużywane
 function highlight(colour) {
     var range, sel;
@@ -145,7 +31,11 @@ function highlight(colour) {
 //     });
 // }
 
-function gallery(element) {
+function gallery(element, url) {
+    if (!url) {
+        return
+    }
+    
     var element = $(element);
     var imageDimensions = {};
     
@@ -170,7 +60,7 @@ function gallery(element) {
     }
     
     $.ajax({
-        url: '/gallery/sample',
+        url: url,
         type: 'GET',
         dataType: 'json',
     
@@ -394,7 +284,7 @@ function html(element) {
 
 
 $(function() {
-    gallery('#sidebar');
+    gallery('#sidebar', $('#document-meta .gallery').html());
     html('#html-view');
     
     CodeMirror.fromTextArea('id_text', {
@@ -409,92 +299,6 @@ $(function() {
         tabMode: 'spaces',
         indentUnit: 0,
         initCallback: function(editor) {
-            
-            function createXSLT(xsl) {
-                var p = new XSLTProcessor();
-                p.importStylesheet(xsl);
-                return p;
-            }
-
-            function transform() {
-                $('#simple-editor').block({message: 'Ładowanie...'});
-                setTimeout(function() {
-                    $.ajax({
-                        url: '/static/xsl/wl2html_client.xsl',
-                        dataType: 'xml',
-                        success: function(data) {
-                            var doc = null;
-                            var parser = new DOMParser();
-                            var serializer = new XMLSerializer();
-                            var htmlXSL = createXSLT(data);
-
-                            doc = editor.getCode().replace(/\/\s+/g, '<br />');
-                            doc = parser.parseFromString(doc, 'text/xml');
-                            var error = $('parsererror', doc);
-                            console.log(error);
-                            if (error.length == 0) {
-                                doc = htmlXSL.transformToFragment(doc, document);
-                                error = $('parsererror', doc);
-                            }
-                            console.log('xml', doc);
-                            if (error.length > 0) {
-                                console.log(error);
-                                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + error.text() + '</pre>');
-                            } else {
-                                console.log('after transform', doc);
-                                $('#html-view').html(doc.firstChild);                          
-                            }
-
-                            $('#simple-editor').unblock();
-                        },
-                        error: function() {alert('Error loading XSL!')}
-                    });
-                }, 200);
-            };
-
-            function reverseTransform () {
-                $('#source-editor').block({message: 'Ładowanie...'});
-                setTimeout(function() {
-                    $.ajax({
-                        url: '/static/xsl/html2wl_client.xsl',
-                        dataType: 'xml',
-                        success: function(data) {
-                            var doc = null;
-                            var parser = new DOMParser();
-                            var serializer = new XMLSerializer();
-                            var xsl = createXSLT(data);
-
-                            if ($('#html-view .error').length > 0) {
-                                $('#source-editor').unblock();
-                                return;
-                            }
-                            doc = serializer.serializeToString($('#html-view div').get(0))
-                            doc = parser.parseFromString(doc, 'text/xml');
-                            console.log('xml',doc, doc.documentElement);
-                            // TODO: Sprawdzenie błędów
-                            var error = $('parsererror', doc.documentElement);
-                            console.log(error);
-                            if (error.length == 0) {
-                                doc = xsl.transformToDocument(doc, document);
-                                error = $('parsererror', doc.documentElement);
-                            }
-                            
-                            if (error.length > 0) {
-                                console.log(error);
-                                $('#source-editor').html('<p>Wystąpił błąd:</p>' + error.text());
-                            } else {
-                                doc = serialize(doc.documentElement).join('');
-                                editor.setCode(doc);                                
-                            }
-                            
-                            console.log('after transform', doc, doc.documentElement);
-                            $('#source-editor').unblock();
-                        },
-                        error: function() {alert('Error loading XSL!')}
-                    });                    
-                }, 200);
-            };
-
             $('#save-button').click(function(event) {
                 event.preventDefault();
                 $.blockUI({message: $('#save-dialog')});
@@ -503,9 +307,15 @@ $(function() {
             $('#save-ok').click(function() {
                 $.blockUI({message: 'Zapisywanie...'});
                 
+                var metaComment = '<!--';
+                $('#document-meta div').each(function() {
+                    metaComment += '\n\t' + $(this).attr('class') + ': ' + $(this).html();
+                });
+                metaComment += '\n-->'
+                
                 var data = {
                     name: $('#document-name').html(),
-                    text: editor.getCode(),
+                    text: metaComment + editor.getCode(),
                     revision: $('#document-revision').html(),
                     author: 'annonymous',
                     comment: $('#komentarz').val()
@@ -546,7 +356,7 @@ $(function() {
                 $('#source-view-tab').removeClass('active');
                 $('#source-editor').hide();
                 $('#simple-editor').show();
-                transform();
+                transform(editor);
             });
 
             $('#source-view-tab').click(function() {
@@ -557,7 +367,7 @@ $(function() {
                 $('#simple-view-tab').removeClass('active');
                 $('#simple-editor').hide();
                 $('#source-editor').show();
-                reverseTransform();
+                reverseTransform(editor);
             });
 
             $('.toolbar button').click(function(event) {
@@ -591,12 +401,10 @@ $(function() {
             $('#sidebar').width(480).css({right: 0}).show();
             $('#source-editor, #simple-editor').css({right: 495});
             $('.vsplitbar').css({right: 480}).addClass('active');
-            // $('#splitter').trigger('resize', [$(window).width() - 480]);
         } else {
             $('#sidebar').width(0).hide();
             $('#source-editor, #simple-editor').css({right: 15});
             $('.vsplitbar').css({right: 0}).removeClass('active');
-            // $('#splitter').trigger('resize', [$(window).width()]);
         }
         $(window).resize();
     });

@@ -23,7 +23,7 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
         form = DocumentForm(request.POST, instance=document)
         if form.is_valid():
             document = form.save()
-            return HttpResponse(json.dumps({'text': document.text, 'revision': document.revision()}))
+            return HttpResponse(json.dumps({'text': document.plain_text(), 'meta': document.meta(), 'revision': document.revision()}))
         else:
             return HttpResponse(json.dumps({'errors': form.errors}))
     else:
