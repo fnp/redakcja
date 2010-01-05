@@ -132,12 +132,12 @@ function withStylesheets(block, onError) {
     }
     $.blockUI({message: 'Ładowanie arkuszy stylów...'});
     $.ajax({
-        url: '/static/xsl/wl2html_client.xsl',
+        url: STATIC_URL + 'xsl/wl2html_client.xsl',
         dataType: 'xml',
         success: function(data) {
             xml2htmlStylesheet = createXSLT(data);
             $.ajax({
-                url: '/static/xsl/html2wl_client.xsl',
+                url: STATIC_URL + 'xsl/html2wl_client.xsl',
                 dataType: 'xml',
                 success: function(data) {
                     html2xmlStylesheet = createXSLT(data);

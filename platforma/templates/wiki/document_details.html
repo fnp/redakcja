@@ -4,6 +4,9 @@
 {% block extrahead %}
     <link rel="stylesheet" href="{{STATIC_URL}}css/master.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8" />
+    <script type="text/javascript" charset="utf-8">
+        var STATIC_URL = '{{STATIC_URL}}';
+    </script>
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
