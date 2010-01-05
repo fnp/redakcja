@@ -34,28 +34,10 @@ $(function() {
     </form> 
     <div id="file-list">
     {% for file in document_list %}
-        <p><a href="/{{ file|urlencode }}">{{ file }}</a></p>
+        <p><a href="{% url wiki.views.document_detail file|urlencode %}">{{ file }}</a></p>
     {% endfor %}
     </div>
 </div>
-
-<div id="recent-file-list">
-	<h2>Ostatnio oglądane pliki:</h2>
-	<ul>
-	</ul>
-</div>
-
-{% if perms.explorer.can_add_files %}
-<div class="upload-file-widget">
-<h2>Dodaj nowy utwór</h2>
-
-<form action="{% url file_upload %}" method="POST" enctype="multipart/form-data">
-    {{ bookform }}
-    <p><button type="submit">Dodaj książkę</button></p>
-</form>
-
-</div>
-{% endif %}
 
 </div>
 {% endblock maincontent %}
