@@ -134,11 +134,11 @@ def renderer_test(request):
         extra_context = {} )
 
 
-def document_gallery(request, document):
-    assocs = models.GalleryForDocument.objects.filter(document=document)
-    directory = assocs[0].subpath
+def document_gallery(request, directory):
     try:
-        images = ['/media/%s/%s' % (directory, f) for f in os.listdir(os.path.join(settings.MEDIA_ROOT, directory)) if f.lower().endswith('.jpg')]
+        base_dir = os.path.join(settings.MEDIA_ROOT, settings.FILEBROWSER_DIRECTORY, directory)
+        print base_dir
+        images = ['%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if f.lower().endswith('.jpg')]
         return HttpResponse(json.dumps(images))
-    except IndexError:
+    except (IndexError, OSError), e:
         raise Http404

@@ -94,7 +94,7 @@ function gallery(element, url) {
         zoom();
     });
     $('.change-gallery', element).click(function() {
-        $('.chosen-gallery').val($('#document-meta .gallery').html() || STATIC_URL + 'gallery/');
+        $('.chosen-gallery').val($('#document-meta .gallery').html() || '/platforma/gallery/');
         $('.gallery-image').animate({top: 53}, 200);
         $('.chosen-gallery').focus();
     });

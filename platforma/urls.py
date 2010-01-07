@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     # Our über-restful api
     # url(r'^api/', include('api.urls')),
     
-    url(r'^gallery/(?P<document>[^/]+)$', 'explorer.views.document_gallery'),
+    url(r'^gallery/(?P<directory>[^/]+)$', 'explorer.views.document_gallery'),
     
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
