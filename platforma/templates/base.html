@@ -4,23 +4,12 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <title>{% block title %}Platforma Redakcyjna{% block subtitle %}{% endblock subtitle %}{% endblock title%}</title>
-        {# <link rel="stylesheet" href="{{ STATIC_URL }}css/master.css" type="text/css" /> #}
-        {# <link rel="stylesheet" href="{{ STATIC_URL }}css/buttons.css" type="text/css" /> #}
         <script src="{{ STATIC_URL }}js/lib/jquery.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ STATIC_URL }}js/lib/jquery.logging.js" type="text/javascript" charset="utf-8"></script>
         {% block extrahead %}
         {% endblock %}
     </head>
     <body id="{% block bodyid %}base{% endblock %}">
 	<div id="body-wrap">
-    {# <div id="header"> #}
-    {#  <span id="breadcrumbs">{% block breadcrumbs %}<a href="{% url file_list %}">Platforma Redakcyjna</a>{% endblock breadcrumbs %}</span> #}
-    {#  <span id="header-right-toolbar"> #}
-    {#      {% block header-toolbar %}{% endblock %} #}
-    {#          <span id="login_info">{% include "registration/head_login.html" %}</span> #}
-    {#  </span> #}
-    {#         <div id="message-box">{% block message-box %} {% endblock %}</div> #}
-    {# </div> #}
         <div id="content">{% block maincontent %} {% endblock %}</div>
         </div>
     {% block extrabody %}{% endblock %}
