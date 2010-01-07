@@ -138,7 +138,7 @@ def document_gallery(request, directory):
     try:
         base_dir = os.path.join(settings.MEDIA_ROOT, settings.FILEBROWSER_DIRECTORY, directory)
         print base_dir
-        images = ['%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if f.lower().endswith('.png')]
+        images = ['%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if os.path.splitext(f)[1].lower() in ('.jpg', '.jpeg', '.png')]
         return HttpResponse(json.dumps(images))
     except (IndexError, OSError), e:
         raise Http404
