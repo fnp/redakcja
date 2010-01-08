@@ -144,11 +144,11 @@ class VersionedStorage(object):
         return urlunquote(name)
 
     def __contains__(self, title):
-        return os.path.exists(self._file_path(title))
+        return title in self.all_pages()
 
     def __iter__(self):
-        return self.all_pages()
-
+        return self.all_pages()        
+        
     def merge_changes(self, changectx, repo_file, text, user, parent):
         """Commits and merges conflicting changes in the repository."""
         tip_node = changectx.node()
@@ -165,16 +165,19 @@ class VersionedStorage(object):
         if p1 == p2:
             return text
         
-        # TODO: Check if merge was successful
-        mercurial.merge.update(self.repo, tip_node, True, False, partial)
-
+        try:
+            mercurial.merge.update(self.repo, tip_node, True, False, partial)
+            msg = 'merge of edit conflict'
+        except mercurial.util.Abort:
+            msg = 'failed merge of edit conflict'
+        
         self.repo.dirstate.setparents(tip_node, node)
         # Mercurial 1.1 and later need updating the merge state
         try:
             mercurial.merge.mergestate(self.repo).mark(repo_file, "r")
         except (AttributeError, KeyError):
             pass
-        return u'merge of edit conflict'
+        return msg
 
     @locked_repo
     def save_file(self, title, file_name, author=u'', comment=u'', parent=None):
@@ -261,6 +264,10 @@ class VersionedStorage(object):
         self._commit([repo_file], text, user)
 
     def open_page(self, title):
+        if title not in self:
+            print 'whatever', list(self.all_pages())
+            raise DocumentNotFound()
+        
         try:
             return open(self._file_path(title), "rb")
         except IOError:
@@ -381,11 +388,10 @@ class VersionedStorage(object):
 
     def all_pages(self):
         """Iterate over the titles of all pages in the wiki."""
-
-        for filename in os.listdir(self.path):
-            if (os.path.isfile(os.path.join(self.path, filename))
-                and not filename.startswith('.')):
-                yield urlunquote(filename)
+        status = self.repo.status(self.repo[None], None, None, True, True, True)
+        clean_files = status[6]
+        for filename in clean_files:
+            yield urlunquote(filename)
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""
