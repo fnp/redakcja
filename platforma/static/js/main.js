@@ -64,7 +64,6 @@ function gallery(element, url) {
     
     var pn = $('.page-number', element);
     pn.change(function(event) {
-        console.log('change!', $(this).val());
         event.preventDefault();
         var n = normalizeNumber(pn.val());
         pn.val(n);
@@ -120,7 +119,10 @@ function gallery(element, url) {
             galleryWidth: $(this).parent().width(),
             galleryHeight: $(this).parent().height()
         };
-        console.log('load', imageDimensions)
+        
+        if (!(imageDimensions.width && imageDimensions.height)) {
+            setTimeout(function() { $('img', element).load(); }, 100);
+        }        
         var position = normalizePosition(
             image.position().left,
             image.position().top, 
@@ -182,7 +184,6 @@ function gallery(element, url) {
             imageDimensions.width,
             imageDimensions.height
         );
-        console.log(image.position(), imageDimensions, position);
         image.css({width: imageDimensions.width, height: imageDimensions.height,
             left: position.x, top: position.y});
 
