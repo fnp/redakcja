@@ -144,7 +144,7 @@ class VersionedStorage(object):
         return urlunquote(name)
 
     def __contains__(self, title):
-        return title in self.all_pages()
+        return urlquote(title) in self.repo.dirstate
 
     def __iter__(self):
         return self.all_pages()        
