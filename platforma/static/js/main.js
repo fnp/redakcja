@@ -295,52 +295,78 @@ function html(element) {
         }
     };
     
-    // function openForEdit($origin)
-    // {       
-    //     // if(this.currentOpen && this.currentOpen != $origin) {
-    //     //     this.closeWithSave(this.currentOpen);
-    //     // }
-    //     
-    //     var $box = null
-    // 
-    //     // annotations overlay their sub box - not their own box //
-    //     if($origin.is(".annotation-inline-box"))
-    //         $box = $("*[x-annotation-box]", $origin);
-    //     else
-    //         $box = $origin;
-    //     
-    //     var x = $box[0].offsetLeft;
-    //     var y = $box[0].offsetTop;
-    //     var w = $box.outerWidth();
-    //     var h = $box.innerHeight();
-    // 
-    //     console.log("Edit origin:", $origin, " box:", $box);
-    //     console.log("offsetParent:", $box[0].offsetParent);
-    //     console.log("Dimensions: ", x, y, w , h);
-    // 
-    //     // start edition on this node
-    //     var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
-    // 
-    //     h = Math.max(h - 20, 2*parseInt($box.css('line-height')));
-    //     
-    //     console.log(h);
-    //     
-    //     $overlay.css({
-    //         position: 'absolute',
-    //         height: h,
-    //         left: x,
-    //         top: y,
-    //         right: 0
-    //     });
-    //     
-    //     $($box[0].offsetParent).append($overlay);
-    //     console.log($overlay);
-    // }
-    // 
-    // $('.edit-button').live('click', function() {
-    //     openForEdit($(this).parent());
-    // });
-    // 
+    function openForEdit($origin)
+    {       
+        // if(this.currentOpen && this.currentOpen != $origin) {
+        //     this.closeWithSave(this.currentOpen);
+        // }
+        
+        var $box = null
+    
+        // annotations overlay their sub box - not their own box //
+        if($origin.is(".annotation-inline-box"))
+            $box = $("*[x-annotation-box]", $origin);
+        else
+            $box = $origin;
+        
+        var x = $box[0].offsetLeft;
+        var y = $box[0].offsetTop;
+        var w = $box.outerWidth();
+        var h = $box.innerHeight();
+    
+        console.log("Edit origin:", $origin, " box:", $box);
+        console.log("offsetParent:", $box[0].offsetParent);
+        console.log("Dimensions: ", x, y, w , h);
+    
+        // start edition on this node
+        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
+        var serializer = new XMLSerializer();
+    
+        html2xml({
+            xml: serializer.serializeToString($box.get(0)),
+            success: function(text) {
+                $('textarea', $overlay).focus().val($.trim(text));
+                
+                $('textarea', $overlay).one('blur', function(event) {
+                    xml2html({
+                        xml: $('textarea', $overlay).val(),
+                        success: function(element) {
+                            $box.after(element);
+                            $overlay.remove();
+                            $box.remove();
+                        },
+                        error: function(text) {
+                            $overlay.remove();
+                            alert('Błąd! ' + text);
+                        }
+                    })
+                });
+            }, error: function(text) {
+                alert('Błąd! ' + text);
+            }
+        });
+        
+        h = Math.max(h - 20, 2*parseInt($box.css('line-height')));
+        
+        console.log(h);
+        
+        $overlay.css({
+            position: 'absolute',
+            height: h,
+            left: x,
+            top: y,
+            right: 0
+        });
+        
+        $($box[0].offsetParent).append($overlay);
+        console.log($overlay);
+    }
+    
+    $('.edit-button').live('click', function(event) {
+        openForEdit($(this).parent());
+        return false;
+    });
+    
     var button = $('<button class="edit-button">Edytuj</button>');
     $(element).bind('mousemove', function(event) {
         var editable = $(event.target).closest('*[x-editable]');

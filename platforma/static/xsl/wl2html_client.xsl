@@ -7,9 +7,9 @@
     -->        
     <xsl:output method="xml" encoding="utf-8" indent="no" omit-xml-declaration="yes" />
 
-    <xsl:template match="/">
+    <!-- <xsl:template match="/">
         <xsl:apply-templates select="chunk|utwor" />
-    </xsl:template>
+    </xsl:template> -->
 
     <!--
         Base tag for rendering a fragment of text
