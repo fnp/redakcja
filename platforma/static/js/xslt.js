@@ -168,8 +168,6 @@ function xml2html(options) {
         if (error.length > 0 && options.error) {
             options.error(error.text());
         } else {
-            // console.log(options.xml);
-            console.log(doc, doc.firstChild);
             options.success(doc.firstChild);
         }
     }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
@@ -191,8 +189,6 @@ function html2xml(options) {
         
         if (error.length > 0 && options.error) {
             options.error(error.text());
-            console.log(error);
-            $('#source-editor').html('<p>Wystąpił błąd:</p>' + error.text());
         } else {
             options.success(serialize(doc.documentElement).join(''));                              
         }
