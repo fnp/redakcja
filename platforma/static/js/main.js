@@ -306,37 +306,53 @@ function html(element) {
         var $box = null
     
         // annotations overlay their sub box - not their own box //
-        if($origin.is(".annotation-inline-box"))
+        if($origin.is(".annotation-inline-box")) {
             $box = $("*[x-annotation-box]", $origin);
-        else
+            console.log('annotation!', $box);
+        } else {
             $box = $origin;
+        }
         
         var x = $box[0].offsetLeft;
         var y = $box[0].offsetTop;
         var w = $box.outerWidth();
         var h = $box.innerHeight();
     
+        console.log('width:', w, 'height:', h);
+
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
+        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>').css({
+            position: 'absolute',
+            height: h,
+            left: x,
+            top: y,
+            width: w
+            // right: 0
+        }).appendTo($box[0].offsetParent || element).show();
+        
+        console.log($overlay, $box[0].offsetParent || element);
+        
         var serializer = new XMLSerializer();
     
+        console.log($box.html());
         html2xml({
-            xml: serializer.serializeToString($box.get(0)),
+            xml: serializer.serializeToString($box[0]),
+            inner: true,
             success: function(text) {
                 $('textarea', $overlay).val($.trim(text));
+                console.log($.trim(text));
                 
                 setTimeout(function() {
-                    console.log('focus!');
                     $('textarea', $overlay).focus();
                 }, 100);
                 
                 $('textarea', $overlay).one('blur', function(event) {
+                    var nodeName = $box.attr('x-node') || 'pe';
                     xml2html({
-                        xml: $('textarea', $overlay).val(),
+                        xml: '<' + nodeName + '>' + $('textarea', $overlay).val() + '</' + nodeName + '>',
                         success: function(element) {
-                            $box.after(element);
+                            $box.html($(element).html());
                             $overlay.remove();
-                            $box.remove();
                         },
                         error: function(text) {
                             $overlay.remove();
@@ -348,21 +364,6 @@ function html(element) {
                 alert('Błąd! ' + text);
             }
         });
-        
-        // h = Math.max(h, 2*parseInt($box.css('line-height')));
-        
-        console.log(h);
-        
-        $overlay.css({
-            position: 'absolute',
-            height: h,
-            left: x,
-            top: y,
-            right: 0
-        });
-        
-        $($box[0].offsetParent).append($overlay);
-        console.log($overlay);
     }
     
     $('.edit-button').live('click', function(event) {

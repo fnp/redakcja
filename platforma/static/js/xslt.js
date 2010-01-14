@@ -181,16 +181,24 @@ function html2xml(options) {
         var serializer = new XMLSerializer();
         var doc = parser.parseFromString(xml, 'text/xml');
         var error = $('parsererror', doc.documentElement);
-        
+
         if (error.length == 0) {
-            doc = html2xmlStylesheet.transformToDocument(doc, document);
+            doc = html2xmlStylesheet.transformToDocument(doc);
             error = $('parsererror', doc.documentElement);
         }
         
         if (error.length > 0 && options.error) {
             options.error(error.text());
         } else {
-            options.success(serialize(doc.documentElement).join(''));                              
+            if (options.inner) {
+                var result = [];
+                for (var i = 0; i < doc.documentElement.childNodes.length; i++) {
+                    result.push(serialize(doc.documentElement.childNodes[i]).join(''));
+                };
+                options.success(result.join(''));
+            } else {
+                options.success(serialize(doc.documentElement).join(''));
+            }
         }
     }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
 };
