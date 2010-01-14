@@ -274,14 +274,15 @@ function reverseTransform(editor) {
 }
 
 
+// =============
+// = HTML View =
+// =============
 function html(element) {
     var element = $(element);
     
     function selectTheme(themeId)
     {
         var selection = window.getSelection();
-
-        // remove current selection
         selection.removeAllRanges();
 
         var range = document.createRange();
@@ -294,6 +295,7 @@ function html(element) {
             selection.addRange(range);
         }
     };
+    
     
     function openForEdit($origin)
     {       
@@ -314,10 +316,6 @@ function html(element) {
         var w = $box.outerWidth();
         var h = $box.innerHeight();
     
-        console.log("Edit origin:", $origin, " box:", $box);
-        console.log("offsetParent:", $box[0].offsetParent);
-        console.log("Dimensions: ", x, y, w , h);
-    
         // start edition on this node
         var $overlay = $('<div class="html-editarea"><textarea></textarea></div>');
         var serializer = new XMLSerializer();
@@ -325,7 +323,12 @@ function html(element) {
         html2xml({
             xml: serializer.serializeToString($box.get(0)),
             success: function(text) {
-                $('textarea', $overlay).focus().val($.trim(text));
+                $('textarea', $overlay).val($.trim(text));
+                
+                setTimeout(function() {
+                    console.log('focus!');
+                    $('textarea', $overlay).focus();
+                }, 100);
                 
                 $('textarea', $overlay).one('blur', function(event) {
                     xml2html({
@@ -346,7 +349,7 @@ function html(element) {
             }
         });
         
-        h = Math.max(h - 20, 2*parseInt($box.css('line-height')));
+        // h = Math.max(h, 2*parseInt($box.css('line-height')));
         
         console.log(h);
         
@@ -363,8 +366,8 @@ function html(element) {
     }
     
     $('.edit-button').live('click', function(event) {
+        event.preventDefault();
         openForEdit($(this).parent());
-        return false;
     });
     
     var button = $('<button class="edit-button">Edytuj</button>');
