@@ -299,13 +299,80 @@ function html(element) {
         }
     };
     
+    function verifyTagInsertPoint(node) {
+        if(node.nodeType == 3) { // Text Node
+            node = node.parentNode;
+        }
+
+        if (node.nodeType != 1) { 
+            return false;
+        }
+
+        console.log('Selection point:', node);
+        
+        node = $(node);
+        var xtype = node.attr('x-node');
+
+        if (!xtype || (xtype.search(':') >= 0) ||
+            xtype == 'motyw' || xtype == 'begin' || xtype == 'end') {
+            return false;
+        }
+
+        // this is hopefully redundant
+        //if(! node.is('*.utwor *') )
+        //    return false;
+        
+        // don't allow themes inside annotations
+        if( node.is('*[x-annotation-box] *') )
+            return false;
+
+        return true;
+    }
+    
+    function addAnnotation()
+    {
+        var selection = window.getSelection();
+        var n = selection.rangeCount;
+
+        console.log("Range count:", n);
+        if (n == 0) {
+            window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
+
+        // for now allow only 1 range
+        if (n > 1) {
+            window.alert("Zaznacz jeden obszar");
+            return false;
+        }
+
+        // remember the selected range
+        var range = selection.getRangeAt(0);
+
+        if (!verifyTagInsertPoint(range.endContainer)) {
+            window.alert("Nie można wstawić w to miejsce przypisu.");
+            return false;
+        }
+
+        var text = range.toString();
+        var tag = $('<span></span>');
+        range.collapse(false);
+        range.insertNode(tag[0]);
+
+        xml2html({
+            xml: '<pr><slowo_obce>'+text+'</slowo_obce></pr>',
+            success: function(text) {
+                tag.replaceWith(text);
+            },
+            error: function() {
+                tag.remove();
+                alert('Błąd przy dodawaniu przypisu:' + errors);                
+            }
+        })
+    }
     
     function openForEdit($origin)
     {       
-        // if(this.currentOpen && this.currentOpen != $origin) {
-        //     this.closeWithSave(this.currentOpen);
-        // }
-        
         var $box = null
     
         // annotations overlay their sub box - not their own box //
@@ -385,6 +452,11 @@ function html(element) {
 
     $('.motyw').live('click', function() {
         selectTheme($(this).attr('theme-class'));
+    });
+    
+    $('#insert-annotation-button').click(function() {
+        addAnnotation();
+        return false;
     });
 }
 
