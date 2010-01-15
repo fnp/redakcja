@@ -370,6 +370,84 @@ function html(element) {
             }
         })
     }
+
+    function addTheme()
+    {
+        var selection = window.getSelection();
+        var n = selection.rangeCount;
+
+        console.log("Range count:", n);
+        if(n == 0) {
+            window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
+
+        // for now allow only 1 range
+        if(n > 1) {
+            window.alert("Zaznacz jeden obszar");
+            return false;
+        }
+
+        // remember the selected range
+        var range = selection.getRangeAt(0);
+        console.log(range.startContainer, range.startOffset, range.endContainer, range.endOffset);
+
+        // verify if the start/end points make even sense -
+        // they must be inside a x-node (otherwise they will be discarded)
+        // and the x-node must be a main text
+        if (!verifyTagInsertPoint(range.startContainer)) {
+            window.alert("Motyw nie może się zaczynać w tym miejscu.");
+            return false;
+        }
+
+        if (!verifyTagInsertPoint(range.endContainer)) {
+            window.alert("Motyw nie może się kończyć w tym miejscu.");
+            return false;
+        }
+
+        var date = (new Date()).getTime();
+        var random = Math.floor(4000000000*Math.random());
+        var id = (''+date) + '-' + (''+random);
+
+        var spoint = document.createRange();
+        var epoint = document.createRange();
+
+        spoint.setStart(range.startContainer, range.startOffset);
+        epoint.setStart(range.endContainer, range.endOffset);
+
+        console.log('spoint', spoint.startContainer, spoint.startOffset, spoint.endContainer, spoint.endOffset);
+        console.log('epoint', epoint.startContainer, epoint.startOffset, epoint.endContainer, epoint.endOffset);
+
+        var mtag, btag, etag, errors;
+
+        // insert theme-ref
+                
+        xml2html({
+            xml: '<end id="e'+id+'" />',
+            success: function(text) {
+                etag = $('<span></span>');
+                epoint.insertNode(etag[0]);
+                etag.replaceWith(text);
+                xml2html({
+                    xml: '<motyw id="m'+id+'">motyw</motyw>',
+                    success: function(text) {
+                        mtag = $('<span></span>');
+                        spoint.insertNode(mtag[0]);
+                        mtag.replaceWith(text);
+                        xml2html({
+                            xml: '<begin id="b'+id+'" />',
+                            success: function(text) {
+                                btag = $('<span></span>');
+                                spoint.insertNode(btag[0])
+                                btag.replaceWith(text);
+                                selection.removeAllRanges();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
     
     function openForEdit($origin)
     {       
@@ -456,6 +534,11 @@ function html(element) {
     
     $('#insert-annotation-button').click(function() {
         addAnnotation();
+        return false;
+    });
+    
+    $('#insert-theme-button').click(function() {
+        addTheme();
         return false;
     });
 }
