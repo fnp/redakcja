@@ -317,10 +317,6 @@ function html(element) {
             xtype == 'motyw' || xtype == 'begin' || xtype == 'end') {
             return false;
         }
-
-        // this is hopefully redundant
-        //if(! node.is('*.utwor *') )
-        //    return false;
         
         // don't allow themes inside annotations
         if( node.is('*[x-annotation-box] *') )
@@ -360,7 +356,7 @@ function html(element) {
         range.insertNode(tag[0]);
 
         xml2html({
-            xml: '<pr><slowo_obce>'+text+'</slowo_obce></pr>',
+            xml: '<pr><slowo_obce>'+text+'</slowo_obce> --- </pr>',
             success: function(text) {
                 tag.replaceWith(text);
             },
@@ -466,6 +462,11 @@ function html(element) {
         var w = $box.outerWidth();
         var h = $box.innerHeight();
     
+        if ($origin.is(".annotation-inline-box")) {
+            w = Math.max(w, 400);
+            h = Math.max(h, 60);
+        }
+        
         console.log('width:', w, 'height:', h);
 
         // start edition on this node
@@ -476,9 +477,9 @@ function html(element) {
             top: y,
             width: w
             // right: 0
-        }).appendTo($box[0].offsetParent || element).show();
+        }).appendTo($box[0].offsetParent || $box.parent()).show();
         
-        console.log($overlay, $box[0].offsetParent || element);
+        console.log($overlay, $box[0].offsetParent || $box.parent());
         
         var serializer = new XMLSerializer();
     
