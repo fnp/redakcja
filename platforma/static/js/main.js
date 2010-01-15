@@ -253,7 +253,7 @@ function transform(editor) {
 };
 
 
-function reverseTransform(editor) {
+function reverseTransform(editor, cont) {
     var serializer = new XMLSerializer();
     if ($('#html-view .error').length > 0) {
         return;
@@ -265,6 +265,9 @@ function reverseTransform(editor) {
             success: function(text) {
                 editor.setCode(text);
                 $.unblockUI();
+                if (cont) {
+                    cont();
+                }
             }, error: function(text) {
                 $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
                 $.unblockUI();
@@ -410,41 +413,49 @@ $(function() {
             $('#save-ok').click(function() {
                 $.blockUI({message: 'Zapisywanie...'});
                 
-                var metaComment = '<!--';
-                $('#document-meta div').each(function() {
-                    metaComment += '\n\t' + $(this).attr('class') + ': ' + $(this).html();
-                });
-                metaComment += '\n-->'
+                function doSave (argument) {
+                    var metaComment = '<!--';
+                    $('#document-meta div').each(function() {
+                        metaComment += '\n\t' + $(this).attr('class') + ': ' + $(this).html();
+                    });
+                    metaComment += '\n-->'
+
+                    var data = {
+                        name: $('#document-name').html(),
+                        text: metaComment + editor.getCode(),
+                        revision: $('#document-revision').html(),
+                        author: 'annonymous',
+                        comment: $('#komentarz').val()
+                    };
+
+                    console.log(data);
+
+                    $.ajax({
+                        url: document.location.href,
+                        type: "POST",
+                        dataType: "json",
+                        data: data,                
+                        success: function(data) {
+                            if (data.text) {
+                                editor.setCode(data.text);
+                                $('#document-revision').html(data.revision);
+                            } else {
+                                console.log(data.errors);
+                                alert(data.errors);
+                            }
+                            $.unblockUI();
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            alert('error: ' + textStatus + ' ' + errorThrown);
+                        },
+                    })
+                }
                 
-                var data = {
-                    name: $('#document-name').html(),
-                    text: metaComment + editor.getCode(),
-                    revision: $('#document-revision').html(),
-                    author: 'annonymous',
-                    comment: $('#komentarz').val()
-                };
-                
-                console.log(data);
-                
-                $.ajax({
-                    url: document.location.href,
-                    type: "POST",
-                    dataType: "json",
-                    data: data,                
-                    success: function(data) {
-                        if (data.text) {
-                            editor.setCode(data.text);
-                            $('#document-revision').html(data.revision);
-                        } else {
-                            console.log(data.errors);
-                            alert(data.errors);
-                        }
-                        $.unblockUI();
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert('error: ' + textStatus + ' ' + errorThrown);
-                    },
-                })
+                if ('#simple-view-tab.active') {
+                    reverseTransform(editor, doSave);
+                } else {
+                    doSave();
+                }
             });
             
             $('#save-cancel').click(function() {
