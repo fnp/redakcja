@@ -40,8 +40,6 @@
     text-align: center;
     line-height: 1.5em;
     font-weight: bold;
-
-    text-transform: capitalize;
 }
 
 .htmlview h2 {
@@ -454,7 +452,6 @@
 
     z-index: 0;
     font-size: 10pt;
-    position: relative;
 /*    background-color: ivory;*/
 }
 
