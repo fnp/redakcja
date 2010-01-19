@@ -358,7 +358,9 @@ function html(element) {
         xml2html({
             xml: '<pr><slowo_obce>'+text+'</slowo_obce> --- </pr>',
             success: function(text) {
-                tag.replaceWith(text);
+                var t = $(text);
+                tag.replaceWith(t);
+                openForEdit(t);
             },
             error: function() {
                 tag.remove();
@@ -366,7 +368,7 @@ function html(element) {
             }
         })
     }
-
+    
     function addTheme()
     {
         var selection = window.getSelection();
@@ -437,6 +439,7 @@ function html(element) {
                                 spoint.insertNode(btag[0])
                                 btag.replaceWith(text);
                                 selection.removeAllRanges();
+                                openForEdit($('.motyw[theme-class=' + id + ']'));
                             }
                         });
                     }
@@ -476,7 +479,6 @@ function html(element) {
             left: x,
             top: y,
             width: w
-            // right: 0
         }).appendTo($box[0].offsetParent || $box.parent()).show();
         
         console.log($overlay, $box[0].offsetParent || $box.parent());
@@ -493,7 +495,7 @@ function html(element) {
                 
                 setTimeout(function() {
                     $('textarea', $overlay).focus();
-                }, 100);
+                }, 50);
                 
                 $('textarea', $overlay).one('blur', function(event) {
                     var nodeName = $box.attr('x-node') || 'pe';
