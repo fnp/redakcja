@@ -448,6 +448,10 @@ function html(element) {
         });
     }
     
+    // function removeTheme($origin) {
+    //     
+    // }
+    
     function openForEdit($origin)
     {       
         var $box = null
@@ -473,13 +477,24 @@ function html(element) {
         console.log('width:', w, 'height:', h);
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
             top: y,
             width: w
         }).appendTo($box[0].offsetParent || $box.parent()).show();
+        
+        $('.delete-button', $overlay).click(function() {
+            if ($origin.is('.motyw')) {
+                $('[theme-class=' + $origin.attr('theme-class') + ']').remove();
+            } else {
+                $origin.remove();
+            }
+            $overlay.remove();
+            $(document).unbind('click.blur-overlay');
+            return false;
+        })
         
         console.log($overlay, $box[0].offsetParent || $box.parent());
         
@@ -497,7 +512,7 @@ function html(element) {
                     $('textarea', $overlay).focus();
                 }, 50);
                 
-                $('textarea', $overlay).one('blur', function(event) {
+                function save(argument) {
                     var nodeName = $box.attr('x-node') || 'pe';
                     xml2html({
                         xml: '<' + nodeName + '>' + $('textarea', $overlay).val() + '</' + nodeName + '>',
@@ -510,7 +525,35 @@ function html(element) {
                             alert('Błąd! ' + text);
                         }
                     })
+                }
+                
+                $('.accept-button', $overlay).click(function() {
+                    save();
                 });
+                
+                $(document).bind('click.blur-overlay', function(event) {
+                    if ($(event.target).parents('.html-editarea').length > 0) {
+                        return;
+                    }
+                    save();
+                    
+                    $(document).unbind('click.blur-overlay');
+                });
+                
+                // $('textarea', $overlay).one('blur', function(event) {
+                //     var nodeName = $box.attr('x-node') || 'pe';
+                //     xml2html({
+                //         xml: '<' + nodeName + '>' + $('textarea', $overlay).val() + '</' + nodeName + '>',
+                //         success: function(element) {
+                //             $box.html($(element).html());
+                //             $overlay.remove();
+                //         },
+                //         error: function(text) {
+                //             $overlay.remove();
+                //             alert('Błąd! ' + text);
+                //         }
+                //     })
+                // });
             }, error: function(text) {
                 alert('Błąd! ' + text);
             }
@@ -521,6 +564,8 @@ function html(element) {
         event.preventDefault();
         openForEdit($(this).parent());
     });
+    
+
     
     var button = $('<button class="edit-button">Edytuj</button>');
     $(element).bind('mousemove', function(event) {
