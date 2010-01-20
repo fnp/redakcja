@@ -241,7 +241,8 @@
     width: 10em;
     
     font-weight: normal;
-    font-size: 10pt;
+    font-size: 13px;
+    line-height: 18px;
     font-variant: normal;
     text-decoration: none;
 
@@ -264,7 +265,6 @@
     border-left: 4px solid #DDD;
     padding: 0.2em 0.2em 0.2em 0.5em;
     margin-top: 0.2em;
-
 }
 
 /* 
@@ -445,7 +445,8 @@
 
 .html-editarea textarea
 {
-/*    border: 2px solid black;*/
+    position: absolute;
+    top: 0;
     
     margin: 0px;
     padding: 0px;
