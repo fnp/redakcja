@@ -70,7 +70,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "explorer.context_processors.settings",
+    "platforma.context_processors.settings",
     "django.core.context_processors.request",
 )
 
@@ -79,9 +79,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'explorer.middleware.EditorSettingsMiddleware',
     'django.middleware.doc.XViewMiddleware',
-
     'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
 
@@ -121,7 +119,7 @@ INSTALLED_APPS = (
     'piston',
     'sorl.thumbnail',
     'filebrowser',
-    'explorer',
+    # 'explorer',
     'toolbar',
     'bookthemes',
     # 'api',
@@ -135,13 +133,6 @@ FILEBROWSER_VERSIONS_BASEDIR = 'thumbnails/'
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
-EDITOR_COOKIE_NAME = 'options'
-EDITOR_DEFAULT_SETTINGS = {
-    'panels': [
-        {'name': 'htmleditor', 'ratio': 0.5},
-        {'name': 'gallery', 'ratio': 0.5}
-    ],
-}
 
 # Python logging settings
 import logging

@@ -10,29 +10,31 @@ PATH_END = PATH_SEC + "/$"
 
 urlpatterns = patterns('',
     # Explorer:
-    url(r'^$', 'explorer.views.file_list', name='file_list'),        
-    url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),    
+    # url(r'^$', 'explorer.views.file_list', name='file_list'),        
+    # url(r'^file/upload', 'explorer.views.file_upload', name='file_upload'),    
 
-    url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
+    # url(r'^management/pull-requests$', 'explorer.views.pull_requests'),
   
     # Editor panels
-    url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
-    url(r'^editor/$', 'explorer.views.file_list', name='editor_base'),
+    # url(r'^editor/'+PATH_END, 'explorer.views.display_editor', name='editor_view'),
+    # url(r'^editor/$', 'explorer.views.file_list', name='editor_base'),
 
-    url(r'^file/(?P<docid>[^/]+)/print$', 'explorer.views.print_html', name="file_print"),
+    # url(r'^file/(?P<docid>[^/]+)/print$', 'explorer.views.print_html', name="file_print"),
 
+    url(r'^$', 'wiki.views.document_list', {'template_name': 'explorer/file_list.html'}),
+    
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root),
 
     # Theme database
-    url(r'themes/', include('bookthemes.urls')),
+    # url(r'themes/', include('bookthemes.urls')),
 
     # Our über-restful api
     # url(r'^api/', include('api.urls')),
     
-    url(r'^gallery/(?P<directory>[^/]+)$', 'explorer.views.document_gallery'),
+    url(r'^gallery/(?P<directory>[^/]+)$', 'wiki.views.document_gallery'),
     
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',

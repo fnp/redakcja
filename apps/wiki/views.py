@@ -1,5 +1,8 @@
+import os
+
+from django.conf import settings
 from django.views.generic.simple import direct_to_template
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 
 from wiki.models import storage, Document, DocumentNotFound
@@ -33,3 +36,13 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
         'document': document,
         'form': form,
     })
+
+
+def document_gallery(request, directory):
+    try:
+        base_dir = os.path.join(settings.MEDIA_ROOT, settings.FILEBROWSER_DIRECTORY, directory)
+        print base_dir
+        images = ['%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if os.path.splitext(f)[1].lower() in ('.jpg', '.jpeg', '.png')]
+        return HttpResponse(json.dumps(images))
+    except (IndexError, OSError), e:
+        raise Http404
