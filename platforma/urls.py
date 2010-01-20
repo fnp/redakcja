@@ -21,7 +21,7 @@ urlpatterns = patterns('',
 
     # url(r'^file/(?P<docid>[^/]+)/print$', 'explorer.views.print_html', name="file_print"),
 
-    url(r'^$', 'wiki.views.document_list', {'template_name': 'explorer/file_list.html'}),
+    url(r'^$', 'wiki.views.document_list'),
     
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),
