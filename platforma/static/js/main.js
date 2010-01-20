@@ -308,8 +308,6 @@ function html(element) {
             return false;
         }
 
-        console.log('Selection point:', node);
-        
         node = $(node);
         var xtype = node.attr('x-node');
 
@@ -330,7 +328,6 @@ function html(element) {
         var selection = window.getSelection();
         var n = selection.rangeCount;
 
-        console.log("Range count:", n);
         if (n == 0) {
             window.alert("Nie zaznaczono żadnego obszaru");
             return false;
@@ -374,7 +371,6 @@ function html(element) {
         var selection = window.getSelection();
         var n = selection.rangeCount;
 
-        console.log("Range count:", n);
         if(n == 0) {
             window.alert("Nie zaznaczono żadnego obszaru");
             return false;
@@ -388,7 +384,6 @@ function html(element) {
 
         // remember the selected range
         var range = selection.getRangeAt(0);
-        console.log(range.startContainer, range.startOffset, range.endContainer, range.endOffset);
 
         // verify if the start/end points make even sense -
         // they must be inside a x-node (otherwise they will be discarded)
@@ -412,9 +407,6 @@ function html(element) {
 
         spoint.setStart(range.startContainer, range.startOffset);
         epoint.setStart(range.endContainer, range.endOffset);
-
-        console.log('spoint', spoint.startContainer, spoint.startOffset, spoint.endContainer, spoint.endOffset);
-        console.log('epoint', epoint.startContainer, epoint.startOffset, epoint.endContainer, epoint.endOffset);
 
         var mtag, btag, etag, errors;
 
@@ -459,7 +451,6 @@ function html(element) {
         // annotations overlay their sub box - not their own box //
         if($origin.is(".annotation-inline-box")) {
             $box = $("*[x-annotation-box]", $origin);
-            console.log('annotation!', $box);
         } else {
             $box = $origin;
         }
@@ -474,8 +465,6 @@ function html(element) {
             h = Math.max(h, 60);
         }
         
-        console.log('width:', w, 'height:', h);
-
         // start edition on this node
         var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><textarea></textarea></div>').css({
             position: 'absolute',
@@ -484,6 +473,14 @@ function html(element) {
             top: y,
             width: w
         }).appendTo($box[0].offsetParent || $box.parent()).show();
+        
+        if ($origin.is('.motyw')) {
+            $('textarea', $overlay).autocomplete(['Ala ma kota', 'Kot ma Alę', 'HIV', 'motyw'], {
+                autoFill: true,
+                multiple: true,
+                selectFirst: true
+            });
+        }
         
         $('.delete-button', $overlay).click(function() {
             if ($origin.is('.motyw')) {
@@ -496,20 +493,17 @@ function html(element) {
             return false;
         })
         
-        console.log($overlay, $box[0].offsetParent || $box.parent());
         
         var serializer = new XMLSerializer();
-    
-        console.log($box.html());
+        
         html2xml({
             xml: serializer.serializeToString($box[0]),
             inner: true,
             success: function(text) {
                 $('textarea', $overlay).val($.trim(text));
-                console.log($.trim(text));
                 
                 setTimeout(function() {
-                    $('textarea', $overlay).focus();
+                    $('textarea', $overlay).elastic().focus();
                 }, 50);
                 
                 function save(argument) {
@@ -631,8 +625,6 @@ $(function() {
                         comment: $('#komentarz').val()
                     };
 
-                    console.log(data);
-
                     $.ajax({
                         url: document.location.href,
                         type: "POST",
@@ -643,7 +635,6 @@ $(function() {
                                 editor.setCode(data.text);
                                 $('#document-revision').html(data.revision);
                             } else {
-                                console.log(data.errors);
                                 alert(data.errors);
                             }
                             $.unblockUI();
