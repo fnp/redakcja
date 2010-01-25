@@ -678,7 +678,7 @@ $(function() {
                     })
                 }
                 
-                if ('#simple-view-tab.active') {
+                if ($('#simple-view-tab').hasClass('active')) {
                     reverseTransform(editor, doSave);
                 } else {
                     doSave();
