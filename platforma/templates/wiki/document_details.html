@@ -18,6 +18,9 @@
 {% endblock %}
 
 {% block maincontent %}
+        <div id="loading-overlay">
+            <div id="loading-message"><img src="{{STATIC_URL}}img/spinner.gif" /><p>Ładowanie</p></div>
+        </div>
         <div id="document-meta" style="display:none">
         {% for k, v in document.meta.items %}
             <div class="{{ k }}">{{ v}}</div>

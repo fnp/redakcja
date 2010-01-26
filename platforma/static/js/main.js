@@ -287,41 +287,61 @@ function gallery(element, url) {
 }
 
 
-function transform(editor) {
-    $.blockUI({message: 'Ładowanie...'});
+function transform(editor, callback) {
+    if (!callback) {
+        $.blockUI({message: 'Ładowanie...'});
+    }
     setTimeout(function() {
         xml2html({
             xml: editor.getCode(),
             success: function(element) {
                 $('#html-view').html(element);
                 $.unblockUI();
+                if (callback) {
+                    callback();
+                }
             }, error: function(text) {
                 $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + text + '</pre>');
                 $.unblockUI();
+                if (callback) {
+                    callback();
+                }
             }
         });
     }, 200);
 };
 
 
-function reverseTransform(editor, cont) {
+function reverseTransform(editor, cont, errorCont, dontBlock) {
     var serializer = new XMLSerializer();
     if ($('#html-view .error').length > 0) {
+        if (errorCont) {
+            errorCont();
+        }
         return;
     }
-    $.blockUI({message: 'Ładowanie...'});
+    if (!dontBlock) {
+        $.blockUI({message: 'Ładowanie...'});
+    }
     setTimeout(function() {
         html2xml({
             xml: serializer.serializeToString($('#html-view div').get(0)),
             success: function(text) {
                 editor.setCode(text);
-                $.unblockUI();
+                if (!dontBlock) {
+                    $.unblockUI();
+                }
                 if (cont) {
                     cont();
                 }
             }, error: function(text) {
                 $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
-                $.unblockUI();
+                if (!dontBlock) {
+                    $.unblockUI();
+                }
+                if (errorCont) {
+                    errorCont();
+                }
             }
         });
     }, 200);
@@ -688,19 +708,20 @@ $(function() {
             $('#save-cancel').click(function() {
                 $.unblockUI();
             });
-
-            $('#simple-view-tab').click(function() {
-                if ($(this).hasClass('active')) {
+            
+            function changeTab(callback) {
+                if ($('#simple-view-tab').hasClass('active')) {
                     return;
                 }
-                $(this).addClass('active');
+                $('#simple-view-tab').addClass('active');
                 $('#source-view-tab').removeClass('active');
                 $('#source-editor').hide();
                 $('#simple-editor').show();
-                transform(editor);
-            });
-
-            $('#source-view-tab').click(function() {
+                transform(editor, callback);
+            }        
+            $('#simple-view-tab').click(function() { changeTab(); });
+            
+            $('#source-view-tab').click(function() { 
                 if ($(this).hasClass('active')) {
                     return;
                 }
@@ -708,7 +729,7 @@ $(function() {
                 $('#simple-view-tab').removeClass('active');
                 $('#simple-editor').hide();
                 $('#source-editor').show();
-                reverseTransform(editor);
+                reverseTransform(editor);    
             });
 
             $('#source-editor .toolbar button').click(function(event) {
@@ -727,7 +748,7 @@ $(function() {
             $('.toolbar-buttons-container').hide();
             $('.toolbar select').change();
 
-            $('#simple-view-tab').click();
+            changeTab(function() { $('#loading-overlay').fadeOut() }, function() { $('#loading-overlay').fadeOut() }, true)
         }
     });
     
