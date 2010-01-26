@@ -459,78 +459,13 @@
 /*    background-color: ivory;*/
 }
 
-/*/
-/*
-/* Theme edit dialog
-/*
-/*/
-/*#theme-edit-dialog {    
-    left: 5%;
-    right: 5%;
-    top: 5%;
-    bottom: 5%;
-    padding: 0em;
-}
-
-#theme-edit-dialog *.data-area {
-    position: absolute;
-
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 32px;
-
-    padding: 0px;
-    background-color: #fafafa;
-
-    overflow-y: scroll;
-}
-
-#theme-edit-dialog *.action-area {
-    position: absolute;
-    height: 30px;
-    line-height: 20px;
-
-    left: 5px;
-    right: 5px;
-    bottom: 0px;
-
-    padding: 0px;
-    margin: 0px;
-    
-    border-top: 1px solid black;
-    background-color: #fafafa;
-}
-
-#theme-edit-dialog *.action-area * {
-    vertical-align: baseline;
-}
-
-#theme-edit-dialog .theme-multi-list {
-    padding: 0.5em 1em;
-}
-
-#theme-edit-dialog .theme-multi-list .unknown-themes {
-    display: none;
-}
-
-#theme-edit-dialog .theme-multi-list .letter-heading {
-    font-size: 150%;
-    text-align: left;
-    border-bottom: 1px solid black;
-    padding-top: 1em;
-}
-
-#theme-edit-dialog .theme-mutli-list input:checked + label {
-    font-weight: bold;
-}*/
-
 .out-of-flow-text {
-    border: 1px solid #C8B849;
-    background-color: #D4CB9C;
-    white-space: pre;
+    border: 1px solid #BEBEBE;
+    background-color: #E2E2E1;
+    white-space: pre-line;
     overflow: auto;
-    margin: 1.5em 0 0;
+    padding: 0.25em;
+    margin: 0 -0.25em;
     font-family: monospace;
     font-size: 10pt;
 }
