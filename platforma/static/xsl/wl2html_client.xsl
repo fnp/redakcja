@@ -705,7 +705,7 @@
         <xsl:param name="mixed" />
         <xsl:choose>
             <xsl:when test="normalize-space(.) = ''" />
-            <xsl:when test="not($mixed)"><div x-node="out-of-flow-text" class="out-of-flow-text"><xsl:value-of select="." /></div></xsl:when>
+            <xsl:when test="not($mixed)"><div x-node="out-of-flow-text" class="out-of-flow-text" x-editable="true"><xsl:value-of select="." /></div></xsl:when>
             <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -724,7 +724,11 @@
     </xsl:template>
 
     <xsl:template match="*">
-        <error>Unknown tag: <xsl:value-of select="name()" /></error>
+        <div class="unknown-tag" x-node="{name()}">
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>        
+        </div>
     </xsl:template>
 
     <xsl:template name="context-menu">

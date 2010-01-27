@@ -463,9 +463,16 @@
     border: 1px solid #BEBEBE;
     background-color: #E2E2E1;
     white-space: pre-line;
-    overflow: auto;
-    padding: 0.25em;
-    margin: 0 -0.25em;
     font-family: monospace;
-    font-size: 10pt;
+}
+
+.out-of-flow-text[x-editable] {
+    background-color: #E2E2E1;    
+}
+
+.unknown-tag {
+    background-color: yellow;
+    margin: -0.25em;
+    padding: 0.25em;
+    border: 1px solid orange;
 }
