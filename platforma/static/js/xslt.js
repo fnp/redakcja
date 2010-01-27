@@ -34,8 +34,9 @@ var MARGIN = {
 MARGIN['rdf:RDF'] = 3;
 MARGIN['rdf:Description'] = 2;
 
+var blockTags = ['akap', 'akap_cd', 'akap_dialog', 'strofa', 'didaskalia', 'wers', 'wers_cd', 'wers_akap', 'wers_wciety', 'autor_utworu', 'nazwa_utworu', 'dzielo_nadrzedne', 'podpis'];
 function elementType(element) {
-    if ($.inArray(element.tagName, ['akap', 'akap_cd', 'akap_dialog', 'strofa', 'didaskalia', 'wers', 'wers_cd', 'wers_akap', 'wers_wciety', 'autor_utworu', 'nazwa_utworu', 'dzielo_nadrzedne', 'podpis'])) {
+    if (blockTags.indexOf(element.tagName) != -1) {
         return 'inline';
     } else {
         return 'block';
