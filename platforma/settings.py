@@ -119,10 +119,7 @@ INSTALLED_APPS = (
     'piston',
     'sorl.thumbnail',
     'filebrowser',
-    # 'explorer',
     'toolbar',
-    'bookthemes',
-    # 'api',
 )
 
 
