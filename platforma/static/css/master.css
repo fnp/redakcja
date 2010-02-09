@@ -13,7 +13,7 @@ body {
     bottom: 0;
     right: 0;;
     width: 13px;
-    background: #C1C1C1 url(/static/img/gallery.png) no-repeat scroll center center;
+    background: #C1C1C1 url(../img/gallery.png) no-repeat scroll center center;
     border-left: 1px solid #999;
     border-right: 1px solid #999;
     cursor: w-resize;
