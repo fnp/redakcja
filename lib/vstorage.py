@@ -285,11 +285,12 @@ class VersionedStorage(object):
 
     def page_meta(self, title):
         """Get page's revision, date, last editor and his edit comment."""
-
+        if not title in self:
+            raise DocumentNotFound()
+        
         filectx_tip = self._find_filectx(title)
         if filectx_tip is None:
             raise DocumentNotFound()
-            #return -1, None, u'', u''
         rev = filectx_tip.filerev()
         filectx = filectx_tip.filectx(rev)
         date = datetime.datetime.fromtimestamp(filectx.date()[0])
