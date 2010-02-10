@@ -27,7 +27,13 @@
         {% endfor %}
         </div>
         <div id="header">
-            <div id="tools" style="float: right;">Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
+            <div id="tools" style="float: right;">
+                {% if user.is_authenticated %}
+                    Zalogowany jako {{ user }} | <a href="{% url logout %}">Wyloguj</a> |
+                {% else %}
+                    <a href="{% url login %}?next={{ request.path }}">Zaloguj się</a> |
+                {% endif %}
+                Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
             <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
             <ol id="tabs">
                 <li id="simple-view-tab"><span id="document-name">{{ document.name }}</span></li>
