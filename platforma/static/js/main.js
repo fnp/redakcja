@@ -674,7 +674,7 @@ $(function() {
                         name: $('#document-name').html(),
                         text: metaComment + editor.getCode(),
                         revision: $('#document-revision').html(),
-                        author: 'annonymous',
+                        author: $('#username').html() || 'annonymous',
                         comment: $('#komentarz').val()
                     };
 

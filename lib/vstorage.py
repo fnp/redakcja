@@ -265,7 +265,6 @@ class VersionedStorage(object):
 
     def open_page(self, title):
         if title not in self:
-            print 'whatever', list(self.all_pages())
             raise DocumentNotFound()
         
         try:

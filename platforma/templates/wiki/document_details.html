@@ -29,7 +29,7 @@
         <div id="header">
             <div id="tools" style="float: right;">
                 {% if user.is_authenticated %}
-                    Zalogowany jako {{ user }} | <a href="{% url logout %}">Wyloguj</a> |
+                    Zalogowany jako <span id="username">{{ user }}</span> | <a href="{% url logout %}">Wyloguj</a> |
                 {% else %}
                     <a href="{% url login %}?next={{ request.path }}">Zaloguj się</a> |
                 {% endif %}
