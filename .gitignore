@@ -15,3 +15,8 @@ thumbs.db
 # Netbeans garbage
 nbproject
 nbproject/*
+
+# Eclipse
+.project
+.pydevproject
+.settings

@@ -115,12 +115,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
+    'django_nose',
+
     'wiki',
-    'piston',
     'sorl.thumbnail',
     'filebrowser',
     'toolbar',
 )
+
+TEST_RUNNER = 'django_nose.run_tests'
 
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
