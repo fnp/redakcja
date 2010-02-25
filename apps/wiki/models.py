@@ -29,7 +29,7 @@ class DocumentStorage(object):
 
 
 class Document(object):
-    META_REGEX = re.compile(r'\s*<!--\s(.*?)\s-->', re.DOTALL | re.MULTILINE)
+    META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
     
     def __init__(self, storage, **kwargs):
         self.storage = storage
