@@ -107,6 +107,7 @@ TEMPLATE_DIRS = (
 # 
 # COMPRESS_CSS_FILTERS = None
 
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,6 +125,14 @@ INSTALLED_APPS = (
 )
 
 TEST_RUNNER = 'django_nose.run_tests'
+TEST_MODULES = ('wiki', 'toolbar', 'vstorage')
+NOSE_ARGS = (
+    '--tests=' + ','.join(TEST_MODULES),
+    '--cover-package=' + ','.join(TEST_MODULES),
+    '-d',
+    '--with-coverage',
+    '--with-doctest'
+)
 
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'

@@ -1,12 +1,20 @@
-import unittest
+from nose.tools import *
 import wiki.models as models
+import shutil, tempfile
 
-class TestDocument(unittest.TestCase):
-
+class TestStorageBase:
     def setUp(self):
-        models.storage = None
+        self.dirpath = tempfile.mkdtemp(prefix = 'nosetest_')
 
-    def
+    def tearDown(self):
+        shutil.rmtree(self.dirpath)
+
+class TestDocumentStorage(TestStorageBase):
+
+    def test_storage_empty(self):
+        storage = models.DocumentStorage(self.dirpath)
+        eq_(storage.all(), [])
+
 
 
 
