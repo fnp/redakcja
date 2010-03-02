@@ -50,17 +50,15 @@ function serialize(element, mode) {
     }
     
     if (element.nodeType == 3) { // tekst
-        if (mode == 'block') {
-            return [$.trim(element.nodeValue)];
-        } else {
-            return [element.nodeValue];
-        }
+    	return [element.nodeValue];        
     } else if (element.nodeType != 1) { // pomijamy węzły nie będące elementami XML ani tekstem
         return [];
     }
     
     var result = [];
     var hasContent = false;
+    
+    
     
     if (MARGIN[element.tagName]) {
         for (var i=0; i < MARGIN[element.tagName]; i++) {
