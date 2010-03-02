@@ -38,23 +38,23 @@ PATH_TINYMCE = getattr(settings, "FILEBROWSER_PATH_TINYMCE", DEFAULT_PATH_TINYMC
 # Therefore, if you add a category (e.g. "Misc"), you won't get an icon.
 EXTENSIONS = getattr(settings, "FILEBROWSER_EXTENSIONS", {
     'Folder': [''],
-    'Image': ['.jpg','.jpeg','.gif','.png','.tif','.tiff'],
-    'Video': ['.mov','.wmv','.mpeg','.mpg','.avi','.rm'],
-    'Document': ['.pdf','.doc','.rtf','.txt','.xls','.csv'],
-    'Sound': ['.mp3','.mp4','.wav','.aiff','.midi','.m4p'],
-    'Code': ['.html','.py','.js','.css']
+    'Image': ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff'],
+    'Video': ['.mov', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
+    'Document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv'],
+    'Sound': ['.mp3', '.mp4', '.wav', '.aiff', '.midi', '.m4p'],
+    'Code': ['.html', '.py', '.js', '.css']
 })
 
 # Define different formats for allowed selections.
 # This has to be a subset of EXTENSIONS.
 SELECT_FORMATS = getattr(settings, "FILEBROWSER_SELECT_FORMATS", {
-    'File': ['Folder','Document',],
+    'File': ['Folder', 'Document', ],
     'Image': ['Image'],
-    'Media': ['Video','Sound'],
+    'Media': ['Video', 'Sound'],
     'Document': ['Document'],
     # for TinyMCE we can also define lower-case items
     'image': ['Image'],
-    'file': ['Folder','Image','Document',],
+    'file': ['Folder', 'Image', 'Document', ],
 })
 
 # Directory to Save Image Versions (and Thumbnails). Relative to MEDIA_ROOT.
@@ -72,7 +72,7 @@ VERSIONS = getattr(settings, "FILEBROWSER_VERSIONS", {
     'croppedthumbnail': {'verbose_name': 'Cropped Thumbnail (140x140px)', 'width': 140, 'height': 140, 'opts': 'crop'},
 })
 # Versions available within the Admin-Interface.
-ADMIN_VERSIONS = getattr(settings, 'FILEBROWSER_ADMIN_VERSIONS', ['thumbnail','small', 'medium','big'])
+ADMIN_VERSIONS = getattr(settings, 'FILEBROWSER_ADMIN_VERSIONS', ['thumbnail', 'small', 'medium', 'big'])
 # Which Version should be used as Admin-thumbnail.
 ADMIN_THUMBNAIL = getattr(settings, 'FILEBROWSER_ADMIN_THUMBNAIL', 'fb_thumb')
 
@@ -85,7 +85,7 @@ SAVE_FULL_URL = getattr(settings, "FILEBROWSER_SAVE_FULL_URL", True)
 STRICT_PIL = getattr(settings, 'FILEBROWSER_STRICT_PIL', False)
 # PIL's Error "Suspension not allowed here" work around:
 # s. http://mail.python.org/pipermail/image-sig/1999-August/000816.html
-IMAGE_MAXBLOCK = getattr(settings, 'FILEBROWSER_IMAGE_MAXBLOCK', 1024*1024)
+IMAGE_MAXBLOCK = getattr(settings, 'FILEBROWSER_IMAGE_MAXBLOCK', 1024 * 1024)
 # Exclude files matching any of the following regular expressions
 # Default is to exclude 'thumbnail' style naming of image-thumbnails.
 EXTENSION_LIST = []
@@ -96,6 +96,8 @@ EXCLUDE = getattr(settings, 'FILEBROWSER_EXCLUDE', (r'_(%(exts)s)_.*_q\d{1,3}\.(
 MAX_UPLOAD_SIZE = getattr(settings, "FILEBROWSER_MAX_UPLOAD_SIZE", 10485760)
 # Convert Filename (replace spaces and convert to lowercase)
 CONVERT_FILENAME = getattr(settings, "FILEBROWSER_CONVERT_FILENAME", True)
+
+DEFAULT_ORDER = getattr(settings, "FILEBROWSER_DEFAULT_ORDER", "filename_lower")
 
 # EXTRA TRANSLATION STRINGS
 # The following strings are not availabe within views or templates

@@ -139,6 +139,7 @@ FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
 FILEBROWSER_DIRECTORY = 'images/'
 FILEBROWSER_ADMIN_VERSIONS = []
 FILEBROWSER_VERSIONS_BASEDIR = 'thumbnails/'
+FILEBROWSER_DEFAULT_ORDER = "path_relative"
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
