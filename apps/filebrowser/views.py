@@ -17,7 +17,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.dispatch import Signal
 
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_unicode, smart_str
 
 # filebrowser imports
 from filebrowser.fb_settings import *
@@ -76,7 +76,7 @@ def browse(request):
         results_var['results_total'] += 1
 
         # CREATE FILEOBJECT
-        fileobject = FileObject(os.path.join(DIRECTORY, path, file))
+        fileobject = FileObject(os.path.join(smart_str(DIRECTORY), smart_str(path), smart_str(file)))
 
         # FILTER / SEARCH
         append = False
