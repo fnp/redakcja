@@ -8,8 +8,8 @@ from filebrowser.fb_settings import SELECT_FORMATS
 
 register = template.Library()
 
-@register.inclusion_tag('filebrowser/include/_response.html', takes_context=True)
-def query_string(context, add=None, remove=None):
+@register.inclusion_tag('filebrowser/include/_response.html', takes_context = True)
+def query_string(context, add = None, remove = None):
     """
     Allows the addition and removal of query string parameters.
     
@@ -25,10 +25,10 @@ def query_string(context, add=None, remove=None):
     remove = string_to_list(remove)
     params = context['query'].copy()
     response = get_query_string(params, add, remove)
-    return {'response': response }
-    
+    return {'response': smart_unicode(response) }
 
-def query_helper(query, add=None, remove=None):
+
+def query_helper(query, add = None, remove = None):
     """
     Helper Function for use within views.
     """
@@ -36,9 +36,9 @@ def query_helper(query, add=None, remove=None):
     remove = string_to_list(remove)
     params = query.copy()
     return get_query_string(params, add, remove)
-    
 
-def get_query_string(p, new_params=None, remove=None):
+
+def get_query_string(p, new_params = None, remove = None):
     """
     Add and remove query parameters. From `django.contrib.admin`.
     """
@@ -54,7 +54,7 @@ def get_query_string(p, new_params=None, remove=None):
         elif v is not None:
             p[k] = v
     return mark_safe('?' + '&'.join([u'%s=%s' % (k, v) for k, v in p.items()]).replace(' ', '%20'))
-    
+
 
 def string_to_dict(string):
     """
@@ -76,7 +76,7 @@ def string_to_dict(string):
             kw, val = arg.split('=', 1)
             kwargs[kw] = val
     return kwargs
-    
+
 
 def string_to_list(string):
     """
@@ -95,13 +95,13 @@ def string_to_list(string):
             if arg == '': continue
             args.append(arg)
     return args
-    
+
 
 class SelectableNode(template.Node):
     def __init__(self, filetype, format):
         self.filetype = template.Variable(filetype)
         self.format = template.Variable(format)
-    
+
     def render(self, context):
         try:
             filetype = self.filetype.resolve(context)
@@ -119,15 +119,15 @@ class SelectableNode(template.Node):
             selectable = True
         context['selectable'] = selectable
         return ''
-    
+
 
 def selectable(parser, token):
-    
+
     try:
         tag, filetype, format = token.split_contents()
     except:
         raise TemplateSyntaxError, "%s tag requires 2 arguments" % token.contents.split()[0]
-        
+
     return SelectableNode(filetype, format)
-    
+
 register.tag(selectable)

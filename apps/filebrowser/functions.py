@@ -28,8 +28,9 @@ def _url_to_path(value):
     
     Returns a PATH relative to MEDIA_ROOT.
     """
+    print "URL2PATH", repr(value)
     mediaurl_re = re.compile(r'^(%s)' % (MEDIA_URL))
-    value = mediaurl_re.sub('', value)
+    value = mediaurl_re.sub(u'', value)
     return value
 
 
@@ -70,26 +71,26 @@ def _get_version_path(value, version_prefix):
     if os.path.isfile(os.path.join(MEDIA_ROOT, value)):
         path, filename = os.path.split(value)
         filename, ext = os.path.splitext(filename)
-        version_filename = filename + "_" + version_prefix + ext
+        version_filename = filename + u"_" + version_prefix + ext
         return os.path.join(VERSIONS_BASEDIR, path, version_filename)
     else:
         return None
 
 
 def _url_join(*args):
-    if args[0].startswith("http://"):
-        url = "http://"
+    if args[0].startswith(u"http://"):
+        url = u"http://"
     else:
-        url = "/"
+        url = u"/"
     for arg in args:
-        arg = str(arg).replace("\\", "/")
-        arg_split = arg.split("/")
+        arg = unicode(arg).replace(u"\\", u"/")
+        arg_split = arg.split(u"/")
         for elem in arg_split:
-            if elem != "" and elem != "http:":
-                url = url + elem + "/"
+            if elem != u"" and elem != u"http:":
+                url = url + elem + u"/"
     # remove trailing slash for filenames
     if os.path.splitext(args[-1])[1]:
-        url = url.rstrip("/")
+        url = url.rstrip(u"/")
     return url
 
 
@@ -192,14 +193,11 @@ def _get_file_type(filename):
     """
     Get file type as defined in EXTENSIONS.
     """
-
     file_extension = os.path.splitext(filename)[1].lower()
-    file_type = ''
-    for k, v in EXTENSIONS.iteritems():
-        for extension in v:
-            if file_extension == extension.lower():
-                file_type = k
-    return file_type
+    for ftype, ext_list in EXTENSIONS.iteritems():
+        if file_extension in map(str.lower, ext_list):
+            return ftype
+    return u''
 
 
 def _is_selectable(filename, selecttype):

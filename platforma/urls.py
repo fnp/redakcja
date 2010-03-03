@@ -5,29 +5,19 @@ from django.contrib import admin
 from django.conf import settings
 
 admin.autodiscover()
-PATH_SEC = r"(?P<path>[^/]+)"
-PATH_END = PATH_SEC + "/$"
-
-
-
-urlpatterns = patterns('')
 
 if 'cas_consumer' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        # django-cas-consumer
-        url(r'^accounts/login/$', 'cas_consumer.views.login', name = 'login'),
-        url(r'^accounts/logout/$', 'cas_consumer.views.logout', name = 'logout'),
-    )
+    auth_views = 'cas_consumer.views'
 else:
-    urlpatterns += patterns('',
-        # Django auth
-        url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'redirect_field_name': 'next'}, name = 'login'),
-        url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name = 'logout'),
-    )
+    auth_views = 'django.contrib.auth.views'
 
-urlpatterns += patterns('',
+urlpatterns = patterns('',
     url(r'^$', 'wiki.views.document_list'),
     url(r'^gallery/(?P<directory>[^/]+)$', 'wiki.views.document_gallery'),
+
+    # Auth
+    url(r'^accounts/login/$', auth_views + '.login', name = 'login'),
+    url(r'^accounts/logout/$', auth_views + '.logout', name = 'logout'),
 
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),
@@ -43,6 +33,4 @@ urlpatterns += patterns('',
         {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
 
     url(r'^(?P<name>[^/]+)$', 'wiki.views.document_detail'),
-
 )
-

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 # general imports
-import os, re
+import os, re, locale
 from time import gmtime, strftime
 
 # django imports
@@ -16,6 +16,8 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.dispatch import Signal
+
+from django.utils.encoding import smart_unicode
 
 # filebrowser imports
 from filebrowser.fb_settings import *
@@ -61,8 +63,9 @@ def browse(request):
 
     dir_list = os.listdir(abs_path)
     files = []
+    print "LISTING FILES: ", dir_list
     for file in dir_list:
-
+        print repr(file)
         # EXCLUDE FILES MATCHING VERSIONS_PREFIX OR ANY OF THE EXCLUDE PATTERNS
         filtered = file.startswith('.')
         for re_prefix in filter_re:
