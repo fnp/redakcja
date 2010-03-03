@@ -5,6 +5,7 @@ import locale
 import os, re, datetime
 from time import gmtime, strftime
 from django.conf import settings
+from django.utils.encoding import smart_unicode
 import urllib
 
 # filebrowser imports
@@ -34,7 +35,7 @@ class FileObject(object):
     """
 
     def __init__(self, path):
-        self.path = unicode(path)
+        self.path = path
         self.head = os.path.split(path)[0]
         self.filename = os.path.split(path)[1]
         self.filename_lower = self.filename.lower() # important for sorting
