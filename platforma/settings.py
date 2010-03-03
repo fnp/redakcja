@@ -158,6 +158,7 @@ log.addHandler(ch)
 
 # Import localsettings file, which may override settings defined here
 try:
+    EXTRA_INSTALLED_APPS = tuple()
     from localsettings import *
     INSTALLED_APPS += EXTRA_INSTALLED_APPS
 except ImportError:
