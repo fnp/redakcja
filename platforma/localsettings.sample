@@ -14,25 +14,5 @@ REPOSITORY_PATH = '/home/user/repository'
 # Subdirectory of STATIC_ROOT containing images
 IMAGE_DIR = 'images'
 
-# Authentication via Central Authentication Server
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-    
-    'cas_consumer',
-    'explorer',
-    'toolbar',
-    'api',
-)
-
-AUTHENTICATION_BACKENDS = (
-    'cas_consumer.backends.CASBackend',
-)
-
-CAS_BASE = 'http://localhost:7000/'
-CAS_SERVICE = 'http://localhost:8000/accounts/login/'
+CAS_SERVICE_URL = 'http://stigma.nowoczesnapolska.org.pl/cas/'
 

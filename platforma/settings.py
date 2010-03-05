@@ -78,8 +78,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_cas.middleware.CASMiddleware',
+
     'django.middleware.doc.XViewMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
