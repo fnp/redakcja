@@ -22,7 +22,7 @@ class CASMiddleware(object):
                  "middleware to be installed. Edit your MIDDLEWARE_CLASSES "
                  "setting to insert 'django.contrib.auth.middleware."
                  "AuthenticationMiddleware'.")
-        assert hasattr(request, 'user'), error
+        # assert hasattr(request, 'user'), error
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         """Forwards unauthenticated requests to the admin page to the CAS
