@@ -28,11 +28,7 @@
         </div>
         <div id="header">
             <div id="tools" style="float: right;">
-                {% if user.is_authenticated %}
-                    Zalogowany jako <span id="username">{{ user }}</span> | <a href="{% url logout %}">Wyloguj</a> |
-                {% else %}
-                    <a href="{% url login %}?next={{ request.path }}">Zaloguj się</a> |
-                {% endif %}
+                {% include "registration/head_login.html" %}
                 Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
             <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
             <ol id="tabs">

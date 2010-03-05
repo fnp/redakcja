@@ -6,18 +6,13 @@ from django.conf import settings
 
 admin.autodiscover()
 
-if 'cas_consumer' in settings.INSTALLED_APPS:
-    auth_views = 'cas_consumer.views'
-else:
-    auth_views = 'django.contrib.auth.views'
-
 urlpatterns = patterns('',
     url(r'^$', 'wiki.views.document_list'),
     url(r'^gallery/(?P<directory>[^/]+)$', 'wiki.views.document_gallery'),
 
     # Auth
-    url(r'^accounts/login/$', auth_views + '.login', name = 'login'),
-    url(r'^accounts/logout/$', auth_views + '.logout', name = 'logout'),
+    url(r'^accounts/login/$', 'django_cas.views.login', name = 'login'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout', name = 'logout'),
 
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),

@@ -79,8 +79,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_cas.middleware.CASMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend',
 )
 
 ROOT_URLCONF = 'urls'
@@ -88,6 +94,15 @@ ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (
     PROJECT_ROOT + '/templates',
 )
+
+
+#
+# Central Auth System
+#
+## Set this to where the CAS server lives 
+# CAS_SERVER_URL = "http://cas.fnp.pl/
+CAS_ADMIN_PREFIX = "/admin/"
+CAS_LOGOUT_COMPLETELY = True
 
 # CSS and JS files to compress
 # COMPRESS_CSS = {
@@ -124,6 +139,11 @@ INSTALLED_APPS = (
     'toolbar',
 )
 
+
+#
+# Nose tests
+#
+
 TEST_RUNNER = 'django_nose.run_tests'
 TEST_MODULES = ('wiki', 'toolbar', 'vstorage')
 NOSE_ARGS = (
@@ -155,12 +175,9 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-
 # Import localsettings file, which may override settings defined here
 try:
-    EXTRA_INSTALLED_APPS = tuple()
     from localsettings import *
-    INSTALLED_APPS += EXTRA_INSTALLED_APPS
 except ImportError:
     pass
 
