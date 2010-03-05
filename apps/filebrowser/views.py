@@ -63,9 +63,9 @@ def browse(request):
 
     dir_list = os.listdir(abs_path)
     files = []
-    print "LISTING FILES: ", dir_list
+    # print "LISTING FILES: ", dir_list
     for file in dir_list:
-        print repr(file)
+        # print repr(file)
         # EXCLUDE FILES MATCHING VERSIONS_PREFIX OR ANY OF THE EXCLUDE PATTERNS
         filtered = file.startswith('.')
         for re_prefix in filter_re:

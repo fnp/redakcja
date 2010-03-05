@@ -43,5 +43,8 @@ def document_gallery(request, directory):
         images = [u'%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')]
         images.sort()
         return HttpResponse(json.dumps(images))
-    except (IndexError, OSError), e:
+    except (IndexError, OSError), exc:
+        import traceback
+        traceback.print_exc()
+
         raise Http404
