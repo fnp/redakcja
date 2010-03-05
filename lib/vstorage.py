@@ -15,7 +15,7 @@ import mercurial.revlog
 import mercurial.util
 
 
-def urlquote(url, safe='/'):
+def urlquote(url, safe = '/'):
     """Quotes URL 
     
     >>> urlquote(u'Za\u017c\xf3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144')
@@ -78,7 +78,7 @@ def guess_mime(file_name):
     'archive/gzip'
     """
 
-    mime, encoding = mimetypes.guess_type(file_name, strict=False)
+    mime, encoding = mimetypes.guess_type(file_name, strict = False)
     if encoding:
         mime = 'archive/%s' % encoding
     if mime is None:
@@ -96,7 +96,7 @@ class VersionedStorage(object):
     change history, using Mercurial repository as the storage method.
     """
 
-    def __init__(self, path, charset=None):
+    def __init__(self, path, charset = None):
         """
         Takes the path to the directory where the pages are to be kept.
         If the directory doen't exist, it will be created. If it's inside
@@ -110,8 +110,8 @@ class VersionedStorage(object):
             os.makedirs(self.path)
         self.repo_path = find_repo_path(self.path)
         try:
-            self.ui = mercurial.ui.ui(report_untrusted=False,
-                                      interactive=False, quiet=True)
+            self.ui = mercurial.ui.ui(report_untrusted = False,
+                                      interactive = False, quiet = True)
         except TypeError:
             # Mercurial 1.3 changed the way we setup the ui object.
             self.ui = mercurial.ui.ui()
@@ -125,7 +125,7 @@ class VersionedStorage(object):
             create = False
         self.repo_prefix = self.path[len(self.repo_path):].strip('/')
         self.repo = mercurial.hg.repository(self.ui, self.repo_path,
-                                            create=create)
+                                            create = create)
 
     def reopen(self):
         """Close and reopen the repo, to make sure we are up to date."""
@@ -133,10 +133,10 @@ class VersionedStorage(object):
         self.repo = mercurial.hg.repository(self.ui, self.repo_path)
 
     def _file_path(self, title):
-        return os.path.join(self.path, urlquote(title, safe=''))
+        return os.path.join(self.path, urlquote(title, safe = ''))
 
     def _title_to_file(self, title):
-        return os.path.join(self.repo_prefix, urlquote(title, safe=''))
+        return os.path.join(self.repo_prefix, urlquote(title, safe = ''))
 
     def _file_to_title(self, filename):
         assert filename.startswith(self.repo_prefix)
@@ -147,8 +147,8 @@ class VersionedStorage(object):
         return urlquote(title) in self.repo.dirstate
 
     def __iter__(self):
-        return self.all_pages()        
-        
+        return self.all_pages()
+
     def merge_changes(self, changectx, repo_file, text, user, parent):
         """Commits and merges conflicting changes in the repository."""
         tip_node = changectx.node()
@@ -157,20 +157,20 @@ class VersionedStorage(object):
 
         self.repo.dirstate.setparents(parent_node)
         node = self._commit([repo_file], text, user)
-        
+
         partial = lambda filename: repo_file == filename
-        
+
         # If p1 is equal to p2, there is no work to do. Even the dirstate is correct.
         p1, p2 = self.repo[None].parents()[0], self.repo[tip_node]
         if p1 == p2:
             return text
-        
+
         try:
             mercurial.merge.update(self.repo, tip_node, True, False, partial)
             msg = 'merge of edit conflict'
         except mercurial.util.Abort:
             msg = 'failed merge of edit conflict'
-        
+
         self.repo.dirstate.setparents(tip_node, node)
         # Mercurial 1.1 and later need updating the merge state
         try:
@@ -180,7 +180,7 @@ class VersionedStorage(object):
         return msg
 
     @locked_repo
-    def save_file(self, title, file_name, author=u'', comment=u'', parent=None):
+    def save_file(self, title, file_name, author = u'', comment = u'', parent = None):
         """Save an existing file as specified page."""
 
         user = author.encode('utf-8') or u'anon'.encode('utf-8')
@@ -204,20 +204,20 @@ class VersionedStorage(object):
 
     def _commit(self, files, text, user):
         try:
-            return self.repo.commit(files=files, text=text, user=user,
-                                    force=True, empty_ok=True)
+            return self.repo.commit(files = files, text = text, user = user,
+                                    force = True, empty_ok = True)
         except TypeError:
             # Mercurial 1.3 doesn't accept empty_ok or files parameter
             match = mercurial.match.exact(self.repo_path, '', list(files))
-            return self.repo.commit(match=match, text=text, user=user,
-                                    force=True)
+            return self.repo.commit(match = match, text = text, user = user,
+                                    force = True)
 
 
-    def save_data(self, title, data, author=u'', comment=u'', parent=None):
+    def save_data(self, title, data, author = u'', comment = u'', parent = None):
         """Save data as specified page."""
 
         try:
-            temp_path = tempfile.mkdtemp(dir=self.path)
+            temp_path = tempfile.mkdtemp(dir = self.path)
             file_path = os.path.join(temp_path, 'saved')
             f = open(file_path, "wb")
             f.write(data)
@@ -233,7 +233,7 @@ class VersionedStorage(object):
             except OSError:
                 pass
 
-    def save_text(self, title, text, author=u'', comment=u'', parent=None):
+    def save_text(self, title, text, author = u'', comment = u'', parent = None):
         """Save text as specified page, encoded to charset."""
 
         data = text.encode(self.charset)
@@ -251,7 +251,7 @@ class VersionedStorage(object):
             yield unicode(data, self.charset, 'replace')
 
     @locked_repo
-    def delete_page(self, title, author=u'', comment=u''):
+    def delete_page(self, title, author = u'', comment = u''):
         user = author.encode('utf-8') or 'anon'
         text = comment.encode('utf-8') or 'deleted'
         repo_file = self._title_to_file(title)
@@ -266,7 +266,7 @@ class VersionedStorage(object):
     def open_page(self, title):
         if title not in self:
             raise DocumentNotFound()
-        
+
         try:
             return open(self._file_path(title), "rb")
         except IOError:
@@ -286,7 +286,7 @@ class VersionedStorage(object):
         """Get page's revision, date, last editor and his edit comment."""
         if not title in self:
             raise DocumentNotFound()
-        
+
         filectx_tip = self._find_filectx(title)
         if filectx_tip is None:
             raise DocumentNotFound()
@@ -340,7 +340,7 @@ class VersionedStorage(object):
             return
         maxrev = filectx_tip.filerev()
         minrev = 0
-        for rev in range(maxrev, minrev-1, -1):
+        for rev in range(maxrev, minrev - 1, -1):
             filectx = filectx_tip.filectx(rev)
             date = datetime.datetime.fromtimestamp(filectx.date()[0])
             author = unicode(filectx.user(), "utf-8",
@@ -371,7 +371,7 @@ class VersionedStorage(object):
         changectx = self._changectx()
         maxrev = changectx.rev()
         minrev = 0
-        for wiki_rev in range(maxrev, minrev-1, -1):
+        for wiki_rev in range(maxrev, minrev - 1, -1):
             change = self.repo.changectx(wiki_rev)
             date = datetime.datetime.fromtimestamp(change.date()[0])
             author = unicode(change.user(), "utf-8",
@@ -388,10 +388,11 @@ class VersionedStorage(object):
 
     def all_pages(self):
         """Iterate over the titles of all pages in the wiki."""
-        status = self.repo.status(self.repo[None], None, None, True, True, True)
-        clean_files = status[6]
-        for filename in clean_files:
-            yield urlunquote(filename)
+        return [ urlunquote(filename) for filename in self.repo.dirstate]
+        #status = self.repo.status(self.repo[None], None, None, True, True, True)
+        #clean_files = status[6]
+        #for filename in clean_files:
+        #    yield
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""
@@ -405,6 +406,6 @@ class VersionedStorage(object):
         current = self.repo.lookup('tip')
         status = self.repo.status(current, last)
         modified, added, removed, deleted, unknown, ignored, clean = status
-        for filename in modified+added+removed+deleted:
+        for filename in modified + added + removed + deleted:
             if filename.startswith(self.repo_prefix):
                 yield self._file_to_title(filename)

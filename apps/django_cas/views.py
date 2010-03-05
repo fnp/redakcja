@@ -77,8 +77,8 @@ def login(request, next_page = None, required = False):
         return HttpResponseRedirect(next_page)
     ticket = request.GET.get('ticket')
     service = _service_url(request, next_page)
-    print "TICKET", ticket
-    print "SERVICE", service
+    print "TICKET: ", ticket
+    print "SERVICE: ", service
     if ticket:
         from django.contrib import auth
         user = auth.authenticate(ticket = ticket, service = service)
