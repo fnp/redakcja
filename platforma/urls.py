@@ -11,8 +11,8 @@ urlpatterns = patterns('',
     url(r'^gallery/(?P<directory>[^/]+)$', 'wiki.views.document_gallery'),
 
     # Auth
-    url(r'^accounts/login/$', 'django_cas.views.login', name = 'login'),
-    url(r'^accounts/logout/$', 'django_cas.views.logout', name = 'logout'),
+    url(r'^accounts/login/$', 'django_cas.views.login'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout'),
 
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),
