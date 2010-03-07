@@ -94,7 +94,7 @@ function gallery(element, url) {
     element.data('images', []);
     
     function changePage(pageNumber) {        
-        $('img', element).attr('src', element.data('images')[pageNumber - 1]);
+        $('.gallery-image img', element).attr('src', element.data('images')[pageNumber - 1]);
     }
     
     function normalizeNumber(pageNumber) {
@@ -130,7 +130,7 @@ function gallery(element, url) {
     });
     
     
-    var image = $('img', element).attr('unselectable', 'on');
+    var image = $('.gallery-image img', element).attr('unselectable', 'on');
     var origin = {};
     var imageOrigin = {};
     var zoomFactor = 1;
@@ -160,7 +160,7 @@ function gallery(element, url) {
         $('.gallery-image').animate({top: 27}, 200);
     });
     
-    $('img', element).load(function() {
+    $('.gallery-image img', element).load(function() {
         image.css({width: null, height: null});
         imageDimensions = {
             width: $(this).width() * zoomFactor,
@@ -172,7 +172,7 @@ function gallery(element, url) {
         };
         
         if (!(imageDimensions.width && imageDimensions.height)) {
-            setTimeout(function() { $('img', element).load(); }, 100);
+            setTimeout(function() { $('.gallery-image img', element).load(); }, 100);
         }        
         var position = normalizePosition(
             image.position().left,

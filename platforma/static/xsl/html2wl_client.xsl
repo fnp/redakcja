@@ -33,7 +33,7 @@
         </xsl:element>
     </xsl:template>   
 
-    <xsl:template match="*[@x-node = 'out-of-flow-text']"><xsl:value-of select="." /></xsl:template>
+    <xsl:template match="*[@x-node = 'out-of-flow-text']/text()"><xsl:value-of select="." /></xsl:template>
 
     <!-- Specjalne reguły dla wersów -->
     <xsl:template match="*[@x-node = 'wers']">
@@ -71,9 +71,9 @@
             <xsl:apply-templates select="@*" />
             <xsl:apply-templates select="node()" />
         </xsl:element>
-    </xsl:template>
-
-    <xsl:template match="*[@X-NODE = 'out-of-flow-text']"><xsl:value-of select="@X-CONTENT" /></xsl:template>
+    </xsl:template>   
+    
+    <xsl:template match="*[@X-NODE = 'out-of-flow-text']/text()"><xsl:value-of select="." /></xsl:template>
 
     <!-- Specjalne reguły dla wersów -->
     <xsl:template match="*[@X-NODE = 'wers']">

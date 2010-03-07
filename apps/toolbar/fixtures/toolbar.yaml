@@ -1,0 +1,964 @@
+-   fields: {name: Akapity, position: 0, slug: akapity}
+    model: toolbar.buttongroup
+    pk: 14
+-   fields: {name: Autokorekta, position: 0, slug: autokorekta}
+    model: toolbar.buttongroup
+    pk: 2
+-   fields: {name: Bloki, position: 0, slug: bloki}
+    model: toolbar.buttongroup
+    pk: 21
+-   fields: {name: 'Dramat ', position: 0, slug: dramat}
+    model: toolbar.buttongroup
+    pk: 12
+-   fields: {name: "Elementy pocz\u0105tkowe", position: 0, slug: elementy-poczatkowe}
+    model: toolbar.buttongroup
+    pk: 13
+-   fields: {name: Mastery, position: 0, slug: mastery}
+    model: toolbar.buttongroup
+    pk: 11
+-   fields: {name: "Nag\u0142\xF3wki", position: 0, slug: naglowki}
+    model: toolbar.buttongroup
+    pk: 1
+-   fields: {name: "Pocz\u0105tek dramatu", position: 0, slug: poczatek-dramatu}
+    model: toolbar.buttongroup
+    pk: 22
+-   fields: {name: Polecenia, position: 0, slug: polecenia}
+    model: toolbar.buttongroup
+    pk: 27
+-   fields: {name: Przypisy, position: 0, slug: przypisy}
+    model: toolbar.buttongroup
+    pk: 26
+-   fields: {name: Separatory, position: 0, slug: separatory}
+    model: toolbar.buttongroup
+    pk: 16
+-   fields: {name: Style znakowe, position: 0, slug: style-znakowe}
+    model: toolbar.buttongroup
+    pk: 15
+-   fields: {name: Wersy, position: 0, slug: wersy}
+    model: toolbar.buttongroup
+    pk: 17
+-   fields:
+        group: [14, 12]
+        key: a
+        key_mod: 1
+        label: akapit
+        link: ''
+        params: '{"tag": "akap"}'
+        scriptlet: insert_tag
+        slug: akapit
+        tooltip: wstawia akapit
+    model: toolbar.button
+    pk: 39
+-   fields:
+        group: [14]
+        key: ''
+        key_mod: 0
+        label: akapit cd.
+        link: ''
+        params: '{"tag": "akap_cd"}'
+        scriptlet: insert_tag
+        slug: akapit-cd
+        tooltip: "ci\u0105g dalszy akapitu po wewn\u0105trzakapitowym wtr\u0105ceniu"
+    model: toolbar.button
+    pk: 40
+-   fields:
+        group: [14]
+        key: d
+        key_mod: 1
+        label: akapit dialogowy
+        link: ''
+        params: '{"tag": "akap_dialog"}'
+        scriptlet: insert_tag
+        slug: akapit-dialogowy
+        tooltip: wstawia akapit dialogowy
+    model: toolbar.button
+    pk: 41
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: akt
+        link: ''
+        params: '{"tag": "akt"}'
+        scriptlet: insert_tag
+        slug: akt
+        tooltip: ''
+    model: toolbar.button
+    pk: 14
+-   fields:
+        group: [13]
+        key: ''
+        key_mod: 0
+        label: autor
+        link: ''
+        params: '{"tag": "autor_utworu"}'
+        scriptlet: insert_tag
+        slug: autor
+        tooltip: ''
+    model: toolbar.button
+    pk: 32
+-   fields:
+        group: [2]
+        key: ''
+        key_mod: 0
+        label: Podstawowa
+        link: ''
+        params: '[["fulltextregexp", {"exprs": [["\ufeff", ""], ["$[\\s]*\\d+[\\s]*^",
+            ""], ["-\\s*^", ""], ["\\,\\.\\.|\\.\\,\\.|\\.\\.\\,", "..."]]}], ["lineregexp",
+            {"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+|\\s+(\")", "$1"],
+            ["(\\d)[\u2014-](\\d)", "$1--$2"], ["[\u2014]", "---"], ["<(/?)P([aert])",
+            "<$1p$2"], ["([^\\.])(\\s*)</p", "$1.$2</p"], ["([,\\.:;!\\?])([^\\s\\\\])",
+            "$1 $2"], ["([^\\s])\\s+([,\\.:;!\\?])", "$1$2"]]}]]'
+        scriptlet: macro
+        slug: basic_correction
+        tooltip: "Wykonuj\u0119 operacj\u0119 z novel-pages i poem-pages."
+    model: toolbar.button
+    pk: 4
+-   fields:
+        group: [2]
+        key: ''
+        key_mod: 0
+        label: "zamiana cudzys\u0142ow\xF3w 1"
+        link: ''
+        params: '{"exprs": [["\u00ab|\u201e", ",,"], ["\u00bb", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
+            "$1,,$2"], ["^\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
+            ",,$1"], ["(,,)\\s+|\\s+(\")", "$1"]]}'
+        scriptlet: lineregexp
+        slug: cudzyslow-francuski
+        tooltip: "zamiana \" na ,, oraz  \xABa\xBB na ,,a\""
+    model: toolbar.button
+    pk: 89
+-   fields:
+        group: [2]
+        key: ''
+        key_mod: 0
+        label: "zamiana cudzys\u0142ow\xF3w 2"
+        link: ''
+        params: '{"exprs": [["\u00bb|\u201e", ",,"], ["\u00ab", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
+            "$1,,$2"], ["^\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
+            ",,$1"], ["(,,)\\s+|\\s+(\")", "$1"]]}'
+        scriptlet: lineregexp
+        slug: cudzyslow-niemiecki
+        tooltip: "zamienia \" na ,, oraz \xBBa\xAB na ,,a\""
+    model: toolbar.button
+    pk: 77
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: "cz\u0119\u015B\u0107/ksi\u0119ga"
+        link: ''
+        params: '{"tag": "naglowek_czesc"}'
+        scriptlet: insert_tag
+        slug: czesc
+        tooltip: ''
+    model: toolbar.button
+    pk: 10
+-   fields:
+        group: [13, 22]
+        key: ''
+        key_mod: 0
+        label: dedykacja
+        link: ''
+        params: '{"tag": "dedykacja"}'
+        scriptlet: insert_tag
+        slug: dedykacja
+        tooltip: ''
+    model: toolbar.button
+    pk: 74
+-   fields:
+        group: [12]
+        key: ''
+        key_mod: 0
+        label: didaskalia
+        link: ''
+        params: '{"tag": "didaskalia"}'
+        scriptlet: insert_tag
+        slug: didaskalia
+        tooltip: ''
+    model: toolbar.button
+    pk: 62
+-   fields:
+        group: [22]
+        key: ''
+        key_mod: 0
+        label: "didaskalia pocz\u0105tkowe"
+        link: ''
+        params: '{"tag": "miejsce_czas"}'
+        scriptlet: insert_tag
+        slug: didaskalia-poczatkowe
+        tooltip: "komentarze wprowadzaj\u0105ce przed tekstem dramatu"
+    model: toolbar.button
+    pk: 79
+-   fields:
+        group: [12]
+        key: ''
+        key_mod: 0
+        label: didaskalia tekstowe
+        link: ''
+        params: '{"tag": "didask_tekst"}'
+        scriptlet: insert_tag
+        slug: didaskalia-tekstowe
+        tooltip: "didaskalia umieszczone w obr\u0119bie innego tekstu"
+    model: toolbar.button
+    pk: 63
+-   fields:
+        group: [21]
+        key: ''
+        key_mod: 0
+        label: "d\u0142ugi cyt. poet."
+        link: ''
+        params: '{"tag": "poezja_cyt"}'
+        scriptlet: insert_tag
+        slug: dlugi-cyt-poet
+        tooltip: "d\u0142ugi cytat wierszowany wyr\xF3\u017Cniony sk\u0142adem"
+    model: toolbar.button
+    pk: 67
+-   fields:
+        group: [21]
+        key: ''
+        key_mod: 0
+        label: "d\u0142ugi cytat"
+        link: ''
+        params: '{"tag": "dlugi_cyt"}'
+        scriptlet: insert_tag
+        slug: dlugi-cytat
+        tooltip: "d\u0142ugi cytat wyr\xF3\u017Cniony sk\u0142adem"
+    model: toolbar.button
+    pk: 42
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: dramat wiersz.
+        link: ''
+        params: '{"tag": "dramat_wierszowany_l"}'
+        scriptlet: insert_tag
+        slug: dramat-wiersz
+        tooltip: ''
+    model: toolbar.button
+    pk: 20
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: "dramat wiersz./w. \u0142am"
+        link: ''
+        params: '{"tag": "dramat_wierszowany_lp"}'
+        scriptlet: insert_tag
+        slug: dramat-wiersz-w-lam
+        tooltip: "dramat wierszowany o zw\u0119\u017Conej szeroko\u015Bci \u0142amu"
+    model: toolbar.button
+    pk: 22
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: "dramat wsp\xF3\u0142czesny"
+        link: ''
+        params: '{"tag": "dramat_wspolczesny"}'
+        scriptlet: insert_tag
+        slug: dramat-wspolczesny
+        tooltip: "dramat wsp\xF3\u0142czesny (proz\u0105)"
+    model: toolbar.button
+    pk: 21
+-   fields:
+        group: [13]
+        key: ''
+        key_mod: 0
+        label: "dzie\u0142o nadrz\u0119dne"
+        link: ''
+        params: '{"tag": "dzielo_nadrzedne"}'
+        scriptlet: insert_tag
+        slug: dzielo-nadrzedne
+        tooltip: ''
+    model: toolbar.button
+    pk: 38
+-   fields:
+        group: [27]
+        key: ''
+        key_mod: 0
+        label: extra
+        link: ''
+        params: '{"tag": "extra"}'
+        scriptlet: insert_tag
+        slug: extra
+        tooltip: "uwagi dotycz\u0105ce sk\u0142adu"
+    model: toolbar.button
+    pk: 96
+-   fields:
+        group: []
+        key: ''
+        key_mod: 0
+        label: Wydrukuj
+        link: print/html
+        params: '[]'
+        scriptlet: insert_tag
+        slug: htmleditor-print
+        tooltip: ''
+    model: toolbar.button
+    pk: 87
+-   fields:
+        group: [12]
+        key: k
+        key_mod: 1
+        label: kwestia
+        link: ''
+        params: '{"tag": "kwestia"}'
+        scriptlet: insert_tag
+        slug: kwestia
+        tooltip: "wstawia kwesti\u0119"
+    model: toolbar.button
+    pk: 82
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: liryka
+        link: ''
+        params: '{"tag": "liryka_l"}'
+        scriptlet: insert_tag
+        slug: liryka
+        tooltip: ''
+    model: toolbar.button
+    pk: 23
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: "liryka/w. \u0142am"
+        link: ''
+        params: '{"tag": "liryka_lp"}'
+        scriptlet: insert_tag
+        slug: liryka-w-lam
+        tooltip: "utw\xF3r liryczny o zw\u0119\u017Conej szeroko\u015Bci \u0142amu"
+    model: toolbar.button
+    pk: 24
+-   fields:
+        group: [22]
+        key: ''
+        key_mod: 0
+        label: "lista os\xF3b"
+        link: ''
+        params: '{"tag": "lista_osob"}'
+        scriptlet: insert_tag
+        slug: lista-osob
+        tooltip: "lista os\xF3b poprzedzaj\u0105ca tekst dramatu"
+    model: toolbar.button
+    pk: 93
+-   fields:
+        group: [22]
+        key: ''
+        key_mod: 0
+        label: 'typ osoby '
+        link: ''
+        params: '{"tag": "lista_osoba", "attrs": {"typ": ""}}'
+        scriptlet: insert_tag
+        slug: lista-osob-pole
+        tooltip: osoby z takim samym opisem
+    model: toolbar.button
+    pk: 78
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: matemat.
+        link: ''
+        params: '{"tag": "mat"}'
+        scriptlet: insert_tag
+        slug: matemat
+        tooltip: "wyra\u017Cenia matematyczne lub zmienne symboliczne"
+    model: toolbar.button
+    pk: 47
+-   fields:
+        group: [13, 22]
+        key: ''
+        key_mod: 0
+        label: motto
+        link: ''
+        params: '{"tag": "motto"}'
+        scriptlet: insert_tag
+        slug: motto
+        tooltip: ''
+    model: toolbar.button
+    pk: 75
+-   fields:
+        group: [13, 22]
+        key: ''
+        key_mod: 0
+        label: motto podpis
+        link: ''
+        params: '{"tag": "motto_podpis"}'
+        scriptlet: insert_tag
+        slug: motto-podpis
+        tooltip: ''
+    model: toolbar.button
+    pk: 37
+-   fields:
+        group: [12]
+        key: ''
+        key_mod: 0
+        label: "nag\u0142\xF3wek kwestii"
+        link: ''
+        params: '{"tag": "naglowek_osoba"}'
+        scriptlet: insert_tag
+        slug: naglowek-kwestii
+        tooltip: "nag\u0142\xF3wek kwestii - nazwa osoby"
+    model: toolbar.button
+    pk: 16
+-   fields:
+        group: [22]
+        key: ''
+        key_mod: 0
+        label: "nag\u0142\xF3wek listy"
+        link: ''
+        params: '{"tag": "naglowek_listy"}'
+        scriptlet: insert_tag
+        slug: naglowek-listy
+        tooltip: "nag\u0142\xF3wek listy os\xF3b"
+    model: toolbar.button
+    pk: 94
+-   fields:
+        group: [13]
+        key: ''
+        key_mod: 0
+        label: nazwa utworu
+        link: ''
+        params: '{"tag": "nazwa_utworu"}'
+        scriptlet: insert_tag
+        slug: nazwa-utworu
+        tooltip: ''
+    model: toolbar.button
+    pk: 33
+-   fields:
+        group: [13]
+        key: ''
+        key_mod: 0
+        label: nota
+        link: ''
+        params: '{"tag": "nota"}'
+        scriptlet: insert_tag
+        slug: nota
+        tooltip: ''
+    model: toolbar.button
+    pk: 35
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: opowiadanie
+        link: ''
+        params: '{"tag": "opowiadanie"}'
+        scriptlet: insert_tag
+        slug: opowiadanie
+        tooltip: ''
+    model: toolbar.button
+    pk: 18
+-   fields:
+        group: [12]
+        key: b
+        key_mod: 1
+        label: osoba
+        link: ''
+        params: '{"tag": "osoba"}'
+        scriptlet: insert_tag
+        slug: osoba
+        tooltip: "wstawia nazw\u0119 osoby w didaskaliach"
+    model: toolbar.button
+    pk: 64
+-   fields:
+        group: [22]
+        key: ''
+        key_mod: 0
+        label: osoba na liscie
+        link: ''
+        params: '{"tag": "lista_osoba"}'
+        scriptlet: insert_tag
+        slug: osoba-na-liscie
+        tooltip: "nazwa osoby na liscie os\xF3b"
+    model: toolbar.button
+    pk: 95
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: "podrozdzia\u0142"
+        link: ''
+        params: '{"tag": "naglowek_podrozdzial"}'
+        scriptlet: insert_tag
+        slug: podrozdzial
+        tooltip: ''
+    model: toolbar.button
+    pk: 12
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: "podtytu\u0142"
+        link: ''
+        params: '{"tag": "podtytul"}'
+        scriptlet: insert_tag
+        slug: podtytul
+        tooltip: ''
+    model: toolbar.button
+    pk: 34
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: "powie\u015B\u0107"
+        link: ''
+        params: '{"tag": "powiesc"}'
+        scriptlet: insert_tag
+        slug: powiesc
+        tooltip: ''
+    model: toolbar.button
+    pk: 19
+-   fields:
+        group: []
+        key: ''
+        key_mod: 0
+        label: Wydrukuj
+        link: print/xml
+        params: '[]'
+        scriptlet: insert_tag
+        slug: print-xml
+        tooltip: ''
+    model: toolbar.button
+    pk: 86
+-   fields:
+        group: [26]
+        key: ''
+        key_mod: 0
+        label: przypis autorski
+        link: ''
+        params: '{"tag": "pa"}'
+        scriptlet: insert_tag
+        slug: przypis-autorski
+        tooltip: ''
+    model: toolbar.button
+    pk: 68
+-   fields:
+        group: [26]
+        key: ''
+        key_mod: 0
+        label: przypis edytorski
+        link: ''
+        params: '{"tag": "pe"}'
+        scriptlet: insert_tag
+        slug: przypis-edytorski
+        tooltip: ''
+    model: toolbar.button
+    pk: 71
+-   fields:
+        group: [26]
+        key: ''
+        key_mod: 0
+        label: przypis redaktorski
+        link: ''
+        params: '{"tag": "pr"}'
+        scriptlet: insert_tag
+        slug: przypis-redaktorski
+        tooltip: ''
+    model: toolbar.button
+    pk: 70
+-   fields:
+        group: [26]
+        key: ''
+        key_mod: 0
+        label: "przypis t\u0142umacza"
+        link: ''
+        params: '{"tag": "pt"}'
+        scriptlet: insert_tag
+        slug: przypis-tlumacza
+        tooltip: ''
+    model: toolbar.button
+    pk: 69
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: "rozdzia\u0142"
+        link: ''
+        params: '{"tag": "naglowek_rozdzial"}'
+        scriptlet: insert_tag
+        slug: rozdzial
+        tooltip: ''
+    model: toolbar.button
+    pk: 11
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: scena
+        link: ''
+        params: '{"tag": "naglowek_scena"}'
+        scriptlet: insert_tag
+        slug: scena
+        tooltip: ''
+    model: toolbar.button
+    pk: 15
+-   fields:
+        group: [16]
+        key: ''
+        key_mod: 0
+        label: asterysk
+        link: ''
+        params: '{"nocontent": "true", "tag": "sekcja_asterysk"}'
+        scriptlet: insert_tag
+        slug: sep-asterysk
+        tooltip: rozdzielenie partii tekstu asteryskiem
+    model: toolbar.button
+    pk: 54
+-   fields:
+        group: [16]
+        key: ''
+        key_mod: 0
+        label: linia
+        link: ''
+        params: '{"nocontent": "true", "tag": "separator_linia"}'
+        scriptlet: insert_tag
+        slug: sep-linia
+        tooltip: "rozdzielenie partii tekstu pozioma lini\u0105"
+    model: toolbar.button
+    pk: 55
+-   fields:
+        group: [16]
+        key: ''
+        key_mod: 0
+        label: "\u015Bwiat\u0142o"
+        link: ''
+        params: '{"nocontent": "true", "tag": "sekcja_swiatlo"}'
+        scriptlet: insert_tag
+        slug: sep-swiatlo
+        tooltip: "\u015Bwiat\u0142o rozdzielaj\u0105ce sekcje tekstu"
+    model: toolbar.button
+    pk: 53
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: "s\u0142owo obce"
+        link: ''
+        params: '{"tag": "slowo_obce"}'
+        scriptlet: insert_tag
+        slug: slowo-obce
+        tooltip: "frazy w j\u0119zykach innych ni\u017C polski/definiendum w przypisie"
+    model: toolbar.button
+    pk: 46
+-   fields:
+        group: [1]
+        key: ''
+        key_mod: 0
+        label: "\u015Br\xF3dtytu\u0142"
+        link: ''
+        params: '{"tag": "srodtytul"}'
+        scriptlet: insert_tag
+        slug: srodtytul
+        tooltip: ''
+    model: toolbar.button
+    pk: 13
+-   fields:
+        group: [2]
+        key: ''
+        key_mod: 0
+        label: "Usu\u0144 spacj\u0119"
+        link: ''
+        params: '{"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+", "$1"],
+            ["\\s+(\")", "$1"]]}'
+        scriptlet: lineregexp
+        slug: strip_whitespace
+        tooltip: "Usuwa zb\u0119dne spacj\u0119 z dokumentu."
+    model: toolbar.button
+    pk: 3
+-   fields:
+        group: [12, 17]
+        key: s
+        key_mod: 1
+        label: strofa
+        link: ''
+        params: '{"tag": "strofa"}'
+        scriptlet: insert_stanza
+        slug: strofa
+        tooltip: "wstawia strof\u0119"
+    model: toolbar.button
+    pk: 81
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: "tag g\u0142\xF3wny"
+        link: ''
+        params: '{"tag": "utwor"}'
+        scriptlet: insert_tag
+        slug: tag-glowny
+        tooltip: ''
+    model: toolbar.button
+    pk: 17
+-   fields:
+        group: [2]
+        key: u
+        key_mod: 5
+        label: "A<sup>\u2193</sup>"
+        link: ''
+        params: '[]'
+        scriptlet: lowercase
+        slug: tolowercase
+        tooltip: "Zamie\u0144 wielkie litery na ma\u0142e"
+    model: toolbar.button
+    pk: 76
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: "tytu\u0142 dzie\u0142a"
+        link: ''
+        params: '{"tag": "tytul_dziela"}'
+        scriptlet: insert_tag
+        slug: tytul-dziela
+        tooltip: ''
+    model: toolbar.button
+    pk: 92
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: "tytu\u0142 dzie\u0142a typ 1"
+        link: ''
+        params: '{"tag": "tytul_dziela", "attrs": {"typ": "1"}}'
+        scriptlet: insert_tag
+        slug: tytul-dziela-typ
+        tooltip: "tytu\u0142 dzie\u0142a w cytowanym tytule dzie\u0142a"
+    model: toolbar.button
+    pk: 45
+-   fields:
+        group: [27]
+        key: ''
+        key_mod: 0
+        label: uwaga
+        link: ''
+        params: '{"tag": "uwaga"}'
+        scriptlet: insert_tag
+        slug: uwaga
+        tooltip: 'uwagi redaktorsko-korektorskie '
+    model: toolbar.button
+    pk: 51
+-   fields:
+        group: [14, 17]
+        key: ''
+        key_mod: 0
+        label: wers akap.
+        link: ''
+        params: '{"tag": "wers_akap"}'
+        scriptlet: insert_tag
+        slug: wers-akap
+        tooltip: "wers rozpoczynaj\u0105cy si\u0119 wci\u0119ciem akapitowym"
+    model: toolbar.button
+    pk: 83
+-   fields:
+        group: [12, 17]
+        key: ''
+        key_mod: 0
+        label: wers cd.
+        link: ''
+        params: '{"tag": "wers_cd"}'
+        scriptlet: insert_tag
+        slug: wers-cd
+        tooltip: "cz\u0119\u015B\u0107 wersu przeniesiona do innego wiersza"
+    model: toolbar.button
+    pk: 85
+-   fields:
+        group: [12, 17]
+        key: w
+        key_mod: 1
+        label: "wers mocno wci\u0119ty"
+        link: ''
+        params: '{"tag": "wers_wciety", "attrs": {"typ": ""}}'
+        scriptlet: insert_tag
+        slug: wers-mocno-wciety
+        tooltip: "argumenty wersu wci\u0119tego: od 2 do 6"
+    model: toolbar.button
+    pk: 84
+-   fields:
+        group: [12, 17]
+        key: q
+        key_mod: 1
+        label: "wers wci\u0119ty"
+        link: ''
+        params: '{"tag": "wers_wciety", "attrs": {"typ": "1"}}'
+        scriptlet: insert_tag
+        slug: wers-wciety
+        tooltip: "wstawia wers wci\u0119ty"
+    model: toolbar.button
+    pk: 91
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: www
+        link: ''
+        params: '{"tag": "www"}'
+        scriptlet: insert_tag
+        slug: www
+        tooltip: ''
+    model: toolbar.button
+    pk: 48
+-   fields:
+        group: [15]
+        key: ''
+        key_mod: 0
+        label: "wyr\xF3\u017Cnienie"
+        link: ''
+        params: '{"tag": "wyroznienie"}'
+        scriptlet: insert_tag
+        slug: wyroznienie
+        tooltip: "wyr\xF3\u017Cnienie autorskie"
+    model: toolbar.button
+    pk: 44
+-   fields:
+        group: [11]
+        key: ''
+        key_mod: 0
+        label: wywiad
+        link: ''
+        params: '{"tag": "wywiad"}'
+        scriptlet: insert_tag
+        slug: wywiad
+        tooltip: ''
+    model: toolbar.button
+    pk: 25
+-   fields:
+        group: [21]
+        key: ''
+        key_mod: 0
+        label: "wywiad odpowied\u017A"
+        link: ''
+        params: '{"tag": "wywiad_odp"}'
+        scriptlet: insert_tag
+        slug: wywiad-odpowiedz
+        tooltip: ''
+    model: toolbar.button
+    pk: 73
+-   fields:
+        group: [21]
+        key: ''
+        key_mod: 0
+        label: wywiad pytanie
+        link: ''
+        params: '{"tag": "wywiad_pyt"}'
+        scriptlet: insert_tag
+        slug: wywiad-pytanie
+        tooltip: ''
+    model: toolbar.button
+    pk: 72
+-   fields:
+        group: [2]
+        key: ''
+        key_mod: 0
+        label: "Zamie\u0144 dywiz"
+        link: ''
+        params: '{"exprs": [["(\\s)-(\\s)", "$1---$2"], ["^(\\s*)-(\\s)", "$1---$2"],
+            ["(\\s)-(\\s*)$", "$1---$2"], ["(\\d)[\u2014\u2013\u2010-](\\d)", "$1--$2"],
+            ["\u2014\u2013\u2010", "---"]]}'
+        scriptlet: lineregexp
+        slug: zamien_dywiz
+        tooltip: "Zamienia '\u2014' na '---', oraz '1\u20142' na '1--2'."
+    model: toolbar.button
+    pk: 2
+-   fields:
+        group: [16]
+        key: ''
+        key_mod: 0
+        label: "zast\u0119pnik wersu"
+        link: ''
+        params: '{"tag": "zastepnik_wersu"}'
+        scriptlet: insert_tag
+        slug: zastepnik-wersu
+        tooltip: wykropkowanie wersu
+    model: toolbar.button
+    pk: 56
+-   fields: {code: "var texteditor = panel.texteditor;\nvar text = texteditor.selection();\n\
+            var start_tag = '<'+params.tag;\nfor (var attr in params.attrs) {\n  \
+            \  start_tag += ' '+attr+'=\"' + params.attrs[attr] + '\"';\n};\nstart_tag\
+            \ += '>';\nvar end_tag = '</'+params.tag+'>';\n\nif(text.length > 0) {\n\
+            // tokenize\nvar output = ''\nvar token = ''\nfor(var index=0; index <\
+            \ text.length; index++)\n{\n    if (text[index].match(/\\s/)) { // whitespace\n\
+            \        token += text[index];\n    }\n    else { // character\n     \
+            \   output += token;\n        if(output == token) output += start_tag;\n\
+            \        token = ''\n        output += text[index];\n    }\n}\n\nif( output[output.length-1]\
+            \ == '\\\\' ) {\n    output = output.substr(0, output.length-1) + end_tag\
+            \ + '\\\\';\n} else {\n    output += end_tag;\n}\noutput += token;\n}\n\
+            else {\n output = start_tag + end_tag;\n}\n\ntexteditor.replaceSelection(output);\n\
+            \nif (text.length == 0) {\n    var pos = texteditor.cursorPosition();\n\
+            \    texteditor.selectLines(pos.line, pos.character + params.tag.length\
+            \ + 2);\n}\n\npanel.fireEvent('contentChanged');"}
+    model: toolbar.scriptlet
+    pk: insert_tag
+-   fields: {code: "editor.showPopup('generic-info', 'Przetwarzanie zaznaczonego tekstu...',\
+            \ '', -1);\n\nvar cm = panel.texteditor;\nvar exprs = $.map(params.exprs,\
+            \ function(expr) {\n\n    var opts = \"g\";\n\n    if(expr.length > 2)\n\
+            \n        opts = expr[2];\n\n    return {rx: new RegExp(expr[0], opts),\
+            \ repl: expr[1]};\n\n});\n\n\n\nvar partial = true;\n\nvar text = cm.selection();\n\
+            \n\n\nif(!text) {\n\n    var cpos = cm.cursorPosition();\n\n    cpos.line\
+            \ = cm.lineNumber(cpos.line)\n\n    cm.selectLines(cm.firstLine(), 0,\
+            \ cm.lastLine(), 0);\n\n    text = cm.selection();\n\n    partial = false;\n\
+            \n}\n\n\n\nvar changed = 0;\nvar lines = text.split('\\n');\nvar lines\
+            \ = $.map(lines, function(line) { \n    var old_line = line;\n    $(exprs).each(function()\
+            \ { \n        var expr = this;\n        line = line.replace(expr.rx, expr.repl);\n\
+            \    });\n\n    if(old_line != line) changed += 1;\n    return line;\n\
+            });\n\nif(changed > 0) \n{\n    cm.replaceSelection( lines.join('\\n')\
+            \ );\n    panel.fireEvent('contentChanged');\n    editor.showPopup('generic-yes',\
+            \ 'Zmieniono ' + changed + ' linii.', 1500);\n    editor.advancePopupQueue();\n\
+            }\nelse {\n    editor.showPopup('generic-info',  'Brak zmian w tek\u015B\
+            cie', 1500);\n    editor.advancePopupQueue();\n}\n\nif(!partial)\n   \
+            \ cm.selectLines( cm.nthLine(cpos.line), cpos.character )"}
+    model: toolbar.scriptlet
+    pk: lineregexp
+-   fields: {code: "editor.showPopup('generic-info', 'Przetwarzanie zaznaczonego tekstu...',\
+            \ '', -1);\n$.log(editor, panel, params);\nvar cm = panel.texteditor;\n\
+            var exprs = $.map(params.exprs, function(expr) {\n    var opts = \"mg\"\
+            ;\n    if(expr.length > 2)\n        opts = expr[2];\n\n    return {rx:\
+            \ new RegExp(expr[0], opts), repl: expr[1]};\n});\n\nvar partial = true;\n\
+            var text = cm.selection();\n\nif(!text) {\n    var cpos = cm.cursorPosition();\n\
+            \    cpos.line = cm.lineNumber(cpos.line)\n    cm.selectLines(cm.firstLine(),\
+            \ 0, cm.lastLine(), 0);\n\n    text = cm.selection();\n    partial = false;\n\
+            }\n\nvar original = text;\n$(exprs).each(function() { \n    text = text.replace(this.rx,\
+            \ this.repl);\n});\n\nif( original != text) \n{    \n    cm.replaceSelection(text);\n\
+            \    panel.fireEvent('contentChanged');\n    editor.showPopup('generic-yes',\
+            \ 'Zmieniono tekst' );\n    editor.advancePopupQueue();\n}\nelse {\n \
+            \   editor.showPopup('generic-info', 'Brak zmian w tek\u015Bcie.');\n\
+            \    editor.advancePopupQueue();\n}\n\nif(!partial) {\n    cm.selectLines(\
+            \ cm.nthLine(cpos.line), cpos.character );\n}"}
+    model: toolbar.scriptlet
+    pk: fulltextregexp
+-   fields: {code: "$(params).each(function() {\n    $.log(this[0], this[1]);\n  \
+            \  editor.callScriptlet(this[0], panel, this[1]);\n\n});"}
+    model: toolbar.scriptlet
+    pk: macro
+-   fields: {code: "var cm = panel.texteditor;\r\nvar text = cm.selection();\r\n\r\
+            \nif(!text) return;\r\nvar repl = '';\r\nvar lcase = text.toLowerCase();\r\
+            \nvar ucase = text.toUpperCase();\r\n\r\nif(lcase == text) repl = ucase;\
+            \ /* was lowercase */\r\nelse if(ucase != text) repl = lcase; /* neither\
+            \ lower- or upper-case */\r\nelse { /* upper case -> title-case */\r\n\
+            \   var words = $(lcase.split(/\\s/)).map(function() { \r\n        if(this.length\
+            \ > 0) { return this[0].toUpperCase() + this.slice(1); } else { return\
+            \ ''}\r\n   }); \r\n   repl = words.join(' ');\r\n} \r\n\r\nif(repl !=\
+            \ text) {\r\n    cm.replaceSelection(repl);\r\n    panel.fireEvent('contentChanged');\r\
+            \n};"}
+    model: toolbar.scriptlet
+    pk: lowercase
+-   fields: {code: "var texteditor = panel.texteditor;\r\nvar text = texteditor.selection();\r\
+            \n\r\nif(text) {\r\n  var verses = text.split('\\n');\r\n  var text =\
+            \ ''; var buf = ''; var ebuf = '';\r\n  var first = true;\r\n\r\n  for(var\
+            \ i=0;  i < verses.length; i++) {\r\n    verse = verses[i].replace(/^\\\
+            s+/, \"\").replace(/\\s+$/, \"\");   \r\n    if(verse) {\r\n      text\
+            \ += (buf ? buf + '/\\n' : '') + ebuf;\r\n      buf = (first ? '<strofa>\\\
+            n' : '') + verses[i];\r\n      ebuf = '';\r\n      first = false;\r\n\
+            \    } else {    \r\n      ebuf += '\\n' + verses[i];\r\n    }\r\n  };\r\
+            \n  text = text + buf + '\\n</strofa>' + ebuf; \r\n  texteditor.replaceSelection(text);\r\
+            \n}\r\n\r\nif (!text) {\r\n    var pos = texteditor.cursorPosition();\r\
+            \n    texteditor.selectLines(pos.line, pos.character + 6 + 2);\r\n}\r\n\
+            \r\n\r\n\r\n\r\n\r\n\r\n\r\npanel.fireEvent('contentChanged');"}
+    model: toolbar.scriptlet
+    pk: insert_stanza
+

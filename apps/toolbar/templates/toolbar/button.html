@@ -5,7 +5,7 @@
         ui:action="{{ button.scriptlet.name }}"
         ui:action-params="{{ button.params|escape }}"
         {% if button.key %}ui:hotkey="{{ button.hotkey_code }}"{% endif %}
-        {% if button.tooltip %}ui:tooltip="{{ button.tooltip }}"{% endif %} >
+        {% if button.tooltip %}title="{{ button.full_tooltip }}"{% endif %} >
         {{ button.label|safe }}
 </button>
 {% if button.link %}

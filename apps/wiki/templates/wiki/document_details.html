@@ -5,9 +5,11 @@
     <link rel="stylesheet" href="{{STATIC_URL}}css/master.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="stylesheet" href="{{STATIC_URL}}css/jquery.autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
     <script type="text/javascript" charset="utf-8">
         var STATIC_URL = '{{STATIC_URL}}';
     </script>
+    
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{STATIC_URL}}js/jquery.autocomplete.js" type="text/javascript" charset="utf-8"></script>
@@ -59,9 +61,13 @@
             <div class="vsplitbar"> </div>
             <div id="sidebar">
                 <div class="toolbar">
-                    <button class="previous-page">Poprzednia</button>
+                    <button class="previous-page">
+                    	<img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
+                    </button>
                     <input type="text" size="3" maxlength="3" value="1" class="page-number" />
-                    <button class="next-page">Następna</button>
+                    <button class="next-page">
+                    	<img src="{{STATIC_URL}}icons/go-next.png" alt="Następna" title="Następna"/>
+                    </button>
                     <button class="zoom-in">Powiększ</button>
                     <button class="zoom-out">Pomniejsz</button>
                     <button class="change-gallery">Galeria</button>
