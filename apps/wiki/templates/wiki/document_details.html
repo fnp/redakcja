@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load toolbar_tags %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{{STATIC_URL}}css/master.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="{{STATIC_URL}}css/jquery.autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script type="text/javascript" charset="utf-8">
+        var STATIC_URL = '{{STATIC_URL}}';
+    </script>
+    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.autocomplete.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/jquery.elastic.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/xslt.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}js/main.js" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
+
+{% block maincontent %}
+        <div id="loading-overlay">
+            <div id="loading-message"><img src="{{STATIC_URL}}img/spinner.gif" /><p>Ładowanie</p></div>
+        </div>
+        <div id="document-meta" style="display:none">
+        {% for k, v in document.meta.items %}
+            <div class="{{ k }}">{{ v}}</div>
+        {% endfor %}
+        </div>
+        <div id="header">
+            <div id="tools" style="float: right;">
+                {% include "registration/head_login.html" %}
+                Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
+            <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
+            <ol id="tabs">
+                <li id="simple-view-tab"><span id="document-name">{{ document.name }}</span></li>
+                <li id="source-view-tab" class="active">Kod źródłowy</li>
+            </ol>
+            <div style="clear: both"></div>
+        </div>
+        <div id="splitter">
+            <div id="editor">
+                <div id="source-editor">
+                    {% toolbar %}
+                    <textarea name="text" id="id_text">{{ document.plain_text }}</textarea>
+                    <input type="hidden" name="name" value="{{ document.name }}" />
+                    <input type="hidden" name="author" value="annonymous" />
+                    <input type="hidden" name="comment" value="no comment" />
+                    <input type="hidden" name="revision" value="{{ document.revision }}" />
+                </div>
+                <div id="simple-editor" style="display: none">
+                    <div class="toolbar">
+                        <button id="insert-theme-button">Wstaw motyw</button> <button id="insert-annotation-button">Wstaw przypis</button>
+                        <div class="toolbar-end"> </div>
+                    </div>
+                    <div id="html-view" class="htmlview">
+                    </div>
+                </div>
+            </div>
+            <div class="vsplitbar"> </div>
+            <div id="sidebar">
+                <div class="toolbar">
+                    <button class="previous-page">Poprzednia</button>
+                    <input type="text" size="3" maxlength="3" value="1" class="page-number" />
+                    <button class="next-page">Następna</button>
+                    <button class="zoom-in">Powiększ</button>
+                    <button class="zoom-out">Pomniejsz</button>
+                    <button class="change-gallery">Galeria</button>
+                    <div class="toolbar-end"> </div>
+                </div>
+                <div class="toolbar" id="change-gallery-toolbar">
+                    <input type="text" value="" class="chosen-gallery" />
+                    <button class="change-gallery-ok">Zmień galerię</button>
+                    <button class="change-gallery-cancel">Anuluj</button>
+                    <div class="toolbar-end"> </div>    
+                </div>
+                <div class="gallery-image">
+                    <img src="" />
+                </div>
+            </div>
+        </div>
+        <div id="save-dialog" style="display: none; text-align: left">
+            <label for="komentarz" style="display: block">Opis zmian:</label>
+            <textarea name="komentarz" id="komentarz" style="display: block; width: 100%"></textarea>
+            <button id="save-ok">Zapisz</button> <button id="save-cancel">Anuluj</button>
+        </div>
+{% endblock %}
