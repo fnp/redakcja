@@ -145,7 +145,7 @@ function gallery(element, url) {
     });
     $('.change-gallery', element).click(function() {
         $('.chosen-gallery').val($('#document-meta .gallery').html() || '/platforma/gallery/');
-        $('.gallery-image').animate({top: 53}, 200);
+        $('.gallery-image').animate({top: 60}, 200);
         $('.chosen-gallery').focus();
     });
     $('.change-gallery-ok', element).click(function() {
@@ -154,10 +154,10 @@ function gallery(element, url) {
         }
         $('#document-meta .gallery').html($('.chosen-gallery').val());
         updateGallery($('.chosen-gallery').val());
-        $('.gallery-image').animate({top: 27}, 200);
+        $('.gallery-image').animate({top: 30}, 200);
     });
     $('.change-gallery-cancel', element).click(function() {
-        $('.gallery-image').animate({top: 27}, 200);
+        $('.gallery-image').animate({top: 30}, 200);
     });
     
     $('.gallery-image img', element).load(function() {
@@ -269,14 +269,14 @@ function gallery(element, url) {
                 element.data('images', data);
                 pn.val(1);
                 pn.change();
-                $('img', element).show();
+                $('.gallery-image img', element).show();
             },
             
             error: function(data) {
                 element.data('images', []);
                 pn.val(1);
                 pn.change();
-                $('img', element).hide();
+                $('.gallery-image img', element).hide();
             }
         });
     }
@@ -393,6 +393,23 @@ function html(element) {
 
         return true;
     }
+	
+	var ANNOT_ALLOWED = ['wyroznienie'];
+	
+	function html2plainText(fragment) {
+		var text = "";
+		
+		$(fragment.childNodes).each(function() {
+			if(this.nodeType == 3) // textNode
+			    text += this.nodeValue;
+			else if (this.nodeType == 1 
+			    && $.inArray($(this).attr('x-node'), ANNOT_ALLOWED) != -1 ){
+				text += html2plainText(this);				
+			}			
+		});
+		
+		return text;		
+	}
     
     function addAnnotation()
     {
@@ -418,7 +435,10 @@ function html(element) {
             return false;
         }
 
-        var text = range.toString();
+		// BUG #273 - selected text can contain themes, which should be omited from
+		// defining term
+        var text = html2plainText( range.cloneContents() ); 
+		
         var tag = $('<span></span>');
         range.collapse(false);
         range.insertNode(tag[0]);

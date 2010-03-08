@@ -70,15 +70,19 @@
                     </button>
                     <button class="zoom-in">Powiększ</button>
                     <button class="zoom-out">Pomniejsz</button>
-                    <button class="change-gallery">Galeria</button>
+					{% if request.user.is_staff %}
+                    <button class="change-gallery">Opcje</button>
+					{% endif %}
                     <div class="toolbar-end"> </div>
                 </div>
+				{% if request.user.is_staff %}
                 <div class="toolbar" id="change-gallery-toolbar">
                     <input type="text" value="" class="chosen-gallery" />
                     <button class="change-gallery-ok">Zmień galerię</button>
                     <button class="change-gallery-cancel">Anuluj</button>
                     <div class="toolbar-end"> </div>    
                 </div>
+				{% endif %}
                 <div class="gallery-image">
                     <img src="" />
                 </div>

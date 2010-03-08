@@ -125,10 +125,17 @@ body {
     display: block;
     float: left;
     margin: 4px 0 2px 0;
-    padding: 0 5px 2px 5px;
+    padding: 2px 5px;
     border: none;
     background: none;
 }
+
+.toolbar button img {
+	margin: 0;
+	padding: 0;	
+	margin-bottom: -3px;
+}
+
 
 .toolbar select {
     float: left;
@@ -142,7 +149,8 @@ body {
     float: left;
     font-size: 11px;
     padding: 0;
-    margin: 2px 5px 0 5px;
+    margin: 4px 5px 0px 5px;
+	vertical-align:baseline;
 }
 
 .toolbar-end {
@@ -190,7 +198,7 @@ p { margin: 0;}
 
 .gallery-image {
     position: absolute;
-    top: 27px;
+    top: 30px;
     right: 0;
     bottom: 0;
     left: 0;
