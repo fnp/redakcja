@@ -473,12 +473,20 @@ function html(element) {
 
         // for now allow only 1 range
         if(n > 1) {
-            window.alert("Zaznacz jeden obszar");
+            window.alert("Zaznacz jeden obszar.");
             return false;
         }
+		 
 
         // remember the selected range
         var range = selection.getRangeAt(0);
+		
+		
+		if( $(range.startContainer).is('.html-editarea') 
+		 || $(range.endContainer).is('.html-editarea') ) {
+		 	window.alert("Motywy można oznaczać tylko na tekście nie otwartym do edycji. \n Zamknij edytowany fragment i spróbuj ponownie.");
+            return false;
+		 }		 
 
         // verify if the start/end points make even sense -
         // they must be inside a x-node (otherwise they will be discarded)
@@ -682,6 +690,7 @@ $(function() {
         },
         iframeClass: 'xml-iframe',
         textWrapping: true,
+		lineNumbers: true,
         tabMode: 'spaces',
         indentUnit: 0,
         initCallback: function(editor) {
@@ -766,7 +775,7 @@ $(function() {
                 event.preventDefault();
                 var params = eval("(" + $(this).attr('ui:action-params') + ")");
                 scriptletCenter.scriptlets[$(this).attr('ui:action')](editor, params);
-            });
+            });			
 
             $('.toolbar select').change(function() {
                 var slug = $(this).val();

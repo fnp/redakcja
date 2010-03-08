@@ -144,6 +144,7 @@ class VersionedStorage(object):
         return urlunquote(name)
 
     def __contains__(self, title):
+        print "Checking ", title
         return urlquote(title) in self.repo.dirstate
 
     def __iter__(self):
@@ -270,6 +271,8 @@ class VersionedStorage(object):
         try:
             return open(self._file_path(title), "rb")
         except IOError:
+            import traceback
+            print traceback.print_exc()
             raise DocumentNotFound()
 
     def page_file_meta(self, title):

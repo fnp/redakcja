@@ -122,19 +122,6 @@ function ScriptletCenter()
         }
     }.bind(this);
 
-    this.scriptlets['codemirror_fontsize'] = function(context, params) {
-        var frameBody = this.XMLEditorBody(context);
-
-        if(params.fontSize) {
-            frameBody.css('font-size', params.fontSize);
-        }
-        else {
-            var old_size = parseInt(frameBody.css('font-size'), 10);
-            frameBody.css('font-size', old_size + (params.change || 0) );
-        }
-        
-    }.bind(this);
-
     this.scriptlets['fulltextregexp'] = function(context, params) {
         var exprs = $.map(params.exprs, function(expr) {
             var opts = "mg";

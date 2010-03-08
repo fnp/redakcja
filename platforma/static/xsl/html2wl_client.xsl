@@ -32,6 +32,10 @@
             <xsl:apply-templates select="node()" />
         </xsl:element>
     </xsl:template>   
+	
+	<xsl:template match="*[@x-node = 'out-of-flow-text']">
+		<xsl:apply-templates select="child::node()" />
+	</xsl:template>
 
     <xsl:template match="*[@x-node = 'out-of-flow-text']/text()"><xsl:value-of select="." /></xsl:template>
 
@@ -72,6 +76,10 @@
             <xsl:apply-templates select="node()" />
         </xsl:element>
     </xsl:template>   
+	
+	<xsl:template match="*[@X-NODE = 'out-of-flow-text']" priority="1">
+		<xsl:apply-templates select="child::node()" />
+	</xsl:template>
     
     <xsl:template match="*[@X-NODE = 'out-of-flow-text']/text()"><xsl:value-of select="." /></xsl:template>
 

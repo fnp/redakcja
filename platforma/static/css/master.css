@@ -255,3 +255,28 @@ p { margin: 0;}
     margin-right: 10px;
     margin-top: -6px;
 }
+
+
+.xml-iframe {
+	margin-left: 40px;	
+}
+
+/*
+ * CodeMirror 
+ */
+.CodeMirror-line-numbers {
+	background: #e6ddd5;
+	padding-top: 0.35em;	
+}
+
+.CodeMirror-line-numbers div {
+	padding: 0;
+	padding-right: 4px;
+	
+	font-size: 8pt;
+	line-height: 17px;
+	text-align: right;
+	
+	width: 40px;		
+} 
+ 

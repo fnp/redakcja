@@ -18,8 +18,9 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
     try:
         document = storage.get(name)
     except DocumentNotFound:
-        document = Document(storage, name = name, text = '')
-
+        # WTF ?!
+        raise Http404 
+        # document = Document(storage, name = name, text = '')
 
     if request.method == 'POST':
         form = DocumentForm(request.POST, instance = document)
