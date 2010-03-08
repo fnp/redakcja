@@ -301,7 +301,11 @@ function transform(editor, callback) {
                     callback();
                 }
             }, error: function(text) {
-                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + text + '</pre>');
+				var message = $('<pre></pre>');
+				message.text(text);
+                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' + 
+				    message.html() + '</pre>');
+					
                 $.unblockUI();
                 if (callback) {
                     callback();
