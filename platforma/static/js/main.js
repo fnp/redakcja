@@ -515,7 +515,7 @@ function html(element) {
                 etag.replaceWith(text);
                 xml2html({
                     xml: '<motyw id="m'+id+'"></motyw>',
-                    success: function(text) {
+                    success: function(text) {						
                         mtag = $('<span></span>');
                         spoint.insertNode(mtag[0]);
                         mtag.replaceWith(text);
@@ -599,8 +599,14 @@ function html(element) {
                 
                 function save(argument) {
                     var nodeName = $box.attr('x-node') || 'pe';
+					var insertedText = $('textarea', $overlay).val();
+					
+					if ($origin.is('.motyw')) {
+						insertedText = insertedText.replace(/,\s*$/, '');
+					}
+					
                     xml2html({
-                        xml: '<' + nodeName + '>' + $('textarea', $overlay).val() + '</' + nodeName + '>',
+                        xml: '<' + nodeName + '>' + insertedText + '</' + nodeName + '>',
                         success: function(element) {
                             $box.html($(element).html());
                             $overlay.remove();
