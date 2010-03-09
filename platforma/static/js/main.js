@@ -676,6 +676,78 @@ function html(element) {
     });
 }
 
+/*
+ * History
+ */
+
+function refreshHistory(callback){
+	$.blockUI({
+		message: 'Odświeżanie historii...'
+	});
+	
+	$.ajax({
+		url: document.location.href + '/history',
+        dataType: 'json',
+		error: function() {
+			$('#history-view .message-box').html('Nie udało się odświeżyć historii').show();
+			$.unblockUI();		
+		},
+		success: function(data) {
+			$('#history-view .message-box').hide();
+			var changes_list = $('#changes-list');
+			changes_list.html('');
+			
+			$.each(data, function() {
+				var val = this[0];
+				changes_list.append('<tr>'
+					+'<td><input type="radio" name="rev_from" value="'+val+'">'
+						+ '<input type="radio" name="rev_to" value="'+val+'">'
+					+'<td>'+ this[0]+'</td>'
+					+'<td>'+ this[3]+'</td>'
+					+'<td>'+ this[2]+'</td>'
+					+'<td>'+ this[1]+'</td></tr>')			
+			});							
+			$.unblockUI();	
+			callback();
+		}
+	});
+};
+
+function historyDiff(callback) {
+	var changelist = $('#changes-list');
+	var rev_a = $("input[name='rev_from']:checked", changelist);
+	var rev_b = $("input[name='rev_to']:checked", changelist);
+	
+	if (rev_a.length != 1 || rev_b.length != 1) {
+		window.alert("Musisz zaznaczyć dwie wersje do porównania.");
+		return false;
+	}
+	
+	if (rev_a.val() == rev_b.val()) {
+		window.alert("Musisz zaznaczyć dwie różne wersje do porównania.");
+		return false;
+	}
+			
+	$.blockUI({
+		message: 'Wczytywanie porównania...'
+	});
+	
+	$.ajax({
+		url: document.location.href + '/diff/'+rev_a.val() + '/'+ rev_b.val(),
+        dataType: 'html',
+		error: function() {
+			$.unblockUI();
+			window.alert('Nie udało się wykonać porównania :(.')					
+		},
+		success: function(data) {
+			$.unblockUI();			
+			var diffview = $('#diff-view');			
+			diffview.html(data);
+			diffview.show();							
+		}
+	});
+}
+	
 
 $(function() {
     gallery('#sidebar', $('#document-meta .gallery').html());
@@ -690,7 +762,7 @@ $(function() {
         },
         iframeClass: 'xml-iframe',
         textWrapping: true,
-		lineNumbers: true,
+		/* lineNumbers: true, */
         tabMode: 'spaces',
         indentUnit: 0,
         initCallback: function(editor) {
@@ -747,29 +819,31 @@ $(function() {
             $('#save-cancel').click(function() {
                 $.unblockUI();
             });
-            
-            function changeTab(callback) {
-                if ($('#simple-view-tab').hasClass('active')) {
-                    return;
-                }
-                $('#simple-view-tab').addClass('active');
-                $('#source-view-tab').removeClass('active');
-                $('#source-editor').hide();
-                $('#simple-editor').show();
+            			
+            var tabs = $('ol#tabs li');
+			
+			tabs.click(function(event, callback) {
+				tabs.removeClass('active');
+				$('.editor').hide();
+				$(this).addClass('active');
+				$('#' + $(this).attr('ui:related')).show();				
+				$(this).trigger('wl:tabload', callback);								
+			});	
+			
+			
+            $('#simple-view-tab').bind('wl:tabload', function(event, callback) {
                 transform(editor, callback);
-            }        
-            $('#simple-view-tab').click(function() { changeTab(); });
-            
-            $('#source-view-tab').click(function() { 
-                if ($(this).hasClass('active')) {
-                    return;
-                }
-                $(this).addClass('active');
-                $('#simple-view-tab').removeClass('active');
-                $('#simple-editor').hide();
-                $('#source-editor').show();
-                reverseTransform(editor);    
             });
+			
+			$('#source-view-tab').bind('wl:tabload', function(event, callback) {
+                reverseTransform(editor, callback);
+            });			                
+			
+			$('#history-view-tab').bind('wl:tabload', function(event, callback) {
+				refreshHistory(callback);								
+			}); 
+			
+			$('#make-diff-button').click(historyDiff);
 
             $('#source-editor .toolbar button').click(function(event) {
                 event.preventDefault();
@@ -777,7 +851,7 @@ $(function() {
                 scriptletCenter.scriptlets[$(this).attr('ui:action')](editor, params);
             });			
 
-            $('.toolbar select').change(function() {
+            $('.toolbar select').change(function(event) {
                 var slug = $(this).val();
 
                 $('.toolbar-buttons-container').hide().filter('[data-group=' + slug + ']').show();
@@ -787,7 +861,12 @@ $(function() {
             $('.toolbar-buttons-container').hide();
             $('.toolbar select').change();
 
-            changeTab(function() { $('#loading-overlay').fadeOut() }, function() { $('#loading-overlay').fadeOut() }, true)
+			
+			$('#simple-view-tab').trigger('click', 
+				function() { 
+					$('#loading-overlay').fadeOut();
+					return false; 
+				});            
         }
     });
     

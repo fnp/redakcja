@@ -34,14 +34,15 @@
                 Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
             <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
             <ol id="tabs">
-                <li id="simple-view-tab"><span id="document-name">{{ document.name }}</span></li>
-                <li id="source-view-tab" class="active">Kod źródłowy</li>
+                <li id="simple-view-tab" ui:related="simple-editor"><span id="document-name">{{ document.name }}</span></li>
+                <li id="source-view-tab" ui:related="source-editor">Kod źródłowy</li>
+				<li id="history-view-tab" ui:related="history-viewer">Historia</li>
             </ol>
             <div style="clear: both"></div>
         </div>
         <div id="splitter">
             <div id="editor">
-                <div id="source-editor">
+                <div id="source-editor" class="editor">
                     {% toolbar %}
                     <textarea name="text" id="id_text">{{ document.plain_text }}</textarea>
                     <input type="hidden" name="name" value="{{ document.name }}" />
@@ -49,7 +50,7 @@
                     <input type="hidden" name="comment" value="no comment" />
                     <input type="hidden" name="revision" value="{{ document.revision }}" />
                 </div>
-                <div id="simple-editor" style="display: none">
+                <div id="simple-editor" class="editor" style="display: none">
                     <div class="toolbar">
                         <button id="insert-theme-button">Wstaw motyw</button> <button id="insert-annotation-button">Wstaw przypis</button>
                         <div class="toolbar-end"> </div>
@@ -57,6 +58,30 @@
                     <div id="html-view" class="htmlview">
                     </div>
                 </div>
+				
+				<div id="history-viewer" class="editor" style="display: none">
+					<div class="toolbar"> </div>
+					<div id="history-view">
+						<p class="message-box" style="display:none;"></p>
+						<table>
+							<thead>			
+								<th>&nbsp;</th>					
+								<th>Numer</th>
+								<th>Opis</th>
+								<th>Użytkownik</th>
+								<th>Data</th>
+							</thead>
+							<tbody id="changes-list">																
+							</tbody>
+						</table>
+						
+						<p><button type="button" id="make-diff-button">Porównaj</button></p>
+						<!-- <p><button type="button" id="more-history-button">Więcej</button></p> -->
+						<div id="diff-view">																		
+					</div>									
+				</div>							
+							
+				</div>
             </div>
             <div class="vsplitbar"> </div>
             <div id="sidebar">

@@ -9,6 +9,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'wiki.views.document_list'),
     url(r'^gallery/(?P<directory>[^/]+)$', 'wiki.views.document_gallery'),
+    url(r'^(?P<name>[^/]+)/history$', 'wiki.views.document_history'),
+    url(r'^(?P<name>[^/]+)/diff/(?P<revA>\d+)/(?P<revB>\d+)$', 'wiki.views.document_diff'),
 
     # Auth
     url(r'^accounts/login/$', 'django_cas.views.login', name = 'login'),

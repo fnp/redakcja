@@ -22,6 +22,9 @@ class DocumentStorage(object):
 
     def all(self):
         return list(self.vstorage.all_pages())
+    
+    def history(self, title):
+        return list(self.vstorage.page_history(title))
 
     def _info(self, name):
         return self.vstorage.page_meta(name)
@@ -41,6 +44,7 @@ class Document(object):
         except DocumentNotFound:
             return - 1
 
+    @property
     def plain_text(self):
         return re.sub(self.META_REGEX, '', self.text, 1)
 

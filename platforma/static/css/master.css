@@ -23,7 +23,7 @@ body {
     cursor: e-resize;
 }
 
-#source-editor, #simple-editor {
+#source-editor, #simple-editor, #history-viewer {
     position: absolute;
     top: 25px;
     bottom: 0;
@@ -32,7 +32,7 @@ body {
     overflow: hidden;
 }
 
-#html-view {
+#html-view, #history-view {
     overflow: auto;
     position: absolute;
     top: 27px;
@@ -280,3 +280,37 @@ p { margin: 0;}
 	width: 40px;		
 } 
  
+/* DIFFS */
+ #history-view table {
+ 	width: 75%;
+	margin: 1em auto;
+	max-height: 400px;
+	overflow-y: auto;
+ }
+ 
+ #diff-view {
+ 	border: 2px solid black;
+	background: #fafafa;
+	margin: 1em auto;
+	width: 90%; 	
+ }
+ 
+ td.diff_header {
+ 	display: none;
+ }
+ 
+ td.diff_next {
+ 	display: none;
+ }
+
+ .diff_sub {
+ 	background-color: #ef4040;
+ }
+ 
+ .diff_chg {
+ 	background-color: #efef40;
+ }
+ 
+ .diff_add {
+ 	background-color: #40ef40;
+ }

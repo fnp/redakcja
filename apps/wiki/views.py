@@ -7,6 +7,17 @@ from django.utils import simplejson as json
 
 from wiki.models import storage, Document, DocumentNotFound
 from wiki.forms import DocumentForm
+from datetime import datetime
+
+# import google_diff
+import difflib
+
+
+class DateTimeEncoder(json.JSONEncoder):
+     def default(self, obj):
+         if isinstance(obj, datetime):
+             return datetime.ctime(obj) + " " + (datetime.tzname(obj) or 'GMT')
+         return json.JSONEncoder.default(self, obj)
 
 def document_list(request, template_name = 'wiki/document_list.html'):
     return direct_to_template(request, template_name, extra_context = {
@@ -26,7 +37,7 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
         form = DocumentForm(request.POST, instance = document)
         if form.is_valid():
             document = form.save()
-            return HttpResponse(json.dumps({'text': document.plain_text(), 'meta': document.meta(), 'revision': document.revision()}))
+            return HttpResponse(json.dumps({'text': document.plain_text, 'meta': document.meta(), 'revision': document.revision()}))
         else:
             return HttpResponse(json.dumps({'errors': form.errors}))
     else:
@@ -49,3 +60,17 @@ def document_gallery(request, directory):
         traceback.print_exc()
 
         raise Http404
+    
+def document_diff(request, name, revA, revB):
+    differ = difflib.HtmlDiff(wrapcolumn=60)
+     
+    docA = storage.get(name, int(revA))
+    docB = storage.get(name, int(revB))
+     
+    return HttpResponse(differ.make_table(
+                                docA.plain_text.splitlines(),
+                                docB.plain_text.splitlines() ) )                                           
+    
+    
+def document_history(reuqest, name):
+    return HttpResponse( json.dumps(storage.history(name), cls=DateTimeEncoder), mimetype='application/json')
