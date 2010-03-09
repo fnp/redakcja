@@ -659,6 +659,13 @@ function html(element) {
         if (!editable.hasClass('active')) {
             editable.addClass('active').append(button);
         }
+        if (editable.is('.annotation-inline-box')) {
+            $('*[x-annotation-box]', editable)
+                .css({width: 300, position: 'absolute', left: event.clientX - editable.offset().left + 5, top: event.clientY - editable.offset().top + 5})
+                .show();
+        } else {
+            $('*[x-annotation-box]').hide();
+        }
     });
 
     $('.motyw').live('click', function() {
