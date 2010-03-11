@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"    
     xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -5,11 +6,7 @@
     <!--
         Dokument ten opisuje jednoznaczne przekształcenie WLML 0.1 -> XHTML.
     -->        
-    <xsl:output method="xml" encoding="utf-8" indent="no" omit-xml-declaration="yes" />
-
-    <!-- <xsl:template match="/">
-        <xsl:apply-templates select="chunk|utwor" />
-    </xsl:template> -->
+    <xsl:output method="html" omit-xml-declaration="yes" encoding="utf-8" indent="no" />
 
     <!--
         Base tag for rendering a fragment of text
@@ -27,7 +24,7 @@
     <xsl:template match="utwor">
         <div>
             <xsl:call-template name="standard-attributes" />
-            <xsl:apply-templates select="child::* | text()">
+            <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
         </div>
@@ -750,8 +747,7 @@
         <xsl:param name="extra-class" />
         <xsl:attribute name="class"><xsl:value-of select="local-name()" /><xsl:text>&#x0020;</xsl:text><xsl:value-of select="$extra-class" /></xsl:attribute>
 
-        <!-- we use upper-case attribute names, so we don't have to wory about HTML parsers -->
-        <xsl:attribute name="x-node"><xsl:value-of select="name()" /></xsl:attribute>
+        <xsl:attribute name="x-node"><xsl:value-of select="local-name()" /></xsl:attribute>
 
         <xsl:if test="local-name() != name()">
             <xsl:attribute name="x-ns"><xsl:value-of select="namespace-uri()" /></xsl:attribute>
@@ -760,7 +756,7 @@
         <xsl:for-each select="@*">
             <xsl:variable name="id" select="generate-id()" />
             <xsl:attribute name="x-attr-value-{$id}"><xsl:value-of select="."/></xsl:attribute>
-            <xsl:attribute name="x-attr-qname-{$id}"><xsl:value-of select="name()"/></xsl:attribute>
+            <xsl:attribute name="x-attr-name-{$id}"><xsl:value-of select="local-name()"/></xsl:attribute>
             <xsl:if test="namespace-uri()">
                 <xsl:attribute name="x-attr-ns-{$id}"><xsl:value-of select="namespace-uri()"/></xsl:attribute>
             </xsl:if>               

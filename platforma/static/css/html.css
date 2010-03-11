@@ -9,7 +9,7 @@
     padding-left: 55px;
 }
 
-.htmlview *[x-node='rdf:RDF'] {
+.htmlview *[x-node='RDF'] {
     display: none;
 }
 

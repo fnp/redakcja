@@ -329,7 +329,8 @@ function reverseTransform(editor, cont, errorCont, dontBlock) {
     }
     setTimeout(function() {
         html2xml({
-            xml: serializer.serializeToString($('#html-view div').get(0)),
+			htmlElement: $('#html-view div').get(0),
+            /* xml: serializer.serializeToString($('#html-view div').get(0)), */
             success: function(text) {
                 editor.setCode(text);
                 if (!dontBlock) {

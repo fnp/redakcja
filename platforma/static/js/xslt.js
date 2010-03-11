@@ -71,7 +71,7 @@ function serialize(element, mode) {
     result.push('<');
     result.push(element.tagName);
     
-    // Mozilla nie uważa deklaracji namespace za atrybuty
+    // Mozilla nie uważa deklaracji namespace za atrybuty | --lqc: bo nie są one atrybutami!
     var ns = element.tagName.indexOf(':');
     if (ns != -1 && $.browser.mozilla) {
         result.push(' xmlns:');
@@ -153,52 +153,120 @@ function withStylesheets(block, onError) {
 
 function xml2html(options) {
     withStylesheets(function() {
-        var xml = options.xml.replace(/\/\s+/g, '<br />');
+        var xml = options.xml.replace(/\/\s+/g, '<br />');				
         var parser = new DOMParser();
         var serializer = new XMLSerializer();
-        var doc = parser.parseFromString(xml, 'text/xml');
+        var doc = parser.parseFromString(xml, 'text/xml');		
         var error = $('parsererror', doc);
         
         if (error.length == 0) {
-            doc = xml2htmlStylesheet.transformToFragment(doc, document);
+            doc = xml2htmlStylesheet.transformToDocument(doc);
+			console.log(doc);
             error = $('parsererror', doc);
         }
         
         if (error.length > 0 && options.error) {
             options.error(error.text());
-        } else {
-            options.success(doc.firstChild);
+        } else {			
+            options.success(document.importNode(doc.documentElement, true));
         }
     }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
 }
 
+/* USEFULL CONSTANTS */
+const ELEMENT_NODE 					 = 1;
+const ATTRIBUTE_NODE                 = 2;
+const TEXT_NODE                      = 3;
+const CDATA_SECTION_NODE             = 4;
+const ENTITY_REFERENCE_NODE          = 5;
+const ENTITY_NODE                    = 6;
+const PROCESSING_INSTRUCTION_NODE    = 7;
+const COMMENT_NODE                   = 8;
+const DOCUMENT_NODE                  = 9;
+const DOCUMENT_TYPE_NODE             = 10;
+const DOCUMENT_FRAGMENT_NODE         = 11;
+const NOTATION_NODE                  = 12;
+const XATTR_RE = /^x-attr-name-(.*)$/;
 
-function html2xml(options) {
-    withStylesheets(function() {
-        var xml = options.xml;
-        var parser = new DOMParser();
-        var serializer = new XMLSerializer();
-        var doc = parser.parseFromString(xml, 'text/xml');
-        var error = $('parsererror', doc.documentElement);
+const ELEM_START = 1;
+const ELEM_END = 2;
 
-        if (error.length == 0) {
-            doc = html2xmlStylesheet.transformToDocument(doc);
-            error = $('parsererror', doc.documentElement);
-        }
-        
-        if (error.length > 0 && options.error) {
-            options.error(error.text());
-        } else {
-            if (options.inner) {
-                var result = [];
-                for (var i = 0; i < doc.documentElement.childNodes.length; i++) {
-                    result.push(serialize(doc.documentElement.childNodes[i]).join(''));
-                };
-                options.success(result.join(''));
-            } else {
-                options.success(serialize(doc.documentElement).join(''));
-            }
-        }
-    }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
+const NAMESPACES = {
+	undefined: "",
+	null: "",	
+	"": "",
+	"http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
+	"http://purl.org/dc/elements/1.1/": "dc:",
+	"http://www.w3.org/XML/1998/namespace": "xml:"
 };
 
+function html2text(rootElement) {
+	var stack = [];
+	var result = "";
+	
+	stack.push([ELEM_START, rootElement]);	
+	console.log("SERIALIZING")
+	
+	while( stack.length > 0) {
+		var pair = stack.pop();
+		
+		var event = pair[0];
+		var node = pair[1];
+		
+		// console.log("NODE", event, node);
+		
+		if(event == ELEM_END) {
+			result += "</" + node + ">\n";
+			continue;
+		};
+		
+		switch(node.nodeType) {
+			case ELEMENT_NODE:
+				if(!node.hasAttribute('x-node'))
+					break;
+					
+				var tag_name = NAMESPACES[node.getAttribute('x-ns')] + node.getAttribute('x-node');
+				// console.log("ELEMENT: ", tag_name);
+				
+				/* retrieve attributes */
+				var attr_ids = [];
+				for(var i=0; i < node.attributes.length; i++) {
+					var attr = node.attributes.item(i);
+					
+					// check if name starts with "x-attr-name"
+					var m = attr.name.match(XATTR_RE);
+					if(m !== null) 
+						attr_ids.push(m[1]);						
+					
+				};
+				
+				result += '<' + tag_name;
+				
+				$.each(attr_ids, function() {										
+					result += ' ' + NAMESPACES[node.getAttribute('x-attr-ns-'+this)];
+					result += node.getAttribute('x-attr-name-'+this);
+					result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
+				});								
+				result += '>'
+				
+				stack.push([ELEM_END, tag_name]);
+				for(var i = node.childNodes.length-1; i >= 0; i--)
+					stack.push([ELEM_START, node.childNodes.item(i)]);				
+				
+				break;			
+			case TEXT_NODE:
+				result += node.nodeValue;
+				break;
+		}		
+	}
+	
+	return result;
+}
+
+function html2xml(options) {
+	try {
+		return options.success(html2text(options.htmlElement));
+	} catch(e) {
+		options.error("Nie udało się zserializować tekstu:" + e)
+	}    
+};
