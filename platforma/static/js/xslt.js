@@ -124,10 +124,10 @@ const PADDING = {
     lista_osoba: 1,
 	
 	"podpis": 1,	
-	"wers": 1,
-	"wers_cd": 1,
-	"wers_akap": 1,
-	"wers_wciety": 1,	
+	"wers": 0,
+	"wers_cd": 0,
+	"wers_akap": 0,
+	"wers_wciety": 0,	
 	
 	"rdf:RDF": 3,
 	"rdf:Description": 1,	
@@ -182,12 +182,11 @@ HTMLSerializer.prototype._pushTagEnd = function(tagName) {
 HTMLSerializer.prototype._verseBefore = function(node) {
 	var prev = node.previousSibling;
 	
-	while(prev) {
-		if(prev.nodeType == ELEMENT_NODE && prev.hasAttribute('x-verse'))
-			return true;
-	}
-	
-	return false;
+	while((prev !== null) && (prev.nodeType != ELEMENT_NODE)) {
+		prev = prev.previousSibling;
+	}	
+		
+	return (prev !== null) && prev.hasAttribute('x-verse');
 }
 
 HTMLSerializer.prototype.serialize = function(rootElement, stripOuter) 

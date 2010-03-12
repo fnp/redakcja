@@ -15,6 +15,7 @@
 
 .htmlview * {
     position: relative;
+	overflow: visibl;
 }
 
 .htmlview div {
@@ -136,6 +137,46 @@
     margin: 1.5em 0 0 auto;    
 }
 
+/* wersy */
+.htmlview .strofa .wers_wciety, .htmlview .strofa .wers_wciety[data-wlf-typ='1'] {
+	margin-left: 1em;
+}
+
+.htmlview .strofa .wers_wciety[data-wlf-typ='2'] {
+	margin-left: 2em;
+}
+
+.htmlview .strofa .wers_wciety[data-wlf-typ='3'] {
+	margin-left: 3em;
+}
+
+.htmlview .strofa .wers_wciety[data-wlf-typ='4'] {
+	margin-left: 4em;
+}
+
+.htmlview .strofa .wers_wciety[data-wlf-typ='5'] {
+	margin-left: 5em;
+}
+
+.htmlview .strofa .wers_wciety[data-wlf-typ='6'] {
+	margin-left: 6em;
+}
+
+/* błędne wersy */
+.htmlview *:not(.strofa) > *[x-verse]::after {
+	content: "Ten wers znajduje się poza strofą.";
+	display: inline;
+	background: red;
+	font-size: 8pt;
+	border: 1px solid black;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	padding: 1px 1em;
+	margin-left: 1em;
+	vertical-align: super;
+}
+
+
 .htmlview .kwestia .strofa {
     margin: 0;
 }
@@ -145,7 +186,7 @@
     margin: 1.5em 0 0;
 }
 
-.htmlview p.motto {
+.htmlview .motto {
     text-align: justify;
     font-style: italic;
     margin: 1.5em 0 0;
@@ -221,6 +262,36 @@
     font-weight: bold;
 }
 
+/* Uwaga/Extra */
+
+.htmlview .uwaga {
+	background-color: #96e0e4;
+	border: 1px solid black;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	display: block;
+	font-size: 10pt;
+	line-height: 12pt;
+	padding: 2px 1em;
+	float: right;	
+	max-width: 20%;
+	max-height: 24pt;
+	margin-left: 0.5em;
+	overflow: hidden;
+}
+
+.utwor > .uwaga {
+	float: none;
+	padding: 0.5em 1em;
+	margin: 1em;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.htmlview .uwaga:hover {
+	max-height: 100%;
+}
+
 
 /* Motywy */
 /* ======================== */
@@ -284,7 +355,7 @@
 }
 
 .htmlview .annotation:hover {
-    background-color: #dfdfdf;
+    background-color: #96e0e4;
 }
 
 *.htmlview *.annotation-inline-box {
@@ -299,20 +370,25 @@
      display: none;
      position: absolute;
 
-     max-width: 36em;
+     width: 300px;	 
      
-     font-size: 8pt;
+     font-size: 10pt;	
      line-height: 12pt;
      font-weight: normal;
      font-style: normal;
 
-     background: white;
-     border-color: gray;
-     border-width: 2px;
-     border-style: outset;
+     background: #fffe93;
+     border-color: black;
+     border-width: 1px;
+     border-style: solid;
+	 border-radius: 10px;
+	 -moz-border-radius: 10px;
+	 -webkit-border-radius: 10px;
+	 
      padding: 3px 5px;
 
      text-decoration: none;
+	 
      z-index: 1000;
  }
  
@@ -459,15 +535,32 @@
 /*    background-color: ivory;*/
 }
 
-.out-of-flow-text {
-    border: 1px solid #BEBEBE;
-    background-color: #E2E2E1;
-    white-space: pre-line;
-    font-family: monospace;
+.htmlview .out-of-flow-text {
+	display: block;
+	font-face: monospace;
+    border: 2px solid red !important;
+    white-space: pre-line;    
 }
 
-.out-of-flow-text[x-editable] {
-    background-color: #E2E2E1;    
+.htmlview .out-of-flow-text::before {
+	content: "Tekst w tej ramce nie jest otagowany!";
+	background-color: #ff6c6c;
+	color: black;
+	
+	font-size: 10pt;
+	line-height: 12pt;
+	border: 1px solid black;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	padding: 5px 1em;
+	margin: 0em;
+	margin-left: 1em;
+	
+	text-align: justify;
+	
+	display: inline;
+	float: right;
+	max-width: 25%;
 }
 
 .unknown-tag {

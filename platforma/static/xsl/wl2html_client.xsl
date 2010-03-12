@@ -559,12 +559,16 @@
 
     <xsl:template match="wers_cd|wers_akap|wers_wciety">
         <xsl:param name="mixed" />
-        <p x-verse="true">
-            <xsl:call-template name="standard-attributes" />
-            <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="true()" />
-            </xsl:apply-templates>
-        </p>
+		<!-- <xsl:choose>
+		<xsl:when test="ancestor::*[0]/self::strofa"> -->
+        	<p x-verse="true">
+            	<xsl:call-template name="standard-attributes" />
+            	<xsl:apply-templates select="child::node()">
+                	<xsl:with-param name="mixed" select="true()" />
+            	</xsl:apply-templates>
+	        </p>
+		<!-- </xsl:when> 
+		<xsl:choose> -->
     </xsl:template>
 
     <xsl:template match="br"><xsl:text>/</xsl:text></xsl:template>
@@ -666,7 +670,9 @@
     <xsl:template match="extra|uwaga">
         <span>
             <xsl:call-template name="standard-attributes" />
-            <xsl:apply-templates select="node()" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
         </span>
     </xsl:template>
 
@@ -716,20 +722,31 @@
     </xsl:template>
 
     <xsl:template match="*[name() != local-name()]">
-        <div>
+        <span>
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </div>
+        </span>
     </xsl:template>
+	
+	<!-- 
+		Earlier versions of html2wl introduced a BUG, that 'causes "out-of-flow-text" tag to appear.
+		Instead of marking it as "unknown", just pass thru it
+	-->
+	<xsl:template match="out-of-flow-text">
+		<xsl:param name="mixed" />
+		<xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="$mixed" />
+            </xsl:apply-templates>
+	</xsl:template>	
 
     <xsl:template match="*">
-        <div class="unknown-tag" x-node="{name()}">
+        <span class="unknown-tag" x-node="{name()}">
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>        
-        </div>
+        </span>
     </xsl:template>
 
     <xsl:template name="context-menu">
@@ -757,9 +774,15 @@
             <xsl:variable name="id" select="generate-id()" />
             <xsl:attribute name="x-attr-value-{$id}"><xsl:value-of select="."/></xsl:attribute>
             <xsl:attribute name="x-attr-name-{$id}"><xsl:value-of select="local-name()"/></xsl:attribute>
-            <xsl:if test="namespace-uri()">
+            <xsl:choose>
+            	<xsl:when test="namespace-uri()">
                 <xsl:attribute name="x-attr-ns-{$id}"><xsl:value-of select="namespace-uri()"/></xsl:attribute>
-            </xsl:if>               
+				</xsl:when>
+				<!-- if the element belongs to default namespace and attribut has no namespace -->
+            	<xsl:when test="not(namespace-uri(.))">
+				<xsl:attribute name="data-wlf-{local-name()}"><xsl:value-of select="."/></xsl:attribute>
+				</xsl:when>
+			</xsl:choose>               
         </xsl:for-each>
     </xsl:template>
     
