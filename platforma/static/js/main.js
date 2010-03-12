@@ -328,9 +328,8 @@ function reverseTransform(editor, cont, errorCont, dontBlock) {
         $.blockUI({message: 'Ładowanie...'});
     }
     setTimeout(function() {
-        html2xml({
-			htmlElement: $('#html-view div').get(0),
-            /* xml: serializer.serializeToString($('#html-view div').get(0)), */
+        html2text({
+			element: $('#html-view div').get(0),            
             success: function(text) {
                 editor.setCode(text);
                 if (!dontBlock) {
@@ -596,9 +595,9 @@ function html(element) {
         
         var serializer = new XMLSerializer();
         
-        html2xml({
-            xml: serializer.serializeToString($box[0]),
-            inner: true,
+        html2text({
+            element: $box[0],
+            stripOuter: true,
             success: function(text) {
                 $('textarea', $overlay).val($.trim(text));
                 

@@ -542,7 +542,7 @@
         <xsl:choose>
             <!-- Simple verse == not wers_ tags anywhere until the ending br -->
             <xsl:when test="not($verse-content[starts-with(name(), 'wers_')])">
-                <p class="wers" x-node="wers">
+                <p class="wers" x-node="wers" x-verse="true">
                 <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
                     <xsl:with-param name="mixed" select="true()" />
                 </xsl:apply-templates>
@@ -559,7 +559,7 @@
 
     <xsl:template match="wers_cd|wers_akap|wers_wciety">
         <xsl:param name="mixed" />
-        <p>
+        <p x-verse="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -645,7 +645,7 @@
             <!-- the link to the non-inline version -->
             <a href="#annotation-{generate-id(.)}" class="annotation"></a>
             <!-- inline contents -->
-            <span x-annotation-box="true">
+            <span x-annotation-box="true" x-pass-thru="true">
                 <xsl:call-template name="context-menu" />
                 <xsl:apply-templates select="node()">
                     <xsl:with-param name="mixed" select="true()" />
@@ -677,7 +677,7 @@
                 <xsl:value-of select="substring-after(@id, 'm')" />
             </xsl:attribute>
             <xsl:call-template name="context-menu" />
-            <span class="theme-text-list"><xsl:value-of select=".|node()" /></span>
+            <span x-pass-thru="true" class="theme-text-list"><xsl:value-of select=".|node()" /></span>
         </span>
     </xsl:template>
 

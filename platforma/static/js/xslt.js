@@ -1,153 +1,36 @@
-var MARGIN = {
-    dramat_wierszowany_l: 4,
-    dramat_wierszowany_lp: 4,
-    dramat_wspolczesny: 4,
-    wywiad: 4,
-    opowiadanie: 4,
-    powiesc: 4,
-    liryka_l: 4,
-    liryka_lp: 4,
-    naglowek_czesc: 4,
-    naglowek_akt: 4,
-    naglowek_rozdzial: 4,
-    naglowek_osoba: 4,
-    lista_osob: 4,
-    
-    akap: 3,
-    akap_cd: 3,
-    akap_dialog: 3,
-    strofa: 3,
-    motto: 3, 
-    miejsce_czas: 3,
-        
-    autor_utworu: 2,
-    nazwa_utworu: 2,
-    dzielo_nadrzedne: 2,
-    didaskalia: 2,
-    motto_podpis: 2,
-    naglowek_listy: 2,
-    
-    kwestia: 1,
-    lista_osoba: 1
-}
-
-MARGIN['rdf:RDF'] = 3;
-MARGIN['rdf:Description'] = 2;
-
-var blockTags = ['akap', 'akap_cd', 'akap_dialog', 'strofa', 'didaskalia', 'wers', 'wers_cd', 'wers_akap', 'wers_wciety', 'autor_utworu', 'nazwa_utworu', 'dzielo_nadrzedne', 'podpis'];
-function elementType(element) {
-    if (blockTags.indexOf(element.tagName) != -1) {
-        return 'inline';
-    } else {
-        return 'block';
-    }
-}
-
-// Serializuje XML, wstawiając odpowiednie ilości białych znaków między elementami
-function serialize(element, mode) {
-    if (!mode) {
-        mode = 'block';
-    }
-    
-    if (element.nodeType == 3) { // tekst
-    	return [element.nodeValue];        
-    } else if (element.nodeType != 1) { // pomijamy węzły nie będące elementami XML ani tekstem
-        return [];
-    }
-    
-    var result = [];
-    var hasContent = false;
-    
-    
-    
-    if (MARGIN[element.tagName]) {
-        for (var i=0; i < MARGIN[element.tagName]; i++) {
-            result.push('\n');
-        };
-    } else if (element.tagName.indexOf('dc:') != -1) {
-        result.push('\n');
-    }
-    
-    result.push('<');
-    result.push(element.tagName);
-    
-    // Mozilla nie uważa deklaracji namespace za atrybuty | --lqc: bo nie są one atrybutami!
-    var ns = element.tagName.indexOf(':');
-    if (ns != -1 && $.browser.mozilla) {
-        result.push(' xmlns:');
-        result.push(element.tagName.substring(0, ns));
-        result.push('="');
-        result.push(element.namespaceURI);
-        result.push('"');
-    }
-    
-    if (element.attributes) {
-        for (var i=0; i < element.attributes.length; i++) {
-            var attr = element.attributes[i];
-            result.push(' ');
-            result.push(attr.name);
-            result.push('="');
-            result.push(attr.value);
-            result.push('"');
-            hasContent = true;
-        }
-    }
-    
-    if (element.childNodes.length == 0) {
-        result.push(' />');
-    } else {
-        result.push('>');
-
-        for (var i=0; i < element.childNodes.length; i++) {
-            result = result.concat(serialize(element.childNodes[i], 
-                mode == 'inline' ? 'inline' : elementType(element.childNodes[i])));
-        }
-
-        result.push('</');
-        result.push(element.tagName);
-        result.push('>');
-    }
-    
-    return result;
-};
-
-
+/*
+ * 
+ * XSLT STUFF
+ * 
+ */
 function createXSLT(xsl) {
     var p = new XSLTProcessor();
     p.importStylesheet(xsl);
     return p;
 }
 
-
 var xml2htmlStylesheet = null;
-var html2xmlStylesheet = null;
-
 
 // Wykonuje block z załadowanymi arkuszami stylów
-function withStylesheets(block, onError) {
-    if (xml2htmlStylesheet && html2xmlStylesheet) {
-        block();
-        return;
+function withStylesheets(code_block, onError) 
+{	
+    if (!xml2htmlStylesheet) {
+    	$.blockUI({message: 'Ładowanie arkuszy stylów...'});
+    	$.ajax({
+        	url: STATIC_URL + 'xsl/wl2html_client.xsl',
+        	dataType: 'xml',
+        	success: function(data) {
+            	xml2htmlStylesheet = createXSLT(data);
+                $.unblockUI();
+				code_block();
+                 
+            },
+			error: onError
+        })
     }
-    $.blockUI({message: 'Ładowanie arkuszy stylów...'});
-    $.ajax({
-        url: STATIC_URL + 'xsl/wl2html_client.xsl',
-        dataType: 'xml',
-        success: function(data) {
-            xml2htmlStylesheet = createXSLT(data);
-            $.ajax({
-                url: STATIC_URL + 'xsl/html2wl_client.xsl',
-                dataType: 'xml',
-                success: function(data) {
-                    html2xmlStylesheet = createXSLT(data);
-                    $.unblockUI();
-                    block();
-                },
-                error: onError
-            })
-        },
-        error: onError
-    })
+	else {
+		code_block();
+	}
 }
 
 
@@ -190,83 +73,280 @@ const XATTR_RE = /^x-attr-name-(.*)$/;
 
 const ELEM_START = 1;
 const ELEM_END = 2;
+const NS_END = 3;
 
 const NAMESPACES = {
-	undefined: "",
-	null: "",	
-	"": "",
-	"http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
-	"http://purl.org/dc/elements/1.1/": "dc:",
-	"http://www.w3.org/XML/1998/namespace": "xml:"
+	// namespaces not listed here will be assigned random names
+	"http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+	"http://purl.org/dc/elements/1.1/": "dc",
+	"http://www.w3.org/XML/1998/namespace": "xml"
 };
 
-function html2text(rootElement) {
-	var stack = [];
-	var result = "";
+/*
+ * PADDING for pretty-printing
+ */
+const PADDING = {
+    dramat_wierszowany_l: 4,
+    dramat_wierszowany_lp: 4,
+    dramat_wspolczesny: 4,
+    wywiad: 4,
+    opowiadanie: 4,
+    powiesc: 4,
+    liryka_l: 4,
+    liryka_lp: 4,
+    naglowek_czesc: 4,
+    naglowek_akt: 4,
+    naglowek_rozdzial: 4,
+    naglowek_osoba: 4,
+    lista_osob: 4,
+    
+    akap: 3,
+    akap_cd: 3,
+    akap_dialog: 3,
+    strofa: 3,
+    motto: 3, 
+    miejsce_czas: 3,
+        
+    autor_utworu: 2,
+    nazwa_utworu: 2,
+    dzielo_nadrzedne: 2,
 	
-	stack.push([ELEM_START, rootElement]);	
-	console.log("SERIALIZING")
+    didaskalia: 2,
+    motto_podpis: 2,
+    naglowek_listy: 2,
+    kwestia: 1,
+    lista_osoba: 1,
 	
-	while( stack.length > 0) {
-		var pair = stack.pop();
+	"podpis": 1,	
+	"wers": 1,
+	"wers_cd": 1,
+	"wers_akap": 1,
+	"wers_wciety": 1,	
+	
+	"rdf:RDF": 3,	
+}
+
+function HTMLSerializer() {	
+	// empty constructor
+}
+
+HTMLSerializer.prototype._prepare = function() {
+	this.stack = [];
+	
+	// XML namespace is implicit
+	this.nsMap = {"http://www.w3.org/XML/1998/namespace": "xml"};
 		
-		var event = pair[0];
-		var node = pair[1];
-		
-		// console.log("NODE", event, node);
-		
-		if(event == ELEM_END) {
-			result += "</" + node + ">\n";
+	this.result = "";
+	this.nsCounter = 1;	
+}
+
+HTMLSerializer.prototype._pushElement = function(element) {
+	this.stack.push({
+		"type": ELEM_START,
+		"node": element
+	});	
+}
+
+HTMLSerializer.prototype._pushChildren = function(element) {
+	for(var i = element.childNodes.length-1; i >= 0; i--)
+		this._pushElement(element.childNodes.item(i));					
+}
+
+HTMLSerializer.prototype._pushTagEnd = function(tagName) {
+	this.stack.push({
+		"type": ELEM_END,
+		"tagName": tagName
+	});	
+}
+
+HTMLSerializer.prototype._verseBefore = function(node) {
+	var prev = node.previousSibling;
+	
+	while(prev) {
+		if(prev.nodeType == ELEMENT_NODE && prev.hasAttribute('x-verse'))
+			return true;
+	}
+	
+	return false;
+}
+
+HTMLSerializer.prototype.serialize = function(rootElement) 
+{
+	var self = this;
+	self._prepare();
+	self._pushElement(rootElement);	
+	
+	while(self.stack.length > 0) {
+		var token = self.stack.pop();
+						
+		if(token.type === ELEM_END) {
+			self.result += "</" + token.tagName + ">";
+			if (PADDING[token.tagName]) {
+				for(var n=0; n < PADDING[token.tagName]; n++)			
+					self.result += "\n";
+			}
 			continue;
 		};
 		
-		switch(node.nodeType) {
+		if(token.type === NS_END) {
+			self._unassignNamespace(token.namespace);
+			continue;
+		} 
+		
+		
+		switch(token.node.nodeType) {
 			case ELEMENT_NODE:
-				if(!node.hasAttribute('x-node'))
+				if(token.node.hasAttribute('x-pass-thru')) {
+					self._pushChildren(token.node);
+					break;
+				}
+				
+				if(!token.node.hasAttribute('x-node'))
 					break;
 					
-				var tag_name = NAMESPACES[node.getAttribute('x-ns')] + node.getAttribute('x-node');
-				// console.log("ELEMENT: ", tag_name);
+				var xnode = token.node.getAttribute('x-node');
 				
-				/* retrieve attributes */
-				var attr_ids = [];
-				for(var i=0; i < node.attributes.length; i++) {
-					var attr = node.attributes.item(i);
-					
-					// check if name starts with "x-attr-name"
-					var m = attr.name.match(XATTR_RE);
-					if(m !== null) 
-						attr_ids.push(m[1]);						
-					
+				if(xnode === 'wers') {
+					/* push children */
+					if(self._verseBefore(token.node))
+						self.result += '/\n';
+					self._pushChildren(token.node);
+					break;					
+				};					
+				
+				if(token.node.hasAttribute('x-verse') && self._verseBefore(token.node)) {
+					self.result += '/\n';					
 				};
-				
-				result += '<' + tag_name;
-				
-				$.each(attr_ids, function() {										
-					result += ' ' + NAMESPACES[node.getAttribute('x-attr-ns-'+this)];
-					result += node.getAttribute('x-attr-name-'+this);
-					result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
-				});								
-				result += '>'
-				
-				stack.push([ELEM_END, tag_name]);
-				for(var i = node.childNodes.length-1; i >= 0; i--)
-					stack.push([ELEM_START, node.childNodes.item(i)]);				
-				
-				break;			
-			case TEXT_NODE:
-				result += node.nodeValue;
+					
+				self._serializeElement(token.node);
 				break;
-		}		
-	}
+			case TEXT_NODE:
+				self.result += token.node.nodeValue;
+				break;
+		};
+	};
 	
-	return result;
+	return this.result;
 }
 
-function html2xml(options) {
-	try {
-		return options.success(html2text(options.htmlElement));
-	} catch(e) {
-		options.error("Nie udało się zserializować tekstu:" + e)
-	}    
+/*
+ * TODO: this doesn't support prefix redefinitions
+ */
+HTMLSerializer.prototype._unassignNamespace = function(nsData) {
+	this.nsMap[nsData.uri] = undefined;
 };
+	
+HTMLSerializer.prototype._assignNamespace = function(uri) {
+	if(uri === null) {
+		// default namespace
+		return ({"prefix": "", "uri": "", "fresh": false});
+	}
+	
+	if(this.nsMap[uri] === undefined) {
+		// this prefix hasn't been defined yet in current context	
+		var prefix = NAMESPACES[uri];
+		
+		if (prefix === undefined) { // not predefined
+			prefix = "ns" + this.nsCounter;
+			this.nsCounter += 1;
+		}
+		
+		this.nsMap[uri] = prefix;		
+		return ({
+			"prefix": prefix,
+			"uri": uri,
+			"fresh": true
+		});			
+	}	
+		
+	return ({"prefix": this.nsMap[uri], "uri": uri, "fresh": false});		
+};
+
+HTMLSerializer.prototype._join = function(prefix, name) {
+	if(!!prefix) 
+		return prefix + ":" + name;
+	return name;	
+};
+
+HTMLSerializer.prototype._rjoin = function(prefix, name) {
+	if(!!name) 
+		return prefix + ":" + name;
+	return prefix;	
+};
+ 					
+HTMLSerializer.prototype._serializeElement = function(node) {
+	var self = this;
+		
+	var ns = node.getAttribute('x-ns');
+	var nsPrefix = null;
+	var newNamespaces = [];
+	
+	var nsData = self._assignNamespace(node.getAttribute('x-ns'));
+	
+	if(nsData.fresh) {
+		newNamespaces.push(nsData);
+		self.stack.push({
+			"type": NS_END,
+			"namespace": nsData
+		});
+	} 					
+	
+	var tagName = self._join(nsData.prefix, node.getAttribute('x-node'));
+				
+	/* retrieve attributes */
+	var attributeIDs = [];
+	for (var i = 0; i < node.attributes.length; i++) {
+		var attr = node.attributes.item(i);
+		
+		// check if name starts with "x-attr-name"
+		var m = attr.name.match(XATTR_RE);
+		if (m !== null) 
+			attributeIDs.push(m[1]);				
+	};
+				
+	/* print out */
+	self.result += '<' + tagName;	
+					
+	$.each(attributeIDs, function() {
+		var nsData = self._assignNamespace(node.getAttribute('x-attr-ns-'+this));
+	
+		if(nsData.fresh) {
+			newNamespaces.push(nsData);
+			self.stack.push({
+				"type": NS_END,
+				"namespace": nsData
+			});
+		};
+															
+		self.result += ' ' + self._join(nsData.prefix, node.getAttribute('x-attr-name-'+this));
+		self.result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
+	});
+	
+	/* print new namespace declarations */
+	$.each(newNamespaces, function() {
+		self.result += " " + self._rjoin("xmlns", this.prefix);
+		self.result += '="' + this.uri + '"';		
+	});					
+	
+	if (node.childNodes.length > 0) {
+		self.result += ">";
+		self._pushTagEnd(tagName);
+		self._pushChildren(node);
+	}
+	else {
+		self.result += "/>";
+	};
+};
+
+function html2text(params) {
+	if (params.stripOuter) {
+		// ...
+	};
+	
+	try {
+		var s = new HTMLSerializer();
+		params.success( s.serialize(params.element) );
+	} catch(e) {
+		params.error("Nie udało się zserializować tekstu:" + e)
+	}    	
+}
