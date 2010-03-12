@@ -641,7 +641,7 @@
         Przypisy i motywy
     -->
     <xsl:template match="pr|pa|pe|pt">       
-        <span x-editable="true">
+        <span x-editable="true" x-common="common">
             <xsl:call-template name="standard-attributes">
                 <xsl:with-param name="extra-class" select="'annotation-inline-box'" />
             </xsl:call-template>
@@ -668,7 +668,7 @@
     </xsl:template>
 
     <xsl:template match="extra|uwaga">
-        <span>
+        <span x-common="common">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
@@ -677,7 +677,7 @@
     </xsl:template>
 
     <xsl:template match="motyw">
-        <span x-editable="true">
+        <span x-editable="true" x-common="common">
             <xsl:call-template name="standard-attributes" />
             <xsl:attribute name="theme-class">
                 <xsl:value-of select="substring-after(@id, 'm')" />

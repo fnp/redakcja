@@ -1,8 +1,13 @@
-.editbox {
+.editbox {  
   margin: .4em;
+  margin-top: 5px;
+  margin-left: 45px;
   padding: 0;
-  font-family: monospace;
-  font-size: 10pt;
+  
+  font-family:"Lucida Console", monospace;
+  font-size: 13px;
+  line-height: 18px;
+  
   color: black;
 }
 
@@ -10,12 +15,18 @@
   margin: 0;
 }
 
+.editbox span {
+	display: inline;  
+	font-size: 13px;
+    line-height: 18px;	
+}
+
 span.xml-tagname {
-  color: #A0B;
+  color: #a31727;
 }
 
 span.xml-attribute {
-  color: #281;
+  color: #8b8b8b;
 }
 
 span.xml-punctuation {
@@ -23,7 +34,7 @@ span.xml-punctuation {
 }
 
 span.xml-attname {
-  color: #00F;
+  color: #817aff;
 }
 
 span.xml-comment {

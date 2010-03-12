@@ -6,25 +6,37 @@
         Dodatkowe style dla listy plików na stronie głównej.
 */
 
-#main-page-widgets > div {
-    float: left;
+body {
+	background-color: #84BF2A;
+}
+
+#content {
+    background: #EFEFEF;
     border: 1px solid black;
     padding: 0.5em 2em;
-    margin: 1em;    
+    margin: 1em;
+	overflow: hidden;    
 }
 
-.file-list-widget {
-    background: #DDF;
-    max-width: 60%;
+#content h1 img {
+	vertical-align: middle;
 }
 
-.file-list-widget .page-nav-wrap button {
+#content h1 {
+	border-bottom: 2px solid black;
+	padding: 0.5em;
+	font-size: 2opt;
+	font-family: sans-serif;
+}
+
+.document-list {
+	overflow: visible;
+	float: left;
+	max-width: 60%;
+}
+
+.document-list .page-nav-wrap button {
     width: 2.5em;
-}
-
-.upload-file-widget {
-    min-width: 20%;
-    width: 35%;
 }
 
 ul.file-tree-part {    
@@ -40,8 +52,3 @@ ul.file-tree-part li {
 ul.file-tree-part a {
     padding: 0em;
 }
-
-
-
-
-

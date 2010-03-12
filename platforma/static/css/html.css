@@ -6,7 +6,35 @@
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
     padding: 3em;
-    padding-left: 55px;
+    padding-left: 45px;
+	overflow-y: scroll;
+	overflow-x: auto;
+}
+
+.htmlview[data-tag-names-visible] {
+	padding-left: 90px;	
+}
+
+.htmlview[data-tag-names-visible] *[x-editable]:not(*[x-common])::before {
+	display: block;
+	float: left;
+	clear: left;
+	content: attr(x-node);
+	font-weight: bold;
+	font-style: normal;
+	font-variant:normal;	
+	font-size: 8px;
+	line-height: 8px;
+	margin-bottom: 4px;		
+	
+	padding: 3px 4px;
+	vertical-align: super;
+	background-color:#add8e6;	
+	margin-left: -80px;
+	width: 70px;
+	text-align: center;
+	
+	-webkit-border-radius: 4px;	
 }
 
 .htmlview *[x-node='RDF'] {
@@ -14,8 +42,7 @@
 }
 
 .htmlview * {
-    position: relative;
-	overflow: visibl;
+    position: relative; 	
 }
 
 .htmlview div {
@@ -111,17 +138,11 @@
 }
 
 .htmlview .dzielo_nadrzedne {
-    font-size: 1.5em;
-    display: block;
-    line-height: 1.5em;
-    margin-bottom: -0.25em;
+    /* */
 }
 
 .htmlview .podtytul {
-    font-size: 0.5em;
-    display: block;
-    line-height: 1.5em;
-    margin-top: -0.25em;
+    /* */    
 }
 
 .htmlview .didaskalia {
@@ -134,7 +155,7 @@
 }
 
 .htmlview .strofa {
-    margin: 1.5em 0 0 auto;    
+    margin: 1.5em 0 0.5em auto;    
 }
 
 /* wersy */

@@ -3,8 +3,11 @@ from os import path
 
 PROJECT_ROOT = path.realpath(path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+
+MAINTENANCE_MODE = True
+INTERNAL_IPS = ()
 
 ADMINS = (
     (u'Marek Stępniowski', 'marek@stepniowski.com'),

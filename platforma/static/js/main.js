@@ -767,9 +767,10 @@ $(function() {
         parserConfig: {
             useHTMLKludges: false
         },
-        iframeClass: 'xml-iframe',
+        iframeClass: 'xml-iframe',		
         textWrapping: true,
-		/* lineNumbers: true, */
+		lineNumbers: true, 
+		width: "100%",
         tabMode: 'spaces',
         indentUnit: 0,
         initCallback: function(editor) {

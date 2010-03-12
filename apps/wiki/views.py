@@ -28,12 +28,17 @@ def document_list(request, template_name = 'wiki/document_list.html'):
 def document_detail(request, name, template_name = 'wiki/document_details.html'):
     try:
         document = storage.get(name)
-    except DocumentNotFound:
-        # WTF ?!
-        raise Http404 
-        # document = Document(storage, name = name, text = '')
+    except DocumentNotFound:        
+        raise Http404
+    
+#    access_time = datetime.ctime();
+#    last_documents = request.session.get("wiki_last_docs", [])
+#        
+#    if name not in last_documents:
+#        last_documents.insert(0, (name, access_time))        
 
     if request.method == 'POST':
+        
         form = DocumentForm(request.POST, instance = document)
         if form.is_valid():
             document = form.save()

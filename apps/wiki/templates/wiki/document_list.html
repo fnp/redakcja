@@ -23,15 +23,16 @@ $(function() {
 {% endblock extrahead %}
 
 {% block maincontent %}
-<div id="main-page-widgets">
+<h1><img src="{{STATIC_URL}}/img/logo.png">Platforma Redakcyjna</h1>
 
-<div class="file-list-widget">
+<div class="document-list">
     <form action="#" method="GET">
-    <p><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="60" />
+    <p>Filtr: <input autocomplete="off" name="filter" id="file-list-filter" type="text" size="60" />
         <input type="submit" value="Znajdź" id="file-list-find-button"/>
         <input type="reset" value="Wyczyść" id="file-list-reset-button"/>
     </p>
-    </form> 
+    </form>
+	 
     <div id="file-list">
     {% for file in document_list %}
         <p><a href="{% url wiki.views.document_detail file|urlencode %}">{{ file }}</a></p>

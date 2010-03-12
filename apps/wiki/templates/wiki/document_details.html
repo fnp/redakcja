@@ -28,17 +28,20 @@
             <div class="{{ k }}">{{ v}}</div>
         {% endfor %}
         </div>
-        <div id="header">
-            <div id="tools" style="float: right;">
-                {% include "registration/head_login.html" %}
-                Wersja: <span id="document-revision">{{ document.revision }}</span> <button style="margin-left: 6px" id="save-button">Zapisz</button></div>
+        <div id="header">            
             <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
+			<div id="tools">
+				<a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>				
+                | {% include "registration/head_login.html" %} 
+				| Wersja: <span id="document-revision">{{ document.revision }}</span> 
+				| <button style="margin-left: 6px" id="save-button">Zapisz</button>
+			</div>          
             <ol id="tabs">
                 <li id="simple-view-tab" ui:related="simple-editor"><span id="document-name">{{ document.name }}</span></li>
                 <li id="source-view-tab" ui:related="source-editor">Kod źródłowy</li>
 				<li id="history-view-tab" ui:related="history-viewer">Historia</li>
             </ol>
-            <div style="clear: both"></div>
+			  
         </div>
         <div id="splitter">
             <div id="editor">
@@ -50,12 +53,13 @@
                     <input type="hidden" name="comment" value="no comment" />
                     <input type="hidden" name="revision" value="{{ document.revision }}" />
                 </div>
-                <div id="simple-editor" class="editor" style="display: none">
-                    <div class="toolbar">
+                <div id="simple-editor" class="editor" style="display: none">                    
+                    <div id="html-view" class="htmlview">
+                    </div>
+					
+					<div class="toolbar">
                         <button id="insert-theme-button">Wstaw motyw</button> <button id="insert-annotation-button">Wstaw przypis</button>
                         <div class="toolbar-end"> </div>
-                    </div>
-                    <div id="html-view" class="htmlview">
                     </div>
                 </div>
 				
@@ -83,7 +87,7 @@
 							
 				</div>
             </div>
-            <div class="vsplitbar"> </div>
+            <div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię."> </div>
             <div id="sidebar">
                 <div class="toolbar">
                     <button class="previous-page">
