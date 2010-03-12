@@ -616,7 +616,7 @@ function html(element) {
                     xml2html({
                         xml: '<' + nodeName + '>' + insertedText + '</' + nodeName + '>',
                         success: function(element) {
-                            $box.html($(element).html());
+                            $origin.html($(element).html());
                             $overlay.remove();
                         },
                         error: function(text) {

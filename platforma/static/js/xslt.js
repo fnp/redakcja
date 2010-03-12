@@ -43,15 +43,21 @@ function xml2html(options) {
         var error = $('parsererror', doc);
         
         if (error.length == 0) {
-            doc = xml2htmlStylesheet.transformToDocument(doc);
-			console.log(doc);
+            doc = xml2htmlStylesheet.transformToFragment(doc, document);
+			console.log(doc.firstChild);
+			
+			if(doc.firstChild === null) {
+				options.error("Błąd w przetwarzaniu XML.");
+				return;
+			}
+				
             error = $('parsererror', doc);
         }
         
         if (error.length > 0 && options.error) {
             options.error(error.text());
         } else {			
-            options.success(document.importNode(doc.documentElement, true));
+            options.success(doc.firstChild);
         }
     }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
 }
@@ -123,12 +129,26 @@ const PADDING = {
 	"wers_akap": 1,
 	"wers_wciety": 1,	
 	
-	"rdf:RDF": 3,	
+	"rdf:RDF": 3,
+	"rdf:Description": 1,	
+};
+
+function getPadding(name) {
+	
+	if(name.match(/^dc:.*$/))
+		return -1;
+	
+	if(PADDING[name])
+		return PADDING[name];
+		
+	return 0;
 }
 
 function HTMLSerializer() {	
 	// empty constructor
 }
+
+
 
 HTMLSerializer.prototype._prepare = function() {
 	this.stack = [];
@@ -170,20 +190,23 @@ HTMLSerializer.prototype._verseBefore = function(node) {
 	return false;
 }
 
-HTMLSerializer.prototype.serialize = function(rootElement) 
+HTMLSerializer.prototype.serialize = function(rootElement, stripOuter) 
 {
 	var self = this;
 	self._prepare();
-	self._pushElement(rootElement);	
+	
+	if(!stripOuter)
+		self._pushElement(rootElement);
+	else	
+		self._pushChildren(rootElement);
 	
 	while(self.stack.length > 0) {
 		var token = self.stack.pop();
 						
 		if(token.type === ELEM_END) {
-			self.result += "</" + token.tagName + ">";
-			if (PADDING[token.tagName]) {
-				for(var n=0; n < PADDING[token.tagName]; n++)			
-					self.result += "\n";
+			self.result += "</" + token.tagName + ">";			 		
+			for(var padding = getPadding(token.tagName); padding > 0; padding--) {			
+				self.result += "\n";			
 			}
 			continue;
 		};
@@ -305,6 +328,9 @@ HTMLSerializer.prototype._serializeElement = function(node) {
 	};
 				
 	/* print out */
+	if (getPadding(tagName))
+		self.result += '\n';
+		
 	self.result += '<' + tagName;	
 					
 	$.each(attributeIDs, function() {
@@ -338,14 +364,10 @@ HTMLSerializer.prototype._serializeElement = function(node) {
 	};
 };
 
-function html2text(params) {
-	if (params.stripOuter) {
-		// ...
-	};
-	
+function html2text(params) {	
 	try {
 		var s = new HTMLSerializer();
-		params.success( s.serialize(params.element) );
+		params.success( s.serialize(params.element, params.stripOuter) );
 	} catch(e) {
 		params.error("Nie udało się zserializować tekstu:" + e)
 	}    	
