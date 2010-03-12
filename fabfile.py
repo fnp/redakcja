@@ -70,6 +70,7 @@ def deploy():
     copy_localsettings()
     symlink_current_release()
     migrate()
+    django_compress()
     restart_webserver()
 
 def deploy_version(version):
@@ -152,6 +153,14 @@ def migrate():
         run('../../../bin/python manage.py syncdb --noinput' % env, pty = True)
         if env.use_south:
             run('../../../bin/python manage.py migrate' % env, pty = True)
+            
+def django_compress():
+    "Update static files"
+    print '>>> migrate'
+    require('project_name', provided_by = [staging, production])
+    with cd('%(path)s/releases/current/%(project_name)s' % env):
+        run('../../../bin/python manage.py synccompress --force' % env, pty = True)
+        
 
 def restart_webserver():
     "Restart the web server"

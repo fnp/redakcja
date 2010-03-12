@@ -109,22 +109,52 @@ CAS_ADMIN_PREFIX = "/admin/"
 CAS_LOGOUT_COMPLETELY = True
 
 # CSS and JS files to compress
-# COMPRESS_CSS = {
-#     'all': {
-#         'source_filenames': ('css/master.css', 'css/jquery.date_input.css', 'css/jquery.countdown.css',),
-#         'output_filename': 'css/all.min.css',
-#     }
-# }
-# 
-# COMPRESS_JS = {
-#     'all': {
-#         'source_filenames': ('js/jquery.js', 'js/jquery.date_input.js', 'js/jquery.date_input-pl.js',
-#             'js/jquery.countdown.js', 'js/jquery.countdown-pl.js',),
-#         'output_filename': 'js/all.min.js',
-#     }
-# }
-# 
-# COMPRESS_CSS_FILTERS = None
+COMPRESS_CSS = {
+    'detail': {
+         'source_filenames': (
+            'css/master.css', 
+            'css/html.css',             
+            'css/jquery.autocomplete.css',
+        ),
+        'output_filename': 'compressed/detail_styles_?.css',
+    },
+    'listing': {
+        'source_filenames': (
+            'css/filelist.css', 
+        ),             
+        'output_filename': 'compressed/listing_styles_?.js',
+     }
+}
+ 
+COMPRESS_JS = {
+    # everything except codemirror
+    'detail': {
+        'source_filenames': (
+                'js/jquery-1.4.2.min.js', 
+                'js/jquery.autocomplete.js', 
+                'js/jquery.blockui.js',
+                'js/jquery.elastic.js',
+                'js/button_scripts.js',
+                'js/slugify.js',
+                'js/xslt.js',
+                'js/main.js',
+        ),             
+        'output_filename': 'compressed/detail_scripts_?.js',
+     },
+    'listing': {
+        'source_filenames': (
+                'js/jquery-1.4.2.min.js', 
+                'js/slugify.js',                
+        ),             
+        'output_filename': 'compressed/listing_scripts_?.js',
+     }
+}
+ 
+COMPRESS_CSS_FILTERS = None
+COMPRESS_JS_FILTERS = None
+COMPRESS_AUTO = False
+COMPRESS_VERSION = True
+COMPRESS_VERSIONING = 'compress.versioning.hash.MD5Versioning'
 
 
 INSTALLED_APPS = (
@@ -136,6 +166,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'django_nose',
+    'compress',
 
     'wiki',
     'sorl.thumbnail',

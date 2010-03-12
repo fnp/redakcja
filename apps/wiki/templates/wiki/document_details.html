@@ -2,21 +2,16 @@
 {% load toolbar_tags %}
 
 {% block extrahead %}
-    <link rel="stylesheet" href="{{STATIC_URL}}css/master.css" type="text/css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="{{STATIC_URL}}css/html.css" type="text/css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="{{STATIC_URL}}css/jquery.autocomplete.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
+	{% load compressed %}
+	{% compressed_css 'detail' %}
+{% endblock %}
+	
+{% block extrabody %}
     <script type="text/javascript" charset="utf-8">
         var STATIC_URL = '{{STATIC_URL}}';
-    </script>
-    
+    </script>    
     <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/jquery.blockui.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/jquery.autocomplete.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/jquery.elastic.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/button_scripts.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/xslt.js" type="text/javascript" charset="utf-8"></script>
-    <script src="{{STATIC_URL}}js/main.js" type="text/javascript" charset="utf-8"></script>
+	{% compressed_js 'detail' %}
 {% endblock %}
 
 {% block maincontent %}

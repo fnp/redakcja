@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% load compressed %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/filelist.css" type="text/css" />
-<script src="{{ STATIC_URL }}js/slugify.js" type="text/javascript" charset="utf-8"></script>
+{% compressed_css 'listing' %}
+{% endblock extrahead %}
+
+{% block extrabody %}
+{% compressed_js 'listing' %}
 <script type="text/javascript" charset="utf-8">
 $(function() {
 	function search(event) {
@@ -20,7 +24,7 @@ $(function() {
 	$('#file-list-filter').bind('keyup change DOMAttrModified', search);
 });
 </script>
-{% endblock extrahead %}
+{% endblock %}
 
 {% block maincontent %}
 <h1><img src="{{STATIC_URL}}/img/logo.png">Platforma Redakcyjna</h1>
