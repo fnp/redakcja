@@ -122,7 +122,7 @@ COMPRESS_CSS = {
         'source_filenames': (
             'css/filelist.css', 
         ),             
-        'output_filename': 'compressed/listing_styles_?.js',
+        'output_filename': 'compressed/listing_styles_?.css',
      }
 }
  
