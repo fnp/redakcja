@@ -6,11 +6,10 @@ PROJECT_ROOT = path.realpath(path.dirname(__file__))
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-MAINTENANCE_MODE = True
-INTERNAL_IPS = ()
+MAINTENANCE_MODE = False
 
 ADMINS = (
-    (u'Marek Stępniowski', 'marek@stepniowski.com'),
+    # (u'Marek Stępniowski', 'marek@stepniowski.com'),
     (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
 )
 
