@@ -8,7 +8,8 @@ defaults.handler503 = 'maintenancemode.views.defaults.temporary_unavailable'
 defaults.__all__.append('handler503')
 
 from maintenancemode.conf.settings import MAINTENANCE_MODE
-
+import traceback
+    
 class MaintenanceModeMiddleware(object):
     def process_request(self, request):
         # Allow access if middleware is not activated
@@ -29,3 +30,8 @@ class MaintenanceModeMiddleware(object):
         
         callback, param_dict = resolver._resolve_special('503')
         return callback(request, **param_dict)
+    
+    def process_exception(self, request, exception):
+        tb_text = traceback.format_exc()
+        url = request.build_absolute_uri()
+        request.META['wsgi.errors'].write(url + '\n' + str(tb_text) + '\n')
