@@ -143,8 +143,7 @@ class VersionedStorage(object):
         name = filename[len(self.repo_prefix):].strip('/')
         return urlunquote(name)
 
-    def __contains__(self, title):
-        print "Checking ", title
+    def __contains__(self, title):        
         return urlquote(title) in self.repo.dirstate
 
     def __iter__(self):
