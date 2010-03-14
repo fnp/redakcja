@@ -896,6 +896,9 @@ $(function() {
         }
         $(window).resize();
     });
-                
+	
+	$(window).bind('beforeunload', function(event) {
+		return "Na stronie mogą być niezapisane zmiany.";								
+	});                
 
 });
