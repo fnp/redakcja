@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.inclusion_tag('toolbar/toolbar.html')
 def toolbar():
-    return {'toolbar_groups': models.ButtonGroup.objects.all()}
+    return {'toolbar_groups': models.ButtonGroup.objects.all().select_related() }
 
 @register.inclusion_tag('toolbar/button.html')
 def toolbar_button(b):

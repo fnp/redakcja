@@ -1,0 +1,20 @@
+<table class="diff_table">
+	<thead>
+		<tr>
+			<th colspan="2">Stara wersja</th>
+			<th colspan="2">Nowa wersja</th>
+		</tr>
+	</thead>
+<tbody>
+{% for an, a, bn, b, has_change in changes %}
+
+<tr class="{% if has_change %}change{% endif %}">
+<td>{{an}}</td>
+<td class="left">{{ a|safe }}&nbsp;</td>
+<td>{{bn}}</td>
+<td class="right">{{ b|safe }}&nbsp;</td>
+</tr>
+
+{% endfor %}
+</tbody>
+</table>

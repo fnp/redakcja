@@ -715,7 +715,7 @@ function refreshHistory(callback){
 					+'<td>'+ this[1]+'</td></tr>')			
 			});							
 			$.unblockUI();	
-			callback();
+			if(callback) callback();
 		}
 	});
 };
@@ -887,11 +887,11 @@ $(function() {
     $('.vsplitbar').click(function() {
         if ($('#sidebar').width() == 0) {
             $('#sidebar').width(480).css({right: 0}).show();
-            $('#source-editor, #simple-editor').css({right: 495});
+            $('#editor .editor').css({right: 495});
             $('.vsplitbar').css({right: 480}).addClass('active');
         } else {
             $('#sidebar').width(0).hide();
-            $('#source-editor, #simple-editor').css({right: 15});
+            $('#editor .editor').css({right: 15});
             $('.vsplitbar').css({right: 0}).removeClass('active');
         }
         $(window).resize();

@@ -29,26 +29,40 @@ body {
 	font-family: sans-serif;
 }
 
-.document-list {
+#file-list {
 	overflow: visible;
 	float: left;
-	max-width: 60%;
+	max-width: 50%;
+	padding-right: 2%;
+	border-right: 1px dashed black;	
+	
 }
 
-.document-list .page-nav-wrap button {
-    width: 2.5em;
+#last-edited-list {
+	float: left;
+	max-width: 35%;
+	margin-left: 5%;
 }
 
-ul.file-tree-part {    
-    margin: 0.5em 1em;
-    padding: 0em;
+#last-edited-list ul {
+	margin: 0px;
+}	
+
+#last-edited-list li {
+	margin-bottom: 1em;
 }
 
-ul.file-tree-part li {
-    list-style: square;    
-    padding: 0em;    
+#last-edited-list .date {
+	font-size: 70%;
+	color: grey;
 }
 
-ul.file-tree-part a {
-    padding: 0em;
+a, a:visited, a:active {
+	color: blue;
+	text-decoration: none;	
+}
+
+a:hover {
+	text-decoration: underline;
+}
 }

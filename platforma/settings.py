@@ -84,8 +84,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_cas.middleware.CASMiddleware',
 
-    'django.middleware.doc.XViewMiddleware',
+    'django.middleware.doc.XViewMiddleware',    
     'maintenancemode.middleware.MaintenanceModeMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -127,10 +128,10 @@ COMPRESS_CSS = {
 }
  
 COMPRESS_JS = {
-    # everything except codemirror
+    # everything except codemirror and jquery (which we take from google)
     'detail': {
         'source_filenames': (
-                'js/jquery-1.4.2.min.js', 
+                #'js/jquery-1.4.2.min.js', 
                 'js/jquery.autocomplete.js', 
                 'js/jquery.blockui.js',
                 'js/jquery.elastic.js',
@@ -143,13 +144,14 @@ COMPRESS_JS = {
      },
     'listing': {
         'source_filenames': (
-                'js/jquery-1.4.2.min.js', 
+                # 'js/jquery-1.4.2.min.js', 
                 'js/slugify.js',                
         ),             
         'output_filename': 'compressed/listing_scripts_?.js',
      }
 }
  
+COMPRESS = True
 COMPRESS_CSS_FILTERS = None
 COMPRESS_JS_FILTERS = None
 COMPRESS_AUTO = False
@@ -166,6 +168,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'django_nose',
+    'debug_toolbar',
+    
     'compress',
 
     'wiki',

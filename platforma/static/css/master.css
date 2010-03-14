@@ -1,3 +1,8 @@
+a, a:visited, a:active {
+	color: gold;
+	text-decoration: none;	
+}
+
 body {
     margin: 0;
     overflow: hidden;
@@ -321,43 +326,71 @@ p { margin: 0;}
     line-height: 18px;
 	padding-right: 5px;
 }
+
+#history-view table {
+	width: 80%;
+	margin: 1em auto;	
+}
+
+#history-view .diff_table {
+	width: 90%;
+}
  
 /* DIFFS */
- #history-view table {
- 	width: 75%;
-	margin: 1em auto;
-	max-height: 400px;
-	overflow-y: auto;
- }
- 
- #diff-view {
- 	border: 2px solid black;
-	background: #fafafa;
-	margin: 1em auto;
-	width: 90%; 	
- }
- 
- td.diff_header {
- 	display: none;
- }
- 
- td.diff_next {
- 	display: none;
- }
+ .diff_table { 
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+	empty-cells: show;
+	border-spacing: 0px;		
+}
 
- .diff_sub {
- 	background-color: #ef4040;
- }
- 
- .diff_chg {
- 	background-color: #efef40;
- }
- 
- .diff_add {
- 	background-color: #40ef40;
- }
+.diff_table td {
+	border-width: 0px 1px 1px 0px;
+	border-style: dotted;
+	border-color: grey;
+	
+	font-size: 10px;
+	line-height: 20px;
+	font-family: monospace;
+	padding: 0px;
+	white-space:pre-line;
+	/*word-wrap:break-word;
+	word-break:break-all; */
+}
 
+.diff_table th {
+	border-width: 0px 1px 1px 0px;
+	border-style: solid;
+	border-color: black;
+	background: #e5ffe5;		
+}
+ 
+/* .diff_table td.left, .diff_table td.right {
+	width: 50%;
+}*/
 
+.diff_table tr.change {
+	background-color: #dcdcdc;
+	
+}
+
+.diff_mark {
+	display: inline-block;
+	padding: 2px;
+}
+
+.diff_mark_removed {
+	background-color: #ff9c94;
+}
+
+.diff_mark_added {
+	background-color: #90ee90;
+}
+
+.diff_mark_changed {
+	background-color: yellow;
+}
 /*
  * HTML Editor view
  */ 

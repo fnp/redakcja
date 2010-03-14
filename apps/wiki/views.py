@@ -10,8 +10,11 @@ from wiki.forms import DocumentForm
 from datetime import datetime
 
 # import google_diff
-import difflib
+# import difflib
+import nice_diff
+import operator
 
+MAX_LAST_DOCS = 10
 
 class DateTimeEncoder(json.JSONEncoder):
      def default(self, obj):
@@ -20,9 +23,12 @@ class DateTimeEncoder(json.JSONEncoder):
          return json.JSONEncoder.default(self, obj)
 
 def document_list(request, template_name = 'wiki/document_list.html'):
+    # TODO: find a way to cache "Storage All"
     return direct_to_template(request, template_name, extra_context = {
         'document_list': storage.all(),
-    })
+        'last_docs': sorted(request.session.get("wiki_last_docs", {}).items(), 
+                        key=operator.itemgetter(1), reverse = True)
+    })  
 
 
 def document_detail(request, name, template_name = 'wiki/document_details.html'):
@@ -31,12 +37,15 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
     except DocumentNotFound:        
         raise Http404
     
-#    access_time = datetime.ctime();
-#    last_documents = request.session.get("wiki_last_docs", [])
-#        
-#    if name not in last_documents:
-#        last_documents.insert(0, (name, access_time))        
-
+    access_time = datetime.now()
+    last_documents = request.session.get("wiki_last_docs", {})      
+    last_documents[name] = access_time
+    
+    if len(last_documents) > MAX_LAST_DOCS:
+        oldest_key = min(last_documents, key = last_documents.__getitem__)
+        del last_documents[oldest_key]        
+    request.session['wiki_last_docs'] = last_documents   
+                
     if request.method == 'POST':
         
         form = DocumentForm(request.POST, instance = document)
@@ -66,15 +75,13 @@ def document_gallery(request, directory):
 
         raise Http404
     
-def document_diff(request, name, revA, revB):
-    differ = difflib.HtmlDiff(wrapcolumn=60)
-     
+def document_diff(request, name, revA, revB):     
     docA = storage.get(name, int(revA))
-    docB = storage.get(name, int(revB))
-     
-    return HttpResponse(differ.make_table(
-                                docA.plain_text.splitlines(),
-                                docB.plain_text.splitlines() ) )                                           
+    docB = storage.get(name, int(revB)) 
+    
+    
+    return HttpResponse(nice_diff.html_diff_table(docA.plain_text.splitlines(), 
+                                         docB.plain_text.splitlines()) )                                           
     
     
 def document_history(reuqest, name):
