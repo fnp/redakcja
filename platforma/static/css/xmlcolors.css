@@ -22,7 +22,7 @@
 }
 
 span.xml-tagname {
-  color: #a31727;
+  color: #0e5f0e;
 }
 
 span.xml-attribute {
@@ -55,6 +55,7 @@ span.xml-entity {
 
 span.xml-error {
   color: #F00;
+  font-weight: bolder;
 }
 
 span.xml-text {

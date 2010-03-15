@@ -171,10 +171,11 @@ INSTALLED_APPS = (
     'debug_toolbar',
     
     'compress',
-
-    'wiki',
+    'south',
     'sorl.thumbnail',
     'filebrowser',
+
+    'wiki',    
     'toolbar',
 )
 

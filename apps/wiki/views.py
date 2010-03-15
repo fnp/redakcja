@@ -8,6 +8,7 @@ from django.utils import simplejson as json
 from wiki.models import storage, Document, DocumentNotFound
 from wiki.forms import DocumentForm
 from datetime import datetime
+from django.utils.encoding import smart_unicode
 
 # import google_diff
 # import difflib
@@ -65,8 +66,24 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
 
 def document_gallery(request, directory):
     try:
-        base_dir = os.path.join(settings.MEDIA_ROOT, settings.FILEBROWSER_DIRECTORY, directory)
-        images = [u'%s%s%s/%s' % (settings.MEDIA_URL, settings.FILEBROWSER_DIRECTORY, directory, f) for f in os.listdir(base_dir) if os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')]
+        base_dir = os.path.join(
+                    smart_unicode(settings.MEDIA_ROOT), 
+                    smart_unicode(settings.FILEBROWSER_DIRECTORY),
+                    smart_unicode(directory) )
+        
+        def map_to_url(filename):           
+                         
+            return '%s%s%s/%s' % (
+                        smart_unicode(settings.MEDIA_URL),                         
+                        smart_unicode(settings.FILEBROWSER_DIRECTORY),
+                        smart_unicode(directory),
+                        smart_unicode(filename)
+            )
+            
+        def is_image(filename):
+            return os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
+            
+        images = [ map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f) ]
         images.sort()
         return HttpResponse(json.dumps(images))
     except (IndexError, OSError), exc:

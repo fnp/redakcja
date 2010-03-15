@@ -236,6 +236,11 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 					break;					
 				};					
 				
+				if(xnode === 'out-of-flow-text') {
+					self._pushChildren(token.node);
+					break;										
+				}
+				
 				if(token.node.hasAttribute('x-verse') && self._verseBefore(token.node)) {
 					self.result += '/\n';					
 				};
