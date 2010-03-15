@@ -763,7 +763,7 @@ $(function() {
     CodeMirror.fromTextArea('id_text', {
         parserfile: 'parsexml.js',
         path: STATIC_URL + "js/lib/codemirror/",
-        stylesheet: STATIC_URL + "css/xmlcolors.css",
+        stylesheet: STATIC_URL + "css/xmlcolors_15032010.css",
         parserConfig: {
             useHTMLKludges: false
         },

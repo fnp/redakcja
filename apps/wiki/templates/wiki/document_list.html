@@ -10,13 +10,10 @@
 <script type="text/javascript" charset="utf-8">
 $(function() {
 	function search(event) {
-        event.preventDefault();
-        
-        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');
-    	
-        $('#file-list tbody tr').hide().filter(function(index) {
-            console.log(expr.test($(this).attr('title')))
-            return expr.test(slugify($('a', this).html()));
+        event.preventDefault();        
+        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');    	
+        $('#file-list tbody tr').hide().filter(function(index) {            
+            return expr.test(slugify($('a', this).text()));
         }).show();
     }
 	
@@ -29,25 +26,26 @@ $(function() {
 {% block maincontent %}
 <h1><img src="{{STATIC_URL}}/img/logo.png">Platforma Redakcyjna</h1>
 
-<div id="document-list">    	 
-    <table id="file-list">
-    	<thead><tr><th colspan="2">
-    	<form action="#" method="GET">
-    	Filtr: <input autocomplete="off" name="filter" id="file-list-filter" type="text" size="60" />
-        	<input type="submit" value="Znajdź" id="file-list-find-button"/>
-        	<input type="reset" value="Wyczyść" id="file-list-reset-button"/>
-    	
-    	</form>
-		</th></tr></thead>		
+
+<div id="document-list">
+	<form method="get" action="#">    	 
+    <table  id="file-list">
+    	<thead>    	
+    		<tr><th>Filtr:</th>
+			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
+			<th><input type="reset" value="Wyczyść" id="file-list-reset-button"/></th>
+			</tr>   	
+		</thead>		
 		<tbody>
     	{% for file in document_list %}
             <tr>
-            	<td><a target="_blank" href="{% url wiki.views.document_detail file|urlencode %}">{{ file }}</a></td>
-				<td><!-- placeholder --></td>
+            	<td colspan="3"><a target="_blank" href="{% url wiki.views.document_detail file|urlencode %}">{{ file }}</a></td>
+				<!-- placeholder </td> -->
 			</tr>
     	{% endfor %}
 		</tbody>
     </table>
+	</form>
 	
 	<div id="last-edited-list">
 		<h2>Twoje ostatnio otwierane dokumenty:</h2>
