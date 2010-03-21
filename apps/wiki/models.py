@@ -15,7 +15,12 @@ class DocumentStorage(object):
         return Document(self, name = name, text = text)
 
     def put(self, document, author, comment, parent):
-        self.vstorage.save_text(document.name, document.text, author, comment, parent)
+        self.vstorage.save_text(
+                title = document.name,
+                text = document.text, 
+                author = author, 
+                comment = comment, 
+                parent = parent)
 
     def delete(self, name, author, comment):
         self.vstorage.delete_page(name, author, comment)

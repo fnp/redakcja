@@ -6,7 +6,6 @@ class DocumentForm(forms.Form):
     name = forms.CharField(widget=forms.HiddenInput)
     text = forms.CharField(widget=forms.Textarea)
     revision = forms.IntegerField(widget=forms.HiddenInput)
-    author = forms.CharField()
     comment = forms.CharField()
     
     def __init__(self, *args, **kwargs):
@@ -19,10 +18,14 @@ class DocumentForm(forms.Form):
     
     def get_storage(self):
         return storage
-    
-    def save(self):
+        
+    def save(self, document_author = 'anonymous'):
         document = Document(self.get_storage(), name=self.cleaned_data['name'], text=self.cleaned_data['text'])
-        storage.put(document, self.cleaned_data['author'], self.cleaned_data['comment'],
-            self.cleaned_data['revision'])
+        
+        storage.put(document, 
+                author = document_author, 
+                comment = self.cleaned_data['comment'],
+                parent =self.cleaned_data['revision'] )
+        
         return storage.get(self.cleaned_data['name'])
 

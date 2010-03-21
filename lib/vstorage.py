@@ -4,6 +4,10 @@ import tempfile
 import datetime
 import mimetypes
 import urllib
+import functools
+
+import logging
+logger = logging.getLogger('fnp.hazlenut.vstorage')
 
 # Note: we have to set these before importing Mercurial
 os.environ['HGENCODING'] = 'utf-8'
@@ -42,27 +46,36 @@ def find_repo_path(path):
     return path
 
 
-def locked_repo(func):
+def with_working_copy_locked(func):
     """A decorator for locking the repository when calling a method."""
 
-    def new_func(self, *args, **kwargs):
+    @functools.wraps(func)
+    def wrapped(self, *args, **kwargs):
         """Wrap the original function in locks."""
-
         wlock = self.repo.wlock()
+        try:
+            return func(self, *args, **kwargs)
+        finally:            
+            wlock.release()
+    return wrapped
+
+def with_storage_locked(func):
+    """A decorator for locking the repository when calling a method."""
+
+    @functools.wraps(func)
+    def wrapped(self, *args, **kwargs):
+        """Wrap the original function in locks."""
         lock = self.repo.lock()
         try:
-            func(self, *args, **kwargs)
-        finally:
+            return func(self, *args, **kwargs)
+        finally:            
             lock.release()
-            wlock.release()
-
-    return new_func
-
+    return wrapped
 
 def guess_mime(file_name):
     """
     Guess file's mime type based on extension.
-    Default ot text/x-wiki for files without an extension.
+    Default of text/x-wiki for files without an extension.
 
     >>> guess_mime('something.txt')
     'text/plain'
@@ -109,27 +122,24 @@ class VersionedStorage(object):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         self.repo_path = find_repo_path(self.path)
-        try:
-            self.ui = mercurial.ui.ui(report_untrusted = False,
-                                      interactive = False, quiet = True)
-        except TypeError:
-            # Mercurial 1.3 changed the way we setup the ui object.
-            self.ui = mercurial.ui.ui()
-            self.ui.quiet = True
-            self.ui._report_untrusted = False
-            self.ui.setconfig('ui', 'interactive', False)
+        
+        self.ui = mercurial.ui.ui()
+        self.ui.quiet = True
+        self.ui._report_untrusted = False
+        self.ui.setconfig('ui', 'interactive', False)
+        
         if self.repo_path is None:
             self.repo_path = self.path
             create = True
         else:
             create = False
+            
         self.repo_prefix = self.path[len(self.repo_path):].strip('/')
         self.repo = mercurial.hg.repository(self.ui, self.repo_path,
                                             create = create)
 
     def reopen(self):
         """Close and reopen the repo, to make sure we are up to date."""
-
         self.repo = mercurial.hg.repository(self.ui, self.repo_path)
 
     def _file_path(self, title):
@@ -143,8 +153,8 @@ class VersionedStorage(object):
         name = filename[len(self.repo_prefix):].strip('/')
         return urlunquote(name)
 
-    def __contains__(self, title):        
-        return urlquote(title) in self.repo.dirstate
+    def __contains__(self, title):                        
+        return urlquote(title) in self.repo['tip']
 
     def __iter__(self):
         return self.all_pages()
@@ -179,50 +189,42 @@ class VersionedStorage(object):
             pass
         return msg
 
-    @locked_repo
+    @with_working_copy_locked
+    @with_storage_locked
     def save_file(self, title, file_name, author = u'', comment = u'', parent = None):
         """Save an existing file as specified page."""
-
-        user = author.encode('utf-8') or u'anon'.encode('utf-8')
+        user = author.encode('utf-8') or u'anonymous'.encode('utf-8')
         text = comment.encode('utf-8') or u'comment'.encode('utf-8')
+        
         repo_file = self._title_to_file(title)
         file_path = self._file_path(title)
         mercurial.util.rename(file_name, file_path)
         changectx = self._changectx()
+        
         try:
             filectx_tip = changectx[repo_file]
             current_page_rev = filectx_tip.filerev()
         except mercurial.revlog.LookupError:
             self.repo.add([repo_file])
             current_page_rev = -1
+        
         if parent is not None and current_page_rev != parent:
             msg = self.merge_changes(changectx, repo_file, text, user, parent)
             user = '<wiki>'
             text = msg.encode('utf-8')
+            
         self._commit([repo_file], text, user)
-
-
-    def _commit(self, files, text, user):
-        try:
-            return self.repo.commit(files = files, text = text, user = user,
-                                    force = True, empty_ok = True)
-        except TypeError:
-            # Mercurial 1.3 doesn't accept empty_ok or files parameter
-            match = mercurial.match.exact(self.repo_path, '', list(files))
-            return self.repo.commit(match = match, text = text, user = user,
-                                    force = True)
-
-
-    def save_data(self, title, data, author = u'', comment = u'', parent = None):
+        
+        
+    def save_data(self, title, data, **kwargs):
         """Save data as specified page."""
-
         try:
             temp_path = tempfile.mkdtemp(dir = self.path)
             file_path = os.path.join(temp_path, 'saved')
             f = open(file_path, "wb")
             f.write(data)
             f.close()
-            self.save_file(title, file_path, author, comment, parent)
+            self.save_file(title = title, file_name = file_path, **kwargs)
         finally:
             try:
                 os.unlink(file_path)
@@ -233,15 +235,17 @@ class VersionedStorage(object):
             except OSError:
                 pass
 
-    def save_text(self, title, text, author = u'', comment = u'', parent = None):
-        """Save text as specified page, encoded to charset."""
+    def save_text(self, text, **kwargs):
+        """Save text as specified page, encoded to charset.""" 
+        self.save_data(data = text.encode(self.charset), **kwargs)
 
-        data = text.encode(self.charset)
-        self.save_data(title, data, author, comment, parent)
 
+    def _commit(self, files, text, user):
+        match = mercurial.match.exact(self.repo_path, '', list(files))
+        return self.repo.commit(match = match, text = text, user = user, force = True)
+ 
     def page_text(self, title):
         """Read unicode text of a page."""
-
         data = self.open_page(title).read()
         text = unicode(data, self.charset, 'replace')
         return text
@@ -250,7 +254,8 @@ class VersionedStorage(object):
         for data in page:
             yield unicode(data, self.charset, 'replace')
 
-    @locked_repo
+    @with_working_copy_locked
+    @with_storage_locked
     def delete_page(self, title, author = u'', comment = u''):
         user = author.encode('utf-8') or 'anon'
         text = comment.encode('utf-8') or 'deleted'
@@ -263,27 +268,30 @@ class VersionedStorage(object):
         self.repo.remove([repo_file])
         self._commit([repo_file], text, user)
 
+    @with_working_copy_locked
     def open_page(self, title):
         if title not in self:
             raise DocumentNotFound()
-
+        
+        path = self._title_to_file(title)
+        logger.debug("Opening page %s", path)      
         try:
-            return open(self._file_path(title), "rb")
+            return self.repo.wfile(path, 'rb')            
         except IOError:
-            import traceback
-            print traceback.print_exc()
+            logger.exception("Failed to open page %s", title)
             raise DocumentNotFound()
 
+    @with_working_copy_locked
     def page_file_meta(self, title):
         """Get page's inode number, size and last modification time."""
-
         try:
             (st_mode, st_ino, st_dev, st_nlink, st_uid, st_gid, st_size,
              st_atime, st_mtime, st_ctime) = os.stat(self._file_path(title))
         except OSError:
             return 0, 0, 0
         return st_ino, st_size, st_mtime
-
+    
+    @with_working_copy_locked
     def page_meta(self, title):
         """Get page's revision, date, last editor and his edit comment."""
         if not title in self:
@@ -301,23 +309,17 @@ class VersionedStorage(object):
         return rev, date, author, comment
 
     def repo_revision(self):
-        return self._changectx().rev()
+        return self.repo['tip'].rev()
+    
+    def _changectx(self):
+        return self.repo['tip']
 
     def page_mime(self, title):
         """
         Guess page's mime type based on corresponding file name.
         Default ot text/x-wiki for files without an extension.
         """
-        return guess_type(self._file_path(title))
-
-    def _changectx(self):
-        """Get the changectx of the tip."""
-        try:
-            # This is for Mercurial 1.0
-            return self.repo.changectx()
-        except TypeError:
-            # Mercurial 1.3 (and possibly earlier) needs an argument
-            return self.repo.changectx('tip')
+        return guess_mime(self._file_path(title))
 
     def _find_filectx(self, title):
         """Find the last revision in which the file existed."""
@@ -389,12 +391,9 @@ class VersionedStorage(object):
                     yield title, rev, date, author, comment
 
     def all_pages(self):
+        tip = self.repo['tip']
         """Iterate over the titles of all pages in the wiki."""
-        return [ urlunquote(filename) for filename in self.repo.dirstate]
-        #status = self.repo.status(self.repo[None], None, None, True, True, True)
-        #clean_files = status[6]
-        #for filename in clean_files:
-        #    yield
+        return [ urlunquote(filename) for filename in tip ]        
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""

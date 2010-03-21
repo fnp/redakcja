@@ -4,6 +4,7 @@
 import os
 import tempfile
 from nose.tools import *
+from nose.core import runmodule
 
 import vstorage
 
@@ -33,7 +34,11 @@ class TestVersionedStorage(object):
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title, text, author, comment, parent=-1)
+        
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=-1)
+        
         saved = self.repo.open_page(title).read()
         assert saved == text
 
@@ -42,7 +47,11 @@ class TestVersionedStorage(object):
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title, text, author, comment, parent=None)
+        
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=None)
+        
         saved = self.repo.open_page(title).read()
         assert saved == text
 
@@ -51,8 +60,12 @@ class TestVersionedStorage(object):
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title, text, author, comment, parent=-1)
-        self.repo.save_text(title, text, author, comment, parent=-1)
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=-1)
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=-1)
         saved = self.repo.open_page(title).read()
         assert saved == text
     
@@ -63,10 +76,21 @@ class TestVersionedStorage(object):
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title, text, author, comment, parent=-1)
-        self.repo.save_text(title, text1, author, comment, parent=0)
-        self.repo.save_text(title, text2, author, comment, parent=0)
+        
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=-1)
+        
+        self.repo.save_text(title = title, 
+                    text = text1, author = author, 
+                    comment = comment, parent=0)
+        
+        self.repo.save_text(title = title, 
+                    text = text2, author = author, 
+                    comment = comment, parent=0)
+        
         saved = self.repo.open_page(title).read()
+        
         # Other conflict markers placement can also be correct
         assert_equal(saved, u'''\
 text
@@ -77,14 +101,20 @@ text
 >>>>>>> other
 ''')
 
+
     def test_delete(self):
         text = u"text test"
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title, text, author, comment, parent=-1)
+        self.repo.save_text(title = title, 
+                    text = text, author = author, 
+                    comment = comment, parent=-1)
+        
         assert title in self.repo
+        
         self.repo.delete_page(title, author, comment)
+        
         assert title not in self.repo
 
     @raises(vstorage.DocumentNotFound)
@@ -92,8 +122,11 @@ text
         self.repo.open_page(u'unknown entity')
 
     def test_open_existing_repository(self):
-        self.repo.save_text(u'Python!', u'ham and spam')
+        self.repo.save_text(title = u'Python!', text = u'ham and spam')
         current_repo_revision = self.repo.repo_revision()
         same_repo = vstorage.VersionedStorage(self.repo_path)
         assert same_repo.repo_revision() == current_repo_revision
 
+
+if __name__ == '__main__':
+    runmodule()

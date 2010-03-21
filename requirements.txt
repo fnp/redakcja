@@ -13,3 +13,7 @@ south>=0.6
 # debug stuff
 django-nose>=0.0.3
 django-debug-toolbar>=0.8
+
+
+poster==0.5
+httplib2

@@ -10,8 +10,8 @@ from wiki.forms import DocumentForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 
-# import google_diff
-# import difflib
+import httplib2
+import poster
 import nice_diff
 import operator
 
@@ -33,6 +33,7 @@ def document_list(request, template_name = 'wiki/document_list.html'):
 
 
 def document_detail(request, name, template_name = 'wiki/document_details.html'):
+    print "Trying to get", repr(name)
     try:
         document = storage.get(name)
     except DocumentNotFound:        
@@ -47,11 +48,10 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
         del last_documents[oldest_key]        
     request.session['wiki_last_docs'] = last_documents   
                 
-    if request.method == 'POST':
-        
+    if request.method == 'POST':        
         form = DocumentForm(request.POST, instance = document)
         if form.is_valid():
-            document = form.save()
+            document = form.save(document_author = request.user.username)
             return HttpResponse(json.dumps({'text': document.plain_text, 'meta': document.meta(), 'revision': document.revision()}))
         else:
             return HttpResponse(json.dumps({'errors': form.errors}))
@@ -101,5 +101,41 @@ def document_diff(request, name, revA, revB):
                                          docB.plain_text.splitlines()) )                                           
     
     
-def document_history(reuqest, name):
-    return HttpResponse( json.dumps(storage.history(name), cls=DateTimeEncoder), mimetype='application/json')
+def document_history(request, name):
+    return HttpResponse( 
+                json.dumps(storage.history(name), cls=DateTimeEncoder), 
+                mimetype='application/json')
+
+
+def document_publish(request, name, version):
+    # get the document
+    try:
+        document = storage.get(name, revision = int(version))
+    except DocumentNotFound:        
+        raise Http404
+    
+    poster.streaminghttp.register_openers()
+    
+    # send request to WL
+    http = httplib2.Http()
+    http.add_credentials("test", "test")
+    http.follow_all_redirects = True    
+    datagen, headers = poster.encode.multipart_encode({name: document.plain_text})
+    
+    for key, value in headers.items():
+        headers[key] = unicode(value)
+        
+    try:
+        resp, data = http.request("http://localhost:8000/api/books.json", 
+            method = "POST", body = ''.join(datagen), headers = headers)
+        
+        print resp, data    
+    
+        if resp.status == 201: # success
+            result = {"success": True}
+        else:
+            result = {"success": False, "errno": resp.status, "reason": resp.reason}
+    except Exception, e:
+        result = {"success": False, "errno": 500, "reason": unicode(e)}
+        
+    return HttpResponse( json.dumps(result), mimetype='application/json')       

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from os import path
+import os.path
 
-PROJECT_ROOT = path.realpath(path.dirname(__file__))
+PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -220,4 +220,20 @@ try:
     from localsettings import *
 except ImportError:
     pass
+
+try:
+    LOGGING_CONFIG_FILE 
+except NameError:
+    LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 
+                                ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
+
+try:
+    import logging
+    import logging.config
+
+    logging.config.fileConfig(LOGGING_CONFIG_FILE)    
+except ImportError, exc:
+    import traceback
+    traceback.print_exc()
+    raise
 

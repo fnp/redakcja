@@ -398,7 +398,7 @@ function html(element) {
         return true;
     }
 	
-	var ANNOT_ALLOWED = ['wyroznienie'];
+	var ANNOT_ALLOWED = ['wyroznienie', 'slowo_obce', 'osoba'];
 	
 	function html2plainText(fragment) {
 		var text = "";
