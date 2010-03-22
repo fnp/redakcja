@@ -5,7 +5,7 @@ from django.views.generic.simple import direct_to_template
 from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 
-from wiki.models import storage, Document, DocumentNotFound
+from wiki.models import Document, DocumentNotFound, getstorage
 from wiki.forms import DocumentForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
@@ -33,7 +33,7 @@ class DateTimeEncoder(json.JSONEncoder):
 def document_list(request, template_name = 'wiki/document_list.html'):
     # TODO: find a way to cache "Storage All"
     return direct_to_template(request, template_name, extra_context = {
-        'document_list': storage.all(),
+        'document_list': getstorage().all(),
         'last_docs': sorted(request.session.get("wiki_last_docs", {}).items(), 
                         key=operator.itemgetter(1), reverse = True)
     })  
@@ -42,7 +42,7 @@ def document_list(request, template_name = 'wiki/document_list.html'):
 def document_detail(request, name, template_name = 'wiki/document_details.html'):
     print "Trying to get", repr(name)
     try:
-        document = storage.get(name)
+        document = getstorage().get(name)
     except DocumentNotFound:        
         raise Http404
     
@@ -101,7 +101,8 @@ def document_gallery(request, directory):
         raise Http404
     
 @never_cache
-def document_diff(request, name, revA, revB):     
+def document_diff(request, name, revA, revB):
+    storage = getstorage()     
     docA = storage.get(name, int(revA))
     docB = storage.get(name, int(revB)) 
     
@@ -111,6 +112,8 @@ def document_diff(request, name, revA, revB):
     
 @never_cache    
 def document_history(request, name):
+    storage = getstorage()
+    
     return HttpResponse( 
                 json.dumps(storage.history(name), cls=DateTimeEncoder), 
                 mimetype='application/json')
@@ -120,6 +123,8 @@ import urllib, urllib2
 
 @never_cache
 def document_publish(request, name, version):
+    storage = getstorage()
+    
     # get the document
     try:
         document = storage.get(name, revision = int(version))

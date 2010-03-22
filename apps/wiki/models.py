@@ -67,5 +67,5 @@ class Document(object):
 
         return result
 
-# Every time somebody says "let's have a global variable", God kills a kitten.
-storage = DocumentStorage(settings.REPOSITORY_PATH)
+def getstorage():
+    return DocumentStorage(settings.REPOSITORY_PATH)

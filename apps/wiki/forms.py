@@ -1,5 +1,5 @@
 from django import forms
-from wiki.models import Document, storage
+from wiki.models import Document, getstorage
 
 
 class DocumentForm(forms.Form):
@@ -15,12 +15,11 @@ class DocumentForm(forms.Form):
             self.fields['name'].initial = document.name
             self.fields['text'].initial = document.text
             self.fields['revision'].initial = document.revision()
-    
-    def get_storage(self):
-        return storage
         
     def save(self, document_author = 'anonymous'):
-        document = Document(self.get_storage(), name=self.cleaned_data['name'], text=self.cleaned_data['text'])
+        storage = getstorage()
+        
+        document = Document(storage, name=self.cleaned_data['name'], text=self.cleaned_data['text'])
         
         storage.put(document, 
                 author = document_author, 
