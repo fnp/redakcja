@@ -10,8 +10,14 @@ from wiki.forms import DocumentForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 
-import httplib2
-import poster
+#
+# Quick hack around caching problems, TODO: use ETags
+#
+from django.views.decorators.cache import never_cache
+
+import logging
+logger = logging.getLogger("fnp.peanut.api")
+
 import nice_diff
 import operator
 
@@ -23,6 +29,7 @@ class DateTimeEncoder(json.JSONEncoder):
              return datetime.ctime(obj) + " " + (datetime.tzname(obj) or 'GMT')
          return json.JSONEncoder.default(self, obj)
 
+@never_cache
 def document_list(request, template_name = 'wiki/document_list.html'):
     # TODO: find a way to cache "Storage All"
     return direct_to_template(request, template_name, extra_context = {
@@ -31,7 +38,7 @@ def document_list(request, template_name = 'wiki/document_list.html'):
                         key=operator.itemgetter(1), reverse = True)
     })  
 
-
+@never_cache
 def document_detail(request, name, template_name = 'wiki/document_details.html'):
     print "Trying to get", repr(name)
     try:
@@ -64,6 +71,7 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
     })
 
 
+@never_cache
 def document_gallery(request, directory):
     try:
         base_dir = os.path.join(
@@ -92,6 +100,7 @@ def document_gallery(request, directory):
 
         raise Http404
     
+@never_cache
 def document_diff(request, name, revA, revB):     
     docA = storage.get(name, int(revA))
     docB = storage.get(name, int(revB)) 
@@ -100,13 +109,16 @@ def document_diff(request, name, revA, revB):
     return HttpResponse(nice_diff.html_diff_table(docA.plain_text.splitlines(), 
                                          docB.plain_text.splitlines()) )                                           
     
-    
+@never_cache    
 def document_history(request, name):
     return HttpResponse( 
                 json.dumps(storage.history(name), cls=DateTimeEncoder), 
                 mimetype='application/json')
+    
+    
+import urllib, urllib2
 
-
+@never_cache
 def document_publish(request, name, version):
     # get the document
     try:
@@ -114,28 +126,25 @@ def document_publish(request, name, version):
     except DocumentNotFound:        
         raise Http404
     
-    poster.streaminghttp.register_openers()
+    auth_handler = urllib2.HTTPDigestAuthHandler();
+    auth_handler.add_password(
+                    realm="localhost:8000",
+                    uri="http://localhost:8000/api/",
+                    user="test", passwd="test")
     
-    # send request to WL
-    http = httplib2.Http()
-    http.add_credentials("test", "test")
-    http.follow_all_redirects = True    
-    datagen, headers = poster.encode.multipart_encode({name: document.plain_text})
     
-    for key, value in headers.items():
-        headers[key] = unicode(value)
-        
+    opener = urllib2.build_opener(auth_handler)         
+    rq = urllib2.Request("http://localhost:8000/api/books.json")
+    rq.add_data(json.dumps({"text": document.text, "compressed": False}))
+    rq.add_header("Content-Type", "application/json")
+    
     try:
-        resp, data = http.request("http://localhost:8000/api/books.json", 
-            method = "POST", body = ''.join(datagen), headers = headers)
-        
-        print resp, data    
-    
-        if resp.status == 201: # success
-            result = {"success": True}
-        else:
-            result = {"success": False, "errno": resp.status, "reason": resp.reason}
-    except Exception, e:
-        result = {"success": False, "errno": 500, "reason": unicode(e)}
+        response = opener.open(rq)                 
+        result = {"success": True, "message": response.read()}        
+    except urllib2.HTTPError, e:
+        logger.exception("Failed to send")
+        if e.code == 500:
+            return HttpResponse(e.read(), mimetype='text/plain')                        
+        result = {"success": False, "reason": e.read(), "errno": e.code}
         
     return HttpResponse( json.dumps(result), mimetype='application/json')       
