@@ -20,3 +20,5 @@ nbproject/*
 .project
 .pydevproject
 .settings
+platforma/static/compressed
+platforma/static/compressed/*
