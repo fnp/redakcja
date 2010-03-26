@@ -1,0 +1,59 @@
+#history-view .diff_table {
+	width: 90%;
+}
+ 
+/* DIFFS */
+ .diff_table { 
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+	empty-cells: show;
+	border-spacing: 0px;		
+}
+
+.diff_table td {
+	border-width: 0px 1px 1px 0px;
+	border-style: dotted;
+	border-color: grey;
+	
+	font-size: 10px;
+	line-height: 20px;
+	font-family: monospace;
+	padding: 0px;
+	white-space:pre-line;
+	/*word-wrap:break-word;
+	word-break:break-all; */
+}
+
+.diff_table th {
+	border-width: 0px 1px 1px 0px;
+	border-style: solid;
+	border-color: black;
+	background: #e5ffe5;		
+}
+ 
+/* .diff_table td.left, .diff_table td.right {
+	width: 50%;
+}*/
+
+.diff_table tr.change {
+	background-color: #dcdcdc;
+	
+}
+
+.diff_mark {
+	display: inline-block;
+	padding: 2px;
+}
+
+.diff_mark_removed {
+	background-color: #ff9c94;
+}
+
+.diff_mark_added {
+	background-color: #90ee90;
+}
+
+.diff_mark_changed {
+	background-color: yellow;
+}

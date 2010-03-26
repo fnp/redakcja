@@ -113,7 +113,8 @@ CAS_LOGOUT_COMPLETELY = True
 COMPRESS_CSS = {
     'detail': {
          'source_filenames': (
-            'css/master.css', 
+            'css/master.css',
+            'css/history.css', 
             'css/html.css',             
             'css/jquery.autocomplete.css',
         ),
@@ -137,8 +138,15 @@ COMPRESS_JS = {
                 'js/jquery.elastic.js',
                 'js/button_scripts.js',
                 'js/slugify.js',
-                'js/xslt.js',
-                'js/main.js',
+                
+                # wiki scripts
+                'js/wiki/wikiapi.js',
+                'js/wiki/base.js',
+                'js/wiki/xslt.js',
+                'js/wiki/history.js',
+                'js/wiki/source_editor.js',
+                'js/wiki/wysiwyg_editor.js',                
+                'js/wiki/main.js',
         ),             
         'output_filename': 'compressed/detail_scripts_?.js',
      },

@@ -1,0 +1,70 @@
+"""
+   Abstraction over API for wolnelektury.pl
+"""
+import urllib2
+import functools
+import django.utils.simplejson as json
+import logging
+logger = logging.getLogger("fnp.lib.wlapi")
+
+class APICallException(Exception):
+    pass 
+
+def api_call(path, format="json"):
+    def wrapper(func):
+        
+        @functools.wraps(func)
+        def wrapped(self, *args, **kwargs):            
+            generator = func(self, *args, **kwargs)
+            
+            data = generator.next()
+            
+            # prepare request
+            rq = urllib2.Request(self.base_url + path + ".json")
+            
+            # will send POST when there is data, GET otherwise
+            if data is not None:
+                rq.add_data(json.dumps(data))    
+                rq.add_header("Content-Type", "application/json")
+                            
+            try:
+                anwser = json.load(self.opener.open(rq))
+                return generator.send(anwser)
+            except StopIteration:
+                # by default, just return the anwser as a shorthand
+                return anwser                            
+            except urllib2.HTTPError, error:
+                return self._http_error(error)         
+            except Exception, error:
+                return self._error(error)               
+        return wrapped
+    
+    return wrapper
+         
+    
+
+class WLAPI(object):
+    
+    def __init__(self, config_dict):        
+        self.base_url = config_dict['URL']
+        self.auth_realm = config_dict['AUTH_REALM']
+        self.auth_user = config_dict['AUTH_USER'] 
+        
+        auth_handler = urllib2.HTTPDigestAuthHandler();
+        auth_handler.add_password(
+                    realm=self.auth_realm, uri=self.base_url,
+                    user=self.auth_user, passwd=config_dict['AUTH_PASSWD'])
+        
+        self.opener = urllib2.build_opener(auth_handler)
+        
+    def _http_error(self, error):
+        return self._error()
+    
+    def _error(self, error):
+        raise APICallException(cause = error) 
+        
+    @api_call("books")
+    def publish_book(self, document):
+        yield {"text": document.text, "compressed": False} 
+        
+    

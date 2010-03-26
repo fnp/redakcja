@@ -1,122 +1,136 @@
 {% extends "base.html" %}
 {% load toolbar_tags %}
-
 {% block title %}{{ document.name }} - {{ block.super }}{% endblock %}
-
 {% block extrahead %}
-	{% load compressed %}
-	{% compressed_css 'detail' %}
+{% load compressed %}
+{% compressed_css 'detail' %}
 {% endblock %}
-	
 {% block extrabody %}
-    <script type="text/javascript" charset="utf-8">
-        var STATIC_URL = '{{STATIC_URL}}';
-    </script>    
-    <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
-	{% compressed_js 'detail' %}
+<script type="text/javascript" charset="utf-8">
+    var STATIC_URL = '{{STATIC_URL}}';
+</script>
+<script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8">
+</script>
+{% compressed_js 'detail' %}
 {% endblock %}
-
 {% block maincontent %}
-        <div id="loading-overlay">
-            <div id="loading-message"><img src="{{STATIC_URL}}img/spinner.gif" /><p>Ładowanie</p></div>
+<div id="loading-overlay">
+    <div id="loading-message">
+        <img src="{{STATIC_URL}}img/spinner.gif" />
+        <p>
+            Ładowanie
+        </p>
+    </div>
+</div>
+
+<div id="document-meta" data-document-name="{{ document.name }}" style="display:none">
+{% for k, v in document.meta.items %}
+	<span data-key="{{ k }}">{{ v }}</span>
+{% endfor %}
+</div>
+
+<div id="header">
+    <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
+    <div id="tools">
+        <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
+        | {% include "registration/head_login.html" %} 
+        | Wersja: <span id="document-revision">{{ document.revision }}</span>
+        | 
+        <button style="margin-left: 6px" id="save-button">
+            Zapisz
+        </button>
+    </div>
+    <ol id="tabs">
+    	<li id="HistoryPerspective-tab" 
+			data-ui-related="history-viewer" 
+			data-ui-jsclass="HistoryPerspective">		
+            Historia
+        </li>
+		
+        <li id="VisualPerspective-tab" 
+			data-ui-related="simple-editor" data-ui-jsclass="VisualPerspective">
+            <span id="document-name">{{ document.name }}</span>
+        </li>
+        		
+		<li id="CodeMirrorPerspective-tab" 
+			data-ui-related="source-editor" data-ui-jsclass="CodeMirrorPerspective">
+            Kod źródłowy
+        </li>
+    </ol>
+</div>
+<div id="splitter">
+    <div id="editor">
+        <div id="source-editor" class="editor">
+            {% toolbar %}
+            <textarea id="codemirror_placeholder">&lt;br/&gt;</textarea>
+            <input type="hidden" name="name" value="{{ document.name }}" /><input type="hidden" name="author" value="annonymous" /><input type="hidden" name="comment" value="no comment" /><input type="hidden" name="revision" value="{{ document.revision }}" />
         </div>
-        <div id="document-meta" style="display:none">
-        {% for k, v in document.meta.items %}
-            <div class="{{ k }}">{{ v}}</div>
-        {% endfor %}
-        </div>
-        <div id="header">            
-            <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
-			<div id="tools">
-				<a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>				
-                | {% include "registration/head_login.html" %} 
-				| Wersja: <span id="document-revision">{{ document.revision }}</span> 
-				| <button style="margin-left: 6px" id="save-button">Zapisz</button>
-			</div>          
-            <ol id="tabs">
-                <li id="simple-view-tab" ui:related="simple-editor"><span id="document-name">{{ document.name }}</span></li>
-                <li id="source-view-tab" ui:related="source-editor">Kod źródłowy</li>
-				<li id="history-view-tab" ui:related="history-viewer">Historia</li>
-            </ol>
-			  
-        </div>
-        <div id="splitter">
-            <div id="editor">
-                <div id="source-editor" class="editor">
-                    {% toolbar %}
-                    <textarea name="text" id="id_text">{{ document.plain_text }}</textarea>
-                    <input type="hidden" name="name" value="{{ document.name }}" />
-                    <input type="hidden" name="author" value="annonymous" />
-                    <input type="hidden" name="comment" value="no comment" />
-                    <input type="hidden" name="revision" value="{{ document.revision }}" />
-                </div>
-                <div id="simple-editor" class="editor" style="display: none">                    
-                    <div id="html-view" class="htmlview">
-                    </div>
-					
-					<div class="toolbar">
-                        <button id="insert-theme-button">Wstaw motyw</button> <button id="insert-annotation-button">Wstaw przypis</button>
-                        <div class="toolbar-end"> </div>
-                    </div>
-                </div>
-				
-				<div id="history-viewer" class="editor" style="display: none">
-					<div class="toolbar"> </div>
-					<div id="history-view">
-						<p class="message-box" style="display:none;"></p>
-						<table>
-							<thead>			
-								<th>&nbsp;</th>					
-								<th>Numer</th>
-								<th>Opis</th>
-								<th>Użytkownik</th>
-								<th>Data</th>
-							</thead>
-							<tbody id="changes-list">																
-							</tbody>
-						</table>
-						
-						<p><button type="button" id="make-diff-button">Porównaj</button></p>
-						<!-- <p><button type="button" id="more-history-button">Więcej</button></p> -->
-						<div id="diff-view">																		
-					</div>									
-				</div>							
-							
-				</div>
+        <div id="simple-editor" class="editor" style="display: none">
+            <div id="html-view" class="htmlview">
             </div>
-            <div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię."> </div>
-            <div id="sidebar">
-                <div class="toolbar">
-                    <button class="previous-page">
-                    	<img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
-                    </button>
-                    <input type="text" size="3" maxlength="3" value="1" class="page-number" />
-                    <button class="next-page">
-                    	<img src="{{STATIC_URL}}icons/go-next.png" alt="Następna" title="Następna"/>
-                    </button>
-                    <button class="zoom-in">Powiększ</button>
-                    <button class="zoom-out">Pomniejsz</button>
-					{% if request.user.is_staff %}
-                    <button class="change-gallery">Opcje</button>
-					{% endif %}
-                    <div class="toolbar-end"> </div>
-                </div>
-				{% if request.user.is_staff %}
-                <div class="toolbar" id="change-gallery-toolbar">
-                    <input type="text" value="" class="chosen-gallery" />
-                    <button class="change-gallery-ok">Zmień galerię</button>
-                    <button class="change-gallery-cancel">Anuluj</button>
-                    <div class="toolbar-end"> </div>    
-                </div>
-				{% endif %}
-                <div class="gallery-image">
-                    <img src="" />
+            <div class="toolbar">
+                <button id="insert-theme-button">
+                    Wstaw motyw
+                </button>
+                <button id="insert-annotation-button">
+                    Wstaw przypis
+                </button>
+                <div class="toolbar-end">
                 </div>
             </div>
         </div>
-        <div id="save-dialog" style="display: none; text-align: left">
-            <label for="komentarz" style="display: block">Opis zmian:</label>
-            <textarea name="komentarz" id="komentarz" style="display: block; width: 100%"></textarea>
-            <button id="save-ok">Zapisz</button> <button id="save-cancel">Anuluj</button>
+		{% include "wiki/history_panel.html" %}
+    </div>
+    <div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię."> </div>
+    <div id="sidebar">
+        <div class="toolbar">
+            <button class="previous-page">
+                <img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
+            </button><input type="text" size="3" maxlength="3" value="1" class="page-number" />
+            <button class="next-page">
+                <img src="{{STATIC_URL}}icons/go-next.png" alt="Następna" title="Następna"/>
+            </button>
+            <button class="zoom-in">
+                Powiększ
+            </button>
+            <button class="zoom-out">
+                Pomniejsz
+            </button>
+            {% if request.user.is_staff %}
+            <button class="change-gallery">
+                Opcje
+            </button>
+            {% endif %}
+            <div class="toolbar-end">
+            </div>
         </div>
+        {% if request.user.is_staff %}
+        <div class="toolbar" id="change-gallery-toolbar">
+            <input type="text" value="" class="chosen-gallery" />
+            <button class="change-gallery-ok">
+                Zmień galerię
+            </button>
+            <button class="change-gallery-cancel">
+                Anuluj
+            </button>
+            <div class="toolbar-end">
+            </div>
+        </div>
+        {% endif %}
+        <div class="gallery-image"><img src="" /></div>
+    </div>
+</div>
+<div id="save-dialog" style="display: none; text-align: left">
+    <label for="komentarz" style="display: block">
+        Opis zmian:
+    </label>
+    <textarea name="komentarz" id="komentarz" style="display: block; width: 100%">
+    </textarea>
+    <button id="save-ok">
+        Zapisz
+    </button>
+    <button id="save-cancel">
+        Anuluj
+    </button>
+</div>
 {% endblock %}
