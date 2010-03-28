@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-# -*- conding: utf-8 -*-
+# -*- coding: utf-8 -*-
+#
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+#
 __author__="lreqc"
 __date__ ="$2009-09-08 14:31:26$"
 from django.core.management.base import NoArgsCommand

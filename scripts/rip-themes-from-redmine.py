@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import urllib
 
 from lxml import html

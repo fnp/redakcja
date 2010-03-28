@@ -12,7 +12,6 @@ sys.stdout = sys.stderr
 
 # Add apps and lib directories to PYTHONPATH
 sys.path = [
-	'%(path)s/releases/current/%(project_name)s',
 	'%(path)s/releases/current',
 	'%(path)s/releases/current/apps',
 	'%(path)s/releases/current/lib',
