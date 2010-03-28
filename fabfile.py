@@ -10,7 +10,7 @@ import os
 # ==========
 # Globals
 env.project_name = 'platforma'
-env.use_south = False
+env.use_south = True
 
 # Servers
 def staging():
@@ -24,10 +24,10 @@ def staging():
 
 def production():
     """Use production server"""
-    env.hosts = ['wolnelektury.pl:22123']
-    env.user = 'fundacja'
+    env.hosts = ['szo.nowoczesnapolska.org.pl:2225']
+    env.user = 'librarian'
     env.path = '/opt/lektury/platforma'
-    env.python = '/opt/lektury/basevirtualenv/bin/python'
+    env.python = '/srv/library-in-a-box/sandbox/env/redakcja/bin/python'
     env.virtualenv = '/opt/lektury/basevirtualenv/bin/virtualenv'
     env.pip = '/opt/lektury/basevirtualenv/bin/pip'
 
