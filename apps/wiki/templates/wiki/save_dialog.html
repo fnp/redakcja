@@ -1,0 +1,24 @@
+<div id="save_dialog" class="dialog">
+	<p>{{ text_save_form.comment.label }}</p>
+	<p class="help_text">{{text_save_form.comment.help_text}}</p>
+		{{ text_save_form.comment }}
+	
+	{% if request.user.is_anonymous %}
+	<p>
+		{{ text_save_form.author.label }}: 
+		{{ text_save_form.author }}
+		<span class="help_text">{{ text_save_form.author.help_text }}</span>
+	</p>
+	{% else %}
+	<p>
+		{{ text_save_form.stage_completed.label }}: 
+		{{ text_save_form.stage_completed }}
+		<span class="help_text">{{ text_save_form.stage_completed.help_text }}</span>
+	</p>
+	{% endif %}
+	
+	<p class="action_area">
+		<button type="submit" class="ok-button">Zapisz</button>
+		<button class="cancel-button">Anuluj</button>
+	</p>		
+</div>

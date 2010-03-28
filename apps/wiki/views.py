@@ -6,7 +6,7 @@ from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 
 from wiki.models import Document, DocumentNotFound, getstorage
-from wiki.forms import DocumentForm
+from wiki.forms import DocumentForm, DocumentTextSaveForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 import wlapi
@@ -57,7 +57,10 @@ def document_detail(request, name, template_name = 'wiki/document_details.html')
     request.session['wiki_last_docs'] = last_documents      
 
     return direct_to_template(request, template_name, extra_context = {
-        'document': document,        
+        'document': document,
+        'document_info': document.info,
+        'document_meta': document.meta,
+        'text_save_form': DocumentTextSaveForm(),         
     })
 
 @never_cache
@@ -73,7 +76,7 @@ def document_text(request, name):
             document = form.save(document_author = request.user.username)
             return HttpResponse(json.dumps({'text': document.plain_text, 'meta': document.meta(), 'revision': document.revision()}))
         else:
-            return HttpResponse(json.dumps({'errors': form.errors}))
+            return HttpResponse(json.dumps({'errors': list(form.errors)}))
     else:
         return HttpResponse(json.dumps({'text': document.plain_text, 'meta': document.meta(), 'revision': document.revision()}))
    
@@ -143,4 +146,4 @@ def document_publish(request, name, version):
     except wlapi.APICallException, e:                        
         result = {"success": False, "reason": str(e)}
         
-    return HttpResponse( json.dumps(result), mimetype='application/json')       
+    return HttpResponse( json.dumps(result), mimetype='application/json')           

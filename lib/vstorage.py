@@ -354,7 +354,14 @@ class VersionedStorage(object):
             author = unicode(filectx.user(), "utf-8",
                              'replace').split('<')[0].strip()
             comment = unicode(filectx.description(), "utf-8", 'replace')
-            yield {"version": rev, "date": date, "author": author, "description": comment}
+            tags = filectx.changectx().tags()
+            yield {
+                "version": rev, 
+                "date": date, 
+                "author": author, 
+                "description": comment,
+                "tag": tags[0] if tags else None,
+            }
 
     def page_revision(self, title, rev):
         """Get unicode contents of specified revision of the page."""

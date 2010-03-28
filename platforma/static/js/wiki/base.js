@@ -12,7 +12,10 @@
 	
 	$.wiki.Perspective.prototype.onEnter = function () {
 		// called when perspective in initialized
-		document.location.hash = '#' + this.perspective_id; 
+		if (this.perspective_id) {
+			document.location.hash = '#' + this.perspective_id;
+		}
+			 
 		console.log(document.location.hash);
 	};
 	

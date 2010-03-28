@@ -1,0 +1,31 @@
+<div id="summary-view-editor" class="editor" style="display: none">
+    <!-- <div class="toolbar">
+    </div> -->
+    <div id="summary-view">    	
+		<img class="book-cover" src="{{MEDIA_URL}}images/empty.png">
+		<form>
+		<h2>
+			<label for="title">Tytuł:</label>
+			<span data-ui-editable="true" data-edit-target="meta.displayTitle"
+			>{{ document_meta.title }}</span>
+		</h2>
+		<p>
+			<label>ID dokumentu:</label>
+			<span>{{ document.name|urlencode }}</span>
+		</p>
+		<p>
+			<label>Aktulana wersja:</label> 
+			{{ document_info.revision }} ({{document_info.last_update}})
+		<p>
+			<label>Ostatnio edytowane przez:</label>
+			{{document_info.last_comitter}} 
+		</p>
+		<p>
+			<label for="gallery">Link do galerii:</label>
+			<span data-ui-editable="true" data-edit-target="meta.galleryLink"
+			>{{ document_meta.gallery}}</span>				
+		</p>				
+		</form>
+    	
+	</div>
+</div>

@@ -1,0 +1,60 @@
+/* =========== */
+/* = Gallery = */
+/* =========== */
+
+#side-gallery {
+    position: absolute;
+    /* overflow: hidden; */
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 480px;
+    display: none;
+    background-color: #FFF;
+}
+
+#side-gallery .error_message 
+{
+	background-color: white;
+	color: black;
+	padding: 0.5em 1em;
+}
+
+.change-gallery-panel {
+    width: 100%;
+    border-bottom: 1px solid #777;
+    background-color: #C1C1C1;
+    margin: 0;
+    padding: 2px;
+    z-index: 10;
+}
+
+.gallery-image {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    border: none;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.gallery-image img {
+    position: absolute;
+    -moz-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    cursor: pointer;
+	
+	background-color: white;
+	min-height: 100px;
+	min-width: 100px;
+}
+
+.gallery-image img[src=''] {
+	background-color: red;	
+}

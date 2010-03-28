@@ -28,9 +28,7 @@ def files_from(*paths, **kwargs):
     base = kwargs.pop('base')   
     def generator():
         for path in paths:
-            path = os.path.join(base, path)
-            print path
-            
+            path = os.path.join(base, path)            
             if not os.path.isdir(path) or is_package(path): continue
                         
             for dir, _, files in os.walk(path):                            
@@ -100,5 +98,9 @@ django_setup(
         'toolbar',
         'wiki',        
     ],
+    requires = [
+        "librarian (>=1.3)",
+        "Django (>=1.1.1,<1.2)",        
+    ]
     # data_files=[ ('', ['LICENSE', 'NOTICE', 'README.rst', 'AUTHORS.md', 'requirements.txt'])],
 )

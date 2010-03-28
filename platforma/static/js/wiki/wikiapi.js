@@ -24,10 +24,14 @@
 			
 		if (vname == "ajax_document_history") {
 			return "/" + arguments[1] + "/history";
-		}			
+		}
+		
+		if (vname == "ajax_document_gallery") {
+			return "/gallery/" + arguments[1];
+		}						
 					
 		if(vname == "ajax_document_diff")
-			return "/" + arguments[1] + "/diff/" + arguments[2] + "/" + arguments[3] 
+			return "/" + arguments[1] + "/diff"; 
 			
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";		
@@ -41,8 +45,8 @@
 		
 		this.id = meta.attr('data-document-name');		
 		this.revision = $("*[data-key='revision']", meta).text();
-		this.gallery = $("*[data-key='gallery']", meta).text();
-		
+		this.galleryLink = $("*[data-key='gallery']", meta).text();
+		this.galleryImages = [];
 		this.text = null;
 		
 		this.has_local_changes = false;
@@ -142,47 +146,100 @@
 				params['success'](self, data);
 			},
 			error: function() {
-				params['failure'](self, "Nie udało się wczytać treści dokumentu.");
+				params['failure'](self, "Nie udało się wczytać historii dokumentu.");
 			}
 		});						
 	};
 	
+	WikiDocument.prototype.fetchDiff = function(params) {		
+		/* this doesn't modify anything, so no locks */		
+		params = $.extend({
+			'from': self.revision, 
+			'to': self.revision
+		}, noops, params);
+					
+		var self = this;	
+					
+		$.ajax({			
+			method: "GET",
+			url: reverse("ajax_document_diff", self.id),
+			dataType: 'json',
+			data: {"from": params['from'], "to": params['to']},
+			success: function(data) {
+				params['success'](self, data);
+			},
+			error: function() {
+				params['failure'](self, "Nie udało się wczytać porównania wersji.");
+			}
+		});						
+	};
+	
+	/* 
+	 * Fetch gallery
+	 */
+	WikiDocument.prototype.refreshGallery = function(params) {
+		params = $.extend({}, noops, params);		
+		var self = this;
+		
+		$.ajax({			
+			method: "GET",
+			url: reverse("ajax_document_gallery", self.galleryLink),
+			dataType: 'json',
+			// data: {},
+			success: function(data) {
+				this.galleryImages = data.images;
+				params['success'](self, data);
+			},
+			error: function() {
+				this.galleryImages = [];	
+				params['failure'](self, "<p>Nie udało się wczytać gallerii pod nazwą: '"
+					+ self.galleryLink + "'.</p>");
+							
+			}
+		});				
+	};	
+	
 	/*
 	 * Set document's text
 	 */
-	WikiDocument.prototype.setText = function(text) {				
-		this.text = text;
-		this.has_local_changes = true;			
+	WikiDocument.prototype.setText = function(text) {
+		if (this.text != text) {
+			this.text = text;
+			this.has_local_changes = true;
+		}			
 	};
 	
 	/*
 	 * Set document's gallery link
 	 */
-	WikiDocument.prototype.setGallery = function(gallery) {				
-		this.gallery = gallery;
+	WikiDocument.prototype.setGalleryLink = function(gallery) {				
+		this.galleryLink = gallery;
 		this.has_local_changes = true;			
 	};
 	
 	/*
 	 * Save text back to the server
 	 */
-	WikiDocument.prototype.save = function(comment, success, failure){
+	WikiDocument.prototype.save = function(params){
+		params = $.extend({'comment': 'No comment.'}, noops, params);
 		var self = this;
 		
-		if (!self.has_local_changes) {
-			return success(self, "Nie ma zmian do zapisania.");
-		}
-		
 		/* you can't set text while some is fetching it (or saving) */
+		
+		if (!self.has_local_changes) {
+			console.log("Abort: no changes.");
+			return params['success'](self, false, "Nie ma zmian do zapisania.");
+		};		
+		
 		var metaComment = '<!--';
-		metaComment += '\n\tgallery:' + self.gallery;
-		metaComment += '\n-->'
+		metaComment += '\n\tgallery:' + self.galleryLink;
+		metaComment += '\n-->\n'
 		
 		var data = {
 			name: self.id,
-			text: self.text,
+			text: metaComment + self.text,
 			parent_revision: self.revision,
-			comment: comment,
+			comment: params['comment'],
 		};
 		
 		$.ajax({
@@ -198,10 +255,10 @@
 					self.gallery = data.gallery;
 					changed = true;
 				}
-				success(self, changed);
+				params['success'](self, changed, "Zapisano");
 			},
-			error: function(){
-				failure(self, "Nie udało się zapisać.");
+			error: function() {
+				params['failure'](self, "Nie udało się zapisać.");
 			}
 		});		
 	}; /* end of save() */

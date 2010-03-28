@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 
-urlpatterns = patterns('wiki.views',
+urlpatterns = patterns('wiki.views',    
     url(r'^$', 
         'document_list', name='wiki_doclist'),
     url(r'^gallery/(?P<directory>[^/]+)$', 
@@ -14,7 +15,5 @@ urlpatterns = patterns('wiki.views',
     url(r'^(?P<name>[^/]+)/diff/(?P<revA>\d+)/(?P<revB>\d+)$', 
         'document_diff', name="wiki_diff"),    
     url(r'^(?P<name>[^/]+)$', 
-        'document_detail', name="wiki_details"),        
-    
+        'document_detail', name="wiki_details"),       
 )   
-

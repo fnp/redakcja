@@ -1,0 +1,21 @@
+#summary-view-editor {
+	background: white;
+}
+
+#summary-view {
+	padding: 1em;			
+}
+
+#summary-view .book-cover {
+	float: left;
+	margin: 1em;
+	max-height: 300px;	
+}
+
+#summary-view form p {
+	margin: 0.5em; 
+}
+
+#summary-view form label {
+	font-weight: bold; 
+}  

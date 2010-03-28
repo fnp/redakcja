@@ -86,7 +86,7 @@ MIDDLEWARE_CLASSES = (
 
     'django.middleware.doc.XViewMiddleware',    
     'maintenancemode.middleware.MaintenanceModeMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware' #
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -114,9 +114,12 @@ COMPRESS_CSS = {
     'detail': {
          'source_filenames': (
             'css/master.css',
+            'css/gallery.css',  
             'css/history.css', 
+            'css/summary.css',
             'css/html.css',             
             'css/jquery.autocomplete.css',
+            'css/dialogs.css',
         ),
         'output_filename': 'compressed/detail_styles_?.css',
     },
@@ -143,9 +146,11 @@ COMPRESS_JS = {
                 'js/wiki/wikiapi.js',
                 'js/wiki/base.js',
                 'js/wiki/xslt.js',
-                'js/wiki/history.js',
+                'js/wiki/history_view.js',
+                'js/wiki/summary_view.js',
                 'js/wiki/source_editor.js',
-                'js/wiki/wysiwyg_editor.js',                
+                'js/wiki/wysiwyg_editor.js',
+                'js/wiki/scan_gallery.js',                
                 'js/wiki/main.js',
         ),             
         'output_filename': 'compressed/detail_scripts_?.js',
@@ -212,17 +217,6 @@ FILEBROWSER_DEFAULT_ORDER = "path_relative"
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
 
-# Python logging settings
-import logging
-
-log = logging.getLogger('platforma')
-log.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-log.addHandler(ch)
-
 # Import localsettings file, which may override settings defined here
 try:
     from localsettings import *
@@ -232,16 +226,12 @@ except ImportError:
 try:
     LOGGING_CONFIG_FILE 
 except NameError:
-    LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 
+    LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 'config', 
                                 ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
-
 try:
     import logging
     import logging.config
-
+    
     logging.config.fileConfig(LOGGING_CONFIG_FILE)    
 except ImportError, exc:
-    import traceback
-    traceback.print_exc()
     raise
-

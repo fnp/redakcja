@@ -23,10 +23,12 @@
     </div>
 </div>
 
-<div id="document-meta" data-document-name="{{ document.name }}" style="display:none">
-{% for k, v in document.meta.items %}
-	<span data-key="{{ k }}">{{ v }}</span>
-{% endfor %}
+<div id="document-meta" 
+	data-document-name="{{ document.name }}" style="display:none">
+	
+	{% for k, v in document_meta.items %}
+		<span data-key="{{ k }}">{{ v }}</span>
+	{% endfor %}
 </div>
 
 <div id="header">
@@ -34,22 +36,28 @@
     <div id="tools">
         <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
         | {% include "registration/head_login.html" %} 
-        | Wersja: <span id="document-revision">{{ document.revision }}</span>
+        | Wersja: <span id="document-revision">{{ document_info.revision }}</span>
         | 
         <button style="margin-left: 6px" id="save-button">
             Zapisz
         </button>
     </div>
     <ol id="tabs">
-    	<li id="HistoryPerspective-tab" 
-			data-ui-related="history-viewer" 
-			data-ui-jsclass="HistoryPerspective">		
-            Historia
-        </li>
+    	
+		<li id="SummaryPerspective-tab" 
+			data-ui-related="summary-view-editor" data-ui-jsclass="SummaryPerspective">
+            <span>{{ document_meta.title }}</span>
+        </li>		
 		
         <li id="VisualPerspective-tab" 
 			data-ui-related="simple-editor" data-ui-jsclass="VisualPerspective">
-            <span id="document-name">{{ document.name }}</span>
+            <span>Edytor</span>
+        </li>
+		
+		<li id="HistoryPerspective-tab" 
+			data-ui-related="history-view-editor" 
+			data-ui-jsclass="HistoryPerspective">		
+            Historia
         </li>
         		
 		<li id="CodeMirrorPerspective-tab" 
@@ -63,7 +71,7 @@
         <div id="source-editor" class="editor">
             {% toolbar %}
             <textarea id="codemirror_placeholder">&lt;br/&gt;</textarea>
-            <input type="hidden" name="name" value="{{ document.name }}" /><input type="hidden" name="author" value="annonymous" /><input type="hidden" name="comment" value="no comment" /><input type="hidden" name="revision" value="{{ document.revision }}" />
+            <input type="hidden" name="name" value="{{ document.name }}" /><input type="hidden" name="author" value="annonymous" /><input type="hidden" name="comment" value="no comment" /><input type="hidden" name="revision" value="{{ document_info.revision }}" />
         </div>
         <div id="simple-editor" class="editor" style="display: none">
             <div id="html-view" class="htmlview">
@@ -79,10 +87,13 @@
                 </div>
             </div>
         </div>
-		{% include "wiki/history_panel.html" %}
+		{% include "wiki/history_view.html" %}
+		{% include "wiki/summary_view.html" %}
     </div>
     <div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię."> </div>
-    <div id="sidebar">
+    
+	<div id="side-gallery">
+		<!-- gallery toolbar -->				
         <div class="toolbar">
             <button class="previous-page">
                 <img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
@@ -96,41 +107,14 @@
             <button class="zoom-out">
                 Pomniejsz
             </button>
-            {% if request.user.is_staff %}
-            <button class="change-gallery">
-                Opcje
-            </button>
-            {% endif %}
             <div class="toolbar-end">
             </div>
-        </div>
-        {% if request.user.is_staff %}
-        <div class="toolbar" id="change-gallery-toolbar">
-            <input type="text" value="" class="chosen-gallery" />
-            <button class="change-gallery-ok">
-                Zmień galerię
-            </button>
-            <button class="change-gallery-cancel">
-                Anuluj
-            </button>
-            <div class="toolbar-end">
-            </div>
-        </div>
-        {% endif %}
-        <div class="gallery-image"><img src="" /></div>
+        </div>        
+		<div class="error_message"> </div>
+		<div class="gallery-image">
+			<img src="{{MEDIA_URL}}/images/empty.png" />
+		</div>
     </div>
 </div>
-<div id="save-dialog" style="display: none; text-align: left">
-    <label for="komentarz" style="display: block">
-        Opis zmian:
-    </label>
-    <textarea name="komentarz" id="komentarz" style="display: block; width: 100%">
-    </textarea>
-    <button id="save-ok">
-        Zapisz
-    </button>
-    <button id="save-cancel">
-        Anuluj
-    </button>
-</div>
+{% include "wiki/save_dialog.html" %}
 {% endblock %}

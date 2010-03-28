@@ -68,9 +68,21 @@ class Document(object):
                     k, v = line.split(':', 1)
                     result[k.strip()] = v.strip()
                 except ValueError:
-                    continue
+                    continue                
+                
+        if 'gallery' not in result:
+            result['gallery'] = (settings.GALLERY_URL + self.name).replace(' ', '_')
+            
+        if 'title' not in result:
+            result['title'] = self.name.title()            
 
         return result
+    
+    def info(self):
+        return dict(zip(
+            ('revision', 'last_update', 'last_comitter', 'commit_message'),
+            self.storage._info(self.name)
+        ))                         
 
 def getstorage():
     return DocumentStorage(settings.REPOSITORY_PATH)

@@ -4,25 +4,9 @@
 	function CodeMirrorPerspective(doc, callback) 
 	{
 		this.perspective_id = 'CodeMirrorPerspective';
-		this.doc = doc;
+		this.doc = doc; // document model
 		
 		var self = this;
-		
-		$('#source-editor .toolbar button').click(function(event){
-            event.preventDefault();
-            var params = eval("(" + $(this).attr('ui:action-params') + ")");
-            scriptletCenter.scriptlets[$(this).attr('ui:action')](editor, params);
-        });
-        
-        $('.toolbar select').change(function(event){
-            var slug = $(this).val();
-            
-            $('.toolbar-buttons-container').hide().filter('[data-group=' + slug + ']').show();
-            $(window).resize();
-        });
-        
-        $('.toolbar-buttons-container').hide();
-        $('.toolbar select').change();
 		
 		this.codemirror = CodeMirror.fromTextArea('codemirror_placeholder', {			
 			parserfile: 'parsexml.js',
@@ -38,7 +22,25 @@
 			tabMode: 'spaces',
 			indentUnit: 0,
 			initCallback: function() {
+				$('#source-editor .toolbar button').click(function(event){
+	            event.preventDefault();
+	            var params = eval("(" + $(this).attr('data-ui-action-params') + ")");
+	            	scriptletCenter.scriptlets[$(this).attr('data-ui-action')](self.codemirror, params);
+	        	});
+	        
+	        	$('.toolbar select').change(function(event){
+		            var slug = $(this).val();
+		            
+		            $('.toolbar-buttons-container').hide().filter('[data-group=' + slug + ']').show();
+		            $(window).resize();
+		        });
+	        
+		        $('.toolbar-buttons-container').hide();
+		        $('.toolbar select').change();		
+						
 				console.log("Initialized CodeMirror");
+				// textarea is no longer needed
+				$('codemirror_placeholder').remove();
 				callback.call(self);
 			}	
 		});
@@ -56,6 +58,14 @@
 	
 		console.log(this.doc);
 		this.codemirror.setCode(this.doc.text);
+		if(success) success();
+	}
+	
+	CodeMirrorPerspective.prototype.onExit = function(success, failure) {
+		$.wiki.Perspective.prototype.onExit.call(this);
+	
+		console.log(this.doc);
+		this.doc.setText(this.codemirror.getCode());
 		if(success) success();
 	}
 	

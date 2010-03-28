@@ -1,8 +1,86 @@
+#history-view {
+    overflow: auto;
+    position: absolute;
+    top: 30px; /* 0 for no toolbar, 30 for toolbar */
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+	z-index: 1;
+}
+
+/*
+ * File History
+ */
+#changes-list {
+	margin: 0.5em 0.2em;	
+}
+
+#changes-list div {
+	position: relative;
+	padding: 0.5em;
+	margin: 0.5em;
+}
+
+#changes-list div:hover {
+	background-color: #f0f0f0;
+}
+
+#changes-list div.selected {
+	background-color: #ffec63;
+}
+
+#changes-list span.tag {
+	display: inline-block;
+	visibility: hidden;
+	width: 60px;
+	margin: 0 0.5em 0 0;	
+	font-size: 11px;
+	padding: 3px 2px;
+	text-align: center;		
+	color: black;
+	background: #add8e6;
+	cursor: pointer;
+	vertical-align: middle;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+#changes-list div:hover span.tag {
+	visibility: visible;	 
+}
+
+#changes-list span.tag:hover {
+	background: #bde8f6;
+}
+
+#changes-list span[data-version-tag] {
+	visibility: visible;
+	border: 1px solid black;	
+	
+	color: black;
+}
+
+#changes-list span[data-stub-value='version'] {
+	font-weight: bold;
+}
+
+#changes-list span[data-stub-value='date'], 
+#changes-list span[data-stub-value='author'] 
+{
+	font-size: 11px;
+	color: gray;
+}
+ 
+ 
+/* 
+ * Graphical DIFF view
+ * 
+ */
 #history-view .diff_table {
 	width: 90%;
 }
- 
-/* DIFFS */
+
  .diff_table { 
 	border-width: 1px;
 	border-style: solid;

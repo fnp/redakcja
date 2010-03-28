@@ -9,7 +9,7 @@ git+http://github.com/fnp/librarian.git@master#egg=librarian
 ## Django 
 Django>=1.1.1,<1.2
 sorl-thumbnail>=3.2
-django-maintanancemode>=0.9
+django-maintenancemode>=0.9
 
 # migrations
 south>=0.6

@@ -2,17 +2,12 @@
 
     function fetchDiff(success, failed){
         var changelist = $('#changes-list');
-        var rev_a = $("input[name='rev_from']:checked", changelist);
-        var rev_b = $("input[name='rev_to']:checked", changelist);
+   
+		var selected = $('div.selected', changelist); 
         
-        if (rev_a.length != 1 || rev_b.length != 1) {
-            window.alert("Musisz zaznaczyć dwie wersje do porównania.");
-            failed();
-        }
-        
-        if (rev_a.val() == rev_b.val()) {
-            window.alert("Musisz zaznaczyć dwie różne wersje do porównania.");
-            failed();
+        if (selected.length != 2) {
+            window.alert("Musisz zaznaczyć dokładnie dwie wersje do porównania.");
+            if(failed) failed();
         }
         
         $.blockUI({
@@ -20,18 +15,19 @@
         });
         
         $.ajax({
+			method: "GET",
             url: document.location.href + '/diff/' + rev_a.val() + '/' + rev_b.val(),
             dataType: 'html',
             error: function(){
                 $.unblockUI();
-                error();
+                if(failed) failed('Nie udało się wczytać porównania z serwera.');
             },
             success: function(data){
                 var diffview = $('#diff-view');
                 diffview.html(data);
                 diffview.show();
                 $.unblockUI();
-                success();
+                if(success) success(data);
             }
         });
     }
@@ -42,6 +38,20 @@
 		
         // first time page is rendered
         $('#make-diff-button').click(fetchDiff);
+		
+		$('#changes-list div').live('click', function() {
+			var $this = $(this);
+			if($this.hasClass('selected')) 
+				return $this.removeClass('selected');
+				
+			if($("#changes-list div.selected").length < 2)
+				return $this.addClass('selected');
+		});
+		
+		$('#changes-list span.tag').live('click', function(event) {			
+			return false;						
+		});
+		
 		callback.call(this);
     };
     
@@ -78,8 +88,12 @@
             changes_list.html('');
                 
             $.each(data, function(){
-            	$.wiki.renderStub(changes_list, $stub, this);
+            	$.wiki.renderStub(changes_list, $stub, this);								
             });
+			
+			$('span[data-version-tag]', changes_list).each(function() {
+				$(this).text($(this).attr('data-version-tag'));				
+			});
 			
 			_finalize(true);			
         };

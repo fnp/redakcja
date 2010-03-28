@@ -1,0 +1,27 @@
+#save_dialog {
+	display: none;
+	padding: 5px;
+	text-align: left;
+	cursor: auto;
+	background-color: #E1E1E1; /* #e0ffb8; */
+}
+
+#save_dialog textarea {
+	width: 90%;
+	margin: 0.2em 4%;
+}
+
+.dialog .help_text {
+	font-size: 11px;
+	color: #2e3536;	 
+}
+
+.dialog .action_area {
+	padding: 1em 0.5em 0.5em;
+	border-top: 1px solid black;
+	margin-top: 0.5em;	
+}
+
+.dialog p {
+	margin: 0.5em;
+}

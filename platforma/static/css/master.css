@@ -21,34 +21,29 @@ body {
     position: absolute;
     top: 0px;
     bottom: 0;
-    right: 0;;
-    width: 13px;
-    background: #C1C1C1 url(../img/gallery.png) no-repeat scroll center center;
-	text-
-    border-left: 1px solid #999;
-    border-right: 1px solid #999;
+    right: 0;
+    width: 26px;
+    background: #C1C1C1 url(../img/gallery.png) no-repeat scroll center center;	
+    border-left: 2px solid #999;
+    border-right: 2px solid #999;
     cursor: pointer;	
 }
 
 .vsplitbar:hover {
-	background-color: #e6e6fa;
+	background-color: yellow;
+	border-color: orange;
 }
 
-.vsplitbar.active {
-	background-
-    
-}
-
-#source-editor, #simple-editor, #history-viewer {
+.editor {
     position: absolute;
     top: 0px;
     bottom: 0;
     left: 0;
-    right: 15px;
+    right: 30px;
     overflow: hidden;
 }
 
-#html-view, #history-view {
+#html-view {
     overflow: auto;
     position: absolute;
     top: 30px;
@@ -57,18 +52,6 @@ body {
     right: 0;
 	z-index: 1;
 }
-
-#sidebar {
-    position: absolute;
-    overflow: hidden;
-    top: 0px;
-    right: 0;
-    bottom: 0;
-    width: 0;
-    display: none;
-    background-color: #FFF;
-}
-
 
 #splitter {
 	position: fixed;
@@ -181,7 +164,7 @@ body {
     margin: 0;
     padding: 2px;
     z-index: 100;
-/*    height: 22px;*/
+    height: 28px;
 }
 
 .toolbar button {
@@ -235,41 +218,6 @@ button::-moz-focus-inner {
 
 p { margin: 0;}
 
-/* =========== */
-/* = Gallery = */
-/* =========== */
-.change-gallery-panel {
-    width: 100%;
-    border-bottom: 1px solid #777;
-    background-color: #C1C1C1;
-    margin: 0;
-    padding: 2px;
-    z-index: 10;
-}
-
-.gallery-image {
-    position: absolute;
-    top: 30px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    border: none;
-    background-color: #000;
-    overflow: hidden;
-}
-
-.gallery-image img {
-    position: absolute;
-    -moz-drag: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    cursor: pointer;
-}
-
-
 #body-wrap {
     height: 100%;
     width: 100%;
@@ -306,9 +254,6 @@ p { margin: 0;}
     margin-right: 10px;
     margin-top: -6px;
 }
-
-
-
 
 /*
  * CodeMirror 
@@ -350,4 +295,9 @@ p { margin: 0;}
     background-color: #FAFAFA;
     border: 1px solid #DDD;
 /*    -webkit-transition: all 1s linear;*/
+}
+
+.blockOverlay {
+	background-color: black;
+	opacity: 0.4;
 }
