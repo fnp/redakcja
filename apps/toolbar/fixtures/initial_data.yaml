@@ -39,8 +39,7 @@
     pk: 17
 -   fields:
         group: [14, 12]
-        key: a
-        key_mod: 1
+        accesskey: a
         label: akapit
         link: ''
         params: '{"tag": "akap"}'
@@ -51,8 +50,7 @@
     pk: 39
 -   fields:
         group: [14]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: akapit cd.
         link: ''
         params: '{"tag": "akap_cd"}'
@@ -63,8 +61,7 @@
     pk: 40
 -   fields:
         group: [14]
-        key: d
-        key_mod: 1
+        accesskey: d
         label: akapit dialogowy
         link: ''
         params: '{"tag": "akap_dialog"}'
@@ -75,8 +72,7 @@
     pk: 41
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: akt
         link: ''
         params: '{"tag": "akt"}'
@@ -87,8 +83,7 @@
     pk: 14
 -   fields:
         group: [13]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: autor
         link: ''
         params: '{"tag": "autor_utworu"}'
@@ -99,8 +94,7 @@
     pk: 32
 -   fields:
         group: [2]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: Podstawowa
         link: ''
         params: '[["fulltextregexp", {"exprs": [["\ufeff", ""], ["$[\\s]*\\d+[\\s]*^",
@@ -116,8 +110,7 @@
     pk: 4
 -   fields:
         group: [2]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "zamiana cudzys\u0142ow\xF3w 1"
         link: ''
         params: '{"exprs": [["\u00ab|\u201e", ",,"], ["\u00bb", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
@@ -130,8 +123,7 @@
     pk: 89
 -   fields:
         group: [2]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "zamiana cudzys\u0142ow\xF3w 2"
         link: ''
         params: '{"exprs": [["\u00bb|\u201e", ",,"], ["\u00ab", "\""], ["([^=])\"([\u0104\u0118\u00d3\u0141\u017b\u0179\u0106\u0143\u0105\u017c\u017a\u015b\u0144\u00f3\u0142\u0107\\w])",
@@ -144,8 +136,7 @@
     pk: 77
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "cz\u0119\u015B\u0107/ksi\u0119ga"
         link: ''
         params: '{"tag": "naglowek_czesc"}'
@@ -156,8 +147,7 @@
     pk: 10
 -   fields:
         group: [13, 22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: dedykacja
         link: ''
         params: '{"tag": "dedykacja"}'
@@ -168,8 +158,7 @@
     pk: 74
 -   fields:
         group: [12]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: didaskalia
         link: ''
         params: '{"tag": "didaskalia"}'
@@ -180,8 +169,7 @@
     pk: 62
 -   fields:
         group: [22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "didaskalia pocz\u0105tkowe"
         link: ''
         params: '{"tag": "miejsce_czas"}'
@@ -192,8 +180,7 @@
     pk: 79
 -   fields:
         group: [12]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: didaskalia tekstowe
         link: ''
         params: '{"tag": "didask_tekst"}'
@@ -204,8 +191,7 @@
     pk: 63
 -   fields:
         group: [21]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "d\u0142ugi cyt. poet."
         link: ''
         params: '{"tag": "poezja_cyt"}'
@@ -216,8 +202,7 @@
     pk: 67
 -   fields:
         group: [21]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "d\u0142ugi cytat"
         link: ''
         params: '{"tag": "dlugi_cyt"}'
@@ -228,8 +213,7 @@
     pk: 42
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: dramat wiersz.
         link: ''
         params: '{"tag": "dramat_wierszowany_l"}'
@@ -240,8 +224,7 @@
     pk: 20
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "dramat wiersz./w. \u0142am"
         link: ''
         params: '{"tag": "dramat_wierszowany_lp"}'
@@ -252,8 +235,7 @@
     pk: 22
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "dramat wsp\xF3\u0142czesny"
         link: ''
         params: '{"tag": "dramat_wspolczesny"}'
@@ -264,8 +246,7 @@
     pk: 21
 -   fields:
         group: [13]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "dzie\u0142o nadrz\u0119dne"
         link: ''
         params: '{"tag": "dzielo_nadrzedne"}'
@@ -276,8 +257,7 @@
     pk: 38
 -   fields:
         group: [27]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: extra
         link: ''
         params: '{"tag": "extra"}'
@@ -288,8 +268,7 @@
     pk: 96
 -   fields:
         group: []
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: Wydrukuj
         link: print/html
         params: '[]'
@@ -300,8 +279,7 @@
     pk: 87
 -   fields:
         group: [12]
-        key: k
-        key_mod: 1
+        accesskey: k
         label: kwestia
         link: ''
         params: '{"tag": "kwestia"}'
@@ -312,8 +290,7 @@
     pk: 82
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: liryka
         link: ''
         params: '{"tag": "liryka_l"}'
@@ -324,8 +301,7 @@
     pk: 23
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "liryka/w. \u0142am"
         link: ''
         params: '{"tag": "liryka_lp"}'
@@ -336,8 +312,7 @@
     pk: 24
 -   fields:
         group: [22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "lista os\xF3b"
         link: ''
         params: '{"tag": "lista_osob"}'
@@ -348,8 +323,7 @@
     pk: 93
 -   fields:
         group: [22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: 'typ osoby '
         link: ''
         params: '{"tag": "lista_osoba", "attrs": {"typ": ""}}'
@@ -360,8 +334,7 @@
     pk: 78
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: matemat.
         link: ''
         params: '{"tag": "mat"}'
@@ -372,8 +345,7 @@
     pk: 47
 -   fields:
         group: [13, 22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: motto
         link: ''
         params: '{"tag": "motto"}'
@@ -384,8 +356,7 @@
     pk: 75
 -   fields:
         group: [13, 22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: motto podpis
         link: ''
         params: '{"tag": "motto_podpis"}'
@@ -396,8 +367,7 @@
     pk: 37
 -   fields:
         group: [12]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "nag\u0142\xF3wek kwestii"
         link: ''
         params: '{"tag": "naglowek_osoba"}'
@@ -408,8 +378,7 @@
     pk: 16
 -   fields:
         group: [22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "nag\u0142\xF3wek listy"
         link: ''
         params: '{"tag": "naglowek_listy"}'
@@ -420,8 +389,7 @@
     pk: 94
 -   fields:
         group: [13]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: nazwa utworu
         link: ''
         params: '{"tag": "nazwa_utworu"}'
@@ -432,8 +400,7 @@
     pk: 33
 -   fields:
         group: [13]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: nota
         link: ''
         params: '{"tag": "nota"}'
@@ -444,8 +411,7 @@
     pk: 35
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: opowiadanie
         link: ''
         params: '{"tag": "opowiadanie"}'
@@ -456,8 +422,7 @@
     pk: 18
 -   fields:
         group: [12]
-        key: b
-        key_mod: 1
+        accesskey: b
         label: osoba
         link: ''
         params: '{"tag": "osoba"}'
@@ -468,8 +433,7 @@
     pk: 64
 -   fields:
         group: [22]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: osoba na liscie
         link: ''
         params: '{"tag": "lista_osoba"}'
@@ -480,8 +444,7 @@
     pk: 95
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "podrozdzia\u0142"
         link: ''
         params: '{"tag": "naglowek_podrozdzial"}'
@@ -492,8 +455,7 @@
     pk: 12
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "podtytu\u0142"
         link: ''
         params: '{"tag": "podtytul"}'
@@ -504,8 +466,7 @@
     pk: 34
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "powie\u015B\u0107"
         link: ''
         params: '{"tag": "powiesc"}'
@@ -516,8 +477,7 @@
     pk: 19
 -   fields:
         group: []
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: Wydrukuj
         link: print/xml
         params: '[]'
@@ -528,8 +488,7 @@
     pk: 86
 -   fields:
         group: [26]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: przypis autorski
         link: ''
         params: '{"tag": "pa"}'
@@ -540,8 +499,7 @@
     pk: 68
 -   fields:
         group: [26]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: przypis edytorski
         link: ''
         params: '{"tag": "pe"}'
@@ -552,8 +510,7 @@
     pk: 71
 -   fields:
         group: [26]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: przypis redaktorski
         link: ''
         params: '{"tag": "pr"}'
@@ -564,8 +521,7 @@
     pk: 70
 -   fields:
         group: [26]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "przypis t\u0142umacza"
         link: ''
         params: '{"tag": "pt"}'
@@ -576,8 +532,7 @@
     pk: 69
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "rozdzia\u0142"
         link: ''
         params: '{"tag": "naglowek_rozdzial"}'
@@ -588,8 +543,7 @@
     pk: 11
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: scena
         link: ''
         params: '{"tag": "naglowek_scena"}'
@@ -600,8 +554,7 @@
     pk: 15
 -   fields:
         group: [16]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: asterysk
         link: ''
         params: '{"nocontent": "true", "tag": "sekcja_asterysk"}'
@@ -612,8 +565,7 @@
     pk: 54
 -   fields:
         group: [16]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: linia
         link: ''
         params: '{"nocontent": "true", "tag": "separator_linia"}'
@@ -624,8 +576,7 @@
     pk: 55
 -   fields:
         group: [16]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "\u015Bwiat\u0142o"
         link: ''
         params: '{"nocontent": "true", "tag": "sekcja_swiatlo"}'
@@ -636,8 +587,7 @@
     pk: 53
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "s\u0142owo obce"
         link: ''
         params: '{"tag": "slowo_obce"}'
@@ -648,8 +598,7 @@
     pk: 46
 -   fields:
         group: [1]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "\u015Br\xF3dtytu\u0142"
         link: ''
         params: '{"tag": "srodtytul"}'
@@ -660,8 +609,7 @@
     pk: 13
 -   fields:
         group: [2]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "Usu\u0144 spacj\u0119"
         link: ''
         params: '{"exprs": [["^\\s+|\\s+$", ""], ["\\s+", " "], ["(,,)\\s+", "$1"],
@@ -673,8 +621,7 @@
     pk: 3
 -   fields:
         group: [12, 17]
-        key: s
-        key_mod: 1
+        accesskey: s
         label: strofa
         link: ''
         params: '{"tag": "strofa"}'
@@ -685,8 +632,7 @@
     pk: 81
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "tag g\u0142\xF3wny"
         link: ''
         params: '{"tag": "utwor"}'
@@ -697,8 +643,7 @@
     pk: 17
 -   fields:
         group: [2]
-        key: u
-        key_mod: 5
+        accesskey: u
         label: "A<sup>\u2193</sup>"
         link: ''
         params: '[]'
@@ -709,8 +654,7 @@
     pk: 76
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "tytu\u0142 dzie\u0142a"
         link: ''
         params: '{"tag": "tytul_dziela"}'
@@ -721,8 +665,7 @@
     pk: 92
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "tytu\u0142 dzie\u0142a typ 1"
         link: ''
         params: '{"tag": "tytul_dziela", "attrs": {"typ": "1"}}'
@@ -733,8 +676,7 @@
     pk: 45
 -   fields:
         group: [27]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: uwaga
         link: ''
         params: '{"tag": "uwaga"}'
@@ -745,8 +687,7 @@
     pk: 51
 -   fields:
         group: [14, 17]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: wers akap.
         link: ''
         params: '{"tag": "wers_akap"}'
@@ -757,8 +698,7 @@
     pk: 83
 -   fields:
         group: [12, 17]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: wers cd.
         link: ''
         params: '{"tag": "wers_cd"}'
@@ -769,8 +709,7 @@
     pk: 85
 -   fields:
         group: [12, 17]
-        key: w
-        key_mod: 1
+        accesskey: w
         label: "wers mocno wci\u0119ty"
         link: ''
         params: '{"tag": "wers_wciety", "attrs": {"typ": ""}}'
@@ -781,8 +720,7 @@
     pk: 84
 -   fields:
         group: [12, 17]
-        key: q
-        key_mod: 1
+        accesskey: q
         label: "wers wci\u0119ty"
         link: ''
         params: '{"tag": "wers_wciety", "attrs": {"typ": "1"}}'
@@ -793,8 +731,7 @@
     pk: 91
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: www
         link: ''
         params: '{"tag": "www"}'
@@ -805,8 +742,7 @@
     pk: 48
 -   fields:
         group: [15]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "wyr\xF3\u017Cnienie"
         link: ''
         params: '{"tag": "wyroznienie"}'
@@ -817,8 +753,7 @@
     pk: 44
 -   fields:
         group: [11]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: wywiad
         link: ''
         params: '{"tag": "wywiad"}'
@@ -829,8 +764,7 @@
     pk: 25
 -   fields:
         group: [21]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "wywiad odpowied\u017A"
         link: ''
         params: '{"tag": "wywiad_odp"}'
@@ -841,8 +775,7 @@
     pk: 73
 -   fields:
         group: [21]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: wywiad pytanie
         link: ''
         params: '{"tag": "wywiad_pyt"}'
@@ -853,8 +786,7 @@
     pk: 72
 -   fields:
         group: [2]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "Zamie\u0144 dywiz"
         link: ''
         params: '{"exprs": [["(\\s)-(\\s)", "$1---$2"], ["^(\\s*)-(\\s)", "$1---$2"],
@@ -867,8 +799,7 @@
     pk: 2
 -   fields:
         group: [16]
-        key: ''
-        key_mod: 0
+        accesskey: ''
         label: "zast\u0119pnik wersu"
         link: ''
         params: '{"tag": "zastepnik_wersu"}'

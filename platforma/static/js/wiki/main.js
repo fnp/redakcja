@@ -25,6 +25,10 @@ $(function()
 			doc: CurrentDocument
 		});
 		
+		$(document).keydown(function(event) {
+			console.log("Received key:", event);
+		});
+		
 		/* The save button */
         $('#save-button').click(function(event){
             event.preventDefault();

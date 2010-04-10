@@ -56,8 +56,8 @@ class Button(models.Model):
     link = models.CharField(max_length = 256, blank = True, default = '')
 
     # ui related stuff
-    key = models.CharField(blank = True, max_length = 1)
-    key_mod = models.PositiveIntegerField(blank = True, default = 1)
+    accesskey = models.CharField(null = True, max_length = 1)
+        
     tooltip = models.CharField(blank = True, max_length = 120)
 
     # Why the button is restricted to have the same position in each group ?
@@ -69,31 +69,14 @@ class Button(models.Model):
         verbose_name, verbose_name_plural = _('button'), _('buttons')
 
     @property
-    def hotkey_code(self):
-        return ord(self.key.upper()) | (self.key_mod << 8)
-
-    @property
-    def hotkey_name(self):
-        if not self.key:
-            return ''
-
-        mods = []
-        if self.key_mod & 0x01: mods.append('Alt')
-        if self.key_mod & 0x02: mods.append('Ctrl')
-        if self.key_mod & 0x04: mods.append('Shift')
-        mods.append(str(self.key))
-        return '[' + '+'.join(mods) + ']'
-
-    @property
     def full_tooltip(self):
-        return self.tooltip + (' ' + self.hotkey_name if self.key else '')
+        return u"%s %s" % (self.tooltip, "[Alt+%s]" % self.accesskey if self.accesskey else "")
 
     def to_dict(self):
         return {
             'label': self.label,
-            'tooltip': (self.tooltip or '') + self.hotkey_name(),
-            'key': self.key,
-            'key_mod': self.key_mod,
+            'tooltip': self.tooltip,
+            'accesskey': self.accesskey,            
             'params': self.params,
             'scriptlet_id': self.scriptlet_id
         }
@@ -104,9 +87,6 @@ class Button(models.Model):
 class Scriptlet(models.Model):
     name = models.CharField(max_length = 64, primary_key = True)
     code = models.TextField()
-
-    # TODO: add this later and remap code property to this
-    # code_min = models.TextField()
 
     def __unicode__(self):
         return _(u'javascript') + u':' + self.name

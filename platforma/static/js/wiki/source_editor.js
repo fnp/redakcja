@@ -21,6 +21,30 @@
 				tabMode: 'spaces',
 				indentUnit: 0,
 				initCallback: function(){
+					
+					 self.codemirror.grabKeys(function(event) {			
+						if (event.button) {
+							$(event.button).trigger('click');
+							event.button = null;
+						}
+					}, function(event) {
+						/* CM reports characters 2 times - as event and as code */  
+						if((typeof event) != "object")
+							return false;
+							
+						if(!event.altKey)
+							return false;	
+						
+						var c = String.fromCharCode(event.keyCode).toLowerCase();							
+						var button = $("#source-editor button[data-ui-accesskey='"+c+"']");						
+						if(button.length == 0)
+							return false;
+							
+						/* it doesn't matter which button we pick - all do the same */
+						event.button = button[0];
+						return true; 									
+					}); 
+					
 					$('#source-editor .toolbar button').click(function(event){
 						event.preventDefault();
 						var params = eval("(" + $(this).attr('data-ui-action-params') + ")");
