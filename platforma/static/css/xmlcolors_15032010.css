@@ -1,13 +1,11 @@
 .editbox {  
   margin: .4em;
   margin-top: 5px;
-  margin-left: 45px;
+  margin-left: 5px;
   padding: 0;
-  
   font-family:"Lucida Console", monospace;
   font-size: 13px;
-  line-height: 18px;
-  
+  line-height: 18px;  
   color: black;
 }
 

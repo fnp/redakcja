@@ -35,6 +35,14 @@ class DocumentForm(forms.Form):
                 parent =self.cleaned_data['revision'] )
         
         return storage.get(self.cleaned_data['name'])
+    
+class DocumentTagForm(forms.Form):
+    TAGS = (
+        ("publish", "Do publikacji"),        
+    )
+        
+    tag = forms.ChoiceField(choices = TAGS)
+    version = forms.IntegerField(widget = forms.HiddenInput)
 
 class DocumentTextSaveForm(forms.Form):
     """ 
@@ -55,16 +63,16 @@ class DocumentTextSaveForm(forms.Form):
                 
     id = forms.CharField(widget=forms.HiddenInput)
     parent_revision = forms.IntegerField(widget=forms.HiddenInput)
+    text = forms.CharField(widget=forms.HiddenInput)
     
     author = forms.CharField(
         required = False,
         label = _(u"Autor"),
         help_text = _(u"Twoje imie i nazwisko lub email.")
-         
     )
     
     comment = forms.CharField(
-        required = False, 
+        required = True, 
         widget=forms.Textarea,
         label = _(u"Twój komentarz"),
         help_text = _(u"Opisz w miarę dokładnie swoje zmiany."), 

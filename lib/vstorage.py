@@ -325,7 +325,7 @@ class VersionedStorage(object):
         """
         return guess_mime(self._file_path(title))
 
-    def _find_filectx(self, title):
+    def _find_filectx(self, title, rev = None):
         """Find the last revision in which the file existed."""
 
         repo_file = self._title_to_file(title)
@@ -338,14 +338,18 @@ class VersionedStorage(object):
             for parent in changectx.parents():
                 if parent != changectx:
                     stack.append(parent)
-        return changectx[repo_file]
+        
+        try:
+            fctx = changectx[repo_file]            
+            return fctx if rev is None else fctx.filectx(rev)
+        except IndexError, LookupError:
+            raise DocumentNotFound()
 
     def page_history(self, title):
         """Iterate over the page's history."""
 
         filectx_tip = self._find_filectx(title)
-        if filectx_tip is None:
-            return
+        
         maxrev = filectx_tip.filerev()
         minrev = 0
         for rev in range(maxrev, minrev - 1, -1):
@@ -354,31 +358,37 @@ class VersionedStorage(object):
             author = unicode(filectx.user(), "utf-8",
                              'replace').split('<')[0].strip()
             comment = unicode(filectx.description(), "utf-8", 'replace')
-            tags = filectx.changectx().tags()
+            tags = [t.rsplit('#', 1)[-1] for t in filectx.changectx().tags() if '#' in t]
+            
             yield {
                 "version": rev, 
                 "date": date, 
                 "author": author, 
                 "description": comment,
-                "tag": tags[0] if tags else None,
+                "tag": tags,
             }
 
     def page_revision(self, title, rev):
         """Get unicode contents of specified revision of the page."""
-
-        filectx_tip = self._find_filectx(title)
-        if filectx_tip is None:
-            raise DocumentNotFound()
-        try:
-            data = filectx_tip.filectx(rev).data()
-        except IndexError:
-            raise DocumentNotFound()
-        return data
+        return self._find_filectx(title, rev).data()
 
     def revision_text(self, title, rev):
         data = self.page_revision(title, rev)
         text = unicode(data, self.charset, 'replace')
         return text
+    
+    @with_working_copy_locked
+    def add_page_tag(self, title, rev, tag, user = "<wiki>", doctag = True):
+        if doctag:
+            tag = "{title}#{tag}".format(**locals())
+            
+        message = "Assigned tag {tag} to version {rev} of {title}".format(**locals())
+            
+        fctx = self._find_filectx(title, rev)
+        self.repo.tag(
+            names = tag, node = fctx.node(), local = False,
+            user = user, message = message, date = None
+        )        
 
     def history(self):
         """Iterate over the history of entire wiki."""

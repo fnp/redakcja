@@ -1,8 +1,11 @@
 (function($){
 	
 	function DiffPerspective(options) {
-		var old_callback = options.callback || function() {};        
+		var old_callback = options.callback || function() {};
+		var self = this;
+		        
         options.callback = function(){
+			self.base_id = options.base_id;			
 			old_callback.call(this);
 		};		
 		
@@ -15,9 +18,13 @@
         // must 
     };
 	
+	DiffPerspective.prototype.destroy = function() {
+		$('#' + this.base_id).remove();
+		$('#' + this.perspective_id).remove();
+	};
+	
 	DiffPerspective.prototype.onEnter = function(success, failure){
 		$.wiki.Perspective.prototype.onEnter.call(this);
-		
 		console.log("Entered diff view");
 	};
 	

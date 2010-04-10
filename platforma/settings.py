@@ -132,13 +132,13 @@ COMPRESS_CSS = {
 }
  
 COMPRESS_JS = {
-    # everything except codemirror and jquery (which we take from google)
+    # everything except codemirror
     'detail': {
         'source_filenames': (
-                #'js/jquery-1.4.2.min.js', 
+                'js/jquery-1.4.2.min.js', 
                 'js/jquery.autocomplete.js', 
                 'js/jquery.blockui.js',
-                'js/jquery.elastic.js',
+                'js/jquery.elastic.js',                
                 'js/button_scripts.js',
                 'js/slugify.js',
                 
@@ -146,18 +146,26 @@ COMPRESS_JS = {
                 'js/wiki/wikiapi.js',
                 'js/wiki/base.js',
                 'js/wiki/xslt.js',
+                
+                # dialogs
+                'js/wiki/save_dialog.js',
+                
+                # views
                 'js/wiki/history_view.js',
                 'js/wiki/summary_view.js',
                 'js/wiki/source_editor.js',
                 'js/wiki/wysiwyg_editor.js',
                 'js/wiki/scan_gallery.js',                
+                'js/wiki/diff_view.js',
+                
+                # bootstrap
                 'js/wiki/main.js',
         ),             
         'output_filename': 'compressed/detail_scripts_?.js',
      },
     'listing': {
         'source_filenames': (
-                # 'js/jquery-1.4.2.min.js', 
+                'js/jquery-1.4.2.min.js', 
                 'js/slugify.js',                
         ),             
         'output_filename': 'compressed/listing_scripts_?.js',

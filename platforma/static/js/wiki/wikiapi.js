@@ -93,6 +93,10 @@
 //		this._context_lock = -1;
 //		return old;
 //	};
+
+	WikiDocument.prototype.triggerDocumentChanged = function() {
+		$(document).trigger('wlapi_document_changed', this);		
+	};
 	
 	/*
 	 * Fetch text of this document.
@@ -114,6 +118,7 @@
 					self.revision = data.revision;
 					self.gallery = data.gallery;					
 					changed = true;
+					self.triggerDocumentChanged();		
 				}
 				
 				self.has_local_changes = false;				
@@ -152,18 +157,18 @@
 	};
 	
 	WikiDocument.prototype.fetchDiff = function(params) {		
-		/* this doesn't modify anything, so no locks */		
+		/* this doesn't modify anything, so no locks */
+		var self = this;
+				
 		params = $.extend({
 			'from': self.revision, 
 			'to': self.revision
 		}, noops, params);
 					
-		var self = this;	
-					
 		$.ajax({			
 			method: "GET",
 			url: reverse("ajax_document_diff", self.id),
-			dataType: 'json',
+			dataType: 'html',
 			data: {"from": params['from'], "to": params['to']},
 			success: function(data) {
 				params['success'](self, data);
@@ -187,11 +192,11 @@
 			dataType: 'json',
 			// data: {},
 			success: function(data) {
-				this.galleryImages = data.images;
-				params['success'](self, data);
+				self.galleryImages = data;
+				params['success'](self, data);				
 			},
 			error: function() {
-				this.galleryImages = [];	
+				self.galleryImages = [];	
 				params['failure'](self, "<p>Nie udało się wczytać gallerii pod nazwą: '"
 					+ self.galleryLink + "'.</p>");
 							
@@ -202,11 +207,9 @@
 	/*
 	 * Set document's text
 	 */
-	WikiDocument.prototype.setText = function(text) {
-		if (this.text != text) {
-			this.text = text;
-			this.has_local_changes = true;
-		}			
+	WikiDocument.prototype.setText = function(text) {		
+		this.text = text;
+		this.has_local_changes = true;					
 	};
 	
 	/*
@@ -221,26 +224,26 @@
 	 * Save text back to the server
 	 */
 	WikiDocument.prototype.save = function(params){
-		params = $.extend({'comment': 'No comment.'}, noops, params);
+		params = $.extend({}, noops, params);
 		var self = this;
-		
-		/* you can't set text while some is fetching it (or saving) */
-		
+				
 		if (!self.has_local_changes) {
 			console.log("Abort: no changes.");
 			return params['success'](self, false, "Nie ma zmian do zapisania.");
 		};		
 		
+		// Serialize form to dictionary
+		var data = {};		
+		$.each(params['form'].serializeArray(), function() {
+			data[this.name] = this.value;			
+		});
+		
 		var metaComment = '<!--';
 		metaComment += '\n\tgallery:' + self.galleryLink;
 		metaComment += '\n-->\n'
 		
-		var data = {
-			name: self.id,
-			text: metaComment + self.text,
-			parent_revision: self.revision,
-			comment: params['comment'],
-		};
+		data.text = metaComment + self.text;
+		data.comment = data.comment; 
 		
 		$.ajax({
 			url: reverse("ajax_document_text", self.id),
@@ -254,14 +257,26 @@
 					self.revision = data.revision;
 					self.gallery = data.gallery;
 					changed = true;
+					self.triggerDocumentChanged();
 				}
-				params['success'](self, changed, "Zapisano");
+				params['success'](self, changed, 
+					((changed && "Udało się zapisać :)") || "Twoja wersja i serwera jest identyczna") );
 			},
-			error: function() {
-				params['failure'](self, "Nie udało się zapisać.");
+			error: function(xhr) {
+				try {					 
+					params['failure'](self, $.parseJSON(xhr.responseText));
+				} 
+				catch(e) {
+					params['failure'](self, {"__message": "<p>Nie udało się zapisać - błąd serwera.</p>"});				
+				};
 			}
 		});		
 	}; /* end of save() */
+	
+	WikiDocument.prototype.setTag = function(params) {
+		
+	};
+	
 	
 	$.wikiapi.WikiDocument = WikiDocument;
 	

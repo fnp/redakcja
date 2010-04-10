@@ -25,3 +25,8 @@
 .dialog p {
 	margin: 0.5em;
 }
+
+*[data-ui-error-for] {
+	color: red;
+	font-weight: bold;
+}

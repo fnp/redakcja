@@ -4,9 +4,15 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
 #
 import re
+import os
 import vstorage
 from vstorage import DocumentNotFound
 from wiki import settings
+
+from django.http import Http404
+
+import logging
+logger = logging.getLogger("fnp.wiki")
 
 class DocumentStorage(object):
     def __init__(self, path):
@@ -18,6 +24,12 @@ class DocumentStorage(object):
         else:
             text = self.vstorage.revision_text(name, revision)
         return Document(self, name = name, text = text)
+    
+    def get_or_404(self, *args, **kwargs):
+        try:
+            return self.get(*args, **kwargs)
+        except DocumentNotFound:
+            raise Http404            
 
     def put(self, document, author, comment, parent):
         self.vstorage.save_text(
@@ -52,7 +64,12 @@ class Document(object):
         try:
             return self.storage._info(self.name)[0]
         except DocumentNotFound:
-            return - 1
+            return -1
+        
+    def add_tag(self, tag):
+        """ Add document specific tag """
+        logger.debug("Adding tag %s to doc %s version %d", tag, self.name, self.revision)
+        self.storage.vstorage.add_page_tag(self.name, self.revision, tag)
 
     @property
     def plain_text(self):
@@ -70,8 +87,12 @@ class Document(object):
                 except ValueError:
                     continue                
                 
-        if 'gallery' not in result:
-            result['gallery'] = (settings.GALLERY_URL + self.name).replace(' ', '_')
+        gallery = result.get('gallery', self.name.replace(' ', '_'))
+        
+        if gallery.startswith('/'):            
+            gallery = os.path.basename(gallery)
+            
+        result['gallery'] = gallery
             
         if 'title' not in result:
             result['title'] = self.name.title()            

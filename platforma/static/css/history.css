@@ -5,133 +5,151 @@
     bottom: 0px;
     left: 0px;
     right: 0px;
-	z-index: 1;
+    z-index: 1;
 }
 
 /*
  * File History
  */
+#changes-list-container {
+    margin: 1em auto;
+    width: 70%;
+}
+
+table#changes-list-container {
+    border-spacing: 0px 15px;
+}
+
 #changes-list {
-	margin: 0.5em 0.2em;	
+    margin: 0.5em 0.2em;
 }
 
-#changes-list div {
-	position: relative;
-	padding: 0.5em;
-	margin: 0.5em;
+#changes-list td {
+    padding: 0.5em 1em;
 }
 
-#changes-list div:hover {
-	background-color: #f0f0f0;
+#changes-list .entry {
+    position: relative;
+    padding: 0.5em;
+    padding-left: 3em;
+    margin: 0.5em;
 }
 
-#changes-list div.selected {
-	background-color: #ffec63;
+#changes-list .entry:hover {
+    background-color: #f0f0f0;
 }
 
-#changes-list span.tag {
-	display: inline-block;
-	visibility: hidden;
-	width: 60px;
-	margin: 0 0.5em 0 0;	
-	font-size: 11px;
-	padding: 3px 2px;
-	text-align: center;		
-	color: black;
-	background: #add8e6;
-	cursor: pointer;
-	vertical-align: middle;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
+#changes-list .entry.selected {
+    background-color: #ffec63;
 }
 
-#changes-list div:hover span.tag {
-	visibility: visible;	 
+#changes-list .tag {
+    display: inline-block;
+    visibility: hidden;
+    width: 60px;
+    margin: 0 0.5em 0 0;
+    font-size: 11px;
+    padding: 3px 2px;
+    text-align: center;
+    color: black;
+    background: #add8e6;
+    cursor: pointer;
+    vertical-align: middle;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
 }
 
-#changes-list span.tag:hover {
-	background: #bde8f6;
+#changes-list .entry:hover .tag {
+    visibility: visible;
 }
 
-#changes-list span[data-version-tag] {
-	visibility: visible;
-	border: 1px solid black;	
-	
-	color: black;
+#changes-list .tag:hover {
+    background: #bde8f6;
 }
 
-#changes-list span[data-stub-value='version'] {
-	font-weight: bold;
+#changes-list *[data-version-tag] {
+    visibility: visible;
+    border: 1px solid black;
+    color: black;
 }
 
-#changes-list span[data-stub-value='date'], 
-#changes-list span[data-stub-value='author'] 
-{
-	font-size: 11px;
-	color: gray;
+#changes-list *[data-stub-value =
+'version'] {
+    font-weight: bold;
 }
- 
- 
-/* 
+
+#changes-list td[data-stub-value =
+'version'] {
+    vertical-align: text-top;
+}
+
+#changes-list *[data-stub-value =
+'date'], #changes-list *[data-stub-value = 'author'] {
+    font-size: 11px;
+    color: gray;
+}
+
+/*
  * Graphical DIFF view
- * 
+ *
  */
 #history-view .diff_table {
-	width: 90%;
+    width: 90%;
 }
 
- .diff_table { 
-	border-width: 1px;
-	border-style: solid;
-	border-color: black;
-	empty-cells: show;
-	border-spacing: 0px;		
+.editor.DiffPerspective {
+    overflow-y: scroll;
+}
+
+.diff_table {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    empty-cells: show;
+    border-spacing: 0px;
 }
 
 .diff_table td {
-	border-width: 0px 1px 1px 0px;
-	border-style: dotted;
-	border-color: grey;
-	
-	font-size: 10px;
-	line-height: 20px;
-	font-family: monospace;
-	padding: 0px;
-	white-space:pre-line;
-	/*word-wrap:break-word;
-	word-break:break-all; */
+    border-width: 0px 1px 1px 0px;
+    border-style: dotted;
+    border-color: grey;
+    font-size: 10px;
+    line-height: 20px;
+    font-family: monospace;
+    padding: 0px;
+    white-space: pre-line;
+    /*word-wrap:break-word;
+     word-break:break-all; */
 }
 
 .diff_table th {
-	border-width: 0px 1px 1px 0px;
-	border-style: solid;
-	border-color: black;
-	background: #e5ffe5;		
+    border-width: 0px 1px 1px 0px;
+    border-style: solid;
+    border-color: black;
+    background: #e5ffe5;
 }
- 
-/* .diff_table td.left, .diff_table td.right {
-	width: 50%;
-}*/
 
+/* .diff_table td.left, .diff_table td.right {
+ width: 50%;
+ }*/
 .diff_table tr.change {
-	background-color: #dcdcdc;
-	
+    background-color: #dcdcdc;
 }
 
 .diff_mark {
-	display: inline-block;
-	padding: 2px;
+    display: inline-block;
+    padding: 2px;
 }
 
 .diff_mark_removed {
-	background-color: #ff9c94;
+    background-color: #ff9c94;
 }
 
 .diff_mark_added {
-	background-color: #90ee90;
+    background-color: #90ee90;
 }
 
 .diff_mark_changed {
-	background-color: yellow;
+    background-color: yellow;
 }

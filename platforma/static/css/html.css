@@ -1,5 +1,4 @@
 /* Style widoku HTML. Nie należy tu ustawiać position ani marginesów */
-
 .htmlview {
     counter-reset: main;
     font-size: 16px;
@@ -7,42 +6,43 @@
     line-height: 1.5em;
     padding: 3em;
     padding-left: 45px;
-	overflow-y: scroll;
-	overflow-x: auto;
+    overflow-y: scroll;
+    overflow-x: auto;
 }
 
 .htmlview[data-tag-names-visible] {
-	padding-left: 90px;	
+    padding-left: 90px;
 }
 
-.htmlview[data-tag-names-visible] *[x-editable]:not(*[x-common])::before {
-	display: block;
-	float: left;
-	clear: left;
-	content: attr(x-node);
-	font-weight: bold;
-	font-style: normal;
-	font-variant:normal;	
-	font-size: 8px;
-	line-height: 8px;
-	margin-bottom: 4px;		
-	
-	padding: 3px 4px;
-	vertical-align: super;
-	background-color:#add8e6;	
-	margin-left: -80px;
-	width: 70px;
-	text-align: center;
-	
-	-webkit-border-radius: 4px;	
-}
-
-.htmlview *[x-node='RDF'] {
+/*
+ .htmlview[data-tag-names-visible] *[x-editable]:not(*[x-common])::before {
+ display: block;
+ float: left;
+ clear: left;
+ content: attr(x-node);
+ font-weight: bold;
+ font-style: normal;
+ font-variant:normal;
+ font-size: 8px;
+ line-height: 8px;
+ margin-bottom: 4px;
+ 
+ padding: 3px 4px;
+ vertical-align: super;
+ background-color:#add8e6;
+ margin-left: -80px;
+ width: 70px;
+ text-align: center;
+ 
+ -webkit-border-radius: 4px;
+ }
+ */
+.htmlview *[x-node = 'RDF'] {
     display: none;
 }
 
 .htmlview * {
-    position: relative; 	
+    position: relative;
 }
 
 .htmlview div {
@@ -142,7 +142,7 @@
 }
 
 .htmlview .podtytul {
-    /* */    
+    /* */
 }
 
 .htmlview .didaskalia {
@@ -155,48 +155,54 @@
 }
 
 .htmlview .strofa {
-    margin: 1.5em 0 0.5em auto;    
+    margin: 1.5em 0 0.5em auto;
 }
 
 /* wersy */
-.htmlview .strofa .wers_wciety, .htmlview .strofa .wers_wciety[data-wlf-typ='1'] {
-	margin-left: 1em;
+.htmlview .strofa .wers_wciety, .htmlview .strofa .wers_wciety[data-wlf-typ =
+'1'] {
+    margin-left: 1em;
 }
 
-.htmlview .strofa .wers_wciety[data-wlf-typ='2'] {
-	margin-left: 2em;
+.htmlview .strofa .wers_wciety[data-wlf-typ =
+'2'] {
+    margin-left: 2em;
 }
 
-.htmlview .strofa .wers_wciety[data-wlf-typ='3'] {
-	margin-left: 3em;
+.htmlview .strofa .wers_wciety[data-wlf-typ =
+'3'] {
+    margin-left: 3em;
 }
 
-.htmlview .strofa .wers_wciety[data-wlf-typ='4'] {
-	margin-left: 4em;
+.htmlview .strofa .wers_wciety[data-wlf-typ =
+'4'] {
+    margin-left: 4em;
 }
 
-.htmlview .strofa .wers_wciety[data-wlf-typ='5'] {
-	margin-left: 5em;
+.htmlview .strofa .wers_wciety[data-wlf-typ =
+'5'] {
+    margin-left: 5em;
 }
 
-.htmlview .strofa .wers_wciety[data-wlf-typ='6'] {
-	margin-left: 6em;
+.htmlview .strofa .wers_wciety[data-wlf-typ =
+'6'] {
+    margin-left: 6em;
 }
 
 /* błędne wersy */
-.htmlview *:not(.strofa) > *[x-verse]::after {
-	content: "Ten wers znajduje się poza strofą.";
-	display: inline;
-	background: red;
-	font-size: 8pt;
-	border: 1px solid black;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	padding: 1px 1em;
-	margin-left: 1em;
-	vertical-align: super;
+.htmlview *:
+not(.strofa) > *[x-verse]::after {
+    content: "Ten wers znajduje się poza strofą.";
+    display: inline;
+    background: red;
+    font-size: 8pt;
+    border: 1px solid black;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    padding: 1px 1em;
+    margin-left: 1em;
+    vertical-align: super;
 }
-
 
 .htmlview .kwestia .strofa {
     margin: 0;
@@ -223,8 +229,7 @@
     padding-bottom: 1.5em;
 }
 
-.htmlview div.nota p,
-.htmlview div.dedykacja p {
+.htmlview div.nota p, .htmlview div.dedykacja p {
     text-align: right;
     font-style: italic;
 }
@@ -255,10 +260,7 @@
     font-style: italic;
 }
 
-.htmlview .mat,
-.htmlview .slowo_obce,
-.htmlview .tytul_dziela,
-.htmlview .didaskalia {
+.htmlview .mat, .htmlview .slowo_obce, .htmlview .tytul_dziela, .htmlview .didaskalia {
     font-style: italic;
 }
 
@@ -278,73 +280,64 @@
     margin: 1em;
 }
 
- .parse-warning .message {
+.parse-warning .message {
     color: purple;
     font-weight: bold;
 }
 
 /* Uwaga/Extra */
-
 .htmlview .uwaga {
-	background-color: #96e0e4;
-	border: 1px solid black;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	display: block;
-	font-size: 10pt;
-	line-height: 12pt;
-	padding: 2px 1em;
-	float: right;	
-	max-width: 20%;
-	max-height: 24pt;
-	margin-left: 0.5em;
-	overflow: hidden;
+    background-color: #96e0e4;
+    border: 1px solid black;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    display: block;
+    font-size: 10pt;
+    line-height: 12pt;
+    padding: 2px 1em;
+    float: right;
+    max-width: 20%;
+    max-height: 24pt;
+    margin-left: 0.5em;
+    overflow: hidden;
 }
 
 .utwor > .uwaga {
-	float: none;
-	padding: 0.5em 1em;
-	margin: 1em;
-	max-width: 100%;
-	max-height: 100%;
+    float: none;
+    padding: 0.5em 1em;
+    margin: 1em;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .htmlview .uwaga:hover {
-	max-height: 100%;
+    max-height: 100%;
 }
-
 
 /* Motywy */
 /* ======================== */
 /* = Footnotes and themes = */
 /* ======================== */
-
 .htmlview .begin, .htmlview .end {
     background: green;
 }
 
 .htmlview .motyw {
     /* position: absolute; */
-    
     float: right;
     left: auto;
     clear: right;
-    
     width: 10em;
-    
     font-weight: normal;
     font-size: 13px;
     line-height: 18px;
     font-variant: normal;
     text-decoration: none;
-
-
     background-color: #fff;
-    
-/*    border: 1px solid gray;
-
-    border-right: none;
-*/    
+    /*    border: 1px solid gray;
+     
+     border-right: none;
+     */
     z-index: 1;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
@@ -359,15 +352,14 @@
     margin-top: 0.2em;
 }
 
-/* 
+/*
  * Przypisy
  */
-
 /* Znaczniki w tekście */
-.htmlview .annotation {    
+.htmlview .annotation {
     vertical-align: super;
     text-decoration: none;
-/*    font-size: 10px;    */
+    /*    font-size: 10px;    */
 }
 
 .htmlview .annotation:before {
@@ -378,7 +370,6 @@
 .htmlview .annotation:hover {
     background-color: #96e0e4;
 }
-
 *.htmlview *.annotation-inline-box {
     position: static;
 }
@@ -386,33 +377,25 @@
 /*
  * Przypisy w tekście
  */
- .htmlview .annotation-inline-box > span[x-annotation-box]
- {
-     display: none;
-     position: absolute;
-
-     width: 300px;	 
-     
-     font-size: 10pt;	
-     line-height: 12pt;
-     font-weight: normal;
-     font-style: normal;
-
-     background: #fffe93;
-     border-color: black;
-     border-width: 1px;
-     border-style: solid;
-	 border-radius: 10px;
-	 -moz-border-radius: 10px;
-	 -webkit-border-radius: 10px;
-	 
-     padding: 3px 5px;
-
-     text-decoration: none;
-	 
-     z-index: 1000;
- }
- 
+.htmlview .annotation-inline-box > span[x-annotation-box] {
+    display: none;
+    position: absolute;
+    width: 300px;
+    font-size: 10pt;
+    line-height: 12pt;
+    font-weight: normal;
+    font-style: normal;
+    background: #fffe93;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    padding: 3px 5px;
+    text-decoration: none;
+    z-index: 1000;
+}
 
 /*
  * Przypisy na końcu utworu (aktualnie nieuzywane)
@@ -433,7 +416,6 @@
     left: -0.4em;
     width: 2.5em;
     text-align: right;
-
 }
 
 .htmlview .annotations-block .annotation-backref:before {
@@ -444,8 +426,7 @@
 /*
  * EDITABLE ELEMENTS
  */
-
-.htmlview *[x-editable] {    
+.htmlview *[x-editable] {
     position: relative;
     padding: 2px;
     margin-left: 0;
@@ -453,13 +434,11 @@
 }
 
 /* focused editable element */
-.htmlview *[x-editable]:hover
-{
+.htmlview *[x-editable]:hover {
     z-index: 900;
-} 
+}
 
-.htmlview *[x-editable][x-open]
-{
+.htmlview *[x-editable][x-open] {
     visibility: hidden;
 }
 
@@ -469,17 +448,16 @@
     left: -1px;
     width: 72px;
     height: 21px;
-    
     display: block;
-/*    margin: 4px 0 2px 0;*/
+    /*    margin: 4px 0 2px 0;*/
     padding: 5px 5px 2px 5px;
     border: none;
     background-color: #FAFAFA;
-    
-/*    z-index: 3000;*/
-/*    color: #FFF;
-    z-index: 1500;
-*/    border: 1px solid #DDD;
+    /*    z-index: 3000;*/
+    /*    color: #FFF;
+     z-index: 1500;
+     */
+    border: 1px solid #DDD;
     border-bottom: none;
 }
 
@@ -488,7 +466,7 @@
 }
 
 .edit-button:hover, .edit-button:active, .delete-button:hover, .delete-button:active, .accept-button:hover, .accept-button:active {
-/*    color: #FFF;*/
+    /*    color: #FFF;*/
     background-color: #999;
     color: #FFF;
 }
@@ -513,6 +491,7 @@
 .htmlview *[x-editable][x-open] > .default-menu {
     visibility: hidden;
 }
+
 .htmlview *[x-editable][x-open] *[x-annotation-box] > .default-menu {
     visibility: hidden;
 }
@@ -520,6 +499,7 @@
 .htmlview *[x-editable] > .edit-menu {
     visibility: hidden;
 }
+
 .htmlview *[x-editable] *[x-annotation-box] > .edit-menu {
     visibility: hidden;
 }
@@ -527,6 +507,7 @@
 .htmlview *[x-editable][x-open] > .edit-menu {
     visibility: visible;
 }
+
 .htmlview *[x-editable][x-open] *[x-annotation-box] > .edit-menu {
     visibility: visible;
 }
@@ -535,53 +516,45 @@
     border: 0px;
     background-color: gray;
     padding: 1px;
-
     z-index: 2000;
     position: absolute;
 }
 
-.html-editarea textarea
-{
+.html-editarea textarea {
     position: absolute;
     top: 0;
-    
     margin: 0px;
     padding: 0px;
-
     width: 100%;
     height: 100%;
-
     z-index: 0;
     font-size: 10pt;
-/*    background-color: ivory;*/
+    /*    background-color: ivory;*/
 }
 
 .htmlview .out-of-flow-text {
-	display: block;
-	font-face: monospace;
+    display: block;
+    font-face: monospace;
     border: 2px solid red !important;
-    white-space: pre-line;    
+    white-space: pre-line;
 }
 
 .htmlview .out-of-flow-text::before {
-	content: "Tekst w tej ramce nie jest otagowany!";
-	background-color: #ff6c6c;
-	color: black;
-	
-	font-size: 10pt;
-	line-height: 12pt;
-	border: 1px solid black;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	padding: 5px 1em;
-	margin: 0em;
-	margin-left: 1em;
-	
-	text-align: justify;
-	
-	display: inline;
-	float: right;
-	max-width: 25%;
+    content: "Tekst w tej ramce nie jest otagowany!";
+    background-color: #ff6c6c;
+    color: black;
+    font-size: 10pt;
+    line-height: 12pt;
+    border: 1px solid black;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    padding: 5px 1em;
+    margin: 0em;
+    margin-left: 1em;
+    text-align: justify;
+    display: inline;
+    float: right;
+    max-width: 25%;
 }
 
 .unknown-tag {

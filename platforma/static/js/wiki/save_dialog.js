@@ -5,36 +5,50 @@
 (function($) {
 	
 	function SaveDialog(element) {
-		$.wiki.cls.GenericDialog.call(this, element);
 		this.ctx = $.wiki.exitContext();
+		this.clearForm();
+		
+		/* fill out hidden fields */
+		this.$form = $('form', element);
+		
+		$("input[name='id']", this.$form).val(CurrentDocument.id);
+		$("input[name='parent_revision']", this.$form).val(CurrentDocument.revision);
+		
+		$.wiki.cls.GenericDialog.call(this, element);		
 	};
 	
-	SaveDialog.prototype = new $.wiki.cls.GenericDialog();
+	SaveDialog.prototype = new $.wiki.cls.GenericDialog(); 
 	
-	SaveDialog.prototype 
+	SaveDialog.prototype.cancelAction = function() {
+		$.wiki.enterContext(this.ctx);
+		this.hide();
+	};
 	
 	SaveDialog.prototype.saveAction = function() {
 			var self = this;				
 			
 			self.$elem.block({
-				message: "Zapisywanie..."
+				message: "Zapisywanie...",
+				fadeIn: 0,
 			});
 			
 			try {
 				
 				CurrentDocument.save({
-					comment: $("#komentarz").text(),
+					form: self.$form,
 					success: function(doc, changed, info){
 						self.$elem.block({
 							message: info,
-							timeout: 1000,
+							timeout: 2000,
 							fadeOut: 0, 
 							onUnblock: function() {															
 								self.hide();
+								$.wiki.enterContext(self.ctx);
 							}
 						});
 					},
 					failure: function(doc, info) {
+						console.log("Failure", info);
 						self.reportErrors(info);
 						self.$elem.unblock();
 					}					

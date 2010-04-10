@@ -1,9 +1,8 @@
 (function($){
 
-    function normalizeNumber(number, length){
+    function normalizeNumber(pageNumber, pageCount){
         // Numer strony musi być pomiędzy 1 a najwyższym numerem
-        var pageCount = length;
-        pageNumber = parseInt(pageNumber, 10);
+        var pageNumber = parseInt(pageNumber, 10);
         
         if (!pageNumber ||
         pageNumber == NaN ||
@@ -42,54 +41,61 @@
     /*
      * Perspective
      */
-    function ScanGalleryPerspective(doc, callback){
-        var self = this;
-		
-		this.perspective_id = '';
-		this.doc = doc;
+    function ScanGalleryPerspective(options){
+        var old_callback = options.callback || function() { };
         
-        this.dimensions = {};
-        this.zoomFactor = 1;
-        this.$element = $("#side-gallery");
-        this.$numberInput = $('.page-number', this.$element);
+        options.callback = function(){
+            var self = this;
+            
+            this.dimensions = {};
+            this.zoomFactor = 1;
+            this.$element = $("#side-gallery");
+            this.$numberInput = $('.page-number', this.$element);
+            
+            // ...
+            var origin = {};
+            var imageOrigin = {};
+            
+            this.$image = $('.gallery-image img', this.$element).attr('unselectable', 'on');
+            
+            // button handlers
+            this.$numberInput.change(function(event){
+                event.preventDefault();
+                self.setPage($(this).val());
+            });
+            
+            $('.previous-page', this.$element).click(function(){
+                self.setPage(parseInt(self.$numberInput.val(),10) - 1);
+            });
+            
+            $('.next-page', this.$element).click(function(){
+                self.setPage(parseInt(self.$numberInput.val(),10) + 1);
+            });
+            
+            $('.zoom-in', this.$element).click(function(){
+                self.alterZoom(0.2);
+            });
+            
+            $('.zoom-out', this.$element).click(function(){
+                self.alterZoom((-0.2));
+            });
+            
+            $(window).resize(function(){
+                self.dimensions.galleryWidth = self.$image.parent().width();
+                self.dimensions.galleryHeight = self.$image.parent().height();
+            });
+            
+            $('.gallery-image img', this.$element).load(function(){
+                console.log("Image loaded.")
+                self._resizeImage();
+            }).bind('mousedown', function() {
+				self.imageMoveStart.apply(self, arguments);
+			});
+            
+			old_callback.call(this);
+        };
         
-        // ...
-        var origin = {};
-        var imageOrigin = {};
-        
-        this.$image = $('.gallery-image img', this.$element).attr('unselectable', 'on');
-        
-        // button handlers
-        this.$numberInput.change(function(event){
-            event.preventDefault();
-            self.setPage($(this).val());
-        });
-        
-        $('.previous-page', this.$element).click(function(){
-            self.setPage(self.$numberInput.val() - 1);
-        });
-        
-        $('.nexy-page', this.$element).click(function(){
-            self.setPage(self.$numberInput.val() + 1);
-        });        
-        
-        $('.zoom-in', this.$element).click(function(){
-            self.alterZoom(0.2);
-        });
-        
-        $('.zoom-out', this.$element).click(function(){
-            self.alterZoom(-0.2);
-        });
-        
-        $(window).resize(function(){
-            self.dimensions.galleryWidth = self.$image.parent().width();
-            self.dimensions.galleryHeight = self.$image.parent().height();
-        });
-        
-        $('.gallery-image img', this.$element).load(function(){
-			console.load("Image loaded.")
-            self._resizeImage();
-        });
+        $.wiki.Perspective.call(this, options);
     };
     
     ScanGalleryPerspective.prototype = new $.wiki.Perspective();
@@ -106,8 +112,8 @@
             width: $img.width() * this.zoomFactor,
             height: $img.height() * this.zoomFactor,
             originWidth: $img.width(),
-            originHeight: $img.height(),
-            galleryWidth: $img.parent().width(),
+            originHeight: $img.height(),          
+		    galleryWidth: $img.parent().width(),
             galleryHeight: $img.parent().height()
         };
         
@@ -128,7 +134,7 @@
     };
     
     ScanGalleryPerspective.prototype.setPage = function(newPage){
-        newPage = normalizeNumber(newPage, this.$image.length);
+        newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
         this.$numberInput.val(newPage);
         $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1]);
     };
@@ -148,120 +154,87 @@
         this.dimensions.width = this.dimensions.originWidth * this.zoomFactor;
         this.dimensions.height = this.dimensions.originHeight * this.zoomFactor;
         
-        var position = normalizePosition(this.$image.position().left, this.$image.position().top, this.dimensions.galleryWidth, this.dimensions.galleryHeight, this.dimensions.width, this.dimensions.height);
+        // var position = normalizePosition(this.$image.position().left, this.$image.position().top, this.dimensions.galleryWidth, this.dimensions.galleryHeight, this.dimensions.width, this.dimensions.height);
         
-        this.$image.css({
+		this._resizeImage();
+        /* this.$image.css({
             width: this.dimensions.width,
             height: this.dimensions.height,
             left: position.x,
             top: position.y
-        });
+        });*/
     };
+	
+	/*
+	 * Movement
+	 */
+	ScanGalleryPerspective.prototype.imageMoved = function(event){
+		event.preventDefault();
+		
+		// origin is where the drag started
+		// imageOrigin is where the drag started on the image
+		
+		var newX = event.clientX - this.origin.x + this.imageOrigin.left;
+		var newY = event.clientY - this.origin.y + this.imageOrigin.top;
+		
+		var position = normalizePosition(newX, newY, this.dimensions.galleryWidth, this.dimensions.galleryHeight, this.dimensions.width, this.dimensions.height);
+		
+		this.$image.css({
+			left: position.x,
+			top: position.y,
+		});
+		
+		return false;
+	};
+	
+	ScanGalleryPerspective.prototype.imageMoveStart = function(event){
+		event.preventDefault();
+		
+		var self = this;
+		
+		this.origin = {
+			x: event.clientX,
+			y: event.clientY
+		};
+		
+		this.imageOrigin = self.$image.position();
+		$(document).bind('mousemove.gallery', function(){
+			self.imageMoved.apply(self, arguments);
+		}).bind('mouseup.gallery', function() {
+			self.imageMoveStop.apply(self, arguments); 
+		});
+		
+		return false;
+	};
+	
+	ScanGalleryPerspective.prototype.imageMoveStop = function(event){
+		$(document).unbind('mousemove.gallery').unbind('mouseup.gallery');
+	};
     
     /*
      * Loading gallery
      */
     ScanGalleryPerspective.prototype.onEnter = function(success, failure){
-		var self = this;
-		
-        $.wiki.Perspective.prototype.onEnter.call(this);        
+        var self = this;
         
-		this.doc.refreshGallery({
-			success: function(doc, data) {
-				self.$image.show();
-				$('.error_message', self.$element).hide();
-				success();				
-			},
-			failure: function(doc, message) {
-				self.$image.hide();
-				$('.error_message', self.$element).show().html(message);
-				failure();				
-			}			 
-		});
+        $.wiki.Perspective.prototype.onEnter.call(this);
+        
+        this.doc.refreshGallery({
+            success: function(doc, data){
+                self.$image.show();
+				self.setPage( self.$numberInput.val() );
+				
+                $('.error_message', self.$element).hide();
+                if(success) success();
+            },
+            failure: function(doc, message){
+                self.$image.hide();
+                $('.error_message', self.$element).show().html(message);
+                if(failure) failure();
+            }
+        });
     };
     
     $.wiki.ScanGalleryPerspective = ScanGalleryPerspective;
+	
 })(jQuery);
-
-
-/*
-
-
- function onMouseMove(event){
-
-
- var position = normalizePosition(event.clientX - origin.x + imageOrigin.left, event.clientY - origin.y + imageOrigin.top, imageDimensions.galleryWidth, imageDimensions.galleryHeight, imageDimensions.width, imageDimensions.height);
-
-
- image.css({
-
-
- position: 'absolute',
-
-
- top: position.y,
-
-
- left: position.x
-
-
- });
-
-
- return false;
-
-
- }
-
-
- function onMouseUp(event){
-
-
- $(document).unbind('mousemove.gallery').unbind('mouseup.gallery');
-
-
- return false;
-
-
- }
-
-
- image.bind('mousedown', function(event){
-
-
- origin = {
-
-
- x: event.clientX,
-
-
- y: event.clientY
-
-
- };
-
-
- imageOrigin = image.position();
-
-
- $(document).bind('mousemove.gallery', onMouseMove).bind('mouseup.gallery', onMouseUp);
-
-
- return false;
-
-
- });
-
-
- if (url) {
-
-
- updateGallery(url);
-
-
- }
-
-
- }*/
-
-

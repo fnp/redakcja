@@ -1,19 +1,27 @@
 <div id="history-view-editor" class="editor" style="display: none">
     <div class="toolbar">
     	<button type="button" id="make-diff-button">Porównaj</button> 
+		<button type="button" id="tag-changeset-button">Oznacz wersje</button>
 	</div> 
     <div id="history-view">
-        <p class="message-box" style="display:none;">
-        </p>
-        <div class="row-stub" style="display: none;">
-			<span class="tag" data-stub-target="data-version-tag" data-stub-value="tag">dodaj tag</span>
-			<span data-stub-value="version"></span>: <span data-stub-value="description"></span>
-            (<span data-stub-value="author"></span>, <span data-stub-value="date"></span>)
-        </div>
-        <div id="changes-list">
-        </div>
-        <p>            
-    
+        <p class="message-box" style="display:none;"></p>
+        	
+		<table id="changes-list-container">
+        <tbody id="changes-list">        	
+        </tbody>
+		<tbody style="display: none;">
+			<tr class="entry row-stub">			
+			<td data-stub-value="version"></td>
+			<td>
+				<span data-stub-value="description"></span>
+				<br />
+            	<span data-stub-value="author"></span>, <span data-stub-value="date"></span>
+			</td>
+			<td data-stub-value="tag">				
+			</td>
+        	</tr>
+		</tbody>
+		</table>                   
         <div id="diff-view">
         </div>
     </div>

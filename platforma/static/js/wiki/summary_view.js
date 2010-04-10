@@ -1,10 +1,12 @@
 (function($){
 	
-	function SummaryPerspective(doc, callback) {
-		this.perspective_id = 'SummaryPerspective';
-		this.doc = doc;
+	function SummaryPerspective(options) {
+		var old_callback = options.callback;        
+        options.callback = function(){
+			old_callback.call(this);
+		};		
 		
-		callback.call(this);
+		$.wiki.Perspective.call(this, options);
     };
     
     SummaryPerspective.prototype = new $.wiki.Perspective();

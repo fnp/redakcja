@@ -232,17 +232,19 @@
             });
         }
         
-        $('.delete-button', $overlay).click(function(){
-            if ($origin.is('.motyw')) {
-                $('[theme-class=' + $origin.attr('theme-class') + ']').remove();
-            }
-            else {
-                $origin.remove();
-            }
-            $overlay.remove();
-            $(document).unbind('click.blur-overlay');
-            return false;
-        })
+		if ($origin.is('.motyw')) {
+        	$('.delete-button', $overlay).click(function() {
+				if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw ?")) {
+					$('[theme-class=' + $origin.attr('theme-class') + ']').remove();
+					$overlay.remove();
+					$(document).unbind('click.blur-overlay');
+					return false;
+				};
+            });
+		}
+		else {
+			$('.delete-button', $overlay).hide();
+		}
         
         
         var serializer = new XMLSerializer();
@@ -297,120 +299,124 @@
             }
         });
     }
-           
-    function VisualPerspective(doc, callback) 
-	{
-		this.perspective_id = 'VisualPerspective';
-		this.doc = doc;
+    
+    function VisualPerspective(options){
 		
-		var element = $("html-view");		
-		var button = $('<button class="edit-button">Edytuj</button>');
+        var old_callback = options.callback;
 		
-        $('#html-view').bind('mousemove', function(event){
-            var editable = $(event.target).closest('*[x-editable]');
-            $('.active[x-editable]', element).not(editable).removeClass('active').children('.edit-button').remove();
-            if (!editable.hasClass('active')) {
-                editable.addClass('active').append(button);
-            }
-            if (editable.is('.annotation-inline-box')) {
-                $('*[x-annotation-box]', editable).css({
-                    position: 'absolute',
-                    left: event.clientX - editable.offset().left + 5,
-                    top: event.clientY - editable.offset().top + 5
-                }).show();
-            }
-            else {
-                $('*[x-annotation-box]').hide();
-            }
-        });
+        options.callback = function() {       
+            var element = $("#html-view");
+            var button = $('<button class="edit-button">Edytuj</button>');
+            
+            $('#html-view').bind('mousemove', function(event){
+                var editable = $(event.target).closest('*[x-editable]');
+                $('.active', element).not(editable).removeClass('active').children('.edit-button').remove();
+                
+				if (!editable.hasClass('active')) {
+                    editable.addClass('active').append(button);
+                }
+                if (editable.is('.annotation-inline-box')) {
+                    $('*[x-annotation-box]', editable).css({
+                        position: 'absolute',
+                        left: event.clientX - editable.offset().left + 5,
+                        top: event.clientY - editable.offset().top + 5
+                    }).show();
+                }
+                else {
+                    $('*[x-annotation-box]').hide();
+                }
+            });
+            
+            $('.motyw').live('click', function(){
+                selectTheme($(this).attr('theme-class'));
+            });
+            
+            $('#insert-annotation-button').click(function(){
+                addAnnotation();
+                return false;
+            });
+            
+            $('#insert-theme-button').click(function(){
+                addTheme();
+                return false;
+            });
+            
+            $('.edit-button').live('click', function(event){
+                event.preventDefault();
+                openForEdit($(this).parent());
+            });
+			
+			old_callback.call(this);
+        };
         
-        $('.motyw').live('click', function(){
-            selectTheme($(this).attr('theme-class'));
-        });
-        
-        $('#insert-annotation-button').click(function(){
-            addAnnotation();
-            return false;
-        });
-        
-        $('#insert-theme-button').click(function(){
-            addTheme();
-            return false;
-        });
-        
-        $('.edit-button').live('click', function(event){
-            event.preventDefault();
-            openForEdit($(this).parent());
-        });
-		
-		callback.call(this);
+        $.wiki.Perspective.call(this, options);
     };
     
     VisualPerspective.prototype = new $.wiki.Perspective();
-	
-    VisualPerspective.prototype.freezeState = function() {
+    
+    VisualPerspective.prototype.freezeState = function(){
     
     };
-	
-	VisualPerspective.prototype.onEnter = function(success, failure) 
-	{
-		$.wiki.Perspective.prototype.onEnter.call(this);
-		
+    
+    VisualPerspective.prototype.onEnter = function(success, failure){
+        $.wiki.Perspective.prototype.onEnter.call(this);
+        
         $.blockUI({
             message: 'Uaktualnianie widoku...'
         });
-		
-		function _finalize(callback) {
-			$.unblockUI();
-			if (callback) callback();                
-		} 
-		
+        
+        function _finalize(callback){
+            $.unblockUI();
+            if (callback) 
+                callback();
+        }
+        
         xml2html({
             xml: this.doc.text,
             success: function(element){
                 $('#html-view').html(element);
                 _finalize(success);
             },
-            error: function(text) {
+            error: function(text){
                 var message = $('<pre></pre>');
                 message.text(text);
                 $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' +
                 message.html() +
-                '</pre>');								
-				_finalize(failure);
+                '</pre>');
+                _finalize(failure);
             }
-        });   
-	};
-	
-	VisualPerspective.prototype.onExit = function(success, failure) 
-	{
-		var self = this;
-		
+        });
+    };
+    
+    VisualPerspective.prototype.onExit = function(success, failure){
+        var self = this;
+        
         $.blockUI({
             message: 'Zapisywanie widoku...'
-        });	
-		
-		function _finalize(callback) {
-			$.unblockUI();
-			if (callback) callback();                
-		}
-		
-		if ($('#html-view .error').length > 0) 
-			return _finalize(failure);        
-		
+        });
+        
+        function _finalize(callback){
+            $.unblockUI();
+            if (callback) 
+                callback();
+        }
+        
+        if ($('#html-view .error').length > 0) 
+            return _finalize(failure);
+        
         html2text({
             element: $('#html-view div').get(0),
-            success: function(text) {
+            success: function(text){
                 self.doc.setText(text);
                 _finalize(success);
             },
-            error: function(text) {                
-                $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');						
-				_finalize(failure);
+            error: function(text){
+                $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                _finalize(failure);
             }
-        });   
-	};
-	
-	$.wiki.VisualPerspective = VisualPerspective;    
+        });
+    };
+    
+    $.wiki.VisualPerspective = VisualPerspective;
     
 })(jQuery);

@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div id="document-meta" 
+<div id="document-meta"
 	data-document-name="{{ document.name }}" style="display:none">
 	
 	{% for k, v in document_meta.items %}
@@ -36,33 +36,35 @@
     <div id="tools">
         <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
         | {% include "registration/head_login.html" %} 
-        | Wersja: <span id="document-revision">{{ document_info.revision }}</span>
+        | Wersja: <span id="document-revision">unknown</span>
         | 
         <button style="margin-left: 6px" id="save-button">
             Zapisz
         </button>
     </div>
-    <ol id="tabs">
-    	
-		<li id="SummaryPerspective-tab" 
-			data-ui-related="summary-view-editor" data-ui-jsclass="SummaryPerspective">
+    <ol id="tabs">    	
+		<li id="SummaryPerspective" 
+			data-ui-related="summary-view-editor" 
+			data-ui-jsclass="SummaryPerspective">
             <span>{{ document_meta.title }}</span>
         </li>		
 		
-        <li id="VisualPerspective-tab" 
-			data-ui-related="simple-editor" data-ui-jsclass="VisualPerspective">
+        <li id="VisualPerspective" 
+			data-ui-related="simple-editor" 
+			data-ui-jsclass="VisualPerspective">
             <span>Edytor</span>
         </li>
 		
-		<li id="HistoryPerspective-tab" 
+		<li id="HistoryPerspective" 
 			data-ui-related="history-view-editor" 
 			data-ui-jsclass="HistoryPerspective">		
-            Historia
+            <span>Historia</span>
         </li>
         		
-		<li id="CodeMirrorPerspective-tab" 
-			data-ui-related="source-editor" data-ui-jsclass="CodeMirrorPerspective">
-            Kod źródłowy
+		<li id="CodeMirrorPerspective" 
+			data-ui-related="source-editor" 
+			data-ui-jsclass="CodeMirrorPerspective">
+            <span>Kod źródłowy</span>
         </li>
     </ol>
 </div>
@@ -117,4 +119,5 @@
     </div>
 </div>
 {% include "wiki/save_dialog.html" %}
+{% include "wiki/tag_dialog.html" %}
 {% endblock %}
