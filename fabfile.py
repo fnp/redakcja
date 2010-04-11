@@ -61,18 +61,26 @@ def setup():
     """
     require('hosts', 'sandbox', provided_by=[staging, production])
 
-    run("mkdir -p %(path)s; mkdir -p %(path)s/www/wsgi;" % env)
+    run("mkdir -p %(path)s; mkdir -p %(path)s/www/wsgi; mkdir -p %(path)s/www/media" % env)
 
     # make a git mirror
-    run("""\
-cd %(path)s;
+    run("""cd %(path)s;
 git clone %(giturl)s mirror;
 cd %(path)s/mirror;
 git pull""" % env, pty=True)
 
     run('%(virtualenv)s %(path)s' % env, pty=True)
-    run('cd %(path)s; mkdir -p releases; mkdir -p shared; mkdir -p packages;' % env, pty=True)
+    run('cd %(path)s; rm -rf releases shared packages; mkdir -p releases; mkdir -p shared; mkdir -p packages;' % env, pty=True)
+
+    # symlink static content
+    run("""cd %(path)s/www/media;
+ln -sf %(path)s/releases/current/%(project_name)s/static static
+ln -sf %(path)s/lib/python2.6/site-packages/django/contrib/admin/media admin-media
+mkdir -p dynamic
+""" % env)
+
     run('cd %(path)s/releases; ln -s . current; ln -s . previous' % env, pty=True)
+
     deploy()
 
 

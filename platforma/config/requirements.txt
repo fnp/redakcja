@@ -2,6 +2,7 @@
 lxml>=2.2
 mercurial>=1.3.1
 PyYAML>=3.0
+PIL>=1.1
 
 ## Book conversion library
 git+git://github.com/fnp/librarian.git@master#egg=librarian
