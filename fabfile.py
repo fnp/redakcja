@@ -44,6 +44,7 @@ def common():
     env.path = os.path.join(env.sandbox, env.project_name)
     env.target = os.path.join(env.path, 'bin', 'python')
 
+
 # =========
 # = Tasks =
 # =========
@@ -90,7 +91,7 @@ def deploy():
     upload_wsgi_script()
 #    upload_vhost_sample()
     install_requirements()
-    copy_localsettings()
+    hardlink_localsettings()
     symlink_current_release()
     migrate()
     django_compress()
@@ -152,19 +153,27 @@ def upload_wsgi_script():
 
 def install_requirements():
     "Install the required packages from the requirements file using pip"
-    print '>>> install requirements'
+
+    print '>>> Instaling global requirements'
     require('release', provided_by=[deploy])
     run('cd %(path)s; %(path)s/bin/pip install -r %(path)s/releases/%(release)s/%(project_name)s/config/requirements.txt' % env, pty=True)
 
+    print '>>> Instaling site requirements'
 
-#def copy_localsettings():
-#    "Copy localsettings.py from root directory to release directory (if this file exists)"
-#    print ">>> copy localsettings"
-#    require('release', 'path', provided_by=[deploy])
-#    require('sandbox', provided_by=[staging, production])
-#
-#    with settings(warn_only=True):
-#        run('cp %(sandbox)s/etc/%(project_name)s/localsettings.py %(path)s/releases/%(release)s/%(project_name)s' % env)
+    with settings(warn_only=True):
+        run('cd %(path)s; %(path)s/bin/pip install -r %(sandbox)s/etc/%(project_name)s/requirements.txt' % env, pty=True)
+
+
+def hardlink_localsettings():
+    "Hardlink localsettings.py from root directory to release directory (if this file exists)"
+    print ">>> Hardlink localsettings"
+    require('release', 'path', provided_by=[deploy])
+    require('sandbox', provided_by=[staging, production])
+
+    # hardlink localsettings
+    with settings(warn_only=True):
+        run('ln %(sandbox)s/etc/%(project_name)s/localsettings.py %(path)s/releases/%(release)s/%(project_name)s' % env)
+
 
 def symlink_current_release():
     "Symlink our current release"

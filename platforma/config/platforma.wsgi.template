@@ -15,7 +15,6 @@ sys.path = [
 	'%(path)s/releases/current',
 	'%(path)s/releases/current/apps',
 	'%(path)s/releases/current/lib',
-	'%(sandbox)s/etc/%(project_name)s,
 ] + sys.path
 
 # Run Django
