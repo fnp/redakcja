@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
 import tempfile
@@ -23,9 +23,9 @@ import mercurial.revlog
 import mercurial.util
 
 
-def urlquote(url, safe = '/'):
-    """Quotes URL 
-    
+def urlquote(url, safe='/'):
+    """Quotes URL
+
     >>> urlquote(u'Za\u017c\xf3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144')
     'Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84'
     """
@@ -33,8 +33,8 @@ def urlquote(url, safe = '/'):
 
 
 def urlunquote(url):
-    """Unqotes URL 
-    
+    """Unqotes URL
+
     # >>> urlunquote('Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84')
     # u'Za\u017c\xf3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144'
     """
@@ -59,9 +59,10 @@ def with_working_copy_locked(func):
         wlock = self.repo.wlock()
         try:
             return func(self, *args, **kwargs)
-        finally:            
+        finally:
             wlock.release()
     return wrapped
+
 
 def with_storage_locked(func):
     """A decorator for locking the repository when calling a method."""
@@ -72,9 +73,10 @@ def with_storage_locked(func):
         lock = self.repo.lock()
         try:
             return func(self, *args, **kwargs)
-        finally:            
+        finally:
             lock.release()
     return wrapped
+
 
 def guess_mime(file_name):
     """
@@ -95,7 +97,7 @@ def guess_mime(file_name):
     'archive/gzip'
     """
 
-    mime, encoding = mimetypes.guess_type(file_name, strict = False)
+    mime, encoding = mimetypes.guess_type(file_name, strict=False)
     if encoding:
         mime = 'archive/%s' % encoding
     if mime is None:
@@ -113,7 +115,7 @@ class VersionedStorage(object):
     change history, using Mercurial repository as the storage method.
     """
 
-    def __init__(self, path, charset = None):
+    def __init__(self, path, charset=None):
         """
         Takes the path to the directory where the pages are to be kept.
         If the directory doen't exist, it will be created. If it's inside
@@ -126,38 +128,38 @@ class VersionedStorage(object):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         self.repo_path = find_repo_path(self.path)
-        
+
         self.ui = mercurial.ui.ui()
         self.ui.quiet = True
         self.ui._report_untrusted = False
         self.ui.setconfig('ui', 'interactive', False)
-        
+
         if self.repo_path is None:
             self.repo_path = self.path
             create = True
         else:
             create = False
-            
+
         self.repo_prefix = self.path[len(self.repo_path):].strip('/')
         self.repo = mercurial.hg.repository(self.ui, self.repo_path,
-                                            create = create)
+                                            create=create)
 
     def reopen(self):
         """Close and reopen the repo, to make sure we are up to date."""
         self.repo = mercurial.hg.repository(self.ui, self.repo_path)
 
     def _file_path(self, title):
-        return os.path.join(self.path, urlquote(title, safe = ''))
+        return os.path.join(self.path, urlquote(title, safe=''))
 
     def _title_to_file(self, title):
-        return os.path.join(self.repo_prefix, urlquote(title, safe = ''))
+        return os.path.join(self.repo_prefix, urlquote(title, safe=''))
 
     def _file_to_title(self, filename):
         assert filename.startswith(self.repo_prefix)
         name = filename[len(self.repo_prefix):].strip('/')
         return urlunquote(name)
 
-    def __contains__(self, title):                        
+    def __contains__(self, title):
         return urlquote(title) in self.repo['tip']
 
     def __iter__(self):
@@ -195,40 +197,39 @@ class VersionedStorage(object):
 
     @with_working_copy_locked
     @with_storage_locked
-    def save_file(self, title, file_name, author = u'', comment = u'', parent = None):
+    def save_file(self, title, file_name, author=u'', comment=u'', parent=None):
         """Save an existing file as specified page."""
         user = author.encode('utf-8') or u'anonymous'.encode('utf-8')
         text = comment.encode('utf-8') or u'comment'.encode('utf-8')
-        
+
         repo_file = self._title_to_file(title)
         file_path = self._file_path(title)
         mercurial.util.rename(file_name, file_path)
         changectx = self._changectx()
-        
+
         try:
             filectx_tip = changectx[repo_file]
             current_page_rev = filectx_tip.filerev()
         except mercurial.revlog.LookupError:
             self.repo.add([repo_file])
             current_page_rev = -1
-        
+
         if parent is not None and current_page_rev != parent:
             msg = self.merge_changes(changectx, repo_file, text, user, parent)
             user = '<wiki>'
             text = msg.encode('utf-8')
-            
+
         self._commit([repo_file], text, user)
-        
-        
+
     def save_data(self, title, data, **kwargs):
         """Save data as specified page."""
         try:
-            temp_path = tempfile.mkdtemp(dir = self.path)
+            temp_path = tempfile.mkdtemp(dir=self.path)
             file_path = os.path.join(temp_path, 'saved')
             f = open(file_path, "wb")
             f.write(data)
             f.close()
-            self.save_file(title = title, file_name = file_path, **kwargs)
+            self.save_file(title=title, file_name=file_path, **kwargs)
         finally:
             try:
                 os.unlink(file_path)
@@ -240,14 +241,13 @@ class VersionedStorage(object):
                 pass
 
     def save_text(self, text, **kwargs):
-        """Save text as specified page, encoded to charset.""" 
-        self.save_data(data = text.encode(self.charset), **kwargs)
-
+        """Save text as specified page, encoded to charset."""
+        self.save_data(data=text.encode(self.charset), **kwargs)
 
     def _commit(self, files, text, user):
         match = mercurial.match.exact(self.repo_path, '', list(files))
-        return self.repo.commit(match = match, text = text, user = user, force = True)
- 
+        return self.repo.commit(match=match, text=text, user=user, force=True)
+
     def page_text(self, title):
         """Read unicode text of a page."""
         data = self.open_page(title).read()
@@ -260,7 +260,7 @@ class VersionedStorage(object):
 
     @with_working_copy_locked
     @with_storage_locked
-    def delete_page(self, title, author = u'', comment = u''):
+    def delete_page(self, title, author=u'', comment=u''):
         user = author.encode('utf-8') or 'anon'
         text = comment.encode('utf-8') or 'deleted'
         repo_file = self._title_to_file(title)
@@ -276,11 +276,11 @@ class VersionedStorage(object):
     def open_page(self, title):
         if title not in self:
             raise DocumentNotFound()
-        
+
         path = self._title_to_file(title)
-        logger.debug("Opening page %s", path)      
+        logger.debug("Opening page %s", path)
         try:
-            return self.repo.wfile(path, 'rb')            
+            return self.repo.wfile(path, 'rb')
         except IOError:
             logger.exception("Failed to open page %s", title)
             raise DocumentNotFound()
@@ -294,7 +294,7 @@ class VersionedStorage(object):
         except OSError:
             return 0, 0, 0
         return st_ino, st_size, st_mtime
-    
+
     @with_working_copy_locked
     def page_meta(self, title):
         """Get page's revision, date, last editor and his edit comment."""
@@ -314,7 +314,7 @@ class VersionedStorage(object):
 
     def repo_revision(self):
         return self.repo['tip'].rev()
-    
+
     def _changectx(self):
         return self.repo['tip']
 
@@ -325,7 +325,7 @@ class VersionedStorage(object):
         """
         return guess_mime(self._file_path(title))
 
-    def _find_filectx(self, title, rev = None):
+    def _find_filectx(self, title, rev=None):
         """Find the last revision in which the file existed."""
 
         repo_file = self._title_to_file(title)
@@ -338,9 +338,9 @@ class VersionedStorage(object):
             for parent in changectx.parents():
                 if parent != changectx:
                     stack.append(parent)
-        
+
         try:
-            fctx = changectx[repo_file]            
+            fctx = changectx[repo_file]
             return fctx if rev is None else fctx.filectx(rev)
         except IndexError, LookupError:
             raise DocumentNotFound()
@@ -349,7 +349,7 @@ class VersionedStorage(object):
         """Iterate over the page's history."""
 
         filectx_tip = self._find_filectx(title)
-        
+
         maxrev = filectx_tip.filerev()
         minrev = 0
         for rev in range(maxrev, minrev - 1, -1):
@@ -359,11 +359,11 @@ class VersionedStorage(object):
                              'replace').split('<')[0].strip()
             comment = unicode(filectx.description(), "utf-8", 'replace')
             tags = [t.rsplit('#', 1)[-1] for t in filectx.changectx().tags() if '#' in t]
-            
+
             yield {
-                "version": rev, 
-                "date": date, 
-                "author": author, 
+                "version": rev,
+                "date": date,
+                "author": author,
                 "description": comment,
                 "tag": tags,
             }
@@ -376,19 +376,19 @@ class VersionedStorage(object):
         data = self.page_revision(title, rev)
         text = unicode(data, self.charset, 'replace')
         return text
-    
+
     @with_working_copy_locked
-    def add_page_tag(self, title, rev, tag, user = "<wiki>", doctag = True):
+    def add_page_tag(self, title, rev, tag, user="<wiki>", doctag=True):
         if doctag:
             tag = "{title}#{tag}".format(**locals())
-            
+
         message = "Assigned tag {tag} to version {rev} of {title}".format(**locals())
-            
+
         fctx = self._find_filectx(title, rev)
         self.repo.tag(
-            names = tag, node = fctx.node(), local = False,
-            user = user, message = message, date = None
-        )        
+            names=tag, node=fctx.node(), local=False,
+            user=user, message=message, date=None,
+        )
 
     def history(self):
         """Iterate over the history of entire wiki."""
@@ -414,7 +414,7 @@ class VersionedStorage(object):
     def all_pages(self):
         tip = self.repo['tip']
         """Iterate over the titles of all pages in the wiki."""
-        return [ urlunquote(filename) for filename in tip ]        
+        return [urlunquote(filename) for filename in tip]
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""

@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8
 
 import os
 from django.conf import settings
@@ -42,7 +42,7 @@ EXTENSIONS = getattr(settings, "FILEBROWSER_EXTENSIONS", {
     'Video': ['.mov', '.wmv', '.mpeg', '.mpg', '.avi', '.rm'],
     'Document': ['.pdf', '.doc', '.rtf', '.txt', '.xls', '.csv'],
     'Sound': ['.mp3', '.mp4', '.wav', '.aiff', '.midi', '.m4p'],
-    'Code': ['.html', '.py', '.js', '.css']
+    'Code': ['.html', '.py', '.js', '.css'],
 })
 
 # Define different formats for allowed selections.
@@ -107,5 +107,3 @@ _('Video')
 _('Document')
 _('Sound')
 _('Code')
-
-

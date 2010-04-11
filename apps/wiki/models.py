@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
 import os
@@ -14,37 +14,38 @@ from django.http import Http404
 import logging
 logger = logging.getLogger("fnp.wiki")
 
+
 class DocumentStorage(object):
     def __init__(self, path):
         self.vstorage = vstorage.VersionedStorage(path)
 
-    def get(self, name, revision = None):
+    def get(self, name, revision=None):
         if revision is None:
             text = self.vstorage.page_text(name)
         else:
             text = self.vstorage.revision_text(name, revision)
-        return Document(self, name = name, text = text)
-    
+        return Document(self, name=name, text=text)
+
     def get_or_404(self, *args, **kwargs):
         try:
             return self.get(*args, **kwargs)
         except DocumentNotFound:
-            raise Http404            
+            raise Http404
 
     def put(self, document, author, comment, parent):
         self.vstorage.save_text(
-                title = document.name,
-                text = document.text, 
-                author = author, 
-                comment = comment, 
-                parent = parent)
+                title=document.name,
+                text=document.text,
+                author=author,
+                comment=comment,
+                parent=parent)
 
     def delete(self, name, author, comment):
         self.vstorage.delete_page(name, author, comment)
 
     def all(self):
         return list(self.vstorage.all_pages())
-    
+
     def history(self, title):
         return list(self.vstorage.page_history(title))
 
@@ -64,8 +65,8 @@ class Document(object):
         try:
             return self.storage._info(self.name)[0]
         except DocumentNotFound:
-            return -1
-        
+            return - 1
+
     def add_tag(self, tag):
         """ Add document specific tag """
         logger.debug("Adding tag %s to doc %s version %d", tag, self.name, self.revision)
@@ -85,25 +86,26 @@ class Document(object):
                     k, v = line.split(':', 1)
                     result[k.strip()] = v.strip()
                 except ValueError:
-                    continue                
-                
+                    continue
+
         gallery = result.get('gallery', self.name.replace(' ', '_'))
-        
-        if gallery.startswith('/'):            
+
+        if gallery.startswith('/'):
             gallery = os.path.basename(gallery)
-            
+
         result['gallery'] = gallery
-            
+
         if 'title' not in result:
-            result['title'] = self.name.title()            
+            result['title'] = self.name.title()
 
         return result
-    
+
     def info(self):
         return dict(zip(
             ('revision', 'last_update', 'last_comitter', 'commit_message'),
-            self.storage._info(self.name)
-        ))                         
+            self.storage._info(self.name),
+        ))
+
 
 def getstorage():
     return DocumentStorage(settings.REPOSITORY_PATH)

@@ -3,6 +3,7 @@ import os
 from compress.utils import get_output_filename, media_root
 from compress.versioning.base import VersioningBase
 
+
 class MTimeVersioning(VersioningBase):
 
     def get_version(self, source_files):
@@ -16,4 +17,3 @@ class MTimeVersioning(VersioningBase):
         compressed_file_full = media_root(output_file_name)
 
         return (int(os.stat(compressed_file_full).st_mtime) < int(version)), version
-

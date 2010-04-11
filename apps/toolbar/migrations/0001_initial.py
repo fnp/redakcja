@@ -5,9 +5,9 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Adding model 'ButtonGroup'
         db.create_table('toolbar_buttongroup', (
             ('position', self.gf('django.db.models.fields.IntegerField')(default=0)),
@@ -45,10 +45,10 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=64, primary_key=True)),
         ))
         db.send_create_signal('toolbar', ['Scriptlet'])
-    
-    
+
+
     def backwards(self, orm):
-        
+
         # Deleting model 'ButtonGroup'
         db.delete_table('toolbar_buttongroup')
 
@@ -60,8 +60,8 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Scriptlet'
         db.delete_table('toolbar_scriptlet')
-    
-    
+
+
     models = {
         'toolbar.button': {
             'Meta': {'object_name': 'Button'},
@@ -89,5 +89,5 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'primary_key': 'True'})
         }
     }
-    
+
     complete_apps = ['toolbar']

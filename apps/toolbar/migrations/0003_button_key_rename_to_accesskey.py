@@ -5,18 +5,18 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Deleting field 'Button.key'
         db.rename_column('toolbar_button', 'key', 'accesskey')
 
-    
-    
-    def backwards(self, orm):        
+
+
+    def backwards(self, orm):
         db.rename_column('toolbar_button', 'accesskey', 'key')
-    
-    
+
+
     models = {
         'toolbar.button': {
             'Meta': {'object_name': 'Button'},
@@ -43,5 +43,5 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'primary_key': 'True'})
         }
     }
-    
+
     complete_apps = ['toolbar']

@@ -1,16 +1,22 @@
-# coding: utf-8
+# -*- coding: utf-8
 
-import locale
-
-import os, re, datetime
-from time import gmtime, strftime
 from django.conf import settings
 from django.utils.encoding import smart_unicode
+from filebrowser.fb_settings import *
+
+from filebrowser.functions import _get_file_type, _url_join, _is_selectable, \
+    _get_version_path
+
+from time import gmtime, strftime
+
+import locale
+import os
+import re
+import datetime
 import urllib
 
+
 # filebrowser imports
-from filebrowser.fb_settings import *
-from filebrowser.functions import _get_file_type, _url_join, _is_selectable, _get_version_path
 
 # PIL import
 if STRICT_PIL:
@@ -27,10 +33,11 @@ def filesystem_encoding(ucode):
     ucode = urllib.quote(ucode)
     return ucode
 
+
 class FileObject(object):
     """
     The FileObject represents a File on the Server.
-    
+
     PATH has to be relative to MEDIA_ROOT.
     """
 
@@ -38,7 +45,7 @@ class FileObject(object):
         self.path = path
         self.head = os.path.split(path)[0]
         self.filename = os.path.split(path)[1]
-        self.filename_lower = self.filename.lower() # important for sorting
+        self.filename_lower = self.filename.lower()  # important for sorting
         self.filetype = _get_file_type(self.filename)
 
     def _filesize(self):
@@ -205,6 +212,3 @@ class FileObject(object):
 
     def __unicode__(self):
         return u"%s" % self.url_save
-
-
-

@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8
 
 from django.contrib.sessions.models import Session
 from django.shortcuts import get_object_or_404, render_to_response
@@ -12,7 +12,7 @@ def flash_login_required(function):
     Decorator to recognize a user  by its session.
     Used for Flash-Uploading.
     """
-    
+
     def decorator(request, *args, **kwargs):
         try:
             engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
@@ -25,5 +25,3 @@ def flash_login_required(function):
         request.user = get_object_or_404(User, pk=user_id)
         return function(request, *args, **kwargs)
     return decorator
-
-

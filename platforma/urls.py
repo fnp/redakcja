@@ -8,8 +8,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Auth
-    url(r'^accounts/login/$', 'django_cas.views.login', name = 'login'),
-    url(r'^accounts/logout/$', 'django_cas.views.logout', name = 'logout'),
+    url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
 
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),

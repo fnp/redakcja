@@ -2,24 +2,24 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-__author__="lreqc"
-__date__ ="$2009-09-08 14:31:26$"
+
 from django.core.management.base import NoArgsCommand
 from toolbar.models import Button, ButtonGroup
 from django.utils import simplejson as json
 import re
 
+
 class Command(NoArgsCommand):
-    
+
     def handle_noargs(self, **options):
         buttons = Button.objects.all()
         print "Validating parameters... "
         for b in buttons:
-            params = b.params;
+            params = b.params
             try:
-                v = json.loads(b.params)               
+                v = json.loads(b.params)
             except ValueError, e:
                 print 'Trying to fix button "%s" ...' % b.slug
                 if params[0] == u'(':
@@ -43,7 +43,7 @@ class Command(NoArgsCommand):
             if b.slug not in hash:
                 hash[b.slug] = b
                 continue
-                
+
             # duplicate button
             print "Found duplicate of '%s'" % b.slug
             a = hash[b.slug]
@@ -66,8 +66,8 @@ class Command(NoArgsCommand):
         print "Searching for empty groups and orphaned buttons:"
         for g in ButtonGroup.objects.all():
             if len(g.button_set.all()) == 0:
-                print "Empty group: '%s'"  % g.slug
-                
+                print "Empty group: '%s'" % g.slug
+
         for b in Button.objects.all():
             if len(b.group.all()) == 0:
-                print "orphan: '%s'"  % b.slug
+                print "orphan: '%s'" % b.slug

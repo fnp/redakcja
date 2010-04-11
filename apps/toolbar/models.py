@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
 class ButtonGroup(models.Model):
-    name = models.CharField(max_length = 32)
+    name = models.CharField(max_length=32)
     slug = models.SlugField()
-    position = models.IntegerField(default = 0)
+    position = models.IntegerField(default=0)
 
     class Meta:
         ordering = ('position', 'name',)
@@ -19,49 +19,31 @@ class ButtonGroup(models.Model):
     def __unicode__(self):
         return self.name
 
-    def to_dict(self, with_buttons = False):
+    def to_dict(self, with_buttons=False):
         d = {'name': self.name, 'position': self.position}
 
         if with_buttons:
-            d['buttons'] = [ b.to_dict() for b in self.button_set.all() ]
+            d['buttons'] = [b.to_dict() for b in self.button_set.all()]
 
         return d
 
-#class ButtonGroupManager(models.Manager):
-#
-#    def with_buttons(self):
-#        from django.db import connection
-#        cursor = connection.cursor()
-#        cursor.execute("""
-#            SELECT g.name, g.slug, CONCAT(b.slug),
-#            FROM toolbar_buttongroup as g LEFT JOIN toolbar_button as b
-#
-#            WHERE p.id = r.poll_id
-#            GROUP BY 1, 2, 3
-#            ORDER BY 3 DESC""")
-#        result_list = []
-#        for row in cursor.fetchall():
-#            p = self.model(id=row[0], question=row[1], poll_date=row[2])
-#            p.num_responses = row[3]
-#            result_list.append(p)
-#        return result_list
 
 class Button(models.Model):
-    label = models.CharField(max_length = 32)
-    slug = models.SlugField(unique = True) #unused
+    label = models.CharField(max_length=32)
+    slug = models.SlugField(unique=True)  # unused
 
     # behaviour
-    params = models.TextField(default = '[]') # TODO: should be a JSON field
-    scriptlet = models.ForeignKey('Scriptlet', null = True, blank = True)
-    link = models.CharField(max_length = 256, blank = True, default = '')
+    params = models.TextField(default='[]')  # TODO: should be a JSON field
+    scriptlet = models.ForeignKey('Scriptlet', null=True, blank=True)
+    link = models.CharField(max_length=256, blank=True, default='')
 
     # ui related stuff
-    accesskey = models.CharField(null = True, max_length = 1)
-        
-    tooltip = models.CharField(blank = True, max_length = 120)
+    accesskey = models.CharField(null=True, max_length=1)
+
+    tooltip = models.CharField(blank=True, max_length=120)
 
     # Why the button is restricted to have the same position in each group ?
-    # position = models.IntegerField(default=0)   
+    # position = models.IntegerField(default=0)
     group = models.ManyToManyField(ButtonGroup)
 
     class Meta:
@@ -76,16 +58,17 @@ class Button(models.Model):
         return {
             'label': self.label,
             'tooltip': self.tooltip,
-            'accesskey': self.accesskey,            
+            'accesskey': self.accesskey,
             'params': self.params,
-            'scriptlet_id': self.scriptlet_id
+            'scriptlet_id': self.scriptlet_id,
         }
 
     def __unicode__(self):
         return self.label
 
+
 class Scriptlet(models.Model):
-    name = models.CharField(max_length = 64, primary_key = True)
+    name = models.CharField(max_length=64, primary_key=True)
     code = models.TextField()
 
     def __unicode__(self):

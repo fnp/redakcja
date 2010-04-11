@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import sys
 import os
@@ -36,7 +36,7 @@ def ratio(image):
     """Return width to height ratio of image."""
     width, height = image.size
     return float(width) / height
-    
+
 
 def try_creating(directory):
     try:
@@ -61,16 +61,16 @@ for file_name in sys.argv[1:]:
     except IOError, e:
         sys.stderr.write('\nerror:%s:%s\n' % (file_name, e.message))
         continue
-    
+
     # Check ratio
     if ratio(image) > 1:
         images = [crop(image, 0.6), crop(image, 0.6, from_right=True)]
     else:
         images = [image]
-    
+
     for i, image in enumerate(images):
         image_name = '%s.%d.png' % (basename(base_name), i)
-        
+
         # Save files
         small_image = resize(image, 640, 960)
         small_image = small_image.convert('L')
@@ -83,7 +83,7 @@ for file_name in sys.argv[1:]:
             tmp_output_dir + '/' + image_name,
         ))
         os.remove(tmp_output_dir + '/' + image_name)
-        
+
         # big_image = resize(image, 960, 1440)
         # big_image = big_image.convert('L')
         # big_image = big_image.filter(ImageFilter.SHARPEN)
@@ -93,7 +93,7 @@ for file_name in sys.argv[1:]:
         #     tmp_output_dir + '/' + image_name,
         # ))
         # os.remove(tmp_output_dir + '/' + image_name)
-        
+
     sys.stderr.write('.')
 
 shutil.rmtree(tmp_output_dir)

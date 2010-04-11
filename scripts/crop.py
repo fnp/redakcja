@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import sys
 import os
@@ -20,12 +20,11 @@ def crop(image, top=0, right=0, bottom=0, left=0):
         bottom = int(height * bottom)
     if left < 1:
         left = int(width * left)
-    
+
     bounds = (int(left), int(top), int(width - right), int(height - bottom))
     image = image.crop(bounds)
     image.load()
     return image
-
 
 output_dir = realpath(os.getcwd()) + '/output'
 bounds = [float(i) for i in sys.argv[1].split(':')]
@@ -37,6 +36,6 @@ for file_name in sys.argv[2:]:
     except IOError, e:
         sys.stderr.write('\nerror:%s:%s\n' % (file_name, e.message))
         continue
-    
+
     image = crop(image, *bounds)
     image.save(output_dir + '/' + basename(file_name))

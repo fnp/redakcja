@@ -8,13 +8,14 @@ from filebrowser.fb_settings import SELECT_FORMATS
 
 register = template.Library()
 
-@register.inclusion_tag('filebrowser/include/_response.html', takes_context = True)
-def query_string(context, add = None, remove = None):
+
+@register.inclusion_tag('filebrowser/include/_response.html', takes_context=True)
+def query_string(context, add=None, remove=None):
     """
     Allows the addition and removal of query string parameters.
-    
+
     _response.html is just {{ response }}
-    
+
     Usage:
     http://www.url.com/{% query_string "param_to_add=value, param_to_add=value" "param_to_remove, params_to_remove" %}
     http://www.url.com/{% query_string "" "filter" %}filter={{new_filter}}
@@ -25,10 +26,10 @@ def query_string(context, add = None, remove = None):
     remove = string_to_list(remove)
     params = context['query'].copy()
     response = get_query_string(params, add, remove)
-    return {'response': smart_unicode(response) }
+    return {'response': smart_unicode(response)}
 
 
-def query_helper(query, add = None, remove = None):
+def query_helper(query, add=None, remove=None):
     """
     Helper Function for use within views.
     """
@@ -38,12 +39,16 @@ def query_helper(query, add = None, remove = None):
     return get_query_string(params, add, remove)
 
 
-def get_query_string(p, new_params = None, remove = None):
+def get_query_string(p, new_params=None, remove=None):
     """
     Add and remove query parameters. From `django.contrib.admin`.
     """
-    if new_params is None: new_params = {}
-    if remove is None: remove = []
+    if new_params is None:
+        new_params = {}
+
+    if remove is None:
+        remove = []
+
     for r in remove:
         for k in p.keys():
             if k.startswith(r):
@@ -59,29 +64,26 @@ def get_query_string(p, new_params = None, remove = None):
 def string_to_dict(string):
     """
     Usage::
-    
+
         {{ url|thumbnail:"width=10,height=20" }}
         {{ url|thumbnail:"width=10" }}
         {{ url|thumbnail:"height=20" }}
     """
     kwargs = {}
+
     if string:
         string = str(string)
-        if ',' not in string:
-            # ensure at least one ','
-            string += ','
-        for arg in string.split(','):
-            arg = arg.strip()
-            if arg == '': continue
-            kw, val = arg.split('=', 1)
-            kwargs[kw] = val
+
+        args = (arg.strip() for arg in string.split(',') if not arg.iswhitespace())
+        kwargs.update(arg.split('=', 1) for arg in args)
+
     return kwargs
 
 
 def string_to_list(string):
     """
     Usage::
-    
+
         {{ url|thumbnail:"width,height" }}
     """
     args = []
@@ -92,7 +94,8 @@ def string_to_list(string):
             string += ','
         for arg in string.split(','):
             arg = arg.strip()
-            if arg == '': continue
+            if arg == '':
+                continue
             args.append(arg)
     return args
 
@@ -126,7 +129,7 @@ def selectable(parser, token):
     try:
         tag, filetype, format = token.split_contents()
     except:
-        raise TemplateSyntaxError, "%s tag requires 2 arguments" % token.contents.split()[0]
+        raise TemplateSyntaxError("%s tag requires 2 arguments" % token.contents.split()[0])
 
     return SelectableNode(filetype, format)
 

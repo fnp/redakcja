@@ -9,7 +9,8 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 
 __all__ = ['login', 'logout']
 
-def _service_url(request, redirect_to = None):
+
+def _service_url(request, redirect_to=None):
     """Generates application service URL for CAS"""
 
     protocol = ('http://', 'https://')[request.is_secure()]
@@ -51,7 +52,7 @@ def _login_url(service):
     return urljoin(settings.CAS_SERVER_URL, 'login') + '?' + urlencode(params)
 
 
-def _logout_url(request, next_page = None):
+def _logout_url(request, next_page=None):
     """Generates CAS logout URL"""
 
     url = urljoin(settings.CAS_SERVER_URL, 'logout')
@@ -62,7 +63,7 @@ def _logout_url(request, next_page = None):
     return url
 
 
-def login(request, next_page = None, required = False):
+def login(request, next_page=None, required=False):
     """Forwards to CAS login URL or verifies CAS ticket"""
 
     print "LOGIN original NEXT_PAGE:", next_page
@@ -73,7 +74,7 @@ def login(request, next_page = None, required = False):
 
     if request.user.is_authenticated():
         message = "You are logged in as %s." % request.user.username
-        request.user.message_set.create(message = message)
+        request.user.message_set.create(message=message)
         return HttpResponseRedirect(next_page)
     ticket = request.GET.get('ticket')
     service = _service_url(request, next_page)
@@ -81,12 +82,12 @@ def login(request, next_page = None, required = False):
     print "SERVICE: ", service
     if ticket:
         from django.contrib import auth
-        user = auth.authenticate(ticket = ticket, service = service)
+        user = auth.authenticate(ticket=ticket, service=service)
         if user is not None:
             auth.login(request, user)
             name = user.first_name or user.username
             message = "Login succeeded. Welcome, %s." % name
-            user.message_set.create(message = message)
+            user.message_set.create(message=message)
             return HttpResponseRedirect(next_page)
         elif settings.CAS_RETRY_LOGIN or required:
             return HttpResponseRedirect(_login_url(service))
@@ -98,7 +99,7 @@ def login(request, next_page = None, required = False):
         return HttpResponseRedirect(_login_url(service))
 
 
-def logout(request, next_page = None):
+def logout(request, next_page=None):
     """Redirects to CAS logout page"""
 
     from django.contrib.auth import logout

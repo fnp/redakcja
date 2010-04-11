@@ -1,11 +1,15 @@
-# coding: utf-8
+# -*- coding: utf-8
+
+import os
+import re
+import decimal
 
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from time import gmtime, strftime, localtime, mktime, time
 from django.core.files import File
 from django.core.files.storage import default_storage
-import os, re, decimal
+
 from urlparse import urlparse
 
 # filebrowser imports
@@ -25,7 +29,7 @@ def _url_to_path(value):
     """
     Change URL to PATH.
     Value has to be an URL relative to MEDIA URL or a full URL (including MEDIA_URL).
-    
+
     Returns a PATH relative to MEDIA_ROOT.
     """
     print "URL2PATH", repr(value)
@@ -38,7 +42,7 @@ def _path_to_url(value):
     """
     Change PATH to URL.
     Value has to be a PATH relative to MEDIA_ROOT.
-    
+
     Return an URL relative to MEDIA_ROOT.
     """
     mediaroot_re = re.compile(r'^(%s)' % (MEDIA_ROOT))
@@ -64,7 +68,7 @@ def _get_version_path(value, version_prefix):
     """
     Construct the PATH to an Image version.
     Value has to be server-path, relative to MEDIA_ROOT.
-    
+
     version_filename = filename + version_prefix + ext
     Returns a path relative to MEDIA_ROOT.
     """
@@ -135,16 +139,23 @@ def _get_filterdate(filterDate, dateTime):
     Get filterdate.
     """
 
-    returnvalue = ''
     dateYear = strftime("%Y", gmtime(dateTime))
     dateMonth = strftime("%m", gmtime(dateTime))
     dateDay = strftime("%d", gmtime(dateTime))
-    if filterDate == 'today' and int(dateYear) == int(localtime()[0]) and int(dateMonth) == int(localtime()[1]) and int(dateDay) == int(localtime()[2]): returnvalue = 'true'
-    elif filterDate == 'thismonth' and dateTime >= time() - 2592000: returnvalue = 'true'
-    elif filterDate == 'thisyear' and int(dateYear) == int(localtime()[0]): returnvalue = 'true'
-    elif filterDate == 'past7days' and dateTime >= time() - 604800: returnvalue = 'true'
-    elif filterDate == '': returnvalue = 'true'
-    return returnvalue
+
+    if filterDate == 'today' and int(dateYear) == int(localtime()[0]) and int(dateMonth) == int(localtime()[1]) and int(dateDay) == int(localtime()[2]):
+        return 'true'
+
+    if filterDate == 'thismonth' and dateTime >= time() - 2592000:
+        return 'true'
+
+    if filterDate == 'thisyear' and int(dateYear) == int(localtime()[0]):
+        return 'true'
+
+    if filterDate == 'past7days' and dateTime >= time() - 604800:
+        return 'true'
+
+    return 'true' if filterDate == '' else ''
 
 
 def _get_settings_var():
@@ -214,7 +225,7 @@ def _is_selectable(filename, selecttype):
     return select_types
 
 
-def _version_generator(value, version_prefix, force = None):
+def _version_generator(value, version_prefix, force=None):
     """
     Generate Version for an Image.
     value has to be a serverpath relative to MEDIA_ROOT.
@@ -229,7 +240,7 @@ def _version_generator(value, version_prefix, force = None):
             from PIL import ImageFile
         except ImportError:
             import ImageFile
-    ImageFile.MAXBLOCK = IMAGE_MAXBLOCK # default is 64k
+    ImageFile.MAXBLOCK = IMAGE_MAXBLOCK  # default is 64k
 
     try:
         im = Image.open(os.path.join(MEDIA_ROOT, value))
@@ -241,9 +252,9 @@ def _version_generator(value, version_prefix, force = None):
             os.chmod(version_dir, 0775)
         version = scale_and_crop(im, VERSIONS[version_prefix]['width'], VERSIONS[version_prefix]['height'], VERSIONS[version_prefix]['opts'])
         try:
-            version.save(absolute_version_path, quality = 90, optimize = 1)
+            version.save(absolute_version_path, quality=90, optimize=1)
         except IOError:
-            version.save(absolute_version_path, quality = 90)
+            version.save(absolute_version_path, quality=90)
         return version_path
     except:
         return None
@@ -266,7 +277,7 @@ def scale_and_crop(im, width, height, opts):
         r = min(xr / x, yr / y)
 
     if r < 1.0 or (r > 1.0 and 'upscale' in opts):
-        im = im.resize((int(x * r), int(y * r)), resample = Image.ANTIALIAS)
+        im = im.resize((int(x * r), int(y * r)), resample=Image.ANTIALIAS)
 
     if 'crop' in opts:
         x, y = [float(v) for v in im.size]
@@ -282,6 +293,3 @@ def _convert_filename(value):
         return value.replace(" ", "_").lower()
     else:
         return value
-
-
-

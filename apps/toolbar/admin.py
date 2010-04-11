@@ -5,6 +5,7 @@ from django.utils import simplejson as json
 
 from toolbar import models
 
+
 class ButtonAdminForm(forms.ModelForm):
     class Meta:
         model = models.Button
@@ -15,6 +16,7 @@ class ButtonAdminForm(forms.ModelForm):
             return json.dumps(json.loads(value))
         except ValueError, e:
             raise forms.ValidationError(e)
+
 
 class ButtonAdmin(admin.ModelAdmin):
     form = ButtonAdminForm

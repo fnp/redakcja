@@ -7,6 +7,7 @@ from django_cas.models import User
 
 __all__ = ['CASBackend']
 
+
 def _verify_cas1(ticket, service):
     """Verifies CAS 1.0 authentication ticket.
 
@@ -77,7 +78,7 @@ class CASBackend(object):
         if not username:
             return None
         try:
-            user = User.objects.get(username__iexact = username)
+            user = User.objects.get(username__iexact=username)
         except User.DoesNotExist:
             # user will have an "unusable" password
             user = User.objects.create_user(username, '')
@@ -88,6 +89,6 @@ class CASBackend(object):
         """Retrieve the user's entry in the User model if it exists"""
 
         try:
-            return User.objects.get(pk = user_id)
+            return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None

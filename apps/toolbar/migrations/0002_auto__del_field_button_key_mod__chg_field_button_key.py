@@ -5,23 +5,23 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    
+
     def forwards(self, orm):
-        
+
         # Deleting field 'Button.key_mod'
         db.delete_column('toolbar_button', 'key_mod')
 
         # Changing field 'Button.key'
         db.alter_column('toolbar_button', 'key', self.gf('django.db.models.fields.CharField')(max_length=1, null=True))
-    
+
     def backwards(self, orm):
-        
+
         # Adding field 'Button.key_mod'
         db.add_column('toolbar_button', 'key_mod', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, blank=True), keep_default=False)
 
         # Changing field 'Button.key'
-        db.alter_column('toolbar_button', 'key', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True))    
-    
+        db.alter_column('toolbar_button', 'key', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True))
+
     models = {
         'toolbar.button': {
             'Meta': {'object_name': 'Button'},
@@ -48,5 +48,5 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'primary_key': 'True'})
         }
     }
-    
+
     complete_apps = ['toolbar']
