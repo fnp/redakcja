@@ -36,14 +36,13 @@ def production():
     env.virtualenv = os.path.join(env.sandbox, 'bin', 'virtualenv')
 
     env.pip = os.path.join(env.sandbox, 'python', 'bin', 'pip')
-    env.python = env.target = os.path.join(env.sandbox, 'python', 'bin', 'python')
-
+    env.python = os.path.join(env.sandbox, 'python', 'bin', 'python')
     common()
 
 
 def common():
     env.path = os.path.join(env.sandbox, env.project_name)
-
+    env.target = os.path.join(env.path, 'bin', 'python')
 
 # =========
 # = Tasks =
@@ -134,7 +133,7 @@ def prepare_package_from_git():
 
     run('mkdir -p %(path)s/releases/%(release)s' % env, pty=True)
     run('mkdir -p %(path)s/packages' % env, pty=True)
-    run('cd %(path)s/mirror; git archive --format=tar %(gitbranch)s | gzip > %(path)s/packages/%(release)s.tar.gz' % env)
+    run('cd %(path)s/mirror; git pull; git archive --format=tar %(gitbranch)s | gzip > %(path)s/packages/%(release)s.tar.gz' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env, pty=True)
 
 
@@ -158,15 +157,14 @@ def install_requirements():
     run('cd %(path)s; %(path)s/bin/pip install -r %(path)s/releases/%(release)s/%(project_name)s/config/requirements.txt' % env, pty=True)
 
 
-def copy_localsettings():
-    "Copy localsettings.py from root directory to release directory (if this file exists)"
-    print ">>> copy localsettings"
-    require('release', 'path', provided_by=[deploy])
-    require('sandbox', provided_by=[staging, production])
-
-    with settings(warn_only=True):
-        run('cp %(sandbox)s/etc/%(project_name)s/localsettings.py %(path)s/releases/%(release)s/%(project_name)s' % env)
-
+#def copy_localsettings():
+#    "Copy localsettings.py from root directory to release directory (if this file exists)"
+#    print ">>> copy localsettings"
+#    require('release', 'path', provided_by=[deploy])
+#    require('sandbox', provided_by=[staging, production])
+#
+#    with settings(warn_only=True):
+#        run('cp %(sandbox)s/etc/%(project_name)s/localsettings.py %(path)s/releases/%(release)s/%(project_name)s' % env)
 
 def symlink_current_release():
     "Symlink our current release"
@@ -183,10 +181,10 @@ def migrate():
     print '>>> migrate'
     require('project_name', provided_by=[staging, production])
     with cd('%(path)s/releases/current/%(project_name)s' % env):
-        run('%(target) manage.py syncdb --noinput' % env, pty=True)
+        run('%(target)s manage.py syncdb --noinput' % env, pty=True)
 
         if env.use_south:
-            run('%(target) manage.py migrate' % env, pty=True)
+            run('%(target)s manage.py migrate' % env, pty=True)
 
 
 def django_compress():
@@ -194,7 +192,7 @@ def django_compress():
     print '>>> migrate'
     require('project_name', provided_by=[staging, production])
     with cd('%(path)s/releases/current/%(project_name)s' % env):
-        run('%(target) manage.py synccompress --force' % env, pty=True)
+        run('%(target)s manage.py synccompress --force' % env, pty=True)
 
 
 def restart_webserver():

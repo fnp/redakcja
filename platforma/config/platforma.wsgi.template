@@ -15,10 +15,11 @@ sys.path = [
 	'%(path)s/releases/current',
 	'%(path)s/releases/current/apps',
 	'%(path)s/releases/current/lib',
+	'%(sandbox)s/etc/%(project_name)s,
 ] + sys.path
 
 # Run Django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = '%(project_name)s.settings'
 
 from django.core.handlers.wsgi import WSGIHandler
 application = WSGIHandler()
