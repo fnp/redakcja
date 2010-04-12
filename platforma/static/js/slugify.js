@@ -110,7 +110,7 @@
         }
         return downcoded;
     }
-    
+
     slugify = function(s) {
         s = downcode(s);
         // if downcode doesn't hit, the char will be stripped here
@@ -118,7 +118,7 @@
         s = s.replace(/^\s+|\s+$/g, ''); // trim leading/trailing spaces
         s = s.replace(/[-\s]+/g, '-');   // convert spaces to hyphens
         s = s.toLowerCase();             // convert to lowercase
-        
+
         return s;
     }
 })();

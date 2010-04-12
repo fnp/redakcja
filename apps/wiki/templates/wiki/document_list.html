@@ -10,13 +10,13 @@
 <script type="text/javascript" charset="utf-8">
 $(function() {
 	function search(event) {
-        event.preventDefault();        
-        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');    	
-        $('#file-list tbody tr').hide().filter(function(index) {            
+        event.preventDefault();
+        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');
+        $('#file-list tbody tr').hide().filter(function(index) {
             return expr.test(slugify($('a', this).text()));
         }).show();
     }
-	
+
     $('#file-list-find-button').click(search).hide();
 	$('#file-list-filter').bind('keyup change DOMAttrModified', search);
 });
@@ -28,14 +28,14 @@ $(function() {
 
 
 <div id="document-list">
-	<form method="get" action="#">    	 
+	<form method="get" action="#">
     <table  id="file-list">
-    	<thead>    	
+    	<thead>
     		<tr><th>Filtr:</th>
 			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
 			<th><input type="reset" value="Wyczyść" id="file-list-reset-button"/></th>
-			</tr>   	
-		</thead>		
+			</tr>
+		</thead>
 		<tbody>
     	{% for file in document_list %}
             <tr>
@@ -46,14 +46,14 @@ $(function() {
 		</tbody>
     </table>
 	</form>
-	
+
 	<div id="last-edited-list">
 		<h2>Twoje ostatnio otwierane dokumenty:</h2>
 		<ol>
 			{% for	 name, date in last_docs %}
 			<li><a href="{% url wiki.views.document_detail name|urlencode %}"
 				target="_blank">{{ name }}</a><br/><span class="date">({{ date|date:"H:i:s, d/m/Y" }})</span></li>
-			{% endfor %}			
+			{% endfor %}
 		</ol>
 	</div>
 </div>

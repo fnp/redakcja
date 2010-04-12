@@ -5,6 +5,7 @@
 #
 import difflib
 import re
+from collections import deque
 
 from django.template.loader import render_to_string
 from django.utils.html import escape as html_escape
@@ -21,10 +22,39 @@ def filter_line(line):
     return  DIFF_RE.sub(diff_replace, html_escape(line)).replace('\x01', '</span>')
 
 
-def html_diff_table(la, lb):
+def format_changeset(a, b, change):
+    return (a[0], filter_line(a[1]), b[0], filter_line(b[1]), change)
+
+
+def html_diff_table(la, lb, context=None):
+    all_changes = difflib._mdiff(la, lb)
+
+    if context is None:
+        changes = (format_changeset(*c) for c in all_changes)
+    else:
+        changes = []
+        q = deque()
+        after_change = False
+
+        for changeset in all_changes:
+            q.append(changeset)
+
+            if changeset[2]:
+                after_change = True
+                if not after_change:
+                    changes.append((0, '-----', 0, '-----', False))
+                changes.extend(format_changeset(*c) for c in q)
+                q.clear()
+            else:
+                if len(q) == context and after_change:
+                    changes.extend(format_changeset(*c) for c in q)
+                    q.clear()
+                    after_change = False
+                elif len(q) > context:
+                    q.popleft()
+
     return render_to_string("wiki/diff_table.html", {
-        "changes": [(a[0], filter_line(a[1]), b[0], filter_line(b[1]), change)
-                        for a, b, change in difflib._mdiff(la, lb)],
+        "changes": changes,
     })
 
 

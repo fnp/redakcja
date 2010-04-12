@@ -14,6 +14,8 @@ urlpatterns = patterns('wiki.views',
         'document_publish', name="wiki_publish"),
     url(r'^(?P<name>[^/]+)/diff$',
         'document_diff', name="wiki_diff"),
+    url(r'^(?P<name>[^/]+)/tags$',
+        'document_add_tag', name="wiki_add_tag"),
     url(r'^(?P<name>[^/]+)$',
         'document_detail', name="wiki_details"),
 )

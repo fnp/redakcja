@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # Admin panel
     (r'^admin/filebrowser/', include('filebrowser.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',

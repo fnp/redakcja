@@ -15,7 +15,7 @@
 {% if app_list %}
 
     {% include "filebrowser/append.html" %}
-    
+
     {% for app in app_list %}
         <div class="module">
         <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">

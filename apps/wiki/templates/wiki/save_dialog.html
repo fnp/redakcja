@@ -1,40 +1,40 @@
 <div id="save_dialog" class="dialog" data-ui-jsclass="SaveDialog">
-	<form method="POST" action="">
+	<form method="POST" action="#">
 	<p>{{ forms.text_save.comment.label }}</p>
 	<p class="help_text">
 		{{ forms.text_save.comment.help_text}}
 		<span data-ui-error-for="{{ forms.text_save.comment.name }}"> </span>
 	</p>
 	{{forms.text_save.comment }}
-	
-	
-	
+
+
+
 	{% if request.user.is_anonymous %}
 	<p>
-		{{ forms.text_save.author.label }}: 
+		{{ forms.text_save.author.label }}:
 		{{ forms.text_save.author }}
 		<span class="help_text">{{ forms.text_save.author.help_text }}</span>
 		<span data-ui-error-for="{{ forms.text_save.author.name }}"> </span>
 	</p>
 	{% else %}
 	<p>
-		{{ forms.text_save.stage_completed.label }}: 
+		{{ forms.text_save.stage_completed.label }}:
 		{{ forms.text_save.stage_completed }}
 		<span class="help_text">{{ forms.text_save.stage_completed.help_text }}</span>
 		<span data-ui-error-for="{{ forms.text_save.stage_completed.name }}"> </span>
 	</p>
 	{% endif %}
-	
-	
+
+
 	{% for f in forms.text_save.hidden_fields %}
 		{{ f }}
 	{% endfor %}
-	
+
 	<p data-ui-error-for="__all__"> </p>
-	
+
 	<p class="action_area">
 		<button type="submit" class"ok" data-ui-action="save">Zapisz</button>
 		<button type="button" class="cancel" data-ui-action="cancel">Anuluj</button>
-	</p>	
-	</form>	
+	</p>
+	</form>
 </div>

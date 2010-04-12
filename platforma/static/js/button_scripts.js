@@ -1,21 +1,21 @@
 (function() {
   var slice = Array.prototype.slice;
-  
+
   function update(array, args) {
     var arrayLength = array.length, length = args.length;
     while (length--) array[arrayLength + length] = args[length];
     return array;
   };
-  
+
   function merge(array, args) {
     array = slice.call(array, 0);
     return update(array, args);
   };
-  
+
   Function.prototype.bind = function(context) {
     if (arguments.length < 2 && typeof arguments[0] === 'undefined') {
       return this;
-    } 
+    }
     var __method = this;
     var args = slice.call(arguments, 1);
     return function() {
@@ -23,7 +23,7 @@
       return __method.apply(context, a);
     }
   }
-  
+
 })();
 
 
@@ -169,7 +169,7 @@ function ScriptletCenter()
         else if(ucase != text) repl = lcase; /* neither lower- or upper-case */
         else { /* upper case -> camel-case */
             var words = $(lcase.split(/\s/)).map(function() {
-                if(this.length > 0) { 
+                if(this.length > 0) {
                     return this[0].toUpperCase() + this.slice(1);
                 } else {
                     return '';
@@ -208,7 +208,7 @@ function ScriptletCenter()
         if (!text) {
             this.XMLEditorMoveCursorForward(context, params.tag.length + 2);
         }
-        
+
     }.bind(this);
 
 }

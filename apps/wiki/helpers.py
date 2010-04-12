@@ -1,8 +1,8 @@
 from django import http
 from django.utils import simplejson as json
 from django.utils.functional import Promise
-from django.template.loader import render_to_string
 from datetime import datetime
+from functools import wraps
 
 
 class ExtendedEncoder(json.JSONEncoder):
@@ -39,3 +39,23 @@ class JSONServerError(JSONResponse):
     def __init__(self, *args, **kwargs):
         kwargs['status'] = 500
         super(JSONServerError, self).__init__(*args, **kwargs)
+
+
+def ajax_login_required(view):
+    @wraps(view)
+    def authenticated_view(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return http.HttpResponse("Login required.", status=401, mimetype="text/plain")
+        return view(request, *args, **kwargs)
+    return authenticated_view
+
+
+def ajax_require_permission(permission):
+    def decorator(view):
+        @wraps(view)
+        def authorized_view(request, *args, **kwargs):
+            if not request.user.has_perm(permission):
+                return http.HttpResponse("Access Forbidden.", status=403, mimetype="text/plain")
+            return view(request, *args, **kwargs)
+        return authorized_view
+    return decorator

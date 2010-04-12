@@ -378,7 +378,7 @@ class VersionedStorage(object):
         return text
 
     @with_working_copy_locked
-    def add_page_tag(self, title, rev, tag, user="<wiki>", doctag=True):
+    def add_page_tag(self, title, rev, tag, user, doctag=True):
         if doctag:
             tag = "{title}#{tag}".format(**locals())
 

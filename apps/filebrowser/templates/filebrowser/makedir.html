@@ -46,7 +46,7 @@
         <fieldset class="module aligned collapse">
         <h2>{% trans "Help" %}</h2>
         <div class="form-row" >
-            <label class="required">&nbsp;</label> 
+            <label class="required">&nbsp;</label>
             <p>
                 {{ form.dir_name.help_text|safe }}
                 {% if settings_var.CONVERT_FILENAME %}<br />{% trans "The Name will be converted to lowercase. Spaces will be replaced with underscores." %}{% endif %}

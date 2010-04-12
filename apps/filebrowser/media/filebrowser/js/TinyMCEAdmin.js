@@ -2,7 +2,7 @@ function CustomFileBrowser(field_name, url, type, win) {
 
     var cmsURL = "/admin/filebrowser/browse/?pop=2";
     cmsURL = cmsURL + "&type=" + type;
-    
+
     tinyMCE.activeEditor.windowManager.open({
         file: cmsURL,
         width: 820,  // Your dimensions may differ - toy around with them!
@@ -48,27 +48,27 @@ tinyMCE.init({
     file_browser_callback: "CustomFileBrowser",
     relative_urls: false,
     valid_elements : "" +
-    "-p," + 
+    "-p," +
     "a[href|target=_blank|class]," +
     "-strong/-b," +
     "-em/-i," +
-    "-u," + 
-    "-ol," + 
-    "-ul," + 
-    "-li," + 
-    "br," + 
-    "img[class|src|alt=|width|height]," + 
-    "-h2,-h3,-h4," + 
+    "-u," +
+    "-ol," +
+    "-ul," +
+    "-li," +
+    "br," +
+    "img[class|src|alt=|width|height]," +
+    "-h2,-h3,-h4," +
     "-pre," +
-    "-code," + 
+    "-code," +
     "-div",
-    extended_valid_elements: "" + 
-    "a[name|class|href|target|title|onclick]," + 
-    "img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]," + 
-    "br[clearfix]," + 
-    "-p[class<clearfix?summary?code]," + 
-    "h2[class<clearfix],h3[class<clearfix],h4[class<clearfix]," + 
-    "ul[class<clearfix],ol[class<clearfix]," + 
+    extended_valid_elements: "" +
+    "a[name|class|href|target|title|onclick]," +
+    "img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]," +
+    "br[clearfix]," +
+    "-p[class<clearfix?summary?code]," +
+    "h2[class<clearfix],h3[class<clearfix],h4[class<clearfix]," +
+    "ul[class<clearfix],ol[class<clearfix]," +
     "div[class],"
 });
 

@@ -5,6 +5,7 @@
 #
 from django import forms
 from wiki.models import Document, getstorage
+from wiki.constants import DOCUMENT_TAGS, DOCUMENT_STAGES
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -38,12 +39,10 @@ class DocumentForm(forms.Form):
 
 
 class DocumentTagForm(forms.Form):
-    TAGS = (
-        ("publish", "Do publikacji"),
-    )
 
-    tag = forms.ChoiceField(choices=TAGS)
-    version = forms.IntegerField(widget=forms.HiddenInput)
+    id = forms.CharField(widget=forms.HiddenInput)
+    tag = forms.ChoiceField(choices=DOCUMENT_TAGS)
+    revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
 class DocumentTextSaveForm(forms.Form):
@@ -56,12 +55,6 @@ class DocumentTextSaveForm(forms.Form):
         * stage_completed - mark this change as end of given stage.
 
     """
-    DOC_STAGES = (
-        ('', 'Nic konkretnego'),
-        ('tagging', 'Tagowanie'),
-        ('modernized', 'Uwspółcześnienia'),
-        ('editing', 'Redakcja'),
-    )
 
     id = forms.CharField(widget=forms.HiddenInput)
     parent_revision = forms.IntegerField(widget=forms.HiddenInput)
@@ -81,7 +74,7 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     stage_completed = forms.ChoiceField(
-        choices=DOC_STAGES,
+        choices=DOCUMENT_STAGES,
         required=False,
         label=_(u"Skończyłem robić"),
         help_text=_(u"Jeśli skończyłeś jeden z etapów utworu, wybierz go."),

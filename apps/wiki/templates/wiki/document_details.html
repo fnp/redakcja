@@ -26,7 +26,7 @@
 
 <div id="document-meta"
 	data-document-name="{{ document.name }}" style="display:none">
-	
+
 	{% for k, v in document_meta.items %}
 		<span data-key="{{ k }}">{{ v }}</span>
 	{% endfor %}
@@ -36,34 +36,34 @@
     <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
     <div id="tools">
         <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
-        | {% include "registration/head_login.html" %} 
+        | {% include "registration/head_login.html" %}
         | Wersja: <span id="document-revision">unknown</span>
-        | 
+        |
         <button style="margin-left: 6px" id="save-button">
             Zapisz
         </button>
     </div>
-    <ol id="tabs">    	
-		<li id="SummaryPerspective" 
-			data-ui-related="summary-view-editor" 
+    <ol id="tabs">
+		<li id="SummaryPerspective"
+			data-ui-related="summary-view-editor"
 			data-ui-jsclass="SummaryPerspective">
             <span>{{ document_meta.title }}</span>
-        </li>		
-		
-        <li id="VisualPerspective" 
-			data-ui-related="simple-editor" 
+        </li>
+
+        <li id="VisualPerspective"
+			data-ui-related="simple-editor"
 			data-ui-jsclass="VisualPerspective">
             <span>Edytor</span>
         </li>
-		
-		<li id="HistoryPerspective" 
-			data-ui-related="history-view-editor" 
-			data-ui-jsclass="HistoryPerspective">		
+
+		<li id="HistoryPerspective"
+			data-ui-related="history-view-editor"
+			data-ui-jsclass="HistoryPerspective">
             <span>Historia</span>
         </li>
-        		
-		<li id="CodeMirrorPerspective" 
-			data-ui-related="source-editor" 
+
+		<li id="CodeMirrorPerspective"
+			data-ui-related="source-editor"
 			data-ui-jsclass="CodeMirrorPerspective">
             <span>Kod źródłowy</span>
         </li>
@@ -94,9 +94,9 @@
 		{% include "wiki/summary_view.html" %}
     </div>
     <div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię."> </div>
-    
+
 	<div id="side-gallery">
-		<!-- gallery toolbar -->				
+		<!-- gallery toolbar -->
         <div class="toolbar">
             <button class="previous-page">
                 <img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
@@ -112,7 +112,7 @@
             </button>
             <div class="toolbar-end">
             </div>
-        </div>        
+        </div>
 		<div class="error_message"> </div>
 		<div class="gallery-image">
 			<img src="{{MEDIA_URL}}/images/empty.png" />

@@ -106,79 +106,9 @@ TEMPLATE_DIRS = (
 #
 ## Set this to where the CAS server lives
 # CAS_SERVER_URL = "http://cas.fnp.pl/
-CAS_ADMIN_PREFIX = "/admin/"
 CAS_LOGOUT_COMPLETELY = True
 
-# CSS and JS files to compress
-COMPRESS_CSS = {
-    'detail': {
-         'source_filenames': (
-            'css/master.css',
-            'css/gallery.css',
-            'css/history.css',
-            'css/summary.css',
-            'css/html.css',
-            'css/jquery.autocomplete.css',
-            'css/dialogs.css',
-        ),
-        'output_filename': 'compressed/detail_styles_?.css',
-    },
-    'listing': {
-        'source_filenames': (
-            'css/filelist.css',
-        ),
-        'output_filename': 'compressed/listing_styles_?.css',
-     }
-}
-
-COMPRESS_JS = {
-    # everything except codemirror
-    'detail': {
-        'source_filenames': (
-                'js/jquery-1.4.2.min.js',
-                'js/jquery.autocomplete.js',
-                'js/jquery.blockui.js',
-                'js/jquery.elastic.js',
-                'js/button_scripts.js',
-                'js/slugify.js',
-
-                # wiki scripts
-                'js/wiki/wikiapi.js',
-                'js/wiki/base.js',
-                'js/wiki/xslt.js',
-
-                # dialogs
-                'js/wiki/save_dialog.js',
-
-                # views
-                'js/wiki/history_view.js',
-                'js/wiki/summary_view.js',
-                'js/wiki/source_editor.js',
-                'js/wiki/wysiwyg_editor.js',
-                'js/wiki/scan_gallery.js',
-                'js/wiki/diff_view.js',
-
-                # bootstrap
-                'js/wiki/main.js',
-        ),
-        'output_filename': 'compressed/detail_scripts_?.js',
-     },
-    'listing': {
-        'source_filenames': (
-                'js/jquery-1.4.2.min.js',
-                'js/slugify.js',
-        ),
-        'output_filename': 'compressed/listing_scripts_?.js',
-     }
-}
-
-COMPRESS = True
-COMPRESS_CSS_FILTERS = None
-COMPRESS_JS_FILTERS = None
-COMPRESS_AUTO = False
-COMPRESS_VERSION = True
-COMPRESS_VERSIONING = 'compress.versioning.hash.MD5Versioning'
-
+from compress_settings import *
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -188,6 +118,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
+    'django_cas',
     'compress',
     'south',
     'sorl.thumbnail',

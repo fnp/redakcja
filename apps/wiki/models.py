@@ -67,10 +67,10 @@ class Document(object):
         except DocumentNotFound:
             return - 1
 
-    def add_tag(self, tag):
+    def add_tag(self, tag, revision, author):
         """ Add document specific tag """
-        logger.debug("Adding tag %s to doc %s version %d", tag, self.name, self.revision)
-        self.storage.vstorage.add_page_tag(self.name, self.revision, tag)
+        logger.debug("Adding tag %s to doc %s version %d", tag, self.name, revision)
+        self.storage.vstorage.add_page_tag(self.name, revision, tag, user=author)
 
     @property
     def plain_text(self):

@@ -1,15 +1,18 @@
 import os
 
 from django.conf import settings
+
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST
-from .helpers import JSONResponse, JSONFormInvalid, JSONServerError
+from wiki.helpers import JSONResponse, JSONFormInvalid, JSONServerError, ajax_require_permission
 from django import http
 
 from wiki.models import getstorage
-from wiki.forms import DocumentForm, DocumentTextSaveForm, DocumentTagForm
+from wiki.forms import DocumentTextSaveForm, DocumentTagForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
+from django.utils.translation import ugettext_lazy as _
+
 import wlapi
 
 #
@@ -136,29 +139,37 @@ def document_diff(request, name):
     docB = storage.get_or_404(name, int(revB))
 
     return http.HttpResponse(nice_diff.html_diff_table(docA.plain_text.splitlines(),
-                                         docB.plain_text.splitlines()))
+                                         docB.plain_text.splitlines(), context=3))
 
 
 @never_cache
 def document_history(request, name):
     storage = getstorage()
-    return JSONResponse(storage.history(name))
+
+    # TODO: pagination
+    changesets = storage.history(name)
+
+    return JSONResponse(changesets)
 
 
 @require_POST
+@ajax_require_permission('wiki.can_change_tags')
 def document_add_tag(request, name):
     storage = getstorage()
 
     form = DocumentTagForm(request.POST)
     if form.is_valid():
-        doc = storage.get_or_404(name, form.cleaned_data['version'])
-        doc.add_tag(form.cleaned_data['tag'])
+        doc = storage.get_or_404(form.cleaned_data['id'])
+        doc.add_tag(tag=form.cleaned_data['tag'],
+                    revision=form.cleaned_data['revision'],
+                    author=request.user.username)
         return JSONResponse({"message": _("Tag added")})
     else:
         return JSONFormInvalid(form)
 
 
 @require_POST
+@ajax_require_permission('wiki.can_publish')
 def document_publish(request, name, version):
     storage = getstorage()
 
