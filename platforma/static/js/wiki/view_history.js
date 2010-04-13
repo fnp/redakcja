@@ -71,7 +71,7 @@
             var $stub = $('#history-view .row-stub');
             changes_list.html('');
 
-			var tags = $('select#id_tag option');
+			var tags = $('select#id_addtag_tag option');
 
             $.each(data, function(){
                 $.wiki.renderStub({

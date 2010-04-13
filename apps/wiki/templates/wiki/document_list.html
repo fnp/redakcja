@@ -1,12 +1,8 @@
-{% extends "base.html" %}
-{% load compressed %}
+{% extends "wiki/base.html" %}
 
-{% block extrahead %}
-{% compressed_css 'listing' %}
-{% endblock extrahead %}
 
 {% block extrabody %}
-{% compressed_js 'listing' %}
+{{ block.super }}
 <script type="text/javascript" charset="utf-8">
 $(function() {
 	function search(event) {
@@ -23,11 +19,7 @@ $(function() {
 </script>
 {% endblock %}
 
-{% block maincontent %}
-<h1><img src="{{STATIC_URL}}/img/logo.png">Platforma Redakcyjna</h1>
-
-
-<div id="document-list">
+{% block leftcolumn %}
 	<form method="get" action="#">
     <table  id="file-list">
     	<thead>
@@ -46,7 +38,9 @@ $(function() {
 		</tbody>
     </table>
 	</form>
+{% endblock leftcolumn %}
 
+{% block rightcolumn %}
 	<div id="last-edited-list">
 		<h2>Twoje ostatnio otwierane dokumenty:</h2>
 		<ol>
@@ -56,7 +50,4 @@ $(function() {
 			{% endfor %}
 		</ol>
 	</div>
-</div>
-
-</div>
-{% endblock maincontent %}
+{% endblock rightcolumn %}

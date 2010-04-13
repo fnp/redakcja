@@ -4,49 +4,46 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
-from wiki.models import Document, getstorage
 from wiki.constants import DOCUMENT_TAGS, DOCUMENT_STAGES
 from django.utils.translation import ugettext_lazy as _
 
 
-class DocumentForm(forms.Form):
-    """ Old form for saving document's text """
-
-    name = forms.CharField(widget=forms.HiddenInput)
-    text = forms.CharField(widget=forms.Textarea)
-    revision = forms.IntegerField(widget=forms.HiddenInput)
-    comment = forms.CharField()
-
-    def __init__(self, *args, **kwargs):
-        document = kwargs.pop('instance', None)
-        super(DocumentForm, self).__init__(*args, **kwargs)
-        if document:
-            self.fields['name'].initial = document.name
-            self.fields['text'].initial = document.text
-            self.fields['revision'].initial = document.revision()
-
-    def save(self, document_author='anonymous'):
-        storage = getstorage()
-
-        document = Document(storage, name=self.cleaned_data['name'], text=self.cleaned_data['text'])
-
-        storage.put(document,
-                author=document_author,
-                comment=self.cleaned_data['comment'],
-                parent=self.cleaned_data['revision'])
-
-        return storage.get(self.cleaned_data['name'])
-
-
 class DocumentTagForm(forms.Form):
+    """
+        Form for tagging revisions.
+    """
 
     id = forms.CharField(widget=forms.HiddenInput)
     tag = forms.ChoiceField(choices=DOCUMENT_TAGS)
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
-class DocumentTextSaveForm(forms.Form):
+class DocumentCreateForm(forms.Form):
     """
+        Form used for creating new documents.
+    """
+    title = forms.CharField()
+    id = forms.RegexField(regex=ur"\w+")
+    file = forms.FileField(required=False)
+    text = forms.CharField(required=False, widget=forms.Textarea)
+
+    def clean(self):
+        file = self.cleaned_data['file']
+
+        if file is not None:
+            try:
+                self.cleaned_data['text'] = file.read().decode('utf-8')
+            except UnicodeDecodeError:
+                raise forms.ValidationError("Text file must be UTF-8 encoded.")
+
+        if not self.cleaned_data["text"]:
+            raise forms.ValidationError("You must either enter text or upload a file")
+
+        return self.cleaned_data
+
+
+class DocumentTextSaveForm(forms.Form):
+    """if 
     Form for saving document's text:
 
         * name - document's storage identifier.

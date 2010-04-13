@@ -23,5 +23,7 @@ urlpatterns = patterns('',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
         {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
-    url(r'^', include('wiki.urls')),
+
+    url(r'^$', 'redirect_to', {'url': '/documents/'}),
+    url(r'^documents/', include('wiki.urls')),
 )

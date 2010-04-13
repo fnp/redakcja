@@ -153,6 +153,14 @@ FILEBROWSER_DEFAULT_ORDER = "path_relative"
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 IMAGE_DIR = 'images'
 
+
+WL_API_CONFIG = {
+    "URL": "http://localhost:7000/api/",
+    "AUTH_REALM": "wlapi",
+    "AUTH_USER": "platforma",
+    "AUTH_PASSWD": "platforma",
+}
+
 # Import localsettings file, which may override settings defined here
 try:
     from localsettings import *

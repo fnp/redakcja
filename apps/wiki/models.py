@@ -20,11 +20,12 @@ class DocumentStorage(object):
         self.vstorage = vstorage.VersionedStorage(path)
 
     def get(self, name, revision=None):
-        if revision is None:
-            text = self.vstorage.page_text(name)
-        else:
-            text = self.vstorage.revision_text(name, revision)
-        return Document(self, name=name, text=text)
+        text, rev = self.vstorage.page_text(name, revision)
+        return Document(self, name=name, text=text, revision=rev)
+
+    def get_by_tag(self, name, tag):
+        text, rev = self.vstorage.page_text(name, tag)
+        return Document(self, name=name, text=text, revision=rev)
 
     def get_or_404(self, *args, **kwargs):
         try:
@@ -39,6 +40,18 @@ class DocumentStorage(object):
                 author=author,
                 comment=comment,
                 parent=parent)
+
+        return document
+
+    def create_document(self, id, text, title=None):
+        if title is None:
+            title = id.title()
+
+        if text is None:
+            text = u''
+
+        document = Document(self, name=id, text=text, title=title)
+        return self.put(document, u"<wiki>", u"Document created.", None)
 
     def delete(self, name, author, comment):
         self.vstorage.delete_page(name, author, comment)
@@ -60,12 +73,6 @@ class Document(object):
         self.storage = storage
         for attr, value in kwargs.iteritems():
             setattr(self, attr, value)
-
-    def revision(self):
-        try:
-            return self.storage._info(self.name)[0]
-        except DocumentNotFound:
-            return - 1
 
     def add_tag(self, tag, revision, author):
         """ Add document specific tag """

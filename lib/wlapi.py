@@ -14,7 +14,16 @@ logger = logging.getLogger("fnp.lib.wlapi")
 
 
 class APICallException(Exception):
-    pass
+
+    def __init__(self, cause=None):
+        super(Exception, self).__init__()
+        self.cause = cause
+
+    def __unicode__(self):
+        return u"%s, cause: %s" % (type(self).__name__, repr(self.cause))
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
 
 
 def api_call(path, format="json"):
@@ -29,7 +38,7 @@ def api_call(path, format="json"):
             # prepare request
             rq = urllib2.Request(self.base_url + path + ".json")
 
-            # will send POST when there is data, GET otherwise
+            # will send POST when there is data, GET otherwise            
             if data is not None:
                 rq.add_data(json.dumps(data))
                 rq.add_header("Content-Type", "application/json")
@@ -51,23 +60,34 @@ def api_call(path, format="json"):
 
 class WLAPI(object):
 
-    def __init__(self, config_dict):
+    def __init__(self, **config_dict):
         self.base_url = config_dict['URL']
         self.auth_realm = config_dict['AUTH_REALM']
         self.auth_user = config_dict['AUTH_USER']
 
-        auth_handler = urllib2.HTTPDigestAuthHandler()
-        auth_handler.add_password(
+        digest_handler = urllib2.HTTPDigestAuthHandler()
+        digest_handler.add_password(
                     realm=self.auth_realm, uri=self.base_url,
                     user=self.auth_user, passwd=config_dict['AUTH_PASSWD'])
 
-        self.opener = urllib2.build_opener(auth_handler)
+        basic_handler = urllib2.HTTPBasicAuthHandler()
+        basic_handler.add_password(
+                    realm=self.auth_realm, uri=self.base_url,
+                    user=self.auth_user, passwd=config_dict['AUTH_PASSWD'])
+
+        self.opener = urllib2.build_opener(digest_handler, basic_handler)
 
     def _http_error(self, error):
-        return self._error()
+        message = error.read()
+        logger.debug("HTTP ERROR: %s", message)
+        return self._error(message)
 
     def _error(self, error):
-        raise APICallException(cause=error)
+        raise APICallException(error)
+
+    @api_call("books")
+    def list_books(self):
+        yield
 
     @api_call("books")
     def publish_book(self, document):

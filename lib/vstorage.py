@@ -197,10 +197,12 @@ class VersionedStorage(object):
 
     @with_working_copy_locked
     @with_storage_locked
-    def save_file(self, title, file_name, author=u'', comment=u'', parent=None):
+    def save_file(self, title, file_name, **kwargs):
         """Save an existing file as specified page."""
-        user = author.encode('utf-8') or u'anonymous'.encode('utf-8')
-        text = comment.encode('utf-8') or u'comment'.encode('utf-8')
+
+        author = kwargs.get('author', u'anonymous').encode('utf-8')
+        comment = kwargs.get('comment', u'Empty comment.').encode('utf-8')
+        parent = kwargs.get('parent', None)
 
         repo_file = self._title_to_file(title)
         file_path = self._file_path(title)
@@ -215,11 +217,11 @@ class VersionedStorage(object):
             current_page_rev = -1
 
         if parent is not None and current_page_rev != parent:
-            msg = self.merge_changes(changectx, repo_file, text, user, parent)
-            user = '<wiki>'
-            text = msg.encode('utf-8')
+            msg = self.merge_changes(changectx, repo_file, comment, author, parent)
+            author = '<wiki>'
+            comment = msg.encode('utf-8')
 
-        self._commit([repo_file], text, user)
+        self._commit([repo_file], comment, author)
 
     def save_data(self, title, data, **kwargs):
         """Save data as specified page."""
@@ -229,7 +231,8 @@ class VersionedStorage(object):
             f = open(file_path, "wb")
             f.write(data)
             f.close()
-            self.save_file(title=title, file_name=file_path, **kwargs)
+
+            return self.save_file(title=title, file_name=file_path, **kwargs)
         finally:
             try:
                 os.unlink(file_path)
@@ -240,23 +243,14 @@ class VersionedStorage(object):
             except OSError:
                 pass
 
-    def save_text(self, text, **kwargs):
+    def save_text(self, **kwargs):
         """Save text as specified page, encoded to charset."""
-        self.save_data(data=text.encode(self.charset), **kwargs)
+        text = kwargs.pop('text')
+        return self.save_data(data=text.encode(self.charset), **kwargs)
 
-    def _commit(self, files, text, user):
+    def _commit(self, files, comment, user):
         match = mercurial.match.exact(self.repo_path, '', list(files))
-        return self.repo.commit(match=match, text=text, user=user, force=True)
-
-    def page_text(self, title):
-        """Read unicode text of a page."""
-        data = self.open_page(title).read()
-        text = unicode(data, self.charset, 'replace')
-        return text
-
-    def page_lines(self, page):
-        for data in page:
-            yield unicode(data, self.charset, 'replace')
+        return self.repo.commit(match=match, text=comment, user=user, force=True)
 
     @with_working_copy_locked
     @with_storage_locked
@@ -272,25 +266,41 @@ class VersionedStorage(object):
         self.repo.remove([repo_file])
         self._commit([repo_file], text, user)
 
-    @with_working_copy_locked
-    def open_page(self, title):
-        if title not in self:
-            raise DocumentNotFound()
+#    @with_working_copy_locked
+#    def _open_page(self, title):
+#        if title not in self:
+#            raise DocumentNotFound()
+#
+#        path = self._title_to_file(title)
+#        logger.debug("Opening page %s", path)
+#        try:
+#            return self.repo.wfile(path, 'rb')
+#        except IOError:
+#            logger.exception("Failed to open page %s", title)
+#            raise DocumentNotFound()
 
-        path = self._title_to_file(title)
-        logger.debug("Opening page %s", path)
+    def page_text(self, title, revision=None):
+        """Read unicode text of a page."""
+        ctx = self._find_filectx(title, revision)
+        return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
+
+    def page_text_by_tag(self, title, tag):
+        """Read unicode text of a taged page."""
+        tag = u"{title}#{tag}".format(**locals()).encode('utf-8')
+        fname = self._title_to_file(title)
+
         try:
-            return self.repo.wfile(path, 'rb')
-        except IOError:
-            logger.exception("Failed to open page %s", title)
+            ctx = self.repo[tag][fname]
+            return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
+        except IndexError:
             raise DocumentNotFound()
 
     @with_working_copy_locked
     def page_file_meta(self, title):
         """Get page's inode number, size and last modification time."""
         try:
-            (st_mode, st_ino, st_dev, st_nlink, st_uid, st_gid, st_size,
-             st_atime, st_mtime, st_ctime) = os.stat(self._file_path(title))
+            (_st_mode, st_ino, _st_dev, _st_nlink, _st_uid, _st_gid, st_size,
+             _st_atime, st_mtime, _st_ctime) = os.stat(self._file_path(title))
         except OSError:
             return 0, 0, 0
         return st_ino, st_size, st_mtime
@@ -307,9 +317,8 @@ class VersionedStorage(object):
         rev = filectx_tip.filerev()
         filectx = filectx_tip.filectx(rev)
         date = datetime.datetime.fromtimestamp(filectx.date()[0])
-        author = unicode(filectx.user(), "utf-8",
-                         'replace').split('<')[0].strip()
-        comment = unicode(filectx.description(), "utf-8", 'replace')
+        author = filectx.user().decode("utf-8", 'replace')
+        comment = filectx.description().decode("utf-8", 'replace')
         return rev, date, author, comment
 
     def repo_revision(self):
@@ -329,11 +338,14 @@ class VersionedStorage(object):
         """Find the last revision in which the file existed."""
 
         repo_file = self._title_to_file(title)
-        changectx = self._changectx()
+
+        changectx = self._changectx()  # start with tip
         stack = [changectx]
+
         while repo_file not in changectx:
             if not stack:
                 return None
+
             changectx = stack.pop()
             for parent in changectx.parents():
                 if parent != changectx:
@@ -341,8 +353,13 @@ class VersionedStorage(object):
 
         try:
             fctx = changectx[repo_file]
-            return fctx if rev is None else fctx.filectx(rev)
-        except IndexError, LookupError:
+
+            if rev is not None:
+                fctx = fctx.filectx(rev)
+                fctx.filerev()
+
+            return fctx
+        except (IndexError, LookupError) as e:
             raise DocumentNotFound()
 
     def page_history(self, title):
@@ -355,9 +372,8 @@ class VersionedStorage(object):
         for rev in range(maxrev, minrev - 1, -1):
             filectx = filectx_tip.filectx(rev)
             date = datetime.datetime.fromtimestamp(filectx.date()[0])
-            author = unicode(filectx.user(), "utf-8",
-                             'replace').split('<')[0].strip()
-            comment = unicode(filectx.description(), "utf-8", 'replace')
+            author = filectx.user().decode('utf-8', 'replace')
+            comment = filectx.description().decode("utf-8", 'replace')
             tags = [t.rsplit('#', 1)[-1] for t in filectx.changectx().tags() if '#' in t]
 
             yield {
@@ -368,21 +384,12 @@ class VersionedStorage(object):
                 "tag": tags,
             }
 
-    def page_revision(self, title, rev):
-        """Get unicode contents of specified revision of the page."""
-        return self._find_filectx(title, rev).data()
-
-    def revision_text(self, title, rev):
-        data = self.page_revision(title, rev)
-        text = unicode(data, self.charset, 'replace')
-        return text
-
     @with_working_copy_locked
     def add_page_tag(self, title, rev, tag, user, doctag=True):
         if doctag:
-            tag = "{title}#{tag}".format(**locals())
+            tag = u"{title}#{tag}".format(**locals()).encode('utf-8')
 
-        message = "Assigned tag {tag} to version {rev} of {title}".format(**locals())
+        message = u"Assigned tag {tag!r} to version {rev!r} of {title!r}".format(**locals()).encode('utf-8')
 
         fctx = self._find_filectx(title, rev)
         self.repo.tag(
@@ -399,9 +406,8 @@ class VersionedStorage(object):
         for wiki_rev in range(maxrev, minrev - 1, -1):
             change = self.repo.changectx(wiki_rev)
             date = datetime.datetime.fromtimestamp(change.date()[0])
-            author = unicode(change.user(), "utf-8",
-                             'replace').split('<')[0].strip()
-            comment = unicode(change.description(), "utf-8", 'replace')
+            author = change.user().decode('utf-8', 'replace')
+            comment = change.description().decode("utf-8", 'replace')
             for repo_file in change.files():
                 if repo_file.startswith(self.repo_prefix):
                     title = self._file_to_title(repo_file)

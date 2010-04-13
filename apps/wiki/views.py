@@ -4,11 +4,12 @@ from django.conf import settings
 
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST
+from django.core.urlresolvers import reverse
 from wiki.helpers import JSONResponse, JSONFormInvalid, JSONServerError, ajax_require_permission
 from django import http
 
-from wiki.models import getstorage
-from wiki.forms import DocumentTextSaveForm, DocumentTagForm
+from wiki.models import getstorage, DocumentNotFound
+from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -42,7 +43,10 @@ def document_list(request, template_name='wiki/document_list.html'):
 @never_cache
 def document_detail(request, name, template_name='wiki/document_details.html'):
 
-    document = getstorage().get_or_404(name)
+    try:
+        document = getstorage().get(name)
+    except DocumentNotFound:
+        return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[name]))
 
     access_time = datetime.now()
     last_documents = request.session.get("wiki_last_docs", {})
@@ -55,22 +59,51 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
 
     return direct_to_template(request, template_name, extra_context={
         'document': document,
+        'document_name': document.name,
         'document_info': document.info,
         'document_meta': document.meta,
-        'forms': {"text_save": DocumentTextSaveForm(), "add_tag": DocumentTagForm()},
+        'forms': {
+            "text_save": DocumentTextSaveForm(prefix="textsave"),
+            "add_tag": DocumentTagForm(prefix="addtag")
+        },
+    })
+
+
+def document_create_missing(request, name):
+    storage = getstorage()
+
+    if request.method == "POST":
+        form = DocumentCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            doc = storage.create_document(
+                id=form.cleaned_data['id'],
+                text=form.cleaned_data['text'],
+            )
+
+            return http.HttpResponseRedirect(reverse("wiki_details", args=[doc.name]))
+    else:
+        form = DocumentCreateForm(initial={
+                "id": name.replace(" ", "_"),
+                "title": name.title(),
+        })
+
+    return direct_to_template(request, "wiki/document_create_missing.html", extra_context={
+        "document_name": name,
+        "form": form,
     })
 
 
 @never_cache
 def document_text(request, name):
     storage = getstorage()
-    document = storage.get_or_404(name)
 
     if request.method == 'POST':
-        form = DocumentTextSaveForm(request.POST)
+        form = DocumentTextSaveForm(request.POST, prefix="textsave")
 
         if form.is_valid():
             revision = form.cleaned_data['parent_revision']
+
+            document = storage.get_or_404(name, revision)
             document.text = form.cleaned_data['text']
 
             storage.put(document,
@@ -79,18 +112,34 @@ def document_text(request, name):
                 parent=revision,
             )
 
+            document = storage.get(name)
+
             return JSONResponse({
-                'text': document.plain_text if revision != document.revision() else None,
+                'text': document.plain_text if revision != document.revision else None,
                 'meta': document.meta(),
-                'revision': document.revision(),
+                'revision': document.revision,
             })
         else:
             return JSONFormInvalid(form)
     else:
+        revision = request.GET.get("revision", None)
+
+        try:
+            try:
+                revision = revision and int(revision)
+                logger.info("Fetching %s", revision)
+                document = storage.get(name, revision)
+            except ValueError:
+                # treat as a tag
+                logger.info("Fetching tag %s", revision)
+                document = storage.get_by_tag(name, revision)
+        except DocumentNotFound:
+            raise http.Http404
+
         return JSONResponse({
             'text': document.plain_text,
             'meta': document.meta(),
-            'revision': document.revision(),
+            'revision': document.revision,
         })
 
 
@@ -116,9 +165,8 @@ def document_gallery(request, directory):
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
         return JSONResponse(images)
-    except (IndexError, OSError), exc:
-        import traceback
-        traceback.print_exc()
+    except (IndexError, OSError) as e:
+        logger.exception("Unable to fetch gallery")
         raise http.Http404
 
 
@@ -147,7 +195,7 @@ def document_history(request, name):
     storage = getstorage()
 
     # TODO: pagination
-    changesets = storage.history(name)
+    changesets = list(storage.history(name))
 
     return JSONResponse(changesets)
 
@@ -157,7 +205,7 @@ def document_history(request, name):
 def document_add_tag(request, name):
     storage = getstorage()
 
-    form = DocumentTagForm(request.POST)
+    form = DocumentTagForm(request.POST, prefix="addtag")
     if form.is_valid():
         doc = storage.get_or_404(form.cleaned_data['id'])
         doc.add_tag(tag=form.cleaned_data['tag'],
@@ -170,13 +218,12 @@ def document_add_tag(request, name):
 
 @require_POST
 @ajax_require_permission('wiki.can_publish')
-def document_publish(request, name, version):
+def document_publish(request, name):
     storage = getstorage()
+    document = storage.get_by_tag(name, "ready_to_publish")
 
-    # get the document
-    document = storage.get_or_404(name, revision=int(version))
+    api = wlapi.WLAPI(**settings.WL_API_CONFIG)
 
-    api = wlapi.WLAPI(settings.WL_API_CONFIG)
     try:
         return JSONResponse({"result": api.publish_book(document)})
     except wlapi.APICallException, e:

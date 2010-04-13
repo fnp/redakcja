@@ -17,14 +17,11 @@ NAMES = {'+': 'added', '-': 'removed', '^': 'changed'}
 def diff_replace(match):
     return """<span class="diff_mark diff_mark_%s">""" % NAMES[match.group(1)]
 
-
 def filter_line(line):
     return  DIFF_RE.sub(diff_replace, html_escape(line)).replace('\x01', '</span>')
 
-
 def format_changeset(a, b, change):
     return (a[0], filter_line(a[1]), b[0], filter_line(b[1]), change)
-
 
 def html_diff_table(la, lb, context=None):
     all_changes = difflib._mdiff(la, lb)
