@@ -60,6 +60,7 @@ ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ife@x^_lak+x84=lxtr!-ur$5g$+s6xt85gbbm@e_fk6q3r8=+'
+SESSION_COOKIE_NAME = "redakcja_sessionid"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -156,7 +157,7 @@ IMAGE_DIR = 'images'
 
 WL_API_CONFIG = {
     "URL": "http://localhost:7000/api/",
-    "AUTH_REALM": "wlapi",
+    "AUTH_REALM": "WL API",
     "AUTH_USER": "platforma",
     "AUTH_PASSWD": "platforma",
 }

@@ -11,8 +11,8 @@
 		/* fill out hidden fields */
 		this.$form = $('form', element);
 
-		$("input[name='id']", this.$form).val(CurrentDocument.id);
-		$("input[name='parent_revision']", this.$form).val(CurrentDocument.revision);
+		$("input[name='textsave-id']", this.$form).val(CurrentDocument.id);
+		$("input[name='textsave-parent_revision']", this.$form).val(CurrentDocument.revision);
 
 		$.wiki.cls.GenericDialog.call(this, element);
 	};

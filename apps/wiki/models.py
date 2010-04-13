@@ -24,7 +24,7 @@ class DocumentStorage(object):
         return Document(self, name=name, text=text, revision=rev)
 
     def get_by_tag(self, name, tag):
-        text, rev = self.vstorage.page_text(name, tag)
+        text, rev = self.vstorage.page_text_by_tag(name, tag)
         return Document(self, name=name, text=text, revision=rev)
 
     def get_or_404(self, *args, **kwargs):

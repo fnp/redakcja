@@ -25,7 +25,6 @@ class JSONResponse(http.HttpResponse):
         kwargs.pop('mimetype', None)
 
         data = json.dumps(data, cls=ExtendedEncoder)
-        print data
         super(JSONResponse, self).__init__(data, mimetype="application/json", **kwargs)
 
 

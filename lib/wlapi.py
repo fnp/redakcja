@@ -38,7 +38,7 @@ def api_call(path, format="json"):
             # prepare request
             rq = urllib2.Request(self.base_url + path + ".json")
 
-            # will send POST when there is data, GET otherwise            
+            # will send POST when there is data, GET otherwise
             if data is not None:
                 rq.add_data(json.dumps(data))
                 rq.add_header("Content-Type", "application/json")

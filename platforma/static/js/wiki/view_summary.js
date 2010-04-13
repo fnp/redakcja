@@ -9,7 +9,7 @@
 				$.blockUI({message: "Oczekiwanie na odpowiedź serwera..."});
 				self.doc.publish({
 					success: function(doc, data) {
-						$.blockUI({message: "Udało się", timeout: 2000});
+						$.blockUI({message: "Udało się.", timeout: 2000});
 					},
 					failure: function(doc, message) {
 						$.blockUI({
@@ -17,10 +17,10 @@
 							timeout: 5000
 						});
 					}
-					
+
 				});
 			});
-			
+
 			old_callback.call(this);
 		};
 

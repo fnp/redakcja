@@ -16,39 +16,39 @@
 	function reverse() {
 		var vname = arguments[0];
 		var base_path = "/documents";
-		
+
 		if (vname == "ajax_document_text") {
 			var path = "/" + arguments[1] + "/text";
-			
-		if (arguments[2] !== undefined) 
+
+		if (arguments[2] !== undefined)
 				path += "/" + arguments[2];
-			
+
 			return base_path + path;
 		}
-		
+
 		if (vname == "ajax_document_history") {
-			
+
 			return base_path + "/" + arguments[1] + "/history";
 		}
-		
+
 		if (vname == "ajax_document_gallery") {
-			
+
 			return base_path + "/gallery/" + arguments[1];
 		}
-		
-		if (vname == "ajax_document_diff") 	
+
+		if (vname == "ajax_document_diff")
 			return base_path + "/" + arguments[1] + "/diff";
-		
+
 		if (vname == "ajax_document_addtag")
 			return base_path + "/" + arguments[1] + "/tags";
-			
+
 		if (vname == "ajax_publish")
 			return base_path + "/" + arguments[1] + "/publish";
-			
-		console.log("Couldn't reverse match:", vname);		
+
+		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
 	};
-	
+
 	/*
 	 * Document Abstraction
 	 */
@@ -64,7 +64,7 @@
 		this._context_lock = -1;
 		this._lock_count = 0;
 	};
-	
+
 	WikiDocument.prototype.triggerDocumentChanged = function() {
 		$(document).trigger('wlapi_document_changed', this);
 	};
@@ -80,15 +80,15 @@
 			dataType: 'json',
 			success: function(data) {
 				var changed = false;
-				
-if (self.text === null || self.revision !== data.revision) {
+
+				if (self.text === null || self.revision !== data.revision) {
 					self.text = data.text;
 					self.revision = data.revision;
 					self.gallery = data.gallery;
 					changed = true;
 					self.triggerDocumentChanged();
 				};
-				
+
 				self.has_local_changes = false;
 				params['success'](self, changed);
 			},
@@ -188,23 +188,24 @@ if (self.text === null || self.revision !== data.revision) {
 	WikiDocument.prototype.save = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;
-		
+
 		if (!self.has_local_changes) {
-			console.log("Abort: no changes.");			
+			console.log("Abort: no changes.");
 			return params['success'](self, false, "Nie ma zmian do zapisania.");
 		};
-		
+
 		// Serialize form to dictionary
 		var data = {};
 		$.each(params['form'].serializeArray(), function() {
 			data[this.name] = this.value;
 		});
+		
 		var metaComment = '<!--';
 		metaComment += '\n\tgallery:' + self.galleryLink;
 		metaComment += '\n-->\n'
-		
+
 		data['textsave-text'] = metaComment + self.text;
-		
+
 		$.ajax({
 			url: reverse("ajax_document_text", self.id),
 			type: "POST",
@@ -212,7 +213,7 @@ if (self.text === null || self.revision !== data.revision) {
 			data: data,
 			success: function(data) {
 				var changed = false;
-				
+
 				if (data.text) {
 					self.text = data.text;
 					self.revision = data.revision;
@@ -220,19 +221,19 @@ if (self.text === null || self.revision !== data.revision) {
 					changed = true;
 					self.triggerDocumentChanged();
 				};
-				
+
 				params['success'](self, changed, ((changed && "Udało się zapisać :)") || "Twoja wersja i serwera jest identyczna"));
 			},
 			error: function(xhr) {
 				try {
 					params['failure'](self, $.parseJSON(xhr.responseText));
-				} 
+				}
 				catch (e) {
 					params['failure'](self, {
 						"__message": "<p>Nie udało się zapisać - błąd serwera.</p>"
 					});
 				};
-				
+
 			}
 		});
 	}; /* end of save() */
@@ -253,12 +254,12 @@ if (self.text === null || self.revision !== data.revision) {
 				else {
 					try {
 						params.failure(self, xhr.responseText);
-					} 
+					}
 					catch (e) {
-						params.failure(self, "Nie udało się - błąd serwera.");						
-					};					
+						params.failure(self, "Nie udało się - błąd serwera.");
+					};
 				};
-				
+
 			}
 		});
 	};
@@ -266,12 +267,14 @@ if (self.text === null || self.revision !== data.revision) {
 		params = $.extend({}, noops, params);
 		var self = this;
 		var data = {
-			"id": self.id,
+			"addtag-id": self.id,
 		};
+		
 		/* unpack form */
 		$.each(params.form.serializeArray(), function() {
 			data[this.name] = this.value;
 		});
+		
 		$.ajax({
 			url: reverse("ajax_document_addtag", self.id),
 			type: "POST",
@@ -280,7 +283,7 @@ if (self.text === null || self.revision !== data.revision) {
 			success: function(data) {
 				params.success(self, data.message);
 			},
-			error: function(xhr) {				
+			error: function(xhr) {
 				if (xhr.status == 403 || xhr.status == 401) {
 					params.failure(self, {
 						"__all__": ["Nie masz uprawnień lub nie jesteś zalogowany."]
@@ -289,15 +292,15 @@ if (self.text === null || self.revision !== data.revision) {
 				else {
 					try {
 						params.failure(self, $.parseJSON(xhr.responseText));
-					} 
+					}
 					catch (e) {
 						params.failure(self, {
 							"__all__": ["Nie udało się - błąd serwera."]
 						});
 					};
-					
+
 				};
-				
+
 			}
 		});
 	};

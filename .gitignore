@@ -1,6 +1,7 @@
 localsettings.py
 dev.sqlite
 requirements.pybundle
+*~
 
 # Python garbage
 *.pyc

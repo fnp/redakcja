@@ -43,7 +43,7 @@ class DocumentCreateForm(forms.Form):
 
 
 class DocumentTextSaveForm(forms.Form):
-    """if 
+    """
     Form for saving document's text:
 
         * name - document's storage identifier.

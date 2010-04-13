@@ -64,7 +64,7 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
         'document_meta': document.meta,
         'forms': {
             "text_save": DocumentTextSaveForm(prefix="textsave"),
-            "add_tag": DocumentTagForm(prefix="addtag")
+            "add_tag": DocumentTagForm(prefix="addtag"),
         },
     })
 

@@ -14,8 +14,8 @@
         /* fill out hidden fields */
         this.$form = $('form', element);
 
-        $("input[name='id']", this.$form).val(CurrentDocument.id);
-        $("input[name='revision']", this.$form).val(options.revision);
+        $("input[name='addtag-id']", this.$form).val(CurrentDocument.id);
+        $("input[name='addtag-revision']", this.$form).val(options.revision);
 
         $.wiki.cls.GenericDialog.call(this, element);
     };

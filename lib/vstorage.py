@@ -266,19 +266,6 @@ class VersionedStorage(object):
         self.repo.remove([repo_file])
         self._commit([repo_file], text, user)
 
-#    @with_working_copy_locked
-#    def _open_page(self, title):
-#        if title not in self:
-#            raise DocumentNotFound()
-#
-#        path = self._title_to_file(title)
-#        logger.debug("Opening page %s", path)
-#        try:
-#            return self.repo.wfile(path, 'rb')
-#        except IOError:
-#            logger.exception("Failed to open page %s", title)
-#            raise DocumentNotFound()
-
     def page_text(self, title, revision=None):
         """Read unicode text of a page."""
         ctx = self._find_filectx(title, revision)
@@ -286,14 +273,14 @@ class VersionedStorage(object):
 
     def page_text_by_tag(self, title, tag):
         """Read unicode text of a taged page."""
-        tag = u"{title}#{tag}".format(**locals()).encode('utf-8')
         fname = self._title_to_file(title)
+        tag = u"{fname}#{tag}".format(**locals()).encode('utf-8')
 
         try:
             ctx = self.repo[tag][fname]
             return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
         except IndexError:
-            raise DocumentNotFound()
+            raise DocumentNotFound(fname)
 
     @with_working_copy_locked
     def page_file_meta(self, title):
@@ -309,11 +296,11 @@ class VersionedStorage(object):
     def page_meta(self, title):
         """Get page's revision, date, last editor and his edit comment."""
         if not title in self:
-            raise DocumentNotFound()
+            raise DocumentNotFound(title)
 
         filectx_tip = self._find_filectx(title)
         if filectx_tip is None:
-            raise DocumentNotFound()
+            raise DocumentNotFound(title)
         rev = filectx_tip.filerev()
         filectx = filectx_tip.filectx(rev)
         date = datetime.datetime.fromtimestamp(filectx.date()[0])
@@ -336,9 +323,7 @@ class VersionedStorage(object):
 
     def _find_filectx(self, title, rev=None):
         """Find the last revision in which the file existed."""
-
         repo_file = self._title_to_file(title)
-
         changectx = self._changectx()  # start with tip
         stack = [changectx]
 
@@ -360,7 +345,7 @@ class VersionedStorage(object):
 
             return fctx
         except (IndexError, LookupError) as e:
-            raise DocumentNotFound()
+            raise DocumentNotFound(title)
 
     def page_history(self, title):
         """Iterate over the page's history."""
@@ -386,10 +371,12 @@ class VersionedStorage(object):
 
     @with_working_copy_locked
     def add_page_tag(self, title, rev, tag, user, doctag=True):
-        if doctag:
-            tag = u"{title}#{tag}".format(**locals()).encode('utf-8')
+        ctitle = self._title_to_file(title)
 
-        message = u"Assigned tag {tag!r} to version {rev!r} of {title!r}".format(**locals()).encode('utf-8')
+        if doctag:
+            tag = u"{ctitle}#{tag}".format(**locals()).encode('utf-8')
+
+        message = u"Assigned tag {tag!r} to version {rev!r} of {ctitle!r}".format(**locals()).encode('utf-8')
 
         fctx = self._find_filectx(title, rev)
         self.repo.tag(
