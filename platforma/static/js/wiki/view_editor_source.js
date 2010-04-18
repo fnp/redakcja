@@ -20,6 +20,7 @@
 				width: "100%",
 				tabMode: 'spaces',
 				indentUnit: 0,
+				readOnly: CurrentDocument.readonly || false,
 				initCallback: function(){
 
 					self.codemirror.grabKeys(function(event) {
@@ -48,7 +49,11 @@
 					$('#source-editor .toolbar button').click(function(event){
 						event.preventDefault();
 						var params = eval("(" + $(this).attr('data-ui-action-params') + ")");
-						scriptletCenter.scriptlets[$(this).attr('data-ui-action')](self.codemirror, params);
+						scriptletCenter.callInteractive({
+							action: $(this).attr('data-ui-action'),
+							context: self.codemirror,
+							extra: params
+						});
 					});
 
 					$('.toolbar select').change(function(event){
@@ -62,10 +67,10 @@
 					$('.toolbar select').change();
 
 					console.log("Initialized CodeMirror");
-					
+
 					// textarea is no longer needed
 					$('codemirror_placeholder').remove();
-					
+
 					old_callback.call(self);
 				}
 			});
@@ -78,33 +83,39 @@
 	CodeMirrorPerspective.prototype = new $.wiki.Perspective();
 
 	CodeMirrorPerspective.prototype.freezeState = function() {
-
+		this.config().position = this.codemirror.win.scrollY || 0;
 	};
-	
-	
+
+	CodeMirrorPerspective.prototype.unfreezeState = function () {
+		this.codemirror.win.scroll(0, this.config().position || 0);
+	};
 
 	CodeMirrorPerspective.prototype.onEnter = function(success, failure) {
 		$.wiki.Perspective.prototype.onEnter.call(this);
 
 		console.log('Entering', this.doc);
 		this.codemirror.setCode(this.doc.text);
-		
+
 		/* fix line numbers bar */
 		var $nums = $('.CodeMirror-line-numbers');
 	    var barWidth = $nums.width();
-		
-		$(this.codemirror.frame).css('margin-left', barWidth);
-		$nums.css('left', -barWidth);
-		
-		$(this.codemirror.frame.contentWindow).trigger('resize');
+
+		$(this.codemirror.frame.contentDocument.body).css('padding-left', barWidth);
+		// $nums.css('left', -barWidth);
+
+		$(window).resize();
+		this.unfreezeState(this._uistate);
+
 		if(success) success();
 	}
 
 	CodeMirrorPerspective.prototype.onExit = function(success, failure) {
-		$.wiki.Perspective.prototype.onExit.call(this);
+		this.freezeState();
 
+		$.wiki.Perspective.prototype.onExit.call(this);
 		console.log('Exiting', this.doc);
 		this.doc.setText(this.codemirror.getCode());
+
 		if(success) success();
 	}
 

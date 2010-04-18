@@ -44,6 +44,8 @@
     function ScanGalleryPerspective(options){
         var old_callback = options.callback || function() { };
 
+		this.noupdate_hash_onenter = true;
+
         options.callback = function(){
             var self = this;
 
@@ -92,6 +94,8 @@
 				self.imageMoveStart.apply(self, arguments);
 			});
 
+
+
 			old_callback.call(this);
         };
 
@@ -136,6 +140,7 @@
     ScanGalleryPerspective.prototype.setPage = function(newPage){
         newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
         this.$numberInput.val(newPage);
+		this.config().page = newPage;
         $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1]);
     };
 
@@ -222,7 +227,8 @@
         this.doc.refreshGallery({
             success: function(doc, data){
                 self.$image.show();
-				self.setPage( self.$numberInput.val() );
+				console.log("gconfig:", self.config().page );
+				self.setPage( self.config().page );
 
                 $('.error_message', self.$element).hide();
                 if(success) success();
@@ -233,7 +239,12 @@
                 if(failure) failure();
             }
         });
+
     };
+
+	ScanGalleryPerspective.prototype.onExit = function(success, failure) {
+
+	};
 
     $.wiki.ScanGalleryPerspective = ScanGalleryPerspective;
 

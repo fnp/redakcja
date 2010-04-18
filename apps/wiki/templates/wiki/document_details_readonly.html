@@ -1,31 +1,26 @@
 {% extends "wiki/document_details_base.html" %}
 
+{% block editor-class %}readonly{% endblock %}
+
 {% block extrabody %}
 {{ block.super }}
 <script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8">
 </script>
-<script src="{{STATIC_URL}}js/wiki/loader.js" type="text/javascript" charset="utf-8"> </script>
+<script src="{{STATIC_URL}}js/wiki/loader_readonly.js" type="text/javascript" charset="utf-8"> </script>
 {% endblock %}
 
 {% block tabs-menu %}
-    {% include "wiki/tabs/summary_view_item.html" %}
     {% include "wiki/tabs/wysiwyg_editor_item.html" %}
-	{% include "wiki/tabs/history_view_item.html" %}
 	{% include "wiki/tabs/source_editor_item.html" %}
 {% endblock %}
 
 {% block tabs-content %}
-    {% include "wiki/tabs/summary_view.html" %}
     {% include "wiki/tabs/wysiwyg_editor.html" %}
-	{% include "wiki/tabs/history_view.html" %}
 	{% include "wiki/tabs/source_editor.html" %}
 {% endblock %}
 
 {% block splitter-extra %}
-    {% include "wiki/tabs/gallery_view.html" %}
 {% endblock %}
 
 {% block dialogs %}
-	{% include "wiki/save_dialog.html" %}
-	{% include "wiki/tag_dialog.html" %}
 {% endblock %}

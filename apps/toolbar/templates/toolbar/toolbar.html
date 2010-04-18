@@ -1,5 +1,5 @@
 {% load toolbar_tags %}
-<div class="toolbar" xmlns:ui="http://nowoczesnapolska.org.pl/platforma/ui">
+<div class="toolbar">
     <select name="button_group" id="toolbar-button-group-select" size="1">
         {% for group in toolbar_groups %}
         <option value="{{ group.slug }}" {% if forloop.first %}selected="selected"{% endif %}>{{ group.name }}</option>

@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 
 from django.views.generic.simple import direct_to_template
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.core.urlresolvers import reverse
 from wiki.helpers import JSONResponse, JSONFormInvalid, JSONServerError, ajax_require_permission
 from django import http
@@ -67,6 +67,33 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
             "text_save": DocumentTextSaveForm(prefix="textsave"),
             "add_tag": DocumentTagForm(prefix="addtag"),
         },
+    })
+
+
+@require_GET
+def document_detail_readonly(request, name, template_name='wiki/document_details_readonly.html'):
+    storage = getstorage()
+
+    try:
+        revision = request.GET['revision']
+        document = storage.get(name, revision)
+    except (KeyError, DocumentNotFound) as e:
+        raise http.Http404
+
+    access_time = datetime.now()
+    last_documents = request.session.get("wiki_last_docs", {})
+    last_documents[name] = access_time
+
+    if len(last_documents) > MAX_LAST_DOCS:
+        oldest_key = min(last_documents, key=last_documents.__getitem__)
+        del last_documents[oldest_key]
+    request.session['wiki_last_docs'] = last_documents
+
+    return direct_to_template(request, template_name, extra_context={
+        'document': document,
+        'document_name': document.name,
+        'document_info': dict(document.info(), readonly=True),
+        'document_meta': document.meta,
     })
 
 

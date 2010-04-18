@@ -4,8 +4,47 @@
 
 	$.wiki = {
 		perspectives: {},
-		cls: {}
+		cls: {},
+		state: {
+			"version": 1,
+			"perspectives": {
+				"ScanGalleryPerspective": {
+					"show": true,
+					"page": 1
+				},
+				"CodeMirrorPerspective": {}
+				/*
+				"VisualPerspective": {},
+				"HistoryPerspective": {},
+				"SummaryPerspective": {}
+				*/
+			}
+		}
 	};
+
+	$.wiki.loadConfig = function() {
+		if(!window.localStorage)
+			return;
+
+		try {
+			var value = window.localStorage.getItem(CurrentDocument.id) || "{}";
+			var config = JSON.parse(value);
+
+			if (config.version == $.wiki.state.version) {
+				$.wiki.state.perspectives = $.extend($.wiki.state.perspectives, config.perspectives);
+			}
+		} catch(e) {
+			console.log("Failed to load config, using default.");
+		}
+
+		console.log("Loaded:", $.wiki.state, $.wiki.state.version);
+	};
+
+	$(window).bind('unload', function() {
+		if(window.localStorage)
+			window.localStorage.setItem(CurrentDocument.id, JSON.stringify($.wiki.state));
+	})
+
 
 	$.wiki.activePerspective = function() {
 		return this.perspectives[$("#tabs li.active").attr('id')];
@@ -76,8 +115,8 @@
 
 		$old.each(function(){
 			$(this).removeClass('active');
-			$('#' + $(this).attr('data-ui-related')).hide();
 			self.perspectives[$(this).attr('id')].onExit();
+			$('#' + $(this).attr('data-ui-related')).hide();
 		});
 
 		/* show new */
@@ -108,6 +147,10 @@
 			options.callback.call(this);
 	};
 
+	$.wiki.Perspective.prototype.config = function() {
+		return $.wiki.state.perspectives[this.perspective_id];
+	}
+
 	$.wiki.Perspective.prototype.toString = function() {
 		return this.perspective_id;
 	};
@@ -118,16 +161,16 @@
 
 	$.wiki.Perspective.prototype.onEnter = function () {
 		// called when perspective in initialized
-		if (this.perspective_id) {
+		if (!this.noupdate_hash_onenter) {
 			document.location.hash = '#' + this.perspective_id;
 		}
-
-		console.log(document.location.hash);
 	};
 
 	$.wiki.Perspective.prototype.onExit = function () {
 		// called when user switches to another perspective
-		document.location.hash = '';
+		if (!this.noupdate_hash_onenter) {
+			document.location.hash = '';
+		}
 	};
 
 	$.wiki.Perspective.prototype.destroy = function() {

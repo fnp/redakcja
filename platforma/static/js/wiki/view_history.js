@@ -15,6 +15,20 @@
 				self.showTagForm();
 			});
 
+			$('#open-preview-button').click(function(event) {
+				var selected = $('#changes-list .entry.selected');
+
+				if (selected.length != 1) {
+        		    window.alert("Wybierz dokładnie *jedną* wersję.");
+            		return;
+		        }
+
+				var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
+				window.open($(this).attr('data-basehref') + "?revision=" + version);
+
+				event.preventDefault();
+			});
+
         	$('#changes-list .entry').live('click', function(){
             	var $this = $(this);
             	if ($this.hasClass('selected'))
@@ -99,7 +113,7 @@
 		var selected = $('#changes-list .entry.selected');
 
 		if (selected.length != 1) {
-            window.alert("Musisz dokładnie jedną wersję do oznaczenia.");
+            window.alert("Musisz zaznaczyć dokładnie jedną wersję.");
             return;
         }
 

@@ -43,10 +43,14 @@ body {
     overflow: hidden;
 }
 
+#editor.readonly .editor {
+	right: 0px;
+}
+
 #html-view {
     overflow: auto;
     position: absolute;
-    top: 30px;
+    top: 33px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -226,6 +230,7 @@ p { margin: 0;}
     height: 100%;
     width: 100%;
 }
+
 #content {
     height: 100%;
     width: 100%;

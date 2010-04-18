@@ -62,9 +62,6 @@ class DocumentStorage(object):
     def history(self, title):
         return list(self.vstorage.page_history(title))
 
-    def _info(self, name):
-        return self.vstorage.page_meta(name)
-
 
 class Document(object):
     META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
@@ -108,10 +105,7 @@ class Document(object):
         return result
 
     def info(self):
-        return dict(zip(
-            ('revision', 'last_update', 'last_comitter', 'commit_message'),
-            self.storage._info(self.name),
-        ))
+        return self.storage.vstorage.page_meta(self.name, self.revision)
 
 
 def getstorage():

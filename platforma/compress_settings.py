@@ -50,9 +50,6 @@ COMPRESS_JS = {
                 'js/wiki/view_editor_wysiwyg.js',
                 'js/wiki/view_gallery.js',
                 'js/wiki/view_column_diff.js',
-
-                # bootstrap
-                'js/wiki/loader.js',
         ),
         'output_filename': 'compressed/detail_scripts_?.js',
      },

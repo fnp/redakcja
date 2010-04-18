@@ -26,12 +26,29 @@
 
 })();
 
+function nblck_each(array, body, after) {
+	$.each(array, function(i) {
+		body(this, i);
+	});
+
+	after();
+};
+
+function nblck_map(array, func, after) {
+	var acc = [];
+
+	nblck_each(array, function(elem, index) {
+		acc.push(func(elem, index));
+	}, function(){
+		after(acc);
+	});
+};
 
 function ScriptletCenter()
 {
     this.scriptlets = {};
 
-    this.scriptlets['insert_tag'] = function(context, params)
+    this.scriptlets['insert_tag'] = function(context, params, done)
     {
         var text = this.XMLEditorSelectedText(context);
         var start_tag = '<'+params.tag;
@@ -86,9 +103,11 @@ function ScriptletCenter()
             }
         } catch(e) {}
 
+		done();
     }.bind(this);
 
-    this.scriptlets['lineregexp'] = function(context, params) {
+    this.scriptlets['lineregexp'] = function(context, params, done) {
+		var self = this;
 
         var exprs = $.map(params.exprs, function(expr) {
             var opts = "g";
@@ -102,27 +121,34 @@ function ScriptletCenter()
 
         var partial = true;
         var text = this.XMLEditorSelectedText(context);
-        if(!text) return;
+        if(!text) return done();
 
         var changed = 0;
         var lines = text.split('\n');
-        lines = $.map(lines, function(line) {
+
+		nblck_map(lines, function(line, index) {
             var old_line = line;
             $(exprs).each(function() {
                 var expr = this;
                 line = line.replace(expr.rx, expr.repl);
             });
 
+			$progress.html(index);
+
             if(old_line != line) changed += 1;
             return line;
-        });
+        }, function(newlines) {
+			if(changed > 0) {
+				self.XMLEditorReplaceSelectedText(context, newlines.join('\n') );
+			};
 
-        if(changed > 0) {
-            this.XMLEditorReplaceSelectedText(context, lines.join('\n') );
-        }
+			done();
+		});
     }.bind(this);
 
-    this.scriptlets['fulltextregexp'] = function(context, params) {
+    this.scriptlets['fulltextregexp'] = function(context, params, done) {
+		var self = this;
+
         var exprs = $.map(params.exprs, function(expr) {
             var opts = "mg";
             if(expr.length > 2) {
@@ -135,27 +161,40 @@ function ScriptletCenter()
         });
 
         var text = this.XMLEditorSelectedText(context);
-        if(!text) return;
+        if(!text) return done();
         var original = text;
-        $(exprs).each(function() {
-            text = text.replace(this.rx, this.repl);
-        });
 
-        if( original != text) {
-            this.XMLEditorReplaceSelectedText(context, text);
-        }
+		nblck_each(exprs, function(expr, index) {
+			$progress.html(600 + index);
+            text = text.replace(expr.rx, expr.repl);
+        }, function() {
+			if( original != text) {
+         	   self.XMLEditorReplaceSelectedText(context, text);
+        	}
+
+			done();
+		});
     }.bind(this);
 
-    this.scriptlets['macro'] = function(context, params) {
+    this.scriptlets['macro'] = function(context, params, done) {
         var self = this;
+		var i = 0;
 
-        $(params).each(function() {
-            $.log(this[0], this[1]);
-            self.scriptlets[this[0]](context, this[1]);
-        });
+		function next() {
+        	if (i < params.length) {
+				var e = params[i];
+				i = i + 1;
+				self.scriptlets[e[0]](context, e[1], next);
+			}
+			else {
+				done();
+			}
+        };
+
+		next();
     }.bind(this);
 
-    this.scriptlets['lowercase'] = function(context, params)
+    this.scriptlets['lowercase'] = function(context, params, done)
     {
         var text = this.XMLEditorSelectedText(context);
 
@@ -179,10 +218,12 @@ function ScriptletCenter()
         }
 
         if(repl != text) this.XMLEditorReplaceSelectedText(context, repl);
+
+		done();
     }.bind(this);
 
 
-    this.scriptlets["insert_stanza"] = function(context, params) {
+    this.scriptlets["insert_stanza"] = function(context, params, done) {
         var text = this.XMLEditorSelectedText(context);
 
         if(text) {
@@ -209,19 +250,35 @@ function ScriptletCenter()
             this.XMLEditorMoveCursorForward(context, params.tag.length + 2);
         }
 
+		done();
     }.bind(this);
 
 }
 
-ScriptletCenter.prototype.XMLEditorSelectedText = function(panel) {
-    return panel.selection();
+ScriptletCenter.prototype.callInteractive = function(opts) {
+	$progress = $('<span>Executing script</span>');
+	var self = this;
+
+	$.blockUI({
+		message: $progress,
+
+	});
+
+
+	self.scriptlets[opts.action](opts.context, opts.extra, function(){
+		$.unblockUI(); // done
+	});
+}
+
+ScriptletCenter.prototype.XMLEditorSelectedText = function(editor) {
+
+    return editor.selection();
 };
 
-ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(panel, replacement)
+ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(editor, replacement)
 {
-    panel.replaceSelection(replacement);
-    // Tell XML view that it's data has changed
-    // panel.contentView.editorDataChanged();
+	$progress.html("Replacing text");
+    editor.replaceSelection(replacement);
 };
 
 ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, n) {

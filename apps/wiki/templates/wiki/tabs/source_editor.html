@@ -1,0 +1,10 @@
+{% load toolbar_tags %}
+<div id="source-editor" class="editor">
+    {% if not document_info.readonly %}{% toolbar %}{% endif %}
+    <textarea id="codemirror_placeholder">&lt;br/&gt;</textarea>
+    <!-- <input type="hidden" name="name" value="{{ document.name }}" />
+	<input type="hidden" name="author" value="annonymous" />
+	<input type="hidden" name="comment" value="no comment" />
+	<input type="hidden" name="revision" value="{{ document_info.revision }}" />
+	-->
+</div>

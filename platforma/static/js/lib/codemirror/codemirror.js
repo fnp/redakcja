@@ -80,7 +80,7 @@ var CodeMirror = (function(){
         nums = frame.nextSibling, scroller = nums.firstChild;
 
     var nextNum = 1;
-    
+
     function update() {
       var diff = 20 + Math.max(doc.body.offsetHeight, frame.offsetHeight) - scroller.offsetHeight;
       for (var n = Math.ceil(diff / 10); n > 0; n--) {
@@ -90,10 +90,10 @@ var CodeMirror = (function(){
       }
       nums.scrollTop = doc.body.scrollTop || doc.documentElement.scrollTop || 0;
     }
-    
+
     update();
     win.addEventHandler(win, "scroll", update);
-    win.addEventHandler(win, "resize", update);    
+    win.addEventHandler(win, "resize", update);
   }
 
   function CodeMirror(place, options) {

@@ -1,0 +1,17 @@
+<div id="simple-editor" class="editor" style="display: none">
+    <div id="html-view" class="htmlview">
+    </div>
+
+	<div class="toolbar">
+    	{% if not document_info.readonly %}
+        <button id="insert-theme-button">
+            Wstaw motyw
+        </button>
+        <button id="insert-annotation-button">
+            Wstaw przypis
+        </button>
+		{% endif %}
+        <div class="toolbar-end">
+        </div>
+    </div>
+</div>

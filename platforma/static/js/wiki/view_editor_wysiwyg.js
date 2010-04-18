@@ -232,19 +232,19 @@
             });
         }
 
-		if ($origin.is('.motyw')) {
-        	$('.delete-button', $overlay).click(function() {
-				if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw ?")) {
-					$('[theme-class=' + $origin.attr('theme-class') + ']').remove();
-					$overlay.remove();
-					$(document).unbind('click.blur-overlay');
-					return false;
-				};
-            });
-		}
-		else {
-			$('.delete-button', $overlay).hide();
-		}
+        if ($origin.is('.motyw')) {
+            $('.delete-button', $overlay).click(function(){
+                if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw ?")) {
+                    $('[theme-class=' + $origin.attr('theme-class') + ']').remove();
+                    $overlay.remove();
+                    $(document).unbind('click.blur-overlay');
+                    return false;
+                };
+                            });
+        }
+        else {
+            $('.delete-button', $overlay).hide();
+        }
 
 
         var serializer = new XMLSerializer();
@@ -304,49 +304,52 @@
 
         var old_callback = options.callback;
 
-        options.callback = function() {
+        options.callback = function(){
             var element = $("#html-view");
             var button = $('<button class="edit-button">Edytuj</button>');
 
-            $('#html-view').bind('mousemove', function(event){
-                var editable = $(event.target).closest('*[x-editable]');
-                $('.active', element).not(editable).removeClass('active').children('.edit-button').remove();
+            if (!CurrentDocument.readonly) {
+                $('#html-view').bind('mousemove', function(event){
+                    var editable = $(event.target).closest('*[x-editable]');
+                    $('.active', element).not(editable).removeClass('active').children('.edit-button').remove();
 
-				if (!editable.hasClass('active')) {
-                    editable.addClass('active').append(button);
-                }
-                if (editable.is('.annotation-inline-box')) {
-                    $('*[x-annotation-box]', editable).css({
-                        position: 'absolute',
-                        left: event.clientX - editable.offset().left + 5,
-                        top: event.clientY - editable.offset().top + 5
-                    }).show();
-                }
-                else {
-                    $('*[x-annotation-box]').hide();
-                }
-            });
+                    if (!editable.hasClass('active')) {
+                        editable.addClass('active').append(button);
+                    }
+                    if (editable.is('.annotation-inline-box')) {
+                        $('*[x-annotation-box]', editable).css({
+                            position: 'absolute',
+                            left: event.clientX - editable.offset().left + 5,
+                            top: event.clientY - editable.offset().top + 5
+                        }).show();
+                    }
+                    else {
+                        $('*[x-annotation-box]').hide();
+                    }
+                });
+
+                $('#insert-annotation-button').click(function(){
+                    addAnnotation();
+                    return false;
+                });
+
+                $('#insert-theme-button').click(function(){
+                    addTheme();
+                    return false;
+                });
+
+                $('.edit-button').live('click', function(event){
+                    event.preventDefault();
+                    openForEdit($(this).parent());
+                });
+
+            }
 
             $('.motyw').live('click', function(){
                 selectTheme($(this).attr('theme-class'));
             });
 
-            $('#insert-annotation-button').click(function(){
-                addAnnotation();
-                return false;
-            });
-
-            $('#insert-theme-button').click(function(){
-                addTheme();
-                return false;
-            });
-
-            $('.edit-button').live('click', function(event){
-                event.preventDefault();
-                openForEdit($(this).parent());
-            });
-
-			old_callback.call(this);
+            old_callback.call(this);
         };
 
         $.wiki.Perspective.call(this, options);

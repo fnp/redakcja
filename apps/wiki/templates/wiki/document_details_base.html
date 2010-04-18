@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load toolbar_tags %}
+{% block title %}{{ document.name }} - {{ block.super }}{% endblock %}
+{% block extrahead %}
+{% load compressed %}
+{% compressed_css 'detail' %}
+{% endblock %}
+
+{% block extrabody %}
+<script type="text/javascript" charset="utf-8">
+    var STATIC_URL = '{{STATIC_URL}}';
+</script>
+{% compressed_js 'detail' %}
+{% endblock %}
+
+{% block maincontent %}
+<div id="loading-overlay">
+    <div id="loading-message">
+        <img src="{{STATIC_URL}}img/spinner.gif" />
+        <p>Ładowanie</p>
+    </div>
+</div>
+
+<div id="document-meta"
+	data-document-name="{{ document.name }}" style="display:none">
+
+	{% for k, v in document_meta.items %}
+		<span data-key="{{ k }}">{{ v }}</span>
+	{% endfor %}
+
+	{% for k, v in document_info.items %}
+		<span data-key="{{ k }}">{{ v }}</span>
+	{% endfor %}
+
+	{% block meta-extra %} {% endblock %}
+</div>
+
+<div id="header">
+    <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
+    <div id="tools">
+        <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
+        | {% include "registration/head_login.html" %}
+        | Wersja: <span id="document-revision">unknown</span>
+		{% if not readonly %}
+            | <button style="margin-left: 6px" id="save-button">Zapisz</button>
+		{% endif %}
+    </div>
+    <ol id="tabs">
+    	{% block tabs-menu %} {% endblock %}
+    </ol>
+</div>
+<div id="splitter">
+    <div id="editor" class="{% block editor-class %} {% endblock %}">
+    	{% block tabs-content %} {% endblock %}
+    </div>
+	{% block splitter-extra %} {% endblock %}
+</div>
+
+{% block dialogs %} {% endblock %}
+
+{% endblock %}

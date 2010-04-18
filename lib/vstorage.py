@@ -269,10 +269,10 @@ class VersionedStorage(object):
     def page_text(self, title, revision=None):
         """Read unicode text of a page."""
         ctx = self._find_filectx(title, revision)
-        
+
         if ctx is None:
             raise DocumentNotFound(title)
-        
+
         return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
 
     def page_text_by_tag(self, title, tag):
@@ -297,20 +297,19 @@ class VersionedStorage(object):
         return st_ino, st_size, st_mtime
 
     @with_working_copy_locked
-    def page_meta(self, title):
+    def page_meta(self, title, revision=None):
         """Get page's revision, date, last editor and his edit comment."""
-        if not title in self:
+        fctx = self._find_filectx(title, revision)
+
+        if fctx is None:
             raise DocumentNotFound(title)
 
-        filectx_tip = self._find_filectx(title)
-        if filectx_tip is None:
-            raise DocumentNotFound(title)
-        rev = filectx_tip.filerev()
-        filectx = filectx_tip.filectx(rev)
-        date = datetime.datetime.fromtimestamp(filectx.date()[0])
-        author = filectx.user().decode("utf-8", 'replace')
-        comment = filectx.description().decode("utf-8", 'replace')
-        return rev, date, author, comment
+        return {
+            "revision": fctx.filerev(),
+            "date": datetime.datetime.fromtimestamp(fctx.date()[0]),
+            "author": fctx.user().decode("utf-8", 'replace'),
+            "comment": fctx.description().decode("utf-8", 'replace'),
+        }
 
     def repo_revision(self):
         return self.repo['tip'].rev()

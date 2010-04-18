@@ -55,7 +55,10 @@
 	function WikiDocument(element_id) {
 		var meta = $('#' + element_id);
 		this.id = meta.attr('data-document-name');
+
 		this.revision = $("*[data-key='revision']", meta).text();
+		this.readonly = !!$("*[data-key='readonly']", meta).text();
+
 		this.galleryLink = $("*[data-key='gallery']", meta).text();
 		this.galleryImages = [];
 		this.text = null;
@@ -77,6 +80,7 @@
 		$.ajax({
 			method: "GET",
 			url: reverse("ajax_document_text", self.id),
+			data: {"revision": self.revision},
 			dataType: 'json',
 			success: function(data) {
 				var changed = false;
@@ -147,6 +151,7 @@
 			}
 		});
 	};
+
 	/*
 	 * Fetch gallery
 	 */
@@ -168,6 +173,7 @@
 			}
 		});
 	};
+
 	/*
 	 * Set document's text
 	 */
@@ -175,6 +181,7 @@
 		this.text = text;
 		this.has_local_changes = true;
 	};
+
 	/*
 	 * Set document's gallery link
 	 */
@@ -182,6 +189,7 @@
 		this.galleryLink = gallery;
 		this.has_local_changes = true;
 	};
+
 	/*
 	 * Save text back to the server
 	 */
@@ -199,7 +207,7 @@
 		$.each(params['form'].serializeArray(), function() {
 			data[this.name] = this.value;
 		});
-		
+
 		var metaComment = '<!--';
 		metaComment += '\n\tgallery:' + self.galleryLink;
 		metaComment += '\n-->\n'
@@ -237,6 +245,7 @@
 			}
 		});
 	}; /* end of save() */
+
 	WikiDocument.prototype.publish = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;
@@ -269,12 +278,12 @@
 		var data = {
 			"addtag-id": self.id,
 		};
-		
+
 		/* unpack form */
 		$.each(params.form.serializeArray(), function() {
 			data[this.name] = this.value;
 		});
-		
+
 		$.ajax({
 			url: reverse("ajax_document_addtag", self.id),
 			type: "POST",
@@ -298,11 +307,10 @@
 							"__all__": ["Nie udało się - błąd serwera."]
 						});
 					};
-
 				};
-
 			}
 		});
 	};
+
 	$.wikiapi.WikiDocument = WikiDocument;
 })(jQuery);

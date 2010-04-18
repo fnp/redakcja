@@ -22,7 +22,7 @@ $(function()
     function initialize()
 	{
 		gallery = new $.wiki.ScanGalleryPerspective({
-			doc: CurrentDocument
+			doc: CurrentDocument, id: "ScanGalleryPerspective"
 		});
 
 		$(document).keydown(function(event) {
@@ -65,6 +65,7 @@ $(function()
 
         $('.vsplitbar').toggle(
 			function() {
+				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
 				$('#side-gallery').show();
 				$('.vsplitbar').css('right', 480).addClass('.active');
 				$('#editor .editor').css('right', 510);
@@ -72,6 +73,7 @@ $(function()
 				gallery.onEnter();
 			},
 			function() {
+				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
 				$('#side-gallery').hide();
 				$('.vsplitbar').css('right', 0).removeClass('active');
 				$('#editor .editor').css('right', 30);
@@ -79,6 +81,9 @@ $(function()
 				gallery.onExit();
 			}
 		);
+
+		if($.wiki.state.perspectives.ScanGalleryPerspective.show)
+			$('.vsplitbar').trigger('click');
 
         window.onbeforeunload = function(e) {
             if($.wiki.isDirty()) {
@@ -102,16 +107,23 @@ $(function()
 				console.log("Fetch success");
 				$('#loading-overlay').fadeOut();
 				var active_tab = document.location.hash || DEFAULT_PERSPECTIVE;
-				var $active = $("#tabs " + active_tab);
 
-				$active.trigger("click");
+				if(active_tab == "#ScanGalleryPerspective")
+					active_tab = DEFAULT_PERSPECTIVE;
+
+				console.log("Initial tab is:", active_tab)
+				$.wiki.switchToTab(active_tab);
 			},
 			failure: function() {
 				$('#loading-overlay').fadeOut();
 				alert("FAILURE");
 			}
-		});		
+		});
     }; /* end of initialize() */
+
+
+	/* Load configuration */
+	$.wiki.loadConfig();
 
 	var initAll = function(a, f) {
 		if (a.length == 0) return f();
@@ -124,6 +136,7 @@ $(function()
 			}
 		});
 	};
+
 
 	/*
 	 * Initialize all perspectives

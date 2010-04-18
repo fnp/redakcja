@@ -19,6 +19,10 @@ urlpatterns = patterns('wiki.views',
     url(r'^(?P<name>[^/]+)/tags$',
         'document_add_tag', name="wiki_add_tag"),
     url(r'^(?P<name>[^/]+)/publish$', 'document_publish'),
+
+    url(r'^(?P<name>[^/]+)/readonly$',
+        'document_detail_readonly', name="wiki_details_readonly"),
+
     url(r'^(?P<name>[^/]+)$',
         'document_detail', name="wiki_details"),
 )
