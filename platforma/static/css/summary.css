@@ -9,11 +9,13 @@
 #summary-view .book-cover {
 	float: left;
 	margin: 1em;
-	min-height: 300px;
-	min-width: 240px;
+	margin-right: 2em;
 	
-	max-height: 300px;	
-	max-width: 240px;
+	height: 300px;
+	width: 212px;
+	
+	
+	border: 1px dashed black;
 }
 
 #summary-view p {
@@ -23,3 +25,7 @@
 #summary-view label {
 	font-weight: bold; 
 }  
+
+#summary-view .book-cover {
+	
+}

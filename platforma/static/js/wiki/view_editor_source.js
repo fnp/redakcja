@@ -16,13 +16,13 @@
 				},
 				iframeClass: 'xml-iframe',
 				textWrapping: true,
-				lineNumbers: false,
+				lineNumbers: true,
 				width: "100%",
 				tabMode: 'spaces',
 				indentUnit: 0,
 				initCallback: function(){
 
-					 self.codemirror.grabKeys(function(event) {
+					self.codemirror.grabKeys(function(event) {
 						if (event.button) {
 							$(event.button).trigger('click');
 							event.button = null;
@@ -62,8 +62,10 @@
 					$('.toolbar select').change();
 
 					console.log("Initialized CodeMirror");
+					
 					// textarea is no longer needed
 					$('codemirror_placeholder').remove();
+					
 					old_callback.call(self);
 				}
 			});
@@ -78,12 +80,23 @@
 	CodeMirrorPerspective.prototype.freezeState = function() {
 
 	};
+	
+	
 
 	CodeMirrorPerspective.prototype.onEnter = function(success, failure) {
 		$.wiki.Perspective.prototype.onEnter.call(this);
 
 		console.log('Entering', this.doc);
 		this.codemirror.setCode(this.doc.text);
+		
+		/* fix line numbers bar */
+		var $nums = $('.CodeMirror-line-numbers');
+	    var barWidth = $nums.width();
+		
+		$(this.codemirror.frame).css('margin-left', barWidth);
+		$nums.css('left', -barWidth);
+		
+		$(this.codemirror.frame.contentWindow).trigger('resize');
 		if(success) success();
 	}
 

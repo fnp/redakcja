@@ -79,22 +79,8 @@ var CodeMirror = (function(){
     var win = frame.contentWindow, doc = win.document,
         nums = frame.nextSibling, scroller = nums.firstChild;
 
-    var nextNum = 1, barWidth = null;
-    function sizeBar() {
-      if (!frame.offsetWidth || !win.Editor) {
-        for (var cur = frame; cur.parentNode; cur = cur.parentNode) {
-          if (cur != document) {
-            clearInterval(sizeInterval);
-            return;
-          }
-        }
-      }
-
-      if (nums.offsetWidth != barWidth) {
-        barWidth = nums.offsetWidth;
-        nums.style.left = "-" + (frame.parentNode.style.marginLeft = barWidth + "px");
-      }
-    }
+    var nextNum = 1;
+    
     function update() {
       var diff = 20 + Math.max(doc.body.offsetHeight, frame.offsetHeight) - scroller.offsetHeight;
       for (var n = Math.ceil(diff / 10); n > 0; n--) {
@@ -104,11 +90,10 @@ var CodeMirror = (function(){
       }
       nums.scrollTop = doc.body.scrollTop || doc.documentElement.scrollTop || 0;
     }
-    sizeBar();
+    
     update();
     win.addEventHandler(win, "scroll", update);
-    win.addEventHandler(win, "resize", update);
-    var sizeInterval = setInterval(sizeBar, 500);
+    win.addEventHandler(win, "resize", update);    
   }
 
   function CodeMirror(place, options) {

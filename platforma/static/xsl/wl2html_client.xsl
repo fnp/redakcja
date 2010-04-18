@@ -209,15 +209,32 @@
     -->
     <xsl:template match="motto">
         <xsl:param name="mixed" />
+        <div class="motto_container">
         <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
-            </xsl:apply-templates>
+            </xsl:apply-templates>            
+        </div>
+        <xsl:apply-templates select="following-sibling::*[1][self::motto_podpis]" mode="motto">
+            <xsl:with-param name="mixed" select="true()" />
+        </xsl:apply-templates>
         </div>
     </xsl:template>
 
-    <xsl:template match="motto_podpis">
+    <!--  
+        Catch stand-alone "motto_podpis" and make then render properly.
+        If not, editing will fail :(.
+        
+        TODO: Make "motto" & "motto_podpis" one block in edit mode (like strofa) 
+    -->
+    <xsl:template match="motto_podpis[not(preceding-sibling::*[1][self::motto])]">
+    	<xsl:apply-templates select="." mode="motto">
+            <xsl:with-param name="mixed" select="true()" />
+        </xsl:apply-templates>
+    </xsl:template>        
+        
+    <xsl:template match="motto_podpis" mode="motto">
         <xsl:param name="mixed" />
         <p x-editable="true">
             <xsl:call-template name="standard-attributes" />
@@ -226,7 +243,11 @@
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
         </p>
-    </xsl:template>
+    </xsl:template>    
+    
+    <xsl:template match="motto_podpis" />
+    
+    
 
     <!--
         Tagi obejmujące listę osób poprzedzającą tekst dramatu

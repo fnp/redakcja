@@ -110,9 +110,7 @@ $(function()
 				$('#loading-overlay').fadeOut();
 				alert("FAILURE");
 			}
-		});
-
-		$(window).resize();
+		});		
     }; /* end of initialize() */
 
 	var initAll = function(a, f) {

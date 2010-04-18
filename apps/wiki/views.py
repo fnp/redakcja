@@ -42,9 +42,10 @@ def document_list(request, template_name='wiki/document_list.html'):
 
 @never_cache
 def document_detail(request, name, template_name='wiki/document_details.html'):
+    storage = getstorage()
 
     try:
-        document = getstorage().get(name)
+        document = storage.get(name)
     except DocumentNotFound:
         return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[name]))
 

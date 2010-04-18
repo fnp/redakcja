@@ -269,6 +269,10 @@ class VersionedStorage(object):
     def page_text(self, title, revision=None):
         """Read unicode text of a page."""
         ctx = self._find_filectx(title, revision)
+        
+        if ctx is None:
+            raise DocumentNotFound(title)
+        
         return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
 
     def page_text_by_tag(self, title, tag):
