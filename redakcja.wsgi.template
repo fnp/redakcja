@@ -1,6 +1,6 @@
-#!%(python)s
+#!$PYTHON
 import site
-site.addsitedir('%(path)s/lib/python2.6/site-packages')
+site.addsitedir('$PYTHON_SITE')
 
 import os
 from os.path import abspath, dirname, join
@@ -12,13 +12,13 @@ sys.stdout = sys.stderr
 
 # Add apps and lib directories to PYTHONPATH
 sys.path = [
-	'%(path)s/releases/current',
-	'%(path)s/releases/current/apps',
-	'%(path)s/releases/current/lib',
+    '$PROJECT_ROOT',
+	'$PROJECT_ROOT/lib',
+	'$PROJECT_ROOT/apps',
 ] + sys.path
 
 # Run Django
-os.environ['DJANGO_SETTINGS_MODULE'] = '%(project_name)s.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = '$PROJECT_NAME.settings'
 
 from django.core.handlers.wsgi import WSGIHandler
 application = WSGIHandler()

@@ -44,19 +44,19 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = PROJECT_ROOT + '/media/'
+MEDIA_ROOT = PROJECT_ROOT + '/media/dynamic'
 STATIC_ROOT = PROJECT_ROOT + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
+MEDIA_URL = '/media/dynamic/'
+STATIC_URL = '/media/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/admin-media/'
+ADMIN_MEDIA_PREFIX = '/media/admin-media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ife@x^_lak+x84=lxtr!-ur$5g$+s6xt85gbbm@e_fk6q3r8=+'
@@ -73,7 +73,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "platforma.context_processors.settings",
+    "redakcja.context_processors.settings", # this is instead of media 
     "django.core.context_processors.request",
 )
 
@@ -95,7 +95,7 @@ AUTHENTICATION_BACKENDS = (
     'django_cas.backends.CASBackend',
 )
 
-ROOT_URLCONF = 'platforma.urls'
+ROOT_URLCONF = 'redakcja.urls'
 
 TEMPLATE_DIRS = (
     PROJECT_ROOT + '/templates',
@@ -175,8 +175,12 @@ except NameError:
                                 ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
 try:
     import logging
-    import logging.config
 
-    logging.config.fileConfig(LOGGING_CONFIG_FILE)
-except ImportError, exc:
+    if os.path.isfile(LOGGING_CONFIG_FILE):
+        import logging.config
+        logging.config.fileConfig(LOGGING_CONFIG_FILE)
+    else:
+        import sys
+        logging.basicConfig(stream=sys.stderr)
+except ImportError as exc:
     raise
