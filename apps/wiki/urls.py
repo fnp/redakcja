@@ -1,11 +1,12 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
 
 urlpatterns = patterns('wiki.views',
     url(r'^$',
         'document_list', name='wiki_doclist'),
+
     url(r'^create/(?P<name>[^/]+)',
         'document_create_missing', name='wiki_create_missing'),
+
     url(r'^gallery/(?P<directory>[^/]+)$',
         'document_gallery', name="wiki_gallery"),
     url(r'^(?P<name>[^/]+)/history$',

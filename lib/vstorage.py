@@ -328,16 +328,20 @@ class VersionedStorage(object):
         """Find the last revision in which the file existed."""
         repo_file = self._title_to_file(title)
         changectx = self._changectx()  # start with tip
+        visited = set()
+
         stack = [changectx]
+        visited.add(changectx)
 
         while repo_file not in changectx:
             if not stack:
-                return None
+                raise DocumentNotFound(title)
 
             changectx = stack.pop()
             for parent in changectx.parents():
-                if parent != changectx:
+                if parent not in visited:
                     stack.append(parent)
+                    visited.add(parent)
 
         try:
             fctx = changectx[repo_file]
