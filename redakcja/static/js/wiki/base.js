@@ -69,7 +69,7 @@
 		var base_id = 'id' + Math.floor(Math.random()* 5000000000);
 		var id = (''+klass)+'_' + base_id;
 		var $tab = $('<li id="'+id+'" data-ui-related="'+base_id+'" data-ui-jsclass="'+klass+'" >'
-				+ title + '<img src="/static/icons/close.png" class="tabclose"></li>');
+				+ title + '<img src="'+STATIC_URL+'icons/close.png" class="tabclose"></li>');
 		var $view = $('<div class="editor '+klass+'" id="'+base_id+'"> </div>');
 
 		this.perspectives[id] = new $.wiki[klass]({

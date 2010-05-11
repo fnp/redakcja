@@ -209,7 +209,7 @@
     -->
     <xsl:template match="motto">
         <xsl:param name="mixed" />
-        <div class="motto_container">
+        <div class="motto_container" data-pass-thru="true">
         <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">

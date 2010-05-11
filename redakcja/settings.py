@@ -87,7 +87,6 @@ MIDDLEWARE_CLASSES = (
 
     'django.middleware.doc.XViewMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware' #
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -101,6 +100,7 @@ TEMPLATE_DIRS = (
     PROJECT_ROOT + '/templates',
 )
 
+FIREPYTHON_LOGGER_NAME = "fnp"
 
 #
 # Central Auth System

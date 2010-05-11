@@ -218,7 +218,8 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 
 		switch(token.node.nodeType) {
 			case ELEMENT_NODE:
-				if(token.node.hasAttribute('x-pass-thru')) {
+				if(token.node.hasAttribute('x-pass-thru')
+				 || token.node.hasAttribute('data-pass-thru')) {
 					self._pushChildren(token.node);
 					break;
 				}
