@@ -14,7 +14,3 @@ django-maintenancemode>=0.9
 
 # migrations
 south>=0.6
-
-## Debugging utils, uncomment this if you want tests
-# django-nose>=0.0.3
-# django-debug-toolbar>=0.8

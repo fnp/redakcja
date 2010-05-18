@@ -14,7 +14,6 @@
 
     Alias /media $MEDIA_ROOT
     <Directory $MEDIA_ROOT >
-        Options Indexes, FollowLinks
         Order allow,deny
         Allow from all
     </Directory>

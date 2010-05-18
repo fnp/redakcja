@@ -7,11 +7,11 @@
 		failure: noop
 	};
 	/*
-	 * Return absolute reverse path of given named view.
-	 * (at least he have it hard-coded in one place)
-	 *
+	 * Return absolute reverse path of given named view. (at least he have it
+	 * hard-coded in one place)
+	 * 
 	 * TODO: think of a way, not to hard-code it here ;)
-	 *
+	 * 
 	 */
 	function reverse() {
 		var vname = arguments[0];
@@ -103,10 +103,10 @@
 	};
 	/*
 	 * Fetch history of this document.
-	 *
-	 * from - First revision to fetch (default = 0)
-	 * upto - Last revision to fetch (default = tip)
-	 *
+	 * 
+	 * from - First revision to fetch (default = 0) upto - Last revision to
+	 * fetch (default = tip)
+	 * 
 	 */
 	WikiDocument.prototype.fetchHistory = function(params) {
 		/* this doesn't modify anything, so no locks */
