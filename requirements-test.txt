@@ -1,0 +1,3 @@
+django-nose==0.0.3
+nose
+nosexcover

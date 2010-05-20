@@ -12,9 +12,6 @@ from nose.core import runmodule
 
 import vstorage
 
-NULL_PARENT = -1
-
-
 def clear_directory(top):
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
@@ -46,11 +43,12 @@ class TestVersionedStorage(object):
             text=text,
             author=author,
             comment=comment,
-            parent=NULL_PARENT,
+            parent=None,
         )
 
-        saved = self.repo.open_page(title).read()
-        assert_equal(saved, text)
+        saved_text, rev = self.repo.page_text(title)
+        assert_equal(saved_text, text)
+        assert_equal(rev, 0)
 
     def test_save_text_noparent(self):
         text = u"test text"
@@ -62,8 +60,9 @@ class TestVersionedStorage(object):
                     text=text, author=author,
                     comment=comment, parent=None)
 
-        saved = self.repo.open_page(title).read()
-        assert_equal(saved, text)
+        saved_text, rev = self.repo.page_text(title)
+        assert_equal(saved_text, text)
+        assert_equal(rev, 0)
 
     def test_save_merge_no_conflict(self):
         text = u"test\ntext"
@@ -72,12 +71,14 @@ class TestVersionedStorage(object):
         comment = u"test comment"
         self.repo.save_text(title=title,
                     text=text, author=author,
-                    comment=comment, parent=NULL_PARENT)
+                    comment=comment, parent=None)
         self.repo.save_text(title=title,
                     text=text, author=author,
-                    comment=comment, parent=NULL_PARENT)
-        saved = self.repo.open_page(title).read()
-        assert_equal(saved, text)
+                    comment=comment, parent=None)
+
+        saved_text, rev = self.repo.page_text(title)
+        assert_equal(saved_text, text)
+        assert_equal(rev, 0)
 
     def test_save_merge_line_conflict(self):
         text = u"test\ntest\n"
@@ -89,20 +90,27 @@ class TestVersionedStorage(object):
 
         self.repo.save_text(title=title,
                     text=text, author=author,
-                    comment=comment, parent=NULL_PARENT)
+                    comment=comment, parent=None)
+
+        saved_text, rev = self.repo.page_text(title)
+        assert_equal(saved_text, text)
+        assert_equal(rev, 0)
 
         self.repo.save_text(title=title,
                     text=text1, author=author,
                     comment=comment, parent=0)
 
+        saved_text, rev = self.repo.page_text(title)
+        assert_equal(saved_text, text1)
+        assert_equal(rev, 1)
+
         self.repo.save_text(title=title,
                     text=text2, author=author,
                     comment=comment, parent=0)
 
-        saved = self.repo.open_page(title).read()
-
+        saved_text, rev = self.repo.page_text(title)
         # Other conflict markers placement can also be correct
-        assert_equal(saved, u'''\
+        assert_equal(saved_text, u'''\
 text
 test
 <<<<<<< local
@@ -118,7 +126,7 @@ text
         comment = u"test comment"
         self.repo.save_text(title=title,
                     text=text, author=author,
-                    comment=comment, parent=NULL_PARENT)
+                    comment=comment, parent=None)
 
         assert title in self.repo
 
@@ -128,7 +136,7 @@ text
 
     @raises(vstorage.DocumentNotFound)
     def test_document_not_found(self):
-        self.repo.open_page(u'unknown entity')
+        self.repo.page_text(u'unknown entity')
 
     def test_open_existing_repository(self):
         self.repo.save_text(title=u'Python!', text=u'ham and spam')
@@ -212,7 +220,3 @@ class TestVSTags(object):
         for entry in reversed(history):
             expected = [tag[1] for tag in tags if tag[0] == entry["version"]]
             assert_equal(set(entry["tag"]), set(expected))
-
-
-if __name__ == '__main__':
-    runmodule()
