@@ -1,9 +1,10 @@
+{% load i18n %}
 <div id="history-view-editor" class="editor" style="display: none">
     <div class="toolbar">
-    	<button type="button" id="make-diff-button">Porównaj</button>
-		<button type="button" id="tag-changeset-button">Oznacz wersje</button>
+    	<button type="button" id="make-diff-button">{% trans "Compare versions" %}</button>
+		<button type="button" id="tag-changeset-button">{% trans "Mark version" %}</button>
 		<button id="open-preview-button"
-			data-basehref="{% url wiki_details_readonly document_name %}">Podejrzyj wersje</button>
+			data-basehref="{% url wiki_details_readonly document_name %}">{% trans "View version" %}</button>
 	</div>
     <div id="history-view">
         <p class="message-box" style="display:none;"></p>

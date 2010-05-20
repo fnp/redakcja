@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="simple-editor" class="editor" style="display: none">
     <div id="html-view" class="htmlview">
     </div>
@@ -5,10 +6,10 @@
 	<div class="toolbar">
     	{% if not document_info.readonly %}
         <button id="insert-theme-button">
-            Wstaw motyw
+            {% trans "Insert theme" %}
         </button>
         <button id="insert-annotation-button">
-            Wstaw przypis
+            {% trans "Insert annotation" %}
         </button>
 		{% endif %}
         <div class="toolbar-end">

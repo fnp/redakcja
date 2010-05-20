@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG

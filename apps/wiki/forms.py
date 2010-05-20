@@ -57,22 +57,28 @@ class DocumentTextSaveForm(forms.Form):
     parent_revision = forms.IntegerField(widget=forms.HiddenInput)
     text = forms.CharField(widget=forms.HiddenInput)
 
-    author = forms.CharField(
+    author_name = forms.CharField(
         required=False,
-        label=_(u"Autor"),
-        help_text=_(u"Twoje imie i nazwisko lub email."),
+        label=_(u"Author"),
+        help_text=_(u"Your name/"),
+    )
+
+    author_email = forms.EmailField(
+        required=False,
+        label=_(u"Author's email"),
+        help_text=_(u"Your email address, so we can show a gravatar :)"),
     )
 
     comment = forms.CharField(
         required=True,
         widget=forms.Textarea,
-        label=_(u"Twój komentarz"),
-        help_text=_(u"Opisz w miarę dokładnie swoje zmiany."),
+        label=_(u"Your comments"),
+        help_text=_(u"Describe changes you made."),
     )
 
     stage_completed = forms.ChoiceField(
         choices=DOCUMENT_STAGES,
         required=False,
-        label=_(u"Skończyłem robić"),
-        help_text=_(u"Jeśli skończyłeś jeden z etapów utworu, wybierz go."),
+        label=_(u"Completed"),
+        help_text=_(u"If you completed a life cycle stage, select it."),
     )

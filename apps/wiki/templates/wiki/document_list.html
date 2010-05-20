@@ -1,5 +1,5 @@
 {% extends "wiki/base.html" %}
-
+{% load i18n %}
 
 {% block extrabody %}
 {{ block.super }}
@@ -25,7 +25,7 @@ $(function() {
     	<thead>
     		<tr><th>Filtr:</th>
 			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
-			<th><input type="reset" value="Wyczyść" id="file-list-reset-button"/></th>
+			<th><input type="reset" value="{% trans "Clear filter" %}" id="file-list-reset-button"/></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -42,7 +42,7 @@ $(function() {
 
 {% block rightcolumn %}
 	<div id="last-edited-list">
-		<h2>Twoje ostatnio otwierane dokumenty:</h2>
+		<h2>{% trans "Your last edited documents" %}</h2>
 		<ol>
 			{% for	 name, date in last_docs %}
 			<li><a href="{% url wiki.views.document_detail name|urlencode %}"

@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="add_tag_dialog" class="dialog" data-ui-jsclass="AddTagDialog">
 	<form method="POST" action="#">
 		{% for field in forms.add_tag.visible_fields %}
@@ -11,8 +12,8 @@
 		<p data-ui-error-for="__all__"> </p>
 
 		<p class="action_area">
-			<button type="submit" class"ok" data-ui-action="save">Zapisz</button>
-			<button type="button" class="cancel" data-ui-action="cancel">Anuluj</button>
+			<button type="submit" class"ok" data-ui-action="save">{% trans "Save" %}</button>
+			<button type="button" class="cancel" data-ui-action="cancel">{% trans "Cancel" %}</button>
 		</p>
 	</form>
 </div>

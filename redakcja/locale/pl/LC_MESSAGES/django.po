@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-16 10:52+0000\n"
+"POT-Creation-Date: 2010-05-18 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,49 +16,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: templates/explorer/editor.html:53
-msgid "Refresh panel"
-msgstr "Odśwież panel"
+#: templates/admin/index.html:21
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
 
-#: templates/explorer/editor.html:67
-msgid "Print version"
-msgstr "Wersja do druku"
+#: templates/admin/index.html:22
+#, python-format
+msgid "%(name)s"
+msgstr ""
 
-#: templates/explorer/editor.html:96
-msgid "Next page"
-msgstr "Następna strona"
+#: templates/admin/index.html:32
+msgid "Add"
+msgstr ""
 
-#: templates/explorer/editor.html:100
-msgid "Zoom in"
-msgstr "Powiększ"
+#: templates/admin/index.html:38
+msgid "Change"
+msgstr ""
 
-#: templates/explorer/editor.html:103
-msgid "Zoom out"
-msgstr "Zmniejsz"
+#: templates/admin/index.html:48
+msgid "You don't have permission to edit anything."
+msgstr ""
 
-#: templates/explorer/editor.html:106
-msgid "Reset zoom"
-msgstr "Oryginalny rozmiar"
+#: templates/admin/index.html:56
+msgid "Recent Actions"
+msgstr ""
 
-#: templates/explorer/editor.html:155
-msgid "History"
-msgstr "Historia"
+#: templates/admin/index.html:57
+msgid "My Actions"
+msgstr ""
 
-#: templates/explorer/editor.html:156
-msgid "Push"
-msgstr "Zatwierdź"
+#: templates/admin/index.html:61
+msgid "None available"
+msgstr ""
 
-#: templates/explorer/editor.html:157
-msgid "Pull"
-msgstr "Uaktualnij"
-
-#: templates/explorer/editor.html:158
-msgid "Save"
-msgstr "Zapisz"
-
-#: templates/explorer/editor.html:159
-msgid "Quick save"
-msgstr "Szybki zapis"
+#: templates/admin/index.html:75
+msgid "Unknown content"
+msgstr ""
 
 #: templates/registration/head_login.html:5
 msgid "Log Out"
@@ -67,3 +61,36 @@ msgstr "Wyloguj"
 #: templates/registration/head_login.html:9
 msgid "Log In"
 msgstr "Logowanie"
+
+#~ msgid "Refresh panel"
+#~ msgstr "Odśwież panel"
+
+#~ msgid "Print version"
+#~ msgstr "Wersja do druku"
+
+#~ msgid "Next page"
+#~ msgstr "Następna strona"
+
+#~ msgid "Zoom in"
+#~ msgstr "Powiększ"
+
+#~ msgid "Zoom out"
+#~ msgstr "Zmniejsz"
+
+#~ msgid "Reset zoom"
+#~ msgstr "Oryginalny rozmiar"
+
+#~ msgid "History"
+#~ msgstr "Historia"
+
+#~ msgid "Push"
+#~ msgstr "Zatwierdź"
+
+#~ msgid "Pull"
+#~ msgstr "Uaktualnij"
+
+#~ msgid "Save"
+#~ msgstr "Zapisz"
+
+#~ msgid "Quick save"
+#~ msgstr "Szybki zapis"

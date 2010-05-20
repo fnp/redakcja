@@ -7,12 +7,16 @@ import re
 import os
 import vstorage
 from vstorage import DocumentNotFound
-from wiki import settings
+from wiki import settings, constants
+from django.utils.translation import ugettext_lazy as _
 
 from django.http import Http404
 
 import logging
 logger = logging.getLogger("fnp.wiki")
+
+
+STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
 
 
 class DocumentStorage(object):
@@ -60,7 +64,14 @@ class DocumentStorage(object):
         return list(self.vstorage.all_pages())
 
     def history(self, title):
-        return list(self.vstorage.page_history(title))
+        def stage_desc(match):
+            stage = match.group(1)
+            return _("Finished stage: %s") % constants.DOCUMENT_STAGES_DICT[stage]
+
+        for changeset in self.vstorage.page_history(title):
+            changeset['description'] = STAGE_TAGS_RE.sub(stage_desc, changeset['description'])
+            yield changeset
+
 
 
 class Document(object):
@@ -110,3 +121,7 @@ class Document(object):
 
 def getstorage():
     return DocumentStorage(settings.REPOSITORY_PATH)
+
+#
+# Django models
+#

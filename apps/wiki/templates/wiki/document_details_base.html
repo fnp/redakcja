@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% load toolbar_tags %}
+{% load toolbar_tags i18n %}
+
 {% block title %}{{ document.name }} - {{ block.super }}{% endblock %}
 {% block extrahead %}
 {% load compressed %}
@@ -14,13 +15,6 @@
 {% endblock %}
 
 {% block maincontent %}
-<div id="loading-overlay">
-    <div id="loading-message">
-        <img src="{{STATIC_URL}}img/spinner.gif" />
-        <p>Ładowanie</p>
-    </div>
-</div>
-
 <div id="document-meta"
 	data-document-name="{{ document.name }}" style="display:none">
 
@@ -38,11 +32,12 @@
 <div id="header">
     <h1><a href="{% url wiki.views.document_list %}">Platforma</a></h1>
     <div id="tools">
-        <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">Pomoc</a>
+        <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">
+        {% trans "Help" %}</a>
         | {% include "registration/head_login.html" %}
-        | Wersja: <span id="document-revision">unknown</span>
+        | {% trans "Version" %}: <span id="document-revision">{% trans "Unknown" %}</span>
 		{% if not readonly %}
-            | <button style="margin-left: 6px" id="save-button">Zapisz</button>
+            | <button style="margin-left: 6px" id="save-button">{% trans "Save" %}</button>
 		{% endif %}
     </div>
     <ol id="tabs">

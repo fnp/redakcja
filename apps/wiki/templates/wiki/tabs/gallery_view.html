@@ -1,26 +1,25 @@
-<div class="vsplitbar" title="Klinknij aby (ro)zwinąć galerię.">
+{% load i18n %}
+<div class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
 </div>
 <div id="side-gallery">
     <!-- gallery toolbar -->
     <div class="toolbar">
         <button class="previous-page">
-            <img src="{{STATIC_URL}}icons/go-previous.png" alt="Poprzednia" title="Poprzednia"/>
+            <img src="{{STATIC_URL}}icons/go-previous.png" 
+            	alt="{% trans "Previous" %}" title="{% trans "Previous" %}"/>
         </button><input type="text" size="3" maxlength="3" value="1" class="page-number" />
         <button class="next-page">
-            <img src="{{STATIC_URL}}icons/go-next.png" alt="Następna" title="Następna"/>
+            <img src="{{STATIC_URL}}icons/go-next.png" 
+            	alt="{% trans "Next" %}" title="{% trans "Next" %}"/>
         </button>
-        <button class="zoom-in">
-            Powiększ
-        </button>
-        <button class="zoom-out">
-            Pomniejsz
-        </button>
+        <button class="zoom-in">{% trans "Zoom in" %}</button>
+        <button class="zoom-out">{% trans "Zoom out" %}</button>
         <div class="toolbar-end">
         </div>
     </div>
     <div class="error_message">
     </div>
     <div class="gallery-image">
-        <img src="{{MEDIA_URL}}/images/empty.png" />
+        <img src="{{MEDIA_URL}}images/empty.png" />
     </div>
 </div>

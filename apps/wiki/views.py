@@ -134,12 +134,14 @@ def document_text(request, name):
             document = storage.get_or_404(name, revision)
             document.text = form.cleaned_data['text']
 
-            storage.put(document,
-                author=form.cleaned_data['author'] or request.user.username,
-                comment=form.cleaned_data['comment'],
-                parent=revision,
-            )
+            comment = form.cleaned_data['comment']
 
+            if form.cleaned_data['stage_completed']:
+                comment += '\n#stage-finished: %s\n' % form.cleaned_data['stage_completed']
+
+            author = "%s <%s>" % (form.cleaned_data['author_name'], form.cleaned_data['author_email'])
+
+            storage.put(document, author=author, comment=comment, parent=revision)
             document = storage.get(name)
 
             return JSONResponse({

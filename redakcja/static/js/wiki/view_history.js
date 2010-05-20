@@ -96,6 +96,9 @@
 						tag: function(value) {
 							return tags.filter("*[value='"+value+"']").text();
 						}
+//                        description: function(value) {
+//						    return value.replace('\n', ');
+//						}
 					}
 				});
             });

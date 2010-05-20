@@ -1,10 +1,11 @@
 {% extends "wiki/document_details_base.html" %}
+{% load i18n %}
 
 {% block extrabody %}
 {{ block.super }}
-<script src="{{STATIC_URL}}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8">
+<script src="{{ STATIC_URL }}js/lib/codemirror/codemirror.js" type="text/javascript" charset="utf-8">
 </script>
-<script src="{{STATIC_URL}}js/wiki/loader.js" type="text/javascript" charset="utf-8"> </script>
+<script src="{{ STATIC_URL }}js/wiki/loader.js" type="text/javascript" charset="utf-8"> </script>
 {% endblock %}
 
 {% block tabs-menu %}
