@@ -22,7 +22,7 @@ class ButtonAdmin(admin.ModelAdmin):
     form = ButtonAdminForm
     list_display = ('slug', 'label', 'tooltip', 'accesskey')
     list_display_links = ('slug',)
-    list_editable = ('label', 'tooltip',)
+    list_editable = ('label', 'tooltip', 'accesskey')
     prepopulated_fields = {'slug': ('label',)}
 
 admin.site.register(models.Button, ButtonAdmin)

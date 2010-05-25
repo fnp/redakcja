@@ -6,6 +6,9 @@ requirements.pybundle
 # Python garbage
 *.pyc
 .coverage
+coverage.xml
+nosetests.xml
+pip-log.txt
 
 # Mac OS X garbage
 .DS_Store
