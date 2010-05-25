@@ -162,7 +162,7 @@ function ScriptletCenter()
 
         var text = this.XMLEditorSelectedText(context);
         if(!text) return done();
-        var original = text;
+        var original = text;$
 
 		nblck_each(exprs, function(expr, index) {
 			$progress.html(600 + index);
@@ -258,15 +258,20 @@ function ScriptletCenter()
 ScriptletCenter.prototype.callInteractive = function(opts) {
 	$progress = $('<span>Executing script</span>');
 	var self = this;
-
-	$.blockUI({
-		message: $progress,
-
-	});
-
+	
+	/* This won't work, 'cause the JS below might be synchronous :( */
+	/* var timer = setTimeout(function() {
+	    $.blockUI({message: $progress});
+	    timer = null;
+	}, 1000); */
+	
+	$.blockUI({message: $progress, showOverlay: false});
 
 	self.scriptlets[opts.action](opts.context, opts.extra, function(){
-		$.unblockUI(); // done
+	    /*if(timer) 
+	        clearTimeout(timer);    
+	    else */
+	    $.unblockUI(); // done
 	});
 }
 
@@ -277,8 +282,8 @@ ScriptletCenter.prototype.XMLEditorSelectedText = function(editor) {
 
 ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(editor, replacement)
 {
-	$progress.html("Replacing text");
-    editor.replaceSelection(replacement);
+	$progress.html("Replacing text");	
+	editor.replaceSelection(replacement);
 };
 
 ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, n) {
