@@ -44,7 +44,7 @@
     }
 
     /* Convert HTML frament to plaintext */
-    var ANNOT_ALLOWED = ['wyroznienie', 'slowo_obce', 'osoba'];
+    var ANNOT_FORBIDDEN = ['pt', 'pa', 'pr', 'pe', 'begin', 'end', 'theme'];
 
     function html2plainText(fragment){
         var text = "";
@@ -52,11 +52,12 @@
         $(fragment.childNodes).each(function(){
             if (this.nodeType == 3) // textNode
                 text += this.nodeValue;
-            else
+            else {
                 if (this.nodeType == 1 &&
-                $.inArray($(this).attr('x-node'), ANNOT_ALLOWED) != -1) {
+                        $.inArray($(this).attr('x-node'), ANNOT_FORBIDDEN) == -1) {
                     text += html2plainText(this);
                 }
+            };
         });
 
         return text;
@@ -87,7 +88,7 @@
             return false;
         }
 
-        // BUG #273 - selected text can contain themes, which should be omited from
+        // BUG #273 - selected text can contain themes, which should be omitted from
         // defining term
         var text = html2plainText(range.cloneContents());
 
@@ -232,7 +233,7 @@
             });
         }
 
-        if ($origin.is('.motyw')) {
+        if ($origin.is('.motyw')){
             $('.delete-button', $overlay).click(function(){
                 if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw ?")) {
                     $('[theme-class=' + $origin.attr('theme-class') + ']').remove();
@@ -240,7 +241,17 @@
                     $(document).unbind('click.blur-overlay');
                     return false;
                 };
-                            });
+            });
+        }
+        else if($box.is('*[x-annotation-box]')) {
+            $('.delete-button', $overlay).click(function(){
+                if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten przypis?")) {
+                    $origin.remove();
+                    $overlay.remove();
+                    $(document).unbind('click.blur-overlay');
+                    return false;
+                };
+            });
         }
         else {
             $('.delete-button', $overlay).hide();
