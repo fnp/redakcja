@@ -1,20 +1,21 @@
 {% load toolbar_tags %}
 <div class="toolbar">
-    <select name="button_group" id="toolbar-button-group-select" size="1">
+    <select class="group_selector">
         {% for group in toolbar_groups %}
         <option value="{{ group.slug }}" {% if forloop.first %}selected="selected"{% endif %}>{{ group.name }}</option>
         {% endfor %}
     </select>
 
-    <div class="toolbar-button-groups-container">
+	<button type="button" class="prev">&lt;</button>
+    <div class="button_group_container">    	
         {% for group in toolbar_groups %}
-        <div data-group="{{group.slug}}" class="toolbar-buttons-container">
+        <ul data-group="{{ group.slug }}" class="button_group">
             {# buttons for this group #}
             {% for button in group.button_set.all %}
-            {% toolbar_button button %}
+            	<li class="toolbar-button">{% toolbar_button button %}</li>
             {% endfor %}
-        </div>
+        </ul>
         {% endfor %}
     </div>
-    <div class="toolbar-end"></div>
+    <button type="button" class="next">&gt;</button>
 </div>

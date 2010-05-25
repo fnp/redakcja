@@ -3,6 +3,7 @@ COMPRESS_CSS = {
     'detail': {
          'source_filenames': (
             'css/master.css',
+            'css/toolbar.css',
             'css/gallery.css',
             'css/history.css',
             'css/summary.css',
@@ -25,10 +26,10 @@ COMPRESS_JS = {
     'detail': {
         'source_filenames': (
                 # libraries
-                'js/jquery-1.4.2.min.js',
-                'js/jquery.autocomplete.js',
-                'js/jquery.blockui.js',
-                'js/jquery.elastic.js',
+                'js/lib/jquery-1.4.2.min.js',
+                'js/lib/jquery/jquery.autocomplete.js',
+                'js/lib/jquery/jquery.blockui.js',
+                'js/lib/jquery/jquery.elastic.js',
                 'js/button_scripts.js',
                 'js/slugify.js',
 
@@ -38,6 +39,7 @@ COMPRESS_JS = {
 
                 # base UI
                 'js/wiki/base.js',
+                'js/wiki/toolbar.js',
 
                 # dialogs
                 'js/wiki/dialog_save.js',
@@ -55,7 +57,7 @@ COMPRESS_JS = {
      },
     'listing': {
         'source_filenames': (
-                'js/jquery-1.4.2.min.js',
+                'js/lib/jquery-1.4.2.min.js',
                 'js/slugify.js',
         ),
         'output_filename': 'compressed/listing_scripts_?.js',
@@ -65,6 +67,6 @@ COMPRESS_JS = {
 COMPRESS = True
 COMPRESS_CSS_FILTERS = None
 COMPRESS_JS_FILTERS = None
-COMPRESS_AUTO = False
+COMPRESS_AUTO = True
 COMPRESS_VERSION = True
 COMPRESS_VERSIONING = 'compress.versioning.hash.MD5Versioning'

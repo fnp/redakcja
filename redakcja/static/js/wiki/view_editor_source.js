@@ -46,25 +46,9 @@
 						return true;
 					});
 
-					$('#source-editor .toolbar button').click(function(event){
-						event.preventDefault();
-						var params = eval("(" + $(this).attr('data-ui-action-params') + ")");
-						scriptletCenter.callInteractive({
-							action: $(this).attr('data-ui-action'),
-							context: self.codemirror,
-							extra: params
-						});
+					$('#source-editor .toolbar').toolbarize({
+					    actionContext: self.codemirror
 					});
-
-					$('.toolbar select').change(function(event){
-						var slug = $(this).val();
-
-						$('.toolbar-buttons-container').hide().filter('[data-group=' + slug + ']').show();
-						$(window).resize();
-					});
-
-					$('.toolbar-buttons-container').hide();
-					$('.toolbar select').change();
 
 					console.log("Initialized CodeMirror");
 

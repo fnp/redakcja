@@ -91,7 +91,7 @@ $(function()
 				return "Na stronie mogą być nie zapisane zmiany.";
 			};
         };
-
+        
 		console.log("Fetching document's text");
 
 		$(document).bind('wlapi_document_changed', function(event, doc) {
