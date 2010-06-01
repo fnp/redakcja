@@ -140,3 +140,17 @@ WL_API_CONFIG = {
 }
 
 # Import localsettings file, which may override settings defined here
+
+try:
+    import logging
+    if os.path.isfile(LOGGING_CONFIG_FILE):
+        import logging.config
+        logging.config.fileConfig(LOGGING_CONFIG_FILE)
+    else:
+        import sys
+        logging.basicConfig(stream=sys.stderr)
+except NameError:
+    print "No logging"
+    pass
+except ImportError as exc:
+    raise

@@ -58,3 +58,74 @@ def ajax_require_permission(permission):
             return view(request, *args, **kwargs)
         return authorized_view
     return decorator
+
+import collections
+
+def recursive_groupby(iterable):
+    """    
+#    >>> recursive_groupby([1,2,3,4,5])
+#    [1, 2, 3, 4, 5]
+    
+    >>> recursive_groupby([[1]])
+    [1]
+    
+    >>> recursive_groupby([('a', 1),('a', 2), 3, ('b', 4), 5])
+    ['a', [1, 2], 3, 'b', [4], 5]
+    
+    >>> recursive_groupby([('a', 'x', 1),('a', 'x', 2), ('a', 'x', 3)])
+    ['a', ['x', [1, 2, 3]]]
+   
+    """
+
+    def _generator(iterator):
+        group = None
+        grouper = None
+
+        for item in iterator:
+            if not isinstance(item, collections.Sequence):
+                if grouper is not None:
+                    yield grouper
+                    if len(group):
+                        yield recursive_groupby(group)
+                    group = None
+                    grouper = None
+                yield item
+                continue
+            elif len(item) == 1:
+                if grouper is not None:
+                    yield grouper
+                    if len(group):
+                        yield recursive_groupby(group)
+                    group = None
+                    grouper = None
+                yield item[0]
+                continue
+            elif not len(item):
+                continue
+
+            if grouper is None:
+                group = [item[1:]]
+                grouper = item[0]
+                continue
+
+            if grouper != item[0]:
+                if grouper is not None:
+                    yield grouper
+                    if len(group):
+                        yield recursive_groupby(group)
+                    group = None
+                    grouper = None
+                group = [item[1:]]
+                grouper = item[0]
+                continue
+
+            group.append(item[1:])
+
+        if grouper is not None:
+            yield grouper
+            if len(group):
+                yield recursive_groupby(group)
+            group = None
+            grouper = None
+
+    return list(_generator(iterable))

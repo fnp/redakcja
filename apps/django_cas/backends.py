@@ -53,7 +53,7 @@ def _verify_cas2(ticket, service):
     except:
         import traceback
         traceback.print_exc()
-        print "****"
+        print "****", url
         print response
         print "****"
     finally:

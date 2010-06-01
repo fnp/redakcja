@@ -27,18 +27,18 @@ def urlquote(url, safe='/'):
     """Quotes URL
 
     >>> urlquote(u'Za\u017c\xf3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144')
-    'Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84'
+    'Za%C5%BC%C3%B3%C5%82%C4%87%20g%C4%99%C5%9Bl%C4%85%20ja%C5%BA%C5%84'
     """
-    return urllib.quote(url.replace(' ', '_').encode('utf-8', 'ignore'), safe)
+    return urllib.quote(url.encode('utf-8', 'ignore'), safe)
 
 
 def urlunquote(url):
     """Unqotes URL
 
     # >>> urlunquote('Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84')
-    # u'Za\u017c\xf3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144'
+    # u'Za\u017c\xf3\u0142\u0107_g\u0119\u015bl\u0105 ja\u017a\u0144'
     """
-    return unicode(urllib.unquote(url), 'utf-8', 'ignore').replace('_', ' ')
+    return unicode(urllib.unquote(url), 'utf-8', 'ignore')
 
 
 def find_repo_path(path):
@@ -151,12 +151,12 @@ class VersionedStorage(object):
     def _file_path(self, title):
         return os.path.join(self.path, urlquote(title, safe=''))
 
-    def _title_to_file(self, title):
-        return os.path.join(self.repo_prefix, urlquote(title, safe=''))
+    def _title_to_file(self, title, type=".xml"):
+        return os.path.join(self.repo_prefix, urlquote(title, safe='')) + type
 
     def _file_to_title(self, filename):
         assert filename.startswith(self.repo_prefix)
-        name = filename[len(self.repo_prefix):].strip('/')
+        name = filename[len(self.repo_prefix):].strip('/').split('.', 1)[0]
         return urlunquote(name)
 
     def __contains__(self, title):
@@ -411,10 +411,12 @@ class VersionedStorage(object):
                         rev = -1
                     yield title, rev, date, author, comment
 
-    def all_pages(self):
+    def all_pages(self, type=''):
         tip = self.repo['tip']
         """Iterate over the titles of all pages in the wiki."""
-        return [urlunquote(filename) for filename in tip]
+        return [self._file_to_title(filename) for filename in tip
+                  if not filename.startswith('.')
+                    and filename.endswith(type) ]
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""

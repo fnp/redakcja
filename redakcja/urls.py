@@ -4,6 +4,8 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.conf import settings
 
+import wiki.urls
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -26,4 +28,7 @@ urlpatterns = patterns('',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
         {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+    (r'^documents/', include(wiki.urls)),
+    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
+
 )

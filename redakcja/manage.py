@@ -9,10 +9,15 @@ except ImportError:
 
 if __name__ == "__main__":
     # Append lib and apps directories to PYTHONPATH
-    from os import path
+    import os
     import sys
 
-    PROJECT_ROOT = path.realpath(path.dirname(__file__))
-    sys.path += [PROJECT_ROOT + '/../apps', PROJECT_ROOT + '/../lib']
+    PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
+    sys.path += [os.path.realpath(os.path.join(*x)) for x in (
+        (PROJECT_ROOT, '..', 'apps'),
+        (PROJECT_ROOT, '..', 'lib')
+    )]
+
+
 
     execute_manager(settings)

@@ -1,47 +1,64 @@
 import os
+import functools
+import logging
+logger = logging.getLogger("fnp.wiki")
 
 from django.conf import settings
 
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST, require_GET
 from django.core.urlresolvers import reverse
-from wiki.helpers import JSONResponse, JSONFormInvalid, JSONServerError, ajax_require_permission
+from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
+                ajax_require_permission, recursive_groupby)
 from django import http
 
-from wiki.models import getstorage, DocumentNotFound
+from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name
 from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
 
-import wlapi
 
 #
 # Quick hack around caching problems, TODO: use ETags
 #
 from django.views.decorators.cache import never_cache
 
-import logging
-logger = logging.getLogger("fnp.peanut.api")
-
+import wlapi
 import nice_diff
 import operator
 
 MAX_LAST_DOCS = 10
 
 
+def normalized_name(view):
+
+    @functools.wraps(view)
+    def decorated(request, name, *args):
+        normalized = normalize_name(name)
+        logger.debug('View check %r -> %r', name, normalized)
+
+        if normalized != name:
+            return http.HttpResponseRedirect(
+                        reverse('wiki_' + view.__name__, kwargs={'name': normalized}))
+
+        return view(request, name, *args)
+
+    return decorated
+
+
 @never_cache
-def document_list(request, template_name='wiki/document_list.html'):
-    # TODO: find a way to cache "Storage All"
-    return direct_to_template(request, template_name, extra_context={
-        'document_list': getstorage().all(),
+def document_list(request):
+    return direct_to_template(request, 'wiki/document_list.html', extra_context={
+        'docs': getstorage().all(),
         'last_docs': sorted(request.session.get("wiki_last_docs", {}).items(),
                         key=operator.itemgetter(1), reverse=True),
     })
 
 
 @never_cache
-def document_detail(request, name, template_name='wiki/document_details.html'):
+@normalized_name
+def editor(request, name, template_name='wiki/document_details.html'):
     storage = getstorage()
 
     try:
@@ -71,7 +88,9 @@ def document_detail(request, name, template_name='wiki/document_details.html'):
 
 
 @require_GET
-def document_detail_readonly(request, name, template_name='wiki/document_details_readonly.html'):
+@normalized_name
+def editor_readonly(request, name, template_name='wiki/document_details_readonly.html'):
+    name = normalize_name(name)
     storage = getstorage()
 
     try:
@@ -97,7 +116,8 @@ def document_detail_readonly(request, name, template_name='wiki/document_details
     })
 
 
-def document_create_missing(request, name):
+@normalized_name
+def create_missing(request, name):
     storage = getstorage()
 
     if request.method == "POST":
@@ -122,7 +142,8 @@ def document_create_missing(request, name):
 
 
 @never_cache
-def document_text(request, name):
+@normalized_name
+def text(request, name):
     storage = getstorage()
 
     if request.method == 'POST':
@@ -174,7 +195,7 @@ def document_text(request, name):
 
 
 @never_cache
-def document_gallery(request, directory):
+def gallery(request, directory):
     try:
         base_url = ''.join((
                         smart_unicode(settings.MEDIA_URL),
@@ -201,7 +222,8 @@ def document_gallery(request, directory):
 
 
 @never_cache
-def document_diff(request, name):
+@normalized_name
+def diff(request, name):
     storage = getstorage()
 
     revA = int(request.GET.get('from', 0))
@@ -221,7 +243,8 @@ def document_diff(request, name):
 
 
 @never_cache
-def document_history(request, name):
+@normalized_name
+def history(request, name):
     storage = getstorage()
 
     # TODO: pagination
@@ -232,7 +255,8 @@ def document_history(request, name):
 
 @require_POST
 @ajax_require_permission('wiki.can_change_tags')
-def document_add_tag(request, name):
+def add_tag(request, name):
+    name = normalize_name(name)
     storage = getstorage()
 
     form = DocumentTagForm(request.POST, prefix="addtag")
@@ -248,7 +272,9 @@ def document_add_tag(request, name):
 
 @require_POST
 @ajax_require_permission('wiki.can_publish')
-def document_publish(request, name):
+def publish(request, name):
+    name = normalize_name(name)
+
     storage = getstorage()
     document = storage.get_by_tag(name, "ready_to_publish")
 

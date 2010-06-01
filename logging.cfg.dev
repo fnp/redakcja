@@ -23,7 +23,7 @@ datefmt=
 class=logging.Formatter
 
 [handler_console]
-class=StreamHandler
+class=FileHandler
 level=DEBUG
 formatter=default
-args=(sys.stderr, ) 
+args=('redakcja.dev.log', ) 

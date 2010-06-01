@@ -1,29 +1,43 @@
+# -*- coding: utf-8
 from django.conf.urls.defaults import *
+from django.views.generic.simple import redirect_to
+from django.conf import settings
+
+
+PART = ur"""[ ĄĆĘŁŃÓŚŻŹąćęłńóśżź0-9\w_.-]+"""
 
 urlpatterns = patterns('wiki.views',
-    url(r'^$',
-        'document_list', name='wiki_doclist'),
+    url(r'^$', redirect_to, {'url': 'catalogue/'}),
 
-    url(r'^create/(?P<name>[^/]+)',
-        'document_create_missing', name='wiki_create_missing'),
+    url(r'^catalogue/$', 'document_list', name='wiki_document_list'),
+    url(r'^catalogue/([^/]+)/$', 'document_list'),
+    url(r'^catalogue/([^/]+)/([^/]+)/$', 'document_list'),
+    url(r'^catalogue/([^/]+)/([^/]+)/([^/]+)$', 'document_list'),
 
-    url(r'^gallery/(?P<directory>[^/]+)$',
-        'document_gallery', name="wiki_gallery"),
-    url(r'^(?P<name>[^/]+)/history$',
-        'document_history', name="wiki_history"),
-    url(r'^(?P<name>[^/]+)/text$',
-        'document_text', name="wiki_text"),
-    url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$',
-        'document_publish', name="wiki_publish"),
-    url(r'^(?P<name>[^/]+)/diff$',
-        'document_diff', name="wiki_diff"),
-    url(r'^(?P<name>[^/]+)/tags$',
-        'document_add_tag', name="wiki_add_tag"),
-    url(r'^(?P<name>[^/]+)/publish$', 'document_publish'),
+    url(r'^(?P<name>%s)$' % PART,
+        'editor', name="wiki_editor"),
 
     url(r'^(?P<name>[^/]+)/readonly$',
-        'document_detail_readonly', name="wiki_details_readonly"),
+        'editor_readonly', name="wiki_editor_readonly"),
 
-    url(r'^(?P<name>[^/]+)$',
-        'document_detail', name="wiki_details"),
+    url(r'^create/(?P<name>[^/]+)',
+        'create_missing', name='wiki_create_missing'),
+
+    url(r'^(?P<directory>[^/]+)/gallery$',
+        'gallery', name="wiki_gallery"),
+
+    url(r'^(?P<name>[^/]+)/history$',
+        'history', name="wiki_history"),
+
+    url(r'^(?P<name>[^/]+)/text$',
+        'text', name="wiki_text"),
+
+    url(r'^(?P<name>[^/]+)/publish$', 'publish', name="wiki_publish"),
+    url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="wiki_publish"),
+
+    url(r'^(?P<name>[^/]+)/diff$', 'diff', name="wiki_diff"),
+    url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
+
+
+
 )

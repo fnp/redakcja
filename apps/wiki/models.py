@@ -15,6 +15,25 @@ from django.http import Http404
 import logging
 logger = logging.getLogger("fnp.wiki")
 
+_PCHARS_DICT = dict(zip((ord(x) for x in u"ĄĆĘŁŃÓŚŻŹąćęłńóśżź "), u"ACELNOSZZacelnoszz_"))
+
+# I know this is barbaric, but I didn't find a better solution ;(
+def split_name(name):
+    parts = name.translate(_PCHARS_DICT).split('__')
+    logger.info("SPLIT %r -> %r", name, parts)
+    return parts
+
+def join_name(*parts, **kwargs):
+    name = u'__'.join(p.translate(_PCHARS_DICT) for p in parts)
+    logger.info("JOIN %r -> %r", parts, name)
+    return name
+
+def normalize_name(name):
+    """
+    >>> normalize_name("gąska".decode('utf-8'))
+    u'gaska'
+    """
+    return name.translate(_PCHARS_DICT).lower()
 
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
 
@@ -37,7 +56,7 @@ class DocumentStorage(object):
         except DocumentNotFound:
             raise Http404
 
-    def put(self, document, author, comment, parent):
+    def put(self, document, author, comment, parent=None):
         self.vstorage.save_text(
                 title=document.name,
                 text=document.text,
@@ -47,15 +66,14 @@ class DocumentStorage(object):
 
         return document
 
-    def create_document(self, id, text, title=None):
-        if title is None:
-            title = id.title()
+    def create_document(self, text, name):
+        title = u', '.join(p.title for p in split_name(name))
 
         if text is None:
             text = u''
 
-        document = Document(self, name=id, text=text, title=title)
-        return self.put(document, u"<wiki>", u"Document created.", None)
+        document = Document(self, name=name, text=text, title=title)
+        return self.put(document, u"<wiki>", u"Document created.")
 
     def delete(self, name, author, comment):
         self.vstorage.delete_page(name, author, comment)
@@ -109,15 +127,10 @@ class Document(object):
             gallery = os.path.basename(gallery)
 
         result['gallery'] = gallery
-
-        if 'title' not in result:
-            result['title'] = self.name.title()
-
         return result
 
     def info(self):
         return self.storage.vstorage.page_meta(self.name, self.revision)
-
 
 def getstorage():
     return DocumentStorage(settings.REPOSITORY_PATH)

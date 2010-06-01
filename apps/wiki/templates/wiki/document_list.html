@@ -1,5 +1,7 @@
 {% extends "wiki/base.html" %}
+
 {% load i18n %}
+{% load wiki %}
 
 {% block extrabody %}
 {{ block.super }}
@@ -9,7 +11,7 @@ $(function() {
         event.preventDefault();
         var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');
         $('#file-list tbody tr').hide().filter(function(index) {
-            return expr.test(slugify($('a', this).text()));
+            return expr.test(slugify( $('a', this).attr('data-id') ));
         }).show();
     }
 
@@ -29,9 +31,10 @@ $(function() {
 			</tr>
 		</thead>
 		<tbody>
-    	{% for file in document_list %}
+    	{% for doc in docs %}
             <tr>
-            	<td colspan="3"><a target="_blank" href="{% url wiki.views.document_detail file|urlencode %}">{{ file }}</a></td>
+            	<td colspan="3"><a target="_blank" data-id="{{doc}}" 
+					href="{% url wiki_editor doc %}">{{ doc|wiki_title }}</a></td>
 				<!-- placeholder </td> -->
 			</tr>
     	{% endfor %}
@@ -43,10 +46,10 @@ $(function() {
 {% block rightcolumn %}
 	<div id="last-edited-list">
 		<h2>{% trans "Your last edited documents" %}</h2>
-		<ol>
-			{% for	 name, date in last_docs %}
-			<li><a href="{% url wiki.views.document_detail name|urlencode %}"
-				target="_blank">{{ name }}</a><br/><span class="date">({{ date|date:"H:i:s, d/m/Y" }})</span></li>
+	    <ol>
+			{% for name, date in last_docs %}
+			<li><a href="{% url wiki_editor name %}"
+				target="_blank">{{ name|wiki_title }}</a><br/><span class="date">({{ date|date:"H:i:s, d/m/Y" }})</span></li>
 			{% endfor %}
 		</ol>
 	</div>
