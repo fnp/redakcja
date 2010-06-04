@@ -29,13 +29,12 @@ def update_application():
     os.system("pip install -r %s" % os.path.join(ROOT, 'etc', 'requirements.txt'))
     print "done."
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PYTHON = os.path.join(ROOT, 'pythonenv', 'bin', 'python')
 PYTHON_SITE = os.path.join(ROOT, 'pythonenv', 'lib', 'python2.6', 'site-packages')
 
 PROJECT_NAME = 'redakcja'
-PROJECT_ROOT = os.path.join(ROOT, 'app')
+PROJECT_ROOT = os.path.join(ROOT, 'application')
 
 MEDIA_ROOT = os.path.join(ROOT, 'www', 'media')
 

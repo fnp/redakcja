@@ -326,33 +326,40 @@ class VersionedStorage(object):
 
     def _find_filectx(self, title, rev=None):
         """Find the last revision in which the file existed."""
-        repo_file = self._title_to_file(title)
-        changectx = self._changectx()  # start with tip
-        visited = set()
+        tip = self._changectx()  # start with tip
 
-        stack = [changectx]
-        visited.add(changectx)
+        def tree_search(tip, repo_file):
+            logging.info("Searching for %r", repo_file)
+            current = tip
+            visited = set()
 
-        while repo_file not in changectx:
-            if not stack:
-                raise DocumentNotFound(title)
+            stack = [current]
+            visited.add(current)
 
-            changectx = stack.pop()
-            for parent in changectx.parents():
-                if parent not in visited:
-                    stack.append(parent)
-                    visited.add(parent)
+            while repo_file not in current:
+                if not stack:
+                    raise LookupError
 
-        try:
-            fctx = changectx[repo_file]
+                current = stack.pop()
+                for parent in current.parents():
+                    if parent not in visited:
+                        stack.append(parent)
+                        visited.add(parent)
 
+            fctx = current[repo_file]
             if rev is not None:
                 fctx = fctx.filectx(rev)
                 fctx.filerev()
-
             return fctx
+
+        try:
+            return tree_search(tip, self._title_to_file(title))
         except (IndexError, LookupError) as e:
-            raise DocumentNotFound(title)
+            logging.info("XML file not found, trying plain")
+            try:
+                return tree_search(tip, self._title_to_file(title, type=''))
+            except (IndexError, LookupError) as e:
+                raise DocumentNotFound(title)
 
     def page_history(self, title):
         """Iterate over the page's history."""

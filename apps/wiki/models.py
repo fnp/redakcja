@@ -15,12 +15,13 @@ from django.http import Http404
 import logging
 logger = logging.getLogger("fnp.wiki")
 
-_PCHARS_DICT = dict(zip((ord(x) for x in u"ĄĆĘŁŃÓŚŻŹąćęłńóśżź "), u"ACELNOSZZacelnoszz_"))
+
+# _PCHARS_DICT = dict(zip((ord(x) for x in u"ĄĆĘŁŃÓŚŻŹąćęłńóśżź "), u"ACELNOSZZacelnoszz_"))
+_PCHARS_DICT = dict(zip((ord(x) for x in u" "), u"_"))
 
 # I know this is barbaric, but I didn't find a better solution ;(
 def split_name(name):
     parts = name.translate(_PCHARS_DICT).split('__')
-    logger.info("SPLIT %r -> %r", name, parts)
     return parts
 
 def join_name(*parts, **kwargs):

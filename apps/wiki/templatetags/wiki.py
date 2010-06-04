@@ -5,7 +5,7 @@ from django import template
 
 register = template.Library()
 
-# from wiki.models import split_name
+from wiki.models import split_name
 
 @register.filter
 @stringfilter
