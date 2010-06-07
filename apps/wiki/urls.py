@@ -26,4 +26,6 @@ urlpatterns = patterns('wiki.views',
 
     url(r'^(?P<name>[^/]+)$',
         'document_detail', name="wiki_details"),
+    
+    url(r'^ping/$', 'ping', name='ping'),
 )
