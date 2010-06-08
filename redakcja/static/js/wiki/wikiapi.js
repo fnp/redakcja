@@ -44,9 +44,6 @@
 
 		if (vname == "ajax_publish")
 			return base_path + "/" + arguments[1] + "/publish";
-		
-		if (vname == 'ping')
-		    return base_path + '/ping/'
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
@@ -323,20 +320,4 @@
 	};
 
 	$.wikiapi.WikiDocument = WikiDocument;
-	
-	
-	var ping = function () {
-        $.ajax({
-            url : reverse('ping'),
-			timeout: 2000,
-            complete : function () {
-                setTimeout(function () {
-                    ping();
-                }, 600000);
-            }
-        });
-    };
-	
-    ping();
-
 })(jQuery);

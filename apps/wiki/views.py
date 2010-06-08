@@ -256,7 +256,3 @@ def document_publish(request, name):
         return JSONResponse({"result": api.publish_book(document)})
     except wlapi.APICallException, e:
         return JSONServerError({"message": str(e)})
-
-
-def ping(request):
-    return http.HttpResponse('pong')
