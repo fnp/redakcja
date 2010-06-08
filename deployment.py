@@ -25,6 +25,9 @@ class DeploySite(object):
             self.env['PYTHON_BIN'] = os.path.join(
                         self.env['PYTHON_BASE'], 'bin', 'python') + self.env['PYTHON_VERSION']
 
+        if 'PIP_BIN' not in self.env:
+            self.env['PIP_BIN'] = os.path.join(self.env['PYTHON_BASE'], 'bin', 'pip')
+
         if 'PYTHON_SITE' not in self.env:
             self.env['PYTHON_SITE'] = os.path.join(
                         self.env['PYTHON_BASE'], 'lib',
@@ -113,11 +116,11 @@ class PIPSite(DeploySite):
 
     def install_dependencies(self):
         self.info("Installing requirements")
-        os.system("pip install -r %s" % self.find_resource('requirements.txt'))
+        os.system("%s install -r %s" % (self.env['PIP_BIN'], self.find_resource('requirements.txt')))
 
         try:
             self.info("Installing local requirements")
-            os.system("pip install -r %s" % self.find_resource('requirements_local.txt'))
+            os.system("%s install -r %s" % (self.env['PIP_BIN'], self.find_resource('requirements_local.txt')))
         except ValueError:
             pass
 
