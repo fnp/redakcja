@@ -74,9 +74,11 @@ class DeploySite(object):
         self.restart_app()
 
     def find_resource(self, path):
-        full_path = os.path.join(self.env['APP_DIR'], path)
-        if os.path.isfile(full_path):
-            return full_path
+        for dir in (self.env['CONFIG_DIR'], self.env['APP_DIR']):
+            full_path = os.path.join(dir, path)
+            if os.path.isfile(full_path):
+                return full_path
+
         raise ValueError("Resource '%s' not found" % path)
 
     @classmethod
