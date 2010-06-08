@@ -5,7 +5,7 @@ import os
 import sys
 import logging
 
-logging.basicConfig(stream=sys.stderr, format="%(levelname)s:: %(message)s")
+logging.basicConfig(stream=sys.stderr, format="%(levelname)s:: %(message)s", level=logging.INFO)
 
 from string import Template
 
