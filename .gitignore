@@ -2,10 +2,12 @@ localsettings.py
 dev.sqlite
 requirements.pybundle
 *~
+*.orig
 
 # Python garbage
 *.pyc
 .coverage
+.coveragerc
 coverage.xml
 nosetests.xml
 pip-log.txt
