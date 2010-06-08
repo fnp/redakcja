@@ -219,7 +219,7 @@
 			type: "POST",
 			dataType: "json",
 			data: data,
-			timeout: 5000,
+			timeout: 15000,
 			success: function(data) {
 				var changed = false;
 
