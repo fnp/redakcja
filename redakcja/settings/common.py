@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import os.path
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
@@ -102,8 +103,6 @@ FIREPYTHON_LOGGER_NAME = "fnp"
 # CAS_SERVER_URL = "http://cas.fnp.pl/
 CAS_LOGOUT_COMPLETELY = True
 
-from compress_settings import *
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -139,17 +138,7 @@ WL_API_CONFIG = {
     "AUTH_PASSWD": "platforma",
 }
 
-# Import localsettings file, which may override settings defined here
-
-from localsettings import *
-
 try:
-    import logging
-    if os.path.isfile(LOGGING_CONFIG_FILE):
-        import logging.config
-        logging.config.fileConfig(LOGGING_CONFIG_FILE)
-    else:
-        import sys
-        logging.basicConfig(stream=sys.stderr)
-except ImportError as exc:
-    raise
+    from redakcja.settings.compress import *
+except ImportError:
+    pass

@@ -8,11 +8,20 @@
 #  or localsettings.sample instead.
 #
 
+# THIS IS REQUIRED
+from redakcja.settings import *
+
 # Path to repository with managed documents
-REPOSITORY_PATH = '/home/user/repository'
+WIKI_REPOSITORY_PATH = '/home/lrekucki/projekty/fundacja/books'
+
+LOGGING_CONFIG_FILE = "/home/lrekucki/projekty/fundacja/redakcja/logging.cfg.dev"
+
+STATIC_ROOT = '/home/lrekucki/projekty/fundacja/redakcja/redakcja/static/'
+MEDIA_ROOT = '/home/lrekucki/projekty/fundacja/media/'
 
 # Subdirectory of STATIC_ROOT containing images
 IMAGE_DIR = 'images'
 
-CAS_SERVICE_URL = 'http://stigma.nowoczesnapolska.org.pl/cas/'
-
+CAS_SERVER_URL = 'http://logowanie.wolnelektury.pl/cas/'
+DEBUG = True
+COMPRESS = False
