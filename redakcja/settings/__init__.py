@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from settings.common import *
+from .common import *
 
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = PROJECT_ROOT + '/dev.sqlite'             # Or path to database file if using sqlite3.

@@ -1,4 +1,4 @@
-#!$PYTHON
+#!$PYTHON_BIN
 import site
 site.addsitedir('$PYTHON_SITE')
 
@@ -12,9 +12,9 @@ sys.stdout = sys.stderr
 
 # Add apps and lib directories to PYTHONPATH
 sys.path = [
-    '$PROJECT_ROOT',
-	'$PROJECT_ROOT/lib',
-	'$PROJECT_ROOT/apps',
+    '$APP_DIR',
+	'$APP_DIR/lib',
+	'$APP_DIR/apps',
 ] + sys.path
 
 # Run Django

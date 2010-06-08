@@ -67,6 +67,9 @@ class DeploySite(object):
     def update_app(self):
         pass
 
+    def update_config(self):
+        pass
+
     def install_dependencies(self):
         pass
 
@@ -98,6 +101,8 @@ class WSGISite(DeploySite):
             self.env['WSGI_FILE'] = os.path.join(self.env['ROOT'], 'www',
                                         'wsgi', self.env['PROJECT_NAME']) + '.wsgi'
 
+        self.env['WSGI_DIR'] = os.path.dirname(self.env['WSGI_FILE'])
+
         if 'WSGI_SOURCE_FILE' not in self.env:
             self.env['WSGI_SOURCE_FILE'] = 'wsgi_app.template'
 
@@ -109,6 +114,8 @@ class WSGISite(DeploySite):
         os.system("touch %s" % self.env['WSGI_FILE'])
 
     def update_config(self):
+        super(WSGISite, self).update_config()
+
         source = self.find_resource(self.env['WSGI_SOURCE_FILE'])
         self.render_template(source, self.env['WSGI_FILE'])
 
@@ -142,5 +149,7 @@ class ApacheSite(DeploySite):
             self.env['VHOST_FILE'] = os.path.join(self.env['CONFIG_DIR'], self.env['PROJECT_NAME'] + '.vhost')
 
     def update_config(self):
+        super(ApacheSite, self).update_config()
+
         source = self.find_resource(self.env['VHOST_SOURCE_FILE'])
-        self.render_template(source, self.env['VHOST_CONFIG_FILE'])
+        self.render_template(source, self.env['VHOST_FILE'])
