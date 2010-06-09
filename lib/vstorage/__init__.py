@@ -18,9 +18,10 @@ os.environ['HGENCODING'] = 'utf-8'
 os.environ['HGMERGE'] = "internal:merge"
 
 import mercurial.hg
-import mercurial.ui
 import mercurial.revlog
 import mercurial.util
+
+from vstorage.hgui import SilentUI
 
 
 def urlquote(url, safe='/'):
@@ -129,10 +130,7 @@ class VersionedStorage(object):
             os.makedirs(self.path)
         self.repo_path = find_repo_path(self.path)
 
-        self.ui = mercurial.ui.ui()
-        self.ui.quiet = True
-        self.ui._report_untrusted = False
-        self.ui.setconfig('ui', 'interactive', False)
+        self.ui = SilentUI()
 
         if self.repo_path is None:
             self.repo_path = self.path
@@ -148,8 +146,8 @@ class VersionedStorage(object):
         """Close and reopen the repo, to make sure we are up to date."""
         self.repo = mercurial.hg.repository(self.ui, self.repo_path)
 
-    def _file_path(self, title):
-        return os.path.join(self.path, urlquote(title, safe=''))
+    def _file_path(self, title, type='.xml'):
+        return os.path.join(self.path, urlquote(title, safe='')) + type
 
     def _title_to_file(self, title, type=".xml"):
         return os.path.join(self.repo_prefix, urlquote(title, safe='')) + type
@@ -160,7 +158,7 @@ class VersionedStorage(object):
         return urlunquote(name)
 
     def __contains__(self, title):
-        return urlquote(title) in self.repo['tip']
+        return self._title_to_file(title) in self.repo['tip']
 
     def __iter__(self):
         return self.all_pages()
@@ -220,6 +218,8 @@ class VersionedStorage(object):
             msg = self.merge_changes(changectx, repo_file, comment, author, parent)
             author = '<wiki>'
             comment = msg.encode('utf-8')
+
+        logger.debug("Commiting %r", repo_file)
 
         self._commit([repo_file], comment, author)
 
@@ -440,3 +440,12 @@ class VersionedStorage(object):
         for filename in modified + added + removed + deleted:
             if filename.startswith(self.repo_prefix):
                 yield self._file_to_title(filename)
+
+    def revert(self, pageid, rev, **commit_args):
+        """ Make the given version of page the current version (reverting changes). """
+
+        # Find the old version
+        fctx = self._find_filectx(pageid, rev)
+
+        # Restore the contents
+        self.save_data(pageid, fctx.data(), **commit_args)

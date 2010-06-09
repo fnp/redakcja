@@ -60,6 +60,7 @@ class TestVersionedStorage(object):
                     text=text, author=author,
                     comment=comment, parent=None)
 
+
         saved_text, rev = self.repo.page_text(title)
         assert_equal(saved_text, text)
         assert_equal(rev, 0)
@@ -128,11 +129,11 @@ text
                     text=text, author=author,
                     comment=comment, parent=None)
 
-        assert title in self.repo
+        ok_(title in self.repo, "Document not in repository.")
 
         self.repo.delete_page(title, author, comment)
 
-        assert title not in self.repo
+        ok_(title not in self.repo, "Document in repository after delete")
 
     @raises(vstorage.DocumentNotFound)
     def test_document_not_found(self):
@@ -161,6 +162,24 @@ text
             assert_equal(entry["description"], COMMITS[n]["comment"])
             assert_equal(entry["tag"], [])
 
+    def test_data_revert(self):
+        COMMITS = [
+            {u"title": u"one", "author": "bunny", "text":"1.1", "comment": "1"},
+            {u"title": u"one", "author": "frank", "text":"1.2", "comment": "2"},
+            {u"title": u"two", "author": "bunny", "text":"2.1", "comment": "3"},
+            {u"title": u"one", "author": "frank", "text":"1.3", "comment": "4"},
+        ]
+
+        for commit in COMMITS:
+            self.repo.save_text(**commit)
+
+        # now revert last change on one
+        self.repo.revert(u"one", 0)
+        assert_equal(self.repo.page_text(u"one"), (u"1.1", 3))
+        assert_equal(self.repo.page_text(u"two"), (u"2.1", 0))
+
+        self.repo.revert(u"one", 2)
+        assert_equal(self.repo.page_text(u"one"), (u"1.3", 4))
 
 class TestVSTags(object):
 
