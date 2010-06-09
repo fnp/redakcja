@@ -32,7 +32,7 @@ def join_name(*parts, **kwargs):
 def normalize_name(name):
     """
     >>> normalize_name("gąska".decode('utf-8'))
-    u'gaska'
+    u'g\u0105ska'
     """
     return name.translate(_PCHARS_DICT).lower()
 
@@ -49,6 +49,10 @@ class DocumentStorage(object):
 
     def get_by_tag(self, name, tag):
         text, rev = self.vstorage.page_text_by_tag(name, tag)
+        return Document(self, name=name, text=text, revision=rev)
+
+    def revert(self, name, revision):
+        text, rev = self.vstorage.revert(name, revision)
         return Document(self, name=name, text=text, revision=rev)
 
     def get_or_404(self, *args, **kwargs):

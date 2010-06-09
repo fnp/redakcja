@@ -53,5 +53,5 @@ class SilentUI(mercurial.ui.ui):
     def traceback(self, exc=None):
         if exc is not None: self.__logger.exception()
 
-    def progress(self, *args):
+    def progress(self, *args, **kwargs):
         pass
