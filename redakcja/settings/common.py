@@ -138,6 +138,8 @@ WL_API_CONFIG = {
     "AUTH_PASSWD": "platforma",
 }
 
+SHOW_APP_VERSION = False
+
 try:
     from redakcja.settings.compress import *
 except ImportError:
