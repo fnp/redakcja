@@ -1,9 +1,14 @@
 {% load i18n %}
 <div id="history-view-editor" class="editor" style="display: none">
     <div class="toolbar">
-    	<button type="button" id="make-diff-button">{% trans "Compare versions" %}</button>
-		<button type="button" id="tag-changeset-button">{% trans "Mark version" %}</button>
-		<button id="open-preview-button"
+    	<button type="button" id="make-diff-button"
+			data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
+		<button type="button" id="tag-changeset-button"
+			data-enabled-when="1" disabled="disabled">{% trans "Mark version" %}</button>
+		<button type="button" id="doc-revert-button"
+			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
+		<button id="open-preview-button" disabled="disabled"
+			data-enabled-when="1"
 			data-basehref="{% url wiki_editor_readonly document_name %}">{% trans "View version" %}</button>
 
 	</div>

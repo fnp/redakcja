@@ -258,18 +258,18 @@ function ScriptletCenter()
 ScriptletCenter.prototype.callInteractive = function(opts) {
 	$progress = $('<span>Executing script</span>');
 	var self = this;
-	
+
 	/* This won't work, 'cause the JS below might be synchronous :( */
 	/* var timer = setTimeout(function() {
 	    $.blockUI({message: $progress});
 	    timer = null;
 	}, 1000); */
-	
+
 	$.blockUI({message: $progress, showOverlay: false});
 
 	self.scriptlets[opts.action](opts.context, opts.extra, function(){
-	    /*if(timer) 
-	        clearTimeout(timer);    
+	    /*if(timer)
+	        clearTimeout(timer);
 	    else */
 	    $.unblockUI(); // done
 	});
@@ -282,7 +282,7 @@ ScriptletCenter.prototype.XMLEditorSelectedText = function(editor) {
 
 ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(editor, replacement)
 {
-	$progress.html("Replacing text");	
+	$progress.html("Replacing text");
 	editor.replaceSelection(replacement);
 };
 

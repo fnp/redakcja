@@ -1,5 +1,5 @@
 """
-    Mercurial ui module replacement.   
+    Mercurial ui module replacement.
 """
 
 import mercurial.ui
@@ -10,7 +10,7 @@ class SilentUI(mercurial.ui.ui):
     def __init__(self, *args, **kwargs):
         super(SilentUI, self).__init__(*args, **kwargs)
 
-        # make sure this doesn't collide with anything in Mercurial 
+        # make sure this doesn't collide with anything in Mercurial
         self.__logger = logging.getLogger('mercurial')
 
     def _is_trusted(self, fd, filename):

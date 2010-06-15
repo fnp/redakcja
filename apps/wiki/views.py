@@ -195,6 +195,24 @@ def text(request, name):
 
 
 @never_cache
+@normalized_name
+@require_POST
+def revert(request, name):
+    storage = getstorage()
+    revision = request.POST['target_revision']
+
+    try:
+        document = storage.revert(name, revision)
+
+        return JSONResponse({
+            'text': document.plain_text if revision != document.revision else None,
+            'meta': document.meta(),
+            'revision': document.revision,
+        })
+    except DocumentNotFound:
+        raise http.Http404
+
+@never_cache
 def gallery(request, directory):
     try:
         base_url = ''.join((

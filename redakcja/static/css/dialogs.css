@@ -8,13 +8,13 @@
 
 .dialog .help_text {
 	font-size: 11px;
-	color: #2e3536;	 
+	color: #2e3536;
 }
 
 .dialog .action_area {
 	padding: 1em 0.5em 0.5em;
 	border-top: 1px solid black;
-	margin-top: 0.5em;	
+	margin-top: 0.5em;
 }
 
 .dialog p {

@@ -14,11 +14,11 @@
 
 .toolbar > .group_selector {
 	position: absolute;
-	
+
     margin: 1px 5px 1px 0;
     border: 1px solid #999;
     padding: 1px;
-    
+
     top: 0px;
     left: 0px;
     bottom: 0px;
@@ -51,9 +51,9 @@
     bottom: 0px;
 }
 
-.toolbar ul.button_group {	
+.toolbar ul.button_group {
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 	width: 10000%;
 }
 
@@ -74,11 +74,11 @@
 
 .toolbar .button_group button img {
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 	margin-bottom: -3px;
 }
 
-.toolbar .button_group button:hover, 
+.toolbar .button_group button:hover,
 .toolbar .button_group button:active {
     background: #777;
     color: #FFF;

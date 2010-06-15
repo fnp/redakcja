@@ -62,19 +62,19 @@ def ajax_require_permission(permission):
 import collections
 
 def recursive_groupby(iterable):
-    """    
+    """
 #    >>> recursive_groupby([1,2,3,4,5])
 #    [1, 2, 3, 4, 5]
-    
+
     >>> recursive_groupby([[1]])
     [1]
-    
+
     >>> recursive_groupby([('a', 1),('a', 2), 3, ('b', 4), 5])
     ['a', [1, 2], 3, 'b', [4], 5]
-    
+
     >>> recursive_groupby([('a', 'x', 1),('a', 'x', 2), ('a', 'x', 3)])
     ['a', ['x', [1, 2, 3]]]
-   
+
     """
 
     def _generator(iterator):

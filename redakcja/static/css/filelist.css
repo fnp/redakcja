@@ -1,4 +1,4 @@
-/* 
+/*
     Document   : filelist
     Created on : 2009-09-04, 20:44:44
     Author     : lreqc
@@ -15,7 +15,7 @@ body {
     border: 1px solid black;
     padding: 0.5em 2em;
     margin: 1em;
-	overflow: hidden;    
+	overflow: hidden;
 }
 
 #content h1 img {
@@ -34,8 +34,8 @@ body {
 	float: left;
 	max-width: 50%;
 	padding-right: 2%;
-	border-right: 1px dashed black;	
-	
+	border-right: 1px dashed black;
+
 }
 
 #last-edited-list {
@@ -46,7 +46,7 @@ body {
 
 #last-edited-list ul {
 	margin: 0px;
-}	
+}
 
 #last-edited-list li {
 	margin-bottom: 1em;
@@ -59,7 +59,7 @@ body {
 
 a, a:visited, a:active {
 	color: blue;
-	text-decoration: none;	
+	text-decoration: none;
 }
 
 a:hover {

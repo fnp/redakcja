@@ -26,14 +26,14 @@
  font-size: 8px;
  line-height: 8px;
  margin-bottom: 4px;
- 
+
  padding: 3px 4px;
  vertical-align: super;
  background-color:#add8e6;
  margin-left: -80px;
  width: 70px;
  text-align: center;
- 
+
  -webkit-border-radius: 4px;
  }
  */
@@ -210,18 +210,18 @@ not(.strofa) > *[x-verse]::after {
 .htmlview .motto_container {
 	display: inline-block;
 	margin: 1.5em 0 0;
-	clear: right;	
+	clear: right;
 }
 
 .htmlview .motto {
     text-align: justify;
-    font-style: italic;    
+    font-style: italic;
 }
 
 .htmlview p.motto_podpis {
 	position: relative;
 	right: -3em;
-	text-align: right;	
+	text-align: right;
 }
 
 .htmlview div.fragment {
@@ -340,7 +340,7 @@ div[x-node] > .uwaga {
     text-decoration: none;
     background-color: #fff;
     /*    border: 1px solid gray;
-     
+
      border-right: none;
      */
     z-index: 1;
@@ -467,8 +467,8 @@ div[x-node] > .uwaga {
     left: 70px;
 }
 
-.edit-button:hover, .edit-button:active, 
-.delete-button:hover, .delete-button:active, 
+.edit-button:hover, .edit-button:active,
+.delete-button:hover, .delete-button:active,
 .accept-button:hover, .accept-button:active {
     /*    color: #FFF;*/
     background-color: #999;

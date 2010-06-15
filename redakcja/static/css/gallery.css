@@ -13,7 +13,7 @@
     background-color: #FFF;
 }
 
-#side-gallery .error_message 
+#side-gallery .error_message
 {
 	background-color: white;
 	color: black;
@@ -49,12 +49,12 @@
     -khtml-user-select: none;
     -moz-user-select: none;
     cursor: pointer;
-	
+
 	background-color: white;
 	min-height: 100px;
 	min-width: 100px;
 }
 
 .gallery-image img[src=''] {
-	background-color: red;	
+	background-color: red;
 }

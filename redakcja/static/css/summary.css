@@ -3,29 +3,29 @@
 }
 
 #summary-view {
-	padding: 1em;			
+	padding: 1em;
 }
 
 #summary-view .book-cover {
 	float: left;
 	margin: 1em;
 	margin-right: 2em;
-	
+
 	height: 300px;
 	width: 212px;
-	
-	
+
+
 	border: 1px dashed black;
 }
 
 #summary-view p {
-	margin: 0.5em; 
+	margin: 0.5em;
 }
 
 #summary-view label {
-	font-weight: bold; 
-}  
+	font-weight: bold;
+}
 
 #summary-view .book-cover {
-	
+
 }

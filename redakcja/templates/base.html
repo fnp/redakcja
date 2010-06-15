@@ -9,14 +9,14 @@
         {% endblock %}
     </head>
     <body id="{% block bodyid %}base{% endblock %}">
-    
+
     <div id="loading-overlay" style="display: none;">
     	<div id="loading-message">
         	<img src="{{STATIC_URL}}img/spinner.gif" />
         	<p>{% trans "Loading" %}</p>
     	</div>
 	</div>
-	
+
 	<div id="body-wrap">
         <div id="content">{% block maincontent %} {% endblock %}</div>
         </div>

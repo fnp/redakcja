@@ -7,7 +7,7 @@ PIL>=1.1
 ## Book conversion library
 git+git://github.com/fnp/librarian.git@master#egg=librarian
 
-## Django 
+## Django
 Django>=1.1.1,<1.2
 sorl-thumbnail>=3.2
 django-maintenancemode>=0.9

@@ -67,7 +67,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "redakcja.context_processors.settings", # this is instead of media 
+    "redakcja.context_processors.settings", # this is instead of media
     "django.core.context_processors.request",
 )
 

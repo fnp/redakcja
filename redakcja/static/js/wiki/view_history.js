@@ -15,6 +15,10 @@
 				self.showTagForm();
 			});
 
+	        $('#doc-revert-button').click(function() {
+	            self.revertDocumentToVersion();
+	        });
+
 			$('#open-preview-button').click(function(event) {
 				var selected = $('#changes-list .entry.selected');
 
@@ -31,11 +35,23 @@
 
         	$('#changes-list .entry').live('click', function(){
             	var $this = $(this);
-            	if ($this.hasClass('selected'))
-                	return $this.removeClass('selected');
 
-            	if ($("#changes-list .entry.selected").length < 2)
-                	return $this.addClass('selected');
+            	var selected_count = $("#changes-list .entry.selected").length;
+
+            	if ($this.hasClass('selected')) {
+                	$this.removeClass('selected');
+                	selected_count -= 1;
+            	}
+            	else {
+            	    if (selected_count  < 2) {
+            	        $this.addClass('selected');
+            	        selected_count += 1;
+            	    };
+            	};
+
+            	$('#history-view-editor .toolbar button').attr('disabled', 'disabled').
+            	    filter('*[data-enabled-when~=' + selected_count + '], *[data-enabled-when~=*]').
+            	    attr('disabled', null);
         	});
 
     	    $('#changes-list span.tag').live('click', function(event){
@@ -154,6 +170,18 @@
                 $.unblockUI();
             }
         });
+    };
+
+    HistoryPerspective.prototype.revertDocumentToVersion = function(){
+        var selected = $('#changes-list .entry.selected');
+
+        if (selected.length != 1) {
+            window.alert("Musisz zaznaczyć dokładnie jedną wersję.");
+            return;
+        }
+
+        var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
+        this.doc.revertToVersion({'revision': version});
     };
 
     $.wiki.HistoryPerspective = HistoryPerspective;
