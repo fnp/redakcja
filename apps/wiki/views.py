@@ -49,44 +49,6 @@ def normalized_name(view):
     return decorated
 
 
-@never_cache
-def document_list(request):
-    return direct_to_template(request, 'wiki/document_list.html', extra_context={
-        'docs': getstorage().all(),
-        'last_docs': sorted(request.session.get("wiki_last_docs", {}).items(),
-                        key=operator.itemgetter(1), reverse=True),
-    })
-
-
-@never_cache
-@normalized_name
-def editor(request, name, template_name='wiki/document_details.html'):
-    storage = getstorage()
-
-    try:
-        document = storage.get(name)
-    except DocumentNotFound:
-        return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[name]))
-
-    access_time = datetime.now()
-    last_documents = request.session.get("wiki_last_docs", {})
-    last_documents[name] = access_time
-
-    if len(last_documents) > MAX_LAST_DOCS:
-        oldest_key = min(last_documents, key=last_documents.__getitem__)
-        del last_documents[oldest_key]
-    request.session['wiki_last_docs'] = last_documents
-
-    return direct_to_template(request, template_name, extra_context={
-        'document': document,
-        'document_name': document.name,
-        'document_info': document.info,
-        'document_meta': document.meta,
-        'forms': {
-            "text_save": DocumentTextSaveForm(prefix="textsave"),
-            "add_tag": DocumentTagForm(prefix="addtag"),
-        },
-    })
 
 
 @require_GET

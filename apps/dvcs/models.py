@@ -10,7 +10,7 @@ class Change(models.Model):
         argument points to the version against which this change has been 
         recorded. Initial text will have a null parent.
         
-        Data contains a reverse diff needed to reproduce the initial document.
+        Data contains a pickled diff needed to reproduce the initial document.
     """
     author = models.ForeignKey(User)
     patch = models.TextField(blank=True)
@@ -31,7 +31,7 @@ class Change(models.Model):
         ordering = ('created_at',)
 
     def __unicode__(self):
-        return "Id: %r, Tree %r, Parent %r, Patch '''\n%s'''" % (self.id, self.tree_id, self.parent_id, self.patch)
+        return u"Id: %r, Tree %r, Parent %r, Patch '''\n%s'''" % (self.id, self.tree_id, self.parent_id, self.patch)
 
     @staticmethod
     def make_patch(src, dst):
@@ -41,26 +41,25 @@ class Change(models.Model):
         changes = Change.objects.exclude(parent=None).filter(
                         tree=self.tree,
                         created_at__lte=self.created_at).order_by('created_at')
-        text = ''
+        text = u''
         for change in changes:
             text = change.apply_to(text)
         return text
 
-    def make_child(self, patch, description):
+    def make_child(self, patch, author, description):
         return self.children.create(patch=patch,
-                        tree=self.tree,
+                        tree=self.tree, author=author,
                         description=description)
 
-    def make_merge_child(self, patch, description):
+    def make_merge_child(self, patch, author, description):
         return self.merge_children.create(patch=patch,
-                        tree=self.tree,
+                        tree=self.tree, author=author,
                         description=description)
 
     def apply_to(self, text):
         return mdiff.patch(text, pickle.loads(self.patch.encode('ascii')))
 
-
-    def merge_with(self, other):
+    def merge_with(self, other, author, description=u"Automatic merge."):
         assert self.tree_id == other.tree_id  # same tree
         if other.parent_id == self.pk:
             # immediate child 
@@ -74,14 +73,13 @@ class Change(models.Model):
         result = ''.join(merge.merge_lines())
         patch = self.make_patch(local, result)
         return self.children.create(
-                    patch=patch,
-                    merge_parent=other, tree=self.tree, description=u"Automatic merge")
+                    patch=patch, merge_parent=other, tree=self.tree,
+                    author=author, description=description)
 
 
 class Document(models.Model):
     """
-        File in repository.
-        
+        File in repository.        
     """
     creator = models.ForeignKey(User)
     head = models.ForeignKey(Change,
@@ -93,7 +91,14 @@ class Document(models.Model):
                 help_text=_("Name for this file to display."))
 
     def __unicode__(self):
-        return "{0}, HEAD: {1}".format(self.name, self.head_id)
+        return u"{0}, HEAD: {1}".format(self.name, self.head_id)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('dvcs.views.document_data', (), {
+                        'document_id': self.id,
+                        'version': self.head_id,
+        })
 
     def materialize(self, version=None):
         if self.head is None:
@@ -123,11 +128,11 @@ class Document(models.Model):
 
         old_head = self.head
         if parent != old_head:
-            change = parent.make_merge_child(patch, kwargs.get('description', ''))
+            change = parent.make_merge_child(patch, kwargs['author'], kwargs.get('description', ''))
             # not Fast-Forward - perform a merge
-            self.head = old_head.merge_with(change)
+            self.head = old_head.merge_with(change, author=kwargs['author'])
         else:
-            self.head = parent.make_child(patch, kwargs.get('description', ''))
+            self.head = parent.make_child(patch, kwargs['author'], kwargs.get('description', ''))
         self.save()
         return self.head
 

@@ -116,7 +116,9 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'filebrowser',
+    'eav',
     'dvcs',
+    'dcmeta',
 
     'wiki',
     'toolbar',

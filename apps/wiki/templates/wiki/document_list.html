@@ -33,8 +33,8 @@ $(function() {
 		<tbody>
     	{% for doc in docs %}
             <tr>
-            	<td colspan="3"><a target="_blank" data-id="{{doc}}"
-					href="{% url wiki_editor doc %}">{{ doc|wiki_title }}</a></td>
+            	<td colspan="3"><a target="_blank" data-id="{{ doc }}"
+					href="{{ doc.get_absolute_url }}">{{ doc }}</a></td>
 				<!-- placeholder </td> -->
 			</tr>
     	{% endfor %}
