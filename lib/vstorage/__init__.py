@@ -20,6 +20,8 @@ os.environ['HGMERGE'] = "internal:merge"
 import mercurial.hg
 import mercurial.revlog
 import mercurial.util
+from mercurial.match import exact as hg_exact_match
+from mercurial.cmdutil import walkchangerevs
 
 from vstorage.hgui import SilentUI
 
@@ -209,7 +211,7 @@ class VersionedStorage(object):
 
         try:
             filectx_tip = changectx[repo_file]
-            current_page_rev = filectx_tip.filerev()
+            current_page_rev = filectx_tip.rev()
         except mercurial.revlog.LookupError:
             self.repo.add([repo_file])
             current_page_rev = -1
@@ -273,7 +275,7 @@ class VersionedStorage(object):
         if ctx is None:
             raise DocumentNotFound(title)
 
-        return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
+        return ctx.data().decode(self.charset, 'replace'), ctx.rev()
 
     def page_text_by_tag(self, title, tag):
         """Read unicode text of a taged page."""
@@ -282,7 +284,7 @@ class VersionedStorage(object):
 
         try:
             ctx = self.repo[tag][fname]
-            return ctx.data().decode(self.charset, 'replace'), ctx.filerev()
+            return ctx.data().decode(self.charset, 'replace'), ctx.rev()
         except IndexError:
             raise DocumentNotFound(fname)
 
@@ -305,7 +307,7 @@ class VersionedStorage(object):
             raise DocumentNotFound(title)
 
         return {
-            "revision": fctx.filerev(),
+            "revision": fctx.rev(),
             "date": datetime.datetime.fromtimestamp(fctx.date()[0]),
             "author": fctx.user().decode("utf-8", 'replace'),
             "comment": fctx.description().decode("utf-8", 'replace'),
@@ -324,59 +326,49 @@ class VersionedStorage(object):
         """
         return guess_mime(self._file_path(title))
 
-    def _find_filectx(self, title, rev=None):
+    def _find_filectx(self, title, rev=None, oldest=0, newest= -1):
         """Find the last revision in which the file existed."""
-        tip = self._changectx()  # start with tip
+        if rev is not None:
+            oldest, newest = rev, -1
+        opts = {"follow": True, "rev": ["%s:%s" % (newest, oldest)]}
+        def prepare(ctx, fns):
+            pass
+        xml_file = self._title_to_file(title)
+        matchfn = hg_exact_match(self.repo.root, self.repo.getcwd(), [xml_file])
+        generator = walkchangerevs(self.repo, matchfn, opts, prepare)
 
-        def tree_search(tip, repo_file):
-            logging.info("Searching for %r", repo_file)
-            current = tip
-            visited = set()
+        last = None
+        current_name = xml_file
+        for change in generator:
+            fctx = change[current_name]
+            renamed = fctx.renamed()
+            if renamed:
+                current_name = renamed[0]
+            last = change
 
-            stack = [current]
-            visited.add(current)
+        if last is not None:
+            return last[current_name]
 
-            while repo_file not in current:
-                if not stack:
-                    raise LookupError
+        # not found
+        raise DocumentNotFound(title)
 
-                current = stack.pop()
-                for parent in current.parents():
-                    if parent not in visited:
-                        stack.append(parent)
-                        visited.add(parent)
-
-            fctx = current[repo_file]
-            if rev is not None:
-                fctx = fctx.filectx(rev)
-                fctx.filerev()
-            return fctx
-
-        try:
-            return tree_search(tip, self._title_to_file(title))
-        except (IndexError, LookupError) as e:
-            logging.info("XML file not found, trying plain")
-            try:
-                return tree_search(tip, self._title_to_file(title, type=''))
-            except (IndexError, LookupError) as e:
-                raise DocumentNotFound(title)
-
-    def page_history(self, title):
+    def page_history(self, title, oldest=0, newest= -1):
         """Iterate over the page's history."""
+        opts = {"follow": True, "rev": ["%s:%s" % (newest, oldest)]}
+        prepare = lambda * args: True
+        repo_file = self._title_to_file(title)
+        matchfn = hg_exact_match(self.repo.root, self.repo.getcwd(), [repo_file])
+        generator = walkchangerevs(self.repo, matchfn, opts, prepare)
 
-        filectx_tip = self._find_filectx(title)
-
-        maxrev = filectx_tip.filerev()
-        minrev = 0
-        for rev in range(maxrev, minrev - 1, -1):
-            filectx = filectx_tip.filectx(rev)
-            date = datetime.datetime.fromtimestamp(filectx.date()[0])
-            author = filectx.user().decode('utf-8', 'replace')
-            comment = filectx.description().decode("utf-8", 'replace')
-            tags = [t.rsplit('#', 1)[-1] for t in filectx.changectx().tags() if '#' in t]
+        for changeset in generator:
+            changeset
+            date = datetime.datetime.fromtimestamp(changeset.date()[0])
+            author = changeset.user().decode('utf-8', 'replace')
+            comment = changeset.description().decode("utf-8", 'replace')
+            tags = [t.rsplit('#', 1)[-1] for t in changeset.tags() if '#' in t]
 
             yield {
-                "version": rev,
+                "version": changeset.rev(),
                 "date": date,
                 "author": author,
                 "description": comment,
@@ -398,25 +390,21 @@ class VersionedStorage(object):
             user=user, message=message, date=None,
         )
 
-    def history(self):
+    def history(self, newest=None):
         """Iterate over the history of entire wiki."""
+        opts = {"follow": False, "rev": newest}  # follow doesn't make sense
+        prepare = lambda * args: True
+        repo_file = self._title_to_file(title)
+        matchfn = hg_exact_match(self.repo.root, self.repo.getcwd(), [repo_file])
+        generator = walkchangerevs(self.repo, matchfn, opts, prepare)
 
-        changectx = self._changectx()
-        maxrev = changectx.rev()
-        minrev = 0
-        for wiki_rev in range(maxrev, minrev - 1, -1):
-            change = self.repo.changectx(wiki_rev)
+        for change in generator:
             date = datetime.datetime.fromtimestamp(change.date()[0])
             author = change.user().decode('utf-8', 'replace')
             comment = change.description().decode("utf-8", 'replace')
             for repo_file in change.files():
-                if repo_file.startswith(self.repo_prefix):
-                    title = self._file_to_title(repo_file)
-                    try:
-                        rev = change[repo_file].filerev()
-                    except mercurial.revlog.LookupError:
-                        rev = -1
-                    yield title, rev, date, author, comment
+                title = self._file_to_title(repo_file)
+                yield title, change.rev(), date, author, comment
 
     def all_pages(self, type=''):
         tip = self.repo['tip']
@@ -424,22 +412,6 @@ class VersionedStorage(object):
         return [self._file_to_title(filename) for filename in tip
                   if not filename.startswith('.')
                     and filename.endswith(type) ]
-
-    def changed_since(self, rev):
-        """Return all pages that changed since specified repository revision."""
-
-        try:
-            last = self.repo.lookup(int(rev))
-        except IndexError:
-            for page in self.all_pages():
-                yield page
-                return
-        current = self.repo.lookup('tip')
-        status = self.repo.status(current, last)
-        modified, added, removed, deleted, unknown, ignored, clean = status
-        for filename in modified + added + removed + deleted:
-            if filename.startswith(self.repo_prefix):
-                yield self._file_to_title(filename)
 
     def revert(self, pageid, rev, **commit_args):
         """ Make the given version of page the current version (reverting changes). """

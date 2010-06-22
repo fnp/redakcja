@@ -12,6 +12,8 @@ from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission, recursive_groupby)
 from django import http
 
+from django.contrib.auth.decorators import login_required
+
 from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name
 from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
 from datetime import datetime
@@ -124,11 +126,11 @@ def create_missing(request, name):
         form = DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
             doc = storage.create_document(
-                id=form.cleaned_data['id'],
+                name=form.cleaned_data['id'],
                 text=form.cleaned_data['text'],
             )
 
-            return http.HttpResponseRedirect(reverse("wiki_details", args=[doc.name]))
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[doc.name]))
     else:
         form = DocumentCreateForm(initial={
                 "id": name.replace(" ", "_"),
@@ -302,3 +304,8 @@ def publish(request, name):
         return JSONResponse({"result": api.publish_book(document)})
     except wlapi.APICallException, e:
         return JSONServerError({"message": str(e)})
+
+@login_required
+def status_report(request):
+    pass
+

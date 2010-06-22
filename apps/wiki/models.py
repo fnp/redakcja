@@ -72,7 +72,7 @@ class DocumentStorage(object):
         return document
 
     def create_document(self, text, name):
-        title = u', '.join(p.title for p in split_name(name))
+        title = u', '.join(p.title() for p in split_name(name))
 
         if text is None:
             text = u''
