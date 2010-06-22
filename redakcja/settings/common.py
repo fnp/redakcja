@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'filebrowser',
+    'dvcs',
 
     'wiki',
     'toolbar',
@@ -145,3 +146,4 @@ try:
     from redakcja.settings.compress import *
 except ImportError:
     pass
+
