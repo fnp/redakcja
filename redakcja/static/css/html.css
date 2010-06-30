@@ -370,7 +370,10 @@ div[x-node] > .uwaga {
 }
 
 .htmlview .annotation:hover {
-    background-color: #96e0e4;
+    background-color: #ffcccc;
+}
+.htmlview .pe .annotation:hover {
+    background-color: #96e0e4;*/
 }
 *.htmlview *.annotation-inline-box {
     position: static;

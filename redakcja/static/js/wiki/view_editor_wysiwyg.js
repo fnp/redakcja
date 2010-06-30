@@ -97,7 +97,7 @@
         range.insertNode(tag[0]);
 
         xml2html({
-            xml: '<pr><slowo_obce>' + text + '</slowo_obce> --- </pr>',
+            xml: '<pe><slowo_obce>' + text + '</slowo_obce> --- </pe>',
             success: function(text){
                 var t = $(text);
                 tag.replaceWith(t);
