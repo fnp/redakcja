@@ -351,6 +351,10 @@ div[x-node] > .uwaga {
     text-align: left;
 }
 
+.htmlview .noncanon {
+    color: #d00;
+}
+
 .htmlview .motyw[x-editable] {
     border-left: 4px solid #DDD;
     padding: 0.2em 0.2em 0.2em 0.5em;

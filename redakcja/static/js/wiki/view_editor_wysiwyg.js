@@ -226,10 +226,11 @@
         }).appendTo($box[0].offsetParent || $box.parent()).show();
 
         if ($origin.is('.motyw')) {
-            $('textarea', $overlay).autocomplete(THEMES, {
+            $('textarea', $overlay).autocomplete('/themes', {
                 autoFill: true,
                 multiple: true,
-                selectFirst: true
+                selectFirst: true,
+                highlight: false
             });
         }
 

@@ -33,32 +33,71 @@ function withStylesheets(code_block, onError)
 	}
 }
 
+var canonThemes = null;
+
+// Wykonuje block z załadowanymi kanonicznymi motywami
+function withThemes(code_block, onError)
+{
+    if (!canonThemes) {
+        $.blockUI({message: 'Ładowanie motywów...'});
+        $.ajax({
+            url: '/themes',
+            dataType: 'text',
+            success: function(data) {
+                canonThemes = {};
+                themes = data.split('\n');
+                for (i in themes) {
+                    canonThemes[themes[i]] = 1;
+                }
+                $.unblockUI();
+                code_block();
+            },
+            error: onError
+        })
+    }
+    else {
+        code_block();
+    }
+}
+
+
 
 function xml2html(options) {
     withStylesheets(function() {
-        var xml = options.xml.replace(/\/\s+/g, '<br />');
-        var parser = new DOMParser();
-        var serializer = new XMLSerializer();
-        var doc = parser.parseFromString(xml, 'text/xml');
-        var error = $('parsererror', doc);
+        withThemes(function() {
+            var xml = options.xml.replace(/\/\s+/g, '<br />');
+            var parser = new DOMParser();
+            var serializer = new XMLSerializer();
+            var doc = parser.parseFromString(xml, 'text/xml');
+            var error = $('parsererror', doc);
 
-        if (error.length == 0) {
-            doc = xml2htmlStylesheet.transformToFragment(doc, document);
-			console.log(doc.firstChild);
+            if (error.length == 0) {
+                doc = xml2htmlStylesheet.transformToFragment(doc, document);
+                console.log(doc.firstChild);
 
-			if(doc.firstChild === null) {
-				options.error("Błąd w przetwarzaniu XML.");
-				return;
-			}
+                if(doc.firstChild === null) {
+                    options.error("Błąd w przetwarzaniu XML.");
+                    return;
+                }
 
-            error = $('parsererror', doc);
-        }
+                error = $('parsererror', doc);
+            }
 
-        if (error.length > 0 && options.error) {
-            options.error(error.text());
-        } else {
-            options.success(doc.firstChild);
-        }
+            if (error.length > 0 && options.error) {
+                options.error(error.text());
+            } else {
+                $('.theme-text-list', doc.firstChild).each(function(){
+                    var themes = $(this).html().split(',');
+                    for (i in themes) {
+                        themes[i] = $.trim(themes[i]);
+                        if (!(themes[i] in canonThemes))
+                            themes[i] = '<span x-pass-thru="true" class="noncanon">' + themes[i] + "</span>"
+                    }
+                    $(this).html(themes.join(', '));
+                });
+                options.success(doc.firstChild);
+            }
+        }, function() { options.error && options.error('Nie udało się załadować motywów'); });
     }, function() { options.error && options.error('Nie udało się załadować XSLT'); });
 }
 

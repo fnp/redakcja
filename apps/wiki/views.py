@@ -12,7 +12,7 @@ from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission, recursive_groupby)
 from django import http
 
-from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name
+from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name, Theme
 from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
@@ -302,3 +302,8 @@ def publish(request, name):
         return JSONResponse({"result": api.publish_book(document)})
     except wlapi.APICallException, e:
         return JSONServerError({"message": str(e)})
+
+
+def themes(request):
+    prefix = request.GET.get('q', '')
+    return http.HttpResponse('\n'.join([str(t) for t in Theme.objects.filter(name__istartswith=prefix)]))

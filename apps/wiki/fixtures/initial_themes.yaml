@@ -1,0 +1,1246 @@
+- fields: {name: Alkohol}
+  model: wiki.theme
+  pk: 1
+- fields: {name: Ambicja}
+  model: wiki.theme
+  pk: 2
+- fields: {name: "Anio\u0142"}
+  model: wiki.theme
+  pk: 3
+- fields: {name: Antysemityzm}
+  model: wiki.theme
+  pk: 4
+- fields: {name: Arkadia}
+  model: wiki.theme
+  pk: 5
+- fields: {name: Artysta}
+  model: wiki.theme
+  pk: 6
+- fields: {name: "Bezdomno\u015B\u0107"}
+  model: wiki.theme
+  pk: 7
+- fields: {name: "Bezpiecze\u0144stwo"}
+  model: wiki.theme
+  pk: 8
+- fields: {name: Bieda}
+  model: wiki.theme
+  pk: 9
+- fields: {name: Bijatyka}
+  model: wiki.theme
+  pk: 10
+- fields: {name: Bogactwo}
+  model: wiki.theme
+  pk: 14
+- fields: {name: Brat}
+  model: wiki.theme
+  pk: 16
+- fields: {name: Bunt}
+  model: wiki.theme
+  pk: 17
+- fields: {name: Buntownik}
+  model: wiki.theme
+  pk: 18
+- fields: {name: Burza}
+  model: wiki.theme
+  pk: 19
+- fields: {name: "B\xF3g"}
+  model: wiki.theme
+  pk: 15
+- fields: {name: "B\u0142azen"}
+  model: wiki.theme
+  pk: 11
+- fields: {name: "B\u0142oto"}
+  model: wiki.theme
+  pk: 13
+- fields: {name: "B\u0142\u0105dzenie"}
+  model: wiki.theme
+  pk: 12
+- fields: {name: Car}
+  model: wiki.theme
+  pk: 20
+- fields: {name: Carpe diem}
+  model: wiki.theme
+  pk: 21
+- fields: {name: "Chciwo\u015B\u0107"}
+  model: wiki.theme
+  pk: 25
+- fields: {name: Chleb}
+  model: wiki.theme
+  pk: 26
+- fields: {name: Choroba}
+  model: wiki.theme
+  pk: 28
+- fields: {name: Chrystus}
+  model: wiki.theme
+  pk: 29
+- fields: {name: Chrzest}
+  model: wiki.theme
+  pk: 30
+- fields: {name: "Ch\u0142op"}
+  model: wiki.theme
+  pk: 27
+- fields: {name: "Cia\u0142o"}
+  model: wiki.theme
+  pk: 31
+- fields: {name: "Ciemno\u015B\u0107"}
+  model: wiki.theme
+  pk: 22
+- fields: {name: Cierpienie}
+  model: wiki.theme
+  pk: 32
+- fields: {name: "Cie\u0144"}
+  model: wiki.theme
+  pk: 23
+- fields: {name: Cisza}
+  model: wiki.theme
+  pk: 24
+- fields: {name: Cmentarz}
+  model: wiki.theme
+  pk: 33
+- fields: {name: Cnota}
+  model: wiki.theme
+  pk: 34
+- fields: {name: Cud}
+  model: wiki.theme
+  pk: 36
+- fields: {name: Czarownica}
+  model: wiki.theme
+  pk: 37
+- fields: {name: Czary}
+  model: wiki.theme
+  pk: 38
+- fields: {name: Czas}
+  model: wiki.theme
+  pk: 39
+- fields: {name: Czyn}
+  model: wiki.theme
+  pk: 40
+- fields: {name: "Czy\u015Bciec"}
+  model: wiki.theme
+  pk: 41
+- fields: {name: "C\xF3rka"}
+  model: wiki.theme
+  pk: 35
+- fields: {name: Dama}
+  model: wiki.theme
+  pk: 42
+- fields: {name: Danse macabre}
+  model: wiki.theme
+  pk: 43
+- fields: {name: Deszcz}
+  model: wiki.theme
+  pk: 44
+- fields: {name: "Diabe\u0142"}
+  model: wiki.theme
+  pk: 45
+- fields: {name: Dobro}
+  model: wiki.theme
+  pk: 46
+- fields: {name: Dom}
+  model: wiki.theme
+  pk: 47
+- fields: {name: "Doros\u0142o\u015B\u0107"}
+  model: wiki.theme
+  pk: 48
+- fields: {name: Drzewo}
+  model: wiki.theme
+  pk: 49
+- fields: {name: Duch}
+  model: wiki.theme
+  pk: 50
+- fields: {name: Duma}
+  model: wiki.theme
+  pk: 52
+- fields: {name: Dusza}
+  model: wiki.theme
+  pk: 51
+- fields: {name: Dworek}
+  model: wiki.theme
+  pk: 53
+- fields: {name: Dworzanin}
+  model: wiki.theme
+  pk: 54
+- fields: {name: "Dw\xF3r"}
+  model: wiki.theme
+  pk: 55
+- fields: {name: "Dzieci\u0144stwo"}
+  model: wiki.theme
+  pk: 56
+- fields: {name: Dziecko}
+  model: wiki.theme
+  pk: 57
+- fields: {name: Dziedzictwo}
+  model: wiki.theme
+  pk: 58
+- fields: {name: Dziewictwo}
+  model: wiki.theme
+  pk: 59
+- fields: {name: "D\u017Awi\u0119k"}
+  model: wiki.theme
+  pk: 60
+- fields: {name: Egzorcyzm}
+  model: wiki.theme
+  pk: 61
+- fields: {name: Elita}
+  model: wiki.theme
+  pk: 62
+- fields: {name: Emigrant}
+  model: wiki.theme
+  pk: 63
+- fields: {name: "Fa\u0142sz"}
+  model: wiki.theme
+  pk: 64
+- fields: {name: Filozof}
+  model: wiki.theme
+  pk: 65
+- fields: {name: Fircyk}
+  model: wiki.theme
+  pk: 66
+- fields: {name: Flirt}
+  model: wiki.theme
+  pk: 67
+- fields: {name: Gospodarz}
+  model: wiki.theme
+  pk: 71
+- fields: {name: Gospodyni}
+  model: wiki.theme
+  pk: 72
+- fields: {name: Gotycyzm}
+  model: wiki.theme
+  pk: 74
+- fields: {name: "Go\u015B\u0107"}
+  model: wiki.theme
+  pk: 73
+- fields: {name: Gra}
+  model: wiki.theme
+  pk: 76
+- fields: {name: Grzech}
+  model: wiki.theme
+  pk: 78
+- fields: {name: "Grzeczno\u015B\u0107"}
+  model: wiki.theme
+  pk: 79
+- fields: {name: "Gr\xF3b"}
+  model: wiki.theme
+  pk: 77
+- fields: {name: Gwiazda}
+  model: wiki.theme
+  pk: 80
+- fields: {name: "G\xF3ra"}
+  model: wiki.theme
+  pk: 75
+- fields: {name: "G\u0142upiec"}
+  model: wiki.theme
+  pk: 68
+- fields: {name: "G\u0142upota"}
+  model: wiki.theme
+  pk: 69
+- fields: {name: "G\u0142\xF3d"}
+  model: wiki.theme
+  pk: 70
+- fields: {name: Handel}
+  model: wiki.theme
+  pk: 81
+- fields: {name: "Ha\u0144ba"}
+  model: wiki.theme
+  pk: 82
+- fields: {name: Historia}
+  model: wiki.theme
+  pk: 83
+- fields: {name: Honor}
+  model: wiki.theme
+  pk: 84
+- fields: {name: Idealista}
+  model: wiki.theme
+  pk: 85
+- fields: {name: "Imi\u0119"}
+  model: wiki.theme
+  pk: 86
+- fields: {name: Interes}
+  model: wiki.theme
+  pk: 87
+- fields: {name: "Jab\u0142ka"}
+  model: wiki.theme
+  pk: 88
+- fields: {name: Jedzenie}
+  model: wiki.theme
+  pk: 89
+- fields: {name: "Jesie\u0144"}
+  model: wiki.theme
+  pk: 90
+- fields: {name: Kaleka}
+  model: wiki.theme
+  pk: 91
+- fields: {name: Kara}
+  model: wiki.theme
+  pk: 92
+- fields: {name: Karczma}
+  model: wiki.theme
+  pk: 93
+- fields: {name: "Kl\u0119ska"}
+  model: wiki.theme
+  pk: 94
+- fields: {name: Kobieta}
+  model: wiki.theme
+  pk: 97
+- fields: {name: "Kobieta \"upad\u0142a\""}
+  model: wiki.theme
+  pk: 99
+- fields: {name: Kobieta demoniczna}
+  model: wiki.theme
+  pk: 98
+- fields: {name: Kochanek}
+  model: wiki.theme
+  pk: 100
+- fields: {name: Kochanek romantyczny}
+  model: wiki.theme
+  pk: 101
+- fields: {name: Kolonializm}
+  model: wiki.theme
+  pk: 102
+- fields: {name: Kondycja ludzka}
+  model: wiki.theme
+  pk: 103
+- fields: {name: Konflikt}
+  model: wiki.theme
+  pk: 104
+- fields: {name: "Konflikt wewn\u0119trzny"}
+  model: wiki.theme
+  pk: 105
+- fields: {name: "Koniec \u015Bwiata"}
+  model: wiki.theme
+  pk: 106
+- fields: {name: "Korzy\u015B\u0107"}
+  model: wiki.theme
+  pk: 108
+- fields: {name: Kot}
+  model: wiki.theme
+  pk: 109
+- fields: {name: "Ko\u0144"}
+  model: wiki.theme
+  pk: 107
+- fields: {name: "Kradzie\u017C"}
+  model: wiki.theme
+  pk: 110
+- fields: {name: Krew}
+  model: wiki.theme
+  pk: 111
+- fields: {name: Krzywda}
+  model: wiki.theme
+  pk: 113
+- fields: {name: "Kr\xF3l"}
+  model: wiki.theme
+  pk: 112
+- fields: {name: "Ksi\u0105dz"}
+  model: wiki.theme
+  pk: 114
+- fields: {name: "Ksi\u0105\u017Cka"}
+  model: wiki.theme
+  pk: 115
+- fields: {name: "Ksi\u0119\u017Cyc"}
+  model: wiki.theme
+  pk: 116
+- fields: {name: Kuchnia}
+  model: wiki.theme
+  pk: 117
+- fields: {name: Kuszenie}
+  model: wiki.theme
+  pk: 118
+- fields: {name: Kwiaty}
+  model: wiki.theme
+  pk: 119
+- fields: {name: "K\u0142amstwo"}
+  model: wiki.theme
+  pk: 95
+- fields: {name: "K\u0142\xF3tnia"}
+  model: wiki.theme
+  pk: 96
+- fields: {name: Labirynt}
+  model: wiki.theme
+  pk: 120
+- fields: {name: Las}
+  model: wiki.theme
+  pk: 121
+- fields: {name: Lato}
+  model: wiki.theme
+  pk: 122
+- fields: {name: Lekarz}
+  model: wiki.theme
+  pk: 123
+- fields: {name: Lenistwo}
+  model: wiki.theme
+  pk: 124
+- fields: {name: Liberat}
+  model: wiki.theme
+  pk: 126
+- fields: {name: List}
+  model: wiki.theme
+  pk: 125
+- fields: {name: Los}
+  model: wiki.theme
+  pk: 127
+- fields: {name: Lud}
+  model: wiki.theme
+  pk: 128
+- fields: {name: Lustro}
+  model: wiki.theme
+  pk: 129
+- fields: {name: Marzenie}
+  model: wiki.theme
+  pk: 132
+- fields: {name: Maska}
+  model: wiki.theme
+  pk: 133
+- fields: {name: Maszyna}
+  model: wiki.theme
+  pk: 134
+- fields: {name: Matka}
+  model: wiki.theme
+  pk: 135
+- fields: {name: Matka Boska}
+  model: wiki.theme
+  pk: 136
+- fields: {name: "Ma\u0142\u017Ce\u0144stwo"}
+  model: wiki.theme
+  pk: 131
+- fields: {name: Melancholia}
+  model: wiki.theme
+  pk: 139
+- fields: {name: Miasto}
+  model: wiki.theme
+  pk: 142
+- fields: {name: Mieszczanin}
+  model: wiki.theme
+  pk: 143
+- fields: {name: Mizoginia}
+  model: wiki.theme
+  pk: 152
+- fields: {name: "Mi\u0142osierdzie"}
+  model: wiki.theme
+  pk: 144
+- fields: {name: "Mi\u0142o\u015B\u0107"}
+  model: wiki.theme
+  pk: 145
+- fields: {name: "Mi\u0142o\u015B\u0107 niespe\u0142niona"}
+  model: wiki.theme
+  pk: 146
+- fields: {name: "Mi\u0142o\u015B\u0107 platoniczna"}
+  model: wiki.theme
+  pk: 147
+- fields: {name: "Mi\u0142o\u015B\u0107 romantyczna"}
+  model: wiki.theme
+  pk: 148
+- fields: {name: "Mi\u0142o\u015B\u0107 silniejsza ni\u017C \u015Bmier\u0107"}
+  model: wiki.theme
+  pk: 149
+- fields: {name: "Mi\u0142o\u015B\u0107 spe\u0142niona"}
+  model: wiki.theme
+  pk: 150
+- fields: {name: "Mi\u0142o\u015B\u0107 tragiczna"}
+  model: wiki.theme
+  pk: 151
+- fields: {name: Moda}
+  model: wiki.theme
+  pk: 154
+- fields: {name: Modlitwa}
+  model: wiki.theme
+  pk: 155
+- fields: {name: Morderstwo}
+  model: wiki.theme
+  pk: 156
+- fields: {name: Morze}
+  model: wiki.theme
+  pk: 157
+- fields: {name: Motyl}
+  model: wiki.theme
+  pk: 158
+- fields: {name: Mucha}
+  model: wiki.theme
+  pk: 159
+- fields: {name: Muzyka}
+  model: wiki.theme
+  pk: 160
+- fields: {name: "M\u0105dro\u015B\u0107"}
+  model: wiki.theme
+  pk: 137
+- fields: {name: "M\u0105\u017C"}
+  model: wiki.theme
+  pk: 138
+- fields: {name: "M\u0119drzec"}
+  model: wiki.theme
+  pk: 140
+- fields: {name: "M\u0119\u017Cczyzna"}
+  model: wiki.theme
+  pk: 141
+- fields: {name: "M\u0142odo\u015B\u0107"}
+  model: wiki.theme
+  pk: 153
+- fields: {name: Narodziny}
+  model: wiki.theme
+  pk: 161
+- fields: {name: "Nar\xF3d"}
+  model: wiki.theme
+  pk: 162
+- fields: {name: Natura}
+  model: wiki.theme
+  pk: 163
+- fields: {name: Nauczyciel}
+  model: wiki.theme
+  pk: 164
+- fields: {name: Nauczycielka}
+  model: wiki.theme
+  pk: 165
+- fields: {name: Nauka}
+  model: wiki.theme
+  pk: 166
+- fields: {name: "Niebezpiecze\u0144stwo"}
+  model: wiki.theme
+  pk: 167
+- fields: {name: Niedziela}
+  model: wiki.theme
+  pk: 168
+- fields: {name: Niemiec}
+  model: wiki.theme
+  pk: 169
+- fields: {name: "Nienawi\u015B\u0107"}
+  model: wiki.theme
+  pk: 170
+- fields: {name: Niewola}
+  model: wiki.theme
+  pk: 172
+- fields: {name: "Nie\u015Bmiertelno\u015B\u0107"}
+  model: wiki.theme
+  pk: 171
+- fields: {name: Noc}
+  model: wiki.theme
+  pk: 173
+- fields: {name: Nuda}
+  model: wiki.theme
+  pk: 174
+- fields: {name: Obcy}
+  model: wiki.theme
+  pk: 175
+- fields: {name: "Obowi\u0105zek"}
+  model: wiki.theme
+  pk: 177
+- fields: {name: "Obraz \u015Bwiata"}
+  model: wiki.theme
+  pk: 178
+- fields: {name: "Obrz\u0119dy"}
+  model: wiki.theme
+  pk: 179
+- fields: {name: Obyczaje}
+  model: wiki.theme
+  pk: 180
+- fields: {name: Obywatel}
+  model: wiki.theme
+  pk: 181
+- fields: {name: "Ob\u0142ok"}
+  model: wiki.theme
+  pk: 176
+- fields: {name: "Odrodzenie przez gr\xF3b"}
+  model: wiki.theme
+  pk: 182
+- fields: {name: Odwaga}
+  model: wiki.theme
+  pk: 183
+- fields: {name: Ofiara}
+  model: wiki.theme
+  pk: 184
+- fields: {name: "Ogie\u0144"}
+  model: wiki.theme
+  pk: 185
+- fields: {name: "Ogr\xF3d"}
+  model: wiki.theme
+  pk: 186
+- fields: {name: Ojciec}
+  model: wiki.theme
+  pk: 187
+- fields: {name: Ojczyzna}
+  model: wiki.theme
+  pk: 188
+- fields: {name: Oko}
+  model: wiki.theme
+  pk: 189
+- fields: {name: "Okrucie\u0144stwo"}
+  model: wiki.theme
+  pk: 191
+- fields: {name: "Okr\u0119t"}
+  model: wiki.theme
+  pk: 190
+- fields: {name: Omen}
+  model: wiki.theme
+  pk: 192
+- fields: {name: Opieka}
+  model: wiki.theme
+  pk: 193
+- fields: {name: Organizm}
+  model: wiki.theme
+  pk: 194
+- fields: {name: "Otch\u0142a\u0144"}
+  model: wiki.theme
+  pk: 195
+- fields: {name: "O\u015Bwiadczyny"}
+  model: wiki.theme
+  pk: 415
+- fields: {name: "Paj\u0105k"}
+  model: wiki.theme
+  pk: 196
+- fields: {name: "Pami\u0119\u0107"}
+  model: wiki.theme
+  pk: 197
+- fields: {name: Pan}
+  model: wiki.theme
+  pk: 198
+- fields: {name: "Panna m\u0142oda"}
+  model: wiki.theme
+  pk: 199
+- fields: {name: Patriota}
+  model: wiki.theme
+  pk: 201
+- fields: {name: "Pa\u0144stwo"}
+  model: wiki.theme
+  pk: 200
+- fields: {name: "Piek\u0142o"}
+  model: wiki.theme
+  pk: 202
+- fields: {name: Pielgrzym}
+  model: wiki.theme
+  pk: 203
+- fields: {name: "Pieni\u0105dz"}
+  model: wiki.theme
+  pk: 204
+- fields: {name: Pies}
+  model: wiki.theme
+  pk: 205
+- fields: {name: "Pija\u0144stwo"}
+  model: wiki.theme
+  pk: 207
+- fields: {name: Piwnica}
+  model: wiki.theme
+  pk: 208
+- fields: {name: "Pi\u0119tno"}
+  model: wiki.theme
+  pk: 206
+- fields: {name: Plotka}
+  model: wiki.theme
+  pk: 209
+- fields: {name: "Pobo\u017Cno\u015B\u0107"}
+  model: wiki.theme
+  pk: 210
+- fields: {name: "Poca\u0142unek"}
+  model: wiki.theme
+  pk: 211
+- fields: {name: Pochlebstwo}
+  model: wiki.theme
+  pk: 212
+- fields: {name: "Podr\xF3\u017C"}
+  model: wiki.theme
+  pk: 216
+- fields: {name: "Podst\u0119p"}
+  model: wiki.theme
+  pk: 217
+- fields: {name: Poeta}
+  model: wiki.theme
+  pk: 213
+- fields: {name: Poetka}
+  model: wiki.theme
+  pk: 214
+- fields: {name: Poezja}
+  model: wiki.theme
+  pk: 215
+- fields: {name: Pogrzeb}
+  model: wiki.theme
+  pk: 218
+- fields: {name: Pojedynek}
+  model: wiki.theme
+  pk: 219
+- fields: {name: Pokora}
+  model: wiki.theme
+  pk: 220
+- fields: {name: Pokusa}
+  model: wiki.theme
+  pk: 221
+- fields: {name: Polak}
+  model: wiki.theme
+  pk: 222
+- fields: {name: Polityka}
+  model: wiki.theme
+  pk: 223
+- fields: {name: Polowanie}
+  model: wiki.theme
+  pk: 224
+- fields: {name: Polska}
+  model: wiki.theme
+  pk: 225
+- fields: {name: Portret}
+  model: wiki.theme
+  pk: 226
+- fields: {name: Porwanie}
+  model: wiki.theme
+  pk: 227
+- fields: {name: "Potw\xF3r"}
+  model: wiki.theme
+  pk: 229
+- fields: {name: Powstanie}
+  model: wiki.theme
+  pk: 230
+- fields: {name: Powstaniec}
+  model: wiki.theme
+  pk: 231
+- fields: {name: Pozory}
+  model: wiki.theme
+  pk: 232
+- fields: {name: "Pozycja spo\u0142eczna"}
+  model: wiki.theme
+  pk: 233
+- fields: {name: "Po\u015Bwi\u0119cenie"}
+  model: wiki.theme
+  pk: 228
+- fields: {name: "Po\u017Car"}
+  model: wiki.theme
+  pk: 234
+- fields: {name: "Po\u017C\u0105danie"}
+  model: wiki.theme
+  pk: 235
+- fields: {name: Praca}
+  model: wiki.theme
+  pk: 236
+- fields: {name: Praca organiczna}
+  model: wiki.theme
+  pk: 238
+- fields: {name: Praca u podstaw}
+  model: wiki.theme
+  pk: 237
+- fields: {name: Prawda}
+  model: wiki.theme
+  pk: 239
+- fields: {name: Prawnik}
+  model: wiki.theme
+  pk: 240
+- fields: {name: Prometeusz}
+  model: wiki.theme
+  pk: 241
+- fields: {name: Proroctwo}
+  model: wiki.theme
+  pk: 242
+- fields: {name: Prorok}
+  model: wiki.theme
+  pk: 243
+- fields: {name: Przebranie}
+  model: wiki.theme
+  pk: 245
+- fields: {name: Przeczucie}
+  model: wiki.theme
+  pk: 246
+- fields: {name: "Przedmurze chrze\u015Bcija\u0144stwa"}
+  model: wiki.theme
+  pk: 247
+- fields: {name: "Przekle\u0144stwo"}
+  model: wiki.theme
+  pk: 248
+- fields: {name: Przekupstwo}
+  model: wiki.theme
+  pk: 249
+- fields: {name: Przemiana}
+  model: wiki.theme
+  pk: 250
+- fields: {name: Przemijanie}
+  model: wiki.theme
+  pk: 251
+- fields: {name: Przemoc}
+  model: wiki.theme
+  pk: 252
+- fields: {name: "Przestrze\u0144"}
+  model: wiki.theme
+  pk: 253
+- fields: {name: "Przyja\u017A\u0144"}
+  model: wiki.theme
+  pk: 254
+- fields: {name: "Przyroda nieo\u017Cywiona"}
+  model: wiki.theme
+  pk: 255
+- fields: {name: "Przysi\u0119ga"}
+  model: wiki.theme
+  pk: 256
+- fields: {name: "Przyw\xF3dca"}
+  model: wiki.theme
+  pk: 257
+- fields: {name: "Pr\xF3\u017Cno\u015B\u0107"}
+  model: wiki.theme
+  pk: 244
+- fields: {name: Ptak}
+  model: wiki.theme
+  pk: 258
+- fields: {name: Pustynia}
+  model: wiki.theme
+  pk: 259
+- fields: {name: Pycha}
+  model: wiki.theme
+  pk: 260
+- fields: {name: Raj}
+  model: wiki.theme
+  pk: 261
+- fields: {name: Realista}
+  model: wiki.theme
+  pk: 262
+- fields: {name: Religia}
+  model: wiki.theme
+  pk: 263
+- fields: {name: Rewolucja}
+  model: wiki.theme
+  pk: 264
+- fields: {name: Robak}
+  model: wiki.theme
+  pk: 265
+- fields: {name: Robotnik}
+  model: wiki.theme
+  pk: 266
+- fields: {name: Rodzina}
+  model: wiki.theme
+  pk: 267
+- fields: {name: Rosja}
+  model: wiki.theme
+  pk: 268
+- fields: {name: Rosjanin}
+  model: wiki.theme
+  pk: 269
+- fields: {name: Rozczarowanie}
+  model: wiki.theme
+  pk: 271
+- fields: {name: Rozpacz}
+  model: wiki.theme
+  pk: 272
+- fields: {name: Rozstanie}
+  model: wiki.theme
+  pk: 273
+- fields: {name: Rozum}
+  model: wiki.theme
+  pk: 274
+- fields: {name: "Ro\u015Bliny"}
+  model: wiki.theme
+  pk: 270
+- fields: {name: Ruiny}
+  model: wiki.theme
+  pk: 275
+- fields: {name: Rycerz}
+  model: wiki.theme
+  pk: 276
+- fields: {name: Rzeka}
+  model: wiki.theme
+  pk: 277
+- fields: {name: Salon}
+  model: wiki.theme
+  pk: 278
+- fields: {name: "Samob\xF3jstwo"}
+  model: wiki.theme
+  pk: 279
+- fields: {name: Samolubstwo}
+  model: wiki.theme
+  pk: 280
+- fields: {name: Samotnik}
+  model: wiki.theme
+  pk: 281
+- fields: {name: "Samotno\u015B\u0107"}
+  model: wiki.theme
+  pk: 282
+- fields: {name: Sarmata}
+  model: wiki.theme
+  pk: 283
+- fields: {name: Sen}
+  model: wiki.theme
+  pk: 287
+- fields: {name: Serce}
+  model: wiki.theme
+  pk: 288
+- fields: {name: Sielanka}
+  model: wiki.theme
+  pk: 290
+- fields: {name: Sierota}
+  model: wiki.theme
+  pk: 291
+- fields: {name: Siostra}
+  model: wiki.theme
+  pk: 293
+- fields: {name: "Si\u0142a"}
+  model: wiki.theme
+  pk: 292
+- fields: {name: "Sk\u0105piec"}
+  model: wiki.theme
+  pk: 299
+- fields: {name: "Sobowt\xF3r"}
+  model: wiki.theme
+  pk: 300
+- fields: {name: "Spowied\u017A"}
+  model: wiki.theme
+  pk: 302
+- fields: {name: "Spo\u0142ecznik"}
+  model: wiki.theme
+  pk: 301
+- fields: {name: "Sprawiedliwo\u015B\u0107"}
+  model: wiki.theme
+  pk: 303
+- fields: {name: "Staro\u015B\u0107"}
+  model: wiki.theme
+  pk: 304
+- fields: {name: Strach}
+  model: wiki.theme
+  pk: 305
+- fields: {name: "Str\xF3j"}
+  model: wiki.theme
+  pk: 306
+- fields: {name: Stworzenie}
+  model: wiki.theme
+  pk: 307
+- fields: {name: Sumienie}
+  model: wiki.theme
+  pk: 308
+- fields: {name: Swaty}
+  model: wiki.theme
+  pk: 309
+- fields: {name: Syberia}
+  model: wiki.theme
+  pk: 310
+- fields: {name: Syn}
+  model: wiki.theme
+  pk: 311
+- fields: {name: Syn marnotrawny}
+  model: wiki.theme
+  pk: 312
+- fields: {name: Syzyf}
+  model: wiki.theme
+  pk: 313
+- fields: {name: Szaleniec}
+  model: wiki.theme
+  pk: 314
+- fields: {name: "Szale\u0144stwo"}
+  model: wiki.theme
+  pk: 315
+- fields: {name: "Szanta\u017C"}
+  model: wiki.theme
+  pk: 316
+- fields: {name: Szatan}
+  model: wiki.theme
+  pk: 317
+- fields: {name: "Szcz\u0119\u015Bcie"}
+  model: wiki.theme
+  pk: 318
+- fields: {name: "Szko\u0142a"}
+  model: wiki.theme
+  pk: 319
+- fields: {name: Szlachcic}
+  model: wiki.theme
+  pk: 320
+- fields: {name: Szpieg}
+  model: wiki.theme
+  pk: 321
+- fields: {name: Sztuka}
+  model: wiki.theme
+  pk: 322
+- fields: {name: "S\u0105d"}
+  model: wiki.theme
+  pk: 285
+- fields: {name: "S\u0105d Ostateczny"}
+  model: wiki.theme
+  pk: 286
+- fields: {name: "S\u0105siad"}
+  model: wiki.theme
+  pk: 284
+- fields: {name: "S\u0119dzia"}
+  model: wiki.theme
+  pk: 289
+- fields: {name: "S\u0142awa"}
+  model: wiki.theme
+  pk: 294
+- fields: {name: "S\u0142owo"}
+  model: wiki.theme
+  pk: 296
+- fields: {name: "S\u0142o\u0144ce"}
+  model: wiki.theme
+  pk: 295
+- fields: {name: "S\u0142uga"}
+  model: wiki.theme
+  pk: 297
+- fields: {name: "S\u0142u\u017Calczo\u015B\u0107"}
+  model: wiki.theme
+  pk: 298
+- fields: {name: Tajemnica}
+  model: wiki.theme
+  pk: 332
+- fields: {name: Taniec}
+  model: wiki.theme
+  pk: 333
+- fields: {name: "Tch\xF3rzostwo"}
+  model: wiki.theme
+  pk: 334
+- fields: {name: Teatr}
+  model: wiki.theme
+  pk: 335
+- fields: {name: Testament}
+  model: wiki.theme
+  pk: 336
+- fields: {name: Theatrum mundi}
+  model: wiki.theme
+  pk: 338
+- fields: {name: Trucizna}
+  model: wiki.theme
+  pk: 340
+- fields: {name: Trup}
+  model: wiki.theme
+  pk: 341
+- fields: {name: "Tw\xF3rczo\u015B\u0107"}
+  model: wiki.theme
+  pk: 342
+- fields: {name: "T\u0119sknota"}
+  model: wiki.theme
+  pk: 337
+- fields: {name: "T\u0142um"}
+  model: wiki.theme
+  pk: 339
+- fields: {name: "Ucze\u0144"}
+  model: wiki.theme
+  pk: 343
+- fields: {name: Uczta}
+  model: wiki.theme
+  pk: 344
+- fields: {name: Umiarkowanie}
+  model: wiki.theme
+  pk: 346
+- fields: {name: Upadek}
+  model: wiki.theme
+  pk: 347
+- fields: {name: "Upi\xF3r"}
+  model: wiki.theme
+  pk: 348
+- fields: {name: Uroda}
+  model: wiki.theme
+  pk: 345
+- fields: {name: "Urz\u0119dnik"}
+  model: wiki.theme
+  pk: 349
+- fields: {name: Vanitas}
+  model: wiki.theme
+  pk: 350
+- fields: {name: Walka}
+  model: wiki.theme
+  pk: 351
+- fields: {name: Walka klas}
+  model: wiki.theme
+  pk: 352
+- fields: {name: Wampir}
+  model: wiki.theme
+  pk: 353
+- fields: {name: Warszawa}
+  model: wiki.theme
+  pk: 354
+- fields: {name: Wdowa}
+  model: wiki.theme
+  pk: 356
+- fields: {name: Wdowiec}
+  model: wiki.theme
+  pk: 357
+- fields: {name: Wesele}
+  model: wiki.theme
+  pk: 358
+- fields: {name: Wiatr}
+  model: wiki.theme
+  pk: 359
+- fields: {name: Wiedza}
+  model: wiki.theme
+  pk: 363
+- fields: {name: "Wierno\u015B\u0107"}
+  model: wiki.theme
+  pk: 360
+- fields: {name: Wierzenia}
+  model: wiki.theme
+  pk: 361
+- fields: {name: "Wie\u015B"}
+  model: wiki.theme
+  pk: 362
+- fields: {name: "Wie\u017Ca Babel"}
+  model: wiki.theme
+  pk: 364
+- fields: {name: Wina}
+  model: wiki.theme
+  pk: 367
+- fields: {name: Wino}
+  model: wiki.theme
+  pk: 368
+- fields: {name: Wiosna}
+  model: wiki.theme
+  pk: 369
+- fields: {name: Wizja}
+  model: wiki.theme
+  pk: 370
+- fields: {name: "Wi\u0119zienie"}
+  model: wiki.theme
+  pk: 365
+- fields: {name: "Wi\u0119zie\u0144"}
+  model: wiki.theme
+  pk: 366
+- fields: {name: Woda}
+  model: wiki.theme
+  pk: 373
+- fields: {name: Wojna}
+  model: wiki.theme
+  pk: 374
+- fields: {name: "Wojna pokole\u0144"}
+  model: wiki.theme
+  pk: 375
+- fields: {name: "Wolno\u015B\u0107"}
+  model: wiki.theme
+  pk: 376
+- fields: {name: "Wr\xF3g"}
+  model: wiki.theme
+  pk: 377
+- fields: {name: Wspomnienia}
+  model: wiki.theme
+  pk: 378
+- fields: {name: "Wsp\xF3\u0142praca"}
+  model: wiki.theme
+  pk: 379
+- fields: {name: Wygnanie}
+  model: wiki.theme
+  pk: 380
+- fields: {name: Wyrzuty sumienia}
+  model: wiki.theme
+  pk: 381
+- fields: {name: Wyspa}
+  model: wiki.theme
+  pk: 382
+- fields: {name: Wzrok}
+  model: wiki.theme
+  pk: 383
+- fields: {name: "W\u0105\u017C"}
+  model: wiki.theme
+  pk: 355
+- fields: {name: "W\u0142adza"}
+  model: wiki.theme
+  pk: 371
+- fields: {name: "W\u0142asno\u015B\u0107"}
+  model: wiki.theme
+  pk: 372
+- fields: {name: Zabawa}
+  model: wiki.theme
+  pk: 384
+- fields: {name: Zabobony}
+  model: wiki.theme
+  pk: 385
+- fields: {name: Zamek}
+  model: wiki.theme
+  pk: 386
+- fields: {name: "Zar\u0119czyny"}
+  model: wiki.theme
+  pk: 387
+- fields: {name: "Zazdro\u015B\u0107"}
+  model: wiki.theme
+  pk: 389
+- fields: {name: "Za\u015Bwiaty"}
+  model: wiki.theme
+  pk: 388
+- fields: {name: Zbawienie}
+  model: wiki.theme
+  pk: 390
+- fields: {name: Zbrodnia}
+  model: wiki.theme
+  pk: 391
+- fields: {name: Zbrodniarz}
+  model: wiki.theme
+  pk: 392
+- fields: {name: Zdrada}
+  model: wiki.theme
+  pk: 393
+- fields: {name: Zdrowie}
+  model: wiki.theme
+  pk: 394
+- fields: {name: Zemsta}
+  model: wiki.theme
+  pk: 395
+- fields: {name: "Zes\u0142aniec"}
+  model: wiki.theme
+  pk: 396
+- fields: {name: Ziarno}
+  model: wiki.theme
+  pk: 397
+- fields: {name: Ziemia}
+  model: wiki.theme
+  pk: 398
+- fields: {name: Zima}
+  model: wiki.theme
+  pk: 399
+- fields: {name: Zmartwychwstanie}
+  model: wiki.theme
+  pk: 403
+- fields: {name: "Zwierz\u0119ta"}
+  model: wiki.theme
+  pk: 405
+- fields: {name: "Zwyci\u0119stwo"}
+  model: wiki.theme
+  pk: 406
+- fields: {name: "Zw\u0105tpienie"}
+  model: wiki.theme
+  pk: 404
+- fields: {name: "Z\u0142o"}
+  model: wiki.theme
+  pk: 400
+- fields: {name: "Z\u0142odziej"}
+  model: wiki.theme
+  pk: 401
+- fields: {name: "Z\u0142oty wiek"}
+  model: wiki.theme
+  pk: 402
+- fields: {name: "\u0141zy"}
+  model: wiki.theme
+  pk: 130
+- fields: {name: "\u015Alub"}
+  model: wiki.theme
+  pk: 323
+- fields: {name: "\u015Amiech"}
+  model: wiki.theme
+  pk: 324
+- fields: {name: "\u015Amier\u0107"}
+  model: wiki.theme
+  pk: 325
+- fields: {name: "\u015Amier\u0107 bohaterska"}
+  model: wiki.theme
+  pk: 326
+- fields: {name: "\u015Apiew"}
+  model: wiki.theme
+  pk: 327
+- fields: {name: "\u015Awiat\u0142o"}
+  model: wiki.theme
+  pk: 328
+- fields: {name: "\u015Awit"}
+  model: wiki.theme
+  pk: 331
+- fields: {name: "\u015Awi\u0119toszek"}
+  model: wiki.theme
+  pk: 329
+- fields: {name: "\u015Awi\u0119ty"}
+  model: wiki.theme
+  pk: 330
+- fields: {name: "\u017Ba\u0142oba"}
+  model: wiki.theme
+  pk: 407
+- fields: {name: "\u017Bebrak"}
+  model: wiki.theme
+  pk: 408
+- fields: {name: "\u017Bona"}
+  model: wiki.theme
+  pk: 410
+- fields: {name: "\u017Bo\u0142nierz"}
+  model: wiki.theme
+  pk: 409
+- fields: {name: "\u017Bycie jako w\u0119dr\xF3wka"}
+  model: wiki.theme
+  pk: 411
+- fields: {name: "\u017Bycie snem"}
+  model: wiki.theme
+  pk: 412
+- fields: {name: "\u017Byd"}
+  model: wiki.theme
+  pk: 413
+- fields: {name: "\u017Bywio\u0142y"}
+  model: wiki.theme
+  pk: 414
+
