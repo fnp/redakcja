@@ -65,7 +65,7 @@
                 event.preventDefault();
                 self.setPage($(this).val());
             });
-
+                    
             $('.previous-page', this.$element).click(function(){
                 self.setPage(parseInt(self.$numberInput.val(),10) - 1);
             });
@@ -139,6 +139,7 @@
 
     ScanGalleryPerspective.prototype.setPage = function(newPage){
         newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
+        $('#imagesCount').val(this.doc.galleryImages.length);
         this.$numberInput.val(newPage);
 		this.config().page = newPage;
         $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1]);

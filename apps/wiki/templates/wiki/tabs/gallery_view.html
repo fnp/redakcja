@@ -7,7 +7,9 @@
         <button class="previous-page">
             <img src="{{STATIC_URL}}icons/go-previous.png"
             	alt="{% trans "Previous" %}" title="{% trans "Previous" %}"/>
-        </button><input type="text" size="3" maxlength="3" value="1" class="page-number" />
+        </button>
+        <input type="text" size="3" maxlength="3" value="0" class="page-number" />
+        <input type="text" id="imagesCount" disabled="disabled" value="0" maxlength="3" size="3">
         <button class="next-page">
             <img src="{{STATIC_URL}}icons/go-next.png"
             	alt="{% trans "Next" %}" title="{% trans "Next" %}"/>

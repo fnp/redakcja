@@ -33,7 +33,7 @@
 
 		if (vname == "ajax_document_gallery") {
 
-			return base_path + "/gallery/" + arguments[1];
+			return base_path + "/" + arguments[1] + "/gallery";
 		}
 
 		if (vname == "ajax_document_diff")
