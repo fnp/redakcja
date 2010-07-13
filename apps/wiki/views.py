@@ -96,7 +96,7 @@ def editor_readonly(request, name, template_name='wiki/document_details_readonly
     try:
         revision = request.GET['revision']
         document = storage.get(name, revision)
-    except (KeyError, DocumentNotFound) as e:
+    except (KeyError, DocumentNotFound):
         raise http.Http404
 
     access_time = datetime.now()
@@ -148,23 +148,16 @@ def text(request, name):
 
     if request.method == 'POST':
         form = DocumentTextSaveForm(request.POST, prefix="textsave")
-
         if form.is_valid():
             revision = form.cleaned_data['parent_revision']
-
-            document = storage.get_or_404(name, revision)
+            document = storage.get_or_404(name, revision)          
             document.text = form.cleaned_data['text']
-
             comment = form.cleaned_data['comment']
-
-            if form.cleaned_data['stage_completed']:
-                comment += '\n#stage-finished: %s\n' % form.cleaned_data['stage_completed']
-
-            author = "%s <%s>" % (form.cleaned_data['author_name'], form.cleaned_data['author_email'])
-
-            storage.put(document, author=author, comment=comment, parent=revision)
-            document = storage.get(name)
-
+            if form.cleaned_data['stage_completed']:        
+                comment += '\n#stage-finished: %s\n' % form.cleaned_data['stage_completed']         
+            author = "%s <%s>" % (form.cleaned_data['author_name'], form.cleaned_data['author_email'])           
+            storage.put(document, author=author, comment=comment, parent=revision)           
+            document = storage.get(name)          
             return JSONResponse({
                 'text': document.plain_text if revision != document.revision else None,
                 'meta': document.meta(),
@@ -234,7 +227,7 @@ def gallery(request, directory):
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
         return JSONResponse(images)
-    except (IndexError, OSError) as e:
+    except (IndexError, OSError):
         logger.exception("Unable to fetch gallery")
         raise http.Http404
 

@@ -354,11 +354,11 @@ class VersionedStorage(object):
 
         try:
             return tree_search(tip, self._title_to_file(title))
-        except (IndexError, LookupError) as e:
+        except (IndexError, LookupError):
             logging.info("XML file not found, trying plain")
             try:
                 return tree_search(tip, self._title_to_file(title, type=''))
-            except (IndexError, LookupError) as e:
+            except (IndexError, LookupError):
                 raise DocumentNotFound(title)
 
     def page_history(self, title):

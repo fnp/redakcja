@@ -236,7 +236,6 @@ img.tabclose {
 	vertical-align: text-bottom;
 }
 
-
 /*
  * HTML Editor view
  */
@@ -259,4 +258,9 @@ img.tabclose {
 .blockOverlay {
 	background-color: black;
 	opacity: 0.4;
+}
+
+.poezja_cyt {
+    margin:1.5em 2em 0;
+    font-size:0.875em
 }
