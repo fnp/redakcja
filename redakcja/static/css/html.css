@@ -333,11 +333,16 @@ div[x-node] > .uwaga {
     left: auto;
     clear: right;
     width: 10em;
+
+    font-style: normal;
     font-weight: normal;
+    font-variant: normal;
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: none;
+
     font-size: 13px;
     line-height: 18px;
-    font-variant: normal;
-    text-decoration: none;
     background-color: #fff;
     /*    border: 1px solid gray;
 
