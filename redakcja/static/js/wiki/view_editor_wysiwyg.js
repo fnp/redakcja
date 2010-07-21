@@ -43,7 +43,7 @@
         return true;
     }
 
-    /* Convert HTML frament to plaintext */
+    /* Convert HTML fragment to plaintext */
     var ANNOT_FORBIDDEN = ['pt', 'pa', 'pr', 'pe', 'begin', 'end', 'theme'];
 
     function html2plainText(fragment){
