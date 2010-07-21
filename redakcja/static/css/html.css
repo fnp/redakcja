@@ -365,6 +365,10 @@ div[x-node] > .uwaga {
  * Przypisy
  */
 /* Znaczniki w tekście */
+.annotation {
+    font-style: normal;
+}
+
 .htmlview .annotation:before {
     content: "[" counter(main) "]";
     counter-increment: main;
