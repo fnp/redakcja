@@ -222,6 +222,8 @@
 			success: function(data) {
 				var changed = false;
 
+                $('#header').removeClass('saving');
+
 				if (data.text) {
 					self.text = data.text;
 					self.revision = data.revision;
@@ -233,17 +235,31 @@
 				params['success'](self, changed, ((changed && "Udało się zapisać :)") || "Twoja wersja i serwera jest identyczna"));
 			},
 			error: function(xhr) {
-				try {
-					params['failure'](self, $.parseJSON(xhr.responseText));
-				}
-				catch (e) {
-					params['failure'](self, {
-						"__message": "<p>Nie udało się zapisać - błąd serwera.</p>"
-					});
-				};
+                if ($('#header').hasClass('saving')) {
+                    $('#header').removeClass('saving');
+                    $.blockUI({
+                        message: "<p>Nie udało się zapisać zmian. <br/><button onclick='$.unblockUI()'>OK</button></p>"
+                    })
+                }
+                else {
+                    try {
+                        params['failure'](self, $.parseJSON(xhr.responseText));
+                    }
+                    catch (e) {
+                        params['failure'](self, {
+                            "__message": "<p>Nie udało się zapisać - błąd serwera.</p>"
+                        });
+                    };
+                }
 
 			}
 		});
+
+        $('#save-hide').click(function(){
+            $('#header').addClass('saving');
+            $.unblockUI();
+            $.wiki.blocking.unblock();
+        });
 	}; /* end of save() */
 
 	WikiDocument.prototype.publish = function(params) {
