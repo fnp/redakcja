@@ -41,8 +41,11 @@
 			<span id='save-attempt-info'>{% trans "Save attempt in progress" %}</span>
 		{% endif %}
     </div>
-    <ol id="tabs">
+    <ol id="tabs" class="tabs">
     	{% block tabs-menu %} {% endblock %}
+    </ol>
+    <ol id="tabs-right" class="tabs">
+        {% block tabs-right %} {% endblock %}
     </ol>
 </div>
 <div id="splitter">

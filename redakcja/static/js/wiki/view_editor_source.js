@@ -100,6 +100,10 @@
 		console.log('Exiting', this.doc);
 		this.doc.setText(this.codemirror.getCode());
 
+        if ($('.vsplitbar').hasClass('active') && $('#SearchPerspective').hasClass('active')) {
+            $.wiki.switchToTab('#ScanGalleryPerspective');
+        }
+
 		if(success) success();
 	}
 

@@ -1,0 +1,19 @@
+{% load i18n %}
+<div id='side-search'>
+    <p>{% trans "Search" %}:<br/>
+    <input id='search-input' /><br/>
+    <button id='search-button'>{% trans "Search" %}</button>
+    </p>
+
+    <p>{% trans "Replace with" %}:<br/>
+        <input id='replace-input' /><br/>
+        <button id='replace-button'>{% trans "Replace" %}</button><br/>
+    </p>
+
+    <p>{% trans "Options" %}<br/>
+        <input type="checkbox" id="search-case-sensitive" />
+            <label for="search-case-sensitive">{% trans "Case sensitive" %}</label><br/>
+        <input type="checkbox" id="search-from-cursor" />
+            <label for="search-from-cursor">{% trans "From cursor" %}</label><br/>
+    </p>
+</div>

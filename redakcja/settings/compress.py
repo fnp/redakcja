@@ -51,6 +51,7 @@ COMPRESS_JS = {
                 'js/wiki/view_editor_source.js',
                 'js/wiki/view_editor_wysiwyg.js',
                 'js/wiki/view_gallery.js',
+                'js/wiki/view_search.js',
                 'js/wiki/view_column_diff.js',
         ),
         'output_filename': 'compressed/detail_scripts_?.js',

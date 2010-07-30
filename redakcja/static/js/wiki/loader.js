@@ -36,7 +36,7 @@ $(function()
 		/*
 		 * TABS
 		 */
-        $('#tabs li').live('click', function(event, callback) {
+        $('.tabs li').live('click', function(event, callback) {
 			$.wiki.switchToTab(this);
         });
 
@@ -62,19 +62,19 @@ $(function()
         $('.vsplitbar').toggle(
 			function() {
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
-				$('#side-gallery').show();
-				$('.vsplitbar').css('right', 480).addClass('.active');
+				$('#sidebar').show();
+				$('.vsplitbar').css('right', 480).addClass('active');
 				$('#editor .editor').css('right', 510);
 				$(window).resize();
-				gallery.onEnter();
+				$.wiki.perspectiveForTab('#tabs-right .active').onEnter();
 			},
 			function() {
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
-				$('#side-gallery').hide();
+				$('#sidebar').hide();
 				$('.vsplitbar').css('right', 0).removeClass('active');
 				$('#editor .editor').css('right', 30);
 				$(window).resize();
-				gallery.onExit();
+				$.wiki.perspectiveForTab('#tabs-right .active').onExit();
 			}
 		);
 
@@ -137,6 +137,6 @@ $(function()
 	/*
 	 * Initialize all perspectives
 	 */
-	initAll( $.makeArray($('ol#tabs li')), initialize);
+	initAll( $.makeArray($('.tabs li')), initialize);
 	console.log(location.hash);
 });

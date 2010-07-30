@@ -223,7 +223,29 @@ var Editor = (function(){
   // indicating whether anything was found, and can be called again to
   // skip to the next find. Use the select and replace methods to
   // actually do something with the found locations.
-  function SearchCursor(editor, string, fromCursor) {
+  function SearchCursor(editor, string, fromCursor, regexp, case_sensitive) {
+
+    function casedIndexOf(hay, needle, case_sensitive) {
+        if (case_sensitive)
+            return hay.indexOf(needle);
+        else
+            return hay.toLowerCase().indexOf(needle.toLowerCase())
+    }
+
+    function casedLastIndexOf(hay, needle, case_sensitive) {
+        if (case_sensitive)
+            return hay.lastIndexOf(needle);
+        else
+            return hay.toLowerCase().lastIndexOf(needle.toLowerCase());
+    }
+
+    function casedEqual(a, b, case_sensitive) {
+        if (case_sensitive)
+            return a == b;
+        else
+            return a.toLowerCase() == b.toLowerCase();
+    }
+
     this.editor = editor;
     this.history = editor.history;
     this.history.commit();
@@ -252,7 +274,8 @@ var Editor = (function(){
       // For one-line strings, searching can be done simply by calling
       // indexOf on the current line.
       function() {
-        var match = cleanText(self.history.textAfter(self.line).slice(self.offset)).indexOf(string);
+        var match = casedIndexOf(cleanText(self.history.textAfter(self.line).slice(self.offset)),
+                string, case_sensitive);
         if (match > -1)
           return {from: {node: self.line, offset: self.offset + match},
                   to: {node: self.line, offset: self.offset + match + string.length}};
@@ -262,19 +285,19 @@ var Editor = (function(){
       // end of the line and the last match starts at the start.
       function() {
         var firstLine = cleanText(self.history.textAfter(self.line).slice(self.offset));
-        var match = firstLine.lastIndexOf(target[0]);
+        var match = casedLastIndexOf(firstLine, target[0], case_sensitive);
         if (match == -1 || match != firstLine.length - target[0].length)
           return false;
         var startOffset = self.offset + match;
 
         var line = self.history.nodeAfter(self.line);
         for (var i = 1; i < target.length - 1; i++) {
-          if (cleanText(self.history.textAfter(line)) != target[i])
+          if (!casedEqual(cleanText(self.history.textAfter(line)), target[i], case_sensitive))
             return false;
           line = self.history.nodeAfter(line);
         }
 
-        if (cleanText(self.history.textAfter(line)).indexOf(target[target.length - 1]) != 0)
+        if (casedIndexOf(cleanText(self.history.textAfter(line)), target[target.length - 1], case_sensitive) != 0)
           return false;
 
         return {from: {node: self.line, offset: startOffset},
@@ -619,8 +642,8 @@ var Editor = (function(){
               offset: lastLine.length};
     },
 
-    getSearchCursor: function(string, fromCursor) {
-      return new SearchCursor(this, string, fromCursor);
+    getSearchCursor: function(string, fromCursor, regexp, case_sensitive) {
+      return new SearchCursor(this, string, fromCursor, regexp, case_sensitive);
     },
 
     // Re-indent the whole buffer

@@ -117,16 +117,22 @@ body {
     color: #222;
 }
 
-#tabs {
+.tabs {
 	overflow: hidden;
     margin: 0;
 	padding: 0;
 	height: 31px;
 	border: 0px;
 	padding-left: 1em;
+    float: left;
 }
 
-#tabs li {
+#tabs-right {
+    float: right;
+    padding-right: 1em;
+}
+
+.tabs li {
 	height: 18px;
 	margin-top: 6px;
 	margin-bottom: 0px;
@@ -157,7 +163,7 @@ body {
     -webkit-border-bottom-right-radius: 0px;
 }
 
-#tabs li.active {
+.tabs li.active {
     background-color: #C1C1C1;
 }
 
