@@ -84,6 +84,7 @@ def editor(request, name, template_name='wiki/document_details.html'):
             "text_save": DocumentTextSaveForm(prefix="textsave"),
             "add_tag": DocumentTagForm(prefix="addtag"),
         },
+        'REDMINE_URL': settings.REDMINE_URL,
     })
 
 
@@ -113,6 +114,7 @@ def editor_readonly(request, name, template_name='wiki/document_details_readonly
         'document_name': document.name,
         'document_info': dict(document.info(), readonly=True),
         'document_meta': document.meta,
+        'REDMINE_URL': settings.REDMINE_URL,
     })
 
 
