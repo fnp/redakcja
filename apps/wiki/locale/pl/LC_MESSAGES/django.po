@@ -1,0 +1,272 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-08-03 12:13+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: constants.py:6
+msgid "First correction"
+msgstr "Autokorekta"
+
+#: constants.py:7
+msgid "Tagging"
+msgstr "Tagowanie"
+
+#: constants.py:8
+msgid "Initial Proofreading"
+msgstr "Korekta"
+
+#: constants.py:9
+msgid "Annotation Proofreading"
+msgstr "Sprawdzenie przypisów źródła"
+
+#: constants.py:10
+msgid "Modernisation"
+msgstr "Uwspółcześnienie"
+
+#: constants.py:11
+msgid "Themes"
+msgstr "Motywy"
+
+#: constants.py:12
+msgid "Editor's Proofreading"
+msgstr "Ostateczna redakcja literacka"
+
+#: constants.py:13
+msgid "Technical Editor's Proofreading"
+msgstr "Ostateczna redakcja techniczna"
+
+#: constants.py:17
+msgid "Ready to publish"
+msgstr "Gotowe do publikacji"
+
+#: forms.py:62
+msgid "Author"
+msgstr "Autor"
+
+#: forms.py:63
+msgid "Your name/"
+msgstr "Imię i nazwisko/"
+
+#: forms.py:68
+msgid "Author's email"
+msgstr "E-mail autora"
+
+#: forms.py:69
+msgid "Your email address, so we can show a gravatar :)"
+msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
+
+#: forms.py:75
+msgid "Your comments"
+msgstr "Twój komentarz"
+
+#: forms.py:76
+msgid "Describe changes you made."
+msgstr "Opisz swoje zmiany"
+
+#: forms.py:82
+msgid "Completed"
+msgstr "Ukończono"
+
+#: forms.py:83
+msgid "If you completed a life cycle stage, select it."
+msgstr "Jeśli został ukończony etap prac, wskaż go."
+
+#: models.py:93
+#, python-format
+msgid "Finished stage: %s"
+msgstr "Ukończony etap: %s"
+
+#: models.py:149
+msgid "name"
+msgstr "nazwa"
+
+#: models.py:153
+msgid "theme"
+msgstr "motyw"
+
+#: models.py:154
+msgid "themes"
+msgstr "motywy"
+
+#: views.py:279
+msgid "Tag added"
+msgstr "Dodano tag"
+
+#: templates/wiki/base.html:15
+msgid "Platforma Redakcyjna"
+msgstr ""
+
+#: templates/wiki/diff_table.html:5
+msgid "Old version"
+msgstr "Stara wersja"
+
+#: templates/wiki/diff_table.html:6
+msgid "New version"
+msgstr "Nowa wersja"
+
+#: templates/wiki/document_create_missing.html:8
+msgid "Create document"
+msgstr "Utwórz dokument"
+
+#: templates/wiki/document_details.html:31
+msgid "Click to open/close gallery"
+msgstr "Kliknij, aby (ro)zwinąć galerię"
+
+#: templates/wiki/document_details_base.html:36
+msgid "Help"
+msgstr "Pomoc"
+
+#: templates/wiki/document_details_base.html:38
+msgid "Version"
+msgstr "Wersja"
+
+#: templates/wiki/document_details_base.html:38
+msgid "Unknown"
+msgstr "nieznana"
+
+#: templates/wiki/document_details_base.html:40
+#: templates/wiki/tag_dialog.html:15
+msgid "Save"
+msgstr "Zapisz"
+
+#: templates/wiki/document_details_base.html:41
+msgid "Save attempt in progress"
+msgstr ""
+
+#: templates/wiki/document_list.html:30
+msgid "Clear filter"
+msgstr "Wyczyść filtr"
+
+#: templates/wiki/document_list.html:48
+msgid "Your last edited documents"
+msgstr "Twoje ostatnie edycje"
+
+#: templates/wiki/tag_dialog.html:16
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: templates/wiki/tabs/gallery_view.html:7
+msgid "Previous"
+msgstr "Poprzednie"
+
+#: templates/wiki/tabs/gallery_view.html:13
+msgid "Next"
+msgstr "Następne"
+
+#: templates/wiki/tabs/gallery_view.html:15
+msgid "Zoom in"
+msgstr "Powiększ"
+
+#: templates/wiki/tabs/gallery_view.html:16
+msgid "Zoom out"
+msgstr "Zmniejsz"
+
+#: templates/wiki/tabs/gallery_view_item.html:3
+msgid "Gallery"
+msgstr "Galeria"
+
+#: templates/wiki/tabs/history_view.html:5
+msgid "Compare versions"
+msgstr "Porównaj wersje"
+
+#: templates/wiki/tabs/history_view.html:7
+msgid "Mark version"
+msgstr "Oznacz wersję"
+
+#: templates/wiki/tabs/history_view.html:9
+msgid "Revert document"
+msgstr "Przywróć wersję"
+
+#: templates/wiki/tabs/history_view.html:12
+msgid "View version"
+msgstr "Zobacz wersję"
+
+#: templates/wiki/tabs/history_view_item.html:3
+msgid "History"
+msgstr "Historia"
+
+#: templates/wiki/tabs/search_view.html:3
+#: templates/wiki/tabs/search_view.html:5
+msgid "Search"
+msgstr "Szukaj"
+
+#: templates/wiki/tabs/search_view.html:8
+msgid "Replace with"
+msgstr "Zamień na"
+
+#: templates/wiki/tabs/search_view.html:10
+msgid "Replace"
+msgstr "Zamień"
+
+#: templates/wiki/tabs/search_view.html:13
+msgid "Options"
+msgstr "Opcje"
+
+#: templates/wiki/tabs/search_view.html:15
+msgid "Case sensitive"
+msgstr "Rozróżniaj wielkość liter"
+
+#: templates/wiki/tabs/search_view.html:17
+msgid "From cursor"
+msgstr "Zacznij od kursora"
+
+#: templates/wiki/tabs/search_view_item.html:3
+msgid "Search and replace"
+msgstr "Znajdź i zamień"
+
+#: templates/wiki/tabs/source_editor_item.html:5
+msgid "Source code"
+msgstr "Kod źródłowy"
+
+#: templates/wiki/tabs/summary_view.html:10
+msgid "Title"
+msgstr "Tytuł"
+
+#: templates/wiki/tabs/summary_view.html:15
+msgid "Document ID"
+msgstr "ID dokumentu"
+
+#: templates/wiki/tabs/summary_view.html:19
+msgid "Current version"
+msgstr "Aktualna wersja"
+
+#: templates/wiki/tabs/summary_view.html:22
+msgid "Last edited by"
+msgstr "Ostatnio edytowane przez"
+
+#: templates/wiki/tabs/summary_view.html:26
+msgid "Link to gallery"
+msgstr "Link do galerii"
+
+#: templates/wiki/tabs/summary_view.html:31
+msgid "Publish"
+msgstr "Opublikuj"
+
+#: templates/wiki/tabs/summary_view_item.html:4
+msgid "Summary"
+msgstr "Podsumowanie"
+
+#: templates/wiki/tabs/wysiwyg_editor.html:9
+msgid "Insert theme"
+msgstr "Wstaw motyw"
+
+#: templates/wiki/tabs/wysiwyg_editor.html:12
+msgid "Insert annotation"
+msgstr "Wstaw przypis"
+
+#: templates/wiki/tabs/wysiwyg_editor_item.html:3
+msgid "Visual editor"
+msgstr "Edytor wizualny"

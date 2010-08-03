@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 DOCUMENT_STAGES = (
     ("", u"-----"),
+    ("first_correction", _(u"First correction")),
     ("tagging", _(u"Tagging")),
     ("proofreading", _(u"Initial Proofreading")),
     ("annotation-proofreading", _(u"Annotation Proofreading")),
