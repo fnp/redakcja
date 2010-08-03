@@ -298,7 +298,6 @@
 		reportErrors: function(errors) {
 			var global = $("*[data-ui-error-for='__all__']", this.$elem);
 			var unassigned = [];
-			var unassigned_text = '';
 
 			for (var field_name in errors)
 			{
@@ -306,7 +305,6 @@
 
 				if(!span.length) {
 					unassigned.push(field_name);
-					unassigned_text += errors[field_name];
 					continue;
 				}
 
@@ -314,7 +312,7 @@
 			}
 
 			if(unassigned.length > 0)
-				global.text( global.text() + unassigned_text);
+				global.text( global.text() + 'W formularzu wystąpiły błędy');
 		}
 	};
 

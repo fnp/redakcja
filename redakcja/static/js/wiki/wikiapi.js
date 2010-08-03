@@ -219,7 +219,6 @@
 			type: "POST",
 			dataType: "json",
 			data: data,
-			timeout: 15000,
 			success: function(data) {
 				var changed = false;
 
@@ -233,22 +232,16 @@
 
 				params['success'](self, changed, ((changed && "Udało się zapisać :)") || "Twoja wersja i serwera jest identyczna"));
 			},
-			error: function(xhr, msg) {
-				if (msg == 'timeout') {
+			error: function(xhr) {
+				try {
+					params['failure'](self, $.parseJSON(xhr.responseText));
+				}
+				catch (e) {
 					params['failure'](self, {
-                        "__message": "Przekroczony czas połączenia. Zmiany nie zostały zapisane."
-                    });
-				}
-				else {
-                    try {
-                        params['failure'](self, $.parseJSON(xhr.responseText));
-                    }
-                    catch (e) {
-                        params['failure'](self, {
-                            "__message": "Nie udało się zapisać - błąd serwera."
-                        });
-                    };
-				}
+						"__message": "<p>Nie udało się zapisać - błąd serwera.</p>"
+					});
+				};
+
 			}
 		});
 	}; /* end of save() */
