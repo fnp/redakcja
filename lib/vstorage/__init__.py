@@ -147,10 +147,18 @@ class VersionedStorage(object):
         self.repo = mercurial.hg.repository(self.ui, self.repo_path)
 
     def _file_path(self, title, type='.xml'):
-        return os.path.join(self.path, urlquote(title, safe='')) + type
+        """ Return plain version if exists in repo, add extension otherwise. """
+        path = os.path.join(self.path, urlquote(title, safe=''))
+        if type and self._title_to_file(title, '') not in self.repo['tip']:
+            path += type
+        return path
 
     def _title_to_file(self, title, type=".xml"):
-        return os.path.join(self.repo_prefix, urlquote(title, safe='')) + type
+        """ Return plain version if exists in repo, add extension otherwise. """
+        path = os.path.join(self.repo_prefix, urlquote(title, safe=''))
+        if type and path not in self.repo['tip']:
+            path += type
+        return path
 
     def _file_to_title(self, filename):
         assert filename.startswith(self.repo_prefix)
