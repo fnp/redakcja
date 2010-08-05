@@ -17,10 +17,6 @@ $(function()
 
     function initialize()
 	{
-		gallery = new $.wiki.ScanGalleryPerspective({
-			doc: CurrentDocument, id: "ScanGalleryPerspective"
-		});
-
 		$(document).keydown(function(event) {
 			console.log("Received key:", event);
 		});
