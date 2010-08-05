@@ -48,9 +48,8 @@ function ScriptletCenter()
 {
     this.scriptlets = {};
 
-    this.scriptlets['insert_tag'] = function(context, params, done)
+    this.scriptlets['insert_tag'] = function(context, params, text, move_forward, done)
     {
-        var text = this.XMLEditorSelectedText(context);
         var start_tag = '<'+params.tag;
         var move_cursor = false;
 
@@ -95,18 +94,14 @@ function ScriptletCenter()
             }
         }
 
-        this.XMLEditorReplaceSelectedText(context, output);
+        if (move_cursor) {
+            move_forward += params.tag.length+2;
+        }
 
-        try {
-            if (move_cursor) {
-                this.XMLEditorMoveCursorForward(context, params.tag.length+2);
-            }
-        } catch(e) {}
-
-		done();
+        done(output, move_forward);
     }.bind(this);
 
-    this.scriptlets['lineregexp'] = function(context, params, done) {
+    this.scriptlets['lineregexp'] = function(context, params, text, move_forward, done) {
 		var self = this;
 
         var exprs = $.map(params.exprs, function(expr) {
@@ -120,8 +115,7 @@ function ScriptletCenter()
         });
 
         var partial = true;
-        var text = this.XMLEditorSelectedText(context);
-        if(!text) return done();
+        if(!text) done(text, move_forward);
 
         var changed = 0;
         var lines = text.split('\n');
@@ -138,15 +132,15 @@ function ScriptletCenter()
             if(old_line != line) changed += 1;
             return line;
         }, function(newlines) {
-			if(changed > 0) {
-				self.XMLEditorReplaceSelectedText(context, newlines.join('\n') );
-			};
+            if(changed > 0) {
+                text = newlines.join('\n');
+            };
 
-			done();
+            done(text, move_forward);
 		});
     }.bind(this);
 
-    this.scriptlets['fulltextregexp'] = function(context, params, done) {
+    this.scriptlets['fulltextregexp'] = function(context, params, text, move_forward, done) {
 		var self = this;
 
         var exprs = $.map(params.exprs, function(expr) {
@@ -160,47 +154,39 @@ function ScriptletCenter()
                 };
         });
 
-        var text = this.XMLEditorSelectedText(context);
-        if(!text) return done();
+        if(!text) done(text, move_forward);
         var original = text;$
 
 		nblck_each(exprs, function(expr, index) {
 			$progress.html(600 + index);
             text = text.replace(expr.rx, expr.repl);
         }, function() {
-			if( original != text) {
-         	   self.XMLEditorReplaceSelectedText(context, text);
-        	}
-
-			done();
+			done(text, move_forward);
 		});
     }.bind(this);
 
-    this.scriptlets['macro'] = function(context, params, done) {
+    this.scriptlets['macro'] = function(context, params, text, move_forward, done) {
         var self = this;
 		var i = 0;
 
-		function next() {
+		function next(text, move_forward) {
         	if (i < params.length) {
 				var e = params[i];
 				i = i + 1;
-				self.scriptlets[e[0]](context, e[1], next);
+				self.scriptlets[e[0]](context, e[1], text, move_forward, next);
 			}
 			else {
-				done();
+				done(text, move_forward);
 			}
         };
 
-		next();
+		next(text, move_forward);
     }.bind(this);
 
-    this.scriptlets['lowercase'] = function(context, params, done)
+    this.scriptlets['lowercase'] = function(context, params, text, move_forward, done)
     {
-        var text = this.XMLEditorSelectedText(context);
+        if(!text) done(text, move_forward);
 
-        if(!text) return;
-
-        var repl = '';
         var lcase = text.toLowerCase();
         var ucase = text.toUpperCase();
 
@@ -214,18 +200,14 @@ function ScriptletCenter()
                     return '';
                 }
             });
-            repl = words.join(' ');
+            text = words.join(' ');
         }
 
-        if(repl != text) this.XMLEditorReplaceSelectedText(context, repl);
-
-		done();
+        done(text, move_forward);
     }.bind(this);
 
 
-    this.scriptlets["insert_stanza"] = function(context, params, done) {
-        var text = this.XMLEditorSelectedText(context);
-
+    this.scriptlets["insert_stanza"] = function(context, params, text, move_forward, done) {
         if(text) {
             var verses = text.split('\n');
             text = ''; var buf = ''; var ebuf = '';
@@ -243,14 +225,12 @@ function ScriptletCenter()
                 }
             }
             text = text + buf + '\n</strofa>' + ebuf;
-            this.XMLEditorReplaceSelectedText(context, text);
+        }
+        else {
+            move_forward += params.tag.length + 2;
         }
 
-        if (!text) {
-            this.XMLEditorMoveCursorForward(context, params.tag.length + 2);
-        }
-
-		done();
+        done(text, move_forward);
     }.bind(this);
 
 }
@@ -267,10 +247,20 @@ ScriptletCenter.prototype.callInteractive = function(opts) {
 
 	$.blockUI({message: $progress, showOverlay: false});
 
-	self.scriptlets[opts.action](opts.context, opts.extra, function(){
+    var input = self.XMLEditorSelectedText(opts.context);
+	self.scriptlets[opts.action](opts.context, opts.extra, input, 0, function(output, move_forward){
 	    /*if(timer)
 	        clearTimeout(timer);
 	    else */
+        if (input != output) {
+            self.XMLEditorReplaceSelectedText(opts.context, output)
+        }
+        if (move_forward) {
+            try {
+                self.XMLEditorMoveCursorForward(opts.context, move_forward)
+            }
+            catch(e) {}
+        }
 	    $.unblockUI(); // done
 	});
 }

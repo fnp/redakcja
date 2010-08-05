@@ -1,17 +1,26 @@
-/* =========== */
-/* = Gallery = */
-/* =========== */
-
-#side-gallery {
+#sidebar {
+    display:none;
     position: absolute;
-    /* overflow: hidden; */
     top: 0px;
     right: 0px;
     bottom: 0px;
     width: 480px;
-    display: none;
     background-color: #FFF;
 }
+
+#side-search {
+    height: 100%;
+    display: none;
+    background-color: #C1C1C1;
+}
+
+#side-search p {
+    padding: .5em;
+}
+
+/* =========== */
+/* = Gallery = */
+/* =========== */
 
 #side-gallery .error_message
 {

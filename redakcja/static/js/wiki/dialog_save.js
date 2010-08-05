@@ -28,9 +28,10 @@
 			var self = this;
 
 			self.$elem.block({
-				message: "Zapisywanie...",
+				message: "Zapisywanie... <br/><button id='save-hide'>ukryj</button>",
 				fadeIn: 0,
 			});
+            $.wiki.blocking = self.$elem;
 
 			try {
 

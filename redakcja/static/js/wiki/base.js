@@ -111,7 +111,7 @@
 		if($tab.length != 1)
 			$tab = $(DEFAULT_PERSPECTIVE);
 
-		var $old = $('#tabs li').filter('.active');
+		var $old = $tab.closest('.tabs').find('.active');
 
 		$old.each(function(){
 			$(this).removeClass('active');

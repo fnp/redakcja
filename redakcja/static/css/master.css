@@ -87,6 +87,20 @@ body {
     font-weight: bold;
 }
 
+#header.saving {
+	background-color: #E1C1C1;
+}
+#header.saving #save-button {
+    display: none;
+}
+#save-attempt-info {
+    color: #801000;
+    display: none;
+}
+.saving #save-attempt-info {
+    display: inline;
+}
+
 #header h1, #header h1 a {
     margin: 0;
     padding: 0;
@@ -103,16 +117,22 @@ body {
     color: #222;
 }
 
-#tabs {
+.tabs {
 	overflow: hidden;
     margin: 0;
 	padding: 0;
 	height: 31px;
 	border: 0px;
 	padding-left: 1em;
+    float: left;
 }
 
-#tabs li {
+#tabs-right {
+    float: right;
+    padding-right: 1em;
+}
+
+.tabs li {
 	height: 18px;
 	margin-top: 6px;
 	margin-bottom: 0px;
@@ -143,7 +163,7 @@ body {
     -webkit-border-bottom-right-radius: 0px;
 }
 
-#tabs li.active {
+.tabs li.active {
     background-color: #C1C1C1;
 }
 

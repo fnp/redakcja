@@ -22,8 +22,18 @@
 	{% include "wiki/tabs/source_editor.html" %}
 {% endblock %}
 
+{% block tabs-right %}
+    {% include "wiki/tabs/gallery_view_item.html" %}
+    {% include "wiki/tabs/search_view_item.html" %}
+{% endblock %}
+
 {% block splitter-extra %}
-    {% include "wiki/tabs/gallery_view.html" %}
+<div class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
+    </div>
+    <div id="sidebar">
+        {% include "wiki/tabs/gallery_view.html" %}
+        {% include "wiki/tabs/search_view.html" %}
+    </div>
 {% endblock %}
 
 {% block dialogs %}
