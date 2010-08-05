@@ -139,7 +139,7 @@
 
     ScanGalleryPerspective.prototype.setPage = function(newPage){
         newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
-        $('#imagesCount').val(this.doc.galleryImages.length);
+        $('#imagesCount').html("/"+this.doc.galleryImages.length);
         this.$numberInput.val(newPage);
 		this.config().page = newPage;
         $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1]);
