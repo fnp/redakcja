@@ -157,7 +157,13 @@ def text(request, name):
             comment = form.cleaned_data['comment']
             if form.cleaned_data['stage_completed']:        
                 comment += '\n#stage-finished: %s\n' % form.cleaned_data['stage_completed']         
-            author = "%s <%s>" % (form.cleaned_data['author_name'], form.cleaned_data['author_email'])           
+            if request.user.is_authenticated():
+                author_name = request.user
+                author_email = request.user.email
+            else:
+                author_name = form.cleaned_data['author_name']
+                author_email = form.cleaned_data['author_email']
+            author = "%s <%s>" % (author_name, author_email)
             storage.put(document, author=author, comment=comment, parent=revision)           
             document = storage.get(name)          
             return JSONResponse({
