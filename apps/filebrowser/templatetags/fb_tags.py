@@ -74,7 +74,7 @@ def string_to_dict(string):
     if string:
         string = str(string)
 
-        args = (arg.strip() for arg in string.split(',') if not arg.iswhitespace())
+        args = (arg.strip() for arg in string.split(',') if not arg.isspace())
         kwargs.update(arg.split('=', 1) for arg in args)
 
     return kwargs
