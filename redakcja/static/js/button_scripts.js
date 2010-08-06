@@ -193,9 +193,9 @@ function ScriptletCenter()
         if(lcase == text) repl = ucase; /* was lowercase */
         else if(ucase != text) repl = lcase; /* neither lower- or upper-case */
         else { /* upper case -> camel-case */
-            var words = $(lcase.split(/\s/)).map(function() {
-                if(this.length > 0) {
-                    return this[0].toUpperCase() + this.slice(1);
+            var words = $.map(lcase.split(/\s/), function(word) {
+                if(word.length > 0) {
+                    return word[0].toUpperCase() + word.slice(1);
                 } else {
                     return '';
                 }
