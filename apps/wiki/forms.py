@@ -60,7 +60,7 @@ class DocumentTextSaveForm(forms.Form):
     author_name = forms.CharField(
         required=False,
         label=_(u"Author"),
-        help_text=_(u"Your name/"),
+        help_text=_(u"Your name"),
     )
 
     author_email = forms.EmailField(
