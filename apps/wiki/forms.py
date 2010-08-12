@@ -23,7 +23,7 @@ class DocumentCreateForm(forms.Form):
         Form used for creating new documents.
     """
     title = forms.CharField()
-    id = forms.RegexField(regex=ur"\w+")
+    id = forms.RegexField(regex=ur"^[\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")
     file = forms.FileField(required=False)
     text = forms.CharField(required=False, widget=forms.Textarea)
 
