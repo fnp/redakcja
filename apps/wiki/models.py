@@ -35,7 +35,7 @@ def normalize_name(name):
     >>> normalize_name("gąska".decode('utf-8'))
     u'g\u0105ska'
     """
-    return name.translate(_PCHARS_DICT).lower()
+    return unicode(name).translate(_PCHARS_DICT).lower()
 
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
 

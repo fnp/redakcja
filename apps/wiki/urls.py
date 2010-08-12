@@ -20,6 +20,9 @@ urlpatterns = patterns('wiki.views',
     url(r'^(?P<name>[^/]+)/readonly$',
         'editor_readonly', name="wiki_editor_readonly"),
 
+    url(r'^upload/$',
+        'upload', name='wiki_upload'),
+
     url(r'^create/(?P<name>[^/]+)',
         'create_missing', name='wiki_create_missing'),
 

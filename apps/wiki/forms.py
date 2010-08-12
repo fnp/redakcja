@@ -42,6 +42,26 @@ class DocumentCreateForm(forms.Form):
         return self.cleaned_data
 
 
+class DocumentsUploadForm(forms.Form):
+    """
+        Form used for uploading new documents.
+    """
+    file = forms.FileField(required=True, label=_('ZIP file'))
+
+    def clean(self):
+        file = self.cleaned_data['file']
+
+        import zipfile
+        try:
+            z = self.cleaned_data['zip'] = zipfile.ZipFile(file)
+        except zipfile.BadZipfile:
+            raise forms.ValidationError("Should be a ZIP file.")
+        if z.testzip():
+            raise forms.ValidationError("ZIP file corrupt.")
+
+        return self.cleaned_data
+
+
 class DocumentTextSaveForm(forms.Form):
     """
     Form for saving document's text:

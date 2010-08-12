@@ -70,3 +70,20 @@ a:hover {
 #loading-overlay {
 	display: none;
 }
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.success {
+    color: green;
+}
+
+#error-list {
+    color: red;
+}
+
+#skipped-list {
+    color: #666;
+}
