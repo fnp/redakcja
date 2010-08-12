@@ -11,12 +11,20 @@
 
 
 	{% if request.user.is_anonymous %}
-	<p>
-		{{ forms.text_save.author.label }}:
-		{{ forms.text_save.author }}
-		<span class="help_text">{{ forms.text_save.author.help_text }}</span>
-		<span data-ui-error-for="{{ forms.text_save.author.name }}"> </span>
-	</p>
+    <table style='margin:0 4%;'>
+    <tr>
+        <td>{{ forms.text_save.author_name.label }}:</td>
+        <td>{{ forms.text_save.author_name }}
+        <span class="help_text">{{ forms.text_save.author_name.help_text }}</span>
+        <span data-ui-error-for="{{ forms.text_save.author_name.name }}"> </span></td>
+    </tr>
+    <tr>
+        <td>{{ forms.text_save.author_email.label }}:</td>
+        <td>{{ forms.text_save.author_email }}
+        <span class="help_text">{{ forms.text_save.author_email.help_text }}</span>
+        <span data-ui-error-for="{{ forms.text_save.author_email.name }}"> </span></td>
+    </tr>
+    </table>
 	{% else %}
 	<p>
 		{{ forms.text_save.stage_completed.label }}:
