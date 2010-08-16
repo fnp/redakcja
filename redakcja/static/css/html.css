@@ -415,6 +415,12 @@ div[x-node] > .uwaga {
     z-index: 600;
 }
 
+/* annotation editing shouldn't interfere with gallery */
+#html-view span.annotation-inline-box {
+	position:absolute;
+	left:0px;
+}
+
 /*
  * Przypisy na końcu utworu (aktualnie nieuzywane)
  */
