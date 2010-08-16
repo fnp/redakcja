@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-12 12:22+0200\n"
-"PO-Revision-Date: 2010-08-12 12:24+0100\n"
+"POT-Creation-Date: 2010-08-16 16:22+0200\n"
+"PO-Revision-Date: 2010-08-16 16:24+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "MIME-Version: 1.0\n"
@@ -36,18 +36,22 @@ msgid "Modernisation"
 msgstr "Uwspółcześnienie"
 
 #: constants.py:11
+msgid "Annotations"
+msgstr "Przypisy"
+
+#: constants.py:12
 msgid "Themes"
 msgstr "Motywy"
 
-#: constants.py:12
+#: constants.py:13
 msgid "Editor's Proofreading"
 msgstr "Ostateczna redakcja literacka"
 
-#: constants.py:13
+#: constants.py:14
 msgid "Technical Editor's Proofreading"
 msgstr "Ostateczna redakcja techniczna"
 
-#: constants.py:17
+#: constants.py:18
 msgid "Ready to publish"
 msgstr "Gotowe do publikacji"
 
@@ -318,6 +322,10 @@ msgstr "Wstaw motyw"
 #: templates/wiki/tabs/wysiwyg_editor.html:12
 msgid "Insert annotation"
 msgstr "Wstaw przypis"
+
+#: templates/wiki/tabs/wysiwyg_editor.html:15
+msgid "Insert special character"
+msgstr "Wstaw znak specjalny"
 
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
