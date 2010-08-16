@@ -583,3 +583,24 @@ div[x-node] > .uwaga {
     padding: 0.25em;
     border: 1px solid orange;
 }
+
+/* specialChars */
+#specialCharsContainer {
+    text-align: center; 
+    width: 600px; 
+    padding:20px; 
+    background-color: gray; 
+    position: absolute; 
+    top: 20px; 
+    left: 20px; 
+    z-index:1000;
+}
+#specialCharsContainer a {
+    color: white;
+    font-weight: bold;
+} 
+#tableSpecialChars td input {
+    background-color: transparent;
+    border:0;
+    color: white;
+} 
