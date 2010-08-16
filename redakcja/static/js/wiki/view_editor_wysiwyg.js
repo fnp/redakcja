@@ -194,6 +194,90 @@
         });
     }
 
+    function addSymbol() {
+        if($('div.html-editarea textarea')[0]) {
+            var specialCharsContainer = $("<div id='specialCharsContainer'><a href='#' id='specialCharsClose'>Zamknij</a><table id='tableSpecialChars' style='width: 600px;'></table></div>");
+            var specialChars = ['Ą','ą','Ć','ć','Ę','ę','Ł','ł','Ń','ń','Ó','ó','Ś','ś','Ż','ż','Ź','ź','Á','á','À','à',
+            'Â','â','Ä','ä','Å','å','Ā','ā','Ă','ă','Ã','ã',
+            'Æ','æ','Ç','ç','Č','č','Ċ','ċ','Ď','ď','É','é','È','è',
+            'Ê','ê','Ë','ë','Ē','ē','Ě','ě','Ġ','ġ','Ħ','ħ','Í','í','Î','î',
+            'Ī','ī','Ĭ','ĭ','Ľ','ľ','Ñ','ñ','Ň','ň','Ó','ó','Ö','ö',
+            'Ô','ô','Ō','ō','Ǒ','ǒ','Œ','œ','Ø','ø','Ř','ř','Š',
+            'š','Ş','ş','Ť','ť','Ţ','ţ','Ű','ű','Ú','ú',
+            'Ü','ü','Ů','ů','Ū','ū','Û','û','Ŭ','ŭ',
+            'Ý','ý','Ž','ž','ß','Ð','ð','Þ','þ','А','а','Б',
+            'б','В','в','Г','г','Д','д','Е','е','Ё','ё','Ж',
+            'ж','З','з','И','и','Й','й','К','к','Л','л','М',
+            'м','Н','н','О','о','П','п','Р','р','С','с',
+            'Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ч',
+            'ч','Ш','ш','Щ','щ','Ъ','ъ','Ы','ы','Ь','ь','Э',
+            'э','Ю','ю','Я','я','ѓ','є','і','ї','ј','љ','њ',
+            'Ґ','ґ','Α','α','Β','β','Γ','γ','Δ','δ','Ε','ε',
+            'Ζ','ζ','Η','η','Θ','θ','Ι','ι','Κ','κ','Λ','λ','Μ',
+            'μ','Ν','ν','Ξ','ξ','Ο','ο','Π','π','Ρ','ρ','Σ','ς','σ',
+            'Τ','τ','Υ','υ','Φ','φ','Χ','χ','Ψ','ψ','Ω','ω','–',
+            '—','¡','¿','$','¢','£','€','©','®','°','¹','²','³',
+            '¼','½','¾','†','§','‰','•','←','↑','→','↓',
+            '„”','«»','’','[',']','[','~','|','−','·',
+            '×','÷','≈','≠','±','≤','≥','∈'];
+            var tableContent = "<tr>";
+            
+            for(var i in specialChars) {
+                if(i % 14 == 0 && i > 0) {
+                    tableContent += "</tr><tr>";
+                }              
+                tableContent += "<td><input type='button' class='specialBtn' value='"+specialChars[i]+"'/></td>";              
+            }
+            
+            tableContent += "</tr>";                                   
+            $("#content").append(specialCharsContainer);
+            $("#tableSpecialChars").append(tableContent);
+            
+            /* events */
+            
+            $('.specialBtn').click(function(){
+                insertAtCaret($('div.html-editarea textarea')[0], $(this).val());
+                $(specialCharsContainer).remove();
+            });         
+            $('#specialCharsClose').click(function(){
+                $(specialCharsContainer).remove();
+            });                   
+            
+        } else {
+            window.alert('Najedź na fragment tekstu, wybierz "Edytuj" i ustaw kursor na miejscu gdzie chcesz wstawić symbol.');
+        }
+    }
+
+    function insertAtCaret(txtarea,text) { 
+        /* http://www.scottklarr.com/topic/425/how-to-insert-text-into-a-textarea-where-the-cursor-is/ */
+        var scrollPos = txtarea.scrollTop; 
+        var strPos = 0; 
+        var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? "ff" : (document.selection ? "ie" : false ) );
+        if (br == "ie") { 
+            txtarea.focus();
+            var range = document.selection.createRange(); 
+            range.moveStart ('character', -txtarea.value.length); 
+            strPos = range.text.length; 
+        } else if (br == "ff") strPos = txtarea.selectionStart; 
+        var front = (txtarea.value).substring(0,strPos); 
+        var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+        txtarea.value=front+text+back; 
+        strPos = strPos + text.length; 
+        if (br == "ie") { 
+            txtarea.focus(); 
+            var range = document.selection.createRange(); 
+            range.moveStart ('character', -txtarea.value.length); 
+            range.moveStart ('character', strPos); 
+            range.moveEnd ('character', 0); 
+            range.select(); 
+        } else if (br == "ff") { 
+            txtarea.selectionStart = strPos; 
+            txtarea.selectionEnd = strPos; 
+            txtarea.focus(); 
+        } 
+        txtarea.scrollTop = scrollPos; 
+    } 
+
     /* open edition window for selected fragment */
     function openForEdit($origin){
         var $box = null
@@ -349,6 +433,11 @@
                     addTheme();
                     return false;
                 });
+                
+                $('#insert-symbol-button').click(function(){
+                    addSymbol();
+                    return false;
+                });                
 
                 $('.edit-button').live('click', function(event){
                     event.preventDefault();
