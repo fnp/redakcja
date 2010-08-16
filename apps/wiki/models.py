@@ -35,7 +35,7 @@ def normalize_name(name):
     >>> normalize_name("gąska".decode('utf-8'))
     u'g\u0105ska'
     """
-    return name.translate(_PCHARS_DICT).lower()
+    return unicode(name).translate(_PCHARS_DICT)
 
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
 
@@ -73,7 +73,7 @@ class DocumentStorage(object):
         return document
 
     def create_document(self, text, name):
-        title = u', '.join(p.title for p in split_name(name))
+        title = u', '.join(p.title() for p in split_name(name))
 
         if text is None:
             text = u''

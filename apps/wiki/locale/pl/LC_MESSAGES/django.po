@@ -3,15 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-03 12:13+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2010-08-12 12:22+0200\n"
+"PO-Revision-Date: 2010-08-12 12:24+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -52,35 +51,39 @@ msgstr "Ostateczna redakcja techniczna"
 msgid "Ready to publish"
 msgstr "Gotowe do publikacji"
 
-#: forms.py:62
+#: forms.py:49
+msgid "ZIP file"
+msgstr "Plik ZIP"
+
+#: forms.py:82
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:63
-msgid "Your name/"
-msgstr "Imię i nazwisko/"
+#: forms.py:83
+msgid "Your name"
+msgstr "Imię i nazwisko"
 
-#: forms.py:68
+#: forms.py:88
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:69
+#: forms.py:89
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: forms.py:75
+#: forms.py:95
 msgid "Your comments"
 msgstr "Twój komentarz"
 
-#: forms.py:76
+#: forms.py:96
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:82
+#: forms.py:102
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:83
+#: forms.py:103
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
@@ -101,7 +104,16 @@ msgstr "motyw"
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:279
+#: views.py:165
+#, python-format
+msgid "Title already used for %s"
+msgstr "Nazwa taka sama jak dla pliku %s"
+
+#: views.py:167
+msgid "Title already used in repository."
+msgstr "Plik o tej nazwie już istnieje w repozytorium."
+
+#: views.py:339
 msgid "Tag added"
 msgstr "Dodano tag"
 
@@ -144,7 +156,7 @@ msgstr "Zapisz"
 
 #: templates/wiki/document_details_base.html:41
 msgid "Save attempt in progress"
-msgstr ""
+msgstr "Trwa zapisywanie"
 
 #: templates/wiki/document_list.html:30
 msgid "Clear filter"
@@ -153,6 +165,46 @@ msgstr "Wyczyść filtr"
 #: templates/wiki/document_list.html:48
 msgid "Your last edited documents"
 msgstr "Twoje ostatnie edycje"
+
+#: templates/wiki/document_upload.html:9
+msgid "Bulk documents upload"
+msgstr "Hurtowe dodawanie dokumentów"
+
+#: templates/wiki/document_upload.html:12
+msgid "Please submit a ZIP with XML files. Files not ending with <code>.xml</code> will be ignored."
+msgstr "Proszę wskazać archiwum ZIP z plikami XML. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
+
+#: templates/wiki/document_upload.html:17
+msgid "Upload"
+msgstr "Dodaj"
+
+#: templates/wiki/document_upload.html:24
+msgid "There have been some errors. No files have been added to the repository."
+msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
+
+#: templates/wiki/document_upload.html:25
+msgid "Offending files"
+msgstr "Błędne pliki"
+
+#: templates/wiki/document_upload.html:33
+msgid "Correct files"
+msgstr "Poprawne pliki"
+
+#: templates/wiki/document_upload.html:44
+msgid "Files have been successfully uploaded to the repository."
+msgstr "Pliki zostały dodane do repozytorium."
+
+#: templates/wiki/document_upload.html:45
+msgid "Uploaded files"
+msgstr "Dodane pliki"
+
+#: templates/wiki/document_upload.html:55
+msgid "Skipped files"
+msgstr "Pominięte pliki"
+
+#: templates/wiki/document_upload.html:56
+msgid "Files skipped due to no <code>.xml</code> extension"
+msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
 #: templates/wiki/tag_dialog.html:16
 msgid "Cancel"
@@ -270,3 +322,4 @@ msgstr "Wstaw przypis"
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
+

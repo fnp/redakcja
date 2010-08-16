@@ -19,6 +19,7 @@
     };
 
 	DiffPerspective.prototype.destroy = function() {
+        $.wiki.switchToTab('#HistoryPerspective');
 		$('#' + this.base_id).remove();
 		$('#' + this.perspective_id).remove();
 	};

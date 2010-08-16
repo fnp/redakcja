@@ -23,7 +23,7 @@ class DocumentCreateForm(forms.Form):
         Form used for creating new documents.
     """
     title = forms.CharField()
-    id = forms.RegexField(regex=ur"\w+")
+    id = forms.RegexField(regex=ur"^[\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")
     file = forms.FileField(required=False)
     text = forms.CharField(required=False, widget=forms.Textarea)
 
@@ -38,6 +38,26 @@ class DocumentCreateForm(forms.Form):
 
         if not self.cleaned_data["text"]:
             raise forms.ValidationError("You must either enter text or upload a file")
+
+        return self.cleaned_data
+
+
+class DocumentsUploadForm(forms.Form):
+    """
+        Form used for uploading new documents.
+    """
+    file = forms.FileField(required=True, label=_('ZIP file'))
+
+    def clean(self):
+        file = self.cleaned_data['file']
+
+        import zipfile
+        try:
+            z = self.cleaned_data['zip'] = zipfile.ZipFile(file)
+        except zipfile.BadZipfile:
+            raise forms.ValidationError("Should be a ZIP file.")
+        if z.testzip():
+            raise forms.ValidationError("ZIP file corrupt.")
 
         return self.cleaned_data
 
@@ -60,7 +80,7 @@ class DocumentTextSaveForm(forms.Form):
     author_name = forms.CharField(
         required=False,
         label=_(u"Author"),
-        help_text=_(u"Your name/"),
+        help_text=_(u"Your name"),
     )
 
     author_email = forms.EmailField(

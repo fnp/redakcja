@@ -13,7 +13,7 @@ from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
 from django import http
 
 from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name, Theme
-from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
+from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -126,7 +126,7 @@ def create_missing(request, name):
         form = DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
             doc = storage.create_document(
-                id=form.cleaned_data['id'],
+                name=form.cleaned_data['id'],
                 text=form.cleaned_data['text'],
             )
 
@@ -139,6 +139,58 @@ def create_missing(request, name):
 
     return direct_to_template(request, "wiki/document_create_missing.html", extra_context={
         "document_name": name,
+        "form": form,
+    })
+
+
+def upload(request):
+    storage = getstorage()
+
+    if request.method == "POST":
+        form = DocumentsUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            zip = form.cleaned_data['zip']
+            skipped_list = []
+            ok_list = []
+            error_list = []
+            titles = {}
+            existing = storage.all()
+            for filename in zip.namelist():
+                if filename[-1] == '/':
+                    continue
+                title = normalize_name(os.path.basename(filename)[:-4])
+                if not (title and filename.endswith('.xml')):
+                    skipped_list.append(filename)
+                elif title in titles:
+                    error_list.append((filename, title, _('Title already used for %s' % titles[title])))
+                elif title in existing:
+                    error_list.append((filename, title, _('Title already used in repository.')))
+                else:
+                    ok_list.append((filename, title))
+                    titles[title] = filename
+            if not error_list:
+                for filename, title in ok_list:
+                    storage.create_document(
+                        name=title,
+                        text=zip.read(filename)
+                    )
+
+            return direct_to_template(request, "wiki/document_upload.html", extra_context={
+                "form": form,
+                "ok_list": ok_list,
+                "skipped_list": skipped_list,
+                "error_list": error_list,
+            })
+                #doc = storage.create_document(
+                #    name=base,
+                #    text=form.cleaned_data['text'],
+
+            
+            return http.HttpResponse('\n'.join(yeslist) + '\n\n' + '\n'.join(nolist))
+    else:
+        form = DocumentsUploadForm()
+
+    return direct_to_template(request, "wiki/document_upload.html", extra_context={
         "form": form,
     })
 
