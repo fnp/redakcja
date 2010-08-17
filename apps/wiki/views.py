@@ -130,7 +130,7 @@ def create_missing(request, name):
                 text=form.cleaned_data['text'],
             )
 
-            return http.HttpResponseRedirect(reverse("wiki_details", args=[doc.name]))
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[doc.name]))
     else:
         form = DocumentCreateForm(initial={
                 "id": name.replace(" ", "_"),
