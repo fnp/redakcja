@@ -11,7 +11,8 @@ MAINTENANCE_MODE = False
 
 ADMINS = (
     # (u'Marek Stępniowski', 'marek@stepniowski.com'),
-    (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
+    # (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
+    (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
 )
 
 MANAGERS = ADMINS

@@ -23,5 +23,6 @@ MEDIA_ROOT = '/home/lrekucki/projekty/fundacja/media/'
 IMAGE_DIR = 'images'
 
 CAS_SERVER_URL = 'http://logowanie.wolnelektury.pl/cas/'
+REDMINE_URL = 'http://redmine.nowoczesnapolska.org.pl/'
 DEBUG = True
 COMPRESS = False
