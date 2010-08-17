@@ -290,8 +290,11 @@
             $box = $origin;
         }
 
-        var x = $box[0].offsetLeft;
-        var y = $box[0].offsetTop;
+        /* always stick to the left to avoid interfering with gallery */
+        var x = 20;
+        var y = $origin.offset().top + $("#html-view").scrollTop();
+        
+        
         var w = $box.outerWidth();
         var h = $box.innerHeight();
 
@@ -307,7 +310,8 @@
             left: x,
             top: y,
             width: w
-        }).appendTo($box[0].offsetParent || $box.parent()).show();
+        }).appendTo($('#html-view')).show();  /* appending outside of the document structure */
+        
 
         if ($origin.is('.motyw')) {
             $('textarea', $overlay).autocomplete('/themes', {
