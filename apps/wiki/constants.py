@@ -8,6 +8,7 @@ DOCUMENT_STAGES = (
     ("proofreading", _(u"Initial Proofreading")),
     ("annotation-proofreading", _(u"Annotation Proofreading")),
     ("modernisation", _(u"Modernisation")),
+    ("annotations", _(u"Annotations")),
     ("themes", _(u"Themes")),
     ("editor-proofreading", _(u"Editor's Proofreading")),
     ("technical-editor-proofreading", _(u"Technical Editor's Proofreading")),
