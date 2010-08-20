@@ -1,6 +1,6 @@
 ## Python libraries
 lxml>=2.2
-mercurial>=1.3.1
+mercurial>=1.6
 PyYAML>=3.0
 PIL>=1.1
 
