@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-16 16:22+0200\n"
+"POT-Creation-Date: 2010-08-23 11:22+0200\n"
 "PO-Revision-Date: 2010-08-16 16:24+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
+"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
+"pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -117,7 +118,11 @@ msgstr "Nazwa taka sama jak dla pliku %s"
 msgid "Title already used in repository."
 msgstr "Plik o tej nazwie już istnieje w repozytorium."
 
-#: views.py:339
+#: views.py:173
+msgid "File should be UTF-8 encoded."
+msgstr "Plik powinien mieć kodowanie UTF-8."
+
+#: views.py:344
 msgid "Tag added"
 msgstr "Dodano tag"
 
@@ -175,15 +180,20 @@ msgid "Bulk documents upload"
 msgstr "Hurtowe dodawanie dokumentów"
 
 #: templates/wiki/document_upload.html:12
-msgid "Please submit a ZIP with XML files. Files not ending with <code>.xml</code> will be ignored."
-msgstr "Proszę wskazać archiwum ZIP z plikami XML. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
+msgid ""
+"Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
+"<code>.xml</code> will be ignored."
+msgstr ""
+"Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>."
+"xml</code> zostaną zignorowane."
 
 #: templates/wiki/document_upload.html:17
 msgid "Upload"
 msgstr "Dodaj"
 
 #: templates/wiki/document_upload.html:24
-msgid "There have been some errors. No files have been added to the repository."
+msgid ""
+"There have been some errors. No files have been added to the repository."
 msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
 
 #: templates/wiki/document_upload.html:25
@@ -330,4 +340,3 @@ msgstr "Wstaw znak specjalny"
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
-

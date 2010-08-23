@@ -219,7 +219,7 @@ class VersionedStorage(object):
             filectx_tip = changectx[repo_file]
             current_page_rev = filectx_tip.filerev()
         except mercurial.revlog.LookupError:
-            self.repo.add([repo_file])
+            self.repo[None].add([repo_file])
             current_page_rev = -1
 
         if parent is not None and current_page_rev != parent:
@@ -271,7 +271,7 @@ class VersionedStorage(object):
             os.unlink(file_path)
         except OSError:
             pass
-        self.repo.remove([repo_file])
+        self.repo[None].remove([repo_file])
         self._commit([repo_file], text, user)
 
     def page_text(self, title, revision=None):
