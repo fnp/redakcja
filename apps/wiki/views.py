@@ -166,13 +166,18 @@ def upload(request):
                 elif title in existing:
                     error_list.append((filename, title, _('Title already used in repository.')))
                 else:
-                    ok_list.append((filename, title))
+                    try:
+                        zip.read(filename).decode('utf-8') # test read
+                        ok_list.append((filename, title))
+                    except UnicodeDecodeError:
+                        error_list.append((filename, title, _('File should be UTF-8 encoded.')))
                     titles[title] = filename
+
             if not error_list:
                 for filename, title in ok_list:
                     storage.create_document(
                         name=title,
-                        text=zip.read(filename)
+                        text=zip.read(filename).decode('utf-8')
                     )
 
             return direct_to_template(request, "wiki/document_upload.html", extra_context={
