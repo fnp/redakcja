@@ -91,7 +91,6 @@
         // BUG #273 - selected text can contain themes, which should be omitted from
         // defining term
         var text = html2plainText(range.cloneContents());
-
         var tag = $('<span></span>');
         range.collapse(false);
         range.insertNode(tag[0]);
@@ -486,11 +485,11 @@
                 _finalize(success);
             },
             error: function(text){
-                var message = $('<pre></pre>');
-                message.text(text);
-                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>' +
-                message.html() +
-                '</pre>');
+                /* only basic error message */
+                var errorArray = text.split("\n");
+                var errorLocation = errorArray[2].split(":")[0];
+                text = errorLocation;
+                $('#html-view').html('<p class="error">Wystąpił błąd: '+ text + '</p>');
                 _finalize(failure);
             }
         });
