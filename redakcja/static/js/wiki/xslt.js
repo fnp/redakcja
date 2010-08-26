@@ -288,7 +288,11 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				self._serializeElement(token.node);
 				break;
 			case TEXT_NODE:
-				self.result += token.node.nodeValue;
+				// collapse previous element's padding
+				var i = 0;
+				while (token.node.nodeValue[i] == '\n' && self.result[self.result.length - 1] == '\n')
+				  i ++;
+				self.result += token.node.nodeValue.substr(i);
 				break;
 		};
 	};
@@ -372,7 +376,9 @@ HTMLSerializer.prototype._serializeElement = function(node) {
 	};
 
 	/* print out */
-	if (getPadding(tagName))
+
+	// at least one newline before padded elements
+	if (getPadding(tagName) && self.result[self.result.length - 1] != '\n')
 		self.result += '\n';
 
 	self.result += '<' + tagName;
