@@ -17,6 +17,8 @@ from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
+from django.utils.decorators import decorator_from_middleware
+from django.middleware.gzip import GZipMiddleware
 
 
 #
@@ -202,6 +204,7 @@ def upload(request):
 
 @never_cache
 @normalized_name
+@decorator_from_middleware(GZipMiddleware)
 def text(request, name):
     storage = getstorage()
 
