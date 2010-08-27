@@ -354,6 +354,11 @@ div[x-node] > .uwaga {
     user-select: none;
     margin-right: -12em;
     text-align: left;
+    color: #999;
+}
+
+.htmlview .canon {
+    color: black;
 }
 
 .htmlview .noncanon {

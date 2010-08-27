@@ -313,12 +313,14 @@
         
 
         if ($origin.is('.motyw')) {
-            $('textarea', $overlay).autocomplete('/themes', {
-                autoFill: true,
-                multiple: true,
-                selectFirst: true,
-                highlight: false
-            });
+            withThemes(function(canonThemes){
+                $('textarea', $overlay).autocomplete(canonThemes, {
+                    autoFill: true,
+                    multiple: true,
+                    selectFirst: true,
+                    highlight: false
+                });
+            })
         }
 
         if ($origin.is('.motyw')){
@@ -487,8 +489,9 @@
             error: function(text){
                 /* only basic error message */
                 var errorArray = text.split("\n");
-                var errorLocation = errorArray[2].split(":")[0];
-                text = errorLocation;
+                if (errorArray.length >= 3) {
+                    text = errorArray[2].split(":")[0];
+                }
                 $('#html-view').html('<p class="error">Wystąpił błąd: '+ text + '</p>');
                 _finalize(failure);
             }
