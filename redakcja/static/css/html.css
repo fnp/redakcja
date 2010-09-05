@@ -400,6 +400,11 @@ div[x-node] > .uwaga {
 /*
  * Przypisy w tekście
  */
+ 
+.htmlview .annotation-inline-box:hover > span[x-annotation-box]{
+    display: block;
+}
+
 .htmlview .annotation-inline-box > span[x-annotation-box] {
     display: none;
     position: absolute;
