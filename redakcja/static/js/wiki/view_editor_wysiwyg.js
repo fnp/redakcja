@@ -289,8 +289,8 @@
             $box = $origin;
         }
 
-        /* always stick to the left to avoid interfering with gallery */
-        var x = 20;
+        /* check sidebar width and display textarea on the right but avoiding interfering with gallery */
+        var x = $(document).width() - $("#sidebar").width() - 576 - 100; // and little margin here: 100px
         var y = $origin.offset().top + $("#html-view").scrollTop();
         
         
