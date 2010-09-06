@@ -10,7 +10,7 @@
 			this.codemirror = CodeMirror.fromTextArea('codemirror_placeholder', {
 				parserfile: 'parsexml.js',
 				path: STATIC_URL + "js/lib/codemirror/",
-				stylesheet: STATIC_URL + "css/xmlcolors_15032010.css",
+				stylesheet: STATIC_URL + "css/xmlcolors_20100906.css",
 				parserConfig: {
 					useHTMLKludges: false
 				},
@@ -18,6 +18,7 @@
 				textWrapping: true,
 				lineNumbers: true,
 				width: "100%",
+				height: "100%",
 				tabMode: 'spaces',
 				indentUnit: 0,
 				readOnly: CurrentDocument.readonly || false,

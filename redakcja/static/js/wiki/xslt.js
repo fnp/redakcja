@@ -61,7 +61,7 @@ function withThemes(code_block, onError)
 
 function xml2html(options) {
     withStylesheets(function() {
-        var xml = options.xml.replace(/\/\s+/g, '<br />');
+        var xml = options.xml.replace(/\/(\s+)/g, '<br />$1');
         var parser = new DOMParser();
         var serializer = new XMLSerializer();
         var doc = parser.parseFromString(xml, 'text/xml');
@@ -271,7 +271,7 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				if(xnode === 'wers') {
 					/* push children */
 					if(self._verseBefore(token.node))
-						self.result += '/\n';
+						self.result += '/';
 					self._pushChildren(token.node);
 					break;
 				};

@@ -9,7 +9,7 @@
  * complexity and hackery.
  *
  * In short, the editor 'touches' BR elements as it parses them, and
- * the History stores these. When nothing is touched in commitDelay
+ * the UndoHistory stores these. When nothing is touched in commitDelay
  * milliseconds, the changes are committed: It goes over all touched
  * nodes, throws out the ones that did not change since last commit or
  * are no longer in the document, and assembles the rest into zero or
@@ -26,11 +26,10 @@
 // delay (of no input) after which it commits a set of changes, and,
 // unfortunately, the 'parent' window -- a window that is not in
 // designMode, and on which setTimeout works in every browser.
-function History(container, maxDepth, commitDelay, editor, onChange) {
+function UndoHistory(container, maxDepth, commitDelay, editor) {
   this.container = container;
   this.maxDepth = maxDepth; this.commitDelay = commitDelay;
   this.editor = editor; this.parent = editor.parent;
-  this.onChange = onChange;
   // This line object represents the initial, empty editor.
   var initial = {text: "", from: null, to: null};
   // As the borders between lines are represented by BR elements, the
@@ -48,7 +47,7 @@ function History(container, maxDepth, commitDelay, editor, onChange) {
   this.history = []; this.redoHistory = []; this.touched = [];
 }
 
-History.prototype = {
+UndoHistory.prototype = {
   // Schedule a commit (if no other touches come in for commitDelay
   // milliseconds).
   scheduleCommit: function() {
@@ -73,7 +72,7 @@ History.prototype = {
       // shadow in the redo history.
       var item = this.history.pop();
       this.redoHistory.push(this.updateTo(item, "applyChain"));
-      if (this.onChange) this.onChange();
+      this.notifyEnvironment();
       return this.chainNode(item);
     }
   },
@@ -85,7 +84,7 @@ History.prototype = {
       // The inverse of undo, basically.
       var item = this.redoHistory.pop();
       this.addUndoLevel(this.updateTo(item, "applyChain"));
-      if (this.onChange) this.onChange();
+      this.notifyEnvironment();
       return this.chainNode(item);
     }
   },
@@ -109,6 +108,7 @@ History.prototype = {
       from = end;
     }
     this.pushChains([chain], from == null && to == null);
+    this.notifyEnvironment();
   },
 
   pushChains: function(chains, doNotHighlight) {
@@ -145,7 +145,7 @@ History.prototype = {
 
   // Commit unless there are pending dirty nodes.
   tryCommit: function() {
-    if (!window.History) return; // Stop when frame has been unloaded
+    if (!window.UndoHistory) return; // Stop when frame has been unloaded
     if (this.editor.highlightDirty()) this.commit(true);
     else this.scheduleCommit();
   },
@@ -162,7 +162,7 @@ History.prototype = {
     if (chains.length) {
       this.addUndoLevel(this.updateTo(chains, "linkChain"));
       this.redoHistory = [];
-      if (this.onChange) this.onChange();
+      this.notifyEnvironment();
     }
   },
 
@@ -189,6 +189,13 @@ History.prototype = {
   notifyDirty: function(nodes) {
     forEach(nodes, method(this.editor, "addDirtyNode"))
     this.editor.scheduleHighlight();
+  },
+
+  notifyEnvironment: function() {
+    if (this.onChange) this.onChange();
+    // Used by the line-wrapping line-numbering code.
+    if (window.frameElement && window.frameElement.CodeMirror.updateNumbers)
+      window.frameElement.CodeMirror.updateNumbers();
   },
 
   // Link a chain into the DOM nodes (or the first/last links for null
@@ -250,7 +257,7 @@ History.prototype = {
     function buildLine(node) {
       var text = [];
       for (var cur = node ? node.nextSibling : self.container.firstChild;
-           cur && cur.nodeName != "BR"; cur = cur.nextSibling)
+           cur && !isBR(cur); cur = cur.nextSibling)
         if (cur.currentText) text.push(cur.currentText);
       return {from: node, to: cur, text: cleanText(text.join(""))};
     }
@@ -275,7 +282,7 @@ History.prototype = {
     // Get the BR element after/before the given node.
     function nextBR(node, dir) {
       var link = dir + "Sibling", search = node[link];
-      while (search && search.nodeName != "BR")
+      while (search && !isBR(search))
         search = search[link];
       return search;
     }
