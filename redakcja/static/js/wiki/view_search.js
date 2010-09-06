@@ -64,8 +64,7 @@
             self.searchCursor = self.editor.getSearchCursor(
                 self.$searchInput.val(), 
                 self.options['search-from-cursor'], 
-                self.options['search-regexp'],
-                self.options['search-case-sensitive']
+                !self.options['search-case-sensitive']
             );
         }
         if (self.searchCursor.findNext()) {
