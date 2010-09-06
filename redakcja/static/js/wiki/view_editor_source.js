@@ -9,7 +9,7 @@
 
 			this.codemirror = CodeMirror.fromTextArea('codemirror_placeholder', {
 				parserfile: 'parsexml.js',
-				path: STATIC_URL + "js/lib/codemirror/",
+				path: STATIC_URL + "js/lib/codemirror-0.8/",
 				stylesheet: STATIC_URL + "css/xmlcolors_20100906.css",
 				parserConfig: {
 					useHTMLKludges: false
