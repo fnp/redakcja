@@ -29,15 +29,11 @@
 							$(event.button).trigger('click');
 							event.button = null;
 						}
-					}, function(event) {
-						/* CM reports characters 2 times - as event and as code */
-						if((typeof event) != "object")
-							return false;
-
+					}, function(keycode, event) {
 						if(!event.altKey)
 							return false;
 
-						var c = String.fromCharCode(event.keyCode).toLowerCase();
+						var c = String.fromCharCode(keycode).toLowerCase();
 						var button = $("#source-editor button[data-ui-accesskey='"+c+"']");
 						if(button.length == 0)
 							return false;
