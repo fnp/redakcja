@@ -486,8 +486,8 @@
                 $('#html-view').html(element);
                 _finalize(success);
             },
-            error: function(text){
-                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>'+text+'</pre>');
+            error: function(text, source){
+                $('#html-view').html('<p class="error">Wystąpił błąd:</p><p>'+text+'</p><pre>'+source.replace(/&/g, '&amp;').replace(/</g, '&lt;')+'</pre>');
                 _finalize(failure);
             }
         });

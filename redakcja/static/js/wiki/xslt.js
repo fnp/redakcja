@@ -58,7 +58,6 @@ function withThemes(code_block, onError)
 }
 
 
-
 function xml2html(options) {
     withStylesheets(function() {
         var xml = options.xml.replace(/\/(\s+)/g, '<br />$1');
@@ -80,7 +79,10 @@ function xml2html(options) {
         }
 
         if (error.length > 0 && options.error) {
-            options.error(error.text());
+            source = $('sourcetext', doc);
+            source_text = source.text();
+            source.text('');
+            options.error(error.text(), source_text);
         } else {
             options.success(doc.firstChild);
 
