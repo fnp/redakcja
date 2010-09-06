@@ -487,12 +487,7 @@
                 _finalize(success);
             },
             error: function(text){
-                /* only basic error message */
-                var errorArray = text.split("\n");
-                if (errorArray.length >= 3) {
-                    text = errorArray[2].split(":")[0];
-                }
-                $('#html-view').html('<p class="error">Wystąpił błąd: '+ text + '</p>');
+                $('#html-view').html('<p class="error">Wystąpił błąd:</p><pre>'+text+'</pre>');
                 _finalize(failure);
             }
         });
