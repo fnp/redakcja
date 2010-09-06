@@ -95,7 +95,7 @@ function ScriptletCenter()
         }
 
         if (move_cursor) {
-            move_forward += params.tag.length+2;
+            move_forward -= params.tag.length+3;
         }
 
         done(output, move_forward);
@@ -227,7 +227,8 @@ function ScriptletCenter()
             text = text + buf + '\n</strofa>' + ebuf;
         }
         else {
-            move_forward += params.tag.length + 2;
+            text = "<strofa></strofa>"
+            move_forward -= "</strofa>".length;
         }
 
         done(text, move_forward);
