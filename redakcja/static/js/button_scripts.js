@@ -186,24 +186,7 @@ function ScriptletCenter()
     this.scriptlets['lowercase'] = function(context, params, text, move_forward, done)
     {
         if(!text) done(text, move_forward);
-
-        var lcase = text.toLowerCase();
-        var ucase = text.toUpperCase();
-
-        if(lcase == text) repl = ucase; /* was lowercase */
-        else if(ucase != text) repl = lcase; /* neither lower- or upper-case */
-        else { /* upper case -> camel-case */
-            var words = $.map(lcase.split(/\s/), function(word) {
-                if(word.length > 0) {
-                    return word[0].toUpperCase() + word.slice(1);
-                } else {
-                    return '';
-                }
-            });
-            text = words.join(' ');
-        }
-
-        done(text, move_forward);
+        done(text.toLowerCase(), move_forward);
     }.bind(this);
 
 
