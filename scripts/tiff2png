@@ -1,0 +1,17 @@
+#!/bin/bash
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+
+# Skrypt wyszukuje pliki .tiff w obecnym katalogu i w jego podkatalogach
+# i przetwarza je na pliki .png pomniejszone do rozmiaru nadającego się
+# do wyświetlenia na platformie redakcyjnej.
+# 
+# Pliki wyjściowe zapisywane są obok plików źródłowych, z rozszerzeniem
+# zmienionym na .png.
+
+find . -iname '*.tiff' -print0 | while read -d $'\0' file 
+do
+	echo "$file"
+	convert "$file" -depth 7 -resize 640x960 png:- | pngnq -n 128 -s 1 > "${file%.tiff}.png"
+done
+
