@@ -4,6 +4,9 @@
 -   fields: {name: Autokorekta, position: 0, slug: autokorekta}
     model: toolbar.buttongroup
     pk: 2
+-   fields: {name: Autotagowanie, position: 0, slug: autotagowanie}
+    model: toolbar.buttongroup
+    pk: 28
 -   fields: {name: Bloki, position: 0, slug: bloki}
     model: toolbar.buttongroup
     pk: 21
@@ -70,6 +73,17 @@
         tooltip: wstawia akapit dialogowy
     model: toolbar.button
     pk: 41
+-   fields:
+        accesskey: ''
+        group: [28]
+        label: akapity
+        link: ''
+        params: '{"tag": "akap"}'
+        scriptlet: autotag
+        slug: akapity
+        tooltip: "autotagowanie akapit\xF3w"
+    model: toolbar.button
+    pk: 97
 -   fields:
         accesskey: ''
         group: [1]
@@ -645,6 +659,17 @@
     pk: 81
 -   fields:
         accesskey: ''
+        group: [28]
+        label: strofy
+        link: ''
+        params: '{"tag": "strofa"}'
+        scriptlet: autotag
+        slug: strofy
+        tooltip: autotagowanie strof
+    model: toolbar.button
+    pk: 99
+-   fields:
+        accesskey: ''
         group: [11]
         label: "tag g\u0142\xF3wny"
         link: ''
@@ -742,6 +767,17 @@
         tooltip: "wstawia wers wci\u0119ty"
     model: toolbar.button
     pk: 91
+-   fields:
+        accesskey: ''
+        group: [28]
+        label: "wersy wci\u0119te"
+        link: ''
+        params: '{"padding": 1, "tag": "wers_wciety", "split": 1}'
+        scriptlet: autotag
+        slug: wersy-wciete
+        tooltip: "autotagowanie wers\xF3w wci\u0119tych"
+    model: toolbar.button
+    pk: 100
 -   fields:
         accesskey: ''
         group: [15]
@@ -892,4 +928,7 @@
             \r\n\r\n\r\n\r\n\r\n\r\n\r\npanel.fireEvent('contentChanged');"}
     model: toolbar.scriptlet
     pk: insert_stanza
+-   fields: {code: '-'}
+    model: toolbar.scriptlet
+    pk: autotag
 

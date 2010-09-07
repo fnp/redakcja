@@ -114,7 +114,6 @@ function ScriptletCenter()
                 };
         });
 
-        var partial = true;
         if(!text) done(text, move_forward);
 
         var changed = 0;
@@ -155,7 +154,6 @@ function ScriptletCenter()
         });
 
         if(!text) done(text, move_forward);
-        var original = text;$
 
 		nblck_each(exprs, function(expr, index) {
 			$progress.html(600 + index);
@@ -212,6 +210,45 @@ function ScriptletCenter()
         else {
             text = "<strofa></strofa>"
             move_forward -= "</strofa>".length;
+        }
+
+        done(text, move_forward);
+    }.bind(this);
+
+
+    this.scriptlets['autotag'] = function(context, params, text, move_forward, done)
+    {
+        if(!text.match(/^\n+$/)) done(text, move_forward);
+
+        function insert_done(output, mf) {
+            text += output;
+        }
+
+        if (!params.split) params.split = 2;
+        if (!params.padding) params.padding = 3;
+
+        chunks = text.replace(/^\n+|\n+$/, '').split(new RegExp("\\n{"+params.split+",}"));
+        text = text.match(/^\n+/);
+        if (!text)
+            text = '';
+        padding = '';
+        for(; params.padding; params.padding--) {
+            padding += "\n";
+        }
+
+        if (params.tag == 'strofa')
+            tagger = this.scriptlets['insert_stanza'];
+        else
+            tagger = this.scriptlets['insert_tag'];
+
+        for (i in chunks) {
+            if (chunks[i]) {
+                if (params.tag == 'akap' && chunks[i].match(/^---/))
+                    tag = 'akap_dialog';
+                else tag = params.tag;
+                tagger(context, {tag: tag}, chunks[i], 0, insert_done);
+                text += padding;
+            }
         }
 
         done(text, move_forward);
