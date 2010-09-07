@@ -8,6 +8,8 @@
  *   http://www.gnu.org/licenses/gpl.html
  *
  * Revision: $Id: jquery.autocomplete.js 15 2009-08-22 10:30:27Z joern.zaefferer $
+ * 
+ * changed by Radek Czajka (FNP), 20100907: ignore alt keydown
  */
 
 ;(function($) {
@@ -95,6 +97,11 @@ $.Autocompleter = function(input, options) {
 		// track last key pressed
 		lastKeyPressCode = event.keyCode;
 		switch(event.keyCode) {
+
+            // changed by fnp
+            case 0:
+                break;
+            // changed by fnp
 
 			case KEY.UP:
 				event.preventDefault();
