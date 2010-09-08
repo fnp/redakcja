@@ -38,7 +38,7 @@ class Button(models.Model):
     link = models.CharField(max_length=256, blank=True, default='')
 
     # ui related stuff
-    accesskey = models.CharField(null=True, max_length=1)
+    accesskey = models.CharField(blank=True, max_length=1)
 
     tooltip = models.CharField(blank=True, max_length=120)
 
