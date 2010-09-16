@@ -297,8 +297,8 @@
         if ($origin.is(".annotation-inline-box")) {
             w = Math.max(w, 400);
             h = Math.max(h, 60);
-            if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 450)){
-                x = 0;    
+            if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 480)){
+                x = -(Math.max($origin.offset().left, $origin.width())); 
             } else {
                 x = 100;
             }
