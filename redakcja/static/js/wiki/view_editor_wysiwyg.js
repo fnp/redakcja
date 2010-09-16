@@ -288,11 +288,8 @@
         else {
             $box = $origin;
         }
-
-        /* check sidebar width and display textarea on the right but avoiding interfering with gallery */
-        var x = $(document).width() - $("#sidebar").width() - 576 - 100; // and little margin here: 100px
-        var y = $origin.offset().top + $("#html-view").scrollTop();
-        
+        var x = $box[0].offsetLeft;
+        var y = $box[0].offsetTop;        
         
         var w = $box.outerWidth();
         var h = $box.innerHeight();
@@ -300,6 +297,12 @@
         if ($origin.is(".annotation-inline-box")) {
             w = Math.max(w, 400);
             h = Math.max(h, 60);
+            if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 450)){
+                x = 0;    
+            } else {
+                x = 100;
+            }
+            alert('Origin left: ' + ($('.htmlview div').offset().left + $('.htmlview div').width()) + ', Belka-odstep: ' + ($('.vsplitbar').offset().left - 450));
         }
 
         // start edition on this node
@@ -309,7 +312,7 @@
             left: x,
             top: y,
             width: w
-        }).appendTo($('#html-view')).show();  /* appending outside of the document structure */
+        }).appendTo($box[0].offsetParent || $box.parent()).show();
         
 
         if ($origin.is('.motyw')) {

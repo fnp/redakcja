@@ -417,7 +417,6 @@ div[x-node] > .uwaga {
 
 .htmlview .annotation-inline-box > span[x-annotation-box] {
     display: none;
-    position: absolute;
     width: 300px;
     font-size: 10pt;
     line-height: 12pt;
