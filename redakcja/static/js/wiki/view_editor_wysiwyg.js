@@ -302,7 +302,6 @@
             } else {
                 x = 100;
             }
-            alert('Origin left: ' + ($('.htmlview div').offset().left + $('.htmlview div').width()) + ', Belka-odstep: ' + ($('.vsplitbar').offset().left - 450));
         }
 
         // start edition on this node
