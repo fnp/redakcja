@@ -226,7 +226,8 @@
         $.wiki.Perspective.prototype.onEnter.call(this);
 
         $('.vsplitbar').not('.active').trigger('click');
-
+        $(".vsplitbar-title").html("&darr;&nbsp;GALLERY&nbsp;&darr;");        
+        
         this.doc.refreshGallery({
             success: function(doc, data){
                 self.$image.show();

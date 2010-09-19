@@ -59,6 +59,7 @@ $(function()
 			function() {
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
 				$('#sidebar').show();
+				$(".vsplitbar-title").html("&darr;&nbsp;GALLERY&nbsp;&darr;");
 				$('.vsplitbar').css('right', 480).addClass('active');
 				$('#editor .editor').css('right', 510);
 				$(window).resize();
@@ -68,15 +69,23 @@ $(function()
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
 				$('#sidebar').hide();
 				$('.vsplitbar').css('right', 0).removeClass('active');
+				if($(".vsplitbar-title").html() == "↓&nbsp;SEARCH&nbsp;AND&nbsp;REPLACE&nbsp;↓"){
+				        $(".vsplitbar-title").html("&uarr;&nbsp;SEARCH&nbsp;AND&nbsp;REPLACE&nbsp;&uarr;");        
+				} else {
+				    $(".vsplitbar-title").html("&uarr;&nbsp;GALLERY&nbsp;&uarr;");
+				}
 				$('#editor .editor').css('right', 30);
 				$(window).resize();
 				$.wiki.perspectiveForTab('#tabs-right .active').onExit();
 			}
 		);
 
-		if($.wiki.state.perspectives.ScanGalleryPerspective.show)
-			$('.vsplitbar').trigger('click');
-
+		if($.wiki.state.perspectives.ScanGalleryPerspective.show){
+            $('.vsplitbar').trigger('click');
+            $(".vsplitbar-title").html("&darr;&nbsp;GALLERY&nbsp;&darr;");
+        } else {
+            $(".vsplitbar-title").html("&uarr;&nbsp;GALLERY&nbsp;&uarr;");
+        }
         window.onbeforeunload = function(e) {
             if($.wiki.isDirty()) {
 				e.returnValue = "Na stronie mogą być nie zapisane zmiany.";

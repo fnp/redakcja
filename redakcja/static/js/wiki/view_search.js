@@ -99,6 +99,8 @@
         self.$searchCursor = null;
 
         $('.vsplitbar').not('.active').trigger('click');
+        $(".vsplitbar-title").html("&darr;&nbsp;SEARCH&nbsp;AND&nbsp;REPLACE&nbsp;&darr;");        
+        
         if ($.wiki.activePerspective() != 'CodeMirrorPerspective')
             $.wiki.switchToTab('#CodeMirrorPerspective');
     };
