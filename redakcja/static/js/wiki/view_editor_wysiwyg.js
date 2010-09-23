@@ -346,7 +346,14 @@
             });
         }
         else {
-            $('.delete-button', $overlay).hide();
+            $('.delete-button', $overlay).html("Anuluj");
+            $('.delete-button', $overlay).click(function(){
+                if (window.confirm("Czy jesteś pewien, że chcesz anulować zmiany?")) {
+                    $overlay.remove();
+                    $(document).unbind('click.blur-overlay');
+                    return false;
+                };
+            });
         }
 
 
@@ -385,7 +392,7 @@
                     var msg = $("<div class='saveNotify'><p>Twoje zmiany zostały naniesione na tekst źródłowy. Pamiętaj, że aby zmiany zostały utrwalone <span>należy je zapisać</span>!</p><p class='notifyTip'>Ta wiadomość zostanie automatycznie zamknięta za 6 sekund.</p></div>");
                     $("#base").prepend(msg);
                     $("#save-button").css({border: '5px solid red'});
-                    $('#base .saveNotify').fadeOut(6000, function(){
+                    $('#base .saveNotify').fadeOut(7000, function(){
                         $(this).remove(); 
                         $("#save-button").css({border: '1px solid black'});
                     });
