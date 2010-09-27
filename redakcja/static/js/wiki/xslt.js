@@ -273,7 +273,7 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				if(xnode === 'wers') {
 					/* push children */
 					if(self._verseBefore(token.node))
-						self.result += '/';
+						self.result += '/\n';
 					self._pushChildren(token.node);
 					break;
 				};

@@ -169,7 +169,7 @@
 			},
 			error: function() {
 				self.galleryImages = [];
-				params['failure'](self, "<p>Nie udało się wczytać gallerii pod nazwą: '" + self.galleryLink + "'.</p>");
+				params['failure'](self, "<p>Nie udało się wczytać galerii pod nazwą: '" + self.galleryLink + "'.</p>");
 			}
 		});
 	};
