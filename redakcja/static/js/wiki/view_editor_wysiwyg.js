@@ -503,7 +503,10 @@
                 _finalize(success);
             },
             error: function(text, source){
-                $('#html-view').html('<p class="error">Wystąpił błąd:</p><p>'+text+'</p><pre>'+source.replace(/&/g, '&amp;').replace(/</g, '&lt;')+'</pre>');
+                err = '<p class="error">Wystąpił błąd:</p><p>'+text+'</p>';
+                if (source)
+                    err += '<pre>'+source.replace(/&/g, '&amp;').replace(/</g, '&lt;')+'</pre>'
+                $('#html-view').html(err);
                 _finalize(failure);
             }
         });

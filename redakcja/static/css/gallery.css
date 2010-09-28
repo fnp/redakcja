@@ -18,6 +18,27 @@
     padding: .5em;
 }
 
+#side-annotations {
+    display: none;
+}
+
+.annotations-list {
+    position: absolute;
+    left: 0;
+    top: 28px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 1em 1em 0 1em;
+}
+
+#side-annotations p.akap {
+    font-size: 16px;
+    font-family: "Georgia", "Times New Roman", serif;
+    line-height: 1.5em;
+    margin-bottom: 1em;
+}
+
 /* =========== */
 /* = Gallery = */
 /* =========== */

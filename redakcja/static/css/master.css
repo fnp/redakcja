@@ -149,7 +149,6 @@ body {
 }
 
 .tabs li {
-	height: 18px;
 	margin-top: 6px;
 	margin-bottom: 0px;
 
@@ -157,10 +156,6 @@ body {
     cursor: pointer;
     display: block;
     float: left;
-
-	padding-left: 12px;
-	padding-right: 12px;
-	padding-top: 5px;
 
     font-weight: bold;
     color: #222;
@@ -179,9 +174,26 @@ body {
     -webkit-border-bottom-right-radius: 0px;
 }
 
+#tabs li {
+    height: 18px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 5px;
+}
+
 .tabs li.active {
     background-color: #C1C1C1;
 }
+
+
+#tabs-right li {
+    height: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 3px;
+}
+
+
 
 #tools {
 	float: right;

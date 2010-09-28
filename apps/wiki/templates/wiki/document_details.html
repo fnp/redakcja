@@ -24,6 +24,7 @@
 
 {% block tabs-right %}
     {% include "wiki/tabs/gallery_view_item.html" %}
+    {% include "wiki/tabs/annotations_view_item.html" %}
     {% include "wiki/tabs/search_view_item.html" %}
 {% endblock %}
 
@@ -33,6 +34,7 @@
     </div>
     <div id="sidebar">
         {% include "wiki/tabs/gallery_view.html" %}
+        {% include "wiki/tabs/annotations_view.html" %}
         {% include "wiki/tabs/search_view.html" %}
     </div>
 {% endblock %}

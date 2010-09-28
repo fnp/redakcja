@@ -69,10 +69,12 @@ $(function()
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
 				$('#sidebar').hide();
 				$('.vsplitbar').css('right', 0).removeClass('active');
-				if($(".vsplitbar-title").html() == "↓&nbsp;SEARCH&nbsp;AND&nbsp;REPLACE&nbsp;↓"){
-				        $(".vsplitbar-title").html("&uarr;&nbsp;SEARCH&nbsp;AND&nbsp;REPLACE&nbsp;&uarr;");        
-				} else {
-				    $(".vsplitbar-title").html("&uarr;&nbsp;GALLERY&nbsp;&uarr;");
+				if($(".vsplitbar-title").html() == "↓&nbsp;ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ&nbsp;↓"){
+				        $(".vsplitbar-title").html("&uarr;&nbsp;ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ&nbsp;&uarr;");        
+				} else if($(".vsplitbar-title").html() == "↓&nbsp;PRZYPISY&nbsp;↓"){
+                        $(".vsplitbar-title").html("&uarr;&nbsp;PRZYPISY&nbsp;&uarr;");        
+                } else {
+				    $(".vsplitbar-title").html("&uarr;&nbsp;GALERIA&nbsp;&uarr;");
 				}
 				$('#editor .editor').css('right', 30);
 				$(window).resize();
