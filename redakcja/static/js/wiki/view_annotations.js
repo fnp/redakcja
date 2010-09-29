@@ -68,20 +68,23 @@
 
             for (var i=0; i<annos.length; i++)
             {
-                text = serializer.serializeToString(annos[i]).replace(/<(\/?)pe[^>]*>/g, "<$1akap>");
+                xml_text = serializer.serializeToString(annos[i]).replace(/^<pe[^>]*>|<\/pe>$/g, "");
                 xml2html({
-                    xml: text,
-                    success: function(elem){
-                        elem.txt = $(elem).text().trim();
-                        anno_list.push(elem);
-                        counter--;
+                    xml: "<akap>" + xml_text + "</akap>",
+                    success: function(xml_text){
+                        return function(elem){
+                            elem.sortby = $(elem).text().trim();
+                            $(elem).append("<div class='src'>"+ xml_text.replace("&", "&amp;", "g").replace("<", "&lt;", "g") +"</div>")
+                            anno_list.push(elem);
+                            counter--;
 
-                        if (!counter) {
-                            anno_list.sort(function(a, b){return (a.txt < b.txt) ? -1 : (a.txt > b.txt ? 1 : 0)});
-                            self.$annos.append(anno_list);
-                            self.$annos.show();
+                            if (!counter) {
+                                anno_list.sort(function(a, b){return a.sortby.localeCompare(b.sortby);});
+                                self.$annos.append(anno_list);
+                                self.$annos.show();
+                            }
                         }
-                    },
+                    }(xml_text),
                     error: function(text) {
                         $.unblockUI();
                         self.$error.html(text);

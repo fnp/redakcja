@@ -32,11 +32,30 @@
     padding: 1em 1em 0 1em;
 }
 
-#side-annotations p.akap {
+#side-annotations .akap {
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
     margin-bottom: 1em;
+    position: relative;
+}
+
+#side-annotations .src {
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 13px;
+    position: absolute;
+    top: 0;
+    bottom: -.5em;
+    display:none;
+    background: white;
+    border: 1px solid #888;
+    width: 100%;
+}
+
+#side-annotations .akap:hover .src {
+    display: block;
 }
 
 /* =========== */
