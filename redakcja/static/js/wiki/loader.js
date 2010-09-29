@@ -110,6 +110,14 @@ $(function()
 
 				console.log("Initial tab is:", active_tab)
 				$.wiki.switchToTab(active_tab);
+
+                /* every 5 minutes check for a newer version */
+                var revTimer = setInterval(function() {
+                        CurrentDocument.checkRevision({error: function(){
+                            $('#header').addClass('out-of-date');
+                            clearInterval(revTimer);
+                        }});
+                    }, 300000);
 			},
 			failure: function() {
 				$('#loading-overlay').fadeOut();

@@ -101,6 +101,7 @@ body {
     font-weight: bold;
 }
 
+
 #header.saving {
 	background-color: #E1C1C1;
 }
@@ -113,7 +114,25 @@ body {
 }
 .saving #save-attempt-info {
     display: inline;
+    font-weight: normal;
 }
+
+
+#header.out-of-date {
+    background-color: #E1C1C1;
+}
+#header.out-of-date #save-button {
+    display: none;
+}
+#out-of-date-info {
+    color: #801000;
+    display: none;
+}
+.out-of-date #out-of-date-info {
+    display: inline;
+}
+
+
 
 #header h1, #header h1 a {
     margin: 0;

@@ -39,6 +39,7 @@
 		{% if not readonly %}
             | <button style="margin-left: 6px" id="save-button">{% trans "Save" %}</button>
 			<span id='save-attempt-info'>{% trans "Save attempt in progress" %}</span>
+            <span id='out-of-date-info'>{% trans "There is a newer version of this document!" %}</span>
 		{% endif %}
     </div>
     <ol id="tabs" class="tabs">

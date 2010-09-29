@@ -32,6 +32,9 @@ urlpatterns = patterns('wiki.views',
     url(r'^(?P<name>[^/]+)/history$',
         'history', name="wiki_history"),
 
+    url(r'^(?P<name>[^/]+)/rev$',
+        'revision', name="wiki_revision"),
+
     url(r'^(?P<name>[^/]+)/text$',
         'text', name="wiki_text"),
 

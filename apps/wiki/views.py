@@ -323,6 +323,17 @@ def diff(request, name):
 
 @never_cache
 @normalized_name
+def revision(request, name):
+    storage = getstorage()
+
+    try:
+        return http.HttpResponse(str(storage.doc_meta(name)['revision']))
+    except DocumentNotFound:
+        raise http.Http404
+
+
+@never_cache
+@normalized_name
 def history(request, name):
     storage = getstorage()
 

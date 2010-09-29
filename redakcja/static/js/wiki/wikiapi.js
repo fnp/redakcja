@@ -39,6 +39,9 @@
 		if (vname == "ajax_document_diff")
 			return base_path + "/" + arguments[1] + "/diff";
 
+        if (vname == "ajax_document_rev")
+            return base_path + "/" + arguments[1] + "/rev";
+
 		if (vname == "ajax_document_addtag")
 			return base_path + "/" + arguments[1] + "/tags";
 
@@ -151,6 +154,20 @@
 			}
 		});
 	};
+
+    WikiDocument.prototype.checkRevision = function(params) {
+        /* this doesn't modify anything, so no locks */
+        var self = this;
+        $.ajax({
+            method: "GET",
+            url: reverse("ajax_document_rev", self.id),
+            dataType: 'text',
+            success: function(data) {
+                if (data != self.revision)
+                    params.error();
+            }
+        });
+    };
 
 	/*
 	 * Fetch gallery

@@ -96,6 +96,9 @@ class DocumentStorage(object):
             changeset['description'] = STAGE_TAGS_RE.sub(stage_desc, changeset['description'])
             yield changeset
 
+    def doc_meta(self, title, revision=None):
+        return self.vstorage.page_meta(title, revision)
+
 
 
 class Document(object):
