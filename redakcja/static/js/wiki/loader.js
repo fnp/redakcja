@@ -59,34 +59,28 @@ $(function()
 			function() {
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
 				$('#sidebar').show();
-				$(".vsplitbar-title").html("&darr;&nbsp;GALLERY&nbsp;&darr;");
 				$('.vsplitbar').css('right', 480).addClass('active');
 				$('#editor .editor').css('right', 510);
 				$(window).resize();
 				$.wiki.perspectiveForTab('#tabs-right .active').onEnter();
 			},
 			function() {
+			    var active_right = $.wiki.perspectiveForTab('#tabs-right .active');
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
 				$('#sidebar').hide();
 				$('.vsplitbar').css('right', 0).removeClass('active');
-				if($(".vsplitbar-title").html() == "↓&nbsp;ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ&nbsp;↓"){
-				        $(".vsplitbar-title").html("&uarr;&nbsp;ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ&nbsp;&uarr;");        
-				} else if($(".vsplitbar-title").html() == "↓&nbsp;PRZYPISY&nbsp;↓"){
-                        $(".vsplitbar-title").html("&uarr;&nbsp;PRZYPISY&nbsp;&uarr;");        
-                } else {
-				    $(".vsplitbar-title").html("&uarr;&nbsp;GALERIA&nbsp;&uarr;");
-				}
+				$(".vsplitbar-title").html("&uarr;&nbsp;" + active_right.vsplitbar + "&nbsp;&uarr;");
 				$('#editor .editor').css('right', 30);
 				$(window).resize();
-				$.wiki.perspectiveForTab('#tabs-right .active').onExit();
+				active_right.onExit();
 			}
 		);
 
 		if($.wiki.state.perspectives.ScanGalleryPerspective.show){
             $('.vsplitbar').trigger('click');
-            $(".vsplitbar-title").html("&darr;&nbsp;GALLERY&nbsp;&darr;");
+            $(".vsplitbar-title").html("&darr;&nbsp;GALERIA&nbsp;&darr;");
         } else {
-            $(".vsplitbar-title").html("&uarr;&nbsp;GALLERY&nbsp;&uarr;");
+            $(".vsplitbar-title").html("&uarr;&nbsp;GALERIA&nbsp;&uarr;");
         }
         window.onbeforeunload = function(e) {
             if($.wiki.isDirty()) {

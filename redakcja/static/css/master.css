@@ -36,6 +36,8 @@ body {
 
 
 .vsplitbar p {
+    font: 12px Helvetica,Verdana,sans-serif;
+
   -moz-transform: rotate(270deg);
   -moz-transform-origin: 50% 50%;
   -webkit-transform: rotate(270deg);

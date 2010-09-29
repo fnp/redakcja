@@ -7,6 +7,7 @@
         var old_callback = options.callback || function() { };
 
         this.noupdate_hash_onenter = true;
+        this.vsplitbar = 'PRZYPISY';
 
         options.callback = function(){
             var self = this;
@@ -102,7 +103,7 @@
         $.wiki.Perspective.prototype.onEnter.call(this);
 
         $('.vsplitbar').not('.active').trigger('click');
-        $(".vsplitbar-title").html("&darr;&nbsp;PRZYPISY&nbsp;&darr;");        
+        $(".vsplitbar-title").html("&darr;&nbsp;PRZYPISY&nbsp;&darr;");
 
         this.refresh(this);
 

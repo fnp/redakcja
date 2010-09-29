@@ -7,6 +7,7 @@
         var old_callback = options.callback || function() { };
 
         this.noupdate_hash_onenter = true;
+        this.vsplitbar = 'ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ';
 
         options.callback = function(){
             var self = this;

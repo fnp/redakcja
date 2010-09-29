@@ -45,6 +45,7 @@
         var old_callback = options.callback || function() { };
 
 		this.noupdate_hash_onenter = true;
+        this.vsplitbar = 'GALERIA';
 
         options.callback = function(){
             var self = this;
