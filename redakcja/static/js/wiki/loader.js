@@ -5,7 +5,7 @@ if (!window.console) {
     }
 }
 
-var DEFAULT_PERSPECTIVE = "#SummaryPerspective";
+var DEFAULT_PERSPECTIVE = "#VisualPerspective";
 
 $(function()
 {
