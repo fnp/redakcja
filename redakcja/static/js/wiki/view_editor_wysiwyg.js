@@ -305,7 +305,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -315,6 +315,7 @@
         
 
         if ($origin.is('.motyw')) {
+	    $('.akap-edit-button').remove();
             withThemes(function(canonThemes){
                 $('textarea', $overlay).autocomplete(canonThemes, {
                     autoFill: true,
@@ -397,6 +398,39 @@
                         $("#save-button").css({border: '1px solid black'});
                     });
                 }
+
+		$('.akap-edit-button', $overlay).click(function(){
+			var textAreaOpened = $('textarea', $overlay)[0];
+			var startTag = "";
+			var endTag = "";
+			var buttonName = this.innerHTML;
+
+			if(buttonName == "słowo obce") {
+				startTag = "<slowo_obce>";
+				endTag = "</slowo_obce>";
+			} else if (buttonName == "wyróżnienie") {
+				startTag = "<wyroznienie>";
+				endTag = "</wyroznienie>";
+			} else if (buttonName == "tytuł dzieła") {
+				startTag = "<tytul_dziela>";
+				endTag = "</tytul_dziela>";
+			}
+			var myField = textAreaOpened;			
+                        
+			//IE support
+		        if (document.selection) {
+		            textAreaOpened.focus();
+		            sel = document.selection.createRange();
+		            sel.text = startTag + sel.text + endTag;
+		        }
+		        //MOZILLA/NETSCAPE support
+		        else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+		            var startPos = textAreaOpened.selectionStart;
+		            var endPos = textAreaOpened.selectionEnd;
+		            textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+				  + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+		        }
+		});
 
                 $('.accept-button', $overlay).click(function(){
                     save();
