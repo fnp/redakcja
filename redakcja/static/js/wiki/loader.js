@@ -113,7 +113,7 @@ $(function()
 
                 /* every 5 minutes check for a newer version */
                 var revTimer = setInterval(function() {
-                        CurrentDocument.checkRevision({error: function(){
+                        CurrentDocument.checkRevision({outdated: function(){
                             $('#header').addClass('out-of-date');
                             clearInterval(revTimer);
                         }});
