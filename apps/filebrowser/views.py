@@ -55,7 +55,7 @@ def browse(request):
         request.user.message_set.create(message=msg)
         if directory is None:
             # The DIRECTORY does not exist, raise an error to prevent eternal redirecting.
-            raise ImproperlyConfigured(_("Error finding upload directory. Maybe it does not exist?"))
+            raise ImproperlyConfigured(_("Error finding upload directory: %s. Maybe it does not exist?" % os.path.join(MEDIA_ROOT, DIRECTORY)))
         redirect_url = reverse("fb_browse") + query_helper(query, "", "dir")
         return HttpResponseRedirect(redirect_url)
     abs_path = os.path.join(MEDIA_ROOT, DIRECTORY, path)

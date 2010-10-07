@@ -12,14 +12,14 @@
 from redakcja.settings import *
 
 # Path to repository with managed documents
-WIKI_REPOSITORY_PATH = '/home/lrekucki/projekty/fundacja/books'
+WIKI_REPOSITORY_PATH = '/srv/redakcja/books'
 
-LOGGING_CONFIG_FILE = "/home/lrekucki/projekty/fundacja/redakcja/logging.cfg.dev"
+LOGGING_CONFIG_FILE = "/srv/redakcja/logging.cfg.dev"
 
-STATIC_ROOT = '/home/lrekucki/projekty/fundacja/redakcja/redakcja/static/'
-MEDIA_ROOT = '/home/lrekucki/projekty/fundacja/media/'
+STATIC_ROOT = '/srv/redakcja/static/'
+MEDIA_ROOT = '/srv/redakcja/media/'
 
-# Subdirectory of STATIC_ROOT containing images
+# Subdirectory of MEDIA_ROOT containing images
 IMAGE_DIR = 'images'
 
 CAS_SERVER_URL = 'http://logowanie.wolnelektury.pl/cas/'
