@@ -25,9 +25,6 @@
 -   fields: {name: "Pocz\u0105tek dramatu", position: 0, slug: poczatek-dramatu}
     model: toolbar.buttongroup
     pk: 22
--   fields: {name: Polecenia, position: 0, slug: polecenia}
-    model: toolbar.buttongroup
-    pk: 27
 -   fields: {name: Przypisy, position: 0, slug: przypisy}
     model: toolbar.buttongroup
     pk: 26
@@ -37,6 +34,9 @@
 -   fields: {name: Style znakowe, position: 0, slug: style-znakowe}
     model: toolbar.buttongroup
     pk: 15
+-   fields: {name: Uwaga, position: 0, slug: uwaga}
+    model: toolbar.buttongroup
+    pk: 29
 -   fields: {name: Wersy, position: 0, slug: wersy}
     model: toolbar.buttongroup
     pk: 17
@@ -274,7 +274,7 @@
     pk: 38
 -   fields:
         accesskey: ''
-        group: [27]
+        group: []
         label: extra
         link: ''
         params: '{"tag": "extra"}'
@@ -714,7 +714,7 @@
     pk: 45
 -   fields:
         accesskey: ''
-        group: [27]
+        group: [29]
         label: uwaga
         link: ''
         params: '{"tag": "uwaga"}'
@@ -844,6 +844,10 @@
         tooltip: wykropkowanie wersu
     model: toolbar.button
     pk: 56
+-   fields: {code: "$(params).each(function() {\n    $.log(this[0], this[1]);\n  \
+            \  editor.callScriptlet(this[0], panel, this[1]);\n\n});"}
+    model: toolbar.scriptlet
+    pk: macro
 -   fields: {code: "var texteditor = panel.texteditor;\nvar text = texteditor.selection();\n\
             var start_tag = '<'+params.tag;\nfor (var attr in params.attrs) {\n  \
             \  start_tag += ' '+attr+'=\"' + params.attrs[attr] + '\"';\n};\nstart_tag\
@@ -881,6 +885,9 @@
             \ cm.selectLines( cm.nthLine(cpos.line), cpos.character )"}
     model: toolbar.scriptlet
     pk: lineregexp
+-   fields: {code: '-'}
+    model: toolbar.scriptlet
+    pk: autotag
 -   fields: {code: "editor.showPopup('generic-info', 'Przetwarzanie zaznaczonego tekstu...',\
             \ '', -1);\n$.log(editor, panel, params);\nvar cm = panel.texteditor;\n\
             var exprs = $.map(params.exprs, function(expr) {\n    var opts = \"mg\"\
@@ -898,10 +905,6 @@
             \ cm.nthLine(cpos.line), cpos.character );\n}"}
     model: toolbar.scriptlet
     pk: fulltextregexp
--   fields: {code: "$(params).each(function() {\n    $.log(this[0], this[1]);\n  \
-            \  editor.callScriptlet(this[0], panel, this[1]);\n\n});"}
-    model: toolbar.scriptlet
-    pk: macro
 -   fields: {code: "var cm = panel.texteditor;\r\nvar text = cm.selection();\r\n\r\
             \nif(!text) return;\r\nvar repl = '';\r\nvar lcase = text.toLowerCase();\r\
             \nvar ucase = text.toUpperCase();\r\n\r\nif(lcase == text) repl = ucase;\
@@ -928,7 +931,4 @@
             \r\n\r\n\r\n\r\n\r\n\r\n\r\npanel.fireEvent('contentChanged');"}
     model: toolbar.scriptlet
     pk: insert_stanza
--   fields: {code: '-'}
-    model: toolbar.scriptlet
-    pk: autotag
 
