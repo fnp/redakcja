@@ -163,8 +163,10 @@
             url: reverse("ajax_document_rev", self.id),
             dataType: 'text',
             success: function(data) {
-                if (data == '' && params.error)
-                    params.error();
+                if (data == '') {
+                    if (params.error)
+                        params.error();
+                }
                 else if (data != self.revision)
                     params.outdated();
             }
