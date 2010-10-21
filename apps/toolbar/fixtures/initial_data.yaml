@@ -307,6 +307,28 @@
     pk: 82
 -   fields:
         accesskey: ''
+        group: [12]
+        label: kwestioakapit
+        link: ''
+        params: '[["insert_tag", {"tag": "akap"}], ["insert_tag", {"tag": "kwestia"}]]'
+        scriptlet: macro
+        slug: kwestioakapit
+        tooltip: ''
+    model: toolbar.button
+    pk: 101
+-   fields:
+        accesskey: ''
+        group: [12]
+        label: kwestiostrofa
+        link: ''
+        params: '[["insert_stanza", {"tag": "strofa"}], ["insert_tag", {"tag": "kwestia"}]]'
+        scriptlet: macro
+        slug: kwestiostrofa
+        tooltip: ''
+    model: toolbar.button
+    pk: 102
+-   fields:
+        accesskey: ''
         group: [11]
         label: liryka
         link: ''
@@ -404,6 +426,19 @@
         tooltip: "Zamienia cudzys\u0142owy podw\xF3jne na niemieckie"
     model: toolbar.button
     pk: 3
+-   fields:
+        accesskey: ''
+        group: [28]
+        label: "nag\u0142. dramatu"
+        link: ''
+        params: '{"exprs": [["^AKT(\\s\\w*)$", "<naglowek_akt>AKT$1</naglowek_akt>"],
+            ["^SCENA(\\s\\w*)$", "<naglowek_scena>SCENA$1</naglowek_scena>"], ["([A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179]{2}[A-Z\u0104\u0106\u0118\u0141\u0143\u00d3\u015a\u017b\u0179\\s]+)$",
+            "<naglowek_osoba>$1</naglowek_osoba>"]]}'
+        scriptlet: lineregexp
+        slug: nagl-dramatu
+        tooltip: "autotagowanie akt\xF3w, scen, nag\u0142\xF3wk\xF3w os\xF3b"
+    model: toolbar.button
+    pk: 103
 -   fields:
         accesskey: ''
         group: [12]

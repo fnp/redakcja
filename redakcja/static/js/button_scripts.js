@@ -51,7 +51,7 @@ function ScriptletCenter()
     this.scriptlets['insert_tag'] = function(context, params, text, move_forward, done)
     {
         var start_tag = '<'+params.tag;
-        var move_cursor = false;
+        var cursor_inside = false;
 
         for (var attr in params.attrs) {
             start_tag += ' '+attr+'="' + params.attrs[attr] + '"';
@@ -83,6 +83,9 @@ function ScriptletCenter()
                 output += end_tag;
             }
             output += token;
+
+            // keep cursor inside tag if some previous scriptlet has already moved it
+            cursor_inside = move_forward != 0;
         }
         else {
             if(params.nocontent) {
@@ -90,11 +93,11 @@ function ScriptletCenter()
             }
             else {
                 output = start_tag + end_tag;
-                move_cursor = true;
+                cursor_inside = true;
             }
         }
 
-        if (move_cursor) {
+        if (cursor_inside) {
             move_forward -= params.tag.length+3;
         }
 
