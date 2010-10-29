@@ -9,6 +9,7 @@ import os
 import vstorage
 from vstorage import DocumentNotFound
 from wiki import settings, constants
+from slughifi import slughifi
 from django.utils.translation import ugettext_lazy as _
 
 from django.http import Http404
@@ -130,7 +131,7 @@ class Document(object):
                 except ValueError:
                     continue
 
-        gallery = result.get('gallery', self.name.replace(' ', '_'))
+        gallery = result.get('gallery', slughifi(self.name.replace(' ', '_')))
 
         if gallery.startswith('/'):
             gallery = os.path.basename(gallery)
