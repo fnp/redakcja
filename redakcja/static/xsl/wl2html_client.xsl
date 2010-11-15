@@ -753,14 +753,16 @@
 	
 	<!-- 
 		Earlier versions of html2wl introduced a BUG, that 'causes "out-of-flow-text" tag to appear.
-		Instead of marking it as "unknown", just pass thru it
+		Instead of marking it as "unknown", just pass thru it.
+		Keep a pass-thru span for out-of-flow box editing
 	-->
-	<xsl:template match="out-of-flow-text">
-		<xsl:param name="mixed" />
-		<xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="$mixed" />
-            </xsl:apply-templates>
-	</xsl:template>	
+    <xsl:template match="out-of-flow-text">
+        <span data-pass-thru="true">
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="false()" />
+            </xsl:apply-templates>        
+        </span>
+    </xsl:template>
 
     <xsl:template match="*">
         <span class="unknown-tag" x-node="{name()}">

@@ -381,7 +381,13 @@
                     xml2html({
                         xml: '<' + nodeName + '>' + insertedText + '</' + nodeName + '>',
                         success: function(element){
-                            $origin.html($(element).html());
+                            if (nodeName == 'out-of-flow-text') {
+                                $(element).children().insertAfter($origin);
+                                $origin.remove()
+                            }
+                            else {
+                                $origin.html($(element).html());
+                            }
                             $overlay.remove();
                         },
                         error: function(text){
