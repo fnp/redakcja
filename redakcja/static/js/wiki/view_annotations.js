@@ -15,8 +15,21 @@
             this.$element = $("#side-annotations");
             this.$error = $('.error-message', this.$element);
             this.$annos = $('.annotations-list', this.$element);
-            $('.refresh', this.$element).click(function() {
-                self.refresh(self);
+            this.$spinner = $('.spinner', this.$element);
+            this.$refresh = $('.refresh', this.$element);
+
+            this.$refresh.click(function() {
+                $this = $(this);
+
+                self.$refresh.removeClass('active');
+                $this.addClass('active');
+                atype = $this.text();
+
+                self.$annos.hide();
+                self.$error.hide();
+                self.$spinner.show(100, function(){
+                    self.refresh(self, atype);
+                });
             });
 
 			old_callback.call(this);
@@ -27,7 +40,7 @@
 
     AnnotationsPerspective.prototype = new $.wiki.Perspective();
 
-    AnnotationsPerspective.prototype.refresh = function(self) {
+    AnnotationsPerspective.prototype.refresh = function(self, atype) {
         var xml;
 
         persp = $.wiki.activePerspective();
@@ -42,13 +55,15 @@
                 },
                 error: function(text){
                     self.$error.html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                    self.$spinner.hide();
+                    self.$error.show();
                 }
             });
         }
         else {
             xml = this.doc.text;
         }
-        
+
         var parser = new DOMParser();
         var serializer = new XMLSerializer();
         var doc = parser.parseFromString(xml, 'text/xml');
@@ -56,20 +71,25 @@
 
         if (error.length > 0) {
             self.$error.html('Błąd parsowania XML.');
+            self.$spinner.hide();
             self.$error.show();
-            self.$annos.hide();
         }
         else {
-            self.$error.hide();
-            self.$annos.hide();
             self.$annos.html('');
             var anno_list = new Array();
-            var annos = doc.getElementsByTagName('pe');
+            var annos = doc.getElementsByTagName(atype);
             var counter = annos.length;
 
+            if (annos.length == 0)
+            {
+                self.$annos.html('Nie ma żadnych przypisów');
+                self.$spinner.hide();
+                self.$annos.show();
+            }
             for (var i=0; i<annos.length; i++)
             {
-                xml_text = serializer.serializeToString(annos[i]).replace(/^<pe[^>]*>|<\/pe>$/g, "");
+                ann_expr = new RegExp("^<"+atype+"[^>]*>|</"+atype+">$", "g")
+                xml_text = serializer.serializeToString(annos[i]).replace(ann_expr, "");
                 xml2html({
                     xml: "<akap>" + xml_text + "</akap>",
                     success: function(xml_text){
@@ -82,13 +102,16 @@
                             if (!counter) {
                                 anno_list.sort(function(a, b){return a.sortby.localeCompare(b.sortby);});
                                 self.$annos.append(anno_list);
+                                self.$spinner.hide();
                                 self.$annos.show();
                             }
+
                         }
                     }(xml_text),
                     error: function(text) {
                         $.unblockUI();
                         self.$error.html(text);
+                        self.$spinner.hide();
                         self.$error.show();
                     }
                 });
@@ -104,8 +127,7 @@
 
         $('.vsplitbar').not('.active').trigger('click');
         $(".vsplitbar-title").html("&darr;&nbsp;PRZYPISY&nbsp;&darr;");
-
-        this.refresh(this);
+        this.$refresh.filter('.active').trigger('click');
 
     };
 

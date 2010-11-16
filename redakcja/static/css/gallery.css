@@ -32,6 +32,25 @@
     padding: 1em 1em 0 1em;
 }
 
+#side-annotations .active {
+    font-weight: bold;
+}
+
+#side-annotations .spinner {
+    position: absolute;
+    left: 0;
+    top: 28px;
+    right: 0;
+    bottom: 0;
+    text-align:center;
+    padding-top: 50%;
+    background: white;
+}
+
+#side-annotations .spinner img {
+    margin-top: -15px;
+}
+
 #side-annotations .akap {
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
