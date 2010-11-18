@@ -221,6 +221,11 @@ HTMLSerializer.prototype._pushTagEnd = function(tagName) {
 }
 
 HTMLSerializer.prototype._verseBefore = function(node) {
+    /* true if previous element is a previous verse of a stanza */
+    var parent = node.parentNode;
+    if (!parent || !parent.hasAttribute('x-node') || parent.getAttribute('x-node') != 'strofa')
+        return false;
+
 	var prev = node.previousSibling;
 
 	while((prev !== null) && (prev.nodeType != ELEMENT_NODE)) {
@@ -283,9 +288,12 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 					break;
 				}
 
-				if(token.node.hasAttribute('x-verse') && self._verseBefore(token.node)) {
-					self.result += '/\n';
-				};
+                if(token.node.hasAttribute('x-verse')) {
+                    if(self._verseBefore(token.node)) {
+                        self.result += '/';
+                    }
+                    self.result += '\n';
+                };
 
 				self._serializeElement(token.node);
 				break;
