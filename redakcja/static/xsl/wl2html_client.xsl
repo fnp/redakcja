@@ -728,7 +728,9 @@
         <!-- <xsl:value-of select="." /> -->
         <xsl:param name="mixed" />
         <xsl:choose>
-            <xsl:when test="normalize-space(.) = ''" />
+            <xsl:when test="normalize-space(.) = ''">
+                <xsl:value-of select="." />
+            </xsl:when>
             <xsl:when test="not($mixed)">
             	<span x-node="out-of-flow-text" class="out-of-flow-text" x-editable="true">
             		<xsl:value-of select="." />

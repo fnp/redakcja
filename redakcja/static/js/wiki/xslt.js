@@ -129,62 +129,6 @@ const NAMESPACES = {
 	"http://www.w3.org/XML/1998/namespace": "xml"
 };
 
-/*
- * PADDING for pretty-printing
- */
-const PADDING = {
-    dramat_wierszowany_l: 4,
-    dramat_wierszowany_lp: 4,
-    dramat_wspolczesny: 4,
-    wywiad: 4,
-    opowiadanie: 4,
-    powiesc: 4,
-    liryka_l: 4,
-    liryka_lp: 4,
-    naglowek_czesc: 4,
-    naglowek_akt: 4,
-    naglowek_rozdzial: 4,
-    naglowek_osoba: 4,
-    lista_osob: 4,
-
-    akap: 3,
-    akap_cd: 3,
-    akap_dialog: 3,
-    strofa: 3,
-    motto: 3,
-    miejsce_czas: 3,
-
-    autor_utworu: 2,
-    nazwa_utworu: 2,
-    dzielo_nadrzedne: 2,
-
-    didaskalia: 2,
-    motto_podpis: 2,
-    naglowek_listy: 2,
-    kwestia: 1,
-    lista_osoba: 1,
-
-	"podpis": 1,
-	"wers": 0,
-	"wers_cd": 0,
-	"wers_akap": 0,
-	"wers_wciety": 0,
-
-	"rdf:RDF": 3,
-	"rdf:Description": 1,
-};
-
-function getPadding(name) {
-
-	if(name.match(/^dc:.*$/))
-		return -1;
-
-	if(PADDING[name])
-		return PADDING[name];
-
-	return 0;
-}
-
 function HTMLSerializer() {
 	// empty constructor
 }
@@ -235,6 +179,19 @@ HTMLSerializer.prototype._verseBefore = function(node) {
 	return (prev !== null) && prev.hasAttribute('x-verse');
 }
 
+HTMLSerializer.prototype._nodeIgnored = function(node) {
+    return node.getAttribute('x-node') == 'wers';
+}
+
+HTMLSerializer.prototype._ignoredWithWhitespace = function(node) {
+    while (node.nodeType == ELEMENT_NODE && this._nodeIgnored(node) && node.childNodes.length > 0)
+        node = node.childNodes[0];
+    if (node.nodeType == TEXT_NODE)
+        return node.nodeValue.match(/^\s/)
+    else return false;
+}
+
+
 HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 {
 	var self = this;
@@ -245,16 +202,18 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 	else
 		self._pushChildren(rootElement);
 
+    var text_buffer = '';
+
 	while(self.stack.length > 0) {
 		var token = self.stack.pop();
 
-		if(token.type === ELEM_END) {
-			self.result += "</" + token.tagName + ">";
-			for(var padding = getPadding(token.tagName); padding > 0; padding--) {
-				self.result += "\n";
-			}
-			continue;
-		};
+        if(token.type === ELEM_END) {
+            self.result += text_buffer;
+            text_buffer = '';
+            if (token.tagName != '')
+                self.result += "</" + token.tagName + ">";
+            continue;
+        };
 
 		if(token.type === NS_END) {
 			self._unassignNamespace(token.namespace);
@@ -275,34 +234,25 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 
 				var xnode = token.node.getAttribute('x-node');
 
-				if(xnode === 'wers') {
-					/* push children */
-					if(self._verseBefore(token.node))
-						self.result += '/\n';
-					self._pushChildren(token.node);
-					break;
-				};
-
 				if(xnode === 'out-of-flow-text') {
 					self._pushChildren(token.node);
 					break;
 				}
 
-                if(token.node.hasAttribute('x-verse')) {
-                    if(self._verseBefore(token.node)) {
-                        self.result += '/';
-                    }
-                    self.result += '\n';
-                };
+                if(token.node.hasAttribute('x-verse') && self._verseBefore(token.node)) {
+                    self.result += '/';
+                    // add whitespace if there's none
+                    if (!(text_buffer.match(/^\s/) || self._ignoredWithWhitespace(token.node)))
+                        self.result += ' ';
+                }
 
+                self.result += text_buffer;
+                text_buffer = '';
 				self._serializeElement(token.node);
 				break;
 			case TEXT_NODE:
-				// collapse previous element's padding
-				var i = 0;
-				while (token.node.nodeValue[i] == '\n' && self.result[self.result.length - 1] == '\n')
-				  i ++;
-				self.result += token.node.nodeValue.substr(i);
+				self.result += text_buffer;
+				text_buffer = token.node.nodeValue;
 				break;
 		};
 	};
@@ -356,72 +306,74 @@ HTMLSerializer.prototype._rjoin = function(prefix, name) {
 };
 
 HTMLSerializer.prototype._serializeElement = function(node) {
-	var self = this;
+    var self = this;
 
-	var ns = node.getAttribute('x-ns');
-	var nsPrefix = null;
-	var newNamespaces = [];
+    if (self._nodeIgnored(node)) {
+        self._pushTagEnd('');
+        self._pushChildren(node);
+    }
+    else {
+    	var ns = node.getAttribute('x-ns');
+    	var nsPrefix = null;
+    	var newNamespaces = [];
 
-	var nsData = self._assignNamespace(node.getAttribute('x-ns'));
+    	var nsData = self._assignNamespace(node.getAttribute('x-ns'));
 
-	if(nsData.fresh) {
-		newNamespaces.push(nsData);
-		self.stack.push({
-			"type": NS_END,
-			"namespace": nsData
-		});
-	}
+    	if(nsData.fresh) {
+    		newNamespaces.push(nsData);
+    		self.stack.push({
+    			"type": NS_END,
+    			"namespace": nsData
+    		});
+    	}
 
-	var tagName = self._join(nsData.prefix, node.getAttribute('x-node'));
+    	var tagName = self._join(nsData.prefix, node.getAttribute('x-node'));
 
-	/* retrieve attributes */
-	var attributeIDs = [];
-	for (var i = 0; i < node.attributes.length; i++) {
-		var attr = node.attributes.item(i);
+    	/* retrieve attributes */
+    	var attributeIDs = [];
+    	for (var i = 0; i < node.attributes.length; i++) {
+    		var attr = node.attributes.item(i);
 
-		// check if name starts with "x-attr-name"
-		var m = attr.name.match(XATTR_RE);
-		if (m !== null)
-			attributeIDs.push(m[1]);
-	};
+    		// check if name starts with "x-attr-name"
+    		var m = attr.name.match(XATTR_RE);
+    		if (m !== null)
+    			attributeIDs.push(m[1]);
+    	};
 
-	/* print out */
+    	/* print out */
 
-	// at least one newline before padded elements
-	if (getPadding(tagName) && self.result[self.result.length - 1] != '\n')
-		self.result += '\n';
+    	self.result += '<' + tagName;
 
-	self.result += '<' + tagName;
+    	$.each(attributeIDs, function() {
+    		var nsData = self._assignNamespace(node.getAttribute('x-attr-ns-'+this));
 
-	$.each(attributeIDs, function() {
-		var nsData = self._assignNamespace(node.getAttribute('x-attr-ns-'+this));
+    		if(nsData.fresh) {
+    			newNamespaces.push(nsData);
+    			self.stack.push({
+    				"type": NS_END,
+    				"namespace": nsData
+    			});
+    		};
 
-		if(nsData.fresh) {
-			newNamespaces.push(nsData);
-			self.stack.push({
-				"type": NS_END,
-				"namespace": nsData
-			});
-		};
+    		self.result += ' ' + self._join(nsData.prefix, node.getAttribute('x-attr-name-'+this));
+    		self.result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
+    	});
 
-		self.result += ' ' + self._join(nsData.prefix, node.getAttribute('x-attr-name-'+this));
-		self.result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
-	});
+    	/* print new namespace declarations */
+    	$.each(newNamespaces, function() {
+    		self.result += " " + self._rjoin("xmlns", this.prefix);
+    		self.result += '="' + this.uri + '"';
+    	});
 
-	/* print new namespace declarations */
-	$.each(newNamespaces, function() {
-		self.result += " " + self._rjoin("xmlns", this.prefix);
-		self.result += '="' + this.uri + '"';
-	});
-
-	if (node.childNodes.length > 0) {
-		self.result += ">";
-		self._pushTagEnd(tagName);
-		self._pushChildren(node);
-	}
-	else {
-		self.result += "/>";
-	};
+    	if (node.childNodes.length > 0) {
+    		self.result += ">";
+    		self._pushTagEnd(tagName);
+    		self._pushChildren(node);
+    	}
+    	else {
+    		self.result += "/>";
+    	};
+    }
 };
 
 function html2text(params) {

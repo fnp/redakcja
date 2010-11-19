@@ -48,8 +48,12 @@ function ScriptletCenter()
 {
     this.scriptlets = {};
 
-    this.scriptlets['insert_tag'] = function(context, params, text, move_forward, done)
+    this.scriptlets['insert_tag'] = function(context, params, text, move_forward, move_up, done)
     {
+        var padding_top = '';
+        for (var i=params.padding_top; i; i--)
+            padding_top += '\n';
+
         var start_tag = '<'+params.tag;
         var cursor_inside = false;
 
@@ -59,6 +63,10 @@ function ScriptletCenter()
 
         start_tag += '>';
         var end_tag = '</'+params.tag+'>';
+
+        var padding_bottom = '';
+        for (var i=params.padding_bottom; i; i--)
+            padding_bottom += '\n';
 
         if(text.length > 0) {
             // tokenize
@@ -71,40 +79,42 @@ function ScriptletCenter()
                 }
                 else { // character
                     output += token;
-                    if(output == token) output += start_tag;
+                    if(output == token) output += padding_top + start_tag;
                     token = '';
                     output += text[index];
                 }
             }
 
             if( output[output.length-1] == '\\' ) {
-                output = output.substr(0, output.length-1) + end_tag + '\\';
+                output = output.substr(0, output.length-1) + end_tag + padding_bottom + '\\';
             } else {
-                output += end_tag;
+                output += end_tag + padding_bottom;
             }
             output += token;
 
             // keep cursor inside tag if some previous scriptlet has already moved it
-            cursor_inside = move_forward != 0;
+            cursor_inside = move_forward != 0 || move_up != 0;
         }
         else {
             if(params.nocontent) {
-                output = "<"+params.tag +" />";
+                output = padding_top + "<"+params.tag +" />" + padding_bottom;
             }
             else {
-                output = start_tag + end_tag;
+                output = padding_top + start_tag + end_tag + padding_bottom;
                 cursor_inside = true;
             }
         }
 
         if (cursor_inside) {
-            move_forward -= params.tag.length+3;
+            move_forward -= params.tag.length + 3;
+            move_up += params.padding_bottom || 0;
+            alert(move_forward + ' ' + move_up)
         }
 
-        done(output, move_forward);
+        done(output, move_forward, move_up);
     }.bind(this);
 
-    this.scriptlets['lineregexp'] = function(context, params, text, move_forward, done) {
+    this.scriptlets['lineregexp'] = function(context, params, text, move_forward, move_up, done) {
 		var self = this;
 
         var exprs = $.map(params.exprs, function(expr) {
@@ -117,7 +127,7 @@ function ScriptletCenter()
                 };
         });
 
-        if(!text) done(text, move_forward);
+        if(!text) done(text, move_forward, move_up);
 
         var changed = 0;
         var lines = text.split('\n');
@@ -138,11 +148,11 @@ function ScriptletCenter()
                 text = newlines.join('\n');
             };
 
-            done(text, move_forward);
+            done(text, move_forward, move_up);
 		});
     }.bind(this);
 
-    this.scriptlets['fulltextregexp'] = function(context, params, text, move_forward, done) {
+    this.scriptlets['fulltextregexp'] = function(context, params, text, move_forward, move_up, done) {
 		var self = this;
 
         var exprs = $.map(params.exprs, function(expr) {
@@ -156,42 +166,50 @@ function ScriptletCenter()
                 };
         });
 
-        if(!text) done(text, move_forward);
+        if(!text) done(text, move_forward, move_up);
 
 		nblck_each(exprs, function(expr, index) {
 			$progress.html(600 + index);
             text = text.replace(expr.rx, expr.repl);
         }, function() {
-			done(text, move_forward);
+			done(text, move_forward, move_up);
 		});
     }.bind(this);
 
-    this.scriptlets['macro'] = function(context, params, text, move_forward, done) {
+    this.scriptlets['macro'] = function(context, params, text, move_forward, move_up, done) {
         var self = this;
 		var i = 0;
 
-		function next(text, move_forward) {
+		function next(text, move_forward, move_up) {
         	if (i < params.length) {
 				var e = params[i];
 				i = i + 1;
-				self.scriptlets[e[0]](context, e[1], text, move_forward, next);
+				self.scriptlets[e[0]](context, e[1], text, move_forward, move_up, next);
 			}
 			else {
-				done(text, move_forward);
+				done(text, move_forward, move_up);
 			}
         };
 
-		next(text, move_forward);
+		next(text, move_forward, move_up);
     }.bind(this);
 
-    this.scriptlets['lowercase'] = function(context, params, text, move_forward, done)
+    this.scriptlets['lowercase'] = function(context, params, text, move_forward, move_up, done)
     {
-        if(!text) done(text, move_forward);
-        done(text.toLowerCase(), move_forward);
+        if(!text) done(text, move_forward, move_up);
+        done(text.toLowerCase(), move_forward, move_up);
     }.bind(this);
 
 
-    this.scriptlets["insert_stanza"] = function(context, params, text, move_forward, done) {
+    this.scriptlets["insert_stanza"] = function(context, params, text, move_forward, move_up, done) {
+        var padding_top = '';
+        for (var i=params.padding_top; i; i--)
+            padding_top += '\n';
+
+        var padding_bottom = '';
+        for (var i=params.padding_bottom; i; i--)
+            padding_bottom += '\n';
+
         if(text) {
             var verses = text.split('\n');
             text = ''; var buf = ''; var ebuf = '';
@@ -208,20 +226,21 @@ function ScriptletCenter()
                     ebuf += '\n' + verses[i];
                 }
             }
-            text = text + buf + '\n</strofa>' + ebuf;
+            text = padding_top + text + buf + '\n</strofa>' + padding_bottom + ebuf;
         }
         else {
-            text = "<strofa></strofa>"
+            text = padding_top + "<strofa></strofa>" + padding_bottom;
             move_forward -= "</strofa>".length;
+            move_up += params.padding_bottom || 0;
         }
 
-        done(text, move_forward);
+        done(text, move_forward, move_up);
     }.bind(this);
 
 
-    this.scriptlets['autotag'] = function(context, params, text, move_forward, done)
+    this.scriptlets['autotag'] = function(context, params, text, move_forward, move_up, done)
     {
-        if(!text.match(/^\n+$/)) done(text, move_forward);
+        if(!text.match(/^\n+$/)) done(text, move_forward, move_up);
 
         function insert_done(output, mf) {
             text += output;
@@ -254,7 +273,7 @@ function ScriptletCenter()
             }
         }
 
-        done(text, move_forward);
+        done(text, move_forward, move_up);
     }.bind(this);
 
 }
@@ -272,16 +291,16 @@ ScriptletCenter.prototype.callInteractive = function(opts) {
 	$.blockUI({message: $progress, showOverlay: false});
 
     var input = self.XMLEditorSelectedText(opts.context);
-	self.scriptlets[opts.action](opts.context, opts.extra, input, 0, function(output, move_forward){
+	self.scriptlets[opts.action](opts.context, opts.extra, input, 0, 0, function(output, move_forward, move_up){
 	    /*if(timer)
 	        clearTimeout(timer);
 	    else */
         if (input != output) {
             self.XMLEditorReplaceSelectedText(opts.context, output)
         }
-        if (move_forward) {
+        if (move_forward || move_up) {
             try {
-                self.XMLEditorMoveCursorForward(opts.context, move_forward)
+                self.XMLEditorMoveCursorForward(opts.context, move_forward, move_up)
             }
             catch(e) {}
         }
@@ -300,9 +319,24 @@ ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(editor, replac
 	editor.replaceSelection(replacement);
 };
 
-ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, n) {
+ScriptletCenter.prototype.XMLEditorMoveCursorForward = function(panel, right, up) {
     var pos = panel.cursorPosition();
-    panel.selectLines(pos.line, pos.character + n);
+    if (up) {
+        line = pos.line;
+        while (up < 0) {
+            line = panel.nextLine(line);
+            ++up;
+        }
+        while (up > 0) {
+            line = panel.prevLine(line);
+            --up;
+        }
+        len = panel.lineContent(line).length;
+        panel.selectLines(line, len + right);
+    }
+    else {
+        panel.selectLines(pos.line, pos.character + right);
+    }
 };
 
 var scriptletCenter;

@@ -45,7 +45,7 @@
         group: [14, 12]
         label: akapit
         link: ''
-        params: '{"tag": "akap"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "akap"}'
         scriptlet: insert_tag
         slug: akapit
         tooltip: wstawia akapit
@@ -56,7 +56,7 @@
         group: [14]
         label: akapit cd.
         link: ''
-        params: '{"tag": "akap_cd"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "akap_cd"}'
         scriptlet: insert_tag
         slug: akapit-cd
         tooltip: "ci\u0105g dalszy akapitu po wewn\u0105trzakapitowym wtr\u0105ceniu"
@@ -67,7 +67,7 @@
         group: [14]
         label: akapit dialogowy
         link: ''
-        params: '{"tag": "akap_dialog"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "akap_dialog"}'
         scriptlet: insert_tag
         slug: akapit-dialogowy
         tooltip: wstawia akapit dialogowy
@@ -89,7 +89,7 @@
         group: [1]
         label: akt
         link: ''
-        params: '{"tag": "akt"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "naglowek_akt"}'
         scriptlet: insert_tag
         slug: akt
         tooltip: ''
@@ -100,7 +100,7 @@
         group: [13]
         label: autor
         link: ''
-        params: '{"tag": "autor_utworu"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "autor_utworu"}'
         scriptlet: insert_tag
         slug: autor
         tooltip: ''
@@ -156,7 +156,7 @@
         group: [1]
         label: "cz\u0119\u015B\u0107/ksi\u0119ga"
         link: ''
-        params: '{"tag": "naglowek_czesc"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "naglowek_czesc"}'
         scriptlet: insert_tag
         slug: czesc
         tooltip: ''
@@ -178,7 +178,7 @@
         group: [12]
         label: didaskalia
         link: ''
-        params: '{"tag": "didaskalia"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "didaskalia"}'
         scriptlet: insert_tag
         slug: didaskalia
         tooltip: ''
@@ -189,7 +189,7 @@
         group: [22]
         label: "didaskalia pocz\u0105tkowe"
         link: ''
-        params: '{"tag": "miejsce_czas"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "miejsce_czas"}'
         scriptlet: insert_tag
         slug: didaskalia-poczatkowe
         tooltip: "komentarze wprowadzaj\u0105ce przed tekstem dramatu"
@@ -233,7 +233,7 @@
         group: [11]
         label: dramat wiersz.
         link: ''
-        params: '{"tag": "dramat_wierszowany_l"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "dramat_wierszowany_l"}'
         scriptlet: insert_tag
         slug: dramat-wiersz
         tooltip: ''
@@ -244,7 +244,7 @@
         group: [11]
         label: "dramat wiersz./w. \u0142am"
         link: ''
-        params: '{"tag": "dramat_wierszowany_lp"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "dramat_wierszowany_lp"}'
         scriptlet: insert_tag
         slug: dramat-wiersz-w-lam
         tooltip: "dramat wierszowany o zw\u0119\u017Conej szeroko\u015Bci \u0142amu"
@@ -255,7 +255,7 @@
         group: [11]
         label: "dramat wsp\xF3\u0142czesny"
         link: ''
-        params: '{"tag": "dramat_wspolczesny"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "dramat_wspolczesny"}'
         scriptlet: insert_tag
         slug: dramat-wspolczesny
         tooltip: "dramat wsp\xF3\u0142czesny (proz\u0105)"
@@ -266,7 +266,7 @@
         group: [13]
         label: "dzie\u0142o nadrz\u0119dne"
         link: ''
-        params: '{"tag": "dzielo_nadrzedne"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "dzielo_nadrzedne"}'
         scriptlet: insert_tag
         slug: dzielo-nadrzedne
         tooltip: ''
@@ -299,7 +299,7 @@
         group: [12]
         label: kwestia
         link: ''
-        params: '{"tag": "kwestia"}'
+        params: '{"padding_top": 1, "padding_bottom": 1, "tag": "kwestia"}'
         scriptlet: insert_tag
         slug: kwestia
         tooltip: "wstawia kwesti\u0119"
@@ -310,7 +310,8 @@
         group: [12]
         label: kwestioakapit
         link: ''
-        params: '[["insert_tag", {"tag": "akap"}], ["insert_tag", {"tag": "kwestia"}]]'
+        params: '[["insert_tag", {"tag": "akap"}], ["insert_tag", {"padding_top":
+            1, "padding_bottom": 1, "tag": "kwestia"}]]'
         scriptlet: macro
         slug: kwestioakapit
         tooltip: ''
@@ -321,7 +322,8 @@
         group: [12]
         label: kwestiostrofa
         link: ''
-        params: '[["insert_stanza", {"tag": "strofa"}], ["insert_tag", {"tag": "kwestia"}]]'
+        params: '[["insert_stanza", {"tag": "strofa"}], ["insert_tag", {"padding_top":
+            1, "padding_bottom": 1, "tag": "kwestia"}]]'
         scriptlet: macro
         slug: kwestiostrofa
         tooltip: ''
@@ -332,7 +334,7 @@
         group: [11]
         label: liryka
         link: ''
-        params: '{"tag": "liryka_l"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "liryka_l"}'
         scriptlet: insert_tag
         slug: liryka
         tooltip: ''
@@ -343,7 +345,7 @@
         group: [11]
         label: "liryka/w. \u0142am"
         link: ''
-        params: '{"tag": "liryka_lp"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "liryka_lp"}'
         scriptlet: insert_tag
         slug: liryka-w-lam
         tooltip: "utw\xF3r liryczny o zw\u0119\u017Conej szeroko\u015Bci \u0142amu"
@@ -354,7 +356,7 @@
         group: [22]
         label: "lista os\xF3b"
         link: ''
-        params: '{"tag": "lista_osob"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "lista_osob"}'
         scriptlet: insert_tag
         slug: lista-osob
         tooltip: "lista os\xF3b poprzedzaj\u0105ca tekst dramatu"
@@ -365,7 +367,8 @@
         group: [22]
         label: 'typ osoby '
         link: ''
-        params: '{"tag": "lista_osoba", "attrs": {"typ": ""}}'
+        params: '{"padding_top": 1, "padding_bottom": 1, "tag": "lista_osoba", "attrs":
+            {"typ": ""}}'
         scriptlet: insert_tag
         slug: lista-osob-pole
         tooltip: osoby z takim samym opisem
@@ -387,7 +390,7 @@
         group: [13, 22]
         label: motto
         link: ''
-        params: '{"tag": "motto"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "motto"}'
         scriptlet: insert_tag
         slug: motto
         tooltip: ''
@@ -398,7 +401,7 @@
         group: [13, 22]
         label: motto podpis
         link: ''
-        params: '{"tag": "motto_podpis"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "motto_podpis"}'
         scriptlet: insert_tag
         slug: motto-podpis
         tooltip: ''
@@ -444,7 +447,7 @@
         group: [12]
         label: "nag\u0142\xF3wek kwestii"
         link: ''
-        params: '{"tag": "naglowek_osoba"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "naglowek_osoba"}'
         scriptlet: insert_tag
         slug: naglowek-kwestii
         tooltip: "nag\u0142\xF3wek kwestii - nazwa osoby"
@@ -455,7 +458,7 @@
         group: [22]
         label: "nag\u0142\xF3wek listy"
         link: ''
-        params: '{"tag": "naglowek_listy"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "naglowek_listy"}'
         scriptlet: insert_tag
         slug: naglowek-listy
         tooltip: "nag\u0142\xF3wek listy os\xF3b"
@@ -466,7 +469,7 @@
         group: [13]
         label: nazwa utworu
         link: ''
-        params: '{"tag": "nazwa_utworu"}'
+        params: '{"padding_top": 1, "padding_bottom": 2, "tag": "nazwa_utworu"}'
         scriptlet: insert_tag
         slug: nazwa-utworu
         tooltip: ''
@@ -488,7 +491,7 @@
         group: [11]
         label: opowiadanie
         link: ''
-        params: '{"tag": "opowiadanie"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "opowiadanie"}'
         scriptlet: insert_tag
         slug: opowiadanie
         tooltip: ''
@@ -510,7 +513,7 @@
         group: [22]
         label: osoba na liscie
         link: ''
-        params: '{"tag": "lista_osoba"}'
+        params: '{"padding_top": 1, "padding_bottom": 1, "tag": "lista_osoba"}'
         scriptlet: insert_tag
         slug: osoba-na-liscie
         tooltip: "nazwa osoby na liscie os\xF3b"
@@ -543,7 +546,7 @@
         group: [11]
         label: "powie\u015B\u0107"
         link: ''
-        params: '{"tag": "powiesc"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "powiesc"}'
         scriptlet: insert_tag
         slug: powiesc
         tooltip: ''
@@ -609,7 +612,7 @@
         group: [1]
         label: "rozdzia\u0142"
         link: ''
-        params: '{"tag": "naglowek_rozdzial"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "naglowek_rozdzial"}'
         scriptlet: insert_tag
         slug: rozdzial
         tooltip: ''
@@ -686,7 +689,7 @@
         group: [12, 17]
         label: strofa
         link: ''
-        params: '{"tag": "strofa"}'
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "strofa"}'
         scriptlet: insert_stanza
         slug: strofa
         tooltip: "wstawia strof\u0119"
@@ -826,7 +829,7 @@
     pk: 48
 -   fields:
         accesskey: ''
-        group: [15]
+        group: [12, 15]
         label: "wyr\xF3\u017Cnienie"
         link: ''
         params: '{"tag": "wyroznienie"}'
@@ -840,7 +843,7 @@
         group: [11]
         label: wywiad
         link: ''
-        params: '{"tag": "wywiad"}'
+        params: '{"padding_top": 1, "padding_bottom": 4, "tag": "wywiad"}'
         scriptlet: insert_tag
         slug: wywiad
         tooltip: ''
