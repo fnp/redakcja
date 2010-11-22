@@ -108,7 +108,6 @@ function ScriptletCenter()
         if (cursor_inside) {
             move_forward -= params.tag.length + 3;
             move_up += params.padding_bottom || 0;
-            alert(move_forward + ' ' + move_up)
         }
 
         done(output, move_forward, move_up);
