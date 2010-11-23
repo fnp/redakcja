@@ -256,6 +256,7 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				break;
 		};
 	};
+    self.result += text_buffer;
 
 	return this.result;
 }
