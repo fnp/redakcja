@@ -189,6 +189,16 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="nota_red">
+        <xsl:param name="mixed" />
+        <div>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="false()" />
+            </xsl:apply-templates>
+        </div>
+    </xsl:template>
+
     <!--
         Tagi obejmujące tekst dedykacji (styl wieloakapitowy bądź wielostrofowy):
         <dedykacja> tekst-dedykacji </dedykacja>

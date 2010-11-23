@@ -314,10 +314,6 @@ img.tabclose {
 	overflow: hidden;
 }
 
-.htmlview *[x-editable] {
-    background-color: white;
-
-}
 .htmlview .active[x-editable] {
     background-color: #FAFAFA;
     border: 1px solid #DDD;

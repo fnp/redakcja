@@ -244,6 +244,15 @@ not(.strofa) > *[x-verse]::after {
     font-style: italic;
 }
 
+.htmlview .nota_red {
+    background-color: #eee;
+    border: 1px solid #888;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    display: block;
+    padding: 0 1em 1em 1em;
+}
+
 .htmlview br.sekcja_swiatlo {
     height: 3em;
     /* visibility: hidden; */
@@ -467,7 +476,7 @@ div[x-node] > .uwaga {
     position: relative;
     padding: 2px;
     margin-left: 0;
-    border: 1px solid #FFF;
+    border: 1px solid transparent;
 }
 
 /* focused editable element */
