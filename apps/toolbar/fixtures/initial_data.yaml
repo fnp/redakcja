@@ -488,6 +488,17 @@
     pk: 35
 -   fields:
         accesskey: ''
+        group: [13]
+        label: nota red.
+        link: ''
+        params: '{"padding_top": 1, "padding_bottom": 3, "tag": "nota_red"}'
+        scriptlet: insert_tag
+        slug: nota-red
+        tooltip: nota redakcyjna
+    model: toolbar.button
+    pk: 104
+-   fields:
+        accesskey: ''
         group: [11]
         label: opowiadanie
         link: ''
