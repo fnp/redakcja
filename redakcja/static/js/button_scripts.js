@@ -267,7 +267,7 @@ function ScriptletCenter()
                 if (params.tag == 'akap' && chunks[i].match(/^---/))
                     tag = 'akap_dialog';
                 else tag = params.tag;
-                tagger(context, {tag: tag}, chunks[i], 0, insert_done);
+                tagger(context, {tag: tag}, chunks[i], 0, 0, insert_done);
                 text += padding;
             }
         }
