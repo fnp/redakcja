@@ -333,41 +333,27 @@ class VersionedStorage(object):
         return guess_mime(self._file_path(title))
 
     def _find_filectx(self, title, rev=None):
-        """Find the last revision in which the file existed."""
-        tip = self._changectx()  # start with tip
-
-        def tree_search(tip, repo_file):
-            logging.info("Searching for %r", repo_file)
-            current = tip
-            visited = set()
-
-            stack = [current]
-            visited.add(current)
-
-            while repo_file not in current:
-                if not stack:
-                    raise LookupError
-
-                current = stack.pop()
-                for parent in current.parents():
-                    if parent not in visited:
-                        stack.append(parent)
-                        visited.add(parent)
-
-            fctx = current[repo_file]
-            if rev is not None:
-                fctx = fctx.filectx(rev)
-                fctx.filerev()
-            return fctx
-
-        try:
-            return tree_search(tip, self._title_to_file(title))
-        except (IndexError, LookupError):
-            logging.info("XML file not found, trying plain")
-            try:
-                return tree_search(tip, self._title_to_file(title, type=''))
-            except (IndexError, LookupError):
+        """
+        Find the revision of the file in repo.
+        Only look for files still existing in repo's tip.
+        """
+        tip = self._changectx()
+        file = self._title_to_file(title)
+        logging.info('Looking for %s', file)
+        if file in tip:
+            fctx = tip[file]
+        else:
+            file = self._title_to_file(title, type='')
+            logging.info('.xml not found, trying plain')
+            if file in tip:
+                fctx = tip[file]
+            else:
                 raise DocumentNotFound(title)
+
+        if rev is not None:
+            fctx = fctx.filectx(rev)
+            fctx.filerev()
+        return fctx
 
     def page_history(self, title):
         """Iterate over the page's history."""
