@@ -651,8 +651,15 @@ div[x-node] > .uwaga {
     color: white;
     font-weight: bold;
 } 
+
 #tableSpecialChars td input {
     background-color: transparent;
     border:0;
     color: white;
+} 
+
+#tableSpecialChars td input.recentSymbol {
+    background-color: white;
+    border:0;
+    color: black;
 } 

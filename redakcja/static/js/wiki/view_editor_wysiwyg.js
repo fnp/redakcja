@@ -196,6 +196,7 @@
     function addSymbol() {
         if($('div.html-editarea textarea')[0]) {
             var specialCharsContainer = $("<div id='specialCharsContainer'><a href='#' id='specialCharsClose'>Zamknij</a><table id='tableSpecialChars' style='width: 600px;'></table></div>");
+                        
             var specialChars = ['Ą','ą','Ć','ć','Ę','ę','Ł','ł','Ń','ń','Ó','ó','Ś','ś','Ż','ż','Ź','ź','Á','á','À','à',
             'Â','â','Ä','ä','Å','å','Ā','ā','Ă','ă','Ã','ã',
             'Æ','æ','Ç','ç','Č','č','Ċ','ċ','Ď','ď','É','é','È','è',
@@ -230,6 +231,21 @@
             
             tableContent += "</tr>";                                   
             $("#content").append(specialCharsContainer);
+            
+            
+             // localStorage for recently used characters - reading
+             if (typeof(localStorage) != 'undefined') {
+                 if (localStorage.getItem("recentSymbols")) {
+                     var recent = localStorage.getItem("recentSymbols");
+                     var recentArray = recent.split(";");
+                     var recentRow = "";
+                     for(var i in recentArray.reverse()) {
+                        recentRow += "<td><input type='button' class='specialBtn recentSymbol' value='"+recentArray[i]+"'/></td>";              
+                     }
+                     recentRow = "<tr>" + recentRow + "</tr>";                              
+                 }
+             }            
+            $("#tableSpecialChars").append(recentRow);
             $("#tableSpecialChars").append(tableContent);
             
             /* events */
@@ -261,6 +277,34 @@
                 } else {
                     // if we just want to insert single symbol
                     insertAtCaret(editArea, insertVal);
+                }
+                
+                // localStorage for recently used characters - saving
+                if (typeof(localStorage) != 'undefined') {
+                    if (localStorage.getItem("recentSymbols")) {
+                        var recent = localStorage.getItem("recentSymbols");
+                        var recentArray = recent.split(";");
+                        var valIndex = $.inArray(insertVal, recentArray);
+                        //alert(valIndex);
+                        if(valIndex == -1) {
+                            // value not present in array yet
+                            if(recentArray.length > 13){
+                                recentArray.shift();
+                                recentArray.push(insertVal);
+                            } else {
+                                recentArray.push(insertVal);
+                            }
+                        } else  {
+                            // value already in the array
+                            for(var i = valIndex; i < recentArray.length; i++){
+                                recentArray[i] = recentArray[i+1];
+                            }
+                            recentArray[recentArray.length-1] = insertVal;
+                        }
+                        localStorage.setItem("recentSymbols", recentArray.join(";"));
+                    } else {
+                        localStorage.setItem("recentSymbols", insertVal);
+                    }
                 }
                 
                 $(specialCharsContainer).remove();
