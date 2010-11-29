@@ -217,7 +217,7 @@
             'Τ','τ','Υ','υ','Φ','φ','Χ','χ','Ψ','ψ','Ω','ω','–',
             '—','¡','¿','$','¢','£','€','©','®','°','¹','²','³',
             '¼','½','¾','†','§','‰','•','←','↑','→','↓',
-            '„”','«»','’','[',']','[','~','|','−','·',
+            '„','”','«','»','’','[',']','[','~','|','−','·',
             '×','÷','≈','≠','±','≤','≥','∈'];
             var tableContent = "<tr>";
             
@@ -305,7 +305,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -420,7 +420,11 @@
 			} else if (buttonName == "tytuł dzieła") {
 				startTag = "<tytul_dziela>";
 				endTag = "</tytul_dziela>";
+			} else if(buttonName == "znak spec."){
+			    addSymbol();
+			    return false;
 			}
+			
 			var myField = textAreaOpened;			
                         
 			//IE support
@@ -493,12 +497,7 @@
                 $('#insert-theme-button').click(function(){
                     addTheme();
                     return false;
-                });
-                
-                $('#insert-symbol-button').click(function(){
-                    addSymbol();
-                    return false;
-                });                
+                });            
 
                 $('.edit-button').live('click', function(event){
                     event.preventDefault();

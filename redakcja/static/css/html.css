@@ -488,7 +488,7 @@ div[x-node] > .uwaga {
     visibility: hidden;
 }
 
-.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button {
+.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
     position: absolute;
     top: -21px;
     left: -1px;
@@ -512,16 +512,20 @@ div[x-node] > .uwaga {
 }
 
 .tytul-button {
-    left:200px;
+    left:150px;
     width:100px;
 }
 
 .wyroznienie-button {
-    left:300px;
+    left:250px;
     width:100px;
 }
 .slowo-button {
-    left: 400px;
+    left:350px;
+    width:100px;
+}
+.znak-button {
+    left:450px;
     width:100px;
 }
 
@@ -530,7 +534,8 @@ div[x-node] > .uwaga {
 .accept-button:hover, .accept-button:active,
 .tytul-button:hover, .tytul-button:active,
 .wyroznienie-button:hover, .wyroznienie-button:active,
-.slowo-button:hover, .slowo-button:active {
+.slowo-button:hover, .slowo-button:active,
+.znak-button:hover, .znak-button:active {
     /*    color: #FFF;*/
     background-color: #999;
     color: #FFF;
@@ -633,12 +638,14 @@ div[x-node] > .uwaga {
 #specialCharsContainer {
     text-align: center; 
     width: 600px; 
+    height: 400px;
     padding:20px; 
     background-color: gray; 
     position: absolute; 
     top: 20px; 
     left: 20px; 
     z-index:1000;
+    overflow:auto;
 }
 #specialCharsContainer a {
     color: white;
