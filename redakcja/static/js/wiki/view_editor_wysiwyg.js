@@ -467,12 +467,10 @@
                         }
                     })
                     
-                    var msg = $("<div class='saveNotify'><p>Twoje zmiany zostały naniesione na tekst źródłowy. Pamiętaj, że aby zmiany zostały utrwalone <span>należy je zapisać</span>!</p><p class='notifyTip'>Ta wiadomość zostanie automatycznie zamknięta za 6 sekund.</p></div>");
+                    var msg = $("<div class='saveNotify'><p>Pamiętaj, żeby zapisać swoje zmiany.</p></div>");
                     $("#base").prepend(msg);
-                    $("#save-button").css({border: '2px solid #801000', backgroundColor: '#E1C1C1'});
-                    $('#base .saveNotify').fadeOut(7000, function(){
+                    $('#base .saveNotify').fadeOut(3000, function(){
                         $(this).remove(); 
-                        $("#save-button").css({border: '1px solid black'});
                     });
                 }
 
