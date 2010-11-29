@@ -217,7 +217,7 @@
             'Τ','τ','Υ','υ','Φ','φ','Χ','χ','Ψ','ψ','Ω','ω','–',
             '—','¡','¿','$','¢','£','€','©','®','°','¹','²','³',
             '¼','½','¾','†','§','‰','•','←','↑','→','↓',
-            '„','”','«','»','’','[',']','[','~','|','−','·',
+            '„','”','„”','«','»','«»','’','[',']','~','|','−','·',
             '×','÷','≈','≠','±','≤','≥','∈'];
             var tableContent = "<tr>";
             
@@ -235,7 +235,34 @@
             /* events */
             
             $('.specialBtn').click(function(){
-                insertAtCaret($('div.html-editarea textarea')[0], $(this).val());
+                var editArea = $('div.html-editarea textarea')[0];
+                var insertVal = $(this).val();
+                
+                // if we want to surround text with quotes
+                // not sure if just check if value has length == 2
+                
+                if(insertVal == '„”' || insertVal == '«»'){
+                    var startTag = insertVal[0];
+                    var endTag = insertVal[1];
+			        var textAreaOpened = editArea;			                                
+			        //IE support
+		                if (document.selection) {
+		                    textAreaOpened.focus();
+		                    sel = document.selection.createRange();
+		                    sel.text = startTag + sel.text + endTag;
+		                }
+		                //MOZILLA/NETSCAPE support
+		                else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+		                    var startPos = textAreaOpened.selectionStart;
+		                    var endPos = textAreaOpened.selectionEnd;
+		                    textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+				          + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+		                }                
+                } else {
+                    // if we just want to insert single symbol
+                    insertAtCaret(editArea, insertVal);
+                }
+                
                 $(specialCharsContainer).remove();
             });         
             $('#specialCharsClose').click(function(){
