@@ -23,7 +23,7 @@
 
                 self.$refresh.removeClass('active');
                 $this.addClass('active');
-                atype = $this.text();
+                atype = $this.attr('data-tag');
 
                 self.$annos.hide();
                 self.$error.hide();
@@ -77,8 +77,10 @@
         else {
             self.$annos.html('');
             var anno_list = new Array();
-            var annos = doc.getElementsByTagName(atype);
+            var annos = $(atype, doc);
             var counter = annos.length;
+            var atype_rx = atype.replace(/,/g, '|');
+            var ann_expr = new RegExp("^<("+atype_rx+")[^>]*>|</("+atype_rx+")>$", "g")
 
             if (annos.length == 0)
             {
@@ -86,10 +88,8 @@
                 self.$spinner.hide();
                 self.$annos.show();
             }
-            for (var i=0; i<annos.length; i++)
-            {
-                ann_expr = new RegExp("^<"+atype+"[^>]*>|</"+atype+">$", "g")
-                xml_text = serializer.serializeToString(annos[i]).replace(ann_expr, "");
+            annos.each(function (i, elem) {
+                xml_text = serializer.serializeToString(elem).replace(ann_expr, "");
                 xml2html({
                     xml: "<akap>" + xml_text + "</akap>",
                     success: function(xml_text){
@@ -115,7 +115,7 @@
                         self.$error.show();
                     }
                 });
-            }
+            });
         }
     }
 

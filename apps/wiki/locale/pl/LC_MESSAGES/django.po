@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-29 15:34+0200\n"
-"PO-Revision-Date: 2010-09-29 15:36+0100\n"
+"POT-Creation-Date: 2010-11-30 15:00+0100\n"
+"PO-Revision-Date: 2010-11-30 15:00+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -92,20 +93,20 @@ msgstr "Ukończono"
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: models.py:93
+#: models.py:94
 #, python-format
 msgid "Finished stage: %s"
 msgstr "Ukończony etap: %s"
 
-#: models.py:152
+#: models.py:153
 msgid "name"
 msgstr "nazwa"
 
-#: models.py:156
+#: models.py:157
 msgid "theme"
 msgstr "motyw"
 
-#: models.py:157
+#: models.py:158
 msgid "themes"
 msgstr "motywy"
 
@@ -223,9 +224,9 @@ msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: templates/wiki/tabs/annotations_view.html:5
-msgid "Refresh"
-msgstr "Odśwież"
+#: templates/wiki/tabs/annotations_view.html:9
+msgid "all"
+msgstr "wszystkie"
 
 #: templates/wiki/tabs/gallery_view.html:7
 msgid "Previous"
@@ -336,11 +337,12 @@ msgstr "Wstaw motyw"
 msgid "Insert annotation"
 msgstr "Wstaw przypis"
 
-#: templates/wiki/tabs/wysiwyg_editor.html:15
-msgid "Insert special character"
-msgstr "Wstaw znak specjalny"
-
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
+
+#~ msgid "Refresh"
+#~ msgstr "Odśwież"
+#~ msgid "Insert special character"
+#~ msgstr "Wstaw znak specjalny"
 
