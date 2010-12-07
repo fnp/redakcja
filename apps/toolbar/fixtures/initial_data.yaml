@@ -686,6 +686,17 @@
     pk: 46
 -   fields:
         accesskey: ''
+        group: [2]
+        label: slug
+        link: ''
+        params: '[]'
+        scriptlet: slugify
+        slug: slug
+        tooltip: slugifikacja
+    model: toolbar.button
+    pk: 105
+-   fields:
+        accesskey: ''
         group: [1]
         label: "\u015Br\xF3dtytu\u0142"
         link: ''
@@ -980,4 +991,7 @@
             \r\n\r\n\r\n\r\n\r\n\r\n\r\npanel.fireEvent('contentChanged');"}
     model: toolbar.scriptlet
     pk: insert_stanza
+-   fields: {code: '-'}
+    model: toolbar.scriptlet
+    pk: slugify
 

@@ -282,6 +282,12 @@ function ScriptletCenter()
         done(output, move_forward, move_up);
     }.bind(this);
 
+
+    this.scriptlets['slugify'] = function(context, params, text, move_forward, move_up, done)
+    {
+        done(slugify(text.replace(/_/g, '-')), move_forward, move_up);
+    }.bind(this);
+
 }
 
 ScriptletCenter.prototype.callInteractive = function(opts) {
