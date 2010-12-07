@@ -26,7 +26,7 @@
 	font-weight: bold;
 }
 
-#save_dialog textarea {
+#save_dialog textarea, #revert_dialog textarea {
 	width: 90%;
 	margin: 0.2em 4%;
 }

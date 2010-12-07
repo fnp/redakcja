@@ -13,7 +13,7 @@ from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
 from django import http
 
 from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name, Theme
-from wiki.forms import DocumentTextSaveForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
+from wiki.forms import DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -84,6 +84,7 @@ def editor(request, name, template_name='wiki/document_details.html'):
         'document_meta': document.meta,
         'forms': {
             "text_save": DocumentTextSaveForm(prefix="textsave"),
+            "text_revert": DocumentTextRevertForm(prefix="textrevert"),
             "add_tag": DocumentTagForm(prefix="addtag"),
         },
         'REDMINE_URL': settings.REDMINE_URL,
@@ -260,18 +261,38 @@ def text(request, name):
 @require_POST
 def revert(request, name):
     storage = getstorage()
-    revision = request.POST['target_revision']
+    form = DocumentTextRevertForm(request.POST, prefix="textrevert")
+    if form.is_valid():
+        print 'valid'
+        revision = form.cleaned_data['revision']
 
-    try:
-        document = storage.revert(name, revision)
+        comment = form.cleaned_data['comment']
+        comment += "\n#revert to %s" % revision
+
+        if request.user.is_authenticated():
+            author_name = request.user
+            author_email = request.user.email
+        else:
+            author_name = form.cleaned_data['author_name']
+            author_email = form.cleaned_data['author_email']
+        author = "%s <%s>" % (author_name, author_email)
+
+        before = storage.get(name).revision
+        logger.info("Reverting %s to %s", name, revision)
+        storage.revert(name, revision, comment=comment, author=author)
+        logger.info("Fetching %s", name)
+        document = storage.get(name)
+
 
         return JSONResponse({
-            'text': document.plain_text if revision != document.revision else None,
+            'text': document.plain_text if before != document.revision else None,
             'meta': document.meta(),
             'revision': document.revision,
         })
-    except DocumentNotFound:
-        raise http.Http404
+    else:
+        print 'invalid'
+        return JSONFormInvalid(form)
+
 
 @never_cache
 def gallery(request, directory):

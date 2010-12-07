@@ -53,9 +53,8 @@ class DocumentStorage(object):
         text, rev = self.vstorage.page_text_by_tag(name, tag)
         return Document(self, name=name, text=text, revision=rev)
 
-    def revert(self, name, revision):
-        text, rev = self.vstorage.revert(name, revision)
-        return Document(self, name=name, text=text, revision=rev)
+    def revert(self, name, revision, **commit_args):
+        self.vstorage.revert(name, revision, **commit_args)
 
     def get_or_404(self, *args, **kwargs):
         try:

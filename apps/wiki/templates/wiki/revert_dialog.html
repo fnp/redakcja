@@ -1,0 +1,42 @@
+{% load i18n %}
+<div id="revert_dialog" class="dialog" data-ui-jsclass="RevertDialog">
+	<form method="POST" action="">
+	<p>{{ forms.text_revert.comment.label }}</p>
+	<p class="help_text">
+		{{ forms.text_revert.comment.help_text}}
+		<span data-ui-error-for="{{ forms.text_revert.comment.name }}"> </span>
+	</p>
+	{{forms.text_revert.comment }}
+
+
+
+	{% if request.user.is_anonymous %}
+    <table style='margin:0 4%;'>
+    <tr>
+        <td>{{ forms.text_revert.author_name.label }}:</td>
+        <td>{{ forms.text_revert.author_name }}
+        <span class="help_text">{{ forms.text_revert.author_name.help_text }}</span>
+        <span data-ui-error-for="{{ forms.text_revert.author_name.name }}"> </span></td>
+    </tr>
+    <tr>
+        <td>{{ forms.text_revert.author_email.label }}:</td>
+        <td>{{ forms.text_revert.author_email }}
+        <span class="help_text">{{ forms.text_revert.author_email.help_text }}</span>
+        <span data-ui-error-for="{{ forms.text_revert.author_email.name }}"> </span></td>
+    </tr>
+    </table>
+	{% endif %}
+
+
+	{% for f in forms.text_revert.hidden_fields %}
+		{{ f }}
+	{% endfor %}
+
+	<p data-ui-error-for="__all__"> </p>
+
+	<p class="action_area">
+		<button type="submit" class"ok" data-ui-action="revert">{% trans "Revert" %}</button>
+		<button type="button" class="cancel" data-ui-action="cancel">{% trans "Cancel" %}</button>
+	</p>
+	</form>
+</div>

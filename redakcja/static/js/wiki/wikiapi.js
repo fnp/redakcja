@@ -26,6 +26,11 @@
 			return base_path + path;
 		}
 
+        if (vname == "ajax_document_revert") {
+            return base_path + "/" + arguments[1] + "/revert";
+        }
+
+
 		if (vname == "ajax_document_history") {
 
 			return base_path + "/" + arguments[1] + "/history";
@@ -282,6 +287,45 @@
             $.wiki.blocking.unblock();
         });
 	}; /* end of save() */
+
+    WikiDocument.prototype.revertToVersion = function(params) {
+        var self = this;
+        params = $.extend({}, noops, params);
+
+        if (params.revision >= this.revision) {
+            params.failure(self, 'Proszę wybrać rewizję starszą niż aktualna.');
+            return;
+        }
+
+        // Serialize form to dictionary
+        var data = {};
+        $.each(params['form'].serializeArray(), function() {
+            data[this.name] = this.value;
+        });
+
+        $.ajax({
+            url: reverse("ajax_document_revert", self.id),
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function(data) {
+                if (data.text) {
+                    self.text = data.text;
+                    self.revision = data.revision;
+                    self.gallery = data.gallery;
+                    self.triggerDocumentChanged();
+
+                    params.success(self, "Udało się przywrócić wersję :)");
+                }
+                else {
+                    params.failure(self, "Przywracana wersja identyczna z aktualną. Anulowano przywracanie.");
+                }
+            },
+            error: function(xhr) {
+                params.failure(self, "Nie udało się przywrócić wersji - błąd serwera.");
+            }
+        });
+    };
 
 	WikiDocument.prototype.publish = function(params) {
 		params = $.extend({}, noops, params);

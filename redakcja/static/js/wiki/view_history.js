@@ -16,7 +16,7 @@
 			});
 
 	        $('#doc-revert-button').click(function() {
-	            self.revertDocumentToVersion();
+	            self.revertDialog();
 	        });
 
 			$('#open-preview-button').click(function(event) {
@@ -172,7 +172,8 @@
         });
     };
 
-    HistoryPerspective.prototype.revertDocumentToVersion = function(){
+    HistoryPerspective.prototype.revertDialog = function(){
+        var self = this;
         var selected = $('#changes-list .entry.selected');
 
         if (selected.length != 1) {
@@ -181,7 +182,7 @@
         }
 
         var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
-        this.doc.revertToVersion({'revision': version});
+        $.wiki.showDialog('#revert_dialog', {revision: version});
     };
 
     $.wiki.HistoryPerspective = HistoryPerspective;
