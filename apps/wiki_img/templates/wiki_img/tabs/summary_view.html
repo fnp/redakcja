@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load wiki %}
+<div id="summary-view-editor" class="editor" style="display: none">
+    <!-- <div class="toolbar">
+    </div> -->
+    <div id="summary-view">
+		<h2>
+			<label for="title">{% trans "Title" %}:</label>
+			<span data-ui-editable="true" data-edit-target="meta.displayTitle"
+			>{{ document.name|wiki_title }}</span>
+		</h2>
+		<p>
+			<label>{% trans "Document ID" %}:</label>
+			<span>{{ document.name }}</span>
+		</p>
+		<p>
+			<label>{% trans "Current version" %}:</label>
+			{{ document_info.revision }} ({{document_info.date}})
+		<p>
+			<label>{% trans "Last edited by" %}:</label>
+			{{document_info.author}}
+		</p>
+	</div>
+</div>

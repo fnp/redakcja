@@ -18,8 +18,9 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
+    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/images/'}),
     url(r'^documents/', include('wiki.urls')),
+    url(r'^images/', include('wiki_img.urls')),
 
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',

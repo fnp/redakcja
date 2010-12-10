@@ -1,0 +1,32 @@
+{% extends "wiki_img/document_details_base.html" %}
+{% load i18n %}
+
+{% block extrabody %}
+{{ block.super }}
+<script src="{{ STATIC_URL }}js/lib/codemirror-0.8/codemirror.js" type="text/javascript" charset="utf-8">
+</script>
+<script src="{{ STATIC_URL }}js/wiki_img/loader.js" type="text/javascript" charset="utf-8"> </script>
+{% endblock %}
+
+{% block tabs-menu %}
+    {% include "wiki_img/tabs/summary_view_item.html" %}
+    {% include "wiki_img/tabs/motifs_editor_item.html" %}
+    {% include "wiki_img/tabs/objects_editor_item.html" %}
+    {% include "wiki_img/tabs/source_editor_item.html" %}
+{% endblock %}
+
+{% block tabs-content %}
+    {% include "wiki_img/tabs/summary_view.html" %}
+    {% include "wiki_img/tabs/motifs_editor.html" %}
+    {% include "wiki_img/tabs/objects_editor.html" %}
+    {% include "wiki_img/tabs/source_editor.html" %}
+{% endblock %}
+
+{% block dialogs %}
+    {% include "wiki_img/save_dialog.html" %}
+{% endblock %}
+
+{% block editor-class %}
+    sideless
+{% endblock %}
+

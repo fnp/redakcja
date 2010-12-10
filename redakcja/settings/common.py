@@ -118,7 +118,9 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'filebrowser',
 
+    'dvcs',
     'wiki',
+    'wiki_img',
     'toolbar',
 )
 

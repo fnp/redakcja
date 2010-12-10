@@ -1,0 +1,17 @@
+{% load i18n %}
+<div id="objects-editor" class="editor" style="display: none">
+    <div class="toolbar">
+        <input id='tag-name' title='{% trans "Object name" %}' />
+        <button id='add'>{% trans "Add" %}</button>
+
+        <span id="objects-list">
+        </span>
+
+        <div class="toolbar-end">
+        </div>
+    </div>
+
+    <div class='scrolled'>
+        <img src="{{ document.image.url }}" class='area-selectable' />
+    </div>
+</div>

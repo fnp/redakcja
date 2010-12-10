@@ -1,0 +1,56 @@
+{% extends "wiki/base.html" %}
+
+{% load i18n %}
+{% load wiki %}
+
+{% block extrabody %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8">
+$(function() {
+	function search(event) {
+        event.preventDefault();
+        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');
+        $('#file-list tbody tr').hide().filter(function(index) {
+            return expr.test(slugify( $('a', this).attr('data-id') ));
+        }).show();
+    }
+
+    $('#file-list-find-button').click(search).hide();
+	$('#file-list-filter').bind('keyup change DOMAttrModified', search);
+});
+</script>
+{% endblock %}
+
+{% block leftcolumn %}
+	<form method="get" action="#">
+    <table  id="file-list">
+    	<thead>
+    		<tr><th>Filtr:</th>
+			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
+			<th><input type="reset" value="{% trans "Clear filter" %}" id="file-list-reset-button"/></th>
+			</tr>
+		</thead>
+		<tbody>
+    	{% for doc in object_list %}
+            <tr>
+            	<td colspan="3"><a target="_blank" data-id="{{doc.name}}"
+					href="{% url wiki_img_editor doc.slug %}">{{ doc.name }}</a></td>
+				<!-- placeholder </td> -->
+			</tr>
+    	{% endfor %}
+		</tbody>
+    </table>
+	</form>
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+	<div id="last-edited-list">
+		<h2>{% trans "Your last edited documents" %}</h2>
+	    <ol>
+			{% for name, date in last_docs %}
+			<li><a href="{% url wiki_editor name %}"
+				target="_blank">{{ name|wiki_title }}</a><br/><span class="date">({{ date|date:"H:i:s, d/m/Y" }})</span></li>
+			{% endfor %}
+		</ol>
+	</div>
+{% endblock rightcolumn %}

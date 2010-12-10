@@ -9,6 +9,7 @@ COMPRESS_CSS = {
             'css/summary.css',
             'css/html.css',
             'css/jquery.autocomplete.css',
+            'css/imgareaselect-default.css', #img!
             'css/dialogs.css',
         ),
         'output_filename': 'compressed/detail_styles_?.css',
@@ -56,6 +57,36 @@ COMPRESS_JS = {
                 'js/wiki/view_column_diff.js',
         ),
         'output_filename': 'compressed/detail_scripts_?.js',
+     },
+    'wiki_img': {
+        'source_filenames': (
+                # libraries
+                'js/lib/jquery-1.4.2.min.js',
+                'js/lib/jquery/jquery.autocomplete.js',
+                'js/lib/jquery/jquery.blockui.js',
+                'js/lib/jquery/jquery.elastic.js',
+                'js/lib/jquery/jquery.imgareaselect.js',
+                'js/button_scripts.js',
+                'js/slugify.js',
+
+                # wiki scripts
+                'js/wiki_img/wikiapi.js',
+
+                # base UI
+                'js/wiki_img/base.js',
+                'js/wiki_img/toolbar.js',
+
+                # dialogs
+                'js/wiki_img/dialog_save.js',
+                'js/wiki_img/dialog_addtag.js',
+
+                # views
+                'js/wiki_img/view_summary.js',
+                'js/wiki_img/view_editor_objects.js',
+                'js/wiki_img/view_editor_motifs.js',
+                'js/wiki/view_editor_source.js',
+        ),
+        'output_filename': 'compressed/detail_img_scripts_?.js',
      },
     'listing': {
         'source_filenames': (
