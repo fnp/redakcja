@@ -820,5 +820,12 @@
 			</xsl:choose>               
         </xsl:for-each>
     </xsl:template>
-    
+
+    <xsl:template match="alien">
+            <span class="alien" x-pass-thru="true">
+                <xsl:apply-templates select="node()">
+                    <xsl:with-param name="mixed" select="true()" />
+                </xsl:apply-templates>
+            </span>
+    </xsl:template>
 </xsl:stylesheet>

@@ -634,6 +634,10 @@ div[x-node] > .uwaga {
     border: 1px solid orange;
 }
 
+.alien {
+    color: red;
+}
+
 /* specialChars */
 #specialCharsContainer {
     text-align: center; 
