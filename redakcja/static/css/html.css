@@ -169,6 +169,10 @@
 }
 
 /* wersy */
+.htmlview *[x-verse]:after {
+    content: "\feff";
+}
+
 .htmlview .strofa .wers_wciety, .htmlview .strofa .wers_wciety[data-wlf-typ='1'] {
     margin-left: 1em;
 }
@@ -253,9 +257,9 @@ not(.strofa) > *[x-verse]::after {
     padding: 0 1em 1em 1em;
 }
 
-.htmlview br.sekcja_swiatlo {
-    height: 3em;
-    /* visibility: hidden; */
+.htmlview hr.sekcja_swiatlo {
+    margin: 2em 0;
+    visibility: hidden;
 }
 
 .htmlview hr.separator_linia {
@@ -268,6 +272,10 @@ not(.strofa) > *[x-verse]::after {
     padding: 0;
     margin: 1.5em 0;
     text-align: center;
+}
+
+.htmlview p.sekcja_asterysk:after {
+    content: "*";
 }
 
 .htmlview div.lista_osob ol {
