@@ -38,7 +38,7 @@ def text(request, slug):
         form = DocumentTextSaveForm(request.POST, prefix="textsave")
         if form.is_valid():
             document = get_object_or_404(ImageDocument, slug=slug)
-            revision = form.cleaned_data['parent_revision']
+            commit = form.cleaned_data['parent_commit']
 
             comment = form.cleaned_data['comment']
 
@@ -48,7 +48,7 @@ def text(request, slug):
                 user = None
 
             document.doc.commit(
-                parent=revision,
+                parent=commit,
                 text=form.cleaned_data['text'],
                 author=user,
                 description=comment
@@ -61,9 +61,10 @@ def text(request, slug):
         else:
             return JSONFormInvalid(form)
     else:
-        doc = get_object_or_404(ImageDocument, slug=slug)
+        doc = get_object_or_404(ImageDocument, slug=slug).doc
         return JSONResponse({
-            'text': doc.doc.materialize(),
-            'revision': doc.doc.change_set.count()
+            'text': doc.materialize(),
+            'revision': doc.change_set.count(),
+            'commit': doc.head.id,
         })
 

@@ -74,7 +74,7 @@ class DocumentTextSaveForm(forms.Form):
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
-    parent_revision = forms.IntegerField(widget=forms.HiddenInput)
+    parent_commit = forms.IntegerField(widget=forms.HiddenInput)
     text = forms.CharField(widget=forms.HiddenInput)
 
     author_name = forms.CharField(

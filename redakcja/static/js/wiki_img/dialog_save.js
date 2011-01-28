@@ -12,7 +12,7 @@
 		this.$form = $('form', element);
 
 		$("input[name='textsave-id']", this.$form).val(CurrentDocument.id);
-		$("input[name='textsave-parent_revision']", this.$form).val(CurrentDocument.revision);
+		$("input[name='textsave-parent_commit']", this.$form).val(CurrentDocument.commit);
 
 		$.wiki.cls.GenericDialog.call(this, element);
 	};

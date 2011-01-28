@@ -60,6 +60,7 @@
 		this.id = meta.attr('data-document-name');
 
 		this.revision = $("*[data-key='revision']", meta).text();
+        this.commit = $("*[data-key='commit']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();
 
 		this.galleryLink = $("*[data-key='gallery']", meta).text();
@@ -83,17 +84,18 @@
 		$.ajax({
 			method: "GET",
 			url: reverse("ajax_document_text", self.id),
-			data: {"revision": self.revision},
+			data: {"commit": self.commit},
 			dataType: 'json',
 			success: function(data) {
 				var changed = false;
 
-				if (self.text === null || self.revision !== data.revision) {
+				if (self.text === null || self.commit !== data.commit) {
 					self.text = data.text;
 					if (self.text === '') {
 					    self.text = '<obraz></obraz>';
 					}
 					self.revision = data.revision;
+                    self.commit = data.commit;
 					changed = true;
 					self.triggerDocumentChanged();
 				};
@@ -148,6 +150,7 @@
 				if (data.text) {
 					self.text = data.text;
 					self.revision = data.revision;
+                    self.commit = data.commit;
 					changed = true;
 					self.triggerDocumentChanged();
 				};
