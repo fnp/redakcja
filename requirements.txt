@@ -1,11 +1,11 @@
 ## Python libraries
 lxml>=2.2
-mercurial>=1.6
+mercurial>=1.6,<1.7
 PyYAML>=3.0
 PIL>=1.1
 
 ## Book conversion library
-git+git://github.com/fnp/librarian.git@master#egg=librarian
+# git+git://github.com/fnp/librarian.git@master#egg=librarian
 
 ## Django
 Django>=1.1.1,<1.2
