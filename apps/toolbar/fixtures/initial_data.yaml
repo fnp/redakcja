@@ -222,7 +222,7 @@
         group: [21]
         label: "d\u0142ugi cytat"
         link: ''
-        params: '{"tag": "dlugi_cyt"}'
+        params: '{"tag": "dlugi_cytat"}'
         scriptlet: insert_tag
         slug: dlugi-cytat
         tooltip: "d\u0142ugi cytat wyr\xF3\u017Cniony sk\u0142adem"
