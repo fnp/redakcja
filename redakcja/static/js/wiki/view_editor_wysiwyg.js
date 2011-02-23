@@ -257,7 +257,7 @@
                 // if we want to surround text with quotes
                 // not sure if just check if value has length == 2
                 
-                if (insertVal.length) == 2) {
+                if (insertVal.length == 2) {
                     var startTag = insertVal[0];
                     var endTag = insertVal[1];
 			        var textAreaOpened = editArea;			                                
