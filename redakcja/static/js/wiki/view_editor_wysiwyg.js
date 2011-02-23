@@ -218,7 +218,7 @@
             'Τ','τ','Υ','υ','Φ','φ','Χ','χ','Ψ','ψ','Ω','ω','–',
             '—','¡','¿','$','¢','£','€','©','®','°','¹','²','³',
             '¼','½','¾','†','§','‰','•','←','↑','→','↓',
-            '„','”','„”','«','»','«»','’','[',']','~','|','−','·',
+            '„','”','„”','«','»','«»','»«','’','[',']','~','|','−','·',
             '×','÷','≈','≠','±','≤','≥','∈'];
             var tableContent = "<tr>";
             
@@ -257,7 +257,7 @@
                 // if we want to surround text with quotes
                 // not sure if just check if value has length == 2
                 
-                if(insertVal == '„”' || insertVal == '«»'){
+                if (insertVal.length) == 2) {
                     var startTag = insertVal[0];
                     var endTag = insertVal[1];
 			        var textAreaOpened = editArea;			                                
