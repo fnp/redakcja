@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-30 15:00+0100\n"
-"PO-Revision-Date: 2010-11-30 15:00+0100\n"
+"POT-Creation-Date: 2011-03-07 12:31+0100\n"
+"PO-Revision-Date: 2011-03-07 12:31+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: \n"
@@ -61,69 +61,78 @@ msgstr "Gotowe do publikacji"
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:82
+#: forms.py:80
+#: forms.py:118
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:83
+#: forms.py:81
+#: forms.py:119
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
-#: forms.py:88
+#: forms.py:86
+#: forms.py:124
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:89
+#: forms.py:87
+#: forms.py:125
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: forms.py:95
+#: forms.py:93
+#: forms.py:131
 msgid "Your comments"
 msgstr "Twój komentarz"
 
-#: forms.py:96
+#: forms.py:94
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:102
+#: forms.py:100
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:103
+#: forms.py:101
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: models.py:94
+#: forms.py:132
+msgid "Describe the reason for reverting."
+msgstr "Opisz powód przywrócenia."
+
+#: models.py:93
 #, python-format
 msgid "Finished stage: %s"
 msgstr "Ukończony etap: %s"
 
-#: models.py:153
+#: models.py:152
 msgid "name"
 msgstr "nazwa"
 
-#: models.py:157
+#: models.py:156
 msgid "theme"
 msgstr "motyw"
 
-#: models.py:158
+#: models.py:157
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:167
+#: views.py:168
 #, python-format
 msgid "Title already used for %s"
 msgstr "Nazwa taka sama jak dla pliku %s"
 
-#: views.py:169
+#: views.py:170
 msgid "Title already used in repository."
 msgstr "Plik o tej nazwie już istnieje w repozytorium."
 
-#: views.py:175
+#: views.py:176
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: views.py:358
+#: views.py:379
 msgid "Tag added"
 msgstr "Dodano tag"
 
@@ -220,6 +229,11 @@ msgstr "Pominięte pliki"
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
+#: templates/wiki/revert_dialog.html:38
+msgid "Revert"
+msgstr "Przywróć"
+
+#: templates/wiki/revert_dialog.html:39
 #: templates/wiki/tag_dialog.html:16
 msgid "Cancel"
 msgstr "Anuluj"
@@ -322,6 +336,18 @@ msgid "Link to gallery"
 msgstr "Link do galerii"
 
 #: templates/wiki/tabs/summary_view.html:31
+msgid "Characters in document"
+msgstr "Znaków w dokumencie"
+
+#: templates/wiki/tabs/summary_view.html:32
+msgid "pages"
+msgstr "stron"
+
+#: templates/wiki/tabs/summary_view.html:32
+msgid "untagged"
+msgstr "nieotagowane"
+
+#: templates/wiki/tabs/summary_view.html:35
 msgid "Publish"
 msgstr "Opublikuj"
 

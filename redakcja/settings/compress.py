@@ -30,6 +30,7 @@ COMPRESS_JS = {
                 'js/lib/jquery/jquery.autocomplete.js',
                 'js/lib/jquery/jquery.blockui.js',
                 'js/lib/jquery/jquery.elastic.js',
+                'js/lib/jquery/jquery.xmlns.js',
                 'js/button_scripts.js',
                 'js/slugify.js',
 

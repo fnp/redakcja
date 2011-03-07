@@ -37,7 +37,7 @@
  -webkit-border-radius: 4px;
  }
  */
-.htmlview *[x-node = 'RDF'] {
+.htmlview *[x-node = 'RDF'][x-ns = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'] {
     display: none;
 }
 
