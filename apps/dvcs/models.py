@@ -12,7 +12,7 @@ class Change(models.Model):
         
         Data contains a pickled diff needed to reproduce the initial document.
     """
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, null=True, blank=True)
     patch = models.TextField(blank=True)
     tree = models.ForeignKey('Document')
 
@@ -35,6 +35,10 @@ class Change(models.Model):
 
     @staticmethod
     def make_patch(src, dst):
+        if isinstance(src, unicode):
+            src = src.encode('utf-8')
+        if isinstance(dst, unicode):
+            dst = dst.encode('utf-8')
         return pickle.dumps(mdiff.textdiff(src, dst))
 
     def materialize(self):
@@ -81,17 +85,13 @@ class Document(models.Model):
     """
         File in repository.        
     """
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(User, null=True, blank=True)
     head = models.ForeignKey(Change,
                     null=True, blank=True, default=None,
                     help_text=_("This document's current head."))
 
-    # Some meta-data
-    name = models.CharField(max_length=200,
-                help_text=_("Name for this file to display."))
-
     def __unicode__(self):
-        return u"{0}, HEAD: {1}".format(self.name, self.head_id)
+        return u"{0}, HEAD: {1}".format(self.id, self.head_id)
 
     @models.permalink
     def get_absolute_url(self):

@@ -4,110 +4,36 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.db import models
-import re
-import os
-import vstorage
-from vstorage import DocumentNotFound
-from wiki import settings, constants
-from slughifi import slughifi
 from django.utils.translation import ugettext_lazy as _
 
-from django.http import Http404
+from dvcs import models as dvcs_models
+
 
 import logging
 logger = logging.getLogger("fnp.wiki")
 
 
-# _PCHARS_DICT = dict(zip((ord(x) for x in u"ĄĆĘŁŃÓŚŻŹąćęłńóśżź "), u"ACELNOSZZacelnoszz_"))
-_PCHARS_DICT = dict(zip((ord(x) for x in u" "), u"_"))
+class Document(models.Model):
+    """ A document edited on the wiki """
 
-# I know this is barbaric, but I didn't find a better solution ;(
-def split_name(name):
-    parts = name.translate(_PCHARS_DICT).split('__')
-    return parts
-
-def join_name(*parts, **kwargs):
-    name = u'__'.join(p.translate(_PCHARS_DICT) for p in parts)
-    logger.info("JOIN %r -> %r", parts, name)
-    return name
-
-def normalize_name(name):
-    """
-    >>> normalize_name("gąska".decode('utf-8'))
-    u'g\u0105ska'
-    """
-    return unicode(name).translate(_PCHARS_DICT)
-
-STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
+    slug = models.CharField(_('slug'))
+    title = models.CharField(_('displayed title'), blank=True)
+    data = models.ForeignKey(dvcs_models.Document)
+    gallery = models.CharField(_('scan gallery name'), blank=True)
 
 
-class DocumentStorage(object):
-    def __init__(self, path):
-        self.vstorage = vstorage.VersionedStorage(path)
 
-    def get(self, name, revision=None):
-        text, rev = self.vstorage.page_text(name, revision)
-        return Document(self, name=name, text=text, revision=rev)
 
-    def get_by_tag(self, name, tag):
-        text, rev = self.vstorage.page_text_by_tag(name, tag)
-        return Document(self, name=name, text=text, revision=rev)
+'''
+from wiki import settings, constants
+from slughifi import slughifi
 
-    def revert(self, name, revision, **commit_args):
-        self.vstorage.revert(name, revision, **commit_args)
+from django.http import Http404
 
-    def get_or_404(self, *args, **kwargs):
-        try:
-            return self.get(*args, **kwargs)
-        except DocumentNotFound:
-            raise Http404
-
-    def put(self, document, author, comment, parent=None):
-        self.vstorage.save_text(
-                title=document.name,
-                text=document.text,
-                author=author,
-                comment=comment,
-                parent=parent)
-
-        return document
-
-    def create_document(self, text, name):
-        title = u', '.join(p.title() for p in split_name(name))
-
-        if text is None:
-            text = u''
-
-        document = Document(self, name=name, text=text, title=title)
-        return self.put(document, u"<wiki>", u"Document created.")
-
-    def delete(self, name, author, comment):
-        self.vstorage.delete_page(name, author, comment)
-
-    def all(self):
-        return list(self.vstorage.all_pages())
-
-    def history(self, title):
-        def stage_desc(match):
-            stage = match.group(1)
-            return _("Finished stage: %s") % constants.DOCUMENT_STAGES_DICT[stage]
-
-        for changeset in self.vstorage.page_history(title):
-            changeset['description'] = STAGE_TAGS_RE.sub(stage_desc, changeset['description'])
-            yield changeset
-
-    def doc_meta(self, title, revision=None):
-        return self.vstorage.page_meta(title, revision)
 
 
 
 class Document(object):
-    META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
-
-    def __init__(self, storage, **kwargs):
-        self.storage = storage
-        for attr, value in kwargs.iteritems():
-            setattr(self, attr, value)
 
     def add_tag(self, tag, revision, author):
         """ Add document specific tag """
@@ -141,13 +67,9 @@ class Document(object):
     def info(self):
         return self.storage.vstorage.page_meta(self.name, self.revision)
 
-def getstorage():
-    return DocumentStorage(settings.REPOSITORY_PATH)
 
-#
-# Django models
-#
 
+'''
 class Theme(models.Model):
     name = models.CharField(_('name'), max_length=50, unique=True)
 
