@@ -162,7 +162,7 @@ class VersionedStorage(object):
 
     def _file_to_title(self, filename):
         assert filename.startswith(self.repo_prefix)
-        name = filename[len(self.repo_prefix):].strip('/').split('.', 1)[0]
+        name = filename[len(self.repo_prefix):].strip('/').rsplit('.', 1)[0]
         return urlunquote(name)
 
     def __contains__(self, title):
