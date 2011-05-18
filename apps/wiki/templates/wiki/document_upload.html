@@ -1,6 +1,5 @@
 {% extends "wiki/base.html" %}
 {% load i18n %}
-{% load wiki %}
 
 
 {% block leftcolumn %}
@@ -25,15 +24,15 @@
     <h3>{% trans "Offending files" %}</h3>
     <ul id='error-list'>
         {% for filename, title, error in error_list %}
-            <li>{{title|wiki_title}} (<code>{{ filename }}</code>): {{ error }}</li>
+            <li>{{ title }} (<code>{{ filename }}</code>): {{ error }}</li>
         {% endfor %}
     </ul>
 
     {% if ok_list %}
     <h3>{% trans "Correct files" %}</h3>
         <ul>
-            {% for filename, title in ok_list %}
-                <li>{{title|wiki_title}} (<code>{{ filename }}</code>)</li>
+            {% for filename, slug, title in ok_list %}
+                <li>{{ title }} (<code>{{ filename }}</code>)</li>
             {% endfor %}
         </ul>
     {% endif %}
@@ -44,8 +43,8 @@
         <p class='success'>{% trans "Files have been successfully uploaded to the repository." %}</p>
         <h3>{% trans "Uploaded files" %}</h3>
         <ul id='ok-list'>
-        {% for filename, title in ok_list %}
-            <li><a href='{% url wiki_editor title %}'>{{ title|wiki_title }}</a> (<code>{{ filename }})</a></li>
+        {% for filename, slug, title in ok_list %}
+            <li><a href='{% url wiki_editor slug %}'>{{ title }}</a> (<code>{{ filename }})</a></li>
         {% endfor %}
         </ul>
     {% endif %}

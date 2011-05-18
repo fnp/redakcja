@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load toolbar_tags i18n %}
 
-{% block title %}{{ document.name }} - {{ block.super }}{% endblock %}
+{% block title %}{{ book.title }} - {{ block.super }}{% endblock %}
 {% block extrahead %}
 {% load compressed %}
 {% compressed_css 'detail' %}
@@ -16,15 +16,10 @@
 
 {% block maincontent %}
 <div id="document-meta"
-	data-document-name="{{ document.name }}" style="display:none">
+	data-document-name="{{ book.slug }}" style="display:none">
 
-	{% for k, v in document_meta.items %}
-		<span data-key="{{ k }}">{{ v }}</span>
-	{% endfor %}
-
-	{% for k, v in document_info.items %}
-		<span data-key="{{ k }}">{{ v }}</span>
-	{% endfor %}
+	<span data-key="gallery">{{ book.gallery }}</span>
+	<span data-key="revision">{{ revision }}</span>
 
 	{% block meta-extra %} {% endblock %}
 </div>

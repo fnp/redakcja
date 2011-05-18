@@ -1,5 +1,4 @@
 import os
-import functools
 import logging
 logger = logging.getLogger("fnp.wiki")
 
@@ -11,8 +10,9 @@ from django.core.urlresolvers import reverse
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission, recursive_groupby)
 from django import http
+from django.shortcuts import get_object_or_404, redirect
 
-from wiki.models import getstorage, DocumentNotFound, normalize_name, split_name, join_name, Theme
+from wiki.models import Book, Theme
 from wiki.forms import DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
@@ -26,62 +26,42 @@ from django.middleware.gzip import GZipMiddleware
 #
 from django.views.decorators.cache import never_cache
 
-import wlapi
 import nice_diff
 import operator
 
 MAX_LAST_DOCS = 10
 
 
-def normalized_name(view):
-
-    @functools.wraps(view)
-    def decorated(request, name, *args):
-        normalized = normalize_name(name)
-        logger.debug('View check %r -> %r', name, normalized)
-
-        if normalized != name:
-            return http.HttpResponseRedirect(
-                        reverse('wiki_' + view.__name__, kwargs={'name': normalized}))
-
-        return view(request, name, *args)
-
-    return decorated
-
-
 @never_cache
 def document_list(request):
     return direct_to_template(request, 'wiki/document_list.html', extra_context={
-        'docs': getstorage().all(),
-        'last_docs': sorted(request.session.get("wiki_last_docs", {}).items(),
-                        key=operator.itemgetter(1), reverse=True),
+        'books': Book.objects.all(),
+        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
+                        key=lambda x: x[1]['time'], reverse=True),
     })
 
 
 @never_cache
-@normalized_name
-def editor(request, name, template_name='wiki/document_details.html'):
-    storage = getstorage()
-
+def editor(request, slug, template_name='wiki/document_details.html'):
     try:
-        document = storage.get(name)
-    except DocumentNotFound:
-        return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[name]))
+        book = Book.objects.get(slug=slug)
+    except Book.DoesNotExist:
+        return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[slug]))
 
     access_time = datetime.now()
-    last_documents = request.session.get("wiki_last_docs", {})
-    last_documents[name] = access_time
+    last_books = request.session.get("wiki_last_books", {})
+    last_books[slug] = {
+        'time': access_time,
+        'title': book.title,
+        }
 
-    if len(last_documents) > MAX_LAST_DOCS:
-        oldest_key = min(last_documents, key=last_documents.__getitem__)
-        del last_documents[oldest_key]
-    request.session['wiki_last_docs'] = last_documents
+    if len(last_books) > MAX_LAST_DOCS:
+        oldest_key = min(last_books, key=operator.itemgetter('time'))
+        del last_books[oldest_key]
+    request.session['wiki_last_books'] = last_books
 
     return direct_to_template(request, template_name, extra_context={
-        'document': document,
-        'document_name': document.name,
-        'document_info': document.info,
-        'document_meta': document.meta,
+        'book': book,
         'forms': {
             "text_save": DocumentTextSaveForm(prefix="textsave"),
             "text_revert": DocumentTextRevertForm(prefix="textrevert"),
@@ -92,95 +72,105 @@ def editor(request, name, template_name='wiki/document_details.html'):
 
 
 @require_GET
-@normalized_name
-def editor_readonly(request, name, template_name='wiki/document_details_readonly.html'):
-    name = normalize_name(name)
-    storage = getstorage()
-
+def editor_readonly(request, slug, template_name='wiki/document_details_readonly.html'):
     try:
+        book = Book.objects.get(slug=slug)
         revision = request.GET['revision']
-        document = storage.get(name, revision)
-    except (KeyError, DocumentNotFound):
+    except KeyError:
         raise http.Http404
 
     access_time = datetime.now()
-    last_documents = request.session.get("wiki_last_docs", {})
-    last_documents[name] = access_time
+    last_books = request.session.get("wiki_last_books", {})
+    last_books[slug] = {
+        'time': access_time,
+        'title': book.title,
+        }
 
-    if len(last_documents) > MAX_LAST_DOCS:
-        oldest_key = min(last_documents, key=last_documents.__getitem__)
-        del last_documents[oldest_key]
-    request.session['wiki_last_docs'] = last_documents
+    if len(last_books) > MAX_LAST_DOCS:
+        oldest_key = min(last_books, key=operator.itemgetter('time'))
+        del last_books[oldest_key]
+    request.session['wiki_last_books'] = last_books
 
     return direct_to_template(request, template_name, extra_context={
-        'document': document,
-        'document_name': document.name,
-        'document_info': dict(document.info(), readonly=True),
-        'document_meta': document.meta,
+        'book': book,
+        'revision': revision,
+        'readonly': True,
         'REDMINE_URL': settings.REDMINE_URL,
     })
 
 
-@normalized_name
-def create_missing(request, name):
-    storage = getstorage()
+def create_missing(request, slug):
+    slug = slug.replace(' ', '-')
 
     if request.method == "POST":
         form = DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            doc = storage.create_document(
-                name=form.cleaned_data['id'],
+            
+            if request.user.is_authenticated():
+                creator = request.user
+            else:
+                creator = None
+            book = Book.create(creator=creator,
+                slug=form.cleaned_data['slug'],
+                title=form.cleaned_data['title'],
                 text=form.cleaned_data['text'],
             )
 
-            return http.HttpResponseRedirect(reverse("wiki_editor", args=[doc.name]))
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
     else:
         form = DocumentCreateForm(initial={
-                "id": name.replace(" ", "_"),
-                "title": name.title(),
+                "slug": slug,
+                "title": slug.replace('-', ' ').title(),
         })
 
     return direct_to_template(request, "wiki/document_create_missing.html", extra_context={
-        "document_name": name,
+        "slug": slug,
         "form": form,
     })
 
 
 def upload(request):
-    storage = getstorage()
-
     if request.method == "POST":
         form = DocumentsUploadForm(request.POST, request.FILES)
         if form.is_valid():
+            import slughifi
+
+            if request.user.is_authenticated():
+                creator = request.user
+            else:
+                creator = None
+
             zip = form.cleaned_data['zip']
             skipped_list = []
             ok_list = []
             error_list = []
-            titles = {}
-            existing = storage.all()
+            slugs = {}
+            existing = [book.slug for book in Book.objects.all()]
             for filename in zip.namelist():
                 if filename[-1] == '/':
                     continue
-                title = normalize_name(os.path.basename(filename)[:-4])
-                if not (title and filename.endswith('.xml')):
+                title = os.path.basename(filename)[:-4]
+                slug = slughifi(title)
+                if not (slug and filename.endswith('.xml')):
                     skipped_list.append(filename)
-                elif title in titles:
-                    error_list.append((filename, title, _('Title already used for %s' % titles[title])))
-                elif title in existing:
-                    error_list.append((filename, title, _('Title already used in repository.')))
+                elif slug in slugs:
+                    error_list.append((filename, slug, _('Slug already used for %s' % slugs[slug])))
+                elif slug in existing:
+                    error_list.append((filename, slug, _('Slug already used in repository.')))
                 else:
                     try:
                         zip.read(filename).decode('utf-8') # test read
-                        ok_list.append((filename, title))
+                        ok_list.append((filename, slug, title))
                     except UnicodeDecodeError:
                         error_list.append((filename, title, _('File should be UTF-8 encoded.')))
-                    titles[title] = filename
+                    slugs[slug] = filename
 
             if not error_list:
-                for filename, title in ok_list:
-                    storage.create_document(
-                        name=title,
-                        text=zip.read(filename).decode('utf-8')
+                for filename, slug, title in ok_list:
+                    Book.create(creator=creator,
+                        slug=slug,
+                        title=title,
+                        text=zip.read(filename).decode('utf-8'),
                     )
 
             return direct_to_template(request, "wiki/document_upload.html", extra_context={
@@ -189,12 +179,6 @@ def upload(request):
                 "skipped_list": skipped_list,
                 "error_list": error_list,
             })
-                #doc = storage.create_document(
-                #    name=base,
-                #    text=form.cleaned_data['text'],
-
-            
-            return http.HttpResponse('\n'.join(yeslist) + '\n\n' + '\n'.join(nolist))
     else:
         form = DocumentsUploadForm()
 
@@ -204,93 +188,77 @@ def upload(request):
 
 
 @never_cache
-@normalized_name
 @decorator_from_middleware(GZipMiddleware)
-def text(request, name):
-    storage = getstorage()
+def text(request, slug):
+    doc = get_object_or_404(Book, slug=slug).doc
 
     if request.method == 'POST':
         form = DocumentTextSaveForm(request.POST, prefix="textsave")
         if form.is_valid():
-            revision = form.cleaned_data['parent_revision']
-            document = storage.get_or_404(name, revision)          
-            document.text = form.cleaned_data['text']
-            comment = form.cleaned_data['comment']
-            if form.cleaned_data['stage_completed']:        
-                comment += '\n#stage-finished: %s\n' % form.cleaned_data['stage_completed']         
+            # TODO:
+            # - stage completion should be stored (as a relation)
+
             if request.user.is_authenticated():
-                author_name = request.user
-                author_email = request.user.email
+                author = request.user
             else:
-                author_name = form.cleaned_data['author_name']
-                author_email = form.cleaned_data['author_email']
-            author = "%s <%s>" % (author_name, author_email)
-            storage.put(document, author=author, comment=comment, parent=revision)           
-            document = storage.get(name)          
+                author = None
+            text = form.cleaned_data['text']
+            parent_revision = form.cleaned_data['parent_revision']
+            parent = doc.at_revision(parent_revision)
+            doc.commit(author=author,
+                       text=text,
+                       parent=parent,
+                       description=form.cleaned_data['comment'],
+                       )
+            revision = doc.revision()
             return JSONResponse({
-                'text': document.plain_text if revision != document.revision else None,
-                'meta': document.meta(),
-                'revision': document.revision,
+                'text': doc.materialize() if parent_revision != revision else None,
+                'meta': {},
+                'revision': revision,
             })
         else:
             return JSONFormInvalid(form)
     else:
         revision = request.GET.get("revision", None)
-
+        
         try:
-            try:
-                revision = revision and int(revision)
-                logger.info("Fetching %s", revision)
-                document = storage.get(name, revision)
-            except ValueError:
-                # treat as a tag
-                logger.info("Fetching tag %s", revision)
-                document = storage.get_by_tag(name, revision)
-        except DocumentNotFound:
-            raise http.Http404
+            revision = int(revision)
+        except ValueError:
+            revision = None
 
         return JSONResponse({
-            'text': document.plain_text,
-            'meta': document.meta(),
-            'revision': document.revision,
+            'text': doc.at_revision(revision).materialize(),
+            'meta': {},
+            'revision': revision if revision else doc.revision(),
         })
 
 
 @never_cache
-@normalized_name
 @require_POST
-def revert(request, name):
-    storage = getstorage()
+def revert(request, slug):
     form = DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
-        print 'valid'
+        doc = get_object_or_404(Book, slug=slug).doc
         revision = form.cleaned_data['revision']
 
         comment = form.cleaned_data['comment']
         comment += "\n#revert to %s" % revision
 
         if request.user.is_authenticated():
-            author_name = request.user
-            author_email = request.user.email
+            author = request.user
         else:
-            author_name = form.cleaned_data['author_name']
-            author_email = form.cleaned_data['author_email']
-        author = "%s <%s>" % (author_name, author_email)
+            author = None
 
-        before = storage.get(name).revision
-        logger.info("Reverting %s to %s", name, revision)
-        storage.revert(name, revision, comment=comment, author=author)
-        logger.info("Fetching %s", name)
-        document = storage.get(name)
-
+        before = doc.revision()
+        logger.info("Reverting %s to %s", slug, revision)
+        doc.at_revision(revision).revert(author=author, description=comment)
 
         return JSONResponse({
-            'text': document.plain_text if before != document.revision else None,
-            'meta': document.meta(),
-            'revision': document.revision,
+            'text': doc.materialize() if before != doc.revision() else None,
+            'meta': {},
+            'revision': doc.revision(),
         })
     else:
-        print 'invalid'
         return JSONFormInvalid(form)
 
 
@@ -322,10 +290,7 @@ def gallery(request, directory):
 
 
 @never_cache
-@normalized_name
-def diff(request, name):
-    storage = getstorage()
-
+def diff(request, slug):
     revA = int(request.GET.get('from', 0))
     revB = int(request.GET.get('to', 0))
 
@@ -335,33 +300,48 @@ def diff(request, name):
     if revB == 0:
         revB = None
 
-    docA = storage.get_or_404(name, int(revA))
-    docB = storage.get_or_404(name, int(revB))
+    doc = get_object_or_404(Book, slug=slug).doc
+    docA = doc.at_revision(revA).materialize()
+    docB = doc.at_revision(revB).materialize()
 
-    return http.HttpResponse(nice_diff.html_diff_table(docA.plain_text.splitlines(),
-                                         docB.plain_text.splitlines(), context=3))
-
-
-@never_cache
-@normalized_name
-def revision(request, name):
-    storage = getstorage()
-
-    try:
-        return http.HttpResponse(str(storage.doc_meta(name)['revision']))
-    except DocumentNotFound:
-        raise http.Http404
+    return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
+                                         docB.splitlines(), context=3))
 
 
 @never_cache
-@normalized_name
-def history(request, name):
-    storage = getstorage()
+def revision(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    return http.HttpResponse(str(book.doc.revision()))
 
+
+@never_cache
+def history(request, slug):
     # TODO: pagination
-    changesets = list(storage.history(name))
+    book = get_object_or_404(Book, slug=slug)
+    rev = book.doc.revision()
+    changes = []
+    for change in book.doc.history().order_by('-created_at'):
+        if change.author:
+            author = "%s %s <%s>" % (
+                change.author.first_name,
+                change.author.last_name, 
+                change.author.email)
+        else:
+            author = None
+        changes.append({
+                "version": rev,
+                "description": change.description,
+                "author": author,
+                "date": change.created_at,
+                "tag": [],
+            })
+        rev -= 1
+    return JSONResponse(changes)
 
-    return JSONResponse(changesets)
+
+
+"""
+import wlapi
 
 
 @require_POST
@@ -395,7 +375,7 @@ def publish(request, name):
         return JSONResponse({"result": api.publish_book(document)})
     except wlapi.APICallException, e:
         return JSONServerError({"message": str(e)})
-
+"""
 
 def themes(request):
     prefix = request.GET.get('q', '')

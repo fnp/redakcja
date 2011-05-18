@@ -4,48 +4,48 @@ from django.views.generic.simple import redirect_to
 from django.conf import settings
 
 
-PART = ur"""[ ĄĆĘŁŃÓŚŻŹąćęłńóśżź0-9\w_.-]+"""
+#PART = ur"""[ ĄĆĘŁŃÓŚŻŹąćęłńóśżź0-9\w_.-]+"""
 
 urlpatterns = patterns('wiki.views',
     url(r'^$', redirect_to, {'url': 'catalogue/'}),
 
     url(r'^catalogue/$', 'document_list', name='wiki_document_list'),
-    url(r'^catalogue/([^/]+)/$', 'document_list'),
-    url(r'^catalogue/([^/]+)/([^/]+)/$', 'document_list'),
-    url(r'^catalogue/([^/]+)/([^/]+)/([^/]+)$', 'document_list'),
+    #url(r'^catalogue/([^/]+)/$', 'document_list'),
+    #url(r'^catalogue/([^/]+)/([^/]+)/$', 'document_list'),
+    #url(r'^catalogue/([^/]+)/([^/]+)/([^/]+)$', 'document_list'),
 
-    url(r'^(?P<name>%s)$' % PART,
+    url(r'^(?P<slug>[^/]+)/$',
         'editor', name="wiki_editor"),
 
-    url(r'^(?P<name>[^/]+)/readonly$',
+    url(r'^(?P<slug>[^/]+)/readonly$',
         'editor_readonly', name="wiki_editor_readonly"),
 
     url(r'^upload/$',
         'upload', name='wiki_upload'),
 
-    url(r'^create/(?P<name>[^/]+)',
+    url(r'^create/(?P<slug>[^/]+)',
         'create_missing', name='wiki_create_missing'),
 
     url(r'^(?P<directory>[^/]+)/gallery$',
         'gallery', name="wiki_gallery"),
 
-    url(r'^(?P<name>[^/]+)/history$',
+    url(r'^(?P<slug>[^/]+)/history$',
         'history', name="wiki_history"),
 
-    url(r'^(?P<name>[^/]+)/rev$',
+    url(r'^(?P<slug>[^/]+)/rev$',
         'revision', name="wiki_revision"),
 
-    url(r'^(?P<name>[^/]+)/text$',
+    url(r'^(?P<slug>[^/]+)/text$',
         'text', name="wiki_text"),
 
-    url(r'^(?P<name>[^/]+)/revert$',
+    url(r'^(?P<slug>[^/]+)/revert$',
         'revert', name='wiki_revert'),
 
-    url(r'^(?P<name>[^/]+)/publish$', 'publish', name="wiki_publish"),
-    url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="wiki_publish"),
+    #url(r'^(?P<name>[^/]+)/publish$', 'publish', name="wiki_publish"),
+    #url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="wiki_publish"),
 
-    url(r'^(?P<name>[^/]+)/diff$', 'diff', name="wiki_diff"),
-    url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
+    url(r'^(?P<slug>[^/]+)/diff$', 'diff', name="wiki_diff"),
+    #url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
 
 
 

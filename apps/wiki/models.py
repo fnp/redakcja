@@ -13,14 +13,36 @@ import logging
 logger = logging.getLogger("fnp.wiki")
 
 
-class Document(models.Model):
+class Book(models.Model):
     """ A document edited on the wiki """
 
-    slug = models.CharField(_('slug'))
-    title = models.CharField(_('displayed title'), blank=True)
-    data = models.ForeignKey(dvcs_models.Document)
-    gallery = models.CharField(_('scan gallery name'), blank=True)
+    slug = models.SlugField(_('slug'), max_length=255, unique=True)
+    title = models.CharField(_('displayed title'), max_length=255, blank=True)
+    doc = models.ForeignKey(dvcs_models.Document, editable=False)
+    gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
 
+    class Meta:
+        ordering = ['title']
+        verbose_name = _('book')
+        verbose_name_plural = _('books')
+
+    def __unicode__(self):
+        return self.title
+
+    @classmethod
+    def create(cls, creator=None, text=u'', *args, **kwargs):
+        instance = cls(*args, **kwargs)
+        instance.doc = dvcs_models.Document.create(creator=creator, text=text)
+        instance.save()
+        return instance
+
+    @staticmethod
+    def listener_create(sender, instance, created, **kwargs):
+        if created and instance.doc is None:
+            instance.doc = dvcs_models.Document.objects.create()
+            instance.save()
+
+models.signals.post_save.connect(Book.listener_create, sender=Book)
 
 
 

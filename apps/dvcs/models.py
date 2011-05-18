@@ -42,7 +42,12 @@ class Change(models.Model):
         return pickle.dumps(mdiff.textdiff(src, dst))
 
     def materialize(self):
-        changes = Change.objects.exclude(parent=None).filter(
+        # special care for merged nodes
+        if self.parent is None and self.merge_parent is not None:
+            return self.apply_to(self.merge_parent.materialize())
+
+        changes = Change.objects.filter(
+                        ~models.Q(parent=None) | models.Q(merge_parent=None),
                         tree=self.tree,
                         created_at__lte=self.created_at).order_by('created_at')
         text = u''
@@ -80,6 +85,10 @@ class Change(models.Model):
                     patch=patch, merge_parent=other, tree=self.tree,
                     author=author, description=description)
 
+    def revert(self, **kwargs):
+        """ commit this version of a doc as new head """
+        self.tree.commit(text=self.materialize(), **kwargs)
+
 
 class Document(models.Model):
     """
@@ -89,6 +98,15 @@ class Document(models.Model):
     head = models.ForeignKey(Change,
                     null=True, blank=True, default=None,
                     help_text=_("This document's current head."))
+
+    @classmethod
+    def create(cls, text='', *args, **kwargs):
+        instance = cls(*args, **kwargs)
+        instance.save()
+        head = instance.head
+        head.patch = Change.make_patch('', text)
+        head.save()
+        return instance
 
     def __unicode__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)
@@ -100,14 +118,14 @@ class Document(models.Model):
                         'version': self.head_id,
         })
 
-    def materialize(self, version=None):
+    def materialize(self, change=None):
         if self.head is None:
             return u''
-        if version is None:
-            version = self.head
-        elif not isinstance(version, Change):
-            version = self.change_set.get(pk=version)
-        return version.materialize()
+        if change is None:
+            change = self.head
+        elif not isinstance(change, Change):
+            change = self.change_set.get(pk=change)
+        return change.materialize()
 
     def commit(self, **kwargs):
         if 'parent' not in kwargs:
@@ -120,7 +138,7 @@ class Document(models.Model):
         if 'patch' not in kwargs:
             if 'text' not in kwargs:
                 raise ValueError("You must provide either patch or target document.")
-            patch = Change.make_patch(self.materialize(version=parent), kwargs['text'])
+            patch = Change.make_patch(self.materialize(change=parent), kwargs['text'])
         else:
             if 'text' in kwargs:
                 raise ValueError("You can provide only text or patch - not both")
@@ -133,18 +151,28 @@ class Document(models.Model):
             self.head = old_head.merge_with(change, author=kwargs['author'])
         else:
             self.head = parent.make_child(patch, kwargs['author'], kwargs.get('description', ''))
+
         self.save()
         return self.head
 
     def history(self):
-        return self.changes.all()
+        return self.change_set.all()
+
+    def revision(self):
+        return self.change_set.all().count()
+
+    def at_revision(self, rev):
+        if rev:
+            return self.change_set.all()[rev-1]
+        else:
+            return self.head
 
     @staticmethod
     def listener_initial_commit(sender, instance, created, **kwargs):
         if created:
             instance.head = Change.objects.create(
                     author=instance.creator,
-                    patch=pickle.dumps(mdiff.textdiff('', '')),
+                    patch=Change.make_patch('', ''),
                     tree=instance)
             instance.save()
 

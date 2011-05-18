@@ -5,6 +5,7 @@
 #
 from django import forms
 from wiki.constants import DOCUMENT_TAGS, DOCUMENT_STAGES
+from wiki.models import Book
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -18,16 +19,19 @@ class DocumentTagForm(forms.Form):
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
-class DocumentCreateForm(forms.Form):
+class DocumentCreateForm(forms.ModelForm):
     """
         Form used for creating new documents.
     """
-    title = forms.CharField()
-    id = forms.RegexField(regex=ur"^[-\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")
     file = forms.FileField(required=False)
     text = forms.CharField(required=False, widget=forms.Textarea)
 
+    class Meta:
+        model = Book
+        exclude = ['gallery']
+
     def clean(self):
+        super(DocumentCreateForm, self).clean()
         file = self.cleaned_data['file']
 
         if file is not None:

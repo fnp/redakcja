@@ -234,11 +234,7 @@
 			data[this.name] = this.value;
 		});
 
-		var metaComment = '<!--';
-		metaComment += '\n\tgallery:' + self.galleryLink;
-		metaComment += '\n-->\n'
-
-		data['textsave-text'] = metaComment + self.text;
+		data['textsave-text'] = self.text;
 
 		$.ajax({
 			url: reverse("ajax_document_text", self.id),
