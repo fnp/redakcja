@@ -18,7 +18,7 @@
 		var base_path = "/documents";
 
 		if (vname == "ajax_document_text") {
-			var path = "/" + arguments[1] + "/text";
+			var path = "/text/" + arguments[1];
 
 		if (arguments[2] !== undefined)
 				path += "/" + arguments[2];
@@ -27,31 +27,31 @@
 		}
 
         if (vname == "ajax_document_revert") {
-            return base_path + "/" + arguments[1] + "/revert";
+            return base_path + "/revert/" + arguments[1];
         }
 
 
 		if (vname == "ajax_document_history") {
 
-			return base_path + "/" + arguments[1] + "/history";
+			return base_path + "/history/" + arguments[1];
 		}
 
 		if (vname == "ajax_document_gallery") {
 
-			return base_path + "/" + arguments[1] + "/gallery";
+			return base_path + "/gallery/" + arguments[1];
 		}
 
 		if (vname == "ajax_document_diff")
-			return base_path + "/" + arguments[1] + "/diff";
+			return base_path + "/diff/" + arguments[1];
 
         if (vname == "ajax_document_rev")
-            return base_path + "/" + arguments[1] + "/rev";
+            return base_path + "/rev/" + arguments[1];
 
 		if (vname == "ajax_document_addtag")
-			return base_path + "/" + arguments[1] + "/tags";
+			return base_path + "/tags/" + arguments[1];
 
 		if (vname == "ajax_publish")
-			return base_path + "/" + arguments[1] + "/publish";
+			return base_path + "/publish/" + arguments[1];
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
@@ -62,7 +62,7 @@
 	 */
 	function WikiDocument(element_id) {
 		var meta = $('#' + element_id);
-		this.id = meta.attr('data-document-name');
+		this.id = meta.attr('data-book') + '/' + meta.attr('data-chunk');
 
 		this.revision = $("*[data-key='revision']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();

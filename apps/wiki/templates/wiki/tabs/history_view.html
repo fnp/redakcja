@@ -9,7 +9,7 @@
 			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
 		<button id="open-preview-button" disabled="disabled"
 			data-enabled-when="1"
-			data-basehref="{% url wiki_editor_readonly book.slug %}">{% trans "View version" %}</button>
+			data-basehref="{% url wiki_editor_readonly chunk.book.slug chunk.slug %}">{% trans "View version" %}</button>
 
 	</div>
     <div id="history-view">

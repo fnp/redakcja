@@ -15,6 +15,7 @@ class Change(models.Model):
     author = models.ForeignKey(User, null=True, blank=True)
     patch = models.TextField(blank=True)
     tree = models.ForeignKey('Document')
+    revision = models.IntegerField(db_index=True)
 
     parent = models.ForeignKey('self',
                         null=True, blank=True, default=None,
@@ -25,13 +26,22 @@ class Change(models.Model):
                         related_name="merge_children")
 
     description = models.TextField(blank=True, default='')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         ordering = ('created_at',)
+        unique_together = ['tree', 'revision']
 
     def __unicode__(self):
         return u"Id: %r, Tree %r, Parent %r, Patch '''\n%s'''" % (self.id, self.tree_id, self.parent_id, self.patch)
+
+    def save(self, *args, **kwargs):
+        """
+            take the next available revision number if none yet
+        """
+        if self.revision is None:
+            self.revision = self.tree.revision() + 1
+        return super(Change, self).save(*args, **kwargs)
 
     @staticmethod
     def make_patch(src, dst):
@@ -46,10 +56,9 @@ class Change(models.Model):
         if self.parent is None and self.merge_parent is not None:
             return self.apply_to(self.merge_parent.materialize())
 
-        changes = Change.objects.filter(
-                        ~models.Q(parent=None) | models.Q(merge_parent=None),
+        changes = Change.objects.exclude(parent=None).filter(
                         tree=self.tree,
-                        created_at__lte=self.created_at).order_by('created_at')
+                        revision__lte=self.revision).order_by('revision')
         text = u''
         for change in changes:
             text = change.apply_to(text)
@@ -99,15 +108,6 @@ class Document(models.Model):
                     null=True, blank=True, default=None,
                     help_text=_("This document's current head."))
 
-    @classmethod
-    def create(cls, text='', *args, **kwargs):
-        instance = cls(*args, **kwargs)
-        instance.save()
-        head = instance.head
-        head.patch = Change.make_patch('', text)
-        head.save()
-        return instance
-
     def __unicode__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)
 
@@ -144,26 +144,30 @@ class Document(models.Model):
                 raise ValueError("You can provide only text or patch - not both")
             patch = kwargs['patch']
 
+        author = kwargs.get('author', None)
+
         old_head = self.head
         if parent != old_head:
-            change = parent.make_merge_child(patch, kwargs['author'], kwargs.get('description', ''))
+            change = parent.make_merge_child(patch, author, kwargs.get('description', ''))
             # not Fast-Forward - perform a merge
-            self.head = old_head.merge_with(change, author=kwargs['author'])
+            self.head = old_head.merge_with(change, author=author)
         else:
-            self.head = parent.make_child(patch, kwargs['author'], kwargs.get('description', ''))
+            self.head = parent.make_child(patch, author, kwargs.get('description', ''))
 
         self.save()
         return self.head
 
     def history(self):
-        return self.change_set.all()
+        return self.change_set.filter(revision__gt=0)
 
     def revision(self):
-        return self.change_set.all().count()
+        rev = self.change_set.aggregate(
+                models.Max('revision'))['revision__max']
+        return rev if rev is not None else 0
 
     def at_revision(self, rev):
         if rev:
-            return self.change_set.all()[rev-1]
+            return self.change_set.get(revision=rev)
         else:
             return self.head
 
@@ -171,6 +175,7 @@ class Document(models.Model):
     def listener_initial_commit(sender, instance, created, **kwargs):
         if created:
             instance.head = Change.objects.create(
+                    revision=0,
                     author=instance.creator,
                     patch=Change.make_patch('', ''),
                     tree=instance)

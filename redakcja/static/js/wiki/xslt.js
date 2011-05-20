@@ -17,7 +17,7 @@ function withStylesheets(code_block, onError)
     if (!xml2htmlStylesheet) {
     	$.blockUI({message: 'Ładowanie arkuszy stylów...'});
     	$.ajax({
-        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20110112',
+        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20110520',
         	dataType: 'xml',
         	timeout: 10000,
         	success: function(data) {
@@ -255,6 +255,11 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				self.result += text_buffer;
 				text_buffer = token.node.nodeValue;
 				break;
+            case COMMENT_NODE:
+                self.result += text_buffer;
+                text_buffer = '';
+                self.result += '<!--' + token.node.nodeValue + '-->';
+                break;
 		};
 	};
     self.result += text_buffer;

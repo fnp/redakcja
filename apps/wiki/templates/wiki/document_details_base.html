@@ -16,9 +16,9 @@
 
 {% block maincontent %}
 <div id="document-meta"
-	data-document-name="{{ book.slug }}" style="display:none">
+	data-book="{{ chunk.book.slug }}" data-chunk="{{ chunk.slug }}" style="display:none">
 
-	<span data-key="gallery">{{ book.gallery }}</span>
+	<span data-key="gallery">{{ chunk.book.gallery }}</span>
 	<span data-key="revision">{{ revision }}</span>
 
 	{% block meta-extra %} {% endblock %}

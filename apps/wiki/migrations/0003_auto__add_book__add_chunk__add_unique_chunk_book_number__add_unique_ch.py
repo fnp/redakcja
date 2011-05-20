@@ -11,18 +11,45 @@ class Migration(SchemaMigration):
         # Adding model 'Book'
         db.create_table('wiki_book', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=255, db_index=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('doc', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=128, db_index=True)),
             ('gallery', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
+            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='children', null=True, to=orm['wiki.Book'])),
+            ('parent_number', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
         ))
         db.send_create_signal('wiki', ['Book'])
+
+        # Adding model 'Chunk'
+        db.create_table('wiki_chunk', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.Book'])),
+            ('number', self.gf('django.db.models.fields.IntegerField')()),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('doc', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'], unique=True)),
+        ))
+        db.send_create_signal('wiki', ['Chunk'])
+
+        # Adding unique constraint on 'Chunk', fields ['book', 'number']
+        db.create_unique('wiki_chunk', ['book_id', 'number'])
+
+        # Adding unique constraint on 'Chunk', fields ['book', 'slug']
+        db.create_unique('wiki_chunk', ['book_id', 'slug'])
 
 
     def backwards(self, orm):
         
+        # Removing unique constraint on 'Chunk', fields ['book', 'slug']
+        db.delete_unique('wiki_chunk', ['book_id', 'slug'])
+
+        # Removing unique constraint on 'Chunk', fields ['book', 'number']
+        db.delete_unique('wiki_chunk', ['book_id', 'number'])
+
         # Deleting model 'Book'
         db.delete_table('wiki_book')
+
+        # Deleting model 'Chunk'
+        db.delete_table('wiki_chunk')
 
 
     models = {
@@ -63,14 +90,15 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'dvcs.change': {
-            'Meta': {'ordering': "('created_at',)", 'object_name': 'Change'},
+            'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
             'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"})
         },
         'dvcs.document': {
@@ -80,12 +108,22 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'wiki.book': {
-            'Meta': {'ordering': "['title']", 'object_name': 'Book'},
-            'doc': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"}),
+            'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
             'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255', 'db_index': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['wiki.Book']"}),
+            'parent_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'wiki.chunk': {
+            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
+            'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.Book']"}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'doc': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']", 'unique': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'number': ('django.db.models.fields.IntegerField', [], {}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
         },
         'wiki.theme': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Theme'},

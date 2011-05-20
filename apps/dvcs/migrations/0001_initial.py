@@ -14,12 +14,16 @@ class Migration(SchemaMigration):
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('patch', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('tree', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'])),
+            ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='children', null=True, blank=True, to=orm['dvcs.Change'])),
             ('merge_parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='merge_children', null=True, blank=True, to=orm['dvcs.Change'])),
             ('description', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
         ))
         db.send_create_signal('dvcs', ['Change'])
+
+        # Adding unique constraint on 'Change', fields ['tree', 'revision']
+        db.create_unique('dvcs_change', ['tree_id', 'revision'])
 
         # Adding model 'Document'
         db.create_table('dvcs_document', (
@@ -32,6 +36,9 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
+        # Removing unique constraint on 'Change', fields ['tree', 'revision']
+        db.delete_unique('dvcs_change', ['tree_id', 'revision'])
+
         # Deleting model 'Change'
         db.delete_table('dvcs_change')
 
@@ -77,14 +84,15 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'dvcs.change': {
-            'Meta': {'ordering': "('created_at',)", 'object_name': 'Change'},
+            'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
             'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"})
         },
         'dvcs.document': {

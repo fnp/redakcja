@@ -87,3 +87,14 @@ a:hover {
 #skipped-list {
     color: #666;
 }
+
+.chunkno {
+    font-size: .7em;
+}
+
+td {
+    vertical-align: top;
+}
+.listitem-tools {
+    padding-left: 2em;
+}

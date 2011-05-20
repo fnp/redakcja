@@ -32,8 +32,23 @@ $(function() {
 		<tbody>
     	{% for book in books %}
             <tr>
-            	<td colspan="3"><a target="_blank" data-id="{{ book.slug }}"
-					href="{% url wiki_editor book.slug %}">{{ book.title }}</a></td>
+                <td><a target="_blank" data-id="{{ book.slug }}"
+                    href="{% url wiki_book book.slug %}">{{ book.title }}</a>
+                </td>
+                <td class='listitem-tools'>
+                    {% ifequal book.chunk_set.count 1 %}
+                        <a target="_blank" data-id="{{ book.slug }}"
+                                href="{% url wiki_editor book.slug %}">
+                                [{% trans "edit" %}]</a>
+                    {% else %}
+                        {% for chunk in book.chunk_set.all %}
+                            <a target="_blank" data-id="{{ book.slug }}"
+                                href="{% url wiki_editor book.slug chunk.slug %}">
+                                [<span class='chunkno'>{{ forloop.counter }}.</span>
+                                {{ chunk.comment }}</a>]<br/>
+                        {% endfor %}
+                    {% endifequal %}
+                </td>
 				<!-- placeholder </td> -->
 			</tr>
     	{% endfor %}
@@ -46,8 +61,8 @@ $(function() {
 	<div id="last-edited-list">
 		<h2>{% trans "Your last edited documents" %}</h2>
 	    <ol>
-			{% for slug, item in last_books %}
-			<li><a href="{% url wiki_editor slug %}"
+			{% for slugs, item in last_books %}
+			<li><a href="{% url wiki_editor slugs.0 slugs.1 %}"
 				target="_blank">{{ item.title }}</a><br/><span class="date">({{ item.time|date:"H:i:s, d/m/Y" }})</span></li>
 			{% endfor %}
 		</ol>

@@ -11,8 +11,9 @@ from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission, recursive_groupby)
 from django import http
 from django.shortcuts import get_object_or_404, redirect
+from django.http import Http404
 
-from wiki.models import Book, Theme
+from wiki.models import Book, Chunk, Theme
 from wiki.forms import DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
 from datetime import datetime
 from django.utils.encoding import smart_unicode
@@ -42,26 +43,35 @@ def document_list(request):
 
 
 @never_cache
-def editor(request, slug, template_name='wiki/document_details.html'):
+def editor(request, slug, chunk=None, template_name='wiki/document_details.html'):
     try:
-        book = Book.objects.get(slug=slug)
-    except Book.DoesNotExist:
-        return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[slug]))
+        chunk = Chunk.get(slug, chunk)
+    except Chunk.MultipleObjectsReturned:
+        # TODO: choice page
+        raise Http404
+    except Chunk.DoesNotExist:
+        if chunk is None:
+            try:
+                book = Book.objects.get(slug=slug)
+            except Book.DoesNotExist:
+                return http.HttpResponseRedirect(reverse("wiki_create_missing", args=[slug]))
+        else:
+            raise Http404
 
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
-    last_books[slug] = {
+    last_books[slug, chunk.slug] = {
         'time': access_time,
-        'title': book.title,
+        'title': chunk.pretty_name(),
         }
 
     if len(last_books) > MAX_LAST_DOCS:
-        oldest_key = min(last_books, key=operator.itemgetter('time'))
+        oldest_key = min(last_books, key=lambda x: last_books[x]['time'])
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
     return direct_to_template(request, template_name, extra_context={
-        'book': book,
+        'chunk': chunk,
         'forms': {
             "text_save": DocumentTextSaveForm(prefix="textsave"),
             "text_revert": DocumentTextRevertForm(prefix="textrevert"),
@@ -72,27 +82,27 @@ def editor(request, slug, template_name='wiki/document_details.html'):
 
 
 @require_GET
-def editor_readonly(request, slug, template_name='wiki/document_details_readonly.html'):
+def editor_readonly(request, slug, chunk=None, template_name='wiki/document_details_readonly.html'):
     try:
-        book = Book.objects.get(slug=slug)
+        chunk = Chunk.get(slug, chunk)
         revision = request.GET['revision']
-    except KeyError:
-        raise http.Http404
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist, KeyError):
+        raise Http404
 
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
-    last_books[slug] = {
+    last_books[slug, chunk.slug] = {
         'time': access_time,
-        'title': book.title,
+        'title': chunk.book.title,
         }
 
     if len(last_books) > MAX_LAST_DOCS:
-        oldest_key = min(last_books, key=operator.itemgetter('time'))
+        oldest_key = min(last_books, key=lambda x: last_books[x]['time'])
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
     return direct_to_template(request, template_name, extra_context={
-        'book': book,
+        'chunk': chunk,
         'revision': revision,
         'readonly': True,
         'REDMINE_URL': settings.REDMINE_URL,
@@ -189,8 +199,11 @@ def upload(request):
 
 @never_cache
 @decorator_from_middleware(GZipMiddleware)
-def text(request, slug):
-    doc = get_object_or_404(Book, slug=slug).doc
+def text(request, slug, chunk=None):
+    try:
+        doc = Chunk.get(slug, chunk).doc
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
 
     if request.method == 'POST':
         form = DocumentTextSaveForm(request.POST, prefix="textsave")
@@ -223,7 +236,7 @@ def text(request, slug):
         
         try:
             revision = int(revision)
-        except ValueError:
+        except (ValueError, TypeError):
             revision = None
 
         return JSONResponse({
@@ -234,11 +247,24 @@ def text(request, slug):
 
 
 @never_cache
+def compiled(request, slug):
+    text = get_object_or_404(Book, slug=slug).materialize()
+    
+    response = http.HttpResponse(text, content_type='application/xml', mimetype='application/wl+xml')
+    response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
+    return response
+
+
+@never_cache
 @require_POST
-def revert(request, slug):
+def revert(request, slug, chunk=None):
     form = DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
-        doc = get_object_or_404(Book, slug=slug).doc
+        try:
+            doc = Chunk.get(slug, chunk).doc
+        except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+            raise Http404
+
         revision = form.cleaned_data['revision']
 
         comment = form.cleaned_data['comment']
@@ -290,7 +316,7 @@ def gallery(request, directory):
 
 
 @never_cache
-def diff(request, slug):
+def diff(request, slug, chunk=None):
     revA = int(request.GET.get('from', 0))
     revB = int(request.GET.get('to', 0))
 
@@ -300,7 +326,10 @@ def diff(request, slug):
     if revB == 0:
         revB = None
 
-    doc = get_object_or_404(Book, slug=slug).doc
+    try:
+        doc = Chunk.get(slug, chunk).doc
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
     docA = doc.at_revision(revA).materialize()
     docB = doc.at_revision(revB).materialize()
 
@@ -309,18 +338,24 @@ def diff(request, slug):
 
 
 @never_cache
-def revision(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    return http.HttpResponse(str(book.doc.revision()))
+def revision(request, slug, chunk=None):
+    try:
+        doc = Chunk.get(slug, chunk).doc
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
+    return http.HttpResponse(str(doc.revision()))
 
 
 @never_cache
-def history(request, slug):
+def history(request, slug, chunk=None):
     # TODO: pagination
-    book = get_object_or_404(Book, slug=slug)
-    rev = book.doc.revision()
+    try:
+        doc = Chunk.get(slug, chunk).doc
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
+
     changes = []
-    for change in book.doc.history().order_by('-created_at'):
+    for change in doc.history().order_by('-created_at'):
         if change.author:
             author = "%s %s <%s>" % (
                 change.author.first_name,
@@ -329,13 +364,12 @@ def history(request, slug):
         else:
             author = None
         changes.append({
-                "version": rev,
+                "version": change.revision,
                 "description": change.description,
                 "author": author,
                 "date": change.created_at,
                 "tag": [],
             })
-        rev -= 1
     return JSONResponse(changes)
 
 

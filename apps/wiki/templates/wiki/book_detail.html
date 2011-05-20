@@ -1,0 +1,17 @@
+{% extends "wiki/base.html" %}
+{% load i18n %}
+
+{% block leftcolumn %}
+
+    <h1>{{ object.title }}</h1>
+
+    <table>
+    {% for chunk in object.chunk_set.all %}
+        <tr><td>{{ chunk.number }}</td><td>{{ chunk.slug }}</td></tr>
+    {% endfor %}
+    </table>
+
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+{% endblock rightcolumn %}
