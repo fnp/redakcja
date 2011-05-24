@@ -1,10 +1,144 @@
 # encoding: utf-8
 import datetime
+import os.path
+import cPickle
+import re
+import urllib
+
+from django.conf import settings
+from django.db import models
+from mercurial import mdiff, hg, ui
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
+from slughifi import slughifi
+
+META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
+
+
+def urlunquote(url):
+    """Unqotes URL
+
+    # >>> urlunquote('Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84')
+    # u'Za\u017c\xf3\u0142\u0107_g\u0119\u015bl\u0105 ja\u017a\u0144'
+    """
+    return unicode(urllib.unquote(url), 'utf-8', 'ignore')
+
+
+def split_name(name):
+    parts = name.split('__')
+    return parts
+
+
+def file_to_title(fname):
+    """ Returns a title-like version of a filename. """
+    parts = (p.replace('_', ' ').title() for p in fname.split('__'))
+    return ' / '.join(parts)
+
+
+def make_patch(src, dst):
+    if isinstance(src, unicode):
+        src = src.encode('utf-8')
+    if isinstance(dst, unicode):
+        dst = dst.encode('utf-8')
+    return cPickle.dumps(mdiff.textdiff(src, dst))
+
+
+def plain_text(text):
+    return re.sub(META_REGEX, '', text, 1)
+
+
+def gallery(slug, text):
+    result = {}
+
+    m = re.match(META_REGEX, text)
+    if m:
+        for line in m.group(1).split('\n'):
+            try:
+                k, v = line.split(':', 1)
+                result[k.strip()] = v.strip()
+            except ValueError:
+                continue
+
+    gallery = result.get('gallery', slughifi(slug))
+
+    if gallery.startswith('/'):
+        gallery = os.path.basename(gallery)
+
+    return gallery
+
+
+def migrate_file_from_hg(orm, fname, entry):
+    fname = urlunquote(fname)
+    print fname
+    if fname.endswith('.xml'):
+        fname = fname[:-4]
+    title = file_to_title(fname)
+    fname = slughifi(fname)
+    # create all the needed objects
+    # what if it already exists?
+    book = orm.Book.objects.create(
+        title=title,
+        slug=fname)
+    chunk = orm.Chunk.objects.create(
+        book=book,
+        number=1,
+        slug='1',
+        comment='cz. 1')
+    head = orm['dvcs.Change'].objects.create(
+        tree=chunk,
+        revision=-1,
+        patch=make_patch('', ''),
+        created_at=datetime.datetime.fromtimestamp(entry.filectx(0).date()[0]),
+        description=''
+        )
+    chunk.head = head
+    old_data = ''
+
+    maxrev = entry.filerev()
+    gallery_link = None;
+    for rev in xrange(maxrev + 1):
+        # TODO: author, tags, gallery
+        fctx = entry.filectx(rev)
+        data = fctx.data()
+        gallery_link = gallery(fname, data)
+        data = plain_text(data)
+        head = orm['dvcs.Change'].objects.create(
+            tree=chunk,
+            revision=rev + 1,
+            patch=make_patch(old_data, data),
+            created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
+            description=fctx.description().decode("utf-8", 'replace'),
+            parent=chunk.head
+            )
+        chunk.head = head
+        old_data = data
+    chunk.save()
+    if gallery_link:
+        book.gallery = gallery_link
+        book.save()
+
+
+def migrate_from_hg(orm):
+    try:
+        hg_path = settings.WIKI_REPOSITORY_PATH
+    except:
+        pass
+
+    print 'migrate from', hg_path
+    repo = hg.repository(ui.ui(), hg_path)
+    tip = repo['tip']
+    for fname in tip:
+        if fname.startswith('.'):
+            continue
+        migrate_file_from_hg(orm, fname, tip[fname])
+
 
 class Migration(SchemaMigration):
+
+    depends_on = [
+        ('dvcs', '0001_initial'),
+    ]
 
     def forwards(self, orm):
         
@@ -35,6 +169,8 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'Chunk', fields ['book', 'slug']
         db.create_unique('wiki_chunk', ['book_id', 'slug'])
 
+        if not db.dry_run:
+            migrate_from_hg(orm)
 
     def backwards(self, orm):
         
