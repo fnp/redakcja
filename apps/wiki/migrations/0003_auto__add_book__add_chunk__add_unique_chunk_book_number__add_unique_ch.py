@@ -21,12 +21,11 @@ class Migration(SchemaMigration):
 
         # Adding model 'Chunk'
         db.create_table('wiki_chunk', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('document_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['dvcs.Document'], unique=True, primary_key=True)),
             ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.Book'])),
             ('number', self.gf('django.db.models.fields.IntegerField')()),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
             ('comment', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('doc', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'], unique=True)),
         ))
         db.send_create_signal('wiki', ['Chunk'])
 
@@ -92,7 +91,7 @@ class Migration(SchemaMigration):
         'dvcs.change': {
             'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
@@ -117,11 +116,10 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'wiki.chunk': {
-            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
+            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk', '_ormbases': ['dvcs.Document']},
             'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.Book']"}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'doc': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']", 'unique': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'document_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['dvcs.Document']", 'unique': 'True', 'primary_key': 'True'}),
             'number': ('django.db.models.fields.IntegerField', [], {}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
         },

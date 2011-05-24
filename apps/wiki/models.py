@@ -6,6 +6,7 @@
 import itertools
 import re
 
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -46,8 +47,17 @@ class Book(models.Model):
         """
         instance = cls(*args, **kwargs)
         instance.save()
-        instance.chunk_set.all()[0].doc.commit(author=creator, text=text)
+        instance[0].commit(author=creator, text=text)
         return instance
+
+    def __iter__(self):
+        return iter(self.chunk_set.all())
+
+    def __getitem__(self, chunk):
+        return self.chunk_set.all()[chunk]
+
+    def __len__(self):
+        return self.chunk_set.count()
 
     @staticmethod
     def trim(text, trim_begin=True, trim_end=True):
@@ -73,8 +83,8 @@ class Book(models.Model):
         texts = []
         trim_begin = False
         text = ''
-        for chunk in self.chunk_set.all():
-            next_text = chunk.doc.materialize()
+        for chunk in self:
+            next_text = chunk.materialize()
             if not next_text:
                 continue
             if text:
@@ -96,14 +106,13 @@ class Book(models.Model):
 models.signals.post_save.connect(Book.listener_create, sender=Book)
 
 
-class Chunk(models.Model):
+class Chunk(dvcs_models.Document):
     """ An editable chunk of text. Every Book text is divided into chunks. """
 
     book = models.ForeignKey(Book)
     number = models.IntegerField()
     slug = models.SlugField()
     comment = models.CharField(max_length=255)
-    doc = models.ForeignKey(dvcs_models.Document, editable=False, unique=True, null=True)
 
     class Meta:
         unique_together = [['book', 'number'], ['book', 'slug']]
@@ -112,10 +121,8 @@ class Chunk(models.Model):
     def __unicode__(self):
         return "%d-%d: %s" % (self.book_id, self.number, self.comment)
 
-    def save(self, *args, **kwargs):
-        if self.doc is None:
-            self.doc = dvcs_models.Document.objects.create()
-        super(Chunk, self).save(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse("wiki_editor", args=[self.book.slug, self.slug])
 
     @classmethod
     def get(cls, slug, chunk=None):
@@ -126,7 +133,7 @@ class Chunk(models.Model):
 
     def pretty_name(self):
         return "%s, %s (%d/%d)" % (self.book.title, self.comment, 
-                self.number, self.book.chunk_set.count())
+                self.number, len(self.book))
 
 
 

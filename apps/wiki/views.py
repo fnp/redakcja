@@ -206,7 +206,7 @@ def upload(request):
 @decorator_from_middleware(GZipMiddleware)
 def text(request, slug, chunk=None):
     try:
-        doc = Chunk.get(slug, chunk).doc
+        doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
 
@@ -290,7 +290,7 @@ def revert(request, slug, chunk=None):
     form = DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
         try:
-            doc = Chunk.get(slug, chunk).doc
+            doc = Chunk.get(slug, chunk)
         except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
             raise Http404
 
@@ -356,7 +356,7 @@ def diff(request, slug, chunk=None):
         revB = None
 
     try:
-        doc = Chunk.get(slug, chunk).doc
+        doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
     docA = doc.at_revision(revA).materialize()
@@ -369,7 +369,7 @@ def diff(request, slug, chunk=None):
 @never_cache
 def revision(request, slug, chunk=None):
     try:
-        doc = Chunk.get(slug, chunk).doc
+        doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
     return http.HttpResponse(str(doc.revision()))
@@ -379,7 +379,7 @@ def revision(request, slug, chunk=None):
 def history(request, slug, chunk=None):
     # TODO: pagination
     try:
-        doc = Chunk.get(slug, chunk).doc
+        doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
 

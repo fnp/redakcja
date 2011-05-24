@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -26,7 +28,8 @@ class Change(models.Model):
                         related_name="merge_children")
 
     description = models.TextField(blank=True, default='')
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(editable=False, db_index=True, 
+                        default=datetime.now)
 
     class Meta:
         ordering = ('created_at',)
@@ -158,12 +161,12 @@ class Document(models.Model):
         return self.head
 
     def history(self):
-        return self.change_set.filter(revision__gt=0)
+        return self.change_set.filter(revision__gt=-1)
 
     def revision(self):
         rev = self.change_set.aggregate(
                 models.Max('revision'))['revision__max']
-        return rev if rev is not None else 0
+        return rev if rev is not None else -1
 
     def at_revision(self, rev):
         if rev:
@@ -173,12 +176,15 @@ class Document(models.Model):
 
     @staticmethod
     def listener_initial_commit(sender, instance, created, **kwargs):
+        # run for Document and its subclasses
+        if not isinstance(instance, Document):
+            return
         if created:
             instance.head = Change.objects.create(
-                    revision=0,
+                    revision=-1,
                     author=instance.creator,
                     patch=Change.make_patch('', ''),
                     tree=instance)
             instance.save()
 
-models.signals.post_save.connect(Document.listener_initial_commit, sender=Document)
+models.signals.post_save.connect(Document.listener_initial_commit)

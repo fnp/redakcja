@@ -41,9 +41,9 @@ $(function() {
                                 href="{% url wiki_editor book.slug %}">
                                 [{% trans "edit" %}]</a>
                     {% else %}
-                        {% for chunk in book.chunk_set.all %}
+                        {% for chunk in book %}
                             <a target="_blank" data-id="{{ book.slug }}"
-                                href="{% url wiki_editor book.slug chunk.slug %}">
+                                href="{{ chunk.get_absolute_url }}">
                                 [<span class='chunkno'>{{ forloop.counter }}.</span>
                                 {{ chunk.comment }}</a>]<br/>
                         {% endfor %}
