@@ -85,7 +85,7 @@ function xml2html(options) {
             source.text('');
             options.error(error.text(), source_text);
         } else {
-            options.success(doc.firstChild);
+            options.success(doc.childNodes);
 
             withThemes(function(canonThemes) {
                 if (canonThemes != null) {
