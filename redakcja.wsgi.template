@@ -14,6 +14,7 @@ sys.stdout = sys.stderr
 sys.path = [
     '$APP_DIR',
 	'$APP_DIR/lib',
+	'$APP_DIR/lib/librarian',
 	'$APP_DIR/apps',
 ] + sys.path
 

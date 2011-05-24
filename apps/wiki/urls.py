@@ -49,8 +49,11 @@ urlpatterns = patterns('wiki.views',
     url(r'^diff/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'diff', name="wiki_diff"),
     #url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
 
-    url(r'^full/(?P<slug>[^/]+)/$', 'compiled', name="wiki_compiled"),
+    url(r'^book/(?P<slug>[^/]+)/$', 'book', name="wiki_book"),
+    url(r'^book/(?P<slug>[^/]+)/xml$', 'book_xml', name="wiki_book_xml"),
+    url(r'^book/(?P<slug>[^/]+)/txt$', 'book_txt', name="wiki_book_txt"),
+    url(r'^book/(?P<slug>[^/]+)/html$', 'book_html', name="wiki_book_html"),
+    #url(r'^book/(?P<slug>[^/]+)/epub$', 'book_epub', name="wiki_book_epub"),
+    #url(r'^book/(?P<slug>[^/]+)/pdf$', 'book_pdf', name="wiki_book_pdf"),
 
-    url(r'^book/(?P<slug>[^/]+)/$', object_detail, 
-        {"queryset": Book.objects.all()}, name="wiki_book"),
 )

@@ -18,40 +18,40 @@
 		var base_path = "/documents";
 
 		if (vname == "ajax_document_text") {
-			var path = "/text/" + arguments[1];
+			var path = "/text/" + arguments[1] + '/';
 
 		if (arguments[2] !== undefined)
-				path += "/" + arguments[2];
+				path += arguments[2] + '/';
 
 			return base_path + path;
 		}
 
         if (vname == "ajax_document_revert") {
-            return base_path + "/revert/" + arguments[1];
+            return base_path + "/revert/" + arguments[1] + '/';
         }
 
 
 		if (vname == "ajax_document_history") {
 
-			return base_path + "/history/" + arguments[1];
+			return base_path + "/history/" + arguments[1] + '/';
 		}
 
 		if (vname == "ajax_document_gallery") {
 
-			return base_path + "/gallery/" + arguments[1];
+			return base_path + "/gallery/" + arguments[1] + '/';
 		}
 
 		if (vname == "ajax_document_diff")
-			return base_path + "/diff/" + arguments[1];
+			return base_path + "/diff/" + arguments[1] + '/';
 
         if (vname == "ajax_document_rev")
-            return base_path + "/rev/" + arguments[1];
+            return base_path + "/rev/" + arguments[1] + '/';
 
 		if (vname == "ajax_document_addtag")
-			return base_path + "/tags/" + arguments[1];
+			return base_path + "/tags/" + arguments[1] + '/';
 
 		if (vname == "ajax_publish")
-			return base_path + "/publish/" + arguments[1];
+			return base_path + "/publish/" + arguments[1] + '/';
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";

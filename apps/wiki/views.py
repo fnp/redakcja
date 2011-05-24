@@ -1,6 +1,9 @@
 import os
+from StringIO import StringIO
 import logging
 logger = logging.getLogger("fnp.wiki")
+
+from lxml import etree
 
 from django.conf import settings
 
@@ -21,6 +24,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import decorator_from_middleware
 from django.middleware.gzip import GZipMiddleware
 
+import librarian.html
+import librarian.text
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -247,11 +252,35 @@ def text(request, slug, chunk=None):
 
 
 @never_cache
-def compiled(request, slug):
-    text = get_object_or_404(Book, slug=slug).materialize()
+def book_xml(request, slug):
+    xml = get_object_or_404(Book, slug=slug).materialize()
     
-    response = http.HttpResponse(text, content_type='application/xml', mimetype='application/wl+xml')
+    response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
+    return response
+
+
+@never_cache
+def book_txt(request, slug):
+    xml = get_object_or_404(Book, slug=slug).materialize()
+    output = StringIO()
+    # errors?
+    librarian.text.transform(StringIO(xml), output)
+    text = output.getvalue()
+    response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
+    return response
+
+
+@never_cache
+def book_html(request, slug):
+    xml = get_object_or_404(Book, slug=slug).materialize()
+    output = StringIO()
+    # errors?
+    librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
+                             flags=['full-page'])
+    html = output.getvalue()
+    response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     return response
 
 
@@ -371,6 +400,14 @@ def history(request, slug, chunk=None):
                 "tag": [],
             })
     return JSONResponse(changes)
+
+
+def book(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+
+    return direct_to_template(request, "wiki/book_detail.html", extra_context={
+        "book": book,
+    })
 
 
 

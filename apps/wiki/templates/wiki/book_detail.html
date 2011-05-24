@@ -3,15 +3,29 @@
 
 {% block leftcolumn %}
 
-    <h1>{{ object.title }}</h1>
+    <h1>{{ book.title }}</h1>
 
-    <table>
-    {% for chunk in object.chunk_set.all %}
-        <tr><td>{{ chunk.number }}</td><td>{{ chunk.slug }}</td></tr>
+<p>
+    {% for chunk in book.chunk_set.all %}
+        <a target="_blank" href="{% url wiki_editor book.slug chunk.slug %}">{{ chunk.comment }}</a><br/>
     {% endfor %}
-    </table>
+</p>
+
+<p>
+<a href="{% url wiki_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
+<a target="_blank" href="{% url wiki_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
+<a href="{% url wiki_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
+{% comment %}
+<a href="{% url wiki_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
+<a href="{% url wiki_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
+{% endcomment %}
+</p>
+
+<p style='width:200px; height: 75px; border: 1px dotted gray; border-corners: 4px;'></p>
 
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
+
+
 {% endblock rightcolumn %}
