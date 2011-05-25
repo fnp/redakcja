@@ -32,21 +32,23 @@ $(function() {
 		<tbody>
     	{% for book in books %}
             <tr>
-                <td><a target="_blank" data-id="{{ book.slug }}"
-                    href="{% url wiki_book book.slug %}">{{ book.title }}</a>
-                </td>
-                <td class='listitem-tools'>
+                <td colspan="3">
+                    <a target="_blank" data-id="{{ book.slug }}"
+                    href="{% url wiki_book book.slug %}">[?]</a>
                     {% ifequal book.chunk_set.count 1 %}
                         <a target="_blank" data-id="{{ book.slug }}"
                                 href="{% url wiki_editor book.slug %}">
-                                [{% trans "edit" %}]</a>
+                                {{ book.title }}</a>
                     {% else %}
+                        {{ book.title }}
+                        <div class="chunk-list">
                         {% for chunk in book %}
                             <a target="_blank" data-id="{{ book.slug }}"
                                 href="{{ chunk.get_absolute_url }}">
-                                [<span class='chunkno'>{{ forloop.counter }}.</span>
-                                {{ chunk.comment }}</a>]<br/>
+                                <span class='chunkno'>{{ forloop.counter }}.</span>
+                                {{ chunk.comment }}</a><br/>
                         {% endfor %}
+                        </div>
                     {% endifequal %}
                 </td>
 				<!-- placeholder </td> -->

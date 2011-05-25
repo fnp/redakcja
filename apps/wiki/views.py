@@ -385,17 +385,10 @@ def history(request, slug, chunk=None):
 
     changes = []
     for change in doc.history().order_by('-created_at'):
-        if change.author:
-            author = "%s %s <%s>" % (
-                change.author.first_name,
-                change.author.last_name, 
-                change.author.email)
-        else:
-            author = None
         changes.append({
                 "version": change.revision,
                 "description": change.description,
-                "author": author,
+                "author": change.author_str(),
                 "date": change.created_at,
                 "tag": [],
             })

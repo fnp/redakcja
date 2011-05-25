@@ -98,7 +98,7 @@ def migrate_file_from_hg(orm, fname, entry):
     maxrev = entry.filerev()
     gallery_link = None;
     for rev in xrange(maxrev + 1):
-        # TODO: author, tags, gallery
+        # TODO: tags
         fctx = entry.filectx(rev)
         data = fctx.data()
         gallery_link = gallery(fname, data)
@@ -109,6 +109,7 @@ def migrate_file_from_hg(orm, fname, entry):
             patch=make_patch(old_data, data),
             created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
             description=fctx.description().decode("utf-8", 'replace'),
+            author_desc=fctx.user().decode("utf-8", 'replace'),
             parent=chunk.head
             )
         chunk.head = head
@@ -227,6 +228,7 @@ class Migration(SchemaMigration):
         'dvcs.change': {
             'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'author_desc': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

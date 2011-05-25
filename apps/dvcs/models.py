@@ -15,6 +15,7 @@ class Change(models.Model):
         Data contains a pickled diff needed to reproduce the initial document.
     """
     author = models.ForeignKey(User, null=True, blank=True)
+    author_desc = models.CharField(max_length=128, null=True, blank=True)
     patch = models.TextField(blank=True)
     tree = models.ForeignKey('Document')
     revision = models.IntegerField(db_index=True)
@@ -37,6 +38,16 @@ class Change(models.Model):
 
     def __unicode__(self):
         return u"Id: %r, Tree %r, Parent %r, Patch '''\n%s'''" % (self.id, self.tree_id, self.parent_id, self.patch)
+
+    def author_str(self):
+        if self.author:
+            return "%s %s <%s>" % (
+                self.author.first_name,
+                self.author.last_name, 
+                self.author.email)
+        else:
+            return self.author_desc
+
 
     def save(self, *args, **kwargs):
         """
@@ -67,20 +78,24 @@ class Change(models.Model):
             text = change.apply_to(text)
         return text
 
-    def make_child(self, patch, author, description):
+    def make_child(self, patch, description, author=None, author_desc=None):
         return self.children.create(patch=patch,
                         tree=self.tree, author=author,
+                        author_desc=author_desc,
                         description=description)
 
-    def make_merge_child(self, patch, author, description):
+    def make_merge_child(self, patch, description, author=None, 
+            author_desc=None):
         return self.merge_children.create(patch=patch,
                         tree=self.tree, author=author,
+                        author_desc=author_desc,
                         description=description)
 
     def apply_to(self, text):
         return mdiff.patch(text, pickle.loads(self.patch.encode('ascii')))
 
-    def merge_with(self, other, author, description=u"Automatic merge."):
+    def merge_with(self, other, author=None, author_desc=None,
+            description=u"Automatic merge."):
         assert self.tree_id == other.tree_id  # same tree
         if other.parent_id == self.pk:
             # immediate child 
@@ -95,7 +110,8 @@ class Change(models.Model):
         patch = self.make_patch(local, result)
         return self.children.create(
                     patch=patch, merge_parent=other, tree=self.tree,
-                    author=author, description=description)
+                    author=author, author_desc=author_desc,
+                    description=description)
 
     def revert(self, **kwargs):
         """ commit this version of a doc as new head """
@@ -148,14 +164,20 @@ class Document(models.Model):
             patch = kwargs['patch']
 
         author = kwargs.get('author', None)
+        author_desc = kwargs.get('author_desc', None)
 
         old_head = self.head
         if parent != old_head:
-            change = parent.make_merge_child(patch, author, kwargs.get('description', ''))
+            change = parent.make_merge_child(patch, author=author, 
+                    author_desc=author_desc,
+                    description=kwargs.get('description', ''))
             # not Fast-Forward - perform a merge
-            self.head = old_head.merge_with(change, author=author)
+            self.head = old_head.merge_with(change, author=author,
+                    author_desc=author_desc)
         else:
-            self.head = parent.make_child(patch, author, kwargs.get('description', ''))
+            self.head = parent.make_child(patch, author=author, 
+                    author_desc=author_desc, 
+                    description=kwargs.get('description', ''))
 
         self.save()
         return self.head

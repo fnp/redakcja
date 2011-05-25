@@ -12,6 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('dvcs_change', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('author_desc', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
             ('patch', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('tree', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'])),
             ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
@@ -86,6 +87,7 @@ class Migration(SchemaMigration):
         'dvcs.change': {
             'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'author_desc': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
