@@ -47,7 +47,7 @@ urlpatterns = patterns('wiki.views',
     #url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="wiki_publish"),
 
     url(r'^diff/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'diff', name="wiki_diff"),
-    #url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
+    url(r'^tag/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'add_tag', name="wiki_add_tag"),
 
     url(r'^book/(?P<slug>[^/]+)/$', 'book', name="wiki_book"),
     url(r'^book/(?P<slug>[^/]+)/xml$', 'book_xml', name="wiki_book_xml"),

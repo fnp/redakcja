@@ -8,7 +8,9 @@ import re
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.template.loader import render_to_string
 
 from dvcs import models as dvcs_models
 
@@ -31,6 +33,11 @@ class Book(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children")
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True)
 
+    _list_html = models.TextField(editable=False, null=True)
+
+    class NoTextError(BaseException):
+        pass
+
     class Meta:
         ordering = ['parent_number', 'title']
         verbose_name = _('book')
@@ -38,6 +45,11 @@ class Book(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def save(self, reset_list_html=True, *args, **kwargs):
+        if reset_list_html:
+            self._list_html = None
+        return super(Book, self).save(*args, **kwargs)
 
     @classmethod
     def create(cls, creator=None, text=u'', *args, **kwargs):
@@ -59,6 +71,14 @@ class Book(models.Model):
     def __len__(self):
         return self.chunk_set.count()
 
+    def list_html(self):
+        if self._list_html is None:
+            print 'rendering', self.title
+            self._list_html = render_to_string('wiki/document_list_item.html',
+                {'book': self})
+            self.save(reset_list_html=False)
+        return mark_safe(self._list_html)
+
     @staticmethod
     def trim(text, trim_begin=True, trim_end=True):
         """ 
@@ -71,7 +91,11 @@ class Book(models.Model):
             text = RE_TRIM_END.split(text, maxsplit=1)[0]
         return text
 
-    def materialize(self):
+    @staticmethod
+    def publish_tag():
+        return dvcs_models.Tag.get('publish')
+
+    def materialize(self, tag=None):
         """ 
             Get full text of the document compiled from chunks.
             Takes the current versions of all texts for now, but it should
@@ -80,10 +104,16 @@ class Book(models.Model):
             First non-empty text's beginning isn't trimmed,
             and last non-empty text's end isn't trimmed.
         """
+        if tag:
+            changes = [chunk.last_tagged(tag) for chunk in self]
+        else:
+            changes = [chunk.head for chunk in self]
+        if None in changes:
+            raise self.NoTextError('Some chunks have no available text.')
         texts = []
         trim_begin = False
         text = ''
-        for chunk in self:
+        for chunk in changes:
             next_text = chunk.materialize()
             if not next_text:
                 continue
@@ -97,6 +127,14 @@ class Book(models.Model):
         # only trim beginning if it's not still the first non-empty
         texts.append(self.trim(text, trim_begin=trim_begin, trim_end=False))
         return "".join(texts)
+
+    def publishable(self):
+        if not len(self):
+            return False
+        for chunk in self:
+            if not chunk.publishable():
+                return False
+        return True
 
     @staticmethod
     def listener_create(sender, instance, created, **kwargs):
@@ -135,55 +173,18 @@ class Chunk(dvcs_models.Document):
         return "%s, %s (%d/%d)" % (self.book.title, self.comment, 
                 self.number, len(self.book))
 
+    def publishable(self):
+        return self.last_tagged(Book.publish_tag())
+
+    @staticmethod
+    def listener_saved(sender, instance, created, **kwargs):
+        if instance.book:
+            # save book so that its _list_html is reset
+            instance.book.save()
+
+models.signals.post_save.connect(Chunk.listener_saved, sender=Chunk)
 
 
-
-'''
-from wiki import settings, constants
-from slughifi import slughifi
-
-from django.http import Http404
-
-
-
-
-class Document(object):
-
-    def add_tag(self, tag, revision, author):
-        """ Add document specific tag """
-        logger.debug("Adding tag %s to doc %s version %d", tag, self.name, revision)
-        self.storage.vstorage.add_page_tag(self.name, revision, tag, user=author)
-
-    @property
-    def plain_text(self):
-        return re.sub(self.META_REGEX, '', self.text, 1)
-
-    def meta(self):
-        result = {}
-
-        m = re.match(self.META_REGEX, self.text)
-        if m:
-            for line in m.group(1).split('\n'):
-                try:
-                    k, v = line.split(':', 1)
-                    result[k.strip()] = v.strip()
-                except ValueError:
-                    continue
-
-        gallery = result.get('gallery', slughifi(self.name.replace(' ', '_')))
-
-        if gallery.startswith('/'):
-            gallery = os.path.basename(gallery)
-
-        result['gallery'] = gallery
-        return result
-
-    def info(self):
-        return self.storage.vstorage.page_meta(self.name, self.revision)
-
-
-
-'''
 class Theme(models.Model):
     name = models.CharField(_('name'), max_length=50, unique=True)
 

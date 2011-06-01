@@ -109,9 +109,9 @@
 					stub: $stub,
 					data: this,
 					filters: {
-						tag: function(value) {
-							return tags.filter("*[value='"+value+"']").text();
-						}
+//						tag: function(value) {
+//							return tags.filter("*[value='"+value+"']").text();
+//						}
 //                        description: function(value) {
 //						    return value.replace('\n', ');
 //						}

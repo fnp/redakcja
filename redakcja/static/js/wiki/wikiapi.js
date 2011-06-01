@@ -48,7 +48,7 @@
             return base_path + "/rev/" + arguments[1] + '/';
 
 		if (vname == "ajax_document_addtag")
-			return base_path + "/tags/" + arguments[1] + '/';
+			return base_path + "/tag/" + arguments[1] + '/';
 
 		if (vname == "ajax_publish")
 			return base_path + "/publish/" + arguments[1] + '/';

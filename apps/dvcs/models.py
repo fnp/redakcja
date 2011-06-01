@@ -6,6 +6,41 @@ from django.utils.translation import ugettext_lazy as _
 from mercurial import mdiff, simplemerge
 import pickle
 
+
+class Tag(models.Model):
+    """
+        a tag (e.g. document stage) which can be applied to a change
+    """
+
+    name = models.CharField(_('name'), max_length=64)
+    slug = models.SlugField(_('slug'), unique=True, max_length=64, 
+            null=True, blank=True)
+    ordering = models.IntegerField(_('ordering'))
+
+    _object_cache = {}
+
+    class Meta:
+        ordering = ['ordering']
+
+    def __unicode__(self):
+        return self.name
+
+    @classmethod
+    def get(cls, slug):
+        if slug in cls._object_cache:
+            return cls._object_cache[slug]
+        else:
+            obj = cls.objects.get(slug=slug)
+            cls._object_cache[slug] = obj
+            return obj
+
+    @staticmethod
+    def listener_changed(sender, instance, **kwargs):
+        sender._object_cache = {}
+
+models.signals.pre_save.connect(Tag.listener_changed, sender=Tag)
+
+
 class Change(models.Model):
     """
         Single document change related to previous change. The "parent"
@@ -31,6 +66,8 @@ class Change(models.Model):
     description = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(editable=False, db_index=True, 
                         default=datetime.now)
+
+    tags = models.ManyToManyField(Tag)
 
     class Meta:
         ordering = ('created_at',)
@@ -78,18 +115,26 @@ class Change(models.Model):
             text = change.apply_to(text)
         return text
 
-    def make_child(self, patch, description, author=None, author_desc=None):
-        return self.children.create(patch=patch,
+    def make_child(self, patch, description, author=None,
+            author_desc=None, tags=None):
+        ch = self.children.create(patch=patch,
                         tree=self.tree, author=author,
                         author_desc=author_desc,
                         description=description)
+        if tags is not None:
+            ch.tags = tags
+        return ch
 
     def make_merge_child(self, patch, description, author=None, 
-            author_desc=None):
-        return self.merge_children.create(patch=patch,
+            author_desc=None, tags=None):
+        ch = self.merge_children.create(patch=patch,
                         tree=self.tree, author=author,
                         author_desc=author_desc,
-                        description=description)
+                        description=description,
+                        tags=tags)
+        if tags is not None:
+            ch.tags = tags
+        return ch
 
     def apply_to(self, text):
         return mdiff.patch(text, pickle.loads(self.patch.encode('ascii')))
@@ -165,19 +210,22 @@ class Document(models.Model):
 
         author = kwargs.get('author', None)
         author_desc = kwargs.get('author_desc', None)
+        tags = kwargs.get('tags', [])
 
         old_head = self.head
         if parent != old_head:
             change = parent.make_merge_child(patch, author=author, 
                     author_desc=author_desc,
-                    description=kwargs.get('description', ''))
+                    description=kwargs.get('description', ''),
+                    tags=tags)
             # not Fast-Forward - perform a merge
             self.head = old_head.merge_with(change, author=author,
                     author_desc=author_desc)
         else:
             self.head = parent.make_child(patch, author=author, 
                     author_desc=author_desc, 
-                    description=kwargs.get('description', ''))
+                    description=kwargs.get('description', ''),
+                    tags=tags)
 
         self.save()
         return self.head
@@ -195,6 +243,13 @@ class Document(models.Model):
             return self.change_set.get(revision=rev)
         else:
             return self.head
+
+    def last_tagged(self, tag):
+        changes = tag.change_set.filter(tree=self).order_by('-created_at')[:1]
+        if changes.count():
+            return changes[0]
+        else:
+            return None
 
     @staticmethod
     def listener_initial_commit(sender, instance, created, **kwargs):

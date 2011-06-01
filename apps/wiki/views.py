@@ -17,7 +17,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404
 
 from wiki.models import Book, Chunk, Theme
-from wiki.forms import DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm
+from wiki.forms import (DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm,
+        ChunkFormSet)
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -213,9 +214,6 @@ def text(request, slug, chunk=None):
     if request.method == 'POST':
         form = DocumentTextSaveForm(request.POST, prefix="textsave")
         if form.is_valid():
-            # TODO:
-            # - stage completion should be stored (as a relation)
-
             if request.user.is_authenticated():
                 author = request.user
             else:
@@ -223,10 +221,13 @@ def text(request, slug, chunk=None):
             text = form.cleaned_data['text']
             parent_revision = form.cleaned_data['parent_revision']
             parent = doc.at_revision(parent_revision)
+            stage = form.cleaned_data['stage_completed']
+            tags = [stage] if stage else []
             doc.commit(author=author,
                        text=text,
                        parent=parent,
                        description=form.cleaned_data['comment'],
+                       tags=tags,
                        )
             revision = doc.revision()
             return JSONResponse({
@@ -253,8 +254,8 @@ def text(request, slug, chunk=None):
 
 @never_cache
 def book_xml(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
-    
+    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
+
     response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
     return response
@@ -262,7 +263,7 @@ def book_xml(request, slug):
 
 @never_cache
 def book_txt(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
+    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
     output = StringIO()
     # errors?
     librarian.text.transform(StringIO(xml), output)
@@ -274,7 +275,7 @@ def book_txt(request, slug):
 
 @never_cache
 def book_html(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
+    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
     output = StringIO()
     # errors?
     librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
@@ -390,7 +391,7 @@ def history(request, slug, chunk=None):
                 "description": change.description,
                 "author": change.author_str(),
                 "date": change.created_at,
-                "tag": [],
+                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
             })
     return JSONResponse(changes)
 
@@ -403,26 +404,26 @@ def book(request, slug):
     })
 
 
-
-"""
-import wlapi
-
-
 @require_POST
 @ajax_require_permission('wiki.can_change_tags')
-def add_tag(request, name):
-    name = normalize_name(name)
-    storage = getstorage()
-
+def add_tag(request, slug, chunk=None):
     form = DocumentTagForm(request.POST, prefix="addtag")
     if form.is_valid():
-        doc = storage.get_or_404(form.cleaned_data['id'])
-        doc.add_tag(tag=form.cleaned_data['tag'],
-                    revision=form.cleaned_data['revision'],
-                    author=request.user.username)
+        try:
+            doc = Chunk.get(slug, chunk)
+        except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+            raise Http404
+
+        tag = form.cleaned_data['tag']
+        revision = revision=form.cleaned_data['revision']
+        doc.at_revision(revision).tags.add(tag)
         return JSONResponse({"message": _("Tag added")})
     else:
         return JSONFormInvalid(form)
+
+
+"""
+import wlapi
 
 
 @require_POST

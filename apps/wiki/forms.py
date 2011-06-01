@@ -4,10 +4,10 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
-from wiki.constants import DOCUMENT_TAGS, DOCUMENT_STAGES
 from wiki.models import Book
 from django.utils.translation import ugettext_lazy as _
 
+from dvcs.models import Tag
 
 class DocumentTagForm(forms.Form):
     """
@@ -15,7 +15,7 @@ class DocumentTagForm(forms.Form):
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
-    tag = forms.ChoiceField(choices=DOCUMENT_TAGS)
+    tag = forms.ModelChoiceField(queryset=Tag.objects.all())
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
@@ -98,8 +98,8 @@ class DocumentTextSaveForm(forms.Form):
         help_text=_(u"Describe changes you made."),
     )
 
-    stage_completed = forms.ChoiceField(
-        choices=DOCUMENT_STAGES,
+    stage_completed = forms.ModelChoiceField(
+        queryset=Tag.objects.all(),
         required=False,
         label=_(u"Completed"),
         help_text=_(u"If you completed a life cycle stage, select it."),
