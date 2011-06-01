@@ -13,14 +13,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from dvcs import models as dvcs_models
-
+from wiki.xml_tools import compile_text
 
 import logging
 logger = logging.getLogger("fnp.wiki")
-
-
-RE_TRIM_BEGIN = re.compile("^<!-- TRIM_BEGIN -->$", re.M)
-RE_TRIM_END = re.compile("^<!-- TRIM_END -->$", re.M)
 
 
 class Book(models.Model):
@@ -45,6 +41,9 @@ class Book(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("wiki_book", args=[self.slug])
 
     def save(self, reset_list_html=True, *args, **kwargs):
         if reset_list_html:
@@ -80,29 +79,14 @@ class Book(models.Model):
         return mark_safe(self._list_html)
 
     @staticmethod
-    def trim(text, trim_begin=True, trim_end=True):
-        """ 
-            Cut off everything before RE_TRIM_BEGIN and after RE_TRIM_END, so
-            that eg. one big XML file can be compiled from many small XML files.
-        """
-        if trim_begin:
-            text = RE_TRIM_BEGIN.split(text, maxsplit=1)[-1]
-        if trim_end:
-            text = RE_TRIM_END.split(text, maxsplit=1)[0]
-        return text
-
-    @staticmethod
     def publish_tag():
         return dvcs_models.Tag.get('publish')
 
     def materialize(self, tag=None):
         """ 
             Get full text of the document compiled from chunks.
-            Takes the current versions of all texts for now, but it should
-            be possible to specify a tag or a point in time for compiling.
-
-            First non-empty text's beginning isn't trimmed,
-            and last non-empty text's end isn't trimmed.
+            Takes the current versions of all texts
+            or versions most recently tagged by a given tag.
         """
         if tag:
             changes = [chunk.last_tagged(tag) for chunk in self]
@@ -110,23 +94,7 @@ class Book(models.Model):
             changes = [chunk.head for chunk in self]
         if None in changes:
             raise self.NoTextError('Some chunks have no available text.')
-        texts = []
-        trim_begin = False
-        text = ''
-        for chunk in changes:
-            next_text = chunk.materialize()
-            if not next_text:
-                continue
-            if text:
-                # trim the end, because there's more non-empty text
-                # don't trim beginning, if `text' is the first non-empty part
-                texts.append(self.trim(text, trim_begin=trim_begin))
-                trim_begin = True
-            text = next_text
-        # don't trim the end, because there's no more text coming after `text'
-        # only trim beginning if it's not still the first non-empty
-        texts.append(self.trim(text, trim_begin=trim_begin, trim_end=False))
-        return "".join(texts)
+        return compile_text(change.materialize() for change in changes)
 
     def publishable(self):
         if not len(self):
@@ -135,6 +103,48 @@ class Book(models.Model):
             if not chunk.publishable():
                 return False
         return True
+
+    def make_chunk_slug(self, proposed):
+        """ 
+            Finds a chunk slug not yet used in the book.
+        """
+        slugs = set(c.slug for c in self)
+        i = 1
+        new_slug = proposed
+        while new_slug in slugs:
+            new_slug = "%s-%d" % (proposed, i)
+            i += 1
+        return new_slug
+
+    def append(self, other):
+        number = self[len(self) - 1].number + 1
+        single = len(other) == 1
+        for chunk in other:
+            # move chunk to new book
+            chunk.book = self
+            chunk.number = number
+
+            # try some title guessing
+            if other.title.startswith(self.title):
+                other_title_part = other.title[len(self.title):].lstrip(' /')
+            else:
+                other_title_part = other.title
+
+            if single:
+                # special treatment for appending one-parters:
+                # just use the guessed title and original book slug
+                chunk.comment = other_title_part
+                if other.slug.startswith(self.slug):
+                    chunk_slug = other.slug[len(self.slug):].lstrip('-_')
+                else:
+                    chunk_slug = other.slug
+                chunk.slug = self.make_chunk_slug(chunk_slug)
+            else:
+                chunk.comment = "%s, %s" % (other_title_part, chunk.comment)
+                chunk.slug = self.make_chunk_slug(chunk.slug)
+            chunk.save()
+            number += 1
+        other.delete()
 
     @staticmethod
     def listener_create(sender, instance, created, **kwargs):
@@ -147,7 +157,7 @@ models.signals.post_save.connect(Book.listener_create, sender=Book)
 class Chunk(dvcs_models.Document):
     """ An editable chunk of text. Every Book text is divided into chunks. """
 
-    book = models.ForeignKey(Book)
+    book = models.ForeignKey(Book, editable=False)
     number = models.IntegerField()
     slug = models.SlugField()
     comment = models.CharField(max_length=255)
@@ -175,6 +185,14 @@ class Chunk(dvcs_models.Document):
 
     def publishable(self):
         return self.last_tagged(Book.publish_tag())
+
+    def split(self, slug, comment='', creator=None):
+        """ Create an empty chunk after this one """
+        self.book.chunk_set.filter(number__gt=self.number).update(
+                number=models.F('number')+1)
+        new_chunk = self.book.chunk_set.create(number=self.number+1,
+                creator=creator, slug=slug, comment=comment)
+        return new_chunk
 
     @staticmethod
     def listener_saved(sender, instance, created, **kwargs):

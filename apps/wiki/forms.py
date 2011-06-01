@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
-from wiki.models import Book
+from wiki.models import Book, Chunk
 from django.utils.translation import ugettext_lazy as _
 
 from dvcs.models import Tag
@@ -135,3 +135,57 @@ class DocumentTextRevertForm(forms.Form):
         label=_(u"Your comments"),
         help_text=_(u"Describe the reason for reverting."),
     )
+
+
+class ChunkForm(forms.ModelForm):
+    """
+        Form used for editing a chunk.
+    """
+
+    class Meta:
+        model = Chunk
+        exclude = ['number']
+
+    def clean_slug(self):
+        slug = self.cleaned_data['slug']
+        try:
+            chunk = Chunk.objects.get(book=self.instance.book, slug=slug)
+        except Chunk.DoesNotExist:
+            return slug
+        if chunk == self:
+            return slug
+        raise forms.ValidationError(_('Chunk with this slug already exists'))
+
+
+class ChunkAddForm(ChunkForm):
+    """
+        Form used for adding a chunk to a document.
+    """
+
+    def clean_slug(self):
+        slug = self.cleaned_data['slug']
+        try:
+            user = Chunk.objects.get(book=self.instance.book, slug=slug)
+        except Chunk.DoesNotExist:
+            return slug
+        raise forms.ValidationError(_('Chunk with this slug already exists'))
+
+
+
+
+class BookAppendForm(forms.Form):
+    """
+        Form for appending a book to another book.
+        It means moving all chunks from book A to book B and deleting A.
+    """
+
+    append_to = forms.ModelChoiceField(queryset=Book.objects.all())
+
+
+class BookForm(forms.ModelForm):
+    """
+        Form used for editing a Book.
+    """
+
+    class Meta:
+        model = Book

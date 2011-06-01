@@ -3,25 +3,51 @@
 
 {% block leftcolumn %}
 
+<a href="{% url wiki_book_edit book.slug %}">{% trans "edit" %}</a>
     <h1>{{ book.title }}</h1>
 
-<p>
-    {% for chunk in book %}
-        <a target="_blank" href="{{ chunk.get_absolute_url }}">{{ chunk.comment }}</a><br/>
+<table>
+    {% for c in chunks %}
+        <tr class="chunk-row
+        {% if c.graded.is_wl %}
+            chunk-wl
+            {% if c.graded.bad_master %}
+                chunk-bad-master
+            {% endif %}
+        {% else %}
+            {% if c.graded.is_xml %}
+                chunk-xml
+            {% else %}
+                chunk-plain
+            {% endif %}
+        {% endif %}
+        ">
+        <td><a target="_blank" href="{{ c.chunk.get_absolute_url }}">{{ c.chunk.comment }}</a></td>
+        <td>{% if c.chunk.publishable %}P{% endif %}</td>
+        <td><a href="{% url wiki_chunk_edit book.slug c.chunk.slug%}">[{% trans "edit" %}]</a></td>
+        <td>{% if c.bad_master %}{{ c.bad_master }}{% endif %}</td>
+        <td><a href="{% url wiki_chunk_add book.slug c.chunk.slug %}">[+]</a></td>
+        </tr>
     {% endfor %}
-</p>
+</table>
 
-<p>
-<a href="{% url wiki_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
-<a target="_blank" href="{% url wiki_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
-<a href="{% url wiki_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
-{% comment %}
-<a href="{% url wiki_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
-<a href="{% url wiki_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
-{% endcomment %}
-</p>
+<p><a href="{% url wiki_book_append book.slug %}">{% trans "Append to other book" %}</a></p>
 
-<p style='width:200px; height: 75px; border: 1px dotted gray; border-corners: 4px;'></p>
+{% if book.publishable %}
+    <p>
+    <a href="{% url wiki_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
+    <a target="_blank" href="{% url wiki_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
+    <a href="{% url wiki_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
+    {% comment %}
+    <a href="{% url wiki_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
+    <a href="{% url wiki_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
+    {% endcomment %}
+    </p>
+
+    <p style='width:200px; height: 75px; border: 1px dotted gray; border-corners: 4px;'></p>
+{% else %}
+    {% trans "This book cannot be published yet" %}
+{% endif %}
 
 {% endblock leftcolumn %}
 

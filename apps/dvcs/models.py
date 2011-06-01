@@ -167,10 +167,11 @@ class Document(models.Model):
     """
         File in repository.        
     """
-    creator = models.ForeignKey(User, null=True, blank=True)
+    creator = models.ForeignKey(User, null=True, blank=True, editable=False)
     head = models.ForeignKey(Change,
                     null=True, blank=True, default=None,
-                    help_text=_("This document's current head."))
+                    help_text=_("This document's current head."),
+                    editable=False)
 
     def __unicode__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)

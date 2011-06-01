@@ -98,3 +98,14 @@ td {
 .chunk-list {
     padding-left: 2em;
 }
+
+
+.chunk-wl {
+    background-color: #afa;
+}
+.chunk-plain {
+    background-color: #aaa;
+}
+.chunk-xml {
+    background-color: #faa;
+}

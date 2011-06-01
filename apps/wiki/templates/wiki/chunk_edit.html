@@ -1,0 +1,13 @@
+{% extends "wiki/base.html" %}
+{% load i18n %}
+
+{% block leftcolumn %}
+	<form enctype="multipart/form-data" method="POST" action="">
+	{{ form.as_p }}
+
+	<p><button type="submit">{% trans "Save" %}</button></p>
+	</form>
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+{% endblock rightcolumn %}

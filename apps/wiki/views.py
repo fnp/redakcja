@@ -17,8 +17,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404
 
 from wiki.models import Book, Chunk, Theme
-from wiki.forms import (DocumentTextSaveForm, DocumentTextRevertForm, DocumentTagForm, DocumentCreateForm, DocumentsUploadForm,
-        ChunkFormSet)
+from wiki import forms
 from datetime import datetime
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -27,6 +26,7 @@ from django.middleware.gzip import GZipMiddleware
 
 import librarian.html
 import librarian.text
+from wiki.xml_tools import GradedText
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -79,9 +79,9 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
     return direct_to_template(request, template_name, extra_context={
         'chunk': chunk,
         'forms': {
-            "text_save": DocumentTextSaveForm(prefix="textsave"),
-            "text_revert": DocumentTextRevertForm(prefix="textrevert"),
-            "add_tag": DocumentTagForm(prefix="addtag"),
+            "text_save": forms.DocumentTextSaveForm(prefix="textsave"),
+            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
+            "add_tag": forms.DocumentTagForm(prefix="addtag"),
         },
         'REDMINE_URL': settings.REDMINE_URL,
     })
@@ -119,7 +119,7 @@ def create_missing(request, slug):
     slug = slug.replace(' ', '-')
 
     if request.method == "POST":
-        form = DocumentCreateForm(request.POST, request.FILES)
+        form = forms.DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
             
             if request.user.is_authenticated():
@@ -134,7 +134,7 @@ def create_missing(request, slug):
 
             return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
     else:
-        form = DocumentCreateForm(initial={
+        form = forms.DocumentCreateForm(initial={
                 "slug": slug,
                 "title": slug.replace('-', ' ').title(),
         })
@@ -147,7 +147,7 @@ def create_missing(request, slug):
 
 def upload(request):
     if request.method == "POST":
-        form = DocumentsUploadForm(request.POST, request.FILES)
+        form = forms.DocumentsUploadForm(request.POST, request.FILES)
         if form.is_valid():
             import slughifi
 
@@ -196,7 +196,7 @@ def upload(request):
                 "error_list": error_list,
             })
     else:
-        form = DocumentsUploadForm()
+        form = forms.DocumentsUploadForm()
 
     return direct_to_template(request, "wiki/document_upload.html", extra_context={
         "form": form,
@@ -212,7 +212,7 @@ def text(request, slug, chunk=None):
         raise Http404
 
     if request.method == 'POST':
-        form = DocumentTextSaveForm(request.POST, prefix="textsave")
+        form = forms.DocumentTextSaveForm(request.POST, prefix="textsave")
         if form.is_valid():
             if request.user.is_authenticated():
                 author = request.user
@@ -288,7 +288,7 @@ def book_html(request, slug):
 @never_cache
 @require_POST
 def revert(request, slug, chunk=None):
-    form = DocumentTextRevertForm(request.POST, prefix="textrevert")
+    form = forms.DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
         try:
             doc = Chunk.get(slug, chunk)
@@ -399,15 +399,118 @@ def history(request, slug, chunk=None):
 def book(request, slug):
     book = get_object_or_404(Book, slug=slug)
 
+    # do we need some automation?
+    some_wl = False
+    first_master = None
+    chunks = []
+
+    for chunk in book:
+        graded = GradedText(chunk.materialize())
+        chunk_dict = {
+            "chunk": chunk,
+            "graded": graded,
+            }
+        if graded.is_wl():
+            some_wl = True
+            master = graded.master()
+            if first_master is None:
+                first_master = master
+            elif master != first_master:
+                chunk_dict['bad_master'] = master
+        chunks.append(chunk_dict)
+
     return direct_to_template(request, "wiki/book_detail.html", extra_context={
         "book": book,
+        "chunks": chunks,
+        "some_wl": some_wl,
+        "first_master": first_master,
+    })
+
+
+def chunk_add(request, slug, chunk):
+    try:
+        doc = Chunk.get(slug, chunk)
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
+
+    if request.method == "POST":
+        form = forms.ChunkAddForm(request.POST, instance=doc)
+        if form.is_valid():
+            if request.user.is_authenticated():
+                creator = request.user
+            else:
+                creator = None
+            doc.split(creator=creator,
+                slug=form.cleaned_data['slug'],
+                comment=form.cleaned_data['comment'],
+            )
+
+            return http.HttpResponseRedirect(doc.book.get_absolute_url())
+    else:
+        form = forms.ChunkAddForm(initial={
+                "slug": str(doc.number + 1),
+                "comment": "cz. %d" % (doc.number + 1, ),
+        })
+
+    return direct_to_template(request, "wiki/chunk_add.html", extra_context={
+        "chunk": doc,
+        "form": form,
+    })
+
+
+def chunk_edit(request, slug, chunk):
+    try:
+        doc = Chunk.get(slug, chunk)
+    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+        raise Http404
+    if request.method == "POST":
+        form = forms.ChunkForm(request.POST, instance=doc)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(doc.book.get_absolute_url())
+    else:
+        form = forms.ChunkForm(instance=doc)
+    return direct_to_template(request, "wiki/chunk_edit.html", extra_context={
+        "chunk": doc,
+        "form": form,
+    })
+
+
+def book_append(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if request.method == "POST":
+        form = forms.BookAppendForm(request.POST)
+        if form.is_valid():
+            append_to = form.cleaned_data['append_to']
+            append_to.append(book)
+            return http.HttpResponseRedirect(append_to.get_absolute_url())
+    else:
+        form = forms.BookAppendForm()
+    return direct_to_template(request, "wiki/book_append_to.html", extra_context={
+        "book": book,
+        "form": form,
+    })
+
+
+def book_edit(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if request.method == "POST":
+        form = forms.BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(book.get_absolute_url())
+    else:
+        form = forms.BookForm(instance=book)
+    return direct_to_template(request, "wiki/book_edit.html", extra_context={
+        "book": book,
+        "form": form,
     })
 
 
 @require_POST
 @ajax_require_permission('wiki.can_change_tags')
 def add_tag(request, slug, chunk=None):
-    form = DocumentTagForm(request.POST, prefix="addtag")
+    form = forms.DocumentTagForm(request.POST, prefix="addtag")
     if form.is_valid():
         try:
             doc = Chunk.get(slug, chunk)

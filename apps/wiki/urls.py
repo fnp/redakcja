@@ -55,5 +55,13 @@ urlpatterns = patterns('wiki.views',
     url(r'^book/(?P<slug>[^/]+)/html$', 'book_html', name="wiki_book_html"),
     #url(r'^book/(?P<slug>[^/]+)/epub$', 'book_epub', name="wiki_book_epub"),
     #url(r'^book/(?P<slug>[^/]+)/pdf$', 'book_pdf', name="wiki_book_pdf"),
+    url(r'^chunk_add/(?P<slug>[^/]+)/(?P<chunk>[^/]+)/$',
+        'chunk_add', name="wiki_chunk_add"),
+    url(r'^chunk_edit/(?P<slug>[^/]+)/(?P<chunk>[^/]+)/$',
+        'chunk_edit', name="wiki_chunk_edit"),
+    url(r'^book_append/(?P<slug>[^/]+)/$',
+        'book_append', name="wiki_book_append"),
+    url(r'^book_edit/(?P<slug>[^/]+)/$',
+        'book_edit', name="wiki_book_edit"),
 
 )
