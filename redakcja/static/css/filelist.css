@@ -100,12 +100,19 @@ td {
 }
 
 
-.chunk-wl {
-    background-color: #afa;
+.fix {
+    border: 1px solid gray;
+    font-size: 0.7em;
+    padding: 3px;
 }
-.chunk-plain {
-    background-color: #aaa;
+
+.fix-info {
+    font-size: 0.7em;
+    font-style: italic;
 }
-.chunk-xml {
-    background-color: #faa;
-}
+
+.chunk-plain a {color: gray;}
+.chunk-xml a {color: gray; font-style: italic;}
+.chunk-wl-broken a {color: red;}
+.chunk-wl a {color: green;}
+.chunk-wl-fix a {color: black;}

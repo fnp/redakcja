@@ -240,7 +240,7 @@ class Document(models.Model):
         return rev if rev is not None else -1
 
     def at_revision(self, rev):
-        if rev:
+        if rev is not None:
             return self.change_set.get(revision=rev)
         else:
             return self.head

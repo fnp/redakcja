@@ -8,6 +8,7 @@ from wiki.models import Book, Chunk
 from django.utils.translation import ugettext_lazy as _
 
 from dvcs.models import Tag
+from wiki.constants import MASTERS
 
 class DocumentTagForm(forms.Form):
     """
@@ -189,3 +190,11 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
+
+
+class ChooseMasterForm(forms.Form):
+    """
+        Form used for fixing the chunks in a book.
+    """
+
+    master = forms.ChoiceField(choices=((m, m) for m in MASTERS))

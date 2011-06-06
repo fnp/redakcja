@@ -8,27 +8,56 @@
 
 <table>
     {% for c in chunks %}
-        <tr class="chunk-row
-        {% if c.graded.is_wl %}
-            chunk-wl
-            {% if c.graded.bad_master %}
-                chunk-bad-master
-            {% endif %}
-        {% else %}
-            {% if c.graded.is_xml %}
-                chunk-xml
-            {% else %}
-                chunk-plain
-            {% endif %}
-        {% endif %}
-        ">
+        <tr class="chunk-{{ c.grade }}">
         <td><a target="_blank" href="{{ c.chunk.get_absolute_url }}">{{ c.chunk.comment }}</a></td>
-        <td>{% if c.chunk.publishable %}P{% endif %}</td>
+        <td>{% for fix in c.fix %}
+
+                {% ifequal fix "wl" %}<span class="fix"
+                    title="{% trans "add basic document structure" %}"
+                    >&lt;/&gt;</span>{% endifequal %}
+
+                {% ifequal fix "bad-master" %}<span class="fix"
+                    title='{% trans "change master tag to" %} "{{ first_master }}"'
+                    >master</span>{% endifequal %}
+
+                {% ifequal fix "trim-begin" %}<span class="fix"
+                    title="{% trans "add begin trimming tag" %}"
+                    >&#x2701;</span>{% endifequal %}
+
+                {% ifequal fix "trim-end" %}<span class="fix"
+                    title="{% trans "add end trimming tag" %}"
+                    >&#x2703;</span>{% endifequal %}
+
+            {% endfor %}
+
+            {% ifequal c.grade "plain" %}
+                <span class="fix-info">{% trans "unstructured text" %}</span>
+            {% endifequal %}
+
+            {% ifequal c.grade "xml" %}
+                <span class="fix-info">{% trans "unknown XML" %}</span>
+            {% endifequal %}
+
+            {% ifequal c.grade "wl-broken" %}
+                <span class="fix-info">{% trans "broken document" %}</span>
+            {% endifequal %}
+
+        </td>
         <td><a href="{% url wiki_chunk_edit book.slug c.chunk.slug%}">[{% trans "edit" %}]</a></td>
-        <td>{% if c.bad_master %}{{ c.bad_master }}{% endif %}</td>
+        <td>{% if c.chunk.publishable %}P{% endif %}</td>
         <td><a href="{% url wiki_chunk_add book.slug c.chunk.slug %}">[+]</a></td>
         </tr>
     {% endfor %}
+    {% if need_fixing %}
+        <tr><td></td><td>
+            <form method="POST" action="">
+                {% if choose_master %}
+                    {{ form.master }}
+                {% endif %}
+                <button type="submit">{% trans "Apply fixes" %}</button>
+            </form>
+        </td></tr>
+    {% endif %}
 </table>
 
 <p><a href="{% url wiki_book_append book.slug %}">{% trans "Append to other book" %}</a></p>

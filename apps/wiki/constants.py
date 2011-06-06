@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-import re
 
-RE_TRIM_BEGIN = re.compile("^<!-- TRIM_BEGIN -->$", re.M)
-RE_TRIM_END = re.compile("^<!-- TRIM_END -->$", re.M)
+TRIM_BEGIN = " TRIM_BEGIN "
+TRIM_END = " TRIM_END "
+
+MASTERS = ['powiesc',
+           'opowiadanie',
+           'liryka_l',
+           'liryka_lp',
+           'dramat_wierszowany_l',
+           'dramat_wierszowany_lp',
+           'dramat_wspolczesny',
+           ]
