@@ -20,6 +20,17 @@ class DocumentTagForm(forms.Form):
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
+class DocumentPubmarkForm(forms.Form):
+    """
+        Form for marking revisions for publishing.
+    """
+
+    id = forms.CharField(widget=forms.HiddenInput)
+    publishable = forms.BooleanField(required=False, initial=True,
+            label=_('Publishable'))
+    revision = forms.IntegerField(widget=forms.HiddenInput)
+
+
 class DocumentCreateForm(forms.ModelForm):
     """
         Form used for creating new documents.
@@ -180,7 +191,8 @@ class BookAppendForm(forms.Form):
         It means moving all chunks from book A to book B and deleting A.
     """
 
-    append_to = forms.ModelChoiceField(queryset=Book.objects.all())
+    append_to = forms.ModelChoiceField(queryset=Book.objects.all(),
+        label=_("Append to"))
 
 
 class BookForm(forms.ModelForm):

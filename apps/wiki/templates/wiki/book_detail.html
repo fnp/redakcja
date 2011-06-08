@@ -62,6 +62,8 @@
 
 <p><a href="{% url wiki_book_append book.slug %}">{% trans "Append to other book" %}</a></p>
 
+<p>{% trans "Last published" %}: {{ book.last_published }}</p>
+
 {% if book.publishable %}
     <p>
     <a href="{% url wiki_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
@@ -73,7 +75,18 @@
     {% endcomment %}
     </p>
 
-    <p style='width:200px; height: 75px; border: 1px dotted gray; border-corners: 4px;'></p>
+    <!--
+    Angel photos:
+    Angels in Ely Cathedral (http://www.flickr.com/photos/21804434@N02/4483220595/) /
+    mira66 (http://www.flickr.com/photos/21804434@N02/) /
+    CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
+    -->
+    <form method="POST" action="{% url wiki_publish book.slug %}">{% csrf_token %}
+        <img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" />
+        <button id="publish-button" type="submit">
+            <span>{% trans "Publish" %}</span></button>
+        <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
+        </form></form></p>
 {% else %}
     {% trans "This book cannot be published yet" %}
 {% endif %}

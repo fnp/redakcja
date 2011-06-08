@@ -8,6 +8,15 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
+        # Adding model 'Tag'
+        db.create_table('dvcs_tag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=64)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(db_index=True, max_length=64, unique=True, null=True, blank=True)),
+            ('ordering', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('dvcs', ['Tag'])
+
         # Adding model 'Change'
         db.create_table('dvcs_change', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -20,11 +29,20 @@ class Migration(SchemaMigration):
             ('merge_parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='merge_children', null=True, blank=True, to=orm['dvcs.Change'])),
             ('description', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
+            ('publishable', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('dvcs', ['Change'])
 
         # Adding unique constraint on 'Change', fields ['tree', 'revision']
         db.create_unique('dvcs_change', ['tree_id', 'revision'])
+
+        # Adding M2M table for field tags on 'Change'
+        db.create_table('dvcs_change_tags', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('change', models.ForeignKey(orm['dvcs.change'], null=False)),
+            ('tag', models.ForeignKey(orm['dvcs.tag'], null=False))
+        ))
+        db.create_unique('dvcs_change_tags', ['change_id', 'tag_id'])
 
         # Adding model 'Document'
         db.create_table('dvcs_document', (
@@ -40,8 +58,14 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'Change', fields ['tree', 'revision']
         db.delete_unique('dvcs_change', ['tree_id', 'revision'])
 
+        # Deleting model 'Tag'
+        db.delete_table('dvcs_tag')
+
         # Deleting model 'Change'
         db.delete_table('dvcs_change')
+
+        # Removing M2M table for field tags on 'Change'
+        db.delete_table('dvcs_change_tags')
 
         # Deleting model 'Document'
         db.delete_table('dvcs_document')
@@ -94,7 +118,9 @@ class Migration(SchemaMigration):
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['dvcs.Tag']", 'symmetrical': 'False'}),
             'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"})
         },
         'dvcs.document': {
@@ -102,6 +128,13 @@ class Migration(SchemaMigration):
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dvcs.Change']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
+        'dvcs.tag': {
+            'Meta': {'ordering': "['ordering']", 'object_name': 'Tag'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'ordering': ('django.db.models.fields.IntegerField', [], {}),
+            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '64', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         }
     }
 

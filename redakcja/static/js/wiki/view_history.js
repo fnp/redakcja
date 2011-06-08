@@ -15,6 +15,10 @@
 				self.showTagForm();
 			});
 
+			$('#pubmark-changeset-button').click(function() {
+				self.showPubmarkForm();
+			});
+
 	        $('#doc-revert-button').click(function() {
 	            self.revertDialog();
 	        });
@@ -138,6 +142,18 @@
 
 		var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
 		$.wiki.showDialog('#add_tag_dialog', {'revision': version});
+	};
+
+	HistoryPerspective.prototype.showPubmarkForm = function(){
+		var selected = $('#changes-list .entry.selected');
+
+		if (selected.length != 1) {
+            window.alert("Musisz zaznaczyć dokładnie jedną wersję.");
+            return;
+        }
+
+		var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
+		$.wiki.showDialog('#pubmark_dialog', {'revision': version});
 	};
 
 	HistoryPerspective.prototype.makeDiff = function() {

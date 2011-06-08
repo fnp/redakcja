@@ -151,6 +151,8 @@ class Migration(SchemaMigration):
             ('gallery', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='children', null=True, to=orm['wiki.Book'])),
             ('parent_number', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
+            ('last_published', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('_list_html', self.gf('django.db.models.fields.TextField')(null=True)),
         ))
         db.send_create_signal('wiki', ['Book'])
 
@@ -235,7 +237,9 @@ class Migration(SchemaMigration):
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
             'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['dvcs.Tag']", 'symmetrical': 'False'}),
             'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"})
         },
         'dvcs.document': {
@@ -244,10 +248,19 @@ class Migration(SchemaMigration):
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dvcs.Change']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
+        'dvcs.tag': {
+            'Meta': {'ordering': "['ordering']", 'object_name': 'Tag'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'ordering': ('django.db.models.fields.IntegerField', [], {}),
+            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '64', 'unique': 'True', 'null': 'True', 'blank': 'True'})
+        },
         'wiki.book': {
             'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
+            '_list_html': ('django.db.models.fields.TextField', [], {'null': 'True'}),
             'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_published': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['wiki.Book']"}),
             'parent_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),

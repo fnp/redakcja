@@ -7,6 +7,7 @@ from lxml import etree
 
 from django.conf import settings
 
+from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST, require_GET
 from django.core.urlresolvers import reverse
@@ -27,6 +28,7 @@ from django.middleware.gzip import GZipMiddleware
 import librarian.html
 import librarian.text
 from wiki import xml_tools
+from apiclient import api_call
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -82,6 +84,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
             "text_save": forms.DocumentTextSaveForm(prefix="textsave"),
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "add_tag": forms.DocumentTagForm(prefix="addtag"),
+            "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
         },
         'REDMINE_URL': settings.REDMINE_URL,
     })
@@ -254,7 +257,7 @@ def text(request, slug, chunk=None):
 
 @never_cache
 def book_xml(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
+    xml = get_object_or_404(Book, slug=slug).materialize()
 
     response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
@@ -263,7 +266,7 @@ def book_xml(request, slug):
 
 @never_cache
 def book_txt(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
+    xml = get_object_or_404(Book, slug=slug).materialize()
     output = StringIO()
     # errors?
     librarian.text.transform(StringIO(xml), output)
@@ -275,7 +278,7 @@ def book_txt(request, slug):
 
 @never_cache
 def book_html(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize(Book.publish_tag())
+    xml = get_object_or_404(Book, slug=slug).materialize()
     output = StringIO()
     # errors?
     librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
@@ -391,6 +394,7 @@ def history(request, slug, chunk=None):
                 "description": change.description,
                 "author": change.author_str(),
                 "date": change.created_at,
+                "publishable": "Publishable\n" if change.publishable else "",
                 "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
             })
     return JSONResponse(changes)
@@ -581,32 +585,50 @@ def add_tag(request, slug, chunk=None):
             raise Http404
 
         tag = form.cleaned_data['tag']
-        revision = revision=form.cleaned_data['revision']
+        revision = form.cleaned_data['revision']
         doc.at_revision(revision).tags.add(tag)
         return JSONResponse({"message": _("Tag added")})
     else:
         return JSONFormInvalid(form)
 
 
-"""
-import wlapi
+@require_POST
+@ajax_require_permission('wiki.can_pubmark')
+def pubmark(request, slug, chunk=None):
+    form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
+    if form.is_valid():
+        try:
+            doc = Chunk.get(slug, chunk)
+        except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+            raise Http404
+
+        revision = form.cleaned_data['revision']
+        publishable = form.cleaned_data['publishable']
+        change = doc.at_revision(revision)
+        print publishable, change.publishable
+        if publishable != change.publishable:
+            change.publishable = publishable
+            change.save()
+            return JSONResponse({"message": _("Revision marked")})
+        else:
+            return JSONResponse({"message": _("Nothing changed")})
+    else:
+        return JSONFormInvalid(form)
 
 
 @require_POST
-@ajax_require_permission('wiki.can_publish')
-def publish(request, name):
-    name = normalize_name(name)
-
-    storage = getstorage()
-    document = storage.get_by_tag(name, "ready_to_publish")
-
-    api = wlapi.WLAPI(**settings.WL_API_CONFIG)
-
+@login_required
+def publish(request, slug):
+    book = get_object_or_404(Book, slug=slug)
     try:
-        return JSONResponse({"result": api.publish_book(document)})
-    except wlapi.APICallException, e:
-        return JSONServerError({"message": str(e)})
-"""
+        ret = api_call(request.user, "books", {"book_xml": book.materialize()})
+    except BaseException, e:
+        return http.HttpResponse(e)
+    else:
+        book.last_published = datetime.now()
+        book.save()
+        return http.HttpResponseRedirect(book.get_absolute_url())
+
 
 def themes(request):
     prefix = request.GET.get('q', '')

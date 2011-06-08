@@ -45,6 +45,7 @@ COMPRESS_JS = {
                 'js/wiki/dialog_save.js',
                 'js/wiki/dialog_revert.js',
                 'js/wiki/dialog_addtag.js',
+                'js/wiki/dialog_pubmark.js',
 
                 # views
                 'js/wiki/view_history.js',

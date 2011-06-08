@@ -1,0 +1,19 @@
+{% load i18n %}
+<div id="pubmark_dialog" class="dialog" data-ui-jsclass="PubmarkDialog">
+	<form method="POST" action="#">
+		{% for field in forms.pubmark.visible_fields %}
+		<p>{{ field.label_tag }} {{ field }} <span data-ui-error-for="{{ field.name }}"> </span></p>
+		<p>{{ field.help_text }}</p>
+		{% endfor %}
+
+		{% for f in forms.pubmark.hidden_fields %}
+			{{ f }}
+		{% endfor %}
+		<p data-ui-error-for="__all__"> </p>
+
+		<p class="action_area">
+			<button type="submit" class="ok" data-ui-action="save">{% trans "Save" %}</button>
+			<button type="button" class="cancel" data-ui-action="cancel">{% trans "Cancel" %}</button>
+		</p>
+	</form>
+</div>

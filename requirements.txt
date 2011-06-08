@@ -3,6 +3,8 @@ lxml>=2.2.2
 mercurial>=1.6,<1.7
 PyYAML>=3.0
 PIL>=1.1
+oauth2
+httplib2 # oauth2 dependency
 
 ## Book conversion library
 # git+git://github.com/fnp/librarian.git@master#egg=librarian

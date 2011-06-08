@@ -28,6 +28,7 @@ class Book(models.Model):
 
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children")
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True)
+    last_published = models.DateTimeField(null=True, editable=False)
 
     _list_html = models.TextField(editable=False, null=True)
 
@@ -78,18 +79,14 @@ class Book(models.Model):
             self.save(reset_list_html=False)
         return mark_safe(self._list_html)
 
-    @staticmethod
-    def publish_tag():
-        return dvcs_models.Tag.get('publish')
-
-    def materialize(self, tag=None):
+    def materialize(self, publishable=True):
         """ 
             Get full text of the document compiled from chunks.
             Takes the current versions of all texts
-            or versions most recently tagged by a given tag.
+            or versions most recently tagged for publishing.
         """
-        if tag:
-            changes = [chunk.last_tagged(tag) for chunk in self]
+        if publishable:
+            changes = [chunk.publishable() for chunk in self]
         else:
             changes = [chunk.head for chunk in self]
         if None in changes:
@@ -182,9 +179,6 @@ class Chunk(dvcs_models.Document):
     def pretty_name(self):
         return "%s, %s (%d/%d)" % (self.book.title, self.comment, 
                 self.number, len(self.book))
-
-    def publishable(self):
-        return self.last_tagged(Book.publish_tag())
 
     def split(self, slug, comment='', creator=None):
         """ Create an empty chunk after this one """

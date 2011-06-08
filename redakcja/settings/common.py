@@ -117,10 +117,11 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'filebrowser',
-    'dvcs',
 
+    'dvcs',
     'wiki',
     'toolbar',
+    'apiclient',
 )
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'

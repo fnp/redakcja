@@ -66,6 +66,7 @@ class Change(models.Model):
     description = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(editable=False, db_index=True, 
                         default=datetime.now)
+    publishable = models.BooleanField(default=False)
 
     tags = models.ManyToManyField(Tag)
 
@@ -245,8 +246,8 @@ class Document(models.Model):
         else:
             return self.head
 
-    def last_tagged(self, tag):
-        changes = tag.change_set.filter(tree=self).order_by('-created_at')[:1]
+    def publishable(self):
+        changes = self.change_set.filter(publishable=True).order_by('-created_at')[:1]
         if changes.count():
             return changes[0]
         else:
