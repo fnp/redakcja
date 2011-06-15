@@ -45,6 +45,9 @@
         </td>
         <td><a href="{% url wiki_chunk_edit book.slug c.chunk.slug%}">[{% trans "edit" %}]</a></td>
         <td>{% if c.chunk.publishable %}P{% endif %}</td>
+        <td>{% if c.chunk.user.is_authenticated %}
+                <a href="{% url wiki_user c.chunk.user.username %}">{{ c.chunk.user }}</a>
+            {% endif %}</td>
         <td><a href="{% url wiki_chunk_add book.slug c.chunk.slug %}">[+]</a></td>
         </tr>
     {% endfor %}

@@ -7,27 +7,56 @@
 */
 
 body {
-	background-color: #84BF2A;
+    margin: 0;
+    font-family: verdana, sans-serif;
+    font-size: 12px;
+}
+
+
+.clr {
+    clear: both;
+}
+
+#tabs-nav {
+    padding: 5px 5px 0 10px;
+    background: #ffdfbf;
+    border-bottom: 1px solid #ff8000;
+    position: relative;
+}
+
+#tabs-nav-left {
+    margin-left: 60px;
+}
+
+#tabs-nav-left a {
+    display: block;
+    float: left;
+    padding: 5px 20px 5px 20px;
+    margin-bottom: -1px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0);
+}
+
+#tabs-nav-left .active {
+    background: white;
+    border-color: #ff8000 #ff8000 white #ff8000;
+}
+
+#login-box {
+    float: right;
+}
+
+#logo {
+    position: absolute;
+    bottom: 0;
 }
 
 #content {
-    background: #EFEFEF;
-    border: 1px solid black;
-    padding: 0.5em 2em;
-    margin: 1em;
-	overflow: hidden;
+    padding: 10px;
 }
 
-#content h1 img {
-	vertical-align: middle;
-}
 
-#content h1 {
-	border-bottom: 2px solid black;
-	padding: 0.5em;
-	font-size: 2opt;
-	font-family: sans-serif;
-}
 
 #file-list {
 	overflow: visible;
@@ -58,7 +87,7 @@ body {
 }
 
 a, a:visited, a:active {
-	color: blue;
+	color: #bf6000;
 	text-decoration: none;
 }
 
@@ -67,9 +96,6 @@ a:hover {
 }
 
 
-#loading-overlay {
-	display: none;
-}
 
 .error {
     color: red;

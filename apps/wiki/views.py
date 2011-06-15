@@ -7,12 +7,13 @@ from lxml import etree
 
 from django.conf import settings
 
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST, require_GET
 from django.core.urlresolvers import reverse
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
-                ajax_require_permission, recursive_groupby)
+                ajax_require_permission, recursive_groupby, active_tab)
 from django import http
 from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404
@@ -41,6 +42,7 @@ import operator
 MAX_LAST_DOCS = 10
 
 
+@active_tab('all')
 @never_cache
 def document_list(request):
     return direct_to_template(request, 'wiki/document_list.html', extra_context={
@@ -48,6 +50,34 @@ def document_list(request):
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
     })
+
+
+@active_tab('unassigned')
+@never_cache
+def unassigned(request):
+    return direct_to_template(request, 'wiki/document_list.html', extra_context={
+        'books': Chunk.objects.filter(user=None),
+        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
+                        key=lambda x: x[1]['time'], reverse=True),
+    })
+
+
+@never_cache
+def user(request, username=None):
+    if username is None:
+        if request.user.is_authenticated():
+            user = request.user
+        else:
+            raise Http404
+    else:
+        user = get_object_or_404(User, username=username)
+
+    return direct_to_template(request, 'wiki/document_list.html', extra_context={
+        'books': Chunk.objects.filter(user=user),
+        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
+                        key=lambda x: x[1]['time'], reverse=True),
+    })
+my = login_required(active_tab('my')(user))
 
 
 @never_cache
@@ -118,7 +148,10 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
     })
 
 
-def create_missing(request, slug):
+@active_tab('create')
+def create_missing(request, slug=None):
+    if slug is None:
+        slug = ''
     slug = slug.replace(' ', '-')
 
     if request.method == "POST":
@@ -148,6 +181,7 @@ def create_missing(request, slug):
     })
 
 
+@active_tab('upload')
 def upload(request):
     if request.method == "POST":
         form = forms.DocumentsUploadForm(request.POST, request.FILES)

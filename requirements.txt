@@ -13,6 +13,7 @@ httplib2 # oauth2 dependency
 Django>=1.1.1,<1.2
 sorl-thumbnail>=3.2
 django-maintenancemode>=0.9
+django-pagination
 
 # migrations
 south>=0.6

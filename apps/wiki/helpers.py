@@ -129,3 +129,17 @@ def recursive_groupby(iterable):
             grouper = None
 
     return list(_generator(iterable))
+
+
+def active_tab(tab):
+    """
+        View decorator, which puts tab info on a request.
+    """
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(request, *args, **kwargs):
+            request.wiki_active_tab = tab
+            return f(request, *args, **kwargs)
+        return wrapped
+    return wrapper
+

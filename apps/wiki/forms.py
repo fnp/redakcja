@@ -40,7 +40,8 @@ class DocumentCreateForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['gallery']
+        exclude = ['gallery', 'parent', 'parent_number']
+        prepopulated_fields = {'slug': ['title']}
 
     def clean(self):
         super(DocumentCreateForm, self).clean()
@@ -164,7 +165,7 @@ class ChunkForm(forms.ModelForm):
             chunk = Chunk.objects.get(book=self.instance.book, slug=slug)
         except Chunk.DoesNotExist:
             return slug
-        if chunk == self:
+        if chunk == self.instance:
             return slug
         raise forms.ValidationError(_('Chunk with this slug already exists'))
 

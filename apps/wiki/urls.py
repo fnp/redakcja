@@ -15,6 +15,9 @@ urlpatterns = patterns('wiki.views',
     #url(r'^catalogue/([^/]+)/$', 'document_list'),
     #url(r'^catalogue/([^/]+)/([^/]+)/$', 'document_list'),
     #url(r'^catalogue/([^/]+)/([^/]+)/([^/]+)$', 'document_list'),
+    url(r'^unassigned/$', 'unassigned', name='wiki_unassigned'),
+    url(r'^user/$', 'my', name='wiki_user'),
+    url(r'^user/(?P<username>[^/]+)/$', 'user', name='wiki_user'),
 
     url(r'^edit/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'editor', name="wiki_editor"),
@@ -26,6 +29,8 @@ urlpatterns = patterns('wiki.views',
         'upload', name='wiki_upload'),
 
     url(r'^create/(?P<slug>[^/]*)/',
+        'create_missing', name='wiki_create_missing'),
+    url(r'^create/',
         'create_missing', name='wiki_create_missing'),
 
     url(r'^gallery/(?P<directory>[^/]+)/$',

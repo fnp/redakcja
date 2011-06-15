@@ -1,0 +1,9 @@
+<tr>
+    <td colspan="3">
+        <a target="_blank"
+        href="{% url wiki_chunk_edit chunk.book.slug chunk.slug %}">[?]</a>
+        <a target="_blank"
+                href="{{ chunk.get_absolute_url }}">
+                {{ chunk.pretty_name }}</a>
+    </td>
+</tr>

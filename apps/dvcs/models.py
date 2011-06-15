@@ -38,6 +38,9 @@ class Tag(models.Model):
     def listener_changed(sender, instance, **kwargs):
         sender._object_cache = {}
 
+    def next(self):
+        Tag.objects.filter(ordering__gt=self.ordering)
+
 models.signals.pre_save.connect(Tag.listener_changed, sender=Tag)
 
 
@@ -168,11 +171,15 @@ class Document(models.Model):
     """
         File in repository.        
     """
-    creator = models.ForeignKey(User, null=True, blank=True, editable=False)
+    creator = models.ForeignKey(User, null=True, blank=True, editable=False,
+                related_name="created_documents")
     head = models.ForeignKey(Change,
                     null=True, blank=True, default=None,
                     help_text=_("This document's current head."),
                     editable=False)
+
+    user = models.ForeignKey(User, null=True, blank=True)
+    stage = models.ForeignKey(Tag, null=True, blank=True)
 
     def __unicode__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)

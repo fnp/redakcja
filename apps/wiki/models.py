@@ -188,6 +188,11 @@ class Chunk(dvcs_models.Document):
                 creator=creator, slug=slug, comment=comment)
         return new_chunk
 
+    def list_html(self):
+        _list_html = render_to_string('wiki/chunk_list_item.html',
+                {'chunk': self})
+        return mark_safe(_list_html)
+
     @staticmethod
     def listener_saved(sender, instance, created, **kwargs):
         if instance.book:

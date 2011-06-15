@@ -81,6 +81,7 @@ MIDDLEWARE_CLASSES = (
     'django_cas.middleware.CASMiddleware',
 
     'django.middleware.doc.XViewMiddleware',
+    'pagination.middleware.PaginationMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
 
@@ -117,6 +118,7 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'filebrowser',
+    'pagination',
 
     'dvcs',
     'wiki',

@@ -1,6 +1,7 @@
 {% extends "wiki/base.html" %}
 
 {% load i18n %}
+{% load pagination_tags %}
 
 {% block extrabody %}
 {{ block.super }}
@@ -22,7 +23,7 @@ $(function() {
 
 {% block leftcolumn %}
 	<form method="get" action="#">
-    <table  id="file-list">
+    <table id="file-list">
     	<thead>
     		<tr><th>Filtr:</th>
 			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
@@ -30,10 +31,12 @@ $(function() {
 			</tr>
 		</thead>
 		<tbody>
+        {% autopaginate books 20 %}
     	{% for book in books %}
             {{ book.list_html }}
     	{% endfor %}
 		</tbody>
+        <tr><td colspan="3">{% paginate %}</td></tr>
     </table>
 	</form>
 {% endblock leftcolumn %}
