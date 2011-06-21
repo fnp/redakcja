@@ -3,12 +3,14 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.contrib.auth.models import User
+from django.db.models import Count
 from django import forms
-from wiki.models import Book, Chunk
 from django.utils.translation import ugettext_lazy as _
 
 from dvcs.models import Tag
 from wiki.constants import MASTERS
+from wiki.models import Book, Chunk
 
 class DocumentTagForm(forms.Form):
     """
@@ -154,6 +156,10 @@ class ChunkForm(forms.ModelForm):
     """
         Form used for editing a chunk.
     """
+    user = forms.ModelChoiceField(queryset=
+        User.objects.annotate(count=Count('document')).
+        order_by('-count', 'last_name', 'first_name'))
+
 
     class Meta:
         model = Chunk

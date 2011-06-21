@@ -4,6 +4,7 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
@@ -51,6 +52,10 @@ class Migration(SchemaMigration):
             ('head', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['dvcs.Change'], null=True, blank=True)),
         ))
         db.send_create_signal('dvcs', ['Document'])
+
+        if not db.dry_run:
+            from django.core.management import call_command
+            call_command("loaddata", "stages.json")
 
 
     def backwards(self, orm):

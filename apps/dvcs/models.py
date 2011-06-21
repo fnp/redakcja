@@ -39,7 +39,14 @@ class Tag(models.Model):
         sender._object_cache = {}
 
     def next(self):
-        Tag.objects.filter(ordering__gt=self.ordering)
+        """
+            Returns the next tag - stage to work on.
+            Returns None for the last stage.
+        """
+        try:
+            return Tag.objects.filter(ordering__gt=self.ordering)[0]
+        except IndexError:
+            return None
 
 models.signals.pre_save.connect(Tag.listener_changed, sender=Tag)
 
@@ -220,6 +227,9 @@ class Document(models.Model):
         author = kwargs.get('author', None)
         author_desc = kwargs.get('author_desc', None)
         tags = kwargs.get('tags', [])
+        if tags:
+            # set stage to next tag after the commited one
+            self.stage = max(tags, key=lambda t: t.ordering).next()
 
         old_head = self.head
         if parent != old_head:

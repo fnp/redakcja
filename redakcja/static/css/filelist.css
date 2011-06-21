@@ -61,7 +61,7 @@ body {
 #file-list {
 	overflow: visible;
 	float: left;
-	max-width: 50%;
+	/*max-width: 50%;*/
 	padding-right: 2%;
 	border-right: 1px dashed black;
 
@@ -116,13 +116,11 @@ a:hover {
 
 .chunkno {
     font-size: .7em;
+    padding-left: 2em;
 }
 
 td {
     vertical-align: top;
-}
-.chunk-list {
-    padding-left: 2em;
 }
 
 

@@ -18,6 +18,7 @@ urlpatterns = patterns('wiki.views',
     url(r'^unassigned/$', 'unassigned', name='wiki_unassigned'),
     url(r'^user/$', 'my', name='wiki_user'),
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='wiki_user'),
+    url(r'^users/$', 'users', name='wiki_users'),
 
     url(r'^edit/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'editor', name="wiki_editor"),

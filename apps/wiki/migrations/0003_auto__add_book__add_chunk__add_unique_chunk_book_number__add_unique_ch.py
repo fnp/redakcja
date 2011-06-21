@@ -14,6 +14,7 @@ from south.v2 import SchemaMigration
 from slughifi import slughifi
 
 META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
+STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
 
 
 def urlunquote(url):
@@ -93,27 +94,48 @@ def migrate_file_from_hg(orm, fname, entry):
         description=''
         )
     chunk.head = head
+    try:
+        chunk.stage = orm['dvcs.Tag'].objects.order_by('ordering')[0]
+    except IndexError:
+        chunk.stage = None
     old_data = ''
 
     maxrev = entry.filerev()
-    gallery_link = None;
+    gallery_link = None
+    
     for rev in xrange(maxrev + 1):
-        # TODO: tags
         fctx = entry.filectx(rev)
         data = fctx.data()
         gallery_link = gallery(fname, data)
         data = plain_text(data)
+
+        # get tags from description
+        description = fctx.description().decode("utf-8", 'replace')
+        tags = STAGE_TAGS_RE.findall(description)
+        tags = [orm['dvcs.Tag'].objects.get(slug=slug.strip()) for slug in tags]
+
+        if tags:
+            max_ordering = max(tags, key=lambda x: x.ordering).ordering
+            try:
+                chunk.stage = orm['dvcs.Tag'].objects.filter(ordering__gt=max_ordering).order_by('ordering')[0]
+            except IndexError:
+                chunk.stage = None
+
+        description = STAGE_TAGS_RE.sub('', description)
+
         head = orm['dvcs.Change'].objects.create(
             tree=chunk,
             revision=rev + 1,
             patch=make_patch(old_data, data),
             created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
-            description=fctx.description().decode("utf-8", 'replace'),
+            description=description,
             author_desc=fctx.user().decode("utf-8", 'replace'),
             parent=chunk.head
             )
+        head.tags = tags
         chunk.head = head
         old_data = data
+
     chunk.save()
     if gallery_link:
         book.gallery = gallery_link
@@ -246,7 +268,9 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Document'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dvcs.Change']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Tag']", 'null': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
         },
         'dvcs.tag': {
             'Meta': {'ordering': "['ordering']", 'object_name': 'Tag'},

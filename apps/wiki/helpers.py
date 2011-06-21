@@ -143,3 +143,28 @@ def active_tab(tab):
         return wrapped
     return wrapper
 
+
+class BookChunks(object):
+    """
+        Yields the chunks of a book.
+    """
+
+    def __init__(self, book):
+        self.book = book
+
+    @property
+    def chunks(self):
+        return self.book.chunk_set.all()
+
+
+class ChoiceChunks(BookChunks):
+    """
+        Associates the given chunks iterable for a book.
+    """
+
+    chunks = None
+
+    def __init__(self, book, chunks):
+        self.book = book
+        self.chunks = chunks
+

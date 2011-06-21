@@ -30,6 +30,7 @@ def main_tabs(context):
         tabs.append(Tab('my', _('Assigned to me'), reverse("wiki_user")))
 
     tabs.append(Tab('unassigned', _('Unassigned'), reverse("wiki_unassigned")))
+    tabs.append(Tab('users', _('Users'), reverse("wiki_users")))
     tabs.append(Tab('all', _('All'), reverse("wiki_document_list")))
     tabs.append(Tab('create', _('Add'), reverse("wiki_create_missing")))
     tabs.append(Tab('upload', _('Upload'), reverse("wiki_upload")))

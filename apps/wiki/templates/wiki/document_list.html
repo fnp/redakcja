@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load pagination_tags %}
+{% load wiki %}
 
 {% block extrabody %}
 {{ block.super }}
@@ -23,7 +24,7 @@ $(function() {
 
 {% block leftcolumn %}
 	<form method="get" action="#">
-    <table id="file-list">
+    <table>
     	<thead>
     		<tr><th>Filtr:</th>
 			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
@@ -31,12 +32,54 @@ $(function() {
 			</tr>
 		</thead>
 		<tbody>
-        {% autopaginate books 20 %}
-    	{% for book in books %}
-            {{ book.list_html }}
-    	{% endfor %}
 		</tbody>
+    </table>
+	</form>
+
+
+
+	<form method="get" action="#">
+    <table id="file-list">
+		<tbody>
+        {% autopaginate books 20 %}
+        {% if not books %}
+            <tr><td>{% trans "No books found." %}</td></tr>
+        {% endif %}
+    	{% for item in books %}
+            {% with item.book as book %}
+            
+            {% ifequal book.chunk_set.count 1 %}
+                <tr>
+                    <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>
+                    <td><a href="{% url wiki_chunk_edit book.slug book.0.slug %}">[c]</a></td>
+                    <td><a target="_blank"
+                                href="{% url wiki_editor book.slug %}">
+                                {{ book.title }}</a></td>
+                    <td>({{ book.0.stage }})</td>
+                    <td>{% if book.0.user %}<a href="{% url wiki_user book.0.user.username %}">{{ book.0.user.first_name }} {{ book.0.user.last_name }}</a>{% endif %}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>
+                    <td></td>
+                    <td>{{ book.title }}</td>
+                </tr>
+                {% for chunk in item.chunks %}
+                    <tr>
+                        <td></td>
+                        <td><a href="{% url wiki_chunk_edit book.slug chunk.slug %}">[c]</a></td>
+                        <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
+                                <span class='chunkno'>{{ chunk.number }}.</span>
+                                {{ chunk.comment }}</a></td>
+                        <td>({{ chunk.stage }})</td>
+                        <td>{% if chunk.user %}<a href="{% url wiki_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+                    </td></tr>
+                {% endfor %}
+            {% endifequal %}
+            {% endwith %}
+    	{% endfor %}
         <tr><td colspan="3">{% paginate %}</td></tr>
+		</tbody>
     </table>
 	</form>
 {% endblock leftcolumn %}
