@@ -36,6 +36,8 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+USE_L10N = True
+
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -69,12 +71,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "redakcja.context_processors.settings", # this is instead of media
+    'django.core.context_processors.csrf',
     "django.core.context_processors.request",
 )
 
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,6 +116,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.comments',
 
     'django_cas',
     'compress',
@@ -119,6 +124,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'filebrowser',
     'pagination',
+    'gravatar',
 
     'dvcs',
     'wiki',

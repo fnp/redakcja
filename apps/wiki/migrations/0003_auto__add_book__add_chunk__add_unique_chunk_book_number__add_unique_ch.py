@@ -15,6 +15,7 @@ from slughifi import slughifi
 
 META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
+AUTHOR_RE = re.compile(r'\s*(.*?)\s*<(.*)>\s*')
 
 
 def urlunquote(url):
@@ -84,8 +85,7 @@ def migrate_file_from_hg(orm, fname, entry):
     chunk = orm.Chunk.objects.create(
         book=book,
         number=1,
-        slug='1',
-        comment='cz. 1')
+        slug='1')
     head = orm['dvcs.Change'].objects.create(
         tree=chunk,
         revision=-1,
@@ -123,13 +123,27 @@ def migrate_file_from_hg(orm, fname, entry):
 
         description = STAGE_TAGS_RE.sub('', description)
 
+        author = author_name = author_email = None
+        author_desc = fctx.user().decode("utf-8", 'replace')
+        m = AUTHOR_RE.match(author_desc)
+        if m:
+            try:
+                author = orm['auth.User'].objects.get(username=m.group(1), email=m.group(2))
+            except orm['auth.User'].DoesNotExist:
+                author_name = m.group(1)
+                author_email = m.group(2)
+        else:
+            author_name = author_desc
+
         head = orm['dvcs.Change'].objects.create(
             tree=chunk,
             revision=rev + 1,
             patch=make_patch(old_data, data),
             created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
             description=description,
-            author_desc=fctx.user().decode("utf-8", 'replace'),
+            author=author,
+            author_name=author_name,
+            author_email=author_email,
             parent=chunk.head
             )
         head.tags = tags
@@ -252,7 +266,8 @@ class Migration(SchemaMigration):
         'dvcs.change': {
             'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'author_desc': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

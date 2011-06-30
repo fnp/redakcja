@@ -157,7 +157,7 @@ class Chunk(dvcs_models.Document):
     book = models.ForeignKey(Book, editable=False)
     number = models.IntegerField()
     slug = models.SlugField()
-    comment = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255, blank=True)
 
     class Meta:
         unique_together = [['book', 'number'], ['book', 'slug']]
@@ -177,8 +177,13 @@ class Chunk(dvcs_models.Document):
             return cls.objects.get(book__slug=slug, slug=chunk)
 
     def pretty_name(self):
-        return "%s, %s (%d/%d)" % (self.book.title, self.comment, 
-                self.number, len(self.book))
+        title = self.book.title
+        if self.comment:
+            title += ", %s" % self.comment
+        count = len(self.book)
+        if count > 1:
+            title += " (%d/%d)" % (self.number, len(self.book))
+        return title
 
     def split(self, slug, comment='', creator=None):
         """ Create an empty chunk after this one """

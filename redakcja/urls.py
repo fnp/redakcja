@@ -18,6 +18,8 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
+    (r'^comments/', include('django.contrib.comments.urls')),
+
     url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
     url(r'^documents/', include('wiki.urls')),
     url(r'^storage/', include('dvcs.urls')),

@@ -5,6 +5,20 @@
 
 		options.callback = function() {
 			var self = this;
+            if (CurrentDocument.diff) {
+                rev_from = CurrentDocument.diff[0];
+                rev_to = CurrentDocument.diff[1];
+                this.doc.fetchDiff({
+                    from: rev_from,
+                    to: rev_to,
+                    success: function(doc, data){
+                        var result = $.wiki.newTab(doc, ''+rev_from +' -> ' + rev_to, 'DiffPerspective');
+
+                        $(result.view).html(data);
+                        $.wiki.switchToTab(result.tab);
+                    }
+                });
+            }
 
 			// first time page is rendered
         	$('#make-diff-button').click(function() {

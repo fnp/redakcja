@@ -1,5 +1,5 @@
 {% extends "wiki/base.html" %}
-{% load i18n %}
+{% load comments i18n %}
 
 {% block leftcolumn %}
 
@@ -97,6 +97,7 @@
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
-
+{% render_comment_list for book %}
+{% render_comment_form for book %}
 
 {% endblock rightcolumn %}

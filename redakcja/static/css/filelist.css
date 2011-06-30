@@ -58,7 +58,7 @@ body {
 
 
 
-#file-list {
+#wiki_layout_left_column {
 	overflow: visible;
 	float: left;
 	/*max-width: 50%;*/
@@ -67,7 +67,7 @@ body {
 
 }
 
-#last-edited-list {
+#wiki_layout_right_column {
 	float: left;
 	max-width: 35%;
 	margin-left: 5%;

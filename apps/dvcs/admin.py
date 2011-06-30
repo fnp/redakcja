@@ -1,6 +1,11 @@
-from django.contrib.admin import site
-from dvcs.models import Document, Change, Tag
+from django.contrib import admin
 
-site.register(Tag)
-site.register(Document)
-site.register(Change)
+from dvcs import models
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'ordering']
+
+admin.site.register(models.Tag, TagAdmin)
+admin.site.register(models.Document)
+admin.site.register(models.Change)

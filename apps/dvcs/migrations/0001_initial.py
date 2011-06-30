@@ -4,7 +4,6 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
@@ -22,7 +21,8 @@ class Migration(SchemaMigration):
         db.create_table('dvcs_change', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
-            ('author_desc', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
+            ('author_name', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
+            ('author_email', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
             ('patch', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('tree', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Document'])),
             ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
@@ -48,8 +48,10 @@ class Migration(SchemaMigration):
         # Adding model 'Document'
         db.create_table('dvcs_document', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='created_documents', null=True, to=orm['auth.User'])),
             ('head', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['dvcs.Change'], null=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('stage', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dvcs.Tag'], null=True, blank=True)),
         ))
         db.send_create_signal('dvcs', ['Document'])
 
@@ -84,7 +86,7 @@ class Migration(SchemaMigration):
             'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
         },
         'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
+            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
             'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -116,7 +118,8 @@ class Migration(SchemaMigration):
         'dvcs.change': {
             'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'author_desc': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -130,9 +133,11 @@ class Migration(SchemaMigration):
         },
         'dvcs.document': {
             'Meta': {'object_name': 'Document'},
-            'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_documents'", 'null': 'True', 'to': "orm['auth.User']"}),
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dvcs.Change']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Tag']", 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         'dvcs.tag': {
             'Meta': {'ordering': "['ordering']", 'object_name': 'Tag'},

@@ -60,7 +60,8 @@ class Change(models.Model):
         Data contains a pickled diff needed to reproduce the initial document.
     """
     author = models.ForeignKey(User, null=True, blank=True)
-    author_desc = models.CharField(max_length=128, null=True, blank=True)
+    author_name = models.CharField(max_length=128, null=True, blank=True)
+    author_email = models.CharField(max_length=128, null=True, blank=True)
     patch = models.TextField(blank=True)
     tree = models.ForeignKey('Document')
     revision = models.IntegerField(db_index=True)
@@ -94,7 +95,10 @@ class Change(models.Model):
                 self.author.last_name, 
                 self.author.email)
         else:
-            return self.author_desc
+            return "%s <%s>" % (
+                self.author_name,
+                self.author_email
+                )
 
 
     def save(self, *args, **kwargs):
@@ -127,20 +131,22 @@ class Change(models.Model):
         return text
 
     def make_child(self, patch, description, author=None,
-            author_desc=None, tags=None):
+            author_name=None, author_email=None, tags=None):
         ch = self.children.create(patch=patch,
                         tree=self.tree, author=author,
-                        author_desc=author_desc,
+                        author_name=author_name,
+                        author_email=author_email,
                         description=description)
         if tags is not None:
             ch.tags = tags
         return ch
 
     def make_merge_child(self, patch, description, author=None, 
-            author_desc=None, tags=None):
+            author_name=None, author_email=None, tags=None):
         ch = self.merge_children.create(patch=patch,
                         tree=self.tree, author=author,
-                        author_desc=author_desc,
+                        author_name=author_name,
+                        author_email=author_email,
                         description=description,
                         tags=tags)
         if tags is not None:
@@ -150,7 +156,8 @@ class Change(models.Model):
     def apply_to(self, text):
         return mdiff.patch(text, pickle.loads(self.patch.encode('ascii')))
 
-    def merge_with(self, other, author=None, author_desc=None,
+    def merge_with(self, other, author=None, 
+            author_name=None, author_email=None, 
             description=u"Automatic merge."):
         assert self.tree_id == other.tree_id  # same tree
         if other.parent_id == self.pk:
@@ -166,7 +173,9 @@ class Change(models.Model):
         patch = self.make_patch(local, result)
         return self.children.create(
                     patch=patch, merge_parent=other, tree=self.tree,
-                    author=author, author_desc=author_desc,
+                    author=author,
+                    author_name=author_name,
+                    author_email=author_email,
                     description=description)
 
     def revert(self, **kwargs):
@@ -225,7 +234,8 @@ class Document(models.Model):
             patch = kwargs['patch']
 
         author = kwargs.get('author', None)
-        author_desc = kwargs.get('author_desc', None)
+        author_name = kwargs.get('author_name', None)
+        author_email = kwargs.get('author_email', None)
         tags = kwargs.get('tags', [])
         if tags:
             # set stage to next tag after the commited one
@@ -234,15 +244,18 @@ class Document(models.Model):
         old_head = self.head
         if parent != old_head:
             change = parent.make_merge_child(patch, author=author, 
-                    author_desc=author_desc,
+                    author_name=author_name,
+                    author_email=author_email,
                     description=kwargs.get('description', ''),
                     tags=tags)
             # not Fast-Forward - perform a merge
             self.head = old_head.merge_with(change, author=author,
-                    author_desc=author_desc)
+                    author_name=author_name,
+                    author_email=author_email)
         else:
             self.head = parent.make_child(patch, author=author, 
-                    author_desc=author_desc, 
+                    author_name=author_name,
+                    author_email=author_email,
                     description=kwargs.get('description', ''),
                     tags=tags)
 
