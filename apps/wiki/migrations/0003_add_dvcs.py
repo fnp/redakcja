@@ -86,7 +86,7 @@ def migrate_file_from_hg(orm, fname, entry):
         book=book,
         number=1,
         slug='1')
-    head = orm['dvcs.Change'].objects.create(
+    head = orm['wiki.ChunkChange'].objects.create(
         tree=chunk,
         revision=-1,
         patch=make_patch('', ''),
@@ -95,7 +95,7 @@ def migrate_file_from_hg(orm, fname, entry):
         )
     chunk.head = head
     try:
-        chunk.stage = orm['dvcs.Tag'].objects.order_by('ordering')[0]
+        chunk.stage = orm['wiki.ChunkTag'].objects.order_by('ordering')[0]
     except IndexError:
         chunk.stage = None
     old_data = ''
@@ -112,12 +112,12 @@ def migrate_file_from_hg(orm, fname, entry):
         # get tags from description
         description = fctx.description().decode("utf-8", 'replace')
         tags = STAGE_TAGS_RE.findall(description)
-        tags = [orm['dvcs.Tag'].objects.get(slug=slug.strip()) for slug in tags]
+        tags = [orm['wiki.ChunkTag'].objects.get(slug=slug.strip()) for slug in tags]
 
         if tags:
             max_ordering = max(tags, key=lambda x: x.ordering).ordering
             try:
-                chunk.stage = orm['dvcs.Tag'].objects.filter(ordering__gt=max_ordering).order_by('ordering')[0]
+                chunk.stage = orm['wiki.ChunkTag'].objects.filter(ordering__gt=max_ordering).order_by('ordering')[0]
             except IndexError:
                 chunk.stage = None
 
@@ -135,7 +135,7 @@ def migrate_file_from_hg(orm, fname, entry):
         else:
             author_name = author_desc
 
-        head = orm['dvcs.Change'].objects.create(
+        head = orm['wiki.ChunkChange'].objects.create(
             tree=chunk,
             revision=rev + 1,
             patch=make_patch(old_data, data),
@@ -173,10 +173,6 @@ def migrate_from_hg(orm):
 
 class Migration(SchemaMigration):
 
-    depends_on = [
-        ('dvcs', '0001_initial'),
-    ]
-
     def forwards(self, orm):
         
         # Adding model 'Book'
@@ -194,11 +190,15 @@ class Migration(SchemaMigration):
 
         # Adding model 'Chunk'
         db.create_table('wiki_chunk', (
-            ('document_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['dvcs.Document'], unique=True, primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='created_documents', null=True, to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.Book'])),
             ('number', self.gf('django.db.models.fields.IntegerField')()),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
+            ('stage', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.ChunkTag'], null=True, blank=True)),
+            ('head', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['wiki.ChunkChange'], null=True, blank=True)),
         ))
         db.send_create_signal('wiki', ['Chunk'])
 
@@ -208,11 +208,54 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'Chunk', fields ['book', 'slug']
         db.create_unique('wiki_chunk', ['book_id', 'slug'])
 
+        # Adding model 'ChunkTag'
+        db.create_table('wiki_chunktag', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=64)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(db_index=True, max_length=64, unique=True, null=True, blank=True)),
+            ('ordering', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('wiki', ['ChunkTag'])
+
+        # Adding model 'ChunkChange'
+        db.create_table('wiki_chunkchange', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('author_name', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
+            ('author_email', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
+            ('patch', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
+            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='children', null=True, blank=True, to=orm['wiki.ChunkChange'])),
+            ('merge_parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='merge_children', null=True, blank=True, to=orm['wiki.ChunkChange'])),
+            ('description', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
+            ('publishable', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('tree', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.Chunk'])),
+        ))
+        db.send_create_signal('wiki', ['ChunkChange'])
+
+        # Adding unique constraint on 'ChunkChange', fields ['tree', 'revision']
+        db.create_unique('wiki_chunkchange', ['tree_id', 'revision'])
+
+        # Adding M2M table for field tags on 'ChunkChange'
+        db.create_table('wiki_chunkchange_tags', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('chunkchange', models.ForeignKey(orm['wiki.chunkchange'], null=False)),
+            ('chunktag', models.ForeignKey(orm['wiki.chunktag'], null=False))
+        ))
+        db.create_unique('wiki_chunkchange_tags', ['chunkchange_id', 'chunktag_id'])
+
         if not db.dry_run:
+            from django.core.management import call_command
+            call_command("loaddata", "stages.json")
+
             migrate_from_hg(orm)
 
     def backwards(self, orm):
         
+        # Removing unique constraint on 'ChunkChange', fields ['tree', 'revision']
+        db.delete_unique('wiki_chunkchange', ['tree_id', 'revision'])
+
         # Removing unique constraint on 'Chunk', fields ['book', 'slug']
         db.delete_unique('wiki_chunk', ['book_id', 'slug'])
 
@@ -225,6 +268,15 @@ class Migration(SchemaMigration):
         # Deleting model 'Chunk'
         db.delete_table('wiki_chunk')
 
+        # Deleting model 'ChunkTag'
+        db.delete_table('wiki_chunktag')
+
+        # Deleting model 'ChunkChange'
+        db.delete_table('wiki_chunkchange')
+
+        # Removing M2M table for field tags on 'ChunkChange'
+        db.delete_table('wiki_chunkchange_tags')
+
 
     models = {
         'auth.group': {
@@ -234,7 +286,7 @@ class Migration(SchemaMigration):
             'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
         },
         'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
+            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
             'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -263,37 +315,6 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'dvcs.change': {
-            'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'Change'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['dvcs.Change']"}),
-            'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['dvcs.Tag']", 'symmetrical': 'False'}),
-            'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Document']"})
-        },
-        'dvcs.document': {
-            'Meta': {'object_name': 'Document'},
-            'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dvcs.Change']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dvcs.Tag']", 'null': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
-        },
-        'dvcs.tag': {
-            'Meta': {'ordering': "['ordering']", 'object_name': 'Tag'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'ordering': ('django.db.models.fields.IntegerField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '64', 'unique': 'True', 'null': 'True', 'blank': 'True'})
-        },
         'wiki.book': {
             'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
             '_list_html': ('django.db.models.fields.TextField', [], {'null': 'True'}),
@@ -306,12 +327,39 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'wiki.chunk': {
-            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk', '_ormbases': ['dvcs.Document']},
+            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
             'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.Book']"}),
-            'comment': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'document_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['dvcs.Document']", 'unique': 'True', 'primary_key': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_documents'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['wiki.ChunkChange']", 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.IntegerField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.ChunkTag']", 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
+        },
+        'wiki.chunkchange': {
+            'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'ChunkChange'},
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['wiki.ChunkChange']"}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['wiki.ChunkChange']"}),
+            'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['wiki.ChunkTag']", 'symmetrical': 'False'}),
+            'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.Chunk']"})
+        },
+        'wiki.chunktag': {
+            'Meta': {'ordering': "['ordering']", 'object_name': 'ChunkTag'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'ordering': ('django.db.models.fields.IntegerField', [], {}),
+            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '64', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         },
         'wiki.theme': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Theme'},

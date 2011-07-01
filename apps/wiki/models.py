@@ -176,13 +176,12 @@ class Chunk(dvcs_models.Document):
         else:
             return cls.objects.get(book__slug=slug, slug=chunk)
 
-    def pretty_name(self):
+    def pretty_name(self, book_length=None):
         title = self.book.title
         if self.comment:
             title += ", %s" % self.comment
-        count = len(self.book)
-        if count > 1:
-            title += " (%d/%d)" % (self.number, len(self.book))
+        if book_length > 1:
+            title += " (%d/%d)" % (self.number, book_length)
         return title
 
     def split(self, slug, comment='', creator=None):

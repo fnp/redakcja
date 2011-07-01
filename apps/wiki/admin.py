@@ -9,3 +9,5 @@ class BookAdmin(admin.ModelAdmin):
 admin.site.register(models.Book, BookAdmin)
 admin.site.register(models.Chunk)
 admin.site.register(models.Theme)
+
+admin.site.register(models.Chunk.tag_model)

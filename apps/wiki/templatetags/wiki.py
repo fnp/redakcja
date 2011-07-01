@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 
+from django.db.models import Count
 from django.core.urlresolvers import reverse
 from django.contrib.comments.models import Comment
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.translation import ugettext as _
 
-from wiki.models import Book
-from dvcs.models import Change
+from wiki.models import Book, Chunk
 
 register = template.Library()
 
@@ -63,11 +63,14 @@ class WallItem(object):
 
 
 def changes_wall(max_len):
-    qs = Change.objects.filter(revision__gt=-1).order_by('-created_at').select_related()
+    qs = Chunk.change_model.objects.filter(revision__gt=-1).order_by('-created_at')
+    qs = qs.defer('patch')
+    qs = qs.select_related('author', 'tree')
+    #qs = qs.annotate(book_length=Count('chunk__book__chunk'))
     qs = qs[:max_len]
     for item in qs:
         tag = 'stage' if item.tags.count() else 'change'
-        chunk = item.tree.chunk
+        chunk = item.tree
         w  = WallItem(tag)
         w.title = chunk.pretty_name()
         w.summary = item.description

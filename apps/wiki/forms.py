@@ -8,7 +8,6 @@ from django.db.models import Count
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from dvcs.models import Tag
 from wiki.constants import MASTERS
 from wiki.models import Book, Chunk
 
@@ -18,7 +17,7 @@ class DocumentTagForm(forms.Form):
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
-    tag = forms.ModelChoiceField(queryset=Tag.objects.all())
+    tag = forms.ModelChoiceField(queryset=Chunk.tag_model.objects.all())
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
@@ -114,7 +113,7 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     stage_completed = forms.ModelChoiceField(
-        queryset=Tag.objects.all(),
+        queryset=Chunk.tag_model.objects.all(),
         required=False,
         label=_(u"Completed"),
         help_text=_(u"If you completed a life cycle stage, select it."),
@@ -157,7 +156,7 @@ class ChunkForm(forms.ModelForm):
         Form used for editing a chunk.
     """
     user = forms.ModelChoiceField(queryset=
-        User.objects.annotate(count=Count('document')).
+        User.objects.annotate(count=Count('chunk')).
         order_by('-count', 'last_name', 'first_name'))
 
 

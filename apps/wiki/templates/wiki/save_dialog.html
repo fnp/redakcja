@@ -1,6 +1,7 @@
 {% load i18n %}
 <div id="save_dialog" class="dialog" data-ui-jsclass="SaveDialog">
 	<form method="POST" action="">
+    {% csrf_token %}
 	<p>{{ forms.text_save.comment.label }}</p>
 	<p class="help_text">
 		{{ forms.text_save.comment.help_text}}

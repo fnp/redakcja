@@ -47,8 +47,12 @@ MAX_LAST_DOCS = 10
 @active_tab('all')
 @never_cache
 def document_list(request):
+    chunks_list = helpers.ChunksList(Chunk.objects.order_by(
+        'book__title', 'book', 'number'))
+
     return direct_to_template(request, 'wiki/document_list.html', extra_context={
-        'books': [helpers.BookChunks(b) for b in Book.objects.all()],
+        'books': chunks_list,
+        #'books': [helpers.BookChunks(b) for b in Book.objects.all().select_related()],
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
     })
@@ -57,18 +61,11 @@ def document_list(request):
 @active_tab('unassigned')
 @never_cache
 def unassigned(request):
-    chunks = Chunk.objects.filter(user=None).order_by('book__title', 'book', 'number')
-    books = []
-    book = None
-    for chunk in chunks:
-        if chunk.book != book:
-            book = chunk.book
-            books.append(helpers.ChoiceChunks(book, [chunk]))
-        else:
-            books[-1].chunks.append(chunk)
+    chunks_list = helpers.ChunksList(Chunk.objects.filter(
+        user=None).order_by('book__title', 'book__id', 'number'))
 
     return direct_to_template(request, 'wiki/document_list.html', extra_context={
-        'books': books,
+        'books': chunks_list,
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
     })
@@ -84,18 +81,11 @@ def user(request, username=None):
     else:
         user = get_object_or_404(User, username=username)
 
-    chunks = Chunk.objects.filter(user=user).order_by('book__title', 'number')
-    books = []
-    book = None
-    for chunk in chunks:
-        if chunk.book != book:
-            book = chunk.book
-            books.append(helpers.ChoiceChunks(book, [chunk]))
-        else:
-            books[-1].chunks.append(chunk)
+    chunks_list = helpers.ChunksList(Chunk.objects.filter(
+        user=user).order_by('book__title', 'book', 'number'))
 
     return direct_to_template(request, 'wiki/document_list.html', extra_context={
-        'books': books,
+        'books': chunks_list,
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
     })
@@ -105,7 +95,7 @@ my = login_required(active_tab('my')(user))
 @active_tab('users')
 def users(request):
     return direct_to_template(request, 'wiki/user_list.html', extra_context={
-        'users': User.objects.all().annotate(count=Count('document')).order_by(
+        'users': User.objects.all().annotate(count=Count('chunk')).order_by(
             '-count', 'last_name', 'first_name'),
     })
 

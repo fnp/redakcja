@@ -47,17 +47,19 @@ $(function() {
         {% endif %}
     	{% for item in books %}
             {% with item.book as book %}
-            
-            {% ifequal book.chunk_set.count 1 %}
+
+            {% ifequal item.book_length 1 %}
+                {% with item.chunks.0 as chunk %}
                 <tr>
                     <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>
-                    <td><a href="{% url wiki_chunk_edit book.slug book.0.slug %}">[c]</a></td>
+                    <td><a href="{% url wiki_chunk_edit book.slug chunk.slug %}">[c]</a></td>
                     <td><a target="_blank"
                                 href="{% url wiki_editor book.slug %}">
                                 {{ book.title }}</a></td>
-                    <td>({{ book.0.stage }})</td>
-                    <td>{% if book.0.user %}<a href="{% url wiki_user book.0.user.username %}">{{ book.0.user.first_name }} {{ book.0.user.last_name }}</a>{% endif %}</td>
+                    <td>({{ chunk.stage }})</td>
+                    <td>{% if chunk.user %}<a href="{% url wiki_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
                 </tr>
+                {% endwith %}
             {% else %}
                 <tr>
                     <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>

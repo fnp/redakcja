@@ -1,4 +1,5 @@
 from django import http
+from django.db.models import Count
 from django.utils import simplejson as json
 from django.utils.functional import Promise
 from datetime import datetime
@@ -144,27 +145,50 @@ def active_tab(tab):
     return wrapper
 
 
-class BookChunks(object):
-    """
-        Yields the chunks of a book.
-    """
+class ChunksList(object):
+    def __init__(self, chunk_qs):
+        self.chunk_qs = chunk_qs.annotate(
+            book_length=Count('book__chunk')).select_related(
+            'book', 'stage__name',
+            'user')
 
-    def __init__(self, book):
-        self.book = book
+        self.book_ids = [x['book_id'] for x in chunk_qs.values('book_id')]
 
-    @property
-    def chunks(self):
-        return self.book.chunk_set.all()
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return self.get_slice(key)
+        elif isinstance(key, int):
+            return self.get_slice(slice(key, key+1))[0]
+        else:
+            raise TypeError('Unsupported list index. Must be a slice or an int.')
+
+    def __len__(self):
+        return len(self.book_ids)
+
+    def get_slice(self, slice_):
+        book_ids = self.book_ids[slice_]
+        chunk_qs = self.chunk_qs.filter(book__in=book_ids)
+
+        chunks_list = []
+        book = None
+        for chunk in chunk_qs:
+            if chunk.book != book:
+                book = chunk.book
+                chunks_list.append(ChoiceChunks(book, [chunk], chunk.book_length))
+            else:
+                chunks_list[-1].chunks.append(chunk)
+        return chunks_list
 
 
-class ChoiceChunks(BookChunks):
+class ChoiceChunks(object):
     """
         Associates the given chunks iterable for a book.
     """
 
     chunks = None
 
-    def __init__(self, book, chunks):
+    def __init__(self, book, chunks, book_length):
         self.book = book
         self.chunks = chunks
+        self.book_length = book_length
 

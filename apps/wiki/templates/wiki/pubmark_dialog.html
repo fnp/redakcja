@@ -1,6 +1,7 @@
 {% load i18n %}
 <div id="pubmark_dialog" class="dialog" data-ui-jsclass="PubmarkDialog">
 	<form method="POST" action="#">
+    {% csrf_token %}
 		{% for field in forms.pubmark.visible_fields %}
 		<p>{{ field.label_tag }} {{ field }} <span data-ui-error-for="{{ field.name }}"> </span></p>
 		<p>{{ field.help_text }}</p>

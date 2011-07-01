@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models.base import ModelBase
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from mercurial import mdiff, simplemerge
@@ -20,6 +21,7 @@ class Tag(models.Model):
     _object_cache = {}
 
     class Meta:
+        abstract = True
         ordering = ['ordering']
 
     def __unicode__(self):
@@ -63,7 +65,6 @@ class Change(models.Model):
     author_name = models.CharField(max_length=128, null=True, blank=True)
     author_email = models.CharField(max_length=128, null=True, blank=True)
     patch = models.TextField(blank=True)
-    tree = models.ForeignKey('Document')
     revision = models.IntegerField(db_index=True)
 
     parent = models.ForeignKey('self',
@@ -79,9 +80,8 @@ class Change(models.Model):
                         default=datetime.now)
     publishable = models.BooleanField(default=False)
 
-    tags = models.ManyToManyField(Tag)
-
     class Meta:
+        abstract = True
         ordering = ('created_at',)
         unique_together = ['tree', 'revision']
 
@@ -122,8 +122,7 @@ class Change(models.Model):
         if self.parent is None and self.merge_parent is not None:
             return self.apply_to(self.merge_parent.materialize())
 
-        changes = Change.objects.exclude(parent=None).filter(
-                        tree=self.tree,
+        changes = self.tree.change_set.exclude(parent=None).filter(
                         revision__lte=self.revision).order_by('revision')
         text = u''
         for change in changes:
@@ -183,19 +182,60 @@ class Change(models.Model):
         self.tree.commit(text=self.materialize(), **kwargs)
 
 
+def create_tag_model(model):
+    name = model.__name__ + 'Tag'
+    attrs = {
+        '__module__': model.__module__,
+    }
+    return type(name, (Tag,), attrs)
+
+
+def create_change_model(model):
+    name = model.__name__ + 'Change'
+
+    attrs = {
+        '__module__': model.__module__,
+        'tree': models.ForeignKey(model, related_name='change_set'),
+        'tags': models.ManyToManyField(model.tag_model, related_name='change_set'),
+    }
+    return type(name, (Change,), attrs)
+
+
+
+class DocumentMeta(ModelBase):
+    "Metaclass for Document models."
+    def __new__(cls, name, bases, attrs):
+        model = super(DocumentMeta, cls).__new__(cls, name, bases, attrs)
+        if not model._meta.abstract:
+            # create a real Tag object and `stage' fk
+            model.tag_model = create_tag_model(model)
+            models.ForeignKey(model.tag_model, 
+                null=True, blank=True).contribute_to_class(model, 'stage')
+
+            # create real Change model and `head' fk
+            model.change_model = create_change_model(model)
+            models.ForeignKey(model.change_model,
+                    null=True, blank=True, default=None,
+                    help_text=_("This document's current head."),
+                    editable=False).contribute_to_class(model, 'head')
+
+        return model
+
+
+
 class Document(models.Model):
     """
         File in repository.        
     """
+    __metaclass__ = DocumentMeta
+
     creator = models.ForeignKey(User, null=True, blank=True, editable=False,
                 related_name="created_documents")
-    head = models.ForeignKey(Change,
-                    null=True, blank=True, default=None,
-                    help_text=_("This document's current head."),
-                    editable=False)
 
     user = models.ForeignKey(User, null=True, blank=True)
-    stage = models.ForeignKey(Tag, null=True, blank=True)
+
+    class Meta:
+        abstract = True
 
     def __unicode__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)
@@ -222,7 +262,7 @@ class Document(models.Model):
         else:
             parent = kwargs['parent']
             if not isinstance(parent, Change):
-                parent = Change.objects.get(pk=kwargs['parent'])
+                parent = self.change_set.objects.get(pk=kwargs['parent'])
 
         if 'patch' not in kwargs:
             if 'text' not in kwargs:
@@ -289,7 +329,7 @@ class Document(models.Model):
         if not isinstance(instance, Document):
             return
         if created:
-            instance.head = Change.objects.create(
+            instance.head = instance.change_model.objects.create(
                     revision=-1,
                     author=instance.creator,
                     patch=Change.make_patch('', ''),
