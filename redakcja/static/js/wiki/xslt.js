@@ -40,7 +40,7 @@ function withThemes(code_block, onError)
 {
     if (typeof withThemes.canon == 'undefined') {
         $.ajax({
-            url: '/themes',
+            url: '/editor/themes',
             dataType: 'text',
             success: function(data) {
                 withThemes.canon = data.split('\n');

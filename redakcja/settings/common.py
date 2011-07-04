@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'pagination',
     'gravatar',
 
+    'catalogue',
     'dvcs',
     'wiki',
     'toolbar',

@@ -13,7 +13,7 @@ from django.core.management.color import color_style
 from django.db import transaction
 
 from slughifi import slughifi
-from wiki.models import Chunk
+from catalogue.models import Chunk
 
 
 REDMINE_CSV = 'http://redmine.nowoczesnapolska.org.pl/projects/wl-publikacje/issues.csv'
@@ -58,9 +58,9 @@ class Command(BaseCommand):
         done_tickets = 0
         done_chunks = 0
         empty_users = 0
-        unknown_users = 0
-        unknown_books = 0
-        forced = 0
+        unknown_users = {}
+        unknown_books = []
+        forced = []
 
         if verbose:
             print 'Downloading CSV file'
@@ -81,9 +81,8 @@ class Command(BaseCommand):
                 user = User.objects.get(first_name=first_name, last_name=last_name)
             except User.DoesNotExist:
                 print self.style.ERROR('Unknown user: ' + username)
-                print "'%s' '%s'" % (first_name, last_name)
-                print type(last_name)
-                unknown_users += 1
+                unknown_users.setdefault(username, 0)
+                unknown_users[username] += 1
                 continue
 
             ticket_done = False
@@ -97,7 +96,7 @@ class Command(BaseCommand):
                 chunks = Chunk.objects.filter(book__slug=fname)
                 if not chunks:
                     print self.style.ERROR('Unknown book: ' + fname)
-                    unknown_books += 1
+                    unknown_books.append(fname)
                     continue
                 all_chunks += chunks.count()
 
@@ -106,7 +105,7 @@ class Command(BaseCommand):
                         if chunk.user == user:
                             continue
                         else:
-                            forced += 1
+                            forced.append((chunk, chunk.user, user))
                             if force:
                                 print self.style.WARNING(
                                     '%s assigned to %s, forcing change to %s.' %
@@ -128,12 +127,24 @@ class Command(BaseCommand):
         # Print results
         print
         print "Results:"
-        print "Done %d/%d tickets, assigned %d/%d book chunks." % (
+        print "Assignments imported from %d/%d tickets to %d/%d relevalt chunks." % (
                 done_tickets, all_tickets, done_chunks, all_chunks)
-        print "%d tickets unassigned, for %d chunks assignment differed." % (
-                empty_users, forced)
-        print "Unrecognized: %d books, %d users." % (
-                unknown_books, unknown_users)
+        if empty_users:
+            print "%d tickets were unassigned." % empty_users
+        if forced:
+            print "%d assignments conficts (%s):" % (
+                len(forced), "changed" if force else "left")
+            for chunk, orig, user in forced:
+                print "  %s: \t%s \t->  %s" % (
+                    chunk.pretty_name(), orig.username, user.username)
+        if unknown_books:
+            print "%d unknown books:" % len(unknown_books)
+            for fname in unknown_books:
+                print "  %s" % fname
+        if unknown_users:
+            print "%d unknown users:" % len(unknown_users)
+            for name in unknown_users:
+                print "  %s (%d tickets)" % (name, unknown_users[name])
         print
 
 

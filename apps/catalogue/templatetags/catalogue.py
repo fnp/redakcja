@@ -7,7 +7,7 @@ from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.translation import ugettext as _
 
-from wiki.models import Book, Chunk
+from catalogue.models import Book, Chunk
 
 register = template.Library()
 
@@ -23,19 +23,19 @@ class Tab(object):
         self.url = url
 
 
-@register.inclusion_tag("wiki/main_tabs.html", takes_context=True)
+@register.inclusion_tag("catalogue/main_tabs.html", takes_context=True)
 def main_tabs(context):
-    active = getattr(context['request'], 'wiki_active_tab', None)
+    active = getattr(context['request'], 'catalogue_active_tab', None)
 
     tabs = []
     user = context['user']
     if user.is_authenticated():
-        tabs.append(Tab('my', _('My page'), reverse("wiki_user")))
+        tabs.append(Tab('my', _('My page'), reverse("catalogue_user")))
 
-    tabs.append(Tab('unassigned', _('Unassigned'), reverse("wiki_unassigned")))
-    tabs.append(Tab('users', _('Users'), reverse("wiki_users")))
-    tabs.append(Tab('create', _('Add'), reverse("wiki_create_missing")))
-    tabs.append(Tab('upload', _('Upload'), reverse("wiki_upload")))
+    tabs.append(Tab('unassigned', _('Unassigned'), reverse("catalogue_unassigned")))
+    tabs.append(Tab('users', _('Users'), reverse("catalogue_users")))
+    tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
+    tabs.append(Tab('upload', _('Upload'), reverse("catalogue_upload")))
 
     if user.is_staff:
         tabs.append(Tab('admin', _('Admin'), reverse("admin:index")))
@@ -129,7 +129,7 @@ def big_wall(max_len, *args):
             del subwalls[i]
 
 
-@register.inclusion_tag("wiki/wall.html", takes_context=True)
+@register.inclusion_tag("catalogue/wall.html", takes_context=True)
 def wall(context, max_len=10):
     return {
         "request": context['request'],

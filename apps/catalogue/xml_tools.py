@@ -2,7 +2,7 @@ from functools import wraps
 import re
 
 from lxml import etree
-from wiki.constants import TRIM_BEGIN, TRIM_END, MASTERS
+from catalogue.constants import TRIM_BEGIN, TRIM_END, MASTERS
 
 RE_TRIM_BEGIN = re.compile("^<!--%s-->$" % TRIM_BEGIN, re.M)
 RE_TRIM_END = re.compile("^<!--%s-->$" % TRIM_END, re.M)

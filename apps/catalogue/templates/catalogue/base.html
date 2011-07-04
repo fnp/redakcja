@@ -1,5 +1,5 @@
 {% load compressed i18n %}
-{% load wiki %}
+{% load catalogue %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +12,7 @@
 
 <div id="tabs-nav">
 
-    <a href="{% url wiki_document_list %}">
+    <a href="{% url catalogue_document_list %}">
         <img id="logo" src="{{ STATIC_URL }}img/wl-orange.png" />
     </a>
 
@@ -30,11 +30,11 @@
 <div id="content">
 
 {% block content %}
-<div id="wiki_layout_left_column">
+<div id="catalogue_layout_left_column">
 	{% block leftcolumn %}
 	{% endblock leftcolumn %}
 </div>
-<div id="wiki_layout_right_column">
+<div id="catalogue_layout_right_column">
 	{% block rightcolumn %}
 	{% endblock rightcolumn %}
 </div>

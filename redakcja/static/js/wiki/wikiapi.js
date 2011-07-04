@@ -15,7 +15,7 @@
 	 */
 	function reverse() {
 		var vname = arguments[0];
-		var base_path = "/documents";
+		var base_path = "/editor";
 
 		if (vname == "ajax_document_text") {
 			var path = "/text/" + arguments[1] + '/';
@@ -47,14 +47,8 @@
         if (vname == "ajax_document_rev")
             return base_path + "/rev/" + arguments[1] + '/';
 
-		if (vname == "ajax_document_addtag")
-			return base_path + "/tag/" + arguments[1] + '/';
-
 		if (vname == "ajax_document_pubmark")
 			return base_path + "/pubmark/" + arguments[1] + '/';
-
-		if (vname == "ajax_publish")
-			return base_path + "/publish/" + arguments[1] + '/';
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
@@ -360,45 +354,6 @@
 					};
 				};
 
-			}
-		});
-	};
-	WikiDocument.prototype.setTag = function(params) {
-		params = $.extend({}, noops, params);
-		var self = this;
-		var data = {
-			"addtag-id": self.id,
-		};
-
-		/* unpack form */
-		$.each(params.form.serializeArray(), function() {
-			data[this.name] = this.value;
-		});
-
-		$.ajax({
-			url: reverse("ajax_document_addtag", self.id),
-			type: "POST",
-			dataType: "json",
-			data: data,
-			success: function(data) {
-				params.success(self, data.message);
-			},
-			error: function(xhr) {
-				if (xhr.status == 403 || xhr.status == 401) {
-					params.failure(self, {
-						"__all__": ["Nie masz uprawnień lub nie jesteś zalogowany."]
-					});
-				}
-				else {
-					try {
-						params.failure(self, $.parseJSON(xhr.responseText));
-					}
-					catch (e) {
-						params.failure(self, {
-							"__all__": ["Nie udało się - błąd serwera."]
-						});
-					};
-				};
 			}
 		});
 	};

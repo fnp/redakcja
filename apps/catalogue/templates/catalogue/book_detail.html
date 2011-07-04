@@ -1,9 +1,9 @@
-{% extends "wiki/base.html" %}
+{% extends "catalogue/base.html" %}
 {% load comments i18n %}
 
 {% block leftcolumn %}
 
-<a href="{% url wiki_book_edit book.slug %}">{% trans "edit" %}</a>
+<a href="{% url catalogue_book_edit book.slug %}">{% trans "edit" %}</a>
     <h1>{{ book.title }}</h1>
 
 <table>
@@ -43,12 +43,12 @@
             {% endifequal %}
 
         </td>
-        <td><a href="{% url wiki_chunk_edit book.slug c.chunk.slug%}">[{% trans "edit" %}]</a></td>
+        <td><a href="{% url catalogue_chunk_edit book.slug c.chunk.slug%}">[{% trans "edit" %}]</a></td>
         <td>{% if c.chunk.publishable %}P{% endif %}</td>
         <td>{% if c.chunk.user.is_authenticated %}
-                <a href="{% url wiki_user c.chunk.user.username %}">{{ c.chunk.user }}</a>
+                <a href="{% url catalogue_user c.chunk.user.username %}">{{ c.chunk.user }}</a>
             {% endif %}</td>
-        <td><a href="{% url wiki_chunk_add book.slug c.chunk.slug %}">[+]</a></td>
+        <td><a href="{% url catalogue_chunk_add book.slug c.chunk.slug %}">[+]</a></td>
         </tr>
     {% endfor %}
     {% if need_fixing %}
@@ -64,18 +64,18 @@
     {% endif %}
 </table>
 
-<p><a href="{% url wiki_book_append book.slug %}">{% trans "Append to other book" %}</a></p>
+<p><a href="{% url catalogue_book_append book.slug %}">{% trans "Append to other book" %}</a></p>
 
 <p>{% trans "Last published" %}: {{ book.last_published }}</p>
 
 {% if book.publishable %}
     <p>
-    <a href="{% url wiki_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
-    <a target="_blank" href="{% url wiki_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
-    <a href="{% url wiki_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
+    <a href="{% url catalogue_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
+    <a target="_blank" href="{% url catalogue_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
+    <a href="{% url catalogue_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
     {% comment %}
-    <a href="{% url wiki_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
-    <a href="{% url wiki_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
+    <a href="{% url catalogue_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
+    <a href="{% url catalogue_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
     {% endcomment %}
     </p>
 
@@ -85,7 +85,7 @@
     mira66 (http://www.flickr.com/photos/21804434@N02/) /
     CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
     -->
-    <form method="POST" action="{% url wiki_publish book.slug %}">{% csrf_token %}
+    <form method="POST" action="{% url catalogue_publish book.slug %}">{% csrf_token %}
         <img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" />
         <button id="publish-button" type="submit">
             <span>{% trans "Publish" %}</span></button>

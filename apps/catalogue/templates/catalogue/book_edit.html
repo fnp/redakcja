@@ -1,4 +1,4 @@
-{% extends "wiki/base.html" %}
+{% extends "catalogue/base.html" %}
 {% load i18n %}
 
 {% block leftcolumn %}
@@ -6,7 +6,7 @@
     {% csrf_token %}
 	{{ form.as_p }}
 
-	<p><button type="submit">{% trans "Add chunk" %}</button></p>
+	<p><button type="submit">{% trans "Save" %}</button></p>
 	</form>
 {% endblock leftcolumn %}
 

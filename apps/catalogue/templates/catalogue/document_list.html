@@ -1,8 +1,8 @@
-{% extends "wiki/base.html" %}
+{% extends "catalogue/base.html" %}
 
 {% load i18n %}
 {% load pagination_tags %}
-{% load wiki %}
+{% load catalogue %}
 
 {% block extrabody %}
 {{ block.super }}
@@ -51,30 +51,30 @@ $(function() {
             {% ifequal item.book_length 1 %}
                 {% with item.chunks.0 as chunk %}
                 <tr>
-                    <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>
-                    <td><a href="{% url wiki_chunk_edit book.slug chunk.slug %}">[c]</a></td>
+                    <td><a target="_blank" href="{% url catalogue_book book.slug %}">[B]</a></td>
+                    <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}">[c]</a></td>
                     <td><a target="_blank"
                                 href="{% url wiki_editor book.slug %}">
                                 {{ book.title }}</a></td>
                     <td>({{ chunk.stage }})</td>
-                    <td>{% if chunk.user %}<a href="{% url wiki_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+                    <td>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
                 </tr>
                 {% endwith %}
             {% else %}
                 <tr>
-                    <td><a target="_blank" href="{% url wiki_book book.slug %}">[B]</a></td>
+                    <td><a target="_blank" href="{% url catalogue_book book.slug %}">[B]</a></td>
                     <td></td>
                     <td>{{ book.title }}</td>
                 </tr>
                 {% for chunk in item.chunks %}
                     <tr>
                         <td></td>
-                        <td><a href="{% url wiki_chunk_edit book.slug chunk.slug %}">[c]</a></td>
+                        <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}">[c]</a></td>
                         <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
                                 <span class='chunkno'>{{ chunk.number }}.</span>
                                 {{ chunk.comment }}</a></td>
                         <td>({{ chunk.stage }})</td>
-                        <td>{% if chunk.user %}<a href="{% url wiki_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+                        <td>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
                     </td></tr>
                 {% endfor %}
             {% endifequal %}
