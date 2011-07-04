@@ -178,13 +178,12 @@ class Migration(SchemaMigration):
         # Adding model 'Book'
         db.create_table('wiki_book', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
             ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=128, db_index=True)),
             ('gallery', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='children', null=True, to=orm['wiki.Book'])),
             ('parent_number', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
-            ('last_published', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-            ('_list_html', self.gf('django.db.models.fields.TextField')(null=True)),
+            ('last_published', self.gf('django.db.models.fields.DateTimeField')(null=True, db_index=True)),
         ))
         db.send_create_signal('wiki', ['Book'])
 
@@ -230,7 +229,7 @@ class Migration(SchemaMigration):
             ('description', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
             ('publishable', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('tree', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['wiki.Chunk'])),
+            ('tree', self.gf('django.db.models.fields.related.ForeignKey')(related_name='change_set', to=orm['wiki.Chunk'])),
         ))
         db.send_create_signal('wiki', ['ChunkChange'])
 
@@ -317,14 +316,13 @@ class Migration(SchemaMigration):
         },
         'wiki.book': {
             'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
-            '_list_html': ('django.db.models.fields.TextField', [], {'null': 'True'}),
             'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_published': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'last_published': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'db_index': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['wiki.Book']"}),
             'parent_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'})
         },
         'wiki.chunk': {
             'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
@@ -351,8 +349,8 @@ class Migration(SchemaMigration):
             'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['wiki.ChunkTag']", 'symmetrical': 'False'}),
-            'tree': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['wiki.Chunk']"})
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'change_set'", 'symmetrical': 'False', 'to': "orm['wiki.ChunkTag']"}),
+            'tree': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'change_set'", 'to': "orm['wiki.Chunk']"})
         },
         'wiki.chunktag': {
             'Meta': {'ordering': "['ordering']", 'object_name': 'ChunkTag'},

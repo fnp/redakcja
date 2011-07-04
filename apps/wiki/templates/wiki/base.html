@@ -12,7 +12,9 @@
 
 <div id="tabs-nav">
 
-    <img id="logo" src="{{ STATIC_URL }}img/wl-orange.png" />
+    <a href="{% url wiki_document_list %}">
+        <img id="logo" src="{{ STATIC_URL }}img/wl-orange.png" />
+    </a>
 
     <div id="tabs-nav-left">
         {% main_tabs %}
@@ -27,6 +29,7 @@
 
 <div id="content">
 
+{% block content %}
 <div id="wiki_layout_left_column">
 	{% block leftcolumn %}
 	{% endblock leftcolumn %}
@@ -35,6 +38,7 @@
 	{% block rightcolumn %}
 	{% endblock rightcolumn %}
 </div>
+{% endblock content %}
 
 </div>
 

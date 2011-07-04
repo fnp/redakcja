@@ -22,15 +22,13 @@ logger = logging.getLogger("fnp.wiki")
 class Book(models.Model):
     """ A document edited on the wiki """
 
-    title = models.CharField(_('title'), max_length=255)
-    slug = models.SlugField(_('slug'), max_length=128, unique=True)
+    title = models.CharField(_('title'), max_length=255, db_index=True)
+    slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
 
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children")
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True)
-    last_published = models.DateTimeField(null=True, editable=False)
-
-    _list_html = models.TextField(editable=False, null=True)
+    last_published = models.DateTimeField(null=True, editable=False, db_index=True)
 
     class NoTextError(BaseException):
         pass
@@ -45,11 +43,6 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("wiki_book", args=[self.slug])
-
-    def save(self, reset_list_html=True, *args, **kwargs):
-        if reset_list_html:
-            self._list_html = None
-        return super(Book, self).save(*args, **kwargs)
 
     @classmethod
     def create(cls, creator=None, text=u'', *args, **kwargs):
@@ -67,17 +60,6 @@ class Book(models.Model):
 
     def __getitem__(self, chunk):
         return self.chunk_set.all()[chunk]
-
-    def __len__(self):
-        return self.chunk_set.count()
-
-    def list_html(self):
-        if self._list_html is None:
-            print 'rendering', self.title
-            self._list_html = render_to_string('wiki/document_list_item.html',
-                {'book': self})
-            self.save(reset_list_html=False)
-        return mark_safe(self._list_html)
 
     def materialize(self, publishable=True):
         """ 

@@ -41,7 +41,7 @@ $(function() {
 	<form method="get" action="#">
     <table id="file-list">
 		<tbody>
-        {% autopaginate books 20 %}
+        {% autopaginate books 100 %}
         {% if not books %}
             <tr><td>{% trans "No books found." %}</td></tr>
         {% endif %}

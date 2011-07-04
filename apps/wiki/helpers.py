@@ -152,7 +152,7 @@ class ChunksList(object):
             'book', 'stage__name',
             'user')
 
-        self.book_ids = [x['book_id'] for x in chunk_qs.values('book_id')]
+        self.book_qs = chunk_qs.values('book_id')
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -163,10 +163,10 @@ class ChunksList(object):
             raise TypeError('Unsupported list index. Must be a slice or an int.')
 
     def __len__(self):
-        return len(self.book_ids)
+        return self.book_qs.count()
 
     def get_slice(self, slice_):
-        book_ids = self.book_ids[slice_]
+        book_ids = [x['book_id'] for x in self.book_qs[slice_]]
         chunk_qs = self.chunk_qs.filter(book__in=book_ids)
 
         chunks_list = []

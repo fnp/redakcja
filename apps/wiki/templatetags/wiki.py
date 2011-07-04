@@ -30,11 +30,10 @@ def main_tabs(context):
     tabs = []
     user = context['user']
     if user.is_authenticated():
-        tabs.append(Tab('my', _('Assigned to me'), reverse("wiki_user")))
+        tabs.append(Tab('my', _('My page'), reverse("wiki_user")))
 
     tabs.append(Tab('unassigned', _('Unassigned'), reverse("wiki_unassigned")))
     tabs.append(Tab('users', _('Users'), reverse("wiki_users")))
-    tabs.append(Tab('all', _('All'), reverse("wiki_document_list")))
     tabs.append(Tab('create', _('Add'), reverse("wiki_create_missing")))
     tabs.append(Tab('upload', _('Upload'), reverse("wiki_upload")))
 
@@ -65,8 +64,7 @@ class WallItem(object):
 def changes_wall(max_len):
     qs = Chunk.change_model.objects.filter(revision__gt=-1).order_by('-created_at')
     qs = qs.defer('patch')
-    qs = qs.select_related('author', 'tree')
-    #qs = qs.annotate(book_length=Count('chunk__book__chunk'))
+    qs = qs.select_related('author', 'tree', 'tree__book__title')
     qs = qs[:max_len]
     for item in qs:
         tag = 'stage' if item.tags.count() else 'change'

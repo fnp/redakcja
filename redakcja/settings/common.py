@@ -81,7 +81,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas.middleware.CASMiddleware',
 
     'django.middleware.doc.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
@@ -90,7 +89,6 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'django_cas.backends.CASBackend',
 )
 
 ROOT_URLCONF = 'redakcja.urls'
@@ -101,13 +99,6 @@ TEMPLATE_DIRS = (
 
 FIREPYTHON_LOGGER_NAME = "fnp"
 
-#
-# Central Auth System
-#
-## Set this to where the CAS server lives
-# CAS_SERVER_URL = "http://cas.fnp.pl/
-CAS_LOGOUT_COMPLETELY = True
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -117,7 +108,6 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.comments',
 
-    'django_cas',
     'compress',
     'south',
     'sorl.thumbnail',
@@ -130,6 +120,9 @@ INSTALLED_APPS = (
     'toolbar',
     'apiclient',
 )
+
+LOGIN_REDIRECT_URL = '/documents/user'
+
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
 FILEBROWSER_DIRECTORY = 'images/'

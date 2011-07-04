@@ -7,9 +7,11 @@ from lxml import etree
 
 from django.conf import settings
 
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.utils.http import urlquote_plus
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.http import require_POST, require_GET
 from django.core.urlresolvers import reverse
@@ -98,6 +100,12 @@ def users(request):
         'users': User.objects.all().annotate(count=Count('chunk')).order_by(
             '-count', 'last_name', 'first_name'),
     })
+
+
+@never_cache
+def logout_then_redirect(request):
+    auth.logout(request)
+    return http.HttpResponseRedirect(urlquote_plus(request.GET.get('next', '/'), safe='/?='))
 
 
 @never_cache
