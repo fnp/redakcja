@@ -2,50 +2,53 @@
 
 {% load i18n %}
 {% load pagination_tags %}
-{% load catalogue %}
+{% load set_get_parameter catalogue %}
 
 {% block extrabody %}
 {{ block.super }}
 <script type="text/javascript" charset="utf-8">
 $(function() {
-	function search(event) {
-        event.preventDefault();
-        var expr = new RegExp(slugify($('#file-list-filter').val()), 'i');
-        $('#file-list tbody tr').hide().filter(function(index) {
-            return expr.test(slugify( $('a', this).attr('data-id') ));
-        }).show();
-    }
-
-    $('#file-list-find-button').click(search).hide();
-	$('#file-list-filter').bind('keyup change DOMAttrModified', search);
+    $("select.filter").change(function() {
+        window.location.href = this.value;
+    });
 });
 </script>
 {% endblock %}
 
 {% block leftcolumn %}
-	<form method="get" action="#">
-    <table>
-    	<thead>
-    		<tr><th>Filtr:</th>
-			<th><input autocomplete="off" name="filter" id="file-list-filter" type="text" size="40" /></th>
-			<th><input type="reset" value="{% trans "Clear filter" %}" id="file-list-reset-button"/></th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-    </table>
-	</form>
 
-
-
-	<form method="get" action="#">
+    <form method="get" action="#">
     <table id="file-list">
-		<tbody>
+        <thead><tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th><select name="stage" class="filter">
+                <option value="{% set_get_parameter stage=,page= %}">- {% trans "filter by stage" %} -</option>
+                <option {% if request.GET.stage == '' %}selected="selected"
+                        {% endif %}value="{% set_get_parameter stage='',page= %}">- {% trans "empty" %} -</option>
+                {% for stage in stages %}
+                    <option {% if request.GET.stage == stage.slug %}selected="selected"
+                        {% endif %}value="{% set_get_parameter stage=stage.slug,page= %}">{{ stage.name }}</option>
+                {% endfor %}
+            </select></th>
+            <th><select name="user" class="filter">
+                <option value="{% set_get_parameter user=,page= %}">- {% trans "filter by user" %} -</option>
+                <option {% if request.GET.user == '' %}selected="selected"
+                        {% endif %}value="{% set_get_parameter user='',page= %}">- {% trans "empty" %} -</option>
+                {% for user in users %}
+                    <option {% if request.GET.user == user.username %}selected="selected"
+                        {% endif %}value="{% set_get_parameter user=user.username,page= %}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                {% endfor %}
+            </select></th>
+        </tr></thead>
+
+        <tbody>
         {% autopaginate books 100 %}
         {% if not books %}
             <tr><td>{% trans "No books found." %}</td></tr>
         {% endif %}
-    	{% for item in books %}
+        {% for item in books %}
             {% with item.book as book %}
 
             {% ifequal item.book_length 1 %}
@@ -56,8 +59,10 @@ $(function() {
                     <td><a target="_blank"
                                 href="{% url wiki_editor book.slug %}">
                                 {{ book.title }}</a></td>
-                    <td>({{ chunk.stage }})</td>
-                    <td>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+                    <td>{% if chunk.stage %}
+                        ({{ chunk.stage }})
+                    {% endif %}</td>
+                    <td>{% if chunk.user %}{{ chunk.user.first_name }} {{ chunk.user.last_name }}{% endif %}</td>
                 </tr>
                 {% endwith %}
             {% else %}

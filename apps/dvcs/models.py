@@ -124,10 +124,10 @@ class Change(models.Model):
 
         changes = self.tree.change_set.exclude(parent=None).filter(
                         revision__lte=self.revision).order_by('revision')
-        text = u''
+        text = ''
         for change in changes:
             text = change.apply_to(text)
-        return text
+        return text.decode('utf-8')
 
     def make_child(self, patch, description, author=None,
             author_name=None, author_email=None, tags=None):

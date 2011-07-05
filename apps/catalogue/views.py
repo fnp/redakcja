@@ -34,17 +34,35 @@ from django.views.decorators.cache import never_cache
 logger = logging.getLogger("fnp.catalogue")
 
 
+def slug_filter(qs, value, filter_field, model, model_field='slug', unset=''):
+    if value == unset:
+        return qs.filter(**{filter_field: None})
+    if value is None:
+        return qs
+    try:
+        obj = model._default_manager.get(**{model_field: value})
+    except model.DoesNotExist:
+        return qs.none()
+    else:
+        return qs.filter(**{filter_field: obj})
+
+
 @active_tab('all')
 @never_cache
-def document_list(request):
-    chunks_list = helpers.ChunksList(Chunk.objects.order_by(
-        'book__title', 'book', 'number'))
+def document_list(request, filters=None):
+    chunks = Chunk.objects.order_by('book__title', 'book', 'number')
+
+    chunks = slug_filter(chunks, request.GET.get('user', None), 'user', User, 'username')
+    chunks = slug_filter(chunks, request.GET.get('stage', None), 'stage', Chunk.tag_model, 'slug')
+
+    chunks_list = helpers.ChunksList(chunks)
 
     return direct_to_template(request, 'catalogue/document_list.html', extra_context={
         'books': chunks_list,
-        #'books': [helpers.BookChunks(b) for b in Book.objects.all().select_related()],
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
+        'stages': Chunk.tag_model.objects.all(),
+        'users': User.objects.annotate(count=Count('chunk')).order_by('-count', 'last_name', 'first_name'),
     })
 
 

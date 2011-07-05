@@ -99,6 +99,8 @@
 
 {% block rightcolumn %}
 {% render_comment_list for book %}
-{% render_comment_form for book %}
+{% with book.get_absolute_url as next %}
+    {% render_comment_form for book %}
+{% endwith %}
 
 {% endblock rightcolumn %}

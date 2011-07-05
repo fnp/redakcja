@@ -9,7 +9,7 @@
 body {
     margin: 0;
     font-family: verdana, sans-serif;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 
@@ -58,7 +58,7 @@ body {
 
 
 
-#wiki_layout_left_column {
+#catalogue_layout_left_column {
 	overflow: visible;
 	float: left;
 	/*max-width: 50%;*/
@@ -67,7 +67,7 @@ body {
 
 }
 
-#wiki_layout_right_column {
+#catalogue_layout_right_column {
 	float: left;
 	max-width: 35%;
 	margin-left: 5%;
