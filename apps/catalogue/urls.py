@@ -7,7 +7,6 @@ urlpatterns = patterns('catalogue.views',
     url(r'^$', redirect_to, {'url': 'catalogue/'}),
 
     url(r'^catalogue/$', 'document_list', name='catalogue_document_list'),
-    url(r'^unassigned/$', 'unassigned', name='catalogue_unassigned'),
     url(r'^user/$', 'my', name='catalogue_user'),
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='catalogue_user'),
     url(r'^users/$', 'users', name='catalogue_users'),

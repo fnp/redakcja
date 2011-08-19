@@ -19,11 +19,10 @@ from django.views.generic.simple import direct_to_template
 import librarian.html
 import librarian.text
 
-from apiclient import api_call
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk
+from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
 from catalogue import xml_tools
 
 #
@@ -66,19 +65,6 @@ def document_list(request, filters=None):
     })
 
 
-@active_tab('unassigned')
-@never_cache
-def unassigned(request):
-    chunks_list = helpers.ChunksList(Chunk.objects.filter(
-        user=None).order_by('book__title', 'book__id', 'number'))
-
-    return direct_to_template(request, 'catalogue/document_list.html', extra_context={
-        'books': chunks_list,
-        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
-                        key=lambda x: x[1]['time'], reverse=True),
-    })
-
-
 @never_cache
 def user(request, username=None):
     if username is None:
@@ -96,6 +82,8 @@ def user(request, username=None):
         'books': chunks_list,
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
+        'viewed_user': user,
+        'stages': Chunk.tag_model.objects.all(),
     })
 my = login_required(active_tab('my')(user))
 
@@ -427,10 +415,8 @@ def book_edit(request, slug):
 def publish(request, slug):
     book = get_object_or_404(Book, slug=slug)
     try:
-        ret = api_call(request.user, "books", {"book_xml": book.materialize()})
+        book.publish(request.user)
     except BaseException, e:
         return http.HttpResponse(e)
     else:
-        book.last_published = datetime.now()
-        book.save()
         return http.HttpResponseRedirect(book.get_absolute_url())

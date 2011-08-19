@@ -3,6 +3,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -23,7 +24,6 @@ class Book(models.Model):
 
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children")
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True)
-    last_published = models.DateTimeField(null=True, editable=False, db_index=True)
 
     class NoTextError(BaseException):
         pass
@@ -32,6 +32,7 @@ class Book(models.Model):
         ordering = ['parent_number', 'title']
         verbose_name = _('book')
         verbose_name_plural = _('books')
+        permissions = [('can_pubmark', 'Can mark for publishing')]
 
     def __unicode__(self):
         return self.title
@@ -56,11 +57,20 @@ class Book(models.Model):
     def __getitem__(self, chunk):
         return self.chunk_set.all()[chunk]
 
-    def materialize(self, publishable=True):
-        """ 
-            Get full text of the document compiled from chunks.
-            Takes the current versions of all texts
-            or versions most recently tagged for publishing.
+    def __len__(self):
+        return self.chunk_set.count()
+
+    def __nonzero__(self):
+        """
+            Necessary so that __len__ isn't used for bool evaluation.
+        """
+        return True
+
+    def get_current_changes(self, publishable=True):
+        """
+            Returns a list containing one Change for every Chunk in the Book.
+            Takes the most recent revision (publishable, if set).
+            Throws an error, if a proper revision is unavailable for a Chunk.
         """
         if publishable:
             changes = [chunk.publishable() for chunk in self]
@@ -68,15 +78,40 @@ class Book(models.Model):
             changes = [chunk.head for chunk in self]
         if None in changes:
             raise self.NoTextError('Some chunks have no available text.')
+        return changes
+
+    def materialize(self, publishable=False, changes=None):
+        """ 
+            Get full text of the document compiled from chunks.
+            Takes the current versions of all texts
+            or versions most recently tagged for publishing,
+            or a specified iterable changes.
+        """
+        if changes is None:
+            changes = self.get_current_changes(publishable)
         return compile_text(change.materialize() for change in changes)
 
     def publishable(self):
-        if not len(self):
+        if not self.chunk_set.exists():
             return False
         for chunk in self:
             if not chunk.publishable():
                 return False
         return True
+
+    def publish(self, user):
+        """
+            Publishes a book on behalf of a (local) user.
+        """
+        from apiclient import api_call
+
+        changes = self.get_current_changes(publishable=True)
+        book_xml = book.materialize(changes=changes)
+        #api_call(user, "books", {"book_xml": book_xml})
+        # record the publish
+        br = BookPublishRecord.objects.create(book=self, user=user)
+        for c in changes:
+            ChunkPublishRecord.objects.create(book_record=br, change=c)
 
     def make_chunk_slug(self, proposed):
         """ 
@@ -176,3 +211,25 @@ class Chunk(dvcs_models.Document):
             instance.book.save()
 
 models.signals.post_save.connect(Chunk.listener_saved, sender=Chunk)
+
+
+class BookPublishRecord(models.Model):
+    """
+        A record left after publishing a Book.
+    """
+
+    book = models.ForeignKey(Book)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+
+class ChunkPublishRecord(models.Model):
+    """
+        BookPublishRecord details for each Chunk.
+    """
+
+    book_record = models.ForeignKey(BookPublishRecord)
+    change = models.ForeignKey(Chunk.change_model)

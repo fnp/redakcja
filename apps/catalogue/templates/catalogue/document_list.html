@@ -32,15 +32,19 @@ $(function() {
                         {% endif %}value="{% set_get_parameter stage=stage.slug,page= %}">{{ stage.name }}</option>
                 {% endfor %}
             </select></th>
-            <th><select name="user" class="filter">
-                <option value="{% set_get_parameter user=,page= %}">- {% trans "filter by user" %} -</option>
-                <option {% if request.GET.user == '' %}selected="selected"
-                        {% endif %}value="{% set_get_parameter user='',page= %}">- {% trans "empty" %} -</option>
-                {% for user in users %}
-                    <option {% if request.GET.user == user.username %}selected="selected"
-                        {% endif %}value="{% set_get_parameter user=user.username,page= %}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
-                {% endfor %}
-            </select></th>
+
+            {% if not viewed_user %}
+                <th><select name="user" class="filter">
+                    <option value="{% set_get_parameter user=,page= %}">- {% trans "filter by user" %} -</option>
+                    <option {% if request.GET.user == '' %}selected="selected"
+                            {% endif %}value="{% set_get_parameter user='',page= %}">- {% trans "empty" %} -</option>
+                    {% for user in users %}
+                        <option {% if request.GET.user == user.username %}selected="selected"
+                            {% endif %}value="{% set_get_parameter user=user.username,page= %}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                    {% endfor %}
+                </select></th>
+            {% endif %}
+
         </tr></thead>
 
         <tbody>
@@ -61,8 +65,9 @@ $(function() {
                                 {{ book.title }}</a></td>
                     <td>{% if chunk.stage %}
                         ({{ chunk.stage }})
+                    {% else %}–
                     {% endif %}</td>
-                    <td>{% if chunk.user %}{{ chunk.user.first_name }} {{ chunk.user.last_name }}{% endif %}</td>
+                    <td>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
                 </tr>
                 {% endwith %}
             {% else %}
@@ -78,8 +83,19 @@ $(function() {
                         <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
                                 <span class='chunkno'>{{ chunk.number }}.</span>
                                 {{ chunk.comment }}</a></td>
-                        <td>({{ chunk.stage }})</td>
-                        <td>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+                        <td>{% if chunk.stage %}
+                                {{ chunk.stage }}
+                            {% else %}
+                                –
+                            {% endif %}</td>
+                        {% if not viewed_user %}
+                            <td>{% if chunk.user %}
+                                <a href="{% url catalogue_user chunk.user.username %}">
+                                    {{ chunk.user.first_name }} {{ chunk.user.last_name }}
+                                </a>{% else %}
+                                
+                                {% endif %}</td>
+                        {% endif %}
                     </td></tr>
                 {% endfor %}
             {% endifequal %}
@@ -102,6 +118,11 @@ $(function() {
 		</ol>
 	</div>
 
-    <h2>{% trans "Recent activity" %}</h2>
-    {% wall %}
+    {% if viewed_user %}
+        <h2>{% trans "Recent activity for" %} {{ viewed_user }}</h2>
+        {% wall viewed_user %}
+    {% else %}
+        <h2>{% trans "Recent activity" %}</h2>
+        {% wall %}
+    {% endif %}
 {% endblock rightcolumn %}
