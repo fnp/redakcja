@@ -26,6 +26,10 @@
 			<span data-ui-editable="true" data-edit-target="meta.galleryLink"
 			>{{ chunk.book.gallery }}</span>
 		</p>
+		<p>
+		    <label>{% trans "Characters in document" %}:</label>
+		    <span id="charcount"></span> (<span id="charcount_pages"></span> {% trans "pages" %}<span id="charcount_untagged">, {% trans "untagged" %}</span>)
+		</p>
 
 		<p><button type="button" id="publish_button">{% trans "Publish" %}</button></p>
 	</div>
