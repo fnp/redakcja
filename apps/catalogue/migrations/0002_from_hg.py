@@ -1,44 +1,177 @@
 # encoding: utf-8
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from zlib import compress
+import os
+import os.path
+import re
+import urllib
 
-class Migration(SchemaMigration):
+from django.db import models
+from mercurial import hg, ui
+from south.db import db
+from south.v2 import DataMigration
+
+from django.conf import settings
+from slughifi import slughifi
+
+META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
+STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
+AUTHOR_RE = re.compile(r'\s*(.*?)\s*<(.*)>\s*')
+
+
+def urlunquote(url):
+    """Unqotes URL
+
+    # >>> urlunquote('Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84')
+    # u'Za\u017c\xf3\u0142\u0107_g\u0119\u015bl\u0105 ja\u017a\u0144'
+    """
+    return unicode(urllib.unquote(url), 'utf-8', 'ignore')
+
+
+def split_name(name):
+    parts = name.split('__')
+    return parts
+
+
+def file_to_title(fname):
+    """ Returns a title-like version of a filename. """
+    parts = (p.replace('_', ' ').title() for p in fname.split('__'))
+    return ' / '.join(parts)
+
+
+def plain_text(text):
+    return re.sub(META_REGEX, '', text, 1)
+
+
+def gallery(slug, text):
+    result = {}
+
+    m = re.match(META_REGEX, text)
+    if m:
+        for line in m.group(1).split('\n'):
+            try:
+                k, v = line.split(':', 1)
+                result[k.strip()] = v.strip()
+            except ValueError:
+                continue
+
+    gallery = result.get('gallery', slughifi(slug))
+
+    if gallery.startswith('/'):
+        gallery = os.path.basename(gallery)
+
+    return gallery
+
+
+def migrate_file_from_hg(orm, fname, entry):
+    fname = urlunquote(fname)
+    print fname
+    if fname.endswith('.xml'):
+        fname = fname[:-4]
+    title = file_to_title(fname)
+    fname = slughifi(fname)
+
+    # create all the needed objects
+    # what if it already exists?
+    book = orm.Book.objects.create(
+        title=title,
+        slug=fname)
+    chunk = orm.Chunk.objects.create(
+        book=book,
+        number=1,
+        slug='1')
+    try:
+        chunk.stage = orm.ChunkTag.objects.order_by('ordering')[0]
+    except IndexError:
+        chunk.stage = None
+
+    maxrev = entry.filerev()
+    gallery_link = None
+
+    # this will fail if directory exists
+    os.makedirs(os.path.join(settings.DVCS_REPO_PATH, str(chunk.pk)))
+
+    for rev in xrange(maxrev + 1):
+        fctx = entry.filectx(rev)
+        data = fctx.data()
+        gallery_link = gallery(fname, data)
+        data = plain_text(data)
+
+        # get tags from description
+        description = fctx.description().decode("utf-8", 'replace')
+        tags = STAGE_TAGS_RE.findall(description)
+        tags = [orm.ChunkTag.objects.get(slug=slug.strip()) for slug in tags]
+
+        if tags:
+            max_ordering = max(tags, key=lambda x: x.ordering).ordering
+            try:
+                chunk.stage = orm.ChunkTag.objects.filter(ordering__gt=max_ordering).order_by('ordering')[0]
+            except IndexError:
+                chunk.stage = None
+
+        description = STAGE_TAGS_RE.sub('', description)
+
+        author = author_name = author_email = None
+        author_desc = fctx.user().decode("utf-8", 'replace')
+        m = AUTHOR_RE.match(author_desc)
+        if m:
+            try:
+                author = orm['auth.User'].objects.get(username=m.group(1), email=m.group(2))
+            except orm['auth.User'].DoesNotExist:
+                author_name = m.group(1)
+                author_email = m.group(2)
+        else:
+            author_name = author_desc
+
+        head = orm.ChunkChange.objects.create(
+            tree=chunk,
+            revision=rev + 1,
+            created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
+            description=description,
+            author=author,
+            author_name=author_name,
+            author_email=author_email,
+            parent=chunk.head
+            )
+
+        path = "%d/%d" % (chunk.pk, head.pk)
+        abs_path = os.path.join(settings.DVCS_REPO_PATH, path)
+        f = open(abs_path, 'wb')
+        f.write(compress(data))
+        f.close()
+        head.data = path
+
+        head.tags = tags
+        head.save()
+
+        chunk.head = head
+
+    chunk.save()
+    if gallery_link:
+        book.gallery = gallery_link
+        book.save()
+
+
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        
-        # Adding model 'BookPublishRecord'
-        db.create_table('catalogue_bookpublishrecord', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Book'])),
-            ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-        ))
-        db.send_create_signal('catalogue', ['BookPublishRecord'])
-
-        # Adding model 'ChunkPublishRecord'
-        db.create_table('catalogue_chunkpublishrecord', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('book_record', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.BookPublishRecord'])),
-            ('change', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.ChunkChange'])),
-        ))
-        db.send_create_signal('catalogue', ['ChunkPublishRecord'])
-
-        # Deleting field 'Book.last_published'
-        db.delete_column('catalogue_book', 'last_published')
+        try:
+            hg_path = settings.WIKI_REPOSITORY_PATH
+        except:
+            pass
+    
+        print 'migrate from', hg_path
+        repo = hg.repository(ui.ui(), hg_path)
+        tip = repo['tip']
+        for fname in tip:
+            if fname.startswith('.') or not fname.startswith('a'):
+                continue
+            migrate_file_from_hg(orm, fname, tip[fname])
 
 
     def backwards(self, orm):
-        
-        # Deleting model 'BookPublishRecord'
-        db.delete_table('catalogue_bookpublishrecord')
-
-        # Deleting model 'ChunkPublishRecord'
-        db.delete_table('catalogue_chunkpublishrecord')
-
-        # Adding field 'Book.last_published'
-        db.add_column('catalogue_book', 'last_published', self.gf('django.db.models.fields.DateTimeField')(null=True, db_index=True), keep_default=False)
+        "Write your backwards methods here."
+        pass
 
 
     models = {
@@ -105,11 +238,11 @@ class Migration(SchemaMigration):
             'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
+            'data': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
-            'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'change_set'", 'symmetrical': 'False', 'to': "orm['catalogue.ChunkTag']"}),

@@ -1,174 +1,8 @@
 # encoding: utf-8
 import datetime
-import os.path
-import cPickle
-import re
-import urllib
-
-from django.conf import settings
-from django.db import models
-from mercurial import mdiff, hg, ui
 from south.db import db
 from south.v2 import SchemaMigration
-
-from slughifi import slughifi
-
-META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
-STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
-AUTHOR_RE = re.compile(r'\s*(.*?)\s*<(.*)>\s*')
-
-
-def urlunquote(url):
-    """Unqotes URL
-
-    # >>> urlunquote('Za%C5%BC%C3%B3%C5%82%C4%87_g%C4%99%C5%9Bl%C4%85_ja%C5%BA%C5%84')
-    # u'Za\u017c\xf3\u0142\u0107_g\u0119\u015bl\u0105 ja\u017a\u0144'
-    """
-    return unicode(urllib.unquote(url), 'utf-8', 'ignore')
-
-
-def split_name(name):
-    parts = name.split('__')
-    return parts
-
-
-def file_to_title(fname):
-    """ Returns a title-like version of a filename. """
-    parts = (p.replace('_', ' ').title() for p in fname.split('__'))
-    return ' / '.join(parts)
-
-
-def make_patch(src, dst):
-    if isinstance(src, unicode):
-        src = src.encode('utf-8')
-    if isinstance(dst, unicode):
-        dst = dst.encode('utf-8')
-    return cPickle.dumps(mdiff.textdiff(src, dst))
-
-
-def plain_text(text):
-    return re.sub(META_REGEX, '', text, 1)
-
-
-def gallery(slug, text):
-    result = {}
-
-    m = re.match(META_REGEX, text)
-    if m:
-        for line in m.group(1).split('\n'):
-            try:
-                k, v = line.split(':', 1)
-                result[k.strip()] = v.strip()
-            except ValueError:
-                continue
-
-    gallery = result.get('gallery', slughifi(slug))
-
-    if gallery.startswith('/'):
-        gallery = os.path.basename(gallery)
-
-    return gallery
-
-
-def migrate_file_from_hg(orm, fname, entry):
-    fname = urlunquote(fname)
-    print fname
-    if fname.endswith('.xml'):
-        fname = fname[:-4]
-    title = file_to_title(fname)
-    fname = slughifi(fname)
-    # create all the needed objects
-    # what if it already exists?
-    book = orm.Book.objects.create(
-        title=title,
-        slug=fname)
-    chunk = orm.Chunk.objects.create(
-        book=book,
-        number=1,
-        slug='1')
-    head = orm.ChunkChange.objects.create(
-        tree=chunk,
-        revision=-1,
-        patch=make_patch('', ''),
-        created_at=datetime.datetime.fromtimestamp(entry.filectx(0).date()[0]),
-        description=''
-        )
-    chunk.head = head
-    try:
-        chunk.stage = orm.ChunkTag.objects.order_by('ordering')[0]
-    except IndexError:
-        chunk.stage = None
-    old_data = ''
-
-    maxrev = entry.filerev()
-    gallery_link = None
-    
-    for rev in xrange(maxrev + 1):
-        fctx = entry.filectx(rev)
-        data = fctx.data()
-        gallery_link = gallery(fname, data)
-        data = plain_text(data)
-
-        # get tags from description
-        description = fctx.description().decode("utf-8", 'replace')
-        tags = STAGE_TAGS_RE.findall(description)
-        tags = [orm.ChunkTag.objects.get(slug=slug.strip()) for slug in tags]
-
-        if tags:
-            max_ordering = max(tags, key=lambda x: x.ordering).ordering
-            try:
-                chunk.stage = orm.ChunkTag.objects.filter(ordering__gt=max_ordering).order_by('ordering')[0]
-            except IndexError:
-                chunk.stage = None
-
-        description = STAGE_TAGS_RE.sub('', description)
-
-        author = author_name = author_email = None
-        author_desc = fctx.user().decode("utf-8", 'replace')
-        m = AUTHOR_RE.match(author_desc)
-        if m:
-            try:
-                author = orm['auth.User'].objects.get(username=m.group(1), email=m.group(2))
-            except orm['auth.User'].DoesNotExist:
-                author_name = m.group(1)
-                author_email = m.group(2)
-        else:
-            author_name = author_desc
-
-        head = orm.ChunkChange.objects.create(
-            tree=chunk,
-            revision=rev + 1,
-            patch=make_patch(old_data, data),
-            created_at=datetime.datetime.fromtimestamp(fctx.date()[0]),
-            description=description,
-            author=author,
-            author_name=author_name,
-            author_email=author_email,
-            parent=chunk.head
-            )
-        head.tags = tags
-        chunk.head = head
-        old_data = data
-
-    chunk.save()
-    if gallery_link:
-        book.gallery = gallery_link
-        book.save()
-
-
-def migrate_from_hg(orm):
-    try:
-        hg_path = settings.WIKI_REPOSITORY_PATH
-    except:
-        pass
-
-    print 'migrate from', hg_path
-    repo = hg.repository(ui.ui(), hg_path)
-    tip = repo['tip']
-    for fname in tip:
-        if fname.startswith('.'):
-            continue
-        migrate_file_from_hg(orm, fname, tip[fname])
+from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -183,7 +17,6 @@ class Migration(SchemaMigration):
             ('gallery', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='children', null=True, to=orm['catalogue.Book'])),
             ('parent_number', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
-            ('last_published', self.gf('django.db.models.fields.DateTimeField')(null=True, db_index=True)),
         ))
         db.send_create_signal('catalogue', ['Book'])
 
@@ -222,7 +55,7 @@ class Migration(SchemaMigration):
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('author_name', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
             ('author_email', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('patch', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('data', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
             ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
             ('parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='children', null=True, blank=True, to=orm['catalogue.ChunkChange'])),
             ('merge_parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='merge_children', null=True, blank=True, to=orm['catalogue.ChunkChange'])),
@@ -244,11 +77,26 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('catalogue_chunkchange_tags', ['chunkchange_id', 'chunktag_id'])
 
+        # Adding model 'BookPublishRecord'
+        db.create_table('catalogue_bookpublishrecord', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Book'])),
+            ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+        ))
+        db.send_create_signal('catalogue', ['BookPublishRecord'])
+
+        # Adding model 'ChunkPublishRecord'
+        db.create_table('catalogue_chunkpublishrecord', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('book_record', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.BookPublishRecord'])),
+            ('change', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.ChunkChange'])),
+        ))
+        db.send_create_signal('catalogue', ['ChunkPublishRecord'])
+
         if not db.dry_run:
             from django.core.management import call_command
             call_command("loaddata", "stages.json")
-
-            migrate_from_hg(orm)
 
 
     def backwards(self, orm):
@@ -276,6 +124,12 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field tags on 'ChunkChange'
         db.delete_table('catalogue_chunkchange_tags')
+
+        # Deleting model 'BookPublishRecord'
+        db.delete_table('catalogue_bookpublishrecord')
+
+        # Deleting model 'ChunkPublishRecord'
+        db.delete_table('catalogue_chunkpublishrecord')
 
 
     models = {
@@ -312,11 +166,17 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
             'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_published': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'db_index': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['catalogue.Book']"}),
             'parent_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'})
+        },
+        'catalogue.bookpublishrecord': {
+            'Meta': {'ordering': "['-timestamp']", 'object_name': 'BookPublishRecord'},
+            'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Book']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'catalogue.chunk': {
             'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
@@ -336,15 +196,21 @@ class Migration(SchemaMigration):
             'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
+            'data': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
-            'patch': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'change_set'", 'symmetrical': 'False', 'to': "orm['catalogue.ChunkTag']"}),
             'tree': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'change_set'", 'to': "orm['catalogue.Chunk']"})
+        },
+        'catalogue.chunkpublishrecord': {
+            'Meta': {'object_name': 'ChunkPublishRecord'},
+            'book_record': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.BookPublishRecord']"}),
+            'change': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.ChunkChange']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'catalogue.chunktag': {
             'Meta': {'ordering': "['ordering']", 'object_name': 'ChunkTag'},

@@ -114,7 +114,10 @@ def text(request, slug, chunk=None):
                 author = None
             text = form.cleaned_data['text']
             parent_revision = form.cleaned_data['parent_revision']
-            parent = doc.at_revision(parent_revision)
+            if parent_revision is not None:
+                parent = doc.at_revision(parent_revision)
+            else:
+                parent = None
             stage = form.cleaned_data['stage_completed']
             tags = [stage] if stage else []
             doc.commit(author=author,
@@ -137,12 +140,17 @@ def text(request, slug, chunk=None):
         try:
             revision = int(revision)
         except (ValueError, TypeError):
-            revision = None
+            revision = doc.revision()
+
+        if revision is not None:
+            text = doc.at_revision(revision).materialize()
+        else:
+            text = ''
 
         return JSONResponse({
-            'text': doc.at_revision(revision).materialize(),
+            'text': text,
             'meta': {},
-            'revision': revision if revision else doc.revision(),
+            'revision': revision,
         })
 
 

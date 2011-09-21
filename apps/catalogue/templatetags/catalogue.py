@@ -63,7 +63,6 @@ class WallItem(object):
 
 def changes_wall(user, max_len):
     qs = Chunk.change_model.objects.filter(revision__gt=-1).order_by('-created_at')
-    qs = qs.defer('patch')
     qs = qs.select_related('author', 'tree', 'tree__book__title')
     if user:
         qs = qs.filter(Q(author=user) | Q(tree__user=user))

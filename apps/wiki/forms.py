@@ -30,7 +30,7 @@ class DocumentTextSaveForm(forms.Form):
 
     """
 
-    parent_revision = forms.IntegerField(widget=forms.HiddenInput)
+    parent_revision = forms.IntegerField(widget=forms.HiddenInput, required=False)
     text = forms.CharField(widget=forms.HiddenInput)
 
     author_name = forms.CharField(

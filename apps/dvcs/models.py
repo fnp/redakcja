@@ -1,11 +1,15 @@
 from datetime import datetime
 
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models.base import ModelBase
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from mercurial import mdiff, simplemerge
-import pickle
+
+from dvcs.fields import GzipFileSystemStorage
+from dvcs.settings import REPO_PATH
 
 
 class Tag(models.Model):
@@ -53,18 +57,23 @@ class Tag(models.Model):
 models.signals.pre_save.connect(Tag.listener_changed, sender=Tag)
 
 
+repo = GzipFileSystemStorage(location=REPO_PATH)
+
+def data_upload_to(instance, filename):
+    return "%d/%d" % (instance.tree.pk, instance.pk)
+
 class Change(models.Model):
     """
         Single document change related to previous change. The "parent"
         argument points to the version against which this change has been 
         recorded. Initial text will have a null parent.
         
-        Data contains a pickled diff needed to reproduce the initial document.
+        Data file contains a gzipped text of the document.
     """
     author = models.ForeignKey(User, null=True, blank=True)
     author_name = models.CharField(max_length=128, null=True, blank=True)
     author_email = models.CharField(max_length=128, null=True, blank=True)
-    patch = models.TextField(blank=True)
+    data = models.FileField(upload_to=data_upload_to, storage=repo)
     revision = models.IntegerField(db_index=True)
 
     parent = models.ForeignKey('self',
@@ -86,7 +95,7 @@ class Change(models.Model):
         unique_together = ['tree', 'revision']
 
     def __unicode__(self):
-        return u"Id: %r, Tree %r, Parent %r, Patch '''\n%s'''" % (self.id, self.tree_id, self.parent_id, self.patch)
+        return u"Id: %r, Tree %r, Parent %r, Data: %s" % (self.id, self.tree_id, self.parent_id, self.data)
 
     def author_str(self):
         if self.author:
@@ -106,76 +115,42 @@ class Change(models.Model):
             take the next available revision number if none yet
         """
         if self.revision is None:
-            self.revision = self.tree.revision() + 1
+            tree_rev = self.tree.revision()
+            if tree_rev is None:
+                self.revision = 0
+            else:
+                self.revision = tree_rev + 1
         return super(Change, self).save(*args, **kwargs)
 
-    @staticmethod
-    def make_patch(src, dst):
-        if isinstance(src, unicode):
-            src = src.encode('utf-8')
-        if isinstance(dst, unicode):
-            dst = dst.encode('utf-8')
-        return pickle.dumps(mdiff.textdiff(src, dst))
-
     def materialize(self):
-        # special care for merged nodes
-        if self.parent is None and self.merge_parent is not None:
-            return self.apply_to(self.merge_parent.materialize())
-
-        changes = self.tree.change_set.exclude(parent=None).filter(
-                        revision__lte=self.revision).order_by('revision')
-        text = ''
-        for change in changes:
-            text = change.apply_to(text)
-        return text.decode('utf-8')
-
-    def make_child(self, patch, description, author=None,
-            author_name=None, author_email=None, tags=None):
-        ch = self.children.create(patch=patch,
-                        tree=self.tree, author=author,
-                        author_name=author_name,
-                        author_email=author_email,
-                        description=description)
-        if tags is not None:
-            ch.tags = tags
-        return ch
-
-    def make_merge_child(self, patch, description, author=None, 
-            author_name=None, author_email=None, tags=None):
-        ch = self.merge_children.create(patch=patch,
-                        tree=self.tree, author=author,
-                        author_name=author_name,
-                        author_email=author_email,
-                        description=description,
-                        tags=tags)
-        if tags is not None:
-            ch.tags = tags
-        return ch
-
-    def apply_to(self, text):
-        return mdiff.patch(text, pickle.loads(self.patch.encode('ascii')))
+        f = self.data.storage.open(self.data)
+        text = f.read()
+        f.close()
+        return unicode(text, 'utf-8')
 
     def merge_with(self, other, author=None, 
             author_name=None, author_email=None, 
             description=u"Automatic merge."):
+        """Performs an automatic merge after straying commits."""
         assert self.tree_id == other.tree_id  # same tree
         if other.parent_id == self.pk:
-            # immediate child 
+            # immediate child - fast forward
             return other
 
-        local = self.materialize()
-        base = other.merge_parent.materialize()
-        remote = other.apply_to(base)
+        local = self.materialize().encode('utf-8')
+        base = other.parent.materialize().encode('utf-8')
+        remote = other.materialize().encode('utf-8')
 
         merge = simplemerge.Merge3Text(base, local, remote)
         result = ''.join(merge.merge_lines())
-        patch = self.make_patch(local, result)
-        return self.children.create(
-                    patch=patch, merge_parent=other, tree=self.tree,
+        merge_node = self.children.create(
+                    merge_parent=other, tree=self.tree,
                     author=author,
                     author_name=author_name,
                     author_email=author_email,
                     description=description)
+        merge_node.data.save('', ContentFile(result))
+        return merge_node
 
     def revert(self, **kwargs):
         """ commit this version of a doc as new head """
@@ -256,22 +231,13 @@ class Document(models.Model):
             change = self.change_set.get(pk=change)
         return change.materialize()
 
-    def commit(self, **kwargs):
+    def commit(self, text, **kwargs):
         if 'parent' not in kwargs:
             parent = self.head
         else:
             parent = kwargs['parent']
-            if not isinstance(parent, Change):
+            if parent is not None and not isinstance(parent, Change):
                 parent = self.change_set.objects.get(pk=kwargs['parent'])
-
-        if 'patch' not in kwargs:
-            if 'text' not in kwargs:
-                raise ValueError("You must provide either patch or target document.")
-            patch = Change.make_patch(self.materialize(change=parent), kwargs['text'])
-        else:
-            if 'text' in kwargs:
-                raise ValueError("You can provide only text or patch - not both")
-            patch = kwargs['patch']
 
         author = kwargs.get('author', None)
         author_name = kwargs.get('author_name', None)
@@ -281,24 +247,23 @@ class Document(models.Model):
             # set stage to next tag after the commited one
             self.stage = max(tags, key=lambda t: t.ordering).next()
 
-        old_head = self.head
-        if parent != old_head:
-            change = parent.make_merge_child(patch, author=author, 
+        change = self.change_set.create(author=author,
                     author_name=author_name,
                     author_email=author_email,
                     description=kwargs.get('description', ''),
-                    tags=tags)
-            # not Fast-Forward - perform a merge
-            self.head = old_head.merge_with(change, author=author,
+                    parent=parent)
+
+        change.tags = tags
+        change.data.save('', ContentFile(text.encode('utf-8')))
+        change.save()
+
+        if self.head:
+            # merge new change as new head
+            self.head = self.head.merge_with(change, author=author,
                     author_name=author_name,
                     author_email=author_email)
         else:
-            self.head = parent.make_child(patch, author=author, 
-                    author_name=author_name,
-                    author_email=author_email,
-                    description=kwargs.get('description', ''),
-                    tags=tags)
-
+            self.head = change
         self.save()
         return self.head
 
@@ -308,13 +273,11 @@ class Document(models.Model):
     def revision(self):
         rev = self.change_set.aggregate(
                 models.Max('revision'))['revision__max']
-        return rev if rev is not None else -1
+        return rev
 
     def at_revision(self, rev):
-        if rev is not None:
-            return self.change_set.get(revision=rev)
-        else:
-            return self.head
+        """Returns a Change with given revision number."""
+        return self.change_set.get(revision=rev)
 
     def publishable(self):
         changes = self.change_set.filter(publishable=True).order_by('-created_at')[:1]
@@ -322,18 +285,3 @@ class Document(models.Model):
             return changes[0]
         else:
             return None
-
-    @staticmethod
-    def listener_initial_commit(sender, instance, created, **kwargs):
-        # run for Document and its subclasses
-        if not isinstance(instance, Document):
-            return
-        if created:
-            instance.head = instance.change_model.objects.create(
-                    revision=-1,
-                    author=instance.creator,
-                    patch=Change.make_patch('', ''),
-                    tree=instance)
-            instance.save()
-
-models.signals.post_save.connect(Document.listener_initial_commit)
