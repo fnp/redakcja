@@ -7,9 +7,12 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.utils import IntegrityError
+
+from slughifi import slughifi
 
 from dvcs import models as dvcs_models
-from catalogue.xml_tools import compile_text
+from catalogue.xml_tools import compile_text, split_xml
 
 import logging
 logger = logging.getLogger("fnp.catalogue")
@@ -41,6 +44,41 @@ class Book(models.Model):
         return reverse("catalogue_book", args=[self.slug])
 
     @classmethod
+    def import_xml_text(cls, text=u'', creator=None, previous_book=None,
+                *args, **kwargs):
+
+        texts = split_xml(text)
+        if previous_book:
+            instance = previous_book
+        else:
+            instance = cls(*args, **kwargs)
+            instance.save()
+
+        # if there are more parts, set the rest to empty strings
+        book_len = len(instance)
+        for i in range(book_len - len(texts)):
+            texts.append(u'pusta część %d' % (i + 1), u'')
+
+        i = 0
+        for i, (title, text) in enumerate(texts):
+            if not title:
+                title = u'część %d' % (i + 1)
+
+            slug = slughifi(title)
+
+            if i < book_len:
+                chunk = instance[i]
+                chunk.slug = slug
+                chunk.comment = title
+                chunk.save()
+            else:
+                chunk = instance.add(slug, title, creator, adjust_slug=True)
+
+            chunk.commit(text, author=creator)
+
+        return instance
+
+    @classmethod
     def create(cls, creator=None, text=u'', *args, **kwargs):
         """
             >>> Book.create(slug='x', text='abc').materialize()
@@ -48,7 +86,7 @@ class Book(models.Model):
         """
         instance = cls(*args, **kwargs)
         instance.save()
-        instance[0].commit(author=creator, text=text)
+        instance[0].commit(text, author=creator)
         return instance
 
     def __iter__(self):
@@ -75,7 +113,7 @@ class Book(models.Model):
         if publishable:
             changes = [chunk.publishable() for chunk in self]
         else:
-            changes = [chunk.head for chunk in self]
+            changes = [chunk.head for chunk in self if chunk.head is not None]
         if None in changes:
             raise self.NoTextError('Some chunks have no available text.')
         return changes
@@ -126,6 +164,7 @@ class Book(models.Model):
         return new_slug
 
     def append(self, other):
+        """Add all chunks of another book to self."""
         number = self[len(self) - 1].number + 1
         single = len(other) == 1
         for chunk in other:
@@ -154,6 +193,10 @@ class Book(models.Model):
             chunk.save()
             number += 1
         other.delete()
+
+    def add(self, *args, **kwargs):
+        """Add a new chunk at the end."""
+        return self.chunk_set.reverse()[0].split(*args, **kwargs)
 
     @staticmethod
     def listener_create(sender, instance, created, **kwargs):
@@ -196,12 +239,22 @@ class Chunk(dvcs_models.Document):
             title += " (%d/%d)" % (self.number, book_length)
         return title
 
-    def split(self, slug, comment='', creator=None):
+    def split(self, slug, comment='', creator=None, adjust_slug=False):
         """ Create an empty chunk after this one """
         self.book.chunk_set.filter(number__gt=self.number).update(
                 number=models.F('number')+1)
-        new_chunk = self.book.chunk_set.create(number=self.number+1,
-                creator=creator, slug=slug, comment=comment)
+        tries = 1
+        new_slug = slug
+        new_chunk = None
+        while not new_chunk:
+            try:
+                new_chunk = self.book.chunk_set.create(number=self.number+1,
+                    creator=creator, slug=new_slug, comment=comment)
+            except IntegrityError:
+                if not adjust_slug:
+                    raise
+                new_slug = "%s_%d" % (slug, tries)
+                tries += 1
         return new_chunk
 
     @staticmethod
