@@ -253,7 +253,7 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				break;
 			case TEXT_NODE:
 				self.result += text_buffer;
-				text_buffer = token.node.nodeValue.replace('&', '&amp;').replace('<', '&lt;');
+				text_buffer = token.node.nodeValue.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 				break;
             case COMMENT_NODE:
                 self.result += text_buffer;
