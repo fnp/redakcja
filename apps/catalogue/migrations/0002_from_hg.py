@@ -158,15 +158,15 @@ class Migration(DataMigration):
         try:
             hg_path = settings.WIKI_REPOSITORY_PATH
         except:
-            pass
-    
-        print 'migrate from', hg_path
-        repo = hg.repository(ui.ui(), hg_path)
-        tip = repo['tip']
-        for fname in tip:
-            if fname.startswith('.') or not fname.startswith('a'):
-                continue
-            migrate_file_from_hg(orm, fname, tip[fname])
+            print 'repository not configured, skipping'
+        else:
+            print 'migrate from', hg_path
+            repo = hg.repository(ui.ui(), hg_path)
+            tip = repo['tip']
+            for fname in tip:
+                if fname.startswith('.') or not fname.startswith('a'):
+                    continue
+                migrate_file_from_hg(orm, fname, tip[fname])
 
 
     def backwards(self, orm):
