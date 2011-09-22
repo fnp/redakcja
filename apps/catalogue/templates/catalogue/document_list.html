@@ -2,45 +2,65 @@
 
 {% load i18n %}
 {% load pagination_tags %}
-{% load set_get_parameter catalogue %}
+{% load catalogue %}
 
 {% block extrabody %}
 {{ block.super }}
 <script type="text/javascript" charset="utf-8">
 $(function() {
     $("select.filter").change(function() {
-        window.location.href = this.value;
+        document.filter[this.name].value = this.value;
+        document.filter.submit();
     });
+
+    $('#book-search').keypress(function(e)
+    {
+         if (e.which == 13) 
+         {
+            document.filter[this.name] = this.value;
+            document.filter.submit();
+         }
+    });
+
 });
 </script>
 {% endblock %}
 
 {% block leftcolumn %}
 
-    <form method="get" action="#">
+    <form name='filter' action=''>
+    <input type='hidden' name="title" value="{{ request.GET.title }}" />
+    <input type='hidden' name="stage" value="{{ request.GET.stage }}" />
+    <input type='hidden' name="user" value="{{ request.GET.user }}" />
+    </form>
+
     <table id="file-list">
         <thead><tr>
             <th></th>
             <th></th>
-            <th></th>
+            <th id='th-book-search' style='width:300px;'>
+                <form action='#'>
+                <input name="title" class='filter' style='width:300px;' value="{{ request.GET.title }}" />
+                </form>
+            </th>
             <th><select name="stage" class="filter">
-                <option value="{% set_get_parameter stage=,page= %}">- {% trans "filter by stage" %} -</option>
-                <option {% if request.GET.stage == '' %}selected="selected"
-                        {% endif %}value="{% set_get_parameter stage='',page= %}">- {% trans "empty" %} -</option>
+                <option value=''>- {% trans "filter by stage" %} -</option>
+                <option {% if request.GET.stage == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
                 {% for stage in stages %}
                     <option {% if request.GET.stage == stage.slug %}selected="selected"
-                        {% endif %}value="{% set_get_parameter stage=stage.slug,page= %}">{{ stage.name }}</option>
+                        {% endif %}value="{{ stage.slug }}">{{ stage.name }}</option>
                 {% endfor %}
             </select></th>
 
             {% if not viewed_user %}
                 <th><select name="user" class="filter">
-                    <option value="{% set_get_parameter user=,page= %}">- {% trans "filter by user" %} -</option>
-                    <option {% if request.GET.user == '' %}selected="selected"
-                            {% endif %}value="{% set_get_parameter user='',page= %}">- {% trans "empty" %} -</option>
+                    <option value=''>- {% trans "filter by user" %} -</option>
+                    <option {% if request.GET.user == '-' %}selected="selected"
+                            {% endif %}value="-">- {% trans "none" %} -</option>
                     {% for user in users %}
                         <option {% if request.GET.user == user.username %}selected="selected"
-                            {% endif %}value="{% set_get_parameter user=user.username,page= %}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                            {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
                     {% endfor %}
                 </select></th>
             {% endif %}
@@ -104,7 +124,6 @@ $(function() {
         <tr><td colspan="3">{% paginate %}</td></tr>
 		</tbody>
     </table>
-	</form>
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}

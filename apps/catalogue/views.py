@@ -33,10 +33,10 @@ from django.views.decorators.cache import never_cache
 logger = logging.getLogger("fnp.catalogue")
 
 
-def slug_filter(qs, value, filter_field, model, model_field='slug', unset=''):
+def foreign_filter(qs, value, filter_field, model, model_field='slug', unset='-'):
     if value == unset:
         return qs.filter(**{filter_field: None})
-    if value is None:
+    if not value:
         return qs
     try:
         obj = model._default_manager.get(**{model_field: value})
@@ -46,22 +46,33 @@ def slug_filter(qs, value, filter_field, model, model_field='slug', unset=''):
         return qs.filter(**{filter_field: obj})
 
 
+def search_filter(qs, value, filter_field):
+    if not value:
+        return qs
+    return qs.filter(**{"%s__icontains" % filter_field: value})
+
+
 @active_tab('all')
 @never_cache
 def document_list(request, filters=None):
     chunks = Chunk.objects.order_by('book__title', 'book', 'number')
 
-    chunks = slug_filter(chunks, request.GET.get('user', None), 'user', User, 'username')
-    chunks = slug_filter(chunks, request.GET.get('stage', None), 'stage', Chunk.tag_model, 'slug')
+    chunks = foreign_filter(chunks, request.GET.get('user', None), 'user', User, 'username')
+    chunks = foreign_filter(chunks, request.GET.get('stage', None), 'stage', Chunk.tag_model, 'slug')
+    chunks = search_filter(chunks, request.GET.get('title', None), 'book__title')
 
     chunks_list = helpers.ChunksList(chunks)
+
+    users = User.objects.annotate(count=Count('chunk')).filter(count__gt=0).order_by('-count', 'last_name', 'first_name')
+    #users = User.objects.annotate(count=Count('chunk')).order_by('-count', 'last_name', 'first_name')
+
 
     return direct_to_template(request, 'catalogue/document_list.html', extra_context={
         'books': chunks_list,
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
         'stages': Chunk.tag_model.objects.all(),
-        'users': User.objects.annotate(count=Count('chunk')).order_by('-count', 'last_name', 'first_name'),
+        'users': users,
     })
 
 
