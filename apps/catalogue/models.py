@@ -159,37 +159,51 @@ class Book(models.Model):
         i = 1
         new_slug = proposed
         while new_slug in slugs:
-            new_slug = "%s-%d" % (proposed, i)
+            new_slug = "%s_%d" % (proposed, i)
             i += 1
         return new_slug
 
-    def append(self, other):
+    def append(self, other, slugs=None, titles=None):
         """Add all chunks of another book to self."""
         number = self[len(self) - 1].number + 1
-        single = len(other) == 1
-        for chunk in other:
+        len_other = len(other)
+        single = len_other == 1
+
+        if slugs is not None:
+            assert len(slugs) == len_other
+        if titles is not None:
+            assert len(titles) == len_other
+            if slugs is None:
+                slugs = [slughifi(t) for t in titles]
+
+        for i, chunk in enumerate(other):
             # move chunk to new book
             chunk.book = self
             chunk.number = number
 
-            # try some title guessing
-            if other.title.startswith(self.title):
-                other_title_part = other.title[len(self.title):].lstrip(' /')
-            else:
-                other_title_part = other.title
-
-            if single:
-                # special treatment for appending one-parters:
-                # just use the guessed title and original book slug
-                chunk.comment = other_title_part
-                if other.slug.startswith(self.slug):
-                    chunk_slug = other.slug[len(self.slug):].lstrip('-_')
+            if titles is None:
+                # try some title guessing
+                if other.title.startswith(self.title):
+                    other_title_part = other.title[len(self.title):].lstrip(' /')
                 else:
-                    chunk_slug = other.slug
-                chunk.slug = self.make_chunk_slug(chunk_slug)
+                    other_title_part = other.title
+
+                if single:
+                    # special treatment for appending one-parters:
+                    # just use the guessed title and original book slug
+                    chunk.comment = other_title_part
+                    if other.slug.startswith(self.slug):
+                        chunk_slug = other.slug[len(self.slug):].lstrip('-_')
+                    else:
+                        chunk_slug = other.slug
+                    chunk.slug = self.make_chunk_slug(chunk_slug)
+                else:
+                    chunk.comment = "%s, %s" % (other_title_part, chunk.comment)
             else:
-                chunk.comment = "%s, %s" % (other_title_part, chunk.comment)
-                chunk.slug = self.make_chunk_slug(chunk.slug)
+                chunk.slug = slugs[i]
+                chunk.comment = titles[i]
+
+            chunk.slug = self.make_chunk_slug(chunk.slug)
             chunk.save()
             number += 1
         other.delete()
@@ -243,18 +257,14 @@ class Chunk(dvcs_models.Document):
         """ Create an empty chunk after this one """
         self.book.chunk_set.filter(number__gt=self.number).update(
                 number=models.F('number')+1)
-        tries = 1
-        new_slug = slug
         new_chunk = None
         while not new_chunk:
+            new_slug = self.book.make_chunk_slug(slug)
             try:
                 new_chunk = self.book.chunk_set.create(number=self.number+1,
                     creator=creator, slug=new_slug, comment=comment)
             except IntegrityError:
-                if not adjust_slug:
-                    raise
-                new_slug = "%s_%d" % (slug, tries)
-                tries += 1
+                pass
         return new_chunk
 
     @staticmethod
