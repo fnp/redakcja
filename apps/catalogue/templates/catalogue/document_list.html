@@ -102,7 +102,7 @@ $(function() {
                         <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}">[c]</a></td>
                         <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
                                 <span class='chunkno'>{{ chunk.number }}.</span>
-                                {{ chunk.comment }}</a></td>
+                                {{ chunk.title }}</a></td>
                         <td>{% if chunk.stage %}
                                 {{ chunk.stage }}
                             {% else %}

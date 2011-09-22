@@ -28,7 +28,7 @@ class Migration(SchemaMigration):
             ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Book'])),
             ('number', self.gf('django.db.models.fields.IntegerField')()),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
             ('stage', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.ChunkTag'], null=True, blank=True)),
             ('head', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['catalogue.ChunkChange'], null=True, blank=True)),
         ))
@@ -181,7 +181,7 @@ class Migration(SchemaMigration):
         'catalogue.chunk': {
             'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
             'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Book']"}),
-            'comment': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_documents'", 'null': 'True', 'to': "orm['auth.User']"}),
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['catalogue.ChunkChange']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

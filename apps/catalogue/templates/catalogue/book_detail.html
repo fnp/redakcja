@@ -9,7 +9,7 @@
 <table>
     {% for c in chunks %}
         <tr class="chunk-{{ c.grade }}">
-        <td><a target="_blank" href="{{ c.chunk.get_absolute_url }}">{{ c.chunk.comment }}</a></td>
+        <td><a target="_blank" href="{{ c.chunk.get_absolute_url }}">{{ c.chunk.title }}</a></td>
         <td>{% for fix in c.fix %}
 
                 {% ifequal fix "wl" %}<span class="fix"

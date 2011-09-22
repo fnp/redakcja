@@ -69,7 +69,7 @@ class Book(models.Model):
             if i < book_len:
                 chunk = instance[i]
                 chunk.slug = slug
-                chunk.comment = title
+                chunk.title = title
                 chunk.save()
             else:
                 chunk = instance.add(slug, title, creator, adjust_slug=True)
@@ -191,17 +191,17 @@ class Book(models.Model):
                 if single:
                     # special treatment for appending one-parters:
                     # just use the guessed title and original book slug
-                    chunk.comment = other_title_part
+                    chunk.title = other_title_part
                     if other.slug.startswith(self.slug):
                         chunk_slug = other.slug[len(self.slug):].lstrip('-_')
                     else:
                         chunk_slug = other.slug
                     chunk.slug = self.make_chunk_slug(chunk_slug)
                 else:
-                    chunk.comment = "%s, %s" % (other_title_part, chunk.comment)
+                    chunk.title = "%s, %s" % (other_title_part, chunk.title)
             else:
                 chunk.slug = slugs[i]
-                chunk.comment = titles[i]
+                chunk.title = titles[i]
 
             chunk.slug = self.make_chunk_slug(chunk.slug)
             chunk.save()
@@ -226,14 +226,14 @@ class Chunk(dvcs_models.Document):
     book = models.ForeignKey(Book, editable=False)
     number = models.IntegerField()
     slug = models.SlugField()
-    comment = models.CharField(max_length=255, blank=True)
+    title = models.CharField(max_length=255, blank=True)
 
     class Meta:
         unique_together = [['book', 'number'], ['book', 'slug']]
         ordering = ['number']
 
     def __unicode__(self):
-        return "%d-%d: %s" % (self.book_id, self.number, self.comment)
+        return "%d:%d: %s" % (self.book_id, self.number, self.title)
 
     def get_absolute_url(self):
         return reverse("wiki_editor", args=[self.book.slug, self.slug])
@@ -247,13 +247,13 @@ class Chunk(dvcs_models.Document):
 
     def pretty_name(self, book_length=None):
         title = self.book.title
-        if self.comment:
-            title += ", %s" % self.comment
+        if self.title:
+            title += ", %s" % self.title
         if book_length > 1:
             title += " (%d/%d)" % (self.number, book_length)
         return title
 
-    def split(self, slug, comment='', creator=None, adjust_slug=False):
+    def split(self, slug, title='', creator=None, adjust_slug=False):
         """ Create an empty chunk after this one """
         self.book.chunk_set.filter(number__gt=self.number).update(
                 number=models.F('number')+1)
@@ -262,7 +262,7 @@ class Chunk(dvcs_models.Document):
             new_slug = self.book.make_chunk_slug(slug)
             try:
                 new_chunk = self.book.chunk_set.create(number=self.number+1,
-                    creator=creator, slug=new_slug, comment=comment)
+                    creator=creator, slug=new_slug, title=title)
             except IntegrityError:
                 pass
         return new_chunk

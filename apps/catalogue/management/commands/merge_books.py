@@ -154,7 +154,7 @@ class Command(BaseCommand):
 
                 if verbose:
                     print "title: %s // %s  -->\n       %s // %s\nslug: %s / %s  -->\n      %s / %s" % (
-                        book.title, chunk.comment,
+                        book.title, chunk.title,
                         new_title, new_chunk_title,
                         book.slug, chunk.slug,
                         new_slug, new_chunk_slug)
@@ -168,7 +168,7 @@ class Command(BaseCommand):
                     book.slug = new_slug
                     book.save()
                     for j, chunk in enumerate(book):
-                        chunk.comment = chunk_titles[j]
+                        chunk.title = chunk_titles[j]
                         chunk.slug = chunk_slugs[j]
                         chunk.save()
 

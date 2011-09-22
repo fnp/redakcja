@@ -356,14 +356,14 @@ def chunk_add(request, slug, chunk):
                 creator = None
             doc.split(creator=creator,
                 slug=form.cleaned_data['slug'],
-                comment=form.cleaned_data['comment'],
+                title=form.cleaned_data['title'],
             )
 
             return http.HttpResponseRedirect(doc.book.get_absolute_url())
     else:
         form = forms.ChunkAddForm(initial={
                 "slug": str(doc.number + 1),
-                "comment": "cz. %d" % (doc.number + 1, ),
+                "title": "cz. %d" % (doc.number + 1, ),
         })
 
     return direct_to_template(request, "catalogue/chunk_add.html", extra_context={
