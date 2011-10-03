@@ -19,6 +19,7 @@ sys.path = [
 ] + sys.path
 
 # Run Django
+os.environ["CELERY_LOADER"] = "django"
 os.environ['DJANGO_SETTINGS_MODULE'] = '$PROJECT_NAME.settings'
 
 from django.core.handlers.wsgi import WSGIHandler

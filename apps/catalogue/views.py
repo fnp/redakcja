@@ -7,10 +7,10 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count
+from django.db.models import Count, Q
 from django import http
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -33,70 +33,26 @@ from django.views.decorators.cache import never_cache
 logger = logging.getLogger("fnp.catalogue")
 
 
-def foreign_filter(qs, value, filter_field, model, model_field='slug', unset='-'):
-    if value == unset:
-        return qs.filter(**{filter_field: None})
-    if not value:
-        return qs
-    try:
-        obj = model._default_manager.get(**{model_field: value})
-    except model.DoesNotExist:
-        return qs.none()
-    else:
-        return qs.filter(**{filter_field: obj})
-
-
-def search_filter(qs, value, filter_field):
-    if not value:
-        return qs
-    return qs.filter(**{"%s__icontains" % filter_field: value})
-
-
 @active_tab('all')
 @never_cache
-def document_list(request, filters=None):
-    chunks = Chunk.objects.order_by('book__title', 'book', 'number')
-
-    chunks = foreign_filter(chunks, request.GET.get('user', None), 'user', User, 'username')
-    chunks = foreign_filter(chunks, request.GET.get('stage', None), 'stage', Chunk.tag_model, 'slug')
-    chunks = search_filter(chunks, request.GET.get('title', None), 'book__title')
-
-    chunks_list = helpers.ChunksList(chunks)
-
-    users = User.objects.annotate(count=Count('chunk')).filter(count__gt=0).order_by('-count', 'last_name', 'first_name')
-    #users = User.objects.annotate(count=Count('chunk')).order_by('-count', 'last_name', 'first_name')
-
-
-    return direct_to_template(request, 'catalogue/document_list.html', extra_context={
-        'books': chunks_list,
-        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
-                        key=lambda x: x[1]['time'], reverse=True),
-        'stages': Chunk.tag_model.objects.all(),
-        'users': users,
-    })
+def document_list(request):
+    return render(request, 'catalogue/document_list.html')
 
 
 @never_cache
-def user(request, username=None):
-    if username is None:
-        if request.user.is_authenticated():
-            user = request.user
-        else:
-            raise Http404
-    else:
-        user = get_object_or_404(User, username=username)
+def user(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'catalogue/user_page.html', {"viewed_user": user})
 
-    chunks_list = helpers.ChunksList(Chunk.objects.filter(
-        user=user).order_by('book__title', 'book', 'number'))
 
-    return direct_to_template(request, 'catalogue/document_list.html', extra_context={
-        'books': chunks_list,
+@login_required
+@active_tab('my')
+@never_cache
+def my(request):
+    return render(request, 'catalogue/my_page.html', {
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
-        'viewed_user': user,
-        'stages': Chunk.tag_model.objects.all(),
-    })
-my = login_required(active_tab('my')(user))
+        })
 
 
 @active_tab('users')
@@ -105,6 +61,11 @@ def users(request):
         'users': User.objects.all().annotate(count=Count('chunk')).order_by(
             '-count', 'last_name', 'first_name'),
     })
+
+
+@active_tab('activity')
+def activity(request):
+    return render(request, 'catalogue/activity.html')
 
 
 @never_cache
@@ -127,11 +88,12 @@ def create_missing(request, slug=None):
                 creator = request.user
             else:
                 creator = None
-            book = Book.create(creator=creator,
+            book = Book.objects.create(
                 slug=form.cleaned_data['slug'],
                 title=form.cleaned_data['title'],
-                text=form.cleaned_data['text'],
             )
+            book.chunk_set.all().update(creator=creator)
+            book[0].commit(text=form.cleaned_data['text'], author=creator)
 
             return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
     else:

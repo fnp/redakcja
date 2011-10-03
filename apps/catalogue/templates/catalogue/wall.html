@@ -13,8 +13,8 @@
             <!--img src='{{ STATIC_URL }}img/wall/{{ item.tag}}.png' alt='{% trans item.tag %}' /-->
         </div>
 
-        {{ item.timestamp }}
-        <br/>
+        <span style='float:right'>{{ item.timestamp }}</span>
+        <h3>{{ item.header }}</h3>
         {% if item.user %}
             <a href="{% url catalogue_user item.user.username %}">
             {{ item.user.first_name }} {{ item.user.last_name }}</a>

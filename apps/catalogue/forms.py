@@ -44,6 +44,8 @@ class DocumentsUploadForm(forms.Form):
         Form used for uploading new documents.
     """
     file = forms.FileField(required=True, label=_('ZIP file'))
+    dirs = forms.BooleanField(label=_('Directories are documents in chunks'),
+            widget = forms.CheckboxInput(attrs={'disabled':'disabled'}))
 
     def clean(self):
         file = self.cleaned_data['file']

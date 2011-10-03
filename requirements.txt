@@ -15,6 +15,8 @@ sorl-thumbnail>=3.2
 django-maintenancemode>=0.9
 django-pagination
 django-gravatar
+django-celery
+django-kombu
 
 # migrations
 south>=0.6

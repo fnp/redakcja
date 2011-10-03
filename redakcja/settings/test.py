@@ -11,12 +11,12 @@ DATABASE_NAME = ':memory:'
 
 import tempfile
 
-WIKI_REPOSITORY_PATH = tempfile.mkdtemp(prefix='wikirepo')
+CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='wikirepo')
 
 INSTALLED_APPS += ('django_nose',)
 
 TEST_RUNNER = 'django_nose.run_tests'
-TEST_MODULES = ('wiki', 'toolbar', 'vstorage')
+TEST_MODULES = ('catalogue', 'dvcs.tests', 'wiki', 'toolbar')
 NOSE_ARGS = (
     '--tests=' + ','.join(TEST_MODULES),
     '--cover-package=' + ','.join(TEST_MODULES),

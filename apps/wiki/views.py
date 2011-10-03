@@ -280,8 +280,7 @@ def pubmark(request, slug, chunk=None):
         publishable = form.cleaned_data['publishable']
         change = doc.at_revision(revision)
         if publishable != change.publishable:
-            change.publishable = publishable
-            change.save()
+            change.set_publishable(publishable)
             return JSONResponse({"message": _("Revision marked")})
         else:
             return JSONResponse({"message": _("Nothing changed")})

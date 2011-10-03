@@ -10,6 +10,7 @@ urlpatterns = patterns('catalogue.views',
     url(r'^user/$', 'my', name='catalogue_user'),
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='catalogue_user'),
     url(r'^users/$', 'users', name='catalogue_users'),
+    url(r'^activity/$', 'activity', name='catalogue_activity'),
 
     url(r'^upload/$',
         'upload', name='catalogue_upload'),

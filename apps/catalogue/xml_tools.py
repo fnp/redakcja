@@ -230,7 +230,7 @@ def split_xml(text):
             for a in name_elem.findall('.//' + tag):
                 a.text=''
                 del a[:]
-        name = etree.tostring(name_elem, method='text', encoding='utf-8')
+        name = etree.tostring(name_elem, method='text', encoding='utf-8').strip()
 
         # in the original, remove everything from the start of the last chapter
         parent = element.getparent()

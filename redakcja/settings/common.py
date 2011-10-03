@@ -10,8 +10,6 @@ TEMPLATE_DEBUG = DEBUG
 MAINTENANCE_MODE = False
 
 ADMINS = (
-    # (u'Marek Stępniowski', 'marek@stepniowski.com'),
-    # (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
     (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
 )
 
@@ -116,6 +114,8 @@ INSTALLED_APPS = (
     'filebrowser',
     'pagination',
     'gravatar',
+    'djcelery',
+    'djkombu',
 
     'catalogue',
     'dvcs',
@@ -137,12 +137,10 @@ FILEBROWSER_DEFAULT_ORDER = "path_relative"
 IMAGE_DIR = 'images'
 
 
-WL_API_CONFIG = {
-    "URL": "http://localhost:7000/api/",
-    "AUTH_REALM": "WL API",
-    "AUTH_USER": "platforma",
-    "AUTH_PASSWD": "platforma",
-}
+import djcelery
+djcelery.setup_loader()
+    
+
 
 SHOW_APP_VERSION = False
 

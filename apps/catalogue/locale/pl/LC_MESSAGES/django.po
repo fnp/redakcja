@@ -7,472 +7,534 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-21 13:41+0200\n"
-"PO-Revision-Date: 2011-06-21 13:46+0100\n"
+"POT-Creation-Date: 2011-10-03 15:56+0200\n"
+"PO-Revision-Date: 2011-10-03 15:56+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
-"Language: \n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: forms.py:32
-msgid "Publishable"
-msgstr "Gotowe do publikacji"
-
-#: forms.py:68
+#: forms.py:46
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
+#: forms.py:47
+msgid "Directories are documents in chunks"
+msgstr "Katalogi zawierają dokumenty w częściach"
+
+#: forms.py:85
 #: forms.py:99
-#: forms.py:137
-msgid "Author"
-msgstr "Autor"
-
-#: forms.py:100
-#: forms.py:138
-msgid "Your name"
-msgstr "Imię i nazwisko"
-
-#: forms.py:105
-#: forms.py:143
-msgid "Author's email"
-msgstr "E-mail autora"
-
-#: forms.py:106
-#: forms.py:144
-msgid "Your email address, so we can show a gravatar :)"
-msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
-
-#: forms.py:112
-#: forms.py:150
-msgid "Your comments"
-msgstr "Twój komentarz"
-
-#: forms.py:113
-msgid "Describe changes you made."
-msgstr "Opisz swoje zmiany"
-
-#: forms.py:119
-msgid "Completed"
-msgstr "Ukończono"
-
-#: forms.py:120
-msgid "If you completed a life cycle stage, select it."
-msgstr "Jeśli został ukończony etap prac, wskaż go."
-
-#: forms.py:151
-msgid "Describe the reason for reverting."
-msgstr "Opisz powód przywrócenia."
-
-#: forms.py:176
-#: forms.py:190
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:202
+#: forms.py:109
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: models.py:25
-msgid "title"
-msgstr "tytuł"
-
-#: models.py:26
-msgid "slug"
-msgstr ""
-
-#: models.py:27
-msgid "scan gallery name"
-msgstr "nazwa galerii skanów"
-
-#: models.py:29
-msgid "parent"
-msgstr "rodzic"
-
-#: models.py:30
-msgid "parent number"
-msgstr "numeracja rodzica"
-
-#: models.py:40
-msgid "book"
-msgstr "książka"
-
-#: models.py:41
-msgid "books"
-msgstr "książki"
-
-#: models.py:206
-msgid "name"
-msgstr "nazwa"
-
-#: models.py:210
-msgid "theme"
-msgstr "motyw"
-
-#: models.py:211
-msgid "themes"
-msgstr "motywy"
-
-#: views.py:241
+#: views.py:137
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:243
+#: views.py:139
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:249
+#: views.py:145
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: views.py:655
-msgid "Tag added"
-msgstr "Dodano tag"
+#: models/book.py:20
+#: models/chunk.py:24
+msgid "title"
+msgstr "tytuł"
 
-#: views.py:677
-msgid "Revision marked"
-msgstr "Wersja oznaczona"
+#: models/book.py:21
+#: models/chunk.py:23
+msgid "slug"
+msgstr "slug"
 
-#: views.py:679
-msgid "Nothing changed"
-msgstr "Nic nie uległo zmianie"
+#: models/book.py:22
+msgid "scan gallery name"
+msgstr "nazwa galerii skanów"
 
-#: templates/wiki/base.html:9
+#: models/book.py:25
+msgid "parent"
+msgstr "rodzic"
+
+#: models/book.py:26
+msgid "parent number"
+msgstr "numeracja rodzica"
+
+#: models/book.py:43
+#: models/chunk.py:21
+#: models/publish_log.py:17
+msgid "book"
+msgstr "książka"
+
+#: models/book.py:44
+msgid "books"
+msgstr "książki"
+
+#: models/book.py:45
+msgid "Can mark for publishing"
+msgstr "Oznacza do publikacji"
+
+#: models/chunk.py:22
+msgid "number"
+msgstr "numer"
+
+#: models/chunk.py:39
+msgid "chunk"
+msgstr "część"
+
+#: models/chunk.py:40
+msgid "chunks"
+msgstr "części"
+
+#: models/publish_log.py:18
+msgid "time"
+msgstr "czas"
+
+#: models/publish_log.py:19
+msgid "user"
+msgstr "użytkownik"
+
+#: models/publish_log.py:24
+#: models/publish_log.py:33
+msgid "book publish record"
+msgstr "zapis publikacji książki"
+
+#: models/publish_log.py:25
+msgid "book publish records"
+msgstr "zapisy publikacji książek"
+
+#: models/publish_log.py:34
+msgid "change"
+msgstr "zmiana"
+
+#: models/publish_log.py:38
+msgid "chunk publish record"
+msgstr "zapis publikacji części"
+
+#: models/publish_log.py:39
+msgid "chunk publish records"
+msgstr "zapisy publikacji części"
+
+#: templates/catalogue/base.html:9
 msgid "Platforma Redakcyjna"
-msgstr ""
+msgstr "Platforma Redakcyjna"
 
-#: templates/wiki/book_append_to.html:8
+#: templates/catalogue/book_append_to.html:9
 msgid "Append book"
 msgstr "Dołącz książkę"
 
-#: templates/wiki/book_detail.html:6
-#: templates/wiki/book_detail.html.py:46
+#: templates/catalogue/book_detail.html:6
+#: templates/catalogue/book_detail.html:46
 msgid "edit"
 msgstr "edytuj"
 
-#: templates/wiki/book_detail.html:16
+#: templates/catalogue/book_detail.html:16
 msgid "add basic document structure"
 msgstr "dodaj podstawową strukturę dokumentu"
 
-#: templates/wiki/book_detail.html:20
+#: templates/catalogue/book_detail.html:20
 msgid "change master tag to"
 msgstr "zmień tak master na"
 
-#: templates/wiki/book_detail.html:24
+#: templates/catalogue/book_detail.html:24
 msgid "add begin trimming tag"
 msgstr "dodaj początkowy ogranicznik"
 
-#: templates/wiki/book_detail.html:28
+#: templates/catalogue/book_detail.html:28
 msgid "add end trimming tag"
 msgstr "dodaj końcowy ogranicznik"
 
-#: templates/wiki/book_detail.html:34
+#: templates/catalogue/book_detail.html:34
 msgid "unstructured text"
 msgstr "tekst bez struktury"
 
-#: templates/wiki/book_detail.html:38
+#: templates/catalogue/book_detail.html:38
 msgid "unknown XML"
 msgstr "nieznany XML"
 
-#: templates/wiki/book_detail.html:42
+#: templates/catalogue/book_detail.html:42
 msgid "broken document"
 msgstr "uszkodzony dokument"
 
-#: templates/wiki/book_detail.html:60
+#: templates/catalogue/book_detail.html:61
 msgid "Apply fixes"
 msgstr "Wykonaj zmiany"
 
-#: templates/wiki/book_detail.html:66
+#: templates/catalogue/book_detail.html:67
 msgid "Append to other book"
 msgstr "Dołącz do innej książki"
 
-#: templates/wiki/book_detail.html:68
+#: templates/catalogue/book_detail.html:69
 msgid "Last published"
 msgstr "Ostatnio opublikowano"
 
-#: templates/wiki/book_detail.html:72
+#: templates/catalogue/book_detail.html:73
 msgid "Full XML"
 msgstr "Pełny XML"
 
-#: templates/wiki/book_detail.html:73
+#: templates/catalogue/book_detail.html:74
 msgid "HTML version"
 msgstr "Wersja HTML"
 
-#: templates/wiki/book_detail.html:74
+#: templates/catalogue/book_detail.html:75
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/wiki/book_detail.html:76
-msgid "EPUB version"
-msgstr "Wersja EPUB"
-
-#: templates/wiki/book_detail.html:77
-msgid "PDF version"
-msgstr "Wersja PDF"
-
-#: templates/wiki/book_detail.html:90
-#: templates/wiki/tabs/summary_view.html:30
+#: templates/catalogue/book_detail.html:92
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: templates/wiki/book_detail.html:94
+#: templates/catalogue/book_detail.html:96
 msgid "This book cannot be published yet"
 msgstr "Ta książka nie może jeszcze zostać opublikowana"
 
-#: templates/wiki/book_edit.html:8
-#: templates/wiki/chunk_edit.html:8
-#: templates/wiki/document_details_base.html:35
-#: templates/wiki/pubmark_dialog.html:15
-#: templates/wiki/tag_dialog.html:15
+#: templates/catalogue/book_edit.html:9
+#: templates/catalogue/chunk_edit.html:9
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/wiki/chunk_add.html:8
+#: templates/catalogue/chunk_add.html:9
 msgid "Add chunk"
 msgstr "Dodaj część"
 
-#: templates/wiki/diff_table.html:5
-msgid "Old version"
-msgstr "Stara wersja"
-
-#: templates/wiki/diff_table.html:6
-msgid "New version"
-msgstr "Nowa wersja"
-
-#: templates/wiki/document_create_missing.html:8
+#: templates/catalogue/document_create_missing.html:9
 msgid "Create document"
 msgstr "Utwórz dokument"
 
-#: templates/wiki/document_details.html:32
-msgid "Click to open/close gallery"
-msgstr "Kliknij, aby (ro)zwinąć galerię"
-
-#: templates/wiki/document_details_base.html:31
-msgid "Help"
-msgstr "Pomoc"
-
-#: templates/wiki/document_details_base.html:33
-msgid "Version"
-msgstr "Wersja"
-
-#: templates/wiki/document_details_base.html:33
-msgid "Unknown"
-msgstr "nieznana"
-
-#: templates/wiki/document_details_base.html:36
-msgid "Save attempt in progress"
-msgstr "Trwa zapisywanie"
-
-#: templates/wiki/document_details_base.html:37
-msgid "There is a newer version of this document!"
-msgstr "Istnieje nowsza wersja tego dokumentu!"
-
-#: templates/wiki/document_list.html:31
-msgid "Clear filter"
-msgstr "Wyczyść filtr"
-
-#: templates/wiki/document_list.html:46
-msgid "No books found."
-msgstr "Nie znaleziono książek."
-
-#: templates/wiki/document_list.html:89
-msgid "Your last edited documents"
-msgstr "Twoje ostatnie edycje"
-
-#: templates/wiki/document_upload.html:8
+#: templates/catalogue/document_upload.html:8
 msgid "Bulk documents upload"
 msgstr "Hurtowe dodawanie dokumentów"
 
-#: templates/wiki/document_upload.html:11
+#: templates/catalogue/document_upload.html:11
 msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored."
 msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
 
-#: templates/wiki/document_upload.html:16
-#: templatetags/wiki.py:36
+#: templates/catalogue/document_upload.html:17
+#: templatetags/catalogue.py:34
 msgid "Upload"
 msgstr "Załaduj"
 
-#: templates/wiki/document_upload.html:23
+#: templates/catalogue/document_upload.html:24
 msgid "There have been some errors. No files have been added to the repository."
 msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
 
-#: templates/wiki/document_upload.html:24
+#: templates/catalogue/document_upload.html:25
 msgid "Offending files"
 msgstr "Błędne pliki"
 
-#: templates/wiki/document_upload.html:32
+#: templates/catalogue/document_upload.html:33
 msgid "Correct files"
 msgstr "Poprawne pliki"
 
-#: templates/wiki/document_upload.html:43
+#: templates/catalogue/document_upload.html:44
 msgid "Files have been successfully uploaded to the repository."
 msgstr "Pliki zostały dodane do repozytorium."
 
-#: templates/wiki/document_upload.html:44
+#: templates/catalogue/document_upload.html:45
 msgid "Uploaded files"
 msgstr "Dodane pliki"
 
-#: templates/wiki/document_upload.html:54
+#: templates/catalogue/document_upload.html:55
 msgid "Skipped files"
 msgstr "Pominięte pliki"
 
-#: templates/wiki/document_upload.html:55
+#: templates/catalogue/document_upload.html:56
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
-#: templates/wiki/pubmark_dialog.html:16
-#: templates/wiki/revert_dialog.html:39
-#: templates/wiki/tag_dialog.html:16
-msgid "Cancel"
-msgstr "Anuluj"
+#: templates/catalogue/my_page.html:13
+msgid "Your last edited documents"
+msgstr "Twoje ostatnie edycje"
 
-#: templates/wiki/revert_dialog.html:38
-msgid "Revert"
-msgstr "Przywróć"
+#: templates/catalogue/my_page.html:22
+#: templates/catalogue/user_page.html:13
+msgid "Recent activity for"
+msgstr "Ostatnia aktywność dla:"
 
-#: templates/wiki/user_list.html:7
-#: templatetags/wiki.py:33
+#: templates/catalogue/user_list.html:7
+#: templatetags/catalogue.py:32
 msgid "Users"
 msgstr "Użytkownicy"
 
-#: templates/wiki/tabs/annotations_view.html:9
-msgid "all"
-msgstr "wszystkie"
+#: templates/catalogue/book_list/book.html:6
+#: templates/catalogue/book_list/book.html:25
+msgid "Book settings"
+msgstr "Ustawienia książki"
 
-#: templates/wiki/tabs/annotations_view_item.html:3
-msgid "Annotations"
-msgstr "Przypisy"
+#: templates/catalogue/book_list/book.html:7
+#: templates/catalogue/book_list/chunk.html:5
+msgid "Chunk settings"
+msgstr "Ustawienia części"
 
-#: templates/wiki/tabs/gallery_view.html:7
-msgid "Previous"
-msgstr "Poprzednie"
+#: templates/catalogue/book_list/book_list.html:19
+msgid "Show hidden books"
+msgstr "Pokaż ukryte książki"
 
-#: templates/wiki/tabs/gallery_view.html:13
-msgid "Next"
-msgstr "Następne"
+#: templates/catalogue/book_list/book_list.html:24
+msgid "Search in book titles"
+msgstr "Szukaj w tytułach książek"
 
-#: templates/wiki/tabs/gallery_view.html:15
-msgid "Zoom in"
-msgstr "Powiększ"
+#: templates/catalogue/book_list/book_list.html:29
+msgid "stage"
+msgstr "etap"
 
-#: templates/wiki/tabs/gallery_view.html:16
-msgid "Zoom out"
-msgstr "Zmniejsz"
+#: templates/catalogue/book_list/book_list.html:31
+#: templates/catalogue/book_list/book_list.html:42
+msgid "none"
+msgstr "brak"
 
-#: templates/wiki/tabs/gallery_view_item.html:3
-msgid "Gallery"
-msgstr "Galeria"
+#: templates/catalogue/book_list/book_list.html:40
+msgid "editor"
+msgstr "redaktor"
 
-#: templates/wiki/tabs/history_view.html:5
-msgid "Compare versions"
-msgstr "Porównaj wersje"
+#: templates/catalogue/book_list/book_list.html:51
+msgid "status"
+msgstr "status"
 
-#: templates/wiki/tabs/history_view.html:7
-msgid "Mark for publishing"
-msgstr "Oznacz do publikacji"
+#: templates/catalogue/book_list/book_list.html:75
+#, python-format
+msgid "%(c)s book"
+msgid_plural "%(c)s books"
+msgstr[0] "%(c)s książka"
+msgstr[1] "%(c)s książki"
+msgstr[2] "%(c)s książek"
 
-#: templates/wiki/tabs/history_view.html:9
-msgid "Revert document"
-msgstr "Przywróć wersję"
+#: templates/catalogue/book_list/book_list.html:80
+msgid "No books found."
+msgstr "Nie znaleziono książek."
 
-#: templates/wiki/tabs/history_view.html:12
-msgid "View version"
-msgstr "Zobacz wersję"
+#: templatetags/book_list.py:81
+msgid "publishable"
+msgstr "do publikacji"
 
-#: templates/wiki/tabs/history_view_item.html:3
-msgid "History"
-msgstr "Historia"
+#: templatetags/book_list.py:82
+msgid "changed"
+msgstr "zmienione"
 
-#: templates/wiki/tabs/search_view.html:3
-#: templates/wiki/tabs/search_view.html:5
-msgid "Search"
-msgstr "Szukaj"
+#: templatetags/book_list.py:83
+msgid "published"
+msgstr "opublikowane"
 
-#: templates/wiki/tabs/search_view.html:8
-msgid "Replace with"
-msgstr "Zamień na"
+#: templatetags/book_list.py:84
+msgid "unpublished"
+msgstr "nie opublikowane"
 
-#: templates/wiki/tabs/search_view.html:10
-msgid "Replace"
-msgstr "Zamień"
+#: templatetags/book_list.py:85
+msgid "empty"
+msgstr "puste"
 
-#: templates/wiki/tabs/search_view.html:13
-msgid "Options"
-msgstr "Opcje"
+#: templatetags/catalogue.py:28
+msgid "My page"
+msgstr "Moja strona"
 
-#: templates/wiki/tabs/search_view.html:15
-msgid "Case sensitive"
-msgstr "Rozróżniaj wielkość liter"
+#: templatetags/catalogue.py:30
+msgid "Activity"
+msgstr "Aktywność"
 
-#: templates/wiki/tabs/search_view.html:17
-msgid "From cursor"
-msgstr "Zacznij od kursora"
-
-#: templates/wiki/tabs/search_view_item.html:3
-msgid "Search and replace"
-msgstr "Znajdź i zamień"
-
-#: templates/wiki/tabs/source_editor_item.html:5
-msgid "Source code"
-msgstr "Kod źródłowy"
-
-#: templates/wiki/tabs/summary_view.html:9
-msgid "Title"
-msgstr "Tytuł"
-
-#: templates/wiki/tabs/summary_view.html:14
-msgid "Document ID"
-msgstr "ID dokumentu"
-
-#: templates/wiki/tabs/summary_view.html:18
-msgid "Current version"
-msgstr "Aktualna wersja"
-
-#: templates/wiki/tabs/summary_view.html:21
-msgid "Last edited by"
-msgstr "Ostatnio edytowane przez"
-
-#: templates/wiki/tabs/summary_view.html:25
-msgid "Link to gallery"
-msgstr "Link do galerii"
-
-#: templates/wiki/tabs/summary_view_item.html:3
-msgid "Summary"
-msgstr "Podsumowanie"
-
-#: templates/wiki/tabs/wysiwyg_editor.html:9
-msgid "Insert theme"
-msgstr "Wstaw motyw"
-
-#: templates/wiki/tabs/wysiwyg_editor.html:12
-msgid "Insert annotation"
-msgstr "Wstaw przypis"
-
-#: templates/wiki/tabs/wysiwyg_editor_item.html:3
-msgid "Visual editor"
-msgstr "Edytor wizualny"
-
-#: templatetags/wiki.py:30
-msgid "Assigned to me"
-msgstr "Przypisane do mnie"
-
-#: templatetags/wiki.py:32
-msgid "Unassigned"
-msgstr "Nie przypisane"
-
-#: templatetags/wiki.py:34
+#: templatetags/catalogue.py:31
 msgid "All"
 msgstr "Wszystkie"
 
-#: templatetags/wiki.py:35
+#: templatetags/catalogue.py:33
 msgid "Add"
 msgstr "Dodaj"
 
-#: templatetags/wiki.py:39
+#: templatetags/catalogue.py:37
 msgid "Admin"
 msgstr "Administracja"
+
+#: templatetags/wall.py:43
+msgid "Related edit"
+msgstr "Powiązana zmiana"
+
+#: templatetags/wall.py:45
+msgid "Edit"
+msgstr "Zmiana"
+
+#: templatetags/wall.py:67
+msgid "Publication"
+msgstr "Publikacja"
+
+#: templatetags/wall.py:84
+msgid "Comment"
+msgstr "Komentarz"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Your name"
+#~ msgstr "Imię i nazwisko"
+
+#~ msgid "Author's email"
+#~ msgstr "E-mail autora"
+
+#~ msgid "Your email address, so we can show a gravatar :)"
+#~ msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
+
+#~ msgid "Describe changes you made."
+#~ msgstr "Opisz swoje zmiany"
+
+#~ msgid "Completed"
+#~ msgstr "Ukończono"
+
+#~ msgid "If you completed a life cycle stage, select it."
+#~ msgstr "Jeśli został ukończony etap prac, wskaż go."
+
+#~ msgid "Describe the reason for reverting."
+#~ msgstr "Opisz powód przywrócenia."
+
+#~ msgid "name"
+#~ msgstr "nazwa"
+
+#~ msgid "theme"
+#~ msgstr "motyw"
+
+#~ msgid "themes"
+#~ msgstr "motywy"
+
+#~ msgid "Tag added"
+#~ msgstr "Dodano tag"
+
+#~ msgid "Revision marked"
+#~ msgstr "Wersja oznaczona"
+
+#~ msgid "EPUB version"
+#~ msgstr "Wersja EPUB"
+
+#~ msgid "PDF version"
+#~ msgstr "Wersja PDF"
+
+#~ msgid "Old version"
+#~ msgstr "Stara wersja"
+
+#~ msgid "New version"
+#~ msgstr "Nowa wersja"
+
+#~ msgid "Click to open/close gallery"
+#~ msgstr "Kliknij, aby (ro)zwinąć galerię"
+
+#~ msgid "Help"
+#~ msgstr "Pomoc"
+
+#~ msgid "Version"
+#~ msgstr "Wersja"
+
+#~ msgid "Unknown"
+#~ msgstr "nieznana"
+
+#~ msgid "Save attempt in progress"
+#~ msgstr "Trwa zapisywanie"
+
+#~ msgid "There is a newer version of this document!"
+#~ msgstr "Istnieje nowsza wersja tego dokumentu!"
+
+#~ msgid "Clear filter"
+#~ msgstr "Wyczyść filtr"
+
+#~ msgid "Cancel"
+#~ msgstr "Anuluj"
+
+#~ msgid "Revert"
+#~ msgstr "Przywróć"
+
+#~ msgid "all"
+#~ msgstr "wszystkie"
+
+#~ msgid "Annotations"
+#~ msgstr "Przypisy"
+
+#~ msgid "Previous"
+#~ msgstr "Poprzednie"
+
+#~ msgid "Next"
+#~ msgstr "Następne"
+
+#~ msgid "Zoom in"
+#~ msgstr "Powiększ"
+
+#~ msgid "Zoom out"
+#~ msgstr "Zmniejsz"
+
+#~ msgid "Gallery"
+#~ msgstr "Galeria"
+
+#~ msgid "Compare versions"
+#~ msgstr "Porównaj wersje"
+
+#~ msgid "Revert document"
+#~ msgstr "Przywróć wersję"
+
+#~ msgid "View version"
+#~ msgstr "Zobacz wersję"
+
+#~ msgid "History"
+#~ msgstr "Historia"
+
+#~ msgid "Search"
+#~ msgstr "Szukaj"
+
+#~ msgid "Replace with"
+#~ msgstr "Zamień na"
+
+#~ msgid "Replace"
+#~ msgstr "Zamień"
+
+#~ msgid "Options"
+#~ msgstr "Opcje"
+
+#~ msgid "Case sensitive"
+#~ msgstr "Rozróżniaj wielkość liter"
+
+#~ msgid "From cursor"
+#~ msgstr "Zacznij od kursora"
+
+#~ msgid "Search and replace"
+#~ msgstr "Znajdź i zamień"
+
+#~ msgid "Source code"
+#~ msgstr "Kod źródłowy"
+
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#~ msgid "Document ID"
+#~ msgstr "ID dokumentu"
+
+#~ msgid "Current version"
+#~ msgstr "Aktualna wersja"
+
+#~ msgid "Last edited by"
+#~ msgstr "Ostatnio edytowane przez"
+
+#~ msgid "Link to gallery"
+#~ msgstr "Link do galerii"
+
+#~ msgid "Summary"
+#~ msgstr "Podsumowanie"
+
+#~ msgid "Insert theme"
+#~ msgstr "Wstaw motyw"
+
+#~ msgid "Insert annotation"
+#~ msgstr "Wstaw przypis"
+
+#~ msgid "Visual editor"
+#~ msgstr "Edytor wizualny"
+
+#~ msgid "Assigned to me"
+#~ msgstr "Przypisane do mnie"
+
+#~ msgid "Unassigned"
+#~ msgstr "Nie przypisane"
 
 #~ msgid "First correction"
 #~ msgstr "Autokorekta"

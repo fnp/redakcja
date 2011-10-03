@@ -13,11 +13,11 @@ COMPRESS_CSS = {
         ),
         'output_filename': 'compressed/detail_styles_?.css',
     },
-    'listing': {
+    'catalogue': {
         'source_filenames': (
             'css/filelist.css',
         ),
-        'output_filename': 'compressed/listing_styles_?.css',
+        'output_filename': 'compressed/catalogue_styles_?.css',
      }
 }
 
@@ -59,12 +59,12 @@ COMPRESS_JS = {
         ),
         'output_filename': 'compressed/detail_scripts_?.js',
      },
-    'listing': {
+    'catalogue': {
         'source_filenames': (
-                'js/lib/jquery-1.4.2.min.js',
+                'js/catalogue.js',
                 'js/slugify.js',
         ),
-        'output_filename': 'compressed/listing_scripts_?.js',
+        'output_filename': 'compressed/catalogue_scripts_?.js',
      }
 }
 

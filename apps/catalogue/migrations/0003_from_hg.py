@@ -89,7 +89,7 @@ def migrate_file_from_hg(orm, fname, entry):
     gallery_link = None
 
     # this will fail if directory exists
-    os.makedirs(os.path.join(settings.DVCS_REPO_PATH, str(chunk.pk)))
+    os.makedirs(os.path.join(settings.CATALOGUE_REPO_PATH, str(chunk.pk)))
 
     for rev in xrange(maxrev + 1):
         fctx = entry.filectx(rev)
@@ -135,7 +135,7 @@ def migrate_file_from_hg(orm, fname, entry):
             )
 
         path = "%d/%d" % (chunk.pk, head.pk)
-        abs_path = os.path.join(settings.DVCS_REPO_PATH, path)
+        abs_path = os.path.join(settings.CATALOGUE_REPO_PATH, path)
         f = open(abs_path, 'wb')
         f.write(compress(data))
         f.close()
@@ -164,7 +164,7 @@ class Migration(DataMigration):
             repo = hg.repository(ui.ui(), hg_path)
             tip = repo['tip']
             for fname in tip:
-                if fname.startswith('.') or not fname.startswith('a'):
+                if fname.startswith('.'):
                     continue
                 migrate_file_from_hg(orm, fname, tip[fname])
 
@@ -206,6 +206,10 @@ class Migration(DataMigration):
         },
         'catalogue.book': {
             'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
+            '_new_publishable': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
+            '_published': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
+            '_short_html': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            '_single': ('django.db.models.fields.NullBooleanField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['catalogue.Book']"}),
@@ -215,21 +219,24 @@ class Migration(DataMigration):
         },
         'catalogue.bookpublishrecord': {
             'Meta': {'ordering': "['-timestamp']", 'object_name': 'BookPublishRecord'},
-            'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Book']"}),
+            'book': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'publish_log'", 'to': "orm['catalogue.Book']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'catalogue.chunk': {
             'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
+            '_changed': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
+            '_hidden': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
+            '_short_html': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Book']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_documents'", 'null': 'True', 'to': "orm['auth.User']"}),
             'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['catalogue.ChunkChange']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.IntegerField', [], {}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.ChunkTag']", 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         'catalogue.chunkchange': {
@@ -251,7 +258,7 @@ class Migration(DataMigration):
         'catalogue.chunkpublishrecord': {
             'Meta': {'object_name': 'ChunkPublishRecord'},
             'book_record': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.BookPublishRecord']"}),
-            'change': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.ChunkChange']"}),
+            'change': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'publish_log'", 'to': "orm['catalogue.ChunkChange']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'catalogue.chunktag': {
