@@ -1,0 +1,83 @@
+[
+    {
+        "pk": 1, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 1, 
+            "name": "Autokorekta", 
+            "slug": "first_correction"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 2, 
+            "name": "Tagowanie", 
+            "slug": "tagging"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 3, 
+            "name": "Korekta", 
+            "slug": "proofreading"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 4, 
+            "name": "Sprawdzenie przypis\u00f3w \u017ar\u00f3d\u0142a", 
+            "slug": "annotation-proofreading"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 5, 
+            "name": "Uwsp\u00f3\u0142cze\u015bnienie", 
+            "slug": "modernisation"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 6, 
+            "name": "Przypisy", 
+            "slug": "annotations"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 7, 
+            "name": "Motywy", 
+            "slug": "themes"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 8, 
+            "name": "Ostateczna redakcja literacka", 
+            "slug": "editor-proofreading"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "catalogue.chunktag", 
+        "fields": {
+            "ordering": 9, 
+            "name": "Ostateczna redakcja techniczna", 
+            "slug": "technical-editor-proofreading"
+        }
+    }
+]

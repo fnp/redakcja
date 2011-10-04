@@ -1,12 +1,12 @@
 /*
- * Dialog for saving document to the server
+ * Dialog for marking document for publishing
  *
  */
 (function($){
 
-    function AddTagDialog(element, options){
+    function PubmarkDialog(element, options){
         if (!options.revision  && options.revision != 0)
-            throw "AddTagDialog needs a revision number.";
+            throw "PubmarkDialog needs a revision number.";
 
         this.ctx = $.wiki.exitContext();
         this.clearForm();
@@ -14,13 +14,13 @@
         /* fill out hidden fields */
         this.$form = $('form', element);
 
-        $("input[name='addtag-id']", this.$form).val(CurrentDocument.id);
-        $("input[name='addtag-revision']", this.$form).val(options.revision);
+        $("input[name='pubmark-id']", this.$form).val(CurrentDocument.id);
+        $("input[name='pubmark-revision']", this.$form).val(options.revision);
 
         $.wiki.cls.GenericDialog.call(this, element);
     };
 
-    AddTagDialog.prototype = $.extend(new $.wiki.cls.GenericDialog(), {
+    PubmarkDialog.prototype = $.extend(new $.wiki.cls.GenericDialog(), {
         cancelAction: function(){
             $.wiki.enterContext(this.ctx);
             this.hide();
@@ -30,11 +30,11 @@
             var self = this;
 
             self.$elem.block({
-                message: "Dodawanie tagu",
+                message: "Oznaczanie wersji",
                 fadeIn: 0,
             });
 
-            CurrentDocument.setTag({
+            CurrentDocument.pubmark({
                 form: self.$form,
                 success: function(doc, changed, info){
                     self.$elem.block({
@@ -57,5 +57,5 @@
     });
 
     /* make it global */
-    $.wiki.cls.AddTagDialog = AddTagDialog;
+    $.wiki.cls.PubmarkDialog = PubmarkDialog;
 })(jQuery);

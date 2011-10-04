@@ -11,6 +11,7 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 sys.path += [os.path.realpath(os.path.join(*x)) for x in (
         (PROJECT_ROOT, '..'),
         (PROJECT_ROOT, '..', 'apps'),
+        (PROJECT_ROOT, '..', 'lib/librarian'),
         (PROJECT_ROOT, '..', 'lib')
 )]
 

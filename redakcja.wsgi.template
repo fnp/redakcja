@@ -14,10 +14,12 @@ sys.stdout = sys.stderr
 sys.path = [
     '$APP_DIR',
 	'$APP_DIR/lib',
+	'$APP_DIR/lib/librarian',
 	'$APP_DIR/apps',
 ] + sys.path
 
 # Run Django
+os.environ["CELERY_LOADER"] = "django"
 os.environ['DJANGO_SETTINGS_MODULE'] = '$PROJECT_NAME.settings'
 
 from django.core.handlers.wsgi import WSGIHandler

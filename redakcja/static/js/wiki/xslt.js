@@ -17,7 +17,7 @@ function withStylesheets(code_block, onError)
     if (!xml2htmlStylesheet) {
     	$.blockUI({message: 'Ładowanie arkuszy stylów...'});
     	$.ajax({
-        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20110112',
+        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20110520',
         	dataType: 'xml',
         	timeout: 10000,
         	success: function(data) {
@@ -40,7 +40,7 @@ function withThemes(code_block, onError)
 {
     if (typeof withThemes.canon == 'undefined') {
         $.ajax({
-            url: '/themes',
+            url: '/editor/themes',
             dataType: 'text',
             success: function(data) {
                 withThemes.canon = data.split('\n');
@@ -85,7 +85,7 @@ function xml2html(options) {
             source.text('');
             options.error(error.text(), source_text);
         } else {
-            options.success(doc.firstChild);
+            options.success(doc.childNodes);
 
             withThemes(function(canonThemes) {
                 if (canonThemes != null) {
@@ -255,6 +255,11 @@ HTMLSerializer.prototype.serialize = function(rootElement, stripOuter)
 				self.result += text_buffer;
 				text_buffer = token.node.nodeValue.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 				break;
+            case COMMENT_NODE:
+                self.result += text_buffer;
+                text_buffer = '';
+                self.result += '<!--' + token.node.nodeValue + '-->';
+                break;
 		};
 	};
     self.result += text_buffer;

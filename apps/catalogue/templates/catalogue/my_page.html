@@ -1,0 +1,24 @@
+{% extends "catalogue/base.html" %}
+
+{% load i18n %}
+{% load catalogue book_list wall %}
+
+
+{% block leftcolumn %}
+    {% book_list request.user %}
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+    <div id="last-edited-list">
+        <h2>{% trans "Your last edited documents" %}</h2>
+        <ol>
+            {% for slugs, item in last_books %}
+            <li><a href="{% url wiki_editor slugs.0 slugs.1 %}"
+                target="_blank">{{ item.title }}</a><br/><span class="date">({{ item.time|date:"H:i:s, d/m/Y" }})</span></li>
+            {% endfor %}
+        </ol>
+    </div>
+
+    <h2>{% trans "Recent activity for" %} {{ request.user|nice_name }}</h2>
+    {% wall request.user 10 %}
+{% endblock rightcolumn %}

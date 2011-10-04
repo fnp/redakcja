@@ -3,13 +3,13 @@
     <div class="toolbar">
     	<button type="button" id="make-diff-button"
 			data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
-		<button type="button" id="tag-changeset-button"
-			data-enabled-when="1" disabled="disabled">{% trans "Mark version" %}</button>
+		<button type="button" id="pubmark-changeset-button"
+			data-enabled-when="1" disabled="disabled">{% trans "Mark for publishing" %}</button>
 		<button type="button" id="doc-revert-button"
 			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
 		<button id="open-preview-button" disabled="disabled"
 			data-enabled-when="1"
-			data-basehref="{% url wiki_editor_readonly document_name %}">{% trans "View version" %}</button>
+			data-basehref="{% url wiki_editor_readonly chunk.book.slug chunk.slug %}">{% trans "View version" %}</button>
 
 	</div>
     <div id="history-view">
@@ -26,7 +26,9 @@
 				<br />
             	<span data-stub-value="author"></span>, <span data-stub-value="date"></span>
 			</td>
-			<td data-stub-value="tag">
+			<td>
+                <div data-stub-value="publishable"></div>
+                <div data-stub-value="tag"></div>
 			</td>
         	</tr>
 		</tbody>

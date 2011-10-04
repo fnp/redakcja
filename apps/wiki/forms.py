@@ -4,62 +4,20 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
-from wiki.constants import DOCUMENT_TAGS, DOCUMENT_STAGES
 from django.utils.translation import ugettext_lazy as _
 
+from catalogue.models import Chunk
 
-class DocumentTagForm(forms.Form):
+
+class DocumentPubmarkForm(forms.Form):
     """
-        Form for tagging revisions.
+        Form for marking revisions for publishing.
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
-    tag = forms.ChoiceField(choices=DOCUMENT_TAGS)
+    publishable = forms.BooleanField(required=False, initial=True,
+            label=_('Publishable'))
     revision = forms.IntegerField(widget=forms.HiddenInput)
-
-
-class DocumentCreateForm(forms.Form):
-    """
-        Form used for creating new documents.
-    """
-    title = forms.CharField()
-    id = forms.RegexField(regex=ur"^[-\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$")
-    file = forms.FileField(required=False)
-    text = forms.CharField(required=False, widget=forms.Textarea)
-
-    def clean(self):
-        file = self.cleaned_data['file']
-
-        if file is not None:
-            try:
-                self.cleaned_data['text'] = file.read().decode('utf-8')
-            except UnicodeDecodeError:
-                raise forms.ValidationError("Text file must be UTF-8 encoded.")
-
-        if not self.cleaned_data["text"]:
-            raise forms.ValidationError("You must either enter text or upload a file")
-
-        return self.cleaned_data
-
-
-class DocumentsUploadForm(forms.Form):
-    """
-        Form used for uploading new documents.
-    """
-    file = forms.FileField(required=True, label=_('ZIP file'))
-
-    def clean(self):
-        file = self.cleaned_data['file']
-
-        import zipfile
-        try:
-            z = self.cleaned_data['zip'] = zipfile.ZipFile(file)
-        except zipfile.BadZipfile:
-            raise forms.ValidationError("Should be a ZIP file.")
-        if z.testzip():
-            raise forms.ValidationError("ZIP file corrupt.")
-
-        return self.cleaned_data
 
 
 class DocumentTextSaveForm(forms.Form):
@@ -72,7 +30,7 @@ class DocumentTextSaveForm(forms.Form):
 
     """
 
-    parent_revision = forms.IntegerField(widget=forms.HiddenInput)
+    parent_revision = forms.IntegerField(widget=forms.HiddenInput, required=False)
     text = forms.CharField(widget=forms.HiddenInput)
 
     author_name = forms.CharField(
@@ -94,8 +52,8 @@ class DocumentTextSaveForm(forms.Form):
         help_text=_(u"Describe changes you made."),
     )
 
-    stage_completed = forms.ChoiceField(
-        choices=DOCUMENT_STAGES,
+    stage_completed = forms.ModelChoiceField(
+        queryset=Chunk.tag_model.objects.all(),
         required=False,
         label=_(u"Completed"),
         help_text=_(u"If you completed a life cycle stage, select it."),

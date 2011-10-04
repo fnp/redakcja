@@ -637,7 +637,8 @@
             return _finalize(failure);
 
         html2text({
-            element: $('#html-view div').get(0),
+            element: $('#html-view').get(0),
+            stripOuter: true,
             success: function(text){
                 self.doc.setText(text);
                 _finalize(success);

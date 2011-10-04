@@ -10,8 +10,6 @@ TEMPLATE_DEBUG = DEBUG
 MAINTENANCE_MODE = False
 
 ADMINS = (
-    # (u'Marek Stępniowski', 'marek@stepniowski.com'),
-    # (u'Łukasz Rekucki', 'lrekucki@gmail.com'),
     (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
 )
 
@@ -36,6 +34,8 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+USE_L10N = True
+
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -59,28 +59,30 @@ SESSION_COOKIE_NAME = "redakcja_sessionid"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "redakcja.context_processors.settings", # this is instead of media
+    'django.core.context_processors.csrf',
     "django.core.context_processors.request",
 )
 
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_cas.middleware.CASMiddleware',
 
     'django.middleware.doc.XViewMiddleware',
+    'pagination.middleware.PaginationMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
 
@@ -97,13 +99,6 @@ TEMPLATE_DIRS = (
 
 FIREPYTHON_LOGGER_NAME = "fnp"
 
-#
-# Central Auth System
-#
-## Set this to where the CAS server lives
-# CAS_SERVER_URL = "http://cas.fnp.pl/
-CAS_LOGOUT_COMPLETELY = True
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,16 +106,26 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.comments',
 
-    'django_cas',
     'compress',
     'south',
     'sorl.thumbnail',
     'filebrowser',
+    'pagination',
+    'gravatar',
+    'djcelery',
+    'djkombu',
 
+    'catalogue',
+    'dvcs',
     'wiki',
     'toolbar',
+    'apiclient',
 )
+
+LOGIN_REDIRECT_URL = '/documents/user'
+
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
 FILEBROWSER_DIRECTORY = 'images/'
@@ -132,12 +137,15 @@ FILEBROWSER_DEFAULT_ORDER = "path_relative"
 IMAGE_DIR = 'images'
 
 
-WL_API_CONFIG = {
-    "URL": "http://localhost:7000/api/",
-    "AUTH_REALM": "WL API",
-    "AUTH_USER": "platforma",
-    "AUTH_PASSWD": "platforma",
-}
+import djcelery
+djcelery.setup_loader()
+
+BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
+BROKER_HOST = "localhost"
+BROKER_PORT = 5672
+BROKER_USER = "guest"
+BROKER_PASSWORD = "guest"
+BROKER_VHOST = "/"
 
 SHOW_APP_VERSION = False
 
@@ -145,3 +153,4 @@ try:
     from redakcja.settings.compress import *
 except ImportError:
     pass
+

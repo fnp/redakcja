@@ -4,12 +4,14 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.conf import settings
 
-import wiki.urls
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     # Auth
+    #url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
+    #url(r'^accounts/logout/$', 'catalogue.views.logout_then_redirect', name='logout'),
+
     url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
     url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
 
@@ -18,8 +20,12 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
+    (r'^comments/', include('django.contrib.comments.urls')),
+
     url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
-    url(r'^documents/', include('wiki.urls')),
+    url(r'^documents/', include('catalogue.urls')),
+    url(r'^apiclient/', include('apiclient.urls')),
+    url(r'^editor/', include('wiki.urls')),
 
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
@@ -28,8 +34,7 @@ urlpatterns = patterns('',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
         {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
-    (r'^documents/', include(wiki.urls)),
-    url(r'^themes$', 'wiki.views.themes', name="themes"),
+
     url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
 
 )

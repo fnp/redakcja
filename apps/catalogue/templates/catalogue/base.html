@@ -1,0 +1,51 @@
+{% load compressed i18n %}
+{% load catalogue %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    {% compressed_css 'catalogue' %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" />
+    <title>{% block title %}{% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
+</head>
+<body>
+
+<div id="tabs-nav">
+
+    <a href="{% url catalogue_document_list %}">
+        <img id="logo" src="{{ STATIC_URL }}img/wl-orange.png" />
+    </a>
+
+    <div id="tabs-nav-left">
+        {% main_tabs %}
+    </div>
+
+    <span id="login-box">
+        {% include "registration/head_login.html" %}
+    </span>
+
+    <div class='clr' ></div>
+</div>
+
+<div id="content">
+
+{% block content %}
+<div id="catalogue_layout_left_column">
+	{% block leftcolumn %}
+	{% endblock leftcolumn %}
+</div>
+<div id="catalogue_layout_right_column">
+	{% block rightcolumn %}
+	{% endblock rightcolumn %}
+</div>
+{% endblock content %}
+
+</div>
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+{% compressed_js 'catalogue' %}
+{% block extrabody %}
+{% endblock %}
+</body>
+</html>

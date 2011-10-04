@@ -1,0 +1,81 @@
+{% load i18n %}
+{% load pagination_tags %}
+
+
+<form name='filter' action=''>
+<input type='hidden' name="title" value="{{ request.GET.title }}" />
+<input type='hidden' name="stage" value="{{ request.GET.stage }}" />
+{% if not viewed_user %}
+    <input type='hidden' name="user" value="{{ request.GET.user }}" />
+{% endif %}
+<input type='hidden' name="all" value="{{ request.GET.all }}" />
+<input type='hidden' name="status" value="{{ request.GET.status }}" />
+</form>
+
+<table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
+    <thead><tr>
+        <th></th>
+        <th>
+            <input class='check-filter' type='checkbox' name='all' title='{% trans "Show hidden books" %}'
+                {% if request.GET.all %}checked='checked'{% endif %} />
+            </th>
+        <th class='book-search-column'>
+            <form>
+            <input title='{% trans "Search in book titles" %}' name="title"
+                class='text-filter' value="{{ request.GET.title }}" />
+            </form>
+        </th>
+        <th><select name="stage" class="filter">
+            <option value=''>- {% trans "stage" %} -</option>
+            <option {% if request.GET.stage == '-' %}selected="selected"
+                    {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for stage in stages %}
+                <option {% if request.GET.stage == stage.slug %}selected="selected"
+                    {% endif %}value="{{ stage.slug }}">{{ stage.name }}</option>
+            {% endfor %}
+        </select></th>
+
+        {% if not viewed_user %}
+            <th><select name="user" class="filter">
+                <option value=''>- {% trans "editor" %} -</option>
+                <option {% if request.GET.user == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+                {% for user in users %}
+                    <option {% if request.GET.user == user.username %}selected="selected"
+                        {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                {% endfor %}
+            </select></th>
+        {% endif %}
+
+        <th><select name="status" class="filter">
+            <option value=''>- {% trans "status" %} -</option>
+            {% for state, label in states %}
+                <option {% if request.GET.status == state %}selected="selected"
+                        {% endif %}value='{{ state }}'>{{ label }}</option>
+            {% endfor %}
+        </select></th>
+
+    </tr></thead>
+
+    {% with cnt=books|length %}
+    {% autopaginate books 100 %}
+    <tbody>
+    {% for item in books %}
+        {% with item.book as book %}
+            {{ book.short_html|safe }}
+            {% if not book.single %}
+                {% for chunk in item.chunks %}
+                    {{ chunk.short_html|safe }}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+    <tr><th class='paginator' colspan="5">
+        {% paginate %}
+        {% blocktrans count c=cnt %}{{c}} book{% plural %}{{c}} books{% endblocktrans %}</th></tr>
+    </tbody>
+    {% endwith %}
+</table>
+{% if not books %}
+    <p>{% trans "No books found." %}</p>
+{% endif %}

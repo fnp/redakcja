@@ -1,52 +1,31 @@
 # -*- coding: utf-8
 from django.conf.urls.defaults import *
-from django.views.generic.simple import redirect_to
-from django.conf import settings
 
-
-PART = ur"""[ ĄĆĘŁŃÓŚŻŹąćęłńóśżź0-9\w_.-]+"""
 
 urlpatterns = patterns('wiki.views',
-    url(r'^$', redirect_to, {'url': 'catalogue/'}),
-
-    url(r'^catalogue/$', 'document_list', name='wiki_document_list'),
-    url(r'^catalogue/([^/]+)/$', 'document_list'),
-    url(r'^catalogue/([^/]+)/([^/]+)/$', 'document_list'),
-    url(r'^catalogue/([^/]+)/([^/]+)/([^/]+)$', 'document_list'),
-
-    url(r'^(?P<name>%s)$' % PART,
+    url(r'^edit/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'editor', name="wiki_editor"),
 
-    url(r'^(?P<name>[^/]+)/readonly$',
+    url(r'^readonly/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'editor_readonly', name="wiki_editor_readonly"),
 
-    url(r'^upload/$',
-        'upload', name='wiki_upload'),
-
-    url(r'^create/(?P<name>[^/]+)',
-        'create_missing', name='wiki_create_missing'),
-
-    url(r'^(?P<directory>[^/]+)/gallery$',
+    url(r'^gallery/(?P<directory>[^/]+)/$',
         'gallery', name="wiki_gallery"),
 
-    url(r'^(?P<name>[^/]+)/history$',
+    url(r'^history/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'history', name="wiki_history"),
 
-    url(r'^(?P<name>[^/]+)/rev$',
+    url(r'^rev/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'revision', name="wiki_revision"),
 
-    url(r'^(?P<name>[^/]+)/text$',
+    url(r'^text/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'text', name="wiki_text"),
 
-    url(r'^(?P<name>[^/]+)/revert$',
+    url(r'^revert/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'revert', name='wiki_revert'),
 
-    url(r'^(?P<name>[^/]+)/publish$', 'publish', name="wiki_publish"),
-    url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="wiki_publish"),
+    url(r'^diff/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'diff', name="wiki_diff"),
+    url(r'^pubmark/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'pubmark', name="wiki_pubmark"),
 
-    url(r'^(?P<name>[^/]+)/diff$', 'diff', name="wiki_diff"),
-    url(r'^(?P<name>[^/]+)/tags$', 'add_tag', name="wiki_add_tag"),
-
-
-
+    url(r'^themes$', 'themes', name="themes"),
 )
