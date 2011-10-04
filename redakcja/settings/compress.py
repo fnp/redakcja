@@ -61,7 +61,7 @@ COMPRESS_JS = {
      },
     'catalogue': {
         'source_filenames': (
-                'js/catalogue.js',
+                'js/catalogue/catalogue.js',
                 'js/slugify.js',
         ),
         'output_filename': 'compressed/catalogue_scripts_?.js',

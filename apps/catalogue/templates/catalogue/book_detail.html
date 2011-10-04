@@ -79,6 +79,8 @@
     {% endcomment %}
     </p>
 
+    {% trans "This book cannot be published yet" %}
+    {% comment %}
     <!--
     Angel photos:
     Angels in Ely Cathedral (http://www.flickr.com/photos/21804434@N02/4483220595/) /
@@ -90,7 +92,8 @@
         <button id="publish-button" type="submit">
             <span>{% trans "Publish" %}</span></button>
         <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
-        </form></p>
+        </form>
+    {% endcomment %}
 {% else %}
     {% trans "This book cannot be published yet" %}
 {% endif %}

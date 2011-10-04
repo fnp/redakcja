@@ -88,12 +88,12 @@ def create_missing(request, slug=None):
                 creator = request.user
             else:
                 creator = None
-            book = Book.objects.create(
+            book = Book.create(
+                text=form.cleaned_data['text'],
+                creator=creator,
                 slug=form.cleaned_data['slug'],
                 title=form.cleaned_data['title'],
             )
-            book.chunk_set.all().update(creator=creator)
-            book[0].commit(text=form.cleaned_data['text'], author=creator)
 
             return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
     else:
@@ -147,10 +147,11 @@ def upload(request):
 
             if not error_list:
                 for filename, slug, title in ok_list:
-                    Book.create(creator=creator,
+                    book = Book.create(
+                        text=zip.read(filename).decode('utf-8'),
+                        creator=creator,
                         slug=slug,
                         title=title,
-                        text=zip.read(filename).decode('utf-8'),
                     )
 
             return direct_to_template(request, "catalogue/document_upload.html", extra_context={

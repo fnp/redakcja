@@ -111,8 +111,8 @@ class Command(BaseCommand):
         force = options.get('force')
         guess = options.get('guess')
         dry_run = options.get('dry_run')
-        new_slug = options.get('new_slug')
-        new_title = options.get('new_title')
+        new_slug = options.get('new_slug').decode('utf-8')
+        new_title = options.get('new_title').decode('utf-8')
         verbose = options.get('verbose')
 
         if guess:

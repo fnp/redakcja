@@ -278,6 +278,8 @@ class Book(models.Model):
         """
             Publishes a book on behalf of a (local) user.
         """
+        raise NotImplementedError("Publishing not possible yet.")
+
         from apiclient import api_call
 
         changes = self.get_current_changes(publishable=True)
