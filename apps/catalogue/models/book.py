@@ -99,7 +99,7 @@ class Book(models.Model):
         # if there are more parts, set the rest to empty strings
         book_len = len(instance)
         for i in range(book_len - len(texts)):
-            texts.append(u'pusta część %d' % (i + 1), u'')
+            texts.append((u'pusta część %d' % (i + 1), u''))
 
         i = 0
         for i, (title, text) in enumerate(texts):
@@ -110,8 +110,8 @@ class Book(models.Model):
 
             if i < book_len:
                 chunk = instance[i]
-                chunk.slug = slug
-                chunk.title = title
+                chunk.slug = slug[:50]
+                chunk.title = title[:255]
                 chunk.save()
             else:
                 chunk = instance.add(slug, title, adjust_slug=True)

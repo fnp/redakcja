@@ -70,7 +70,7 @@ class Chunk(dvcs_models.Document):
             new_slug = self.book.make_chunk_slug(slug)
             try:
                 new_chunk = self.book.chunk_set.create(number=self.number+1,
-                    slug=new_slug, title=title, **kwargs)
+                    slug=new_slug[:50], title=title[:255], **kwargs)
             except IntegrityError:
                 pass
         return new_chunk

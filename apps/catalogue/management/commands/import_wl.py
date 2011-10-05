@@ -49,20 +49,6 @@ class Command(BaseCommand):
             else:
                 slugs[info.slug].append(b)
 
-        #~ conflicts = []
-        #~ for slug, book_list in slugs.items():
-            #~ if len(book_list) > 1:
-                #~ conflicts.append((slug, book_list))
-        #~ if conflicts:
-            #~ print self.style.ERROR("There is more than one book "
-                    #~ "with the same slug in dc:url. "
-                    #~ "Merge or hide them before proceeding.")
-            #~ for slug, book_list in sorted(conflicts):
-                #~ print slug
-                #~ print "\n".join(b.slug for b in book_list)
-                #~ print
-            #~ return
-
         book_count = 0
         commit_args = {
             "author_name": 'Platforma',
@@ -72,7 +58,7 @@ class Command(BaseCommand):
 
         if verbose:
             print 'Opening books list'
-        for book in json.load(urllib2.urlopen(WL_API))[:10]:
+        for book in json.load(urllib2.urlopen(WL_API)):
             book_detail = json.load(urllib2.urlopen(book['href']))
             xml_text = urllib2.urlopen(book_detail['xml']).read()
             info = BookInfo.from_string(xml_text)
@@ -87,8 +73,8 @@ class Command(BaseCommand):
                 previous_book = None
                 comm = '*'
             print book_count, info.slug , '-->', comm
-            Book.import_xml_text(xml_text, title=info.title,
-                slug=info.slug, previous_book=previous_book,
+            Book.import_xml_text(xml_text, title=info.title[:255],
+                slug=info.slug[:128], previous_book=previous_book,
                 commit_args=commit_args)
             book_count += 1
 
