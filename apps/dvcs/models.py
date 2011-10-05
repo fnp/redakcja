@@ -125,7 +125,7 @@ class Change(models.Model):
         if self.revision is None:
             tree_rev = self.tree.revision()
             if tree_rev is None:
-                self.revision = 0
+                self.revision = 1
             else:
                 self.revision = tree_rev + 1
         return super(Change, self).save(*args, **kwargs)

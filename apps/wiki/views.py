@@ -229,7 +229,11 @@ def diff(request, slug, chunk=None):
         doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
-    docA = doc.at_revision(revA).materialize()
+    # allow diff from the beginning
+    if revA:
+        docA = doc.at_revision(revA).materialize()
+    else:
+        docA = ""
     docB = doc.at_revision(revB).materialize()
 
     return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
