@@ -26,7 +26,6 @@ COMPRESS_JS = {
     'detail': {
         'source_filenames': (
                 # libraries
-                'js/lib/jquery-1.4.2.min.js',
                 'js/lib/jquery/jquery.autocomplete.js',
                 'js/lib/jquery/jquery.blockui.js',
                 'js/lib/jquery/jquery.elastic.js',

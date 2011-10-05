@@ -101,7 +101,8 @@
 
                             if (!counter) {
                                 anno_list.sort(function(a, b){return a.sortby.localeCompare(b.sortby);});
-                                self.$annos.append(anno_list);
+                                for (i in anno_list)
+                                    self.$annos.append(anno_list[i]);
                                 self.$spinner.hide();
                                 self.$annos.show();
                             }
