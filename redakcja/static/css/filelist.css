@@ -175,3 +175,6 @@ td {
     width: 96%;
 }
 
+.book-list-user .user-column {
+    display: none;
+}
