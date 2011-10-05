@@ -4,7 +4,8 @@ from dvcs.models import Document
 
 
 class ADocument(Document):
-    pass
+    class Meta:
+        app_label = 'dvcs'
 
 
 class DocumentModelTests(TestCase):
