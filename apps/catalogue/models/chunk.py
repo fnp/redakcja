@@ -38,6 +38,7 @@ class Chunk(dvcs_models.Document):
         ordering = ['number']
         verbose_name = _('chunk')
         verbose_name_plural = _('chunks')
+        permissions = [('can_pubmark', 'Can mark for publishing')]
 
     # Representing
     # ============

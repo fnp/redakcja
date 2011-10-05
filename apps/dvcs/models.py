@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from mercurial import mdiff, simplemerge
 
 from django.conf import settings
-from dvcs.signals import post_commit
+from dvcs.signals import post_commit, post_publishable
 from dvcs.storage import GzipFileSystemStorage
 
 
@@ -167,7 +167,7 @@ class Change(models.Model):
     def set_publishable(self, publishable):
         self.publishable = publishable
         self.save()
-        post_publishable(sender=self, publishable=publishable).send()
+        post_publishable.send(sender=self, publishable=publishable)
 
 
 def create_tag_model(model):

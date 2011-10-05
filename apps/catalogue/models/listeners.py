@@ -40,9 +40,14 @@ def publish_listener(sender, *args, **kwargs):
 post_publish.connect(publish_listener)
 
 
+def publishable_listener(sender, *args, **kwargs):
+    sender.tree.touch()
+    sender.tree.book.touch()
+post_publishable.connect(publishable_listener)
+
+
 def listener_create(sender, instance, created, **kwargs):
     if created:
         instance.chunk_set.create(number=1, slug='1')
 models.signals.post_save.connect(listener_create, sender=Book)
-
 

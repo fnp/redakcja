@@ -42,7 +42,6 @@ class Book(models.Model):
         ordering = ['parent_number', 'title']
         verbose_name = _('book')
         verbose_name_plural = _('books')
-        permissions = [('can_pubmark', 'Can mark for publishing')]
 
 
     # Representing

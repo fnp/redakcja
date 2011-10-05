@@ -9,7 +9,7 @@ from django.http import Http404
 from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
 from django.utils.encoding import smart_unicode
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic.simple import direct_to_template
 
@@ -264,14 +264,14 @@ def history(request, slug, chunk=None):
                 "description": change.description,
                 "author": change.author_str(),
                 "date": change.created_at,
-                "publishable": "Publishable\n" if change.publishable else "",
+                "publishable": _("Publishable") + "\n" if change.publishable else "",
                 "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
             })
     return JSONResponse(changes)
 
 
 @require_POST
-@ajax_require_permission('wiki.can_pubmark')
+@ajax_require_permission('catalogue.can_pubmark')
 def pubmark(request, slug, chunk=None):
     form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
     if form.is_valid():
