@@ -19,6 +19,7 @@
 	data-book="{{ chunk.book.slug }}" data-chunk="{{ chunk.slug }}" style="display:none">
 
 	<span data-key="gallery">{{ chunk.book.gallery }}</span>
+	<span data-key="gallery-start">{% if chunk.gallery_start %}{{ chunk.gallery_start }}{% endif %}</span>
 	<span data-key="revision">{{ revision }}</span>
     <span data-key="diff">{{ request.GET.diff }}</span>
 

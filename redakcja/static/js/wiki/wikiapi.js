@@ -65,6 +65,7 @@
 		this.readonly = !!$("*[data-key='readonly']", meta).text();
 
 		this.galleryLink = $("*[data-key='gallery']", meta).text();
+        this.galleryStart = parseInt($("*[data-key='gallery-start']", meta).text());
 
         var diff = $("*[data-key='diff']", meta).text();
         if (diff) {

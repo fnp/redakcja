@@ -67,8 +67,8 @@ class ChunkForm(forms.ModelForm):
     """
     user = forms.ModelChoiceField(queryset=
         User.objects.annotate(count=Count('chunk')).
-        order_by('-count', 'last_name', 'first_name'), required=False)
-
+        order_by('-count', 'last_name', 'first_name'), required=False,
+        label=_('Assigned to'))
 
     class Meta:
         model = Chunk

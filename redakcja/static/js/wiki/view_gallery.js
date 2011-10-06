@@ -1,14 +1,17 @@
 (function($){
 
     function normalizeNumber(pageNumber, pageCount){
-        // Numer strony musi być pomiędzy 1 a najwyższym numerem
+        // Page number should be >= 1, <= pageCount; 0 if pageCount = 0
         var pageNumber = parseInt(pageNumber, 10);
 
+        if (!pageCount)
+            return 0;
+
         if (!pageNumber ||
-        pageNumber == NaN ||
-        pageNumber == Infinity ||
-        pageNumber == -Infinity ||
-        pageNumber < 1)
+                isNaN(pageNumber) ||
+                pageNumber == Infinity ||
+                pageNumber == -Infinity ||
+                pageNumber < 1)
             return 1;
 
         if (pageNumber > pageCount)
@@ -52,6 +55,7 @@
 
             this.dimensions = {};
             this.zoomFactor = 1;
+            this.config().page = CurrentDocument.galleryStart;
             this.$element = $("#side-gallery");
             this.$numberInput = $('.page-number', this.$element);
 
@@ -88,7 +92,7 @@
                 self.dimensions.galleryHeight = self.$image.parent().height();
             });
 
-            $('.gallery-image img', this.$element).load(function(){
+            this.$image.load(function(){
                 console.log("Image loaded.")
                 self._resizeImage();
             }).bind('mousedown', function() {
@@ -109,8 +113,8 @@
         var $img = this.$image;
 
         $img.css({
-            width: null,
-            height: null
+            width: '',
+            height: ''
         });
 
         this.dimensions = {
@@ -140,7 +144,6 @@
 
     ScanGalleryPerspective.prototype.setPage = function(newPage){
         newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
-        $('#imagesCount').html("/"+this.doc.galleryImages.length);
         this.$numberInput.val(newPage);
 		this.config().page = newPage;
         $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1]);
@@ -164,12 +167,6 @@
         // var position = normalizePosition(this.$image.position().left, this.$image.position().top, this.dimensions.galleryWidth, this.dimensions.galleryHeight, this.dimensions.width, this.dimensions.height);
 
 		this._resizeImage();
-        /* this.$image.css({
-            width: this.dimensions.width,
-            height: this.dimensions.height,
-            left: position.x,
-            top: position.y
-        });*/
     };
 
 	/*
@@ -234,6 +231,7 @@
                 self.$image.show();
 				console.log("gconfig:", self.config().page );
 				self.setPage( self.config().page );
+                $('#imagesCount').html("/" + doc.galleryImages.length);
 
                 $('.error_message', self.$element).hide();
                 if(success) success();
