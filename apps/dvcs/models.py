@@ -51,7 +51,7 @@ class Tag(models.Model):
             Returns None for the last stage.
         """
         try:
-            return Tag.objects.filter(ordering__gt=self.ordering)[0]
+            return type(self).objects.filter(ordering__gt=self.ordering)[0]
         except IndexError:
             return None
 
