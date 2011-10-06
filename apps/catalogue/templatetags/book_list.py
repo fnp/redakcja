@@ -71,10 +71,13 @@ def foreign_filter(qs, value, filter_field, model, model_field='slug', unset='-'
         return qs.filter(**{filter_field: obj})
 
 
-def search_filter(qs, value, filter_field):
+def search_filter(qs, value, filter_fields):
     if not value:
         return qs
-    return qs.filter(**{"%s__icontains" % filter_field: value})
+    q = Q(**{"%s__icontains" % filter_fields[0]: value})
+    for field in filter_fields[1:]:
+        q |= Q(**{"%s__icontains" % field: value})
+    return qs.filter(q)
 
 
 _states = [
@@ -106,7 +109,7 @@ def document_list_filter(request, **kwargs):
 
     chunks = foreign_filter(chunks, arg_or_GET('user'), 'user', User, 'username')
     chunks = foreign_filter(chunks, arg_or_GET('stage'), 'stage', Chunk.tag_model, 'slug')
-    chunks = search_filter(chunks, arg_or_GET('title'), 'book__title')
+    chunks = search_filter(chunks, arg_or_GET('title'), ['book__title', 'title'])
     return chunks
 
 
