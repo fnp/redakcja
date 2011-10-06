@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-03 15:56+0200\n"
-"PO-Revision-Date: 2011-10-03 15:56+0100\n"
+"POT-Creation-Date: 2011-10-06 12:31+0200\n"
+"PO-Revision-Date: 2011-10-06 12:31+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -24,6 +24,10 @@ msgstr "Plik ZIP"
 #: forms.py:47
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
+
+#: forms.py:71
+msgid "Assigned to"
+msgstr "Przypisane do"
 
 #: forms.py:85
 #: forms.py:99
@@ -79,19 +83,19 @@ msgstr "książka"
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:45
-msgid "Can mark for publishing"
-msgstr "Oznacza do publikacji"
-
 #: models/chunk.py:22
 msgid "number"
 msgstr "numer"
 
-#: models/chunk.py:39
+#: models/chunk.py:25
+msgid "gallery start"
+msgstr "początek galerii"
+
+#: models/chunk.py:40
 msgid "chunk"
 msgstr "część"
 
-#: models/chunk.py:40
+#: models/chunk.py:41
 msgid "chunks"
 msgstr "części"
 
@@ -189,11 +193,8 @@ msgstr "Wersja HTML"
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/catalogue/book_detail.html:92
-msgid "Publish"
-msgstr "Opublikuj"
-
-#: templates/catalogue/book_detail.html:96
+#: templates/catalogue/book_detail.html:83
+#: templates/catalogue/book_detail.html:100
 msgid "This book cannot be published yet"
 msgstr "Ta książka nie może jeszcze zostać opublikowana"
 
@@ -368,6 +369,12 @@ msgstr "Publikacja"
 msgid "Comment"
 msgstr "Komentarz"
 
+#~ msgid "Can mark for publishing"
+#~ msgstr "Oznacza do publikacji"
+
+#~ msgid "Publish"
+#~ msgstr "Opublikuj"
+
 #~ msgid "Author"
 #~ msgstr "Autor"
 
@@ -529,9 +536,6 @@ msgstr "Komentarz"
 
 #~ msgid "Visual editor"
 #~ msgstr "Edytor wizualny"
-
-#~ msgid "Assigned to me"
-#~ msgstr "Przypisane do mnie"
 
 #~ msgid "Unassigned"
 #~ msgstr "Nie przypisane"
