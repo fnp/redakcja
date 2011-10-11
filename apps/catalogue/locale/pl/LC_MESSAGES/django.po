@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-06 12:31+0200\n"
-"PO-Revision-Date: 2011-10-06 12:31+0100\n"
+"POT-Creation-Date: 2011-10-11 12:37+0200\n"
+"PO-Revision-Date: 2011-10-11 12:40+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -38,50 +38,74 @@ msgstr "Część z tym slugiem już istnieje"
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:137
+#: views.py:138
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:139
+#: views.py:140
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:145
+#: views.py:146
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:20
+#: models/book.py:25
 #: models/chunk.py:24
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:21
+#: models/book.py:26
 #: models/chunk.py:23
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:22
+#: models/book.py:27
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: models/book.py:25
+#: models/book.py:30
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:26
+#: models/book.py:31
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:43
+#: models/book.py:48
 #: models/chunk.py:21
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:44
+#: models/book.py:49
 msgid "books"
 msgstr "książki"
+
+#: models/book.py:195
+msgid "No chunks in the book."
+msgstr "Książka nie ma części."
+
+#: models/book.py:199
+msgid "Not all chunks have publishable revisions."
+msgstr "W książce są niepublikowalne części."
+
+#: models/book.py:205
+msgid "Invalid XML"
+msgstr "Nieprawidłowy XML"
+
+#: models/book.py:207
+msgid "No Dublin Core found."
+msgstr "Brak sekcji Dublin Core."
+
+#: models/book.py:209
+msgid "Invalid Dublin Core"
+msgstr "Nieprawidłowy Dublin Core"
+
+#: models/book.py:212
+msgid "rdf:about is not"
+msgstr "rdf:about jest różny od"
 
 #: models/chunk.py:22
 msgid "number"
@@ -128,7 +152,7 @@ msgstr "zapis publikacji części"
 msgid "chunk publish records"
 msgstr "zapisy publikacji części"
 
-#: templates/catalogue/base.html:9
+#: templates/catalogue/base.html:8
 msgid "Platforma Redakcyjna"
 msgstr "Platforma Redakcyjna"
 
@@ -193,10 +217,17 @@ msgstr "Wersja HTML"
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/catalogue/book_detail.html:83
+#: templates/catalogue/book_detail.html:93
+msgid "Publish"
+msgstr "Opublikuj"
+
+#: templates/catalogue/book_detail.html:97
+msgid "Log in to publish."
+msgstr "Zaloguj się, aby opublikować."
+
 #: templates/catalogue/book_detail.html:100
-msgid "This book cannot be published yet"
-msgstr "Ta książka nie może jeszcze zostać opublikowana"
+msgid "This book can't be published yet, because:"
+msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
 #: templates/catalogue/book_edit.html:9
 #: templates/catalogue/chunk_edit.html:9
@@ -313,23 +344,23 @@ msgstr[2] "%(c)s książek"
 msgid "No books found."
 msgstr "Nie znaleziono książek."
 
-#: templatetags/book_list.py:81
+#: templatetags/book_list.py:84
 msgid "publishable"
 msgstr "do publikacji"
 
-#: templatetags/book_list.py:82
+#: templatetags/book_list.py:85
 msgid "changed"
 msgstr "zmienione"
 
-#: templatetags/book_list.py:83
+#: templatetags/book_list.py:86
 msgid "published"
 msgstr "opublikowane"
 
-#: templatetags/book_list.py:84
+#: templatetags/book_list.py:87
 msgid "unpublished"
 msgstr "nie opublikowane"
 
-#: templatetags/book_list.py:85
+#: templatetags/book_list.py:88
 msgid "empty"
 msgstr "puste"
 
@@ -371,9 +402,6 @@ msgstr "Komentarz"
 
 #~ msgid "Can mark for publishing"
 #~ msgstr "Oznacza do publikacji"
-
-#~ msgid "Publish"
-#~ msgstr "Opublikuj"
 
 #~ msgid "Author"
 #~ msgstr "Autor"
