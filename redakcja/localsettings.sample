@@ -12,7 +12,7 @@
 from redakcja.settings import *
 
 # Path to repository with managed documents
-WIKI_REPOSITORY_PATH = '/srv/redakcja/books'
+CATALOGUE_REPO_PATH = '/srv/redakcja/books'
 
 LOGGING_CONFIG_FILE = "/srv/redakcja/logging.cfg.dev"
 
@@ -26,3 +26,6 @@ CAS_SERVER_URL = 'http://logowanie.wolnelektury.pl/cas/'
 REDMINE_URL = 'http://redmine.nowoczesnapolska.org.pl/'
 DEBUG = True
 COMPRESS = False
+
+APICLIENT_WL_CONSUMER_KEY = None
+APICLIENT_WL_CONSUMER_SECRET = None

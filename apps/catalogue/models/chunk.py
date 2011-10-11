@@ -63,7 +63,7 @@ class Chunk(dvcs_models.Document):
     # Creating and manipulation
     # =========================
 
-    def split(self, slug, title='', adjust_slug=False, **kwargs):
+    def split(self, slug, title='', **kwargs):
         """ Create an empty chunk after this one """
         self.book.chunk_set.filter(number__gt=self.number).update(
                 number=models.F('number')+1)

@@ -19,6 +19,7 @@ from django.views.generic.simple import direct_to_template
 import librarian.html
 import librarian.text
 
+from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
@@ -294,8 +295,19 @@ def book(request, slug):
     else:
         form = None
 
+    try:
+        book.assert_publishable()
+    except AssertionError, e:
+        publishable = False
+        publishable_error = e
+    else:
+        publishable = True
+        publishable_error = None
+
     return direct_to_template(request, "catalogue/book_detail.html", extra_context={
         "book": book,
+        "publishable": publishable,
+        "publishable_error": publishable_error,
         "chunks": chunks,
         "need_fixing": need_fixing,
         "choose_master": choose_master,
@@ -390,6 +402,8 @@ def publish(request, slug):
     book = get_object_or_404(Book, slug=slug)
     try:
         book.publish(request.user)
+    except NotAuthorizedError:
+        return http.HttpResponseRedirect(reverse('apiclient_oauth'))
     except BaseException, e:
         return http.HttpResponse(e)
     else:

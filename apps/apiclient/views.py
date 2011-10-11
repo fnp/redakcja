@@ -33,7 +33,7 @@ def oauth(request):
     url = "%s?oauth_token=%s&oauth_callback=%s" % (
             WL_AUTHORIZE_URL, 
             request_token['oauth_token'],
-            request.build_absolute_uri(reverse("users_oauth_callback")),
+            request.build_absolute_uri(reverse("apiclient_oauth_callback")),
             )
 
     return HttpResponseRedirect(url)

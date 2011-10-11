@@ -25,10 +25,10 @@ INSTALLED_APPS += ('django_nose', 'dvcs.tests')
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 TEST_MODULES = ('catalogue', 'dvcs.tests', 'wiki', 'toolbar')
-#COVER_APPS = ('catalogue', 'dvcs', 'wiki', 'toolbar')
+COVER_APPS = ('catalogue', 'dvcs', 'wiki', 'toolbar')
 NOSE_ARGS = (
     '--tests=' + ','.join(TEST_MODULES),
-    '--cover-package=' + ','.join(TEST_MODULES),
+    '--cover-package=' + ','.join(COVER_APPS),
     '-d',
     '--with-doctest',
     '--with-xunit',

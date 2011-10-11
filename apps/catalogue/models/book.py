@@ -3,10 +3,15 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.contrib.sites.models import Site
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from slughifi import slughifi
+from librarian import NoDublinCore, ParseError, ValidationError
+from librarian.dcparser import BookInfo
+
+import apiclient
 from catalogue.helpers import cached_in_field
 from catalogue.models import BookPublishRecord, ChunkPublishRecord
 from catalogue.signals import post_publish
@@ -113,7 +118,7 @@ class Book(models.Model):
                 chunk.title = title[:255]
                 chunk.save()
             else:
-                chunk = instance.add(slug, title, adjust_slug=True)
+                chunk = instance.add(slug, title)
 
             chunk.commit(text, **commit_args)
 
@@ -186,13 +191,25 @@ class Book(models.Model):
         except IndexError:
             return None
 
-    def publishable(self):
-        if not self.chunk_set.exists():
-            return False
-        for chunk in self:
-            if not chunk.publishable():
-                return False
-        return True
+    def assert_publishable(self):
+        assert self.chunk_set.exists(), _('No chunks in the book.')
+        try:
+            changes = self.get_current_changes(publishable=True)
+        except self.NoTextError:
+            raise AssertionError(_('Not all chunks have publishable revisions.'))
+        book_xml = self.materialize(changes=changes)
+
+        try:
+            bi = BookInfo.from_string(book_xml.encode('utf-8'))
+        except ParseError, e:
+            raise AssertionError(_('Invalid XML') + ': ' + str(e))
+        except NoDublinCore:
+            raise AssertionError(_('No Dublin Core found.'))
+        except ValidationError, e:
+            raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
+
+        valid_about = "http://%s%s" % (Site.objects.get_current().domain, self.get_absolute_url())
+        assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
 
     def hidden(self):
         return self.slug.startswith('.')
@@ -277,13 +294,10 @@ class Book(models.Model):
         """
             Publishes a book on behalf of a (local) user.
         """
-        raise NotImplementedError("Publishing not possible yet.")
-
-        from apiclient import api_call
-
+        self.assert_publishable()
         changes = self.get_current_changes(publishable=True)
         book_xml = self.materialize(changes=changes)
-        #api_call(user, "books", {"book_xml": book_xml})
+        apiclient.api_call(user, "books/", {"book_xml": book_xml})
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
