@@ -59,7 +59,7 @@
 	 */
 	function WikiDocument(element_id) {
 		var meta = $('#' + element_id);
-		this.id = meta.attr('data-book') + '/' + meta.attr('data-chunk');
+		this.id = meta.attr('data-chunk-id');
 
 		this.revision = $("*[data-key='revision']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();

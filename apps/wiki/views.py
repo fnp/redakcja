@@ -12,6 +12,7 @@ from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic.simple import direct_to_template
+from django.shortcuts import get_object_or_404
 
 from catalogue.models import Book, Chunk
 import nice_diff
@@ -99,11 +100,8 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
 
 @never_cache
 @decorator_from_middleware(GZipMiddleware)
-def text(request, slug, chunk=None):
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
+def text(request, chunk_id):
+    doc = get_object_or_404(Chunk, pk=chunk_id)
 
     if request.method == 'POST':
         form = forms.DocumentTextSaveForm(request.POST, prefix="textsave")
@@ -156,13 +154,10 @@ def text(request, slug, chunk=None):
 
 @never_cache
 @require_POST
-def revert(request, slug, chunk=None):
+def revert(request, chunk_id):
     form = forms.DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
-        try:
-            doc = Chunk.get(slug, chunk)
-        except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-            raise Http404
+        doc = get_object_or_404(Chunk, pk=chunk_id)
 
         revision = form.cleaned_data['revision']
 
@@ -175,7 +170,7 @@ def revert(request, slug, chunk=None):
             author = None
 
         before = doc.revision()
-        logger.info("Reverting %s to %s", slug, revision)
+        logger.info("Reverting %s to %s", chunk_id, revision)
         doc.at_revision(revision).revert(author=author, description=comment)
 
         return JSONResponse({
@@ -215,7 +210,7 @@ def gallery(request, directory):
 
 
 @never_cache
-def diff(request, slug, chunk=None):
+def diff(request, chunk_id):
     revA = int(request.GET.get('from', 0))
     revB = int(request.GET.get('to', 0))
 
@@ -225,10 +220,7 @@ def diff(request, slug, chunk=None):
     if revB == 0:
         revB = None
 
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
+    doc = get_object_or_404(Chunk, pk=chunk_id)
     # allow diff from the beginning
     if revA:
         docA = doc.at_revision(revA).materialize()
@@ -241,21 +233,15 @@ def diff(request, slug, chunk=None):
 
 
 @never_cache
-def revision(request, slug, chunk=None):
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
+def revision(request, chunk_id):
+    doc = get_object_or_404(Chunk, pk=chunk_id)
     return http.HttpResponse(str(doc.revision()))
 
 
 @never_cache
-def history(request, slug, chunk=None):
+def history(request, chunk_id):
     # TODO: pagination
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
+    doc = get_object_or_404(Chunk, pk=chunk_id)
 
     changes = []
     for change in doc.history().order_by('-created_at'):
@@ -272,13 +258,10 @@ def history(request, slug, chunk=None):
 
 @require_POST
 @ajax_require_permission('catalogue.can_pubmark')
-def pubmark(request, slug, chunk=None):
+def pubmark(request, chunk_id):
     form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
     if form.is_valid():
-        try:
-            doc = Chunk.get(slug, chunk)
-        except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-            raise Http404
+        doc = get_object_or_404(Chunk, pk=chunk_id)
 
         revision = form.cleaned_data['revision']
         publishable = form.cleaned_data['publishable']

@@ -12,20 +12,20 @@ urlpatterns = patterns('wiki.views',
     url(r'^gallery/(?P<directory>[^/]+)/$',
         'gallery', name="wiki_gallery"),
 
-    url(r'^history/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^history/(?P<chunk_id>\d+)/$',
         'history', name="wiki_history"),
 
-    url(r'^rev/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^rev/(?P<chunk_id>\d+)/$',
         'revision', name="wiki_revision"),
 
-    url(r'^text/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^text/(?P<chunk_id>\d+)/$',
         'text', name="wiki_text"),
 
-    url(r'^revert/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^revert/(?P<chunk_id>\d+)/$',
         'revert', name='wiki_revert'),
 
-    url(r'^diff/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'diff', name="wiki_diff"),
-    url(r'^pubmark/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$', 'pubmark', name="wiki_pubmark"),
+    url(r'^diff/(?P<chunk_id>\d+)/$', 'diff', name="wiki_diff"),
+    url(r'^pubmark/(?P<chunk_id>\d+)/$', 'pubmark', name="wiki_pubmark"),
 
     url(r'^themes$', 'themes', name="themes"),
 )

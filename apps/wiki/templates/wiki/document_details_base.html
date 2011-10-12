@@ -16,7 +16,7 @@
 
 {% block maincontent %}
 <div id="document-meta"
-	data-book="{{ chunk.book.slug }}" data-chunk="{{ chunk.slug }}" style="display:none">
+	data-chunk-id="{{ chunk.pk }}" style="display:none">
 
 	<span data-key="gallery">{{ chunk.book.gallery }}</span>
 	<span data-key="gallery-start">{% if chunk.gallery_start %}{{ chunk.gallery_start }}{% endif %}</span>
