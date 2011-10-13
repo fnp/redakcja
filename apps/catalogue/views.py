@@ -2,6 +2,8 @@ from datetime import datetime
 import logging
 import os
 from StringIO import StringIO
+from urllib import unquote
+from urlparse import urlsplit, urlunsplit
 
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -11,6 +13,7 @@ from django.db.models import Count, Q
 from django import http
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
+from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -359,12 +362,23 @@ def chunk_edit(request, slug, chunk):
         form = forms.ChunkForm(request.POST, instance=doc)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(doc.book.get_absolute_url())
+            go_next = request.GET.get('next', None)
+            if go_next:
+                go_next = urlquote_plus(unquote(iri_to_uri(go_next)), safe='/?=&')
+            else:
+                go_next = doc.book.get_absolute_url()
+            return http.HttpResponseRedirect(go_next)
     else:
         form = forms.ChunkForm(instance=doc)
+
+    parts = urlsplit(request.META['HTTP_REFERER'])
+    parts = ['', ''] + list(parts[2:])
+    go_next = urlquote_plus(urlunsplit(parts))
+
     return direct_to_template(request, "catalogue/chunk_edit.html", extra_context={
         "chunk": doc,
         "form": form,
+        "go_next": go_next,
     })
 
 

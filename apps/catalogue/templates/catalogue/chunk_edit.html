@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block leftcolumn %}
-	<form enctype="multipart/form-data" method="POST" action="">
+	<form enctype="multipart/form-data" method="POST" action="{% if go_next %}?next={{ go_next }}{% endif %}">
     {% csrf_token %}
 	{{ form.as_p }}
 

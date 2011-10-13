@@ -3,7 +3,7 @@
 {% if book.single %}
     {% with book.0 as chunk %}
     <tr>
-        <td><a target="_blank" href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+        <td><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
         <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
         <td><a target="_blank"
                     href="{% url wiki_editor book.slug %}">
@@ -22,7 +22,7 @@
     {% endwith %}
 {% else %}
     <tr>
-        <td><a target="_blank" href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+        <td><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
         <td></td>
         <td>{{ book.title }}</td>
         <td></td><td></td>
