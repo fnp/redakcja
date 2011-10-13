@@ -368,13 +368,13 @@ def chunk_edit(request, slug, chunk):
 def book_append(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if request.method == "POST":
-        form = forms.BookAppendForm(request.POST)
+        form = forms.BookAppendForm(book, request.POST)
         if form.is_valid():
             append_to = form.cleaned_data['append_to']
             append_to.append(book)
             return http.HttpResponseRedirect(append_to.get_absolute_url())
     else:
-        form = forms.BookAppendForm()
+        form = forms.BookAppendForm(book)
     return direct_to_template(request, "catalogue/book_append_to.html", extra_context={
         "book": book,
         "form": form,

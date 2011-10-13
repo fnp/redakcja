@@ -130,14 +130,16 @@ class Book(models.Model):
         """
         slugs = set(c.slug for c in self)
         i = 1
-        new_slug = proposed
+        new_slug = proposed[:50]
         while new_slug in slugs:
-            new_slug = "%s_%d" % (proposed, i)
+            new_slug = "%s_%d" % (proposed[:45], i)
             i += 1
         return new_slug
 
     def append(self, other, slugs=None, titles=None):
         """Add all chunks of another book to self."""
+        assert self != other
+
         number = self[len(self) - 1].number + 1
         len_other = len(other)
         single = len_other == 1
@@ -166,12 +168,11 @@ class Book(models.Model):
                     # just use the guessed title and original book slug
                     chunk.title = other_title_part
                     if other.slug.startswith(self.slug):
-                        chunk_slug = other.slug[len(self.slug):].lstrip('-_')
+                        chunk.slug = other.slug[len(self.slug):].lstrip('-_')
                     else:
-                        chunk_slug = other.slug
-                    chunk.slug = self.make_chunk_slug(chunk_slug)
+                        chunk.slug = other.slug
                 else:
-                    chunk.title = "%s, %s" % (other_title_part, chunk.title)
+                    chunk.title = ("%s, %s" % (other_title_part, chunk.title))[:255]
             else:
                 chunk.slug = slugs[i]
                 chunk.title = titles[i]
@@ -179,6 +180,7 @@ class Book(models.Model):
             chunk.slug = self.make_chunk_slug(chunk.slug)
             chunk.save()
             number += 1
+        assert not other.chunk_set.exists()
         other.delete()
 
 

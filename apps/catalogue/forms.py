@@ -104,9 +104,13 @@ class BookAppendForm(forms.Form):
         Form for appending a book to another book.
         It means moving all chunks from book A to book B and deleting A.
     """
-
     append_to = forms.ModelChoiceField(queryset=Book.objects.all(),
-        label=_("Append to"))
+            label=_("Append to"))
+
+    def __init__(self, book, *args, **kwargs):
+        ret =  super(BookAppendForm, self).__init__(*args, **kwargs)
+        self.fields['append_to'].queryset = Book.objects.exclude(pk=book.pk)
+        return ret
 
 
 class BookForm(forms.ModelForm):

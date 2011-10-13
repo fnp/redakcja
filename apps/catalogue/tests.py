@@ -29,3 +29,22 @@ class PublishTests(TestCase):
         self.book[1].head.set_publishable(True)
         self.book.publish(self.user)
         api_call.assert_called_with(self.user, 'books', {"book_xml": 'publish me\n too'})
+
+
+class ManipulationTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='tester')
+        self.book1 = Book.create(self.user, 'book 1')
+        self.book2 = Book.create(self.user, 'book 2')
+
+    def test_append(self):
+        self.book1.append(self.book2)
+        self.assertEqual(Book.objects.all().count(), 1)
+        self.assertEqual(len(self.book1), 2)
+
+    def test_append_to_self(self):
+        with self.assertRaises(AssertionError):
+            self.book1.append(Book.objects.get(pk=self.book1.pk))
+        self.assertEqual(Book.objects.all().count(), 2)
+        self.assertEqual(len(self.book1), 1)
