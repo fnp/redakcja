@@ -5,7 +5,7 @@ from StringIO import StringIO
 
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django import http
@@ -75,6 +75,7 @@ def logout_then_redirect(request):
     return http.HttpResponseRedirect(urlquote_plus(request.GET.get('next', '/'), safe='/?='))
 
 
+@permission_required('catalogue.add_book')
 @active_tab('create')
 def create_missing(request, slug=None):
     if slug is None:
@@ -109,6 +110,7 @@ def create_missing(request, slug=None):
     })
 
 
+@permission_required('catalogue.add_book')
 @active_tab('upload')
 def upload(request):
     if request.method == "POST":
@@ -316,6 +318,7 @@ def book(request, slug):
     })
 
 
+@permission_required('catalogue.add_chunk')
 def chunk_add(request, slug, chunk):
     try:
         doc = Chunk.get(slug, chunk)
@@ -365,6 +368,7 @@ def chunk_edit(request, slug, chunk):
     })
 
 
+@permission_required('catalogue.change_book')
 def book_append(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if request.method == "POST":
@@ -381,6 +385,7 @@ def book_append(request, slug):
     })
 
 
+@permission_required('catalogue.change_book')
 def book_edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if request.method == "POST":
