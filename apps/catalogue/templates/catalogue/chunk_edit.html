@@ -1,14 +1,16 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
 
-{% block leftcolumn %}
+{% block content %}
+    <h1>{% trans "Chunk settings" %}</h1>
+
 	<form enctype="multipart/form-data" method="POST" action="{% if go_next %}?next={{ go_next }}{% endif %}">
     {% csrf_token %}
-	{{ form.as_p }}
+    <table class='editable'>
+        <tr><th>{% trans "Book" %}</th><td>{{ chunk.book }} ({{ chunk.number }}/{{ chunk.book|length }})</td></tr>
+        {{ form.as_table}}
+        <tr><td></td><td><button type="submit">{% trans "Save" %}</button></td></tr>
+    </table>
 
-	<p><button type="submit">{% trans "Save" %}</button></p>
 	</form>
-{% endblock leftcolumn %}
-
-{% block rightcolumn %}
-{% endblock rightcolumn %}
+{% endblock content %}

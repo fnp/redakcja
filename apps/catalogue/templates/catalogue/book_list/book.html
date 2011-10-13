@@ -22,10 +22,11 @@
     {% endwith %}
 {% else %}
     <tr>
-        <td><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+        <td class='book-settings-link'><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
         <td></td>
         <td>{{ book.title }}</td>
-        <td></td><td></td>
+        <td></td>
+        <td class='user-column'></td>
         <td>
             {% if book.published %}P{% endif %}
             {% if book.new_publishable %}p{% endif %}

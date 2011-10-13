@@ -219,86 +219,19 @@ def revision(request, slug, chunk=None):
 def book(request, slug):
     book = get_object_or_404(Book, slug=slug)
 
-    # TODO: most of this should go somewhere else
-
-    # do we need some automation?
-    first_master = None
-    chunks = []
-    need_fixing = False
-    choose_master = False
-
-    length = book.chunk_set.count()
-    for i, chunk in enumerate(book):
-        chunk_dict = {
-            "chunk": chunk,
-            "fix": [],
-            "grade": ""
-            }
-        graded = xml_tools.GradedText(chunk.materialize())
-        if graded.is_wl():
-            master = graded.master()
-            if first_master is None:
-                first_master = master
-            elif master != first_master:
-                chunk_dict['fix'].append('bad-master')
-
-            if i > 0 and not graded.has_trim_begin():
-                chunk_dict['fix'].append('trim-begin')
-            if i < length - 1 and not graded.has_trim_end():
-                chunk_dict['fix'].append('trim-end')
-
-            if chunk_dict['fix']:
-                chunk_dict['grade'] = 'wl-fix'
-            else:
-                chunk_dict['grade'] = 'wl'
-
-        elif graded.is_broken_wl():
-            chunk_dict['grade'] = 'wl-broken'
-        elif graded.is_xml():
-            chunk_dict['grade'] = 'xml'
+    if request.user.has_perm('catalogue.change_book'):
+        if request.method == "POST":
+            form = forms.BookForm(request.POST, instance=book)
+            if form.is_valid():
+                form.save()
+                return http.HttpResponseRedirect(book.get_absolute_url())
         else:
-            chunk_dict['grade'] = 'plain'
-            chunk_dict['fix'].append('wl')
-            choose_master = True
-
-        if chunk_dict['fix']:
-            need_fixing = True
-        chunks.append(chunk_dict)
-
-    if first_master or not need_fixing:
-        choose_master = False
-
-    if request.method == "POST":
-        form = forms.ChooseMasterForm(request.POST)
-        if not choose_master or form.is_valid():
-            if choose_master:
-                first_master = form.cleaned_data['master']
-
-            # do the actual fixing
-            for c in chunks:
-                if not c['fix']:
-                    continue
-
-                text = c['chunk'].materialize()
-                for fix in c['fix']:
-                    if fix == 'bad-master':
-                        text = xml_tools.change_master(text, first_master)
-                    elif fix == 'trim-begin':
-                        text = xml_tools.add_trim_begin(text)
-                    elif fix == 'trim-end':
-                        text = xml_tools.add_trim_end(text)
-                    elif fix == 'wl':
-                        text = xml_tools.basic_structure(text, first_master)
-                author = request.user if request.user.is_authenticated() else None
-                description = "auto-fix: " + ", ".join(c['fix'])
-                c['chunk'].commit(text=text, author=author, 
-                    description=description)
-
-            return http.HttpResponseRedirect(book.get_absolute_url())
-    elif choose_master:
-        form = forms.ChooseMasterForm()
+            form = forms.BookForm(instance=book)
+            editable = True
     else:
-        form = None
+        form = forms.ReadonlyBookForm(instance=book)
+        editable = False
+
 
     try:
         book.assert_publishable()
@@ -313,11 +246,8 @@ def book(request, slug):
         "book": book,
         "publishable": publishable,
         "publishable_error": publishable_error,
-        "chunks": chunks,
-        "need_fixing": need_fixing,
-        "choose_master": choose_master,
-        "first_master": first_master,
         "form": form,
+        "editable": editable,
     })
 
 
@@ -394,22 +324,6 @@ def book_append(request, slug):
     else:
         form = forms.BookAppendForm(book)
     return direct_to_template(request, "catalogue/book_append_to.html", extra_context={
-        "book": book,
-        "form": form,
-    })
-
-
-@permission_required('catalogue.change_book')
-def book_edit(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if request.method == "POST":
-        form = forms.BookForm(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect(book.get_absolute_url())
-    else:
-        form = forms.BookForm(instance=book)
-    return direct_to_template(request, "catalogue/book_edit.html", extra_context={
         "book": book,
         "form": form,
     })

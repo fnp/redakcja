@@ -35,7 +35,5 @@ urlpatterns = patterns('catalogue.views',
         'chunk_edit', name="catalogue_chunk_edit"),
     url(r'^book_append/(?P<slug>[^/]+)/$',
         'book_append', name="catalogue_book_append"),
-    url(r'^book_edit/(?P<slug>[^/]+)/$',
-        'book_edit', name="catalogue_book_edit"),
 
 )

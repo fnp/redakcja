@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-11 12:37+0200\n"
-"PO-Revision-Date: 2011-10-11 12:40+0100\n"
+"POT-Creation-Date: 2011-10-13 17:15+0200\n"
+"PO-Revision-Date: 2011-10-13 17:16+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -25,29 +25,29 @@ msgstr "Plik ZIP"
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:71
+#: forms.py:74
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:85
-#: forms.py:99
+#: forms.py:94
+#: forms.py:108
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:109
+#: forms.py:117
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:138
+#: views.py:143
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:140
+#: views.py:145
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:146
+#: views.py:151
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
@@ -57,7 +57,7 @@ msgid "title"
 msgstr "tytuł"
 
 #: models/book.py:26
-#: models/chunk.py:23
+#: models/chunk.py:25
 msgid "slug"
 msgstr "slug"
 
@@ -74,7 +74,7 @@ msgid "parent number"
 msgstr "numeracja rodzica"
 
 #: models/book.py:48
-#: models/chunk.py:21
+#: models/chunk.py:22
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
@@ -83,43 +83,43 @@ msgstr "książka"
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:195
+#: models/book.py:197
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:199
+#: models/book.py:201
 msgid "Not all chunks have publishable revisions."
-msgstr "W książce są niepublikowalne części."
+msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:205
+#: models/book.py:207
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:207
+#: models/book.py:209
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:209
+#: models/book.py:211
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:212
+#: models/book.py:214
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
-#: models/chunk.py:22
+#: models/chunk.py:23
 msgid "number"
 msgstr "numer"
 
-#: models/chunk.py:25
+#: models/chunk.py:26
 msgid "gallery start"
 msgstr "początek galerii"
 
-#: models/chunk.py:40
+#: models/chunk.py:41
 msgid "chunk"
 msgstr "część"
 
-#: models/chunk.py:41
+#: models/chunk.py:42
 msgid "chunks"
 msgstr "części"
 
@@ -160,83 +160,71 @@ msgstr "Platforma Redakcyjna"
 msgid "Append book"
 msgstr "Dołącz książkę"
 
-#: templates/catalogue/book_detail.html:6
-#: templates/catalogue/book_detail.html:46
-msgid "edit"
-msgstr "edytuj"
-
-#: templates/catalogue/book_detail.html:16
-msgid "add basic document structure"
-msgstr "dodaj podstawową strukturę dokumentu"
-
-#: templates/catalogue/book_detail.html:20
-msgid "change master tag to"
-msgstr "zmień tak master na"
-
-#: templates/catalogue/book_detail.html:24
-msgid "add begin trimming tag"
-msgstr "dodaj początkowy ogranicznik"
-
-#: templates/catalogue/book_detail.html:28
-msgid "add end trimming tag"
-msgstr "dodaj końcowy ogranicznik"
-
-#: templates/catalogue/book_detail.html:34
-msgid "unstructured text"
-msgstr "tekst bez struktury"
-
-#: templates/catalogue/book_detail.html:38
-msgid "unknown XML"
-msgstr "nieznany XML"
-
-#: templates/catalogue/book_detail.html:42
-msgid "broken document"
-msgstr "uszkodzony dokument"
-
-#: templates/catalogue/book_detail.html:61
-msgid "Apply fixes"
-msgstr "Wykonaj zmiany"
-
-#: templates/catalogue/book_detail.html:67
-msgid "Append to other book"
-msgstr "Dołącz do innej książki"
-
-#: templates/catalogue/book_detail.html:69
-msgid "Last published"
-msgstr "Ostatnio opublikowano"
-
-#: templates/catalogue/book_detail.html:73
-msgid "Full XML"
-msgstr "Pełny XML"
-
-#: templates/catalogue/book_detail.html:74
-msgid "HTML version"
-msgstr "Wersja HTML"
-
-#: templates/catalogue/book_detail.html:75
-msgid "TXT version"
-msgstr "Wersja TXT"
-
-#: templates/catalogue/book_detail.html:93
-msgid "Publish"
-msgstr "Opublikuj"
-
-#: templates/catalogue/book_detail.html:97
-msgid "Log in to publish."
-msgstr "Zaloguj się, aby opublikować."
-
-#: templates/catalogue/book_detail.html:100
-msgid "This book can't be published yet, because:"
-msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
-
+#: templates/catalogue/book_detail.html:14
 #: templates/catalogue/book_edit.html:9
-#: templates/catalogue/chunk_edit.html:9
+#: templates/catalogue/chunk_edit.html:12
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/catalogue/chunk_add.html:9
+#: templates/catalogue/book_detail.html:21
+msgid "Append to other book"
+msgstr "Dołącz do innej książki"
+
+#: templates/catalogue/book_detail.html:27
+msgid "Chunks"
+msgstr "Części"
+
+#: templates/catalogue/book_detail.html:42
+#: templatetags/wall.py:67
+msgid "Publication"
+msgstr "Publikacja"
+
+#: templates/catalogue/book_detail.html:44
+msgid "Last published"
+msgstr "Ostatnio opublikowano"
+
+#: templates/catalogue/book_detail.html:54
+msgid "Full XML"
+msgstr "Pełny XML"
+
+#: templates/catalogue/book_detail.html:55
+msgid "HTML version"
+msgstr "Wersja HTML"
+
+#: templates/catalogue/book_detail.html:56
+msgid "TXT version"
+msgstr "Wersja TXT"
+
+#: templates/catalogue/book_detail.html:74
+msgid "Publish"
+msgstr "Opublikuj"
+
+#: templates/catalogue/book_detail.html:78
+msgid "Log in to publish."
+msgstr "Zaloguj się, aby opublikować."
+
+#: templates/catalogue/book_detail.html:81
+msgid "This book can't be published yet, because:"
+msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
+
+#: templates/catalogue/book_detail.html:90
+msgid "Comments"
+msgstr "Komentarze"
+
+#: templates/catalogue/chunk_add.html:5
+#: templates/catalogue/chunk_add.html:11
 msgid "Add chunk"
 msgstr "Dodaj część"
+
+#: templates/catalogue/chunk_edit.html:5
+#: templates/catalogue/book_list/book.html:7
+#: templates/catalogue/book_list/chunk.html:5
+msgid "Chunk settings"
+msgstr "Ustawienia części"
+
+#: templates/catalogue/chunk_edit.html:10
+msgid "Book"
+msgstr "Książka"
 
 #: templates/catalogue/document_create_missing.html:9
 msgid "Create document"
@@ -301,11 +289,6 @@ msgstr "Użytkownicy"
 #: templates/catalogue/book_list/book.html:25
 msgid "Book settings"
 msgstr "Ustawienia książki"
-
-#: templates/catalogue/book_list/book.html:7
-#: templates/catalogue/book_list/chunk.html:5
-msgid "Chunk settings"
-msgstr "Ustawienia części"
 
 #: templates/catalogue/book_list/book_list.html:19
 msgid "Show hidden books"
@@ -392,13 +375,36 @@ msgstr "Powiązana zmiana"
 msgid "Edit"
 msgstr "Zmiana"
 
-#: templatetags/wall.py:67
-msgid "Publication"
-msgstr "Publikacja"
-
 #: templatetags/wall.py:84
 msgid "Comment"
 msgstr "Komentarz"
+
+#~ msgid "edit"
+#~ msgstr "edytuj"
+
+#~ msgid "add basic document structure"
+#~ msgstr "dodaj podstawową strukturę dokumentu"
+
+#~ msgid "change master tag to"
+#~ msgstr "zmień tak master na"
+
+#~ msgid "add begin trimming tag"
+#~ msgstr "dodaj początkowy ogranicznik"
+
+#~ msgid "add end trimming tag"
+#~ msgstr "dodaj końcowy ogranicznik"
+
+#~ msgid "unstructured text"
+#~ msgstr "tekst bez struktury"
+
+#~ msgid "unknown XML"
+#~ msgstr "nieznany XML"
+
+#~ msgid "broken document"
+#~ msgstr "uszkodzony dokument"
+
+#~ msgid "Apply fixes"
+#~ msgstr "Wykonaj zmiany"
 
 #~ msgid "Can mark for publishing"
 #~ msgstr "Oznacza do publikacji"

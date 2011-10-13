@@ -27,8 +27,8 @@ class Book(models.Model):
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
-    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children")
-    parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True)
+    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
+    parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
     _short_html = models.TextField(null=True, blank=True, editable=False)
@@ -44,7 +44,7 @@ class Book(models.Model):
 
     class Meta:
         app_label = 'catalogue'
-        ordering = ['parent_number', 'title']
+        ordering = ['title']
         verbose_name = _('book')
         verbose_name_plural = _('books')
 

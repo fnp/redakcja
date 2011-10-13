@@ -127,6 +127,7 @@ def book_list(context, user=None):
                 '-count', 'last_name', 'first_name')}
 
     new_context.update({
+        "filters": True,
         "request": request,
         "books": ChunksList(document_list_filter(request, **filters)),
         "stages": Chunk.tag_model.objects.all(),
@@ -134,4 +135,3 @@ def book_list(context, user=None):
     })
 
     return new_context
-

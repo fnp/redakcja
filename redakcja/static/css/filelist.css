@@ -12,7 +12,18 @@ body {
     font-size: 10px;
 }
 
+img {
+    border: 0;
+}
 
+th {
+    text-align: left;
+}
+
+td {
+    vertical-align: top;
+    padding: 0 3px;
+}
 .clr {
     clear: both;
 }
@@ -41,6 +52,19 @@ body {
 #tabs-nav-left .active {
     background: white;
     border-color: #ff8000 #ff8000 white #ff8000;
+}
+
+.section {
+    border-top: 1px solid #ffdfbf;
+    margin-top: 2em;
+    padding-top: 1em;
+}
+
+.editable td {
+    padding: 1px;
+}
+.editable input, .editable select {
+    width: 30em;
 }
 
 #login-box {
@@ -118,28 +142,6 @@ a:hover {
     font-size: .7em;
     padding-left: 2em;
 }
-
-td {
-    vertical-align: top;
-}
-
-
-.fix {
-    border: 1px solid gray;
-    font-size: 0.7em;
-    padding: 3px;
-}
-
-.fix-info {
-    font-size: 0.7em;
-    font-style: italic;
-}
-
-.chunk-plain a {color: gray;}
-.chunk-xml a {color: gray; font-style: italic;}
-.chunk-wl-broken a {color: red;}
-.chunk-wl a {color: green;}
-.chunk-wl-fix a {color: black;}
 
 
 /* Big cheesy publish button */

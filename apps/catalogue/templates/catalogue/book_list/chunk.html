@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <tr>
-    <td></td>
+    <td class='book-settings-column'></td>
     <td><a href="{% url catalogue_chunk_edit chunk.book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
     <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
             <span class='chunkno'>{{ chunk.number }}.</span>

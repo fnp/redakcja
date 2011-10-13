@@ -68,11 +68,17 @@ class ChunkForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=
         User.objects.annotate(count=Count('chunk')).
         order_by('-count', 'last_name', 'first_name'), required=False,
-        label=_('Assigned to'))
+        label=_('Assigned to')) 
 
     class Meta:
         model = Chunk
+        fields = ['title', 'slug', 'user', 'stage']
         exclude = ['number']
+
+    def __init__(self, *args, **kwargs):
+        super(ChunkForm, self).__init__(*args, **kwargs)
+        self.fields['slug'].widget.attrs={'class': 'autoslug'}
+        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
 
     def clean_slug(self):
         slug = self.cleaned_data['slug']
@@ -114,12 +120,26 @@ class BookAppendForm(forms.Form):
 
 
 class BookForm(forms.ModelForm):
-    """
-        Form used for editing a Book.
-    """
+    """Form used for editing a Book."""
 
     class Meta:
         model = Book
+
+    def __init__(self, *args, **kwargs):
+        ret = super(BookForm, self).__init__(*args, **kwargs)
+        self.fields['slug'].widget.attrs.update({"class": "autoslug"})
+        self.fields['title'].widget.attrs.update({"class": "autoslug-source"})
+        return ret
+
+
+class ReadonlyBookForm(BookForm):
+    """Form used for not editing a Book."""
+
+    def __init__(self, *args, **kwargs):
+        ret = super(ReadonlyBookForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({"readonly": True})
+        return ret
 
 
 class ChooseMasterForm(forms.Form):
