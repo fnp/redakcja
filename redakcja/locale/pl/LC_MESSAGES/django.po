@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-14 17:05+0200\n"
-"PO-Revision-Date: 2011-10-14 17:11+0100\n"
+"PO-Revision-Date: 2011-10-14 17:12+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -26,7 +26,7 @@ msgid ""
 "The page you're trying\n"
 "to reach (<tt>%(p)s</tt>) could not be found. If it's a document, try\n"
 "looking for it on the <a href=\"/\">document list</a>."
-msgstr "Stroną, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj poszukać jej na <a href=\"/\">liście dokumentów</a>."
+msgstr "Strona, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj poszukać jej na <a href=\"/\">liście dokumentów</a>."
 
 #: templates/404.html:15
 #, python-format
