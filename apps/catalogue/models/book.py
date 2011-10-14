@@ -44,7 +44,7 @@ class Book(models.Model):
 
     class Meta:
         app_label = 'catalogue'
-        ordering = ['title']
+        ordering = ['title', 'slug']
         verbose_name = _('book')
         verbose_name_plural = _('books')
 
