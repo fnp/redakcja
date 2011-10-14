@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-14 17:05+0200\n"
-"PO-Revision-Date: 2011-10-14 16:04+0100\n"
+"PO-Revision-Date: 2011-10-14 17:11+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -26,9 +26,7 @@ msgid ""
 "The page you're trying\n"
 "to reach (<tt>%(p)s</tt>) could not be found. If it's a document, try\n"
 "looking for it on the <a href=\"/\">document list</a>."
-msgstr ""
-"Stroną, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje.Spróbuj "
-"poszukać jej na <a href=\"/\">liście dokumentów</a>."
+msgstr "Stroną, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj poszukać jej na <a href=\"/\">liście dokumentów</a>."
 
 #: templates/404.html:15
 #, python-format
@@ -36,9 +34,7 @@ msgid ""
 "If you\n"
 "still can't find what you're looking for, please\n"
 "<a href=\"%(m)s\">contact the administrator</a>."
-msgstr ""
-"Jeśli nadal nie możesz znaleźć tego, czego szukasz,<a href=\"%(m)s"
-"\">skontaktuj się z administratorem</a>."
+msgstr "Jeśli nadal nie możesz znaleźć tego, czego szukasz, <a href=\"%(m)s\">skontaktuj się z administratorem</a>."
 
 #: templates/404.html:22
 #, python-format
@@ -48,9 +44,7 @@ msgid ""
 "Go to the <a href=\"/\">document list</a>\n"
 "or to <a href=\"%(m)s\">your page</a> instead."
 msgstr ""
-"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on jużdo "
-"koordynowania prac redakcyjnych. Możesz za to przejśćdo <a href=\"/\">listy "
-"dokumentów</a>\n"
+"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on już do koordynowania prac redakcyjnych. Możesz za to przejśćdo <a href=\"/\">listy dokumentów</a>\n"
 "albo do <a href=\"%(m)s\">swojej strony</a>."
 
 #: templates/base.html:7
