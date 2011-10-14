@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+
+body {
+    margin: 0;
+    font-family: verdana, sans-serif;
+    font-size: 10px;
+}
+
+img {
+    border: 0;
+}
+
+.clr {
+    clear: both;
+}
+
+#tabs-nav {
+    padding: 5px 5px 0 10px;
+    background: #ffdfbf;
+    border-bottom: 1px solid #ff8000;
+    position: relative;
+    height: 25px;
+}
+
+#logo {
+    position: absolute;
+    bottom: 0;
+}
+
+#content {
+    padding: 10px;
+}
+
+a, a:visited, a:active {
+	color: #bf6000;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+    </style>
+    <title>Platforma Redakcyjna</title>
+</head>
+<body>
+
+<div id="tabs-nav">
+
+<img id="logo" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAcCAYAAADxyeavAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAD7AAAA+wBSobVeQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAATYSURBVFiFvdhbjN1VFcfxzzpTR8tUYisJViJWJCCIVKUNYCGdaRPUMBYvqNFSYkyol4iNsalpaOfPf4bLKBiR8kTQCCG0tWMBa4WEgLY0lJBga61FiGKRahPqgxamUGjP8uF/Mr0wlzMHpzvZL2ft9Vvfvfb6r71zIjOd8FHGe/GgMKAnf9iqTO3/iNTcuDHeh02YJS1+K1InFr6MGQ7ZjDbcgDOUcW6rcicOvowzVBk/bJK52t2Ow+huVfLEwB8NTqfr8kXLcx+24DOtyk48fBkn4zeom6RLkXuGbOF+XOzmeHcr0hMLX0YN92EqulyXLxwX/WG0eV1XK/ITnfmb8Ul8UZHPv8m6Ip/FP2kNftJbQhttlPElLMMSRW4ZZeWjmNdKiInJfBkz8HPco8jbx1j9KD6kjPeMN8zEwIcL0GGy7zSx+rGGz7hLpzX4MmrKmDaK6g5w0IwxtcLZqGNkvRHDtDYW43llnDes9bC/4YC6D4+q0hcfkX6Fp53kF+OFaA3+7dbi39jgpjj1TfYi69jJKPA3xmnqNuIl7S63NAeVcW7je2lqjN5tyngXOjG/MUPNVVbm08pYgC3esFUZCxS58zjvHRj+3fKTmOyQDWjXZq7luU9vLMRduAffaAb+uMxH6IvZyuhTxlOq7N6PL2M76uoeU0anIndpMxuv4AlldB4rZbuRMr/fz3A2uq3Iv+uNa6R78XuTLW0GHCKv1y50SVdgAU7Da3hceER6ROGPZOqPqQ7aiI/hK4p8wK3RYdAGXIwvKPK3oIxZeNI0Ha7Ng0MRy1imurw+p8hf64sL1W3GeixS5KHxwG/DR/Gy6g2yXoeHLM3BYT3KOAkDqptziSLvaPy2EXOEhXpynTvjbfbajwsVuaPh+6nGuu8r8jZlnKV6sL2ATkW+1iw4Vdk8XG3DckV+VZEDI4JDkQdMd4WqPlcp4xaFV3XoxlZptTK6Lc438AfRKJ0yTsG9WK/I29wQH1T1+P1YMF5wiMykjDvwLeEqPbm6ae8yvo2fYgO+psNhgx5SldWlWIQDilypjLsxBx9X9fTNCMxR5D/GC34EXoTSXbhaVcsDTSv0xVx1A/gvrsRf8Tu0q1ms7gPYg8cxGy+pSmUKLlXkX1oBZ6jbZOIarMFqZVzZtMLK3GSSWXgRW/FdYQ3OV7dXkWtU38duHFKVSjvmjwhexjvcFNPHCh3H/HuwLtrsch8+j4WK/GXTm6iCfh23qt7vT5hmnmvzYOOFubax6k/oHiqVMk4RZkszMRPnq9pooF9hRSO5Y8BXYjX8GEuEUo/ekZxH2EA7zsJzinx96Pfe6JImq9krfUK6CBfhTNWJPIc/q27mncL7pVvwoKqFHhgb/gjEN7FK9TFerchXjrNPUd2g56kuo2qGpXpyreFG1T43YV8DsJp1zx6z0SMxLlOV8m5VR9pztHlkeOiN+dI67BZWSeccBXo6ErvwpGjMulOFmdJaRf7rKJB5+I/CtnGe5Jmq7E/FZxX5VHPwR5wHcI7qWLcPzcm2WZYvN9a1q3r/IgziGUXObiThB1J/Q3GLNoutyGea3sCP4p1etREX4NOK3NwcfAVWM11b4+IZzn4yHsAlqnZ7Or6nyOkN+wZMUbNMXT8uEa7Xo7/pU6ieIdUGai6zMrf+DykEtvGDDlIUAAAAAElFTkSuQmCC' />
+
+    <div class='clr' ></div>
+</div>
+
+<div id="content">
+{% block "content" %}
+{% endblock %}
+</div>
+
+
+</body>
+</html>

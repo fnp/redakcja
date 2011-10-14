@@ -22,9 +22,10 @@ MEDIA_ROOT = '/srv/redakcja/media/'
 # Subdirectory of MEDIA_ROOT containing images
 IMAGE_DIR = 'images'
 
-CAS_SERVER_URL = 'http://logowanie.wolnelektury.pl/cas/'
+CAS_SERVER_URL = 'http://logowanie.nowoczesnapolska.org.pl/cas/'
 REDMINE_URL = 'http://redmine.nowoczesnapolska.org.pl/'
 DEBUG = True
+MAINTENANCE_MODE = False
 COMPRESS = False
 
 APICLIENT_WL_CONSUMER_KEY = None
