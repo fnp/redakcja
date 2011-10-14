@@ -34,13 +34,13 @@ class DocumentTextSaveForm(forms.Form):
     text = forms.CharField(widget=forms.HiddenInput)
 
     author_name = forms.CharField(
-        required=False,
+        required=True,
         label=_(u"Author"),
         help_text=_(u"Your name"),
     )
 
     author_email = forms.EmailField(
-        required=False,
+        required=True,
         label=_(u"Author's email"),
         help_text=_(u"Your email address, so we can show a gravatar :)"),
     )
@@ -58,6 +58,14 @@ class DocumentTextSaveForm(forms.Form):
         label=_(u"Completed"),
         help_text=_(u"If you completed a life cycle stage, select it."),
     )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        r = super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
+        if user and user.is_authenticated():
+            self.fields['author_name'].required = False
+            self.fields['author_email'].required = False
+        return r
 
 
 class DocumentTextRevertForm(forms.Form):

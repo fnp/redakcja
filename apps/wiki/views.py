@@ -62,7 +62,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
     return direct_to_template(request, template_name, extra_context={
         'chunk': chunk,
         'forms': {
-            "text_save": forms.DocumentTextSaveForm(prefix="textsave"),
+            "text_save": forms.DocumentTextSaveForm(user=request.user, prefix="textsave"),
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
         },
@@ -104,7 +104,7 @@ def text(request, chunk_id):
     doc = get_object_or_404(Chunk, pk=chunk_id)
 
     if request.method == 'POST':
-        form = forms.DocumentTextSaveForm(request.POST, prefix="textsave")
+        form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
         if form.is_valid():
             if request.user.is_authenticated():
                 author = request.user
@@ -123,6 +123,8 @@ def text(request, chunk_id):
                        parent=parent,
                        description=form.cleaned_data['comment'],
                        tags=tags,
+                       author_name=form.cleaned_data['author_name'],
+                       author_email=form.cleaned_data['author_email'],
                        )
             revision = doc.revision()
             return JSONResponse({

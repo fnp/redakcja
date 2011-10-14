@@ -299,6 +299,7 @@
 			var global = $("*[data-ui-error-for='__all__']", this.$elem);
 			var unassigned = [];
 
+            $("*[data-ui-error-for]", this.$elem).text('');
 			for (var field_name in errors)
 			{
 				var span = $("*[data-ui-error-for='"+field_name+"']", this.$elem);
