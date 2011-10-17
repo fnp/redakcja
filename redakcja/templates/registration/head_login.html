@@ -2,7 +2,7 @@
 
 {% if user.is_authenticated %}
 <span class="user_name">{{ user.username }}</span> |
-<a href='{% url logout %}'>{% trans "Log Out" %}</a>
+<a href='{% url logout %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
 {% else %}
 {% url login as login_url %}
 {% ifnotequal login_url request.path %}

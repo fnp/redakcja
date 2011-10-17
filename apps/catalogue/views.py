@@ -56,6 +56,8 @@ def my(request):
     return render(request, 'catalogue/my_page.html', {
         'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
                         key=lambda x: x[1]['time'], reverse=True),
+
+        "logout_to": '/',
         })
 
 
@@ -110,6 +112,8 @@ def create_missing(request, slug=None):
     return direct_to_template(request, "catalogue/document_create_missing.html", extra_context={
         "slug": slug,
         "form": form,
+
+        "logout_to": '/',
     })
 
 
@@ -165,12 +169,16 @@ def upload(request):
                 "ok_list": ok_list,
                 "skipped_list": skipped_list,
                 "error_list": error_list,
+
+                "logout_to": '/',
             })
     else:
         form = forms.DocumentsUploadForm()
 
     return direct_to_template(request, "catalogue/document_upload.html", extra_context={
         "form": form,
+
+        "logout_to": '/',
     })
 
 
@@ -326,6 +334,8 @@ def book_append(request, slug):
     return direct_to_template(request, "catalogue/book_append_to.html", extra_context={
         "book": book,
         "form": form,
+
+        "logout_to": '/',
     })
 
 

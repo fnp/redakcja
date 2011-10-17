@@ -24,14 +24,15 @@ def main_tabs(context):
 
     tabs = []
     user = context['user']
-    if user.is_authenticated():
-        tabs.append(Tab('my', _('My page'), reverse("catalogue_user")))
+    tabs.append(Tab('my', _('My page'), reverse("catalogue_user")))
 
     tabs.append(Tab('activity', _('Activity'), reverse("catalogue_activity")))
     tabs.append(Tab('all', _('All'), reverse("catalogue_document_list")))
     tabs.append(Tab('users', _('Users'), reverse("catalogue_users")))
-    tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
-    tabs.append(Tab('upload', _('Upload'), reverse("catalogue_upload")))
+
+    if user.has_perm('catalogue.add_book'):
+        tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
+        tabs.append(Tab('upload', _('Upload'), reverse("catalogue_upload")))
 
     if user.is_staff:
         tabs.append(Tab('admin', _('Admin'), reverse("admin:index")))
