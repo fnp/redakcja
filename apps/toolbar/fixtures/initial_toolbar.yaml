@@ -209,17 +209,6 @@
 -   fields:
         accesskey: ''
         group: [21]
-        label: "d\u0142ugi cyt. poet."
-        link: ''
-        params: '{"tag": "poezja_cyt"}'
-        scriptlet: insert_tag
-        slug: dlugi-cyt-poet
-        tooltip: "d\u0142ugi cytat wierszowany wyr\xF3\u017Cniony sk\u0142adem"
-    model: toolbar.button
-    pk: 67
--   fields:
-        accesskey: ''
-        group: [21]
         label: "d\u0142ugi cytat"
         link: ''
         params: '{"tag": "dlugi_cytat"}'
@@ -228,6 +217,17 @@
         tooltip: "d\u0142ugi cytat wyr\xF3\u017Cniony sk\u0142adem"
     model: toolbar.button
     pk: 42
+-   fields:
+        accesskey: ''
+        group: [21]
+        label: "d\u0142ugi cyt. poet."
+        link: ''
+        params: '{"tag": "poezja_cyt"}'
+        scriptlet: insert_tag
+        slug: dlugi-cyt-poet
+        tooltip: "d\u0142ugi cytat wierszowany wyr\xF3\u017Cniony sk\u0142adem"
+    model: toolbar.button
+    pk: 67
 -   fields:
         accesskey: ''
         group: [11]
@@ -420,17 +420,6 @@
     pk: 2
 -   fields:
         accesskey: ''
-        group: [2]
-        label: ",,\u2026\" na \xBB\u2026\xAB"
-        link: ''
-        params: '{"exprs": [[",,", "\u00bb"], ["\"", "\u00ab"]]}'
-        scriptlet: fulltextregexp
-        slug: na-niemieckie
-        tooltip: "Zamienia cudzys\u0142owy podw\xF3jne na niemieckie"
-    model: toolbar.button
-    pk: 3
--   fields:
-        accesskey: ''
         group: [28]
         label: "nag\u0142. dramatu"
         link: ''
@@ -464,6 +453,17 @@
         tooltip: "nag\u0142\xF3wek listy os\xF3b"
     model: toolbar.button
     pk: 94
+-   fields:
+        accesskey: ''
+        group: [2]
+        label: ",,\u2026\" na \xBB\u2026\xAB"
+        link: ''
+        params: '{"exprs": [[",,", "\u00bb"], ["\"", "\u00ab"]]}'
+        scriptlet: fulltextregexp
+        slug: na-niemieckie
+        tooltip: "Zamienia cudzys\u0142owy podw\xF3jne na niemieckie"
+    model: toolbar.button
+    pk: 3
 -   fields:
         accesskey: ''
         group: [13]
@@ -674,7 +674,7 @@
     model: toolbar.button
     pk: 53
 -   fields:
-        accesskey: ''
+        accesskey: e
         group: [15]
         label: "s\u0142owo obce"
         link: ''
@@ -752,6 +752,28 @@
     pk: 76
 -   fields:
         accesskey: ''
+        group: [28]
+        label: trim begin
+        link: ''
+        params: '{"text": "\n<!-- TRIM_BEGIN -->\n"}'
+        scriptlet: insert_text
+        slug: trim-begin
+        tooltip: "Wstawia pocz\u0105tkowy znacznik ci\u0119cia cz\u0119\u015Bci"
+    model: toolbar.button
+    pk: 106
+-   fields:
+        accesskey: ''
+        group: [28]
+        label: trim end
+        link: ''
+        params: '{"text": "\n<!-- TRIM_END -->\n"}'
+        scriptlet: insert_text
+        slug: trim-end
+        tooltip: "Wstawia ko\u0144cowy znacznik ci\u0119cia cz\u0119\u015Bci"
+    model: toolbar.button
+    pk: 107
+-   fields:
+        accesskey: r
         group: [15]
         label: "tytu\u0142 dzie\u0142a"
         link: ''
@@ -850,7 +872,7 @@
     model: toolbar.button
     pk: 48
 -   fields:
-        accesskey: ''
+        accesskey: f
         group: [12, 15]
         label: "wyr\xF3\u017Cnienie"
         link: ''
@@ -965,6 +987,9 @@
             \ cm.nthLine(cpos.line), cpos.character );\n}"}
     model: toolbar.scriptlet
     pk: fulltextregexp
+-   fields: {code: '-'}
+    model: toolbar.scriptlet
+    pk: insert_text
 -   fields: {code: "var cm = panel.texteditor;\r\nvar text = cm.selection();\r\n\r\
             \nif(!text) return;\r\nvar repl = '';\r\nvar lcase = text.toLowerCase();\r\
             \nvar ucase = text.toUpperCase();\r\n\r\nif(lcase == text) repl = ucase;\
@@ -994,4 +1019,3 @@
 -   fields: {code: '-'}
     model: toolbar.scriptlet
     pk: slugify
-

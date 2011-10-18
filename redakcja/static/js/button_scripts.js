@@ -48,6 +48,11 @@ function ScriptletCenter()
 {
     this.scriptlets = {};
 
+    this.scriptlets['insert_text'] = function(context, params, text, move_forward, move_up, done)
+    {
+        done(params.text, move_forward, move_up);
+    }.bind(this);
+
     this.scriptlets['insert_tag'] = function(context, params, text, move_forward, move_up, done)
     {
         var padding_top = '';
