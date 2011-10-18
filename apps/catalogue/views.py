@@ -27,6 +27,7 @@ from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
 from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
+from catalogue.tasks import publishable_error
 from catalogue import xml_tools
 
 #
@@ -240,6 +241,9 @@ def book(request, slug):
         form = forms.ReadonlyBookForm(instance=book)
         editable = False
 
+    task = publishable_error.delay(book)
+    publish_error = t.wait()
+    publishable = publish_error is None
 
     try:
         book.assert_publishable()
@@ -253,7 +257,7 @@ def book(request, slug):
     return direct_to_template(request, "catalogue/book_detail.html", extra_context={
         "book": book,
         "publishable": publishable,
-        "publishable_error": publishable_error,
+        "publishable_error": publish_error,
         "form": form,
         "editable": editable,
     })

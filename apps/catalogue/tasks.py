@@ -9,3 +9,12 @@ def refresh_by_pk(cls, pk):
 def refresh_instance(instance):
     refresh_by_pk.delay(type(instance), instance.pk)
 
+
+@task
+def publishable_error(book):
+    try:
+        book.assert_publishable()
+    except AssertionError, e:
+        return e
+    else:
+       return None
