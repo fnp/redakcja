@@ -242,17 +242,8 @@ def book(request, slug):
         editable = False
 
     task = publishable_error.delay(book)
-    publish_error = t.wait()
+    publish_error = task.wait()
     publishable = publish_error is None
-
-    try:
-        book.assert_publishable()
-    except AssertionError, e:
-        publishable = False
-        publishable_error = e
-    else:
-        publishable = True
-        publishable_error = None
 
     return direct_to_template(request, "catalogue/book_detail.html", extra_context={
         "book": book,
