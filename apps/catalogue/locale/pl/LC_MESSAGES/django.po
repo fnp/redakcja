@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-13 17:15+0200\n"
-"PO-Revision-Date: 2011-10-13 17:16+0100\n"
+"POT-Creation-Date: 2011-10-21 15:53+0200\n"
+"PO-Revision-Date: 2011-10-21 15:53+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -25,29 +25,29 @@ msgstr "Plik ZIP"
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:74
+#: forms.py:71
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:94
-#: forms.py:108
+#: forms.py:91
+#: forms.py:105
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:117
+#: forms.py:114
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:143
+#: views.py:148
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:145
+#: views.py:150
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:151
+#: views.py:156
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
@@ -162,7 +162,7 @@ msgstr "Dołącz książkę"
 
 #: templates/catalogue/book_detail.html:14
 #: templates/catalogue/book_edit.html:9
-#: templates/catalogue/chunk_edit.html:12
+#: templates/catalogue/chunk_edit.html:13
 msgid "Save"
 msgstr "Zapisz"
 
@@ -212,17 +212,25 @@ msgid "Comments"
 msgstr "Komentarze"
 
 #: templates/catalogue/chunk_add.html:5
-#: templates/catalogue/chunk_add.html:11
+#: templates/catalogue/chunk_edit.html:19
+msgid "Split chunk"
+msgstr "Podziel część"
+
+#: templates/catalogue/chunk_add.html:10
+msgid "Insert empty chunk after"
+msgstr "Wstaw pustą część po"
+
+#: templates/catalogue/chunk_add.html:13
 msgid "Add chunk"
 msgstr "Dodaj część"
 
-#: templates/catalogue/chunk_edit.html:5
+#: templates/catalogue/chunk_edit.html:6
 #: templates/catalogue/book_list/book.html:7
 #: templates/catalogue/book_list/chunk.html:5
 msgid "Chunk settings"
 msgstr "Ustawienia części"
 
-#: templates/catalogue/chunk_edit.html:10
+#: templates/catalogue/chunk_edit.html:11
 msgid "Book"
 msgstr "Książka"
 
@@ -239,7 +247,7 @@ msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <
 msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
 
 #: templates/catalogue/document_upload.html:17
-#: templatetags/catalogue.py:34
+#: templatetags/catalogue.py:35
 msgid "Upload"
 msgstr "Załaduj"
 
@@ -281,7 +289,7 @@ msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
 
 #: templates/catalogue/user_list.html:7
-#: templatetags/catalogue.py:32
+#: templatetags/catalogue.py:31
 msgid "Users"
 msgstr "Użytkownicy"
 
@@ -347,23 +355,23 @@ msgstr "nie opublikowane"
 msgid "empty"
 msgstr "puste"
 
-#: templatetags/catalogue.py:28
+#: templatetags/catalogue.py:27
 msgid "My page"
 msgstr "Moja strona"
 
-#: templatetags/catalogue.py:30
+#: templatetags/catalogue.py:29
 msgid "Activity"
 msgstr "Aktywność"
 
-#: templatetags/catalogue.py:31
+#: templatetags/catalogue.py:30
 msgid "All"
 msgstr "Wszystkie"
 
-#: templatetags/catalogue.py:33
+#: templatetags/catalogue.py:34
 msgid "Add"
 msgstr "Dodaj"
 
-#: templatetags/catalogue.py:37
+#: templatetags/catalogue.py:38
 msgid "Admin"
 msgstr "Administracja"
 
@@ -603,6 +611,3 @@ msgstr "Komentarz"
 
 #~ msgid "Refresh"
 #~ msgstr "Odśwież"
-
-#~ msgid "Insert special character"
-#~ msgstr "Wstaw znak specjalny"

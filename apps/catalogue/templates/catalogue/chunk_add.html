@@ -2,12 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans "Add chunk" %}</h1>
+    <h1>{% trans "Split chunk" %}</h1>
 
-	<form enctype="multipart/form-data" method="POST" action="">
+	<form enctype="multipart/form-data" method="POST">
     {% csrf_token %}
-	{{ form.as_p }}
-
-	<p><button type="submit">{% trans "Add chunk" %}</button></p>
+    <table class='editable'>
+        <tr><th>{% trans "Insert empty chunk after" %}:</th>
+            <td><a href="{{ chunk.get_absolute_url }}">{{ chunk.pretty_name }}</a></td></tr>
+        {{ form.as_table }}
+        <tr><td></td><td><button type="submit">{% trans "Add chunk" %}</button></td></tr>
+    </table>
 	</form>
 {% endblock content %}

@@ -1,4 +1,5 @@
 {% extends "catalogue/base.html" %}
+{% load url from future %}
 {% load i18n %}
 
 {% block content %}
@@ -7,10 +8,14 @@
 	<form enctype="multipart/form-data" method="POST" action="{% if go_next %}?next={{ go_next }}{% endif %}">
     {% csrf_token %}
     <table class='editable'>
-        <tr><th>{% trans "Book" %}</th><td>{{ chunk.book }} ({{ chunk.number }}/{{ chunk.book|length }})</td></tr>
+        <tr><th>{% trans "Book" %}:</th><td>{{ chunk.book }} ({{ chunk.number }}/{{ chunk.book|length }})</td></tr>
         {{ form.as_table}}
         <tr><td></td><td><button type="submit">{% trans "Save" %}</button></td></tr>
     </table>
 
 	</form>
+
+
+    <p><a href="{% url "catalogue_chunk_add" chunk.book.slug chunk.slug %}">{% trans "Split chunk" %}</a></p>
+
 {% endblock content %}
