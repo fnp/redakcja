@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-21 13:41+0200\n"
-"PO-Revision-Date: 2011-06-21 13:46+0100\n"
+"POT-Creation-Date: 2011-10-21 15:52+0200\n"
+"PO-Revision-Date: 2011-10-21 15:52+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: \n"
@@ -16,222 +16,75 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: forms.py:32
+#: forms.py:19
+#: views.py:255
 msgid "Publishable"
 msgstr "Gotowe do publikacji"
 
-#: forms.py:68
-msgid "ZIP file"
-msgstr "Plik ZIP"
-
-#: forms.py:99
-#: forms.py:137
+#: forms.py:38
+#: forms.py:84
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:100
-#: forms.py:138
+#: forms.py:39
+#: forms.py:85
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
-#: forms.py:105
-#: forms.py:143
+#: forms.py:44
+#: forms.py:90
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:106
-#: forms.py:144
+#: forms.py:45
+#: forms.py:91
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: forms.py:112
-#: forms.py:150
+#: forms.py:51
+#: forms.py:97
 msgid "Your comments"
 msgstr "Twój komentarz"
 
-#: forms.py:113
+#: forms.py:52
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:119
+#: forms.py:58
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:120
+#: forms.py:59
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: forms.py:151
+#: forms.py:98
 msgid "Describe the reason for reverting."
 msgstr "Opisz powód przywrócenia."
 
-#: forms.py:176
-#: forms.py:190
-msgid "Chunk with this slug already exists"
-msgstr "Część z tym slugiem już istnieje"
-
-#: forms.py:202
-msgid "Append to"
-msgstr "Dołącz do"
-
-#: models.py:25
-msgid "title"
-msgstr "tytuł"
-
-#: models.py:26
-msgid "slug"
-msgstr ""
-
-#: models.py:27
-msgid "scan gallery name"
-msgstr "nazwa galerii skanów"
-
-#: models.py:29
-msgid "parent"
-msgstr "rodzic"
-
-#: models.py:30
-msgid "parent number"
-msgstr "numeracja rodzica"
-
-#: models.py:40
-msgid "book"
-msgstr "książka"
-
-#: models.py:41
-msgid "books"
-msgstr "książki"
-
-#: models.py:206
+#: models.py:14
 msgid "name"
 msgstr "nazwa"
 
-#: models.py:210
+#: models.py:18
 msgid "theme"
 msgstr "motyw"
 
-#: models.py:211
+#: models.py:19
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:241
-#, python-format
-msgid "Slug already used for %s"
-msgstr "Slug taki sam jak dla pliku %s"
-
-#: views.py:243
-msgid "Slug already used in repository."
-msgstr "Dokument o tym slugu już istnieje w repozytorium."
-
-#: views.py:249
-msgid "File should be UTF-8 encoded."
-msgstr "Plik powinien mieć kodowanie UTF-8."
-
-#: views.py:655
-msgid "Tag added"
-msgstr "Dodano tag"
-
-#: views.py:677
+#: views.py:273
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: views.py:679
+#: views.py:275
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
-#: templates/wiki/base.html:9
-msgid "Platforma Redakcyjna"
-msgstr ""
-
-#: templates/wiki/book_append_to.html:8
-msgid "Append book"
-msgstr "Dołącz książkę"
-
-#: templates/wiki/book_detail.html:6
-#: templates/wiki/book_detail.html.py:46
-msgid "edit"
-msgstr "edytuj"
-
-#: templates/wiki/book_detail.html:16
-msgid "add basic document structure"
-msgstr "dodaj podstawową strukturę dokumentu"
-
-#: templates/wiki/book_detail.html:20
-msgid "change master tag to"
-msgstr "zmień tak master na"
-
-#: templates/wiki/book_detail.html:24
-msgid "add begin trimming tag"
-msgstr "dodaj początkowy ogranicznik"
-
-#: templates/wiki/book_detail.html:28
-msgid "add end trimming tag"
-msgstr "dodaj końcowy ogranicznik"
-
-#: templates/wiki/book_detail.html:34
-msgid "unstructured text"
-msgstr "tekst bez struktury"
-
-#: templates/wiki/book_detail.html:38
-msgid "unknown XML"
-msgstr "nieznany XML"
-
-#: templates/wiki/book_detail.html:42
-msgid "broken document"
-msgstr "uszkodzony dokument"
-
-#: templates/wiki/book_detail.html:60
-msgid "Apply fixes"
-msgstr "Wykonaj zmiany"
-
-#: templates/wiki/book_detail.html:66
-msgid "Append to other book"
-msgstr "Dołącz do innej książki"
-
-#: templates/wiki/book_detail.html:68
-msgid "Last published"
-msgstr "Ostatnio opublikowano"
-
-#: templates/wiki/book_detail.html:72
-msgid "Full XML"
-msgstr "Pełny XML"
-
-#: templates/wiki/book_detail.html:73
-msgid "HTML version"
-msgstr "Wersja HTML"
-
-#: templates/wiki/book_detail.html:74
-msgid "TXT version"
-msgstr "Wersja TXT"
-
-#: templates/wiki/book_detail.html:76
-msgid "EPUB version"
-msgstr "Wersja EPUB"
-
-#: templates/wiki/book_detail.html:77
-msgid "PDF version"
-msgstr "Wersja PDF"
-
-#: templates/wiki/book_detail.html:90
-#: templates/wiki/tabs/summary_view.html:30
-msgid "Publish"
-msgstr "Opublikuj"
-
-#: templates/wiki/book_detail.html:94
-msgid "This book cannot be published yet"
-msgstr "Ta książka nie może jeszcze zostać opublikowana"
-
-#: templates/wiki/book_edit.html:8
-#: templates/wiki/chunk_edit.html:8
-#: templates/wiki/document_details_base.html:35
-#: templates/wiki/pubmark_dialog.html:15
-#: templates/wiki/tag_dialog.html:15
-msgid "Save"
-msgstr "Zapisz"
-
-#: templates/wiki/chunk_add.html:8
-msgid "Add chunk"
-msgstr "Dodaj część"
+#: templates/admin/wiki/theme/change_list.html:21
+msgid "Table for Redmine wiki"
+msgstr "Tabela do wiki na Redmine"
 
 #: templates/wiki/diff_table.html:5
 msgid "Old version"
@@ -241,101 +94,43 @@ msgstr "Stara wersja"
 msgid "New version"
 msgstr "Nowa wersja"
 
-#: templates/wiki/document_create_missing.html:8
-msgid "Create document"
-msgstr "Utwórz dokument"
-
 #: templates/wiki/document_details.html:32
 msgid "Click to open/close gallery"
 msgstr "Kliknij, aby (ro)zwinąć galerię"
 
-#: templates/wiki/document_details_base.html:31
+#: templates/wiki/document_details_base.html:33
 msgid "Help"
 msgstr "Pomoc"
 
-#: templates/wiki/document_details_base.html:33
+#: templates/wiki/document_details_base.html:35
 msgid "Version"
 msgstr "Wersja"
 
-#: templates/wiki/document_details_base.html:33
+#: templates/wiki/document_details_base.html:35
 msgid "Unknown"
 msgstr "nieznana"
 
-#: templates/wiki/document_details_base.html:36
+#: templates/wiki/document_details_base.html:37
+#: templates/wiki/pubmark_dialog.html:16
+msgid "Save"
+msgstr "Zapisz"
+
+#: templates/wiki/document_details_base.html:38
 msgid "Save attempt in progress"
 msgstr "Trwa zapisywanie"
 
-#: templates/wiki/document_details_base.html:37
+#: templates/wiki/document_details_base.html:39
 msgid "There is a newer version of this document!"
 msgstr "Istnieje nowsza wersja tego dokumentu!"
 
-#: templates/wiki/document_list.html:31
-msgid "Clear filter"
-msgstr "Wyczyść filtr"
-
-#: templates/wiki/document_list.html:46
-msgid "No books found."
-msgstr "Nie znaleziono książek."
-
-#: templates/wiki/document_list.html:89
-msgid "Your last edited documents"
-msgstr "Twoje ostatnie edycje"
-
-#: templates/wiki/document_upload.html:8
-msgid "Bulk documents upload"
-msgstr "Hurtowe dodawanie dokumentów"
-
-#: templates/wiki/document_upload.html:11
-msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored."
-msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
-
-#: templates/wiki/document_upload.html:16
-#: templatetags/wiki.py:36
-msgid "Upload"
-msgstr "Załaduj"
-
-#: templates/wiki/document_upload.html:23
-msgid "There have been some errors. No files have been added to the repository."
-msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
-
-#: templates/wiki/document_upload.html:24
-msgid "Offending files"
-msgstr "Błędne pliki"
-
-#: templates/wiki/document_upload.html:32
-msgid "Correct files"
-msgstr "Poprawne pliki"
-
-#: templates/wiki/document_upload.html:43
-msgid "Files have been successfully uploaded to the repository."
-msgstr "Pliki zostały dodane do repozytorium."
-
-#: templates/wiki/document_upload.html:44
-msgid "Uploaded files"
-msgstr "Dodane pliki"
-
-#: templates/wiki/document_upload.html:54
-msgid "Skipped files"
-msgstr "Pominięte pliki"
-
-#: templates/wiki/document_upload.html:55
-msgid "Files skipped due to no <code>.xml</code> extension"
-msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
-
-#: templates/wiki/pubmark_dialog.html:16
-#: templates/wiki/revert_dialog.html:39
-#: templates/wiki/tag_dialog.html:16
+#: templates/wiki/pubmark_dialog.html:17
+#: templates/wiki/revert_dialog.html:40
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: templates/wiki/revert_dialog.html:38
+#: templates/wiki/revert_dialog.html:39
 msgid "Revert"
 msgstr "Przywróć"
-
-#: templates/wiki/user_list.html:7
-#: templatetags/wiki.py:33
-msgid "Users"
-msgstr "Użytkownicy"
 
 #: templates/wiki/tabs/annotations_view.html:9
 msgid "all"
@@ -438,6 +233,22 @@ msgstr "Ostatnio edytowane przez"
 msgid "Link to gallery"
 msgstr "Link do galerii"
 
+#: templates/wiki/tabs/summary_view.html:30
+msgid "Characters in document"
+msgstr "Znaków w dokumencie"
+
+#: templates/wiki/tabs/summary_view.html:31
+msgid "pages"
+msgstr "stron"
+
+#: templates/wiki/tabs/summary_view.html:31
+msgid "untagged"
+msgstr "nieotagowane"
+
+#: templates/wiki/tabs/summary_view.html:34
+msgid "Publish"
+msgstr "Opublikuj"
+
 #: templates/wiki/tabs/summary_view_item.html:3
 msgid "Summary"
 msgstr "Podsumowanie"
@@ -454,25 +265,163 @@ msgstr "Wstaw przypis"
 msgid "Visual editor"
 msgstr "Edytor wizualny"
 
-#: templatetags/wiki.py:30
-msgid "Assigned to me"
-msgstr "Przypisane do mnie"
+#~ msgid "ZIP file"
+#~ msgstr "Plik ZIP"
 
-#: templatetags/wiki.py:32
-msgid "Unassigned"
-msgstr "Nie przypisane"
+#~ msgid "Chunk with this slug already exists"
+#~ msgstr "Część z tym slugiem już istnieje"
 
-#: templatetags/wiki.py:34
-msgid "All"
-msgstr "Wszystkie"
+#~ msgid "Append to"
+#~ msgstr "Dołącz do"
 
-#: templatetags/wiki.py:35
-msgid "Add"
-msgstr "Dodaj"
+#~ msgid "title"
+#~ msgstr "tytuł"
 
-#: templatetags/wiki.py:39
-msgid "Admin"
-msgstr "Administracja"
+#~ msgid "scan gallery name"
+#~ msgstr "nazwa galerii skanów"
+
+#~ msgid "parent"
+#~ msgstr "rodzic"
+
+#~ msgid "parent number"
+#~ msgstr "numeracja rodzica"
+
+#~ msgid "book"
+#~ msgstr "książka"
+
+#~ msgid "books"
+#~ msgstr "książki"
+
+#~ msgid "Slug already used for %s"
+#~ msgstr "Slug taki sam jak dla pliku %s"
+
+#~ msgid "Slug already used in repository."
+#~ msgstr "Dokument o tym slugu już istnieje w repozytorium."
+
+#~ msgid "File should be UTF-8 encoded."
+#~ msgstr "Plik powinien mieć kodowanie UTF-8."
+
+#~ msgid "Tag added"
+#~ msgstr "Dodano tag"
+
+#~ msgid "Append book"
+#~ msgstr "Dołącz książkę"
+
+#~ msgid "edit"
+#~ msgstr "edytuj"
+
+#~ msgid "add basic document structure"
+#~ msgstr "dodaj podstawową strukturę dokumentu"
+
+#~ msgid "change master tag to"
+#~ msgstr "zmień tak master na"
+
+#~ msgid "add begin trimming tag"
+#~ msgstr "dodaj początkowy ogranicznik"
+
+#~ msgid "add end trimming tag"
+#~ msgstr "dodaj końcowy ogranicznik"
+
+#~ msgid "unstructured text"
+#~ msgstr "tekst bez struktury"
+
+#~ msgid "unknown XML"
+#~ msgstr "nieznany XML"
+
+#~ msgid "broken document"
+#~ msgstr "uszkodzony dokument"
+
+#~ msgid "Apply fixes"
+#~ msgstr "Wykonaj zmiany"
+
+#~ msgid "Append to other book"
+#~ msgstr "Dołącz do innej książki"
+
+#~ msgid "Last published"
+#~ msgstr "Ostatnio opublikowano"
+
+#~ msgid "Full XML"
+#~ msgstr "Pełny XML"
+
+#~ msgid "HTML version"
+#~ msgstr "Wersja HTML"
+
+#~ msgid "TXT version"
+#~ msgstr "Wersja TXT"
+
+#~ msgid "EPUB version"
+#~ msgstr "Wersja EPUB"
+
+#~ msgid "PDF version"
+#~ msgstr "Wersja PDF"
+
+#~ msgid "This book cannot be published yet"
+#~ msgstr "Ta książka nie może jeszcze zostać opublikowana"
+
+#~ msgid "Add chunk"
+#~ msgstr "Dodaj część"
+
+#~ msgid "Clear filter"
+#~ msgstr "Wyczyść filtr"
+
+#~ msgid "No books found."
+#~ msgstr "Nie znaleziono książek."
+
+#~ msgid "Your last edited documents"
+#~ msgstr "Twoje ostatnie edycje"
+
+#~ msgid "Bulk documents upload"
+#~ msgstr "Hurtowe dodawanie dokumentów"
+
+#~ msgid ""
+#~ "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
+#~ "<code>.xml</code> will be ignored."
+#~ msgstr ""
+#~ "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
+#~ "kończące się na <code>.xml</code> zostaną zignorowane."
+
+#~ msgid "Upload"
+#~ msgstr "Załaduj"
+
+#~ msgid ""
+#~ "There have been some errors. No files have been added to the repository."
+#~ msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
+
+#~ msgid "Offending files"
+#~ msgstr "Błędne pliki"
+
+#~ msgid "Correct files"
+#~ msgstr "Poprawne pliki"
+
+#~ msgid "Files have been successfully uploaded to the repository."
+#~ msgstr "Pliki zostały dodane do repozytorium."
+
+#~ msgid "Uploaded files"
+#~ msgstr "Dodane pliki"
+
+#~ msgid "Skipped files"
+#~ msgstr "Pominięte pliki"
+
+#~ msgid "Files skipped due to no <code>.xml</code> extension"
+#~ msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
+
+#~ msgid "Users"
+#~ msgstr "Użytkownicy"
+
+#~ msgid "Assigned to me"
+#~ msgstr "Przypisane do mnie"
+
+#~ msgid "Unassigned"
+#~ msgstr "Nie przypisane"
+
+#~ msgid "All"
+#~ msgstr "Wszystkie"
+
+#~ msgid "Add"
+#~ msgstr "Dodaj"
+
+#~ msgid "Admin"
+#~ msgstr "Administracja"
 
 #~ msgid "First correction"
 #~ msgstr "Autokorekta"
