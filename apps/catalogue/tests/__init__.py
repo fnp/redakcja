@@ -57,3 +57,16 @@ class ManipulationTests(TestCase):
             self.book1.append(Book.objects.get(pk=self.book1.pk))
         self.assertEqual(Book.objects.all().count(), 2)
         self.assertEqual(len(self.book1), 1)
+
+    def test_prepend_history(self):
+        self.book1.prepend_history(self.book2)
+        self.assertEqual(Book.objects.all().count(), 1)
+        self.assertEqual(len(self.book1), 1)
+        self.assertEqual(self.book1.materialize(), 'book 1')
+
+    def test_prepend_history_to_self(self):
+        with self.assertRaises(AssertionError):
+            self.book1.prepend_history(self.book1)
+        self.assertEqual(Book.objects.all().count(), 2)
+        self.assertEqual(self.book1.materialize(), 'book 1')
+        self.assertEqual(self.book2.materialize(), 'book 2')

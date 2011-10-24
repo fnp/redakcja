@@ -4,7 +4,7 @@ import os.path
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
-from django.db import models
+from django.db import models, transaction
 from django.db.models.base import ModelBase
 from django.utils.translation import ugettext_lazy as _
 from mercurial import mdiff, simplemerge
@@ -324,3 +324,14 @@ class Document(models.Model):
             return changes.order_by('-created_at')[0]
         else:
             return None
+
+    @transaction.commit_on_success
+    def prepend_history(self, other):
+        """Takes over the the other document's history and prepends to own."""
+
+        assert self != other
+        other_revs = other.change_set.all().count()
+        self.change_set.all().update(revision=models.F('revision') + other_revs)
+        other.change_set.all().update(tree=self)
+        assert not other.change_set.exists()
+        other.delete()

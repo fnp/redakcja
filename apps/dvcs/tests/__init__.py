@@ -157,3 +157,22 @@ class DocumentModelTests(TestCase):
         c3 = doc.commit(description="Commit B1", text=text_b1, parent=c1)
         c4 = doc.commit(description="Commit C1", text=text_c1, parent=c1)
         self.assertTextEqual(doc.materialize(), text_merged)
+
+
+    def test_prepend_history(self):
+        doc1 = ADocument.objects.create()
+        doc2 = ADocument.objects.create()
+        doc1.commit(text='Commit 1')
+        doc2.commit(text='Commit 2')
+        doc2.prepend_history(doc1)
+        self.assertEqual(ADocument.objects.all().count(), 1)
+        self.assertTextEqual(doc2.at_revision(1).materialize(), 'Commit 1')
+        self.assertTextEqual(doc2.materialize(), 'Commit 2')
+
+    def test_prepend_to_self(self):
+        doc = ADocument.objects.create()
+        doc.commit(text='Commit 1')
+        with self.assertRaises(AssertionError):
+            doc.prepend_history(doc)
+        self.assertTextEqual(doc.materialize(), 'Commit 1')
+
