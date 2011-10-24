@@ -204,9 +204,18 @@
 				self.galleryImages = data;
 				params['success'](self, data);
 			},
-			error: function() {
+			error: function(xhr) {
+                switch (xhr.status) {
+                    case 403:
+                        var msg = 'Galerie dostępne tylko dla zalogowanych użytkowników.';
+                        break;
+                    case 404:
+                        var msg = "Nie znaleziono galerii o nazwie: '" + self.galleryLink + "'.";
+                    default:
+                        var msg = "Nie udało się wczytać galerii o nazwie: '" + self.galleryLink + "'.";
+                }
 				self.galleryImages = [];
-				params['failure'](self, "<p>Nie udało się wczytać galerii pod nazwą: '" + self.galleryLink + "'.</p>");
+				params['failure'](self, "<p>" + msg + "</p>");
 			}
 		});
 	};

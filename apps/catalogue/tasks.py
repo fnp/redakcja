@@ -1,20 +1,42 @@
 from celery.task import task
+from django.utils import translation
+from django.conf import settings
 
 
 @task
-def refresh_by_pk(cls, pk):
-    cls._default_manager.get(pk=pk).refresh()
-
-
-def refresh_instance(instance):
-    refresh_by_pk.delay(type(instance), instance.pk)
-
-
-@task
-def publishable_error(book):
+def _refresh_by_pk(cls, pk, language=None):
+    prev_language = translation.get_language()
+    language and translation.activate(language)
     try:
-        book.assert_publishable()
+        cls._default_manager.get(pk=pk).refresh()
+    finally:
+        translation.activate(prev_language)
+
+if settings.USE_CELERY:
+    def refresh_instance(instance):
+        _refresh_by_pk.delay(type(instance), instance.pk, translation.get_language())
+else:
+    def refresh_instance(instance):
+        instance.refresh()
+
+
+@task
+def _publishable_error(book, language=None):
+    prev_language = translation.get_language()
+    language and translation.activate(language)
+    try:
+        return book.assert_publishable()
     except AssertionError, e:
         return e
     else:
        return None
+    finally:
+        translation.activate(prev_language)
+
+if settings.USE_CELERY:
+    def publishable_error(book):
+        task = _publishable_error.delay(book, translation.get_language())
+        return task.wait()
+else:
+    def publishable_error(book):
+        return _publishable_error(book)

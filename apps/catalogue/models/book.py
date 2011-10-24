@@ -24,6 +24,7 @@ class Book(models.Model):
 
     title = models.CharField(_('title'), max_length=255, db_index=True)
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
+    public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
@@ -35,9 +36,6 @@ class Book(models.Model):
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
-
-    # Managers
-    objects = models.Manager()
 
     class NoTextError(BaseException):
         pass
@@ -77,6 +75,9 @@ class Book(models.Model):
 
     # Creating & manipulating
     # =======================
+
+    def accessible(self, request):
+        return self.public or request.user.is_authenticated()
 
     @classmethod
     def create(cls, creator, text, *args, **kwargs):

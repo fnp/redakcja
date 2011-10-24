@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django import http
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
@@ -28,7 +28,6 @@ from catalogue import helpers
 from catalogue.helpers import active_tab
 from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
 from catalogue.tasks import publishable_error
-from catalogue import xml_tools
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -101,13 +100,15 @@ def create_missing(request, slug=None):
                 creator=creator,
                 slug=form.cleaned_data['slug'],
                 title=form.cleaned_data['title'],
+                gallery=form.cleaned_data['gallery'],
             )
 
-            return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
+            return http.HttpResponseRedirect(reverse("catalogue_book", args=[book.slug]))
     else:
         form = forms.DocumentCreateForm(initial={
                 "slug": slug,
                 "title": slug.replace('-', ' ').title(),
+                "gallery": slug,
         })
 
     return direct_to_template(request, "catalogue/document_create_missing.html", extra_context={
@@ -185,7 +186,10 @@ def upload(request):
 
 @never_cache
 def book_xml(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+    xml = book.materialize()
 
     response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
@@ -194,7 +198,10 @@ def book_xml(request, slug):
 
 @never_cache
 def book_txt(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+    xml = book.materialize()
     output = StringIO()
     # errors?
     librarian.text.transform(StringIO(xml), output)
@@ -206,7 +213,10 @@ def book_txt(request, slug):
 
 @never_cache
 def book_html(request, slug):
-    xml = get_object_or_404(Book, slug=slug).materialize()
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+    xml = book.materialize()
     output = StringIO()
     # errors?
     librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
@@ -215,18 +225,21 @@ def book_html(request, slug):
     response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     return response
 
-
 @never_cache
 def revision(request, slug, chunk=None):
     try:
         doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
     return http.HttpResponse(str(doc.revision()))
 
 
 def book(request, slug):
     book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     if request.user.has_perm('catalogue.change_book'):
         if request.method == "POST":
@@ -241,8 +254,7 @@ def book(request, slug):
         form = forms.ReadonlyBookForm(instance=book)
         editable = False
 
-    task = publishable_error.delay(book)
-    publish_error = task.wait()
+    publish_error = publishable_error(book)
     publishable = publish_error is None
 
     return direct_to_template(request, "catalogue/book_detail.html", extra_context={
@@ -260,6 +272,8 @@ def chunk_add(request, slug, chunk):
         doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     if request.method == "POST":
         form = forms.ChunkAddForm(request.POST, instance=doc)
@@ -291,6 +305,9 @@ def chunk_edit(request, slug, chunk):
         doc = Chunk.get(slug, chunk)
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
         raise Http404
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
     if request.method == "POST":
         form = forms.ChunkForm(request.POST, instance=doc)
         if form.is_valid():
@@ -318,6 +335,9 @@ def chunk_edit(request, slug, chunk):
 @permission_required('catalogue.change_book')
 def book_append(request, slug):
     book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
     if request.method == "POST":
         form = forms.BookAppendForm(book, request.POST)
         if form.is_valid():
@@ -338,6 +358,9 @@ def book_append(request, slug):
 @login_required
 def publish(request, slug):
     book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
     try:
         book.publish(request.user)
     except NotAuthorizedError:

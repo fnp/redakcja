@@ -103,6 +103,9 @@ def document_list_filter(request, **kwargs):
 
     chunks = chunks.order_by('book__title', 'book', 'number')
 
+    if not request.user.is_authenticated():
+        chunks = chunks.filter(book__public=True)
+
     state = arg_or_GET('status')
     if state in _states_dict:
         chunks = chunks.filter(_states_dict[state])

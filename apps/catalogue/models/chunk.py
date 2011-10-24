@@ -11,7 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 from catalogue.helpers import cached_in_field
 from catalogue.managers import VisibleManager
 from catalogue.tasks import refresh_instance
-from catalogue.xml_tools import GradedText
 from dvcs import models as dvcs_models
 
 
@@ -124,6 +123,3 @@ class Chunk(dvcs_models.Document):
         self.changed
         self.hidden
         self.short_html
-
-    def graded(self, master=None):
-        return GradedText(self.materialize(), master)

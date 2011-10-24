@@ -20,6 +20,7 @@ DATABASES = {
 import tempfile
 
 CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo')
+USE_CELERY = False
 
 INSTALLED_APPS += ('django_nose', 'dvcs.tests')
 

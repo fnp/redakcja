@@ -5,7 +5,7 @@ import logging
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django import http
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
 from django.utils.encoding import smart_unicode
@@ -46,6 +46,8 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
                 return http.HttpResponseRedirect(reverse("catalogue_create_missing", args=[slug]))
         else:
             raise Http404
+    if not chunk.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
@@ -77,6 +79,8 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
         revision = request.GET['revision']
     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist, KeyError):
         raise Http404
+    if not chunk.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
@@ -102,6 +106,8 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
 @decorator_from_middleware(GZipMiddleware)
 def text(request, chunk_id):
     doc = get_object_or_404(Chunk, pk=chunk_id)
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
@@ -160,6 +166,8 @@ def revert(request, chunk_id):
     form = forms.DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
         doc = get_object_or_404(Chunk, pk=chunk_id)
+        if not doc.book.accessible(request):
+            return HttpResponseForbidden("Not authorized.")
 
         revision = form.cleaned_data['revision']
 
@@ -205,6 +213,10 @@ def gallery(request, directory):
 
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
+
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden("Not authorized.")
+
         return JSONResponse(images)
     except (IndexError, OSError):
         logger.exception("Unable to fetch gallery")
@@ -223,6 +235,9 @@ def diff(request, chunk_id):
         revB = None
 
     doc = get_object_or_404(Chunk, pk=chunk_id)
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
     # allow diff from the beginning
     if revA:
         docA = doc.at_revision(revA).materialize()
@@ -237,6 +252,8 @@ def diff(request, chunk_id):
 @never_cache
 def revision(request, chunk_id):
     doc = get_object_or_404(Chunk, pk=chunk_id)
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
     return http.HttpResponse(str(doc.revision()))
 
 
@@ -244,6 +261,8 @@ def revision(request, chunk_id):
 def history(request, chunk_id):
     # TODO: pagination
     doc = get_object_or_404(Chunk, pk=chunk_id)
+    if not doc.book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
 
     changes = []
     for change in doc.history().order_by('-created_at'):
@@ -264,6 +283,8 @@ def pubmark(request, chunk_id):
     form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
     if form.is_valid():
         doc = get_object_or_404(Chunk, pk=chunk_id)
+        if not doc.book.accessible(request):
+            return HttpResponseForbidden("Not authorized.")
 
         revision = form.cleaned_data['revision']
         publishable = form.cleaned_data['publishable']

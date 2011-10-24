@@ -63,8 +63,8 @@ td {
 .editable td {
     padding: 1px;
 }
-.editable input, .editable select {
-    width: 30em;
+.editable input, .editable select, .editable textarea {
+    width: 400px;
 }
 
 #login-box {

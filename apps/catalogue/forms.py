@@ -20,8 +20,13 @@ class DocumentCreateForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['gallery', 'parent', 'parent_number']
-        prepopulated_fields = {'slug': ['title']}
+        exclude = ['parent', 'parent_number']
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentCreateForm, self).__init__(*args, **kwargs)
+        self.fields['slug'].widget.attrs={'class': 'autoslug'}
+        self.fields['gallery'].widget.attrs={'class': 'autoslug'}
+        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
 
     def clean(self):
         super(DocumentCreateForm, self).clean()
@@ -31,10 +36,10 @@ class DocumentCreateForm(forms.ModelForm):
             try:
                 self.cleaned_data['text'] = file.read().decode('utf-8')
             except UnicodeDecodeError:
-                raise forms.ValidationError("Text file must be UTF-8 encoded.")
+                raise forms.ValidationError(_("Text file must be UTF-8 encoded."))
 
         if not self.cleaned_data["text"]:
-            raise forms.ValidationError("You must either enter text or upload a file")
+            self._errors["file"] = self.error_class([_("You must either enter text or upload a file")])
 
         return self.cleaned_data
 
