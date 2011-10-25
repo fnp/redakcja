@@ -198,7 +198,7 @@ class Book(models.Model):
             chunk.commit('')
 
         for i in range(len(other)):
-            self[i].prepend_history(other[i])
+            self[i].prepend_history(other[0])
 
         assert not other.chunk_set.exists()
         other.delete()

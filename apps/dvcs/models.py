@@ -307,7 +307,7 @@ class Document(models.Model):
         return self.head
 
     def history(self):
-        return self.change_set.filter(revision__gt=-1)
+        return self.change_set.all().order_by('revision')
 
     def revision(self):
         rev = self.change_set.aggregate(
@@ -319,9 +319,9 @@ class Document(models.Model):
         return self.change_set.get(revision=rev)
 
     def publishable(self):
-        changes = self.change_set.filter(publishable=True)
+        changes = self.history().filter(publishable=True)
         if changes.exists():
-            return changes.order_by('-created_at')[0]
+            return changes.order_by('-revision')[0]
         else:
             return None
 
@@ -331,7 +331,9 @@ class Document(models.Model):
 
         assert self != other
         other_revs = other.change_set.all().count()
-        self.change_set.all().update(revision=models.F('revision') + other_revs)
+        # workaround for a non-atomic UPDATE in SQLITE
+        self.change_set.all().update(revision=0-models.F('revision'))
+        self.change_set.all().update(revision=other_revs - models.F('revision'))
         other.change_set.all().update(tree=self)
         assert not other.change_set.exists()
         other.delete()

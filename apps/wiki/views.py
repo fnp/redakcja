@@ -265,7 +265,7 @@ def history(request, chunk_id):
         return HttpResponseForbidden("Not authorized.")
 
     changes = []
-    for change in doc.history().order_by('-created_at'):
+    for change in doc.history().reverse():
         changes.append({
                 "version": change.revision,
                 "description": change.description,
