@@ -66,6 +66,10 @@ td {
 .editable input, .editable select, .editable textarea {
     width: 400px;
 }
+.editable .number-input {
+    width: 100px;
+}
+
 
 #login-box {
     float: right;

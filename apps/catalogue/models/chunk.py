@@ -22,7 +22,7 @@ class Chunk(dvcs_models.Document):
     number = models.IntegerField(_('number'))
     title = models.CharField(_('title'), max_length=255, blank=True)
     slug = models.SlugField(_('slug'))
-    gallery_start = models.IntegerField(_('gallery start'), null=True, blank=True)
+    gallery_start = models.IntegerField(_('gallery start'), null=True, blank=True, default=1)
 
     # cache
     _short_html = models.TextField(null=True, blank=True, editable=False)

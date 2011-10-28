@@ -285,6 +285,9 @@ def chunk_add(request, slug, chunk):
             doc.split(creator=creator,
                 slug=form.cleaned_data['slug'],
                 title=form.cleaned_data['title'],
+                gallery_start=form.cleaned_data['gallery_start'],
+                user=form.cleaned_data['user'],
+                stage=form.cleaned_data['stage']
             )
 
             return http.HttpResponseRedirect(doc.book.get_absolute_url())

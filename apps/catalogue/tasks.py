@@ -12,12 +12,8 @@ def _refresh_by_pk(cls, pk, language=None):
     finally:
         translation.activate(prev_language)
 
-if settings.USE_CELERY:
-    def refresh_instance(instance):
-        _refresh_by_pk.delay(type(instance), instance.pk, translation.get_language())
-else:
-    def refresh_instance(instance):
-        instance.refresh()
+def refresh_instance(instance):
+    _refresh_by_pk.delay(type(instance), instance.pk, translation.get_language())
 
 
 @task
@@ -33,10 +29,6 @@ def _publishable_error(book, language=None):
     finally:
         translation.activate(prev_language)
 
-if settings.USE_CELERY:
-    def publishable_error(book):
-        task = _publishable_error.delay(book, translation.get_language())
-        return task.wait()
-else:
-    def publishable_error(book):
-        return _publishable_error(book)
+def publishable_error(book):
+    return _publishable_error.delay(book, 
+        translation.get_language()).wait()

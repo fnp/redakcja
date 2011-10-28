@@ -3,7 +3,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from django.contrib.auth.models import User
+from catalogue.models import User
 from django.db.models import Count
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -77,11 +77,12 @@ class ChunkForm(forms.ModelForm):
 
     class Meta:
         model = Chunk
-        fields = ['title', 'slug', 'user', 'stage']
+        fields = ['title', 'slug', 'gallery_start', 'user', 'stage']
         exclude = ['number']
 
     def __init__(self, *args, **kwargs):
         super(ChunkForm, self).__init__(*args, **kwargs)
+        self.fields['gallery_start'].widget.attrs={'class': 'number-input'}
         self.fields['slug'].widget.attrs={'class': 'autoslug'}
         self.fields['title'].widget.attrs={'class': 'autoslug-source'}
 
