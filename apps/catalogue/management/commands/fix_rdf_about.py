@@ -22,6 +22,7 @@ class Command(BaseCommand):
         from lxml import etree
 
         verbose = options.get('verbose')
+        dry_run = options.get('dry_run')
 
         # Start transaction management.
         transaction.commit_unless_managed()
@@ -64,13 +65,14 @@ class Command(BaseCommand):
                     print "already correct"
                 continue
             desc.set(attr_name, correct_about)
-            new_head = chunk.commit(etree.tostring(t, encoding=unicode),
-                author_name='platforma redakcyjna',
-                description='auto-update rdf:about'
-                )
-            # retain the publishable status
-            if old_head.publishable:
-                new_head.set_publishable(True)
+            if not dry_run:
+                new_head = chunk.commit(etree.tostring(t, encoding=unicode),
+                    author_name='platforma redakcyjna',
+                    description='auto-update rdf:about'
+                    )
+                # retain the publishable status
+                if old_head.publishable:
+                    new_head.set_publishable(True)
             if verbose:
                 print "done"
             done += 1
