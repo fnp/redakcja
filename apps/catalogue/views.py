@@ -324,9 +324,13 @@ def chunk_edit(request, slug, chunk):
     else:
         form = forms.ChunkForm(instance=doc)
 
-    parts = urlsplit(request.META['HTTP_REFERER'])
-    parts = ['', ''] + list(parts[2:])
-    go_next = urlquote_plus(urlunsplit(parts))
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        parts = urlsplit(referer)
+        parts = ['', ''] + list(parts[2:])
+        go_next = urlquote_plus(urlunsplit(parts))
+    else:
+        go_next = ''
 
     return direct_to_template(request, "catalogue/chunk_edit.html", extra_context={
         "chunk": doc,

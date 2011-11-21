@@ -72,6 +72,11 @@ class Book(models.Model):
     def get_absolute_url(self):
         return ("catalogue_book", [self.slug])
 
+    def correct_about(self):
+        return "http://%s%s" % (
+            Site.objects.get_current().domain,
+            self.get_absolute_url()
+        )
 
     # Creating & manipulating
     # =======================
@@ -230,7 +235,7 @@ class Book(models.Model):
         except ValidationError, e:
             raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
 
-        valid_about = "http://%s%s" % (Site.objects.get_current().domain, self.get_absolute_url())
+        valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
 
     def hidden(self):
