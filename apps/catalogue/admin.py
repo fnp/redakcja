@@ -4,6 +4,7 @@ from catalogue import models
 
 class BookAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ['title']}
+    search_fields = ['title']
 
 
 admin.site.register(models.Book, BookAdmin)

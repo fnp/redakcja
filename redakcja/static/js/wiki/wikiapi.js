@@ -343,33 +343,6 @@
         });
     };
 
-	WikiDocument.prototype.publish = function(params) {
-		params = $.extend({}, noops, params);
-		var self = this;
-		$.ajax({
-			url: reverse("ajax_publish", self.id),
-			type: "POST",
-			dataType: "json",
-			success: function(data) {
-				params.success(self, data);
-			},
-			error: function(xhr) {
-				if (xhr.status == 403 || xhr.status == 401) {
-					params.failure(self, "Nie masz uprawnień lub nie jesteś zalogowany.");
-				}
-				else {
-					try {
-						params.failure(self, xhr.responseText);
-					}
-					catch (e) {
-						params.failure(self, "Nie udało się - błąd serwera.");
-					};
-				};
-
-			}
-		});
-	};
-
 	WikiDocument.prototype.pubmark = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-21 15:52+0200\n"
-"PO-Revision-Date: 2011-10-21 15:52+0100\n"
+"POT-Creation-Date: 2011-11-25 14:14+0100\n"
+"PO-Revision-Date: 2011-11-25 14:15+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: forms.py:19
-#: views.py:255
+#: views.py:274
 msgid "Publishable"
 msgstr "Gotowe do publikacji"
 
@@ -74,11 +74,11 @@ msgstr "motyw"
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:273
+#: views.py:294
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: views.py:275
+#: views.py:296
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
@@ -217,37 +217,37 @@ msgstr "Kod źródłowy"
 msgid "Title"
 msgstr "Tytuł"
 
-#: templates/wiki/tabs/summary_view.html:14
+#: templates/wiki/tabs/summary_view.html:13
+msgid "Go to the book's page"
+msgstr "Przejdź do strony książki"
+
+#: templates/wiki/tabs/summary_view.html:16
 msgid "Document ID"
 msgstr "ID dokumentu"
 
-#: templates/wiki/tabs/summary_view.html:18
+#: templates/wiki/tabs/summary_view.html:20
 msgid "Current version"
 msgstr "Aktualna wersja"
 
-#: templates/wiki/tabs/summary_view.html:21
+#: templates/wiki/tabs/summary_view.html:23
 msgid "Last edited by"
 msgstr "Ostatnio edytowane przez"
 
-#: templates/wiki/tabs/summary_view.html:25
+#: templates/wiki/tabs/summary_view.html:27
 msgid "Link to gallery"
 msgstr "Link do galerii"
 
-#: templates/wiki/tabs/summary_view.html:30
+#: templates/wiki/tabs/summary_view.html:32
 msgid "Characters in document"
 msgstr "Znaków w dokumencie"
 
-#: templates/wiki/tabs/summary_view.html:31
+#: templates/wiki/tabs/summary_view.html:33
 msgid "pages"
-msgstr "stron"
+msgstr "stron maszynopisu"
 
-#: templates/wiki/tabs/summary_view.html:31
+#: templates/wiki/tabs/summary_view.html:33
 msgid "untagged"
 msgstr "nieotagowane"
-
-#: templates/wiki/tabs/summary_view.html:34
-msgid "Publish"
-msgstr "Opublikuj"
 
 #: templates/wiki/tabs/summary_view_item.html:3
 msgid "Summary"
@@ -264,6 +264,9 @@ msgstr "Wstaw przypis"
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
+
+#~ msgid "Publish"
+#~ msgstr "Opublikuj"
 
 #~ msgid "ZIP file"
 #~ msgstr "Plik ZIP"

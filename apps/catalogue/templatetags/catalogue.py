@@ -34,9 +34,6 @@ def main_tabs(context):
         tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
         tabs.append(Tab('upload', _('Upload'), reverse("catalogue_upload")))
 
-    if user.is_staff:
-        tabs.append(Tab('admin', _('Admin'), reverse("admin:index")))
-
     return {"tabs": tabs, "active_tab": active}
 
 

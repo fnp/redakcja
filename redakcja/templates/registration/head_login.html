@@ -2,6 +2,11 @@
 
 {% if user.is_authenticated %}
 <span class="user_name">{{ user.username }}</span> |
+
+{% if user.is_staff %}
+    <a href="{% url admin:index %}">{% trans "Admin" %}</a> |
+{% endif %}
+
 <a href='{% url logout %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
 {% else %}
 {% url login as login_url %}
