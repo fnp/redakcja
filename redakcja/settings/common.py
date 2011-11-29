@@ -126,6 +126,9 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/documents/user'
 
+CAS_USER_ATTRS_MAP = {
+    'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
+
 
 FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
 FILEBROWSER_DIRECTORY = 'images/'
