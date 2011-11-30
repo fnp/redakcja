@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     'wiki',
     'toolbar',
     'apiclient',
+    'email_mangler',
 )
 
 LOGIN_REDIRECT_URL = '/documents/user'

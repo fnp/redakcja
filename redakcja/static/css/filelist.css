@@ -184,3 +184,43 @@ a:hover {
 .book-list-user .user-column {
     display: none;
 }
+
+
+/* wall */
+.wall {
+    padding-left: 0;
+    list-style: none;
+}
+
+.wall li {
+    clear: left;
+    border-top: 1px dotted gray;
+    padding: 0 1em 2em 1em;
+    margin-bottom: 0;
+}
+
+.wall .gravatar {
+    float: left;
+    margin-right: 1em;
+    margin-left: -1em;
+}
+.wall h3 {
+    font-size: 1.25em;
+    margin-top: 0;
+}
+
+.wall .time {
+    /* float:right; */
+}
+
+.wall .anonymous {
+    background-color: #efa;
+}
+
+.wall .comment {
+    background-color: #dfc;
+}
+
+.wall .publish {
+    background-color: #fdc;
+}

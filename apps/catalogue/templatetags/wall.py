@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from datetime import timedelta
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.contrib.comments.models import Comment
@@ -17,6 +18,7 @@ class WallItem(object):
     url = ''
     timestamp = ''
     user = None
+    user_name = ''
     email = ''
 
     def __init__(self, tag):
@@ -29,12 +31,16 @@ class WallItem(object):
             return self.email
 
 
-def changes_wall(user, max_len):
+def changes_wall(user=None, max_len=None, day=None):
     qs = Chunk.change_model.objects.order_by('-created_at')
     qs = qs.select_related('author', 'tree', 'tree__book__title')
-    if user:
+    if user is not None:
         qs = qs.filter(Q(author=user) | Q(tree__user=user))
-    qs = qs[:max_len]
+    if max_len is not None:
+        qs = qs[:max_len]
+    if day is not None:
+        next_day = day + timedelta(1)
+        qs = qs.filter(created_at__gte=day, created_at__lt=next_day)
     for item in qs:
         tag = 'stage' if item.tags.count() else 'change'
         chunk = item.tree
@@ -49,6 +55,7 @@ def changes_wall(user, max_len):
                 args=[chunk.book.slug, chunk.slug]) + '?diff=%d' % item.revision
         w.timestamp = item.created_at
         w.user = item.author
+        w.user_name = item.author_name
         w.email = item.author_email
         yield w
 
@@ -56,12 +63,16 @@ def changes_wall(user, max_len):
 # TODO: marked for publishing
 
 
-def published_wall(user, max_len):
+def published_wall(user=None, max_len=None, day=None):
     qs = BookPublishRecord.objects.select_related('book__title')
     if user:
         # TODO: published my book
         qs = qs.filter(Q(user=user))
-    qs = qs[:max_len]
+    if max_len is not None:
+        qs = qs[:max_len]
+    if day is not None:
+        next_day = day + timedelta(1)
+        qs = qs.filter(timestamp__gte=day, timestamp__lt=next_day)
     for item in qs:
         w = WallItem('publish')
         w.header = _('Publication')
@@ -73,12 +84,16 @@ def published_wall(user, max_len):
         yield w
 
 
-def comments_wall(user, max_len):
+def comments_wall(user=None, max_len=None, day=None):
     qs = Comment.objects.filter(is_public=True).select_related().order_by('-submit_date')
     if user:
         # TODO: comments concerning my books
         qs = qs.filter(Q(user=user))
-    qs = qs[:max_len]
+    if max_len is not None:
+        qs = qs[:max_len]
+    if day is not None:
+        next_day = day + timedelta(1)
+        qs = qs.filter(submit_date__gte=day, submit_date__lt=next_day)
     for item in qs:
         w  = WallItem('comment')
         w.header = _('Comment')
@@ -87,22 +102,26 @@ def comments_wall(user, max_len):
         w.url = item.content_object.get_absolute_url()
         w.timestamp = item.submit_date
         w.user = item.user
-        w.email = item.user_email
+        ui = item.userinfo
+        w.email = item.email
+        w.user_name = item.name
         yield w
 
 
-def big_wall(max_len, *args):
+def big_wall(walls, max_len=None):
     """
         Takes some WallItem iterators and zips them into one big wall.
         Input iterators must already be sorted by timestamp.
     """
     subwalls = []
-    for w in args:
+    for w in walls:
         try:
             subwalls.append([next(w), w])
         except StopIteration:
             pass
 
+    if max_len is None:
+        max_len = -1
     while max_len and subwalls:
         i, next_item = max(enumerate(subwalls), key=lambda x: x[1][0].timestamp)
         yield next_item[0]
@@ -118,8 +137,19 @@ def wall(context, user=None, max_len=100):
     return {
         "request": context['request'],
         "STATIC_URL": context['STATIC_URL'],
-        "wall": big_wall(max_len,
+        "wall": big_wall([
             changes_wall(user, max_len),
             published_wall(user, max_len),
             comments_wall(user, max_len),
-        )}
+        ], max_len)}
+
+@register.inclusion_tag("catalogue/wall.html", takes_context=True)
+def day_wall(context, day):
+    return {
+        "request": context['request'],
+        "STATIC_URL": context['STATIC_URL'],
+        "wall": big_wall([
+            changes_wall(day=day),
+            published_wall(day=day),
+            comments_wall(day=day),
+        ])}

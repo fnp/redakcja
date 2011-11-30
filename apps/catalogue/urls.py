@@ -11,6 +11,8 @@ urlpatterns = patterns('catalogue.views',
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='catalogue_user'),
     url(r'^users/$', 'users', name='catalogue_users'),
     url(r'^activity/$', 'activity', name='catalogue_activity'),
+    url(r'^activity/(?P<isodate>\d{4}-\d{2}-\d{2})/$', 
+        'activity', name='catalogue_activity'),
 
     url(r'^upload/$',
         'upload', name='catalogue_upload'),

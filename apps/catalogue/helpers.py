@@ -1,3 +1,4 @@
+from datetime import date
 from functools import wraps
 
 from django.db.models import Count
@@ -28,3 +29,10 @@ def cached_in_field(field_name):
             return value
         return wrapped
     return decorator
+
+
+def parse_isodate(isodate):
+    try:
+        return date(*[int(p) for p in isodate.split('-')])
+    except (AttributeError, TypeError, ValueError):
+        raise ValueError("Not a date in ISO format.")

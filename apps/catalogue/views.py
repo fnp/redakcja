@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import logging
 import os
 from StringIO import StringIO
@@ -70,8 +70,20 @@ def users(request):
 
 
 @active_tab('activity')
-def activity(request):
-    return render(request, 'catalogue/activity.html')
+def activity(request, isodate=None):
+    today = date.today()
+    try:
+        day = helpers.parse_isodate(isodate)
+    except ValueError:
+        day = today
+
+    if day > today:
+        raise Http404
+    if day != today:
+        next_day = day + timedelta(1)
+    prev_day = day - timedelta(1)
+
+    return render(request, 'catalogue/activity.html', locals())
 
 
 @never_cache
