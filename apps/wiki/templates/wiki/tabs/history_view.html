@@ -3,8 +3,10 @@
     <div class="toolbar">
     	<button type="button" id="make-diff-button"
 			data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
+        {% if can_pubmark %}
 		<button type="button" id="pubmark-changeset-button"
 			data-enabled-when="1" disabled="disabled">{% trans "Mark for publishing" %}</button>
+        {% endif %}
 		<button type="button" id="doc-revert-button"
 			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
 		<button id="open-preview-button" disabled="disabled"

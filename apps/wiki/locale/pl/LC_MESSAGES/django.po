@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-25 14:14+0100\n"
-"PO-Revision-Date: 2011-11-25 14:15+0100\n"
+"POT-Creation-Date: 2011-11-30 16:07+0100\n"
+"PO-Revision-Date: 2011-11-30 16:08+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: \n"
@@ -17,32 +17,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: forms.py:19
-#: views.py:274
+#: forms.py:63
+#: views.py:279
 msgid "Publishable"
 msgstr "Gotowe do publikacji"
 
 #: forms.py:38
-#: forms.py:84
+#: forms.py:89
 msgid "Author"
 msgstr "Autor"
 
 #: forms.py:39
-#: forms.py:85
+#: forms.py:90
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
 #: forms.py:44
-#: forms.py:90
+#: forms.py:95
 msgid "Author's email"
 msgstr "E-mail autora"
 
 #: forms.py:45
-#: forms.py:91
+#: forms.py:96
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
 #: forms.py:51
-#: forms.py:97
+#: forms.py:102
 msgid "Your comments"
 msgstr "Twój komentarz"
 
@@ -58,7 +59,11 @@ msgstr "Ukończono"
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: forms.py:98
+#: forms.py:64
+msgid "Mark this revision as publishable."
+msgstr "Oznacz tę wersję jako gotową do publikacji."
+
+#: forms.py:103
 msgid "Describe the reason for reverting."
 msgstr "Opisz powód przywrócenia."
 
@@ -74,11 +79,11 @@ msgstr "motyw"
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:294
+#: views.py:299
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: views.py:296
+#: views.py:301
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
@@ -164,15 +169,15 @@ msgstr "Galeria"
 msgid "Compare versions"
 msgstr "Porównaj wersje"
 
-#: templates/wiki/tabs/history_view.html:7
+#: templates/wiki/tabs/history_view.html:8
 msgid "Mark for publishing"
 msgstr "Oznacz do publikacji"
 
-#: templates/wiki/tabs/history_view.html:9
+#: templates/wiki/tabs/history_view.html:11
 msgid "Revert document"
 msgstr "Przywróć wersję"
 
-#: templates/wiki/tabs/history_view.html:12
+#: templates/wiki/tabs/history_view.html:14
 msgid "View version"
 msgstr "Zobacz wersję"
 

@@ -69,6 +69,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
         },
+        'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
         'REDMINE_URL': settings.REDMINE_URL,
     })
 
@@ -125,6 +126,8 @@ def text(request, chunk_id):
                 parent = None
             stage = form.cleaned_data['stage_completed']
             tags = [stage] if stage else []
+            publishable = (form.cleaned_data['publishable'] and
+                    request.user.has_perm('catalogue.can_pubmark'))
             doc.commit(author=author,
                        text=text,
                        parent=parent,
@@ -132,6 +135,7 @@ def text(request, chunk_id):
                        tags=tags,
                        author_name=form.cleaned_data['author_name'],
                        author_email=form.cleaned_data['author_email'],
+                       publishable=publishable,
                        )
             revision = doc.revision()
             return JSONResponse({

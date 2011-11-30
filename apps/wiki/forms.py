@@ -59,6 +59,11 @@ class DocumentTextSaveForm(forms.Form):
         help_text=_(u"If you completed a life cycle stage, select it."),
     )
 
+    publishable = forms.BooleanField(required=False, initial=False,
+        label=_('Publishable'),
+        help_text=_(u"Mark this revision as publishable.")
+    )
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         r = super(DocumentTextSaveForm, self).__init__(*args, **kwargs)

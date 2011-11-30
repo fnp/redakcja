@@ -33,6 +33,15 @@
 		<span class="help_text">{{ forms.text_save.stage_completed.help_text }}</span>
 		<span data-ui-error-for="{{ forms.text_save.stage_completed.name }}"> </span>
 	</p>
+    {% if can_pubmark %}
+	<p>
+		{{ forms.text_save.publishable.label_tag }}:
+		{{ forms.text_save.publishable }}
+		<span class="help_text">{{ forms.text_save.publishable.help_text }}</span>
+		<span data-ui-error-for="{{ forms.text_save.publishable.name }}"> </span>
+	</p>
+    {% endif %}
+
 	{% endif %}
 
 
