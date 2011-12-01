@@ -34,7 +34,8 @@ class Book(models.Model):
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
-    dc_slug = models.CharField(max_length=128, null=True, blank=True, editable=False)
+    dc_slug = models.CharField(max_length=128, null=True, blank=True,
+            editable=False, db_index=True)
 
     class NoTextError(BaseException):
         pass

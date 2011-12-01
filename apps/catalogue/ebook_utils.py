@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from StringIO import StringIO
 from catalogue.models import Book
 from librarian import DocProvider
 from django.http import HttpResponse
@@ -7,8 +8,12 @@ from django.http import HttpResponse
 class RedakcjaDocProvider(DocProvider):
     """Used for getting books' children."""
 
+    def __init__(self, publishable):
+        self.publishable = publishable
+
     def by_slug(self, slug):
-        return Book.objects.get(dc_slug=slug).xml_file
+        return StringIO(Book.objects.get(dc_slug=slug
+                    ).materialize(publishable=self.publishable))
 
 
 def serve_file(file_path, name, mime_type):

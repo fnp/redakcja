@@ -257,7 +257,7 @@ def book_pdf(request, slug):
 
     try:
         pdf_file = NamedTemporaryFile(delete=False)
-        pdf.transform(RedakcjaDocProvider(),
+        pdf.transform(RedakcjaDocProvider(publishable=True),
                   file_path=xml_file.name,
                   output_file=pdf_file,
                   )
@@ -283,7 +283,8 @@ def book_epub(request, slug):
     xml_file.flush()
 
     epub_file = StringIO()
-    epub.transform(RedakcjaDocProvider(), file_path=xml_file.name,
+    epub.transform(RedakcjaDocProvider(publishable=True),
+            file_path=xml_file.name,
             output_file=epub_file)
     response = HttpResponse(mimetype='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
