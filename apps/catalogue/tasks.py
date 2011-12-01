@@ -32,3 +32,8 @@ def _publishable_error(book, language=None):
 def publishable_error(book):
     return _publishable_error.delay(book, 
         translation.get_language()).wait()
+
+
+@task
+def book_content_updated(book):
+    book.refresh_dc_cache()

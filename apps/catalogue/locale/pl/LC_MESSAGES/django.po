@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-30 13:01+0100\n"
-"PO-Revision-Date: 2011-11-30 13:06+0100\n"
+"POT-Creation-Date: 2011-12-01 16:21+0100\n"
+"PO-Revision-Date: 2011-12-01 16:23+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -46,76 +46,76 @@ msgstr "Część z tym slugiem już istnieje"
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:162
+#: views.py:158
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:164
+#: views.py:160
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:170
+#: views.py:166
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:25
+#: models/book.py:23
 #: models/chunk.py:23
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:26
+#: models/book.py:24
 #: models/chunk.py:24
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:27
+#: models/book.py:25
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:28
+#: models/book.py:26
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: models/book.py:31
+#: models/book.py:29
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:32
+#: models/book.py:30
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:46
+#: models/book.py:45
 #: models/chunk.py:21
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:47
+#: models/book.py:46
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:222
+#: models/book.py:221
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:226
+#: models/book.py:225
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:232
+#: models/book.py:234
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:234
+#: models/book.py:236
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:236
+#: models/book.py:238
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:239
+#: models/book.py:241
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -140,7 +140,7 @@ msgid "time"
 msgstr "czas"
 
 #: models/publish_log.py:19
-#: templates/catalogue/wall.html:17
+#: templates/catalogue/wall.html:18
 msgid "user"
 msgstr "użytkownik"
 
@@ -213,31 +213,39 @@ msgstr "Wersja HTML"
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/catalogue/book_detail.html:74
+#: templates/catalogue/book_detail.html:57
+msgid "PDF version"
+msgstr "Wersja PDF"
+
+#: templates/catalogue/book_detail.html:58
+msgid "EPUB version"
+msgstr "Wersja EPUB"
+
+#: templates/catalogue/book_detail.html:71
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: templates/catalogue/book_detail.html:78
+#: templates/catalogue/book_detail.html:75
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
-#: templates/catalogue/book_detail.html:81
+#: templates/catalogue/book_detail.html:78
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
-#: templates/catalogue/book_detail.html:90
+#: templates/catalogue/book_detail.html:87
 msgid "Comments"
 msgstr "Komentarze"
 
-#: templates/catalogue/book_html.html:21
+#: templates/catalogue/book_html.html:13
 msgid "Table of contents"
 msgstr "Spis treści"
 
-#: templates/catalogue/book_html.html:22
+#: templates/catalogue/book_html.html:14
 msgid "Edit. note"
 msgstr "Nota red."
 
-#: templates/catalogue/book_html.html:23
+#: templates/catalogue/book_html.html:15
 msgid "Infobox"
 msgstr "Informacje"
 
@@ -281,6 +289,7 @@ msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <
 msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
 
 #: templates/catalogue/document_upload.html:17
+#: templates/catalogue/upload_pdf.html:13
 #: templatetags/catalogue.py:35
 msgid "Upload"
 msgstr "Załaduj"
@@ -322,16 +331,20 @@ msgstr "Twoje ostatnie edycje"
 msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
 
+#: templates/catalogue/upload_pdf.html:8
+msgid "PDF file upload"
+msgstr ""
+
 #: templates/catalogue/user_list.html:7
 #: templatetags/catalogue.py:31
 msgid "Users"
 msgstr "Użytkownicy"
 
-#: templates/catalogue/wall.html:27
+#: templates/catalogue/wall.html:28
 msgid "not logged in"
 msgstr "nie zalogowany"
 
-#: templates/catalogue/wall.html:32
+#: templates/catalogue/wall.html:33
 msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
@@ -492,12 +505,6 @@ msgstr "Komentarz"
 
 #~ msgid "Revision marked"
 #~ msgstr "Wersja oznaczona"
-
-#~ msgid "EPUB version"
-#~ msgstr "Wersja EPUB"
-
-#~ msgid "PDF version"
-#~ msgstr "Wersja PDF"
 
 #~ msgid "Old version"
 #~ msgstr "Stara wersja"

@@ -54,10 +54,8 @@
     <a href="{% url catalogue_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
     <a target="_blank" href="{% url catalogue_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
     <a href="{% url catalogue_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
-    {% comment %}
-    <a href="{% url catalogue_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
     <a href="{% url catalogue_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
-    {% endcomment %}
+    <a href="{% url catalogue_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
     </p>
 
     {% if user.is_authenticated %}

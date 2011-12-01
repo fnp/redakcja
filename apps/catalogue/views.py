@@ -11,16 +11,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django import http
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic.simple import direct_to_template
-
-import librarian.html
-import librarian.text
 
 from apiclient import NotAuthorizedError
 from catalogue import forms
@@ -216,6 +213,8 @@ def book_txt(request, slug):
     xml = book.materialize()
     output = StringIO()
     # errors?
+
+    import librarian.text
     librarian.text.transform(StringIO(xml), output)
     text = output.getvalue()
     response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
@@ -231,11 +230,66 @@ def book_html(request, slug):
     xml = book.materialize()
     output = StringIO()
     # errors?
+
+    import librarian.html
     librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
                              flags=['full-page'])
     html = output.getvalue()
     response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     return response
+
+
+@never_cache
+def book_pdf(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    from tempfile import NamedTemporaryFile
+    from os import unlink
+    from librarian import pdf
+    from catalogue.ebook_utils import RedakcjaDocProvider, serve_file
+
+    xml = book.materialize()
+    xml_file = NamedTemporaryFile()
+    xml_file.write(xml.encode('utf-8'))
+    xml_file.flush()
+
+    try:
+        pdf_file = NamedTemporaryFile(delete=False)
+        pdf.transform(RedakcjaDocProvider(),
+                  file_path=xml_file.name,
+                  output_file=pdf_file,
+                  )
+        return serve_file(pdf_file.name, book.slug + '.pdf', 'application/pdf')
+    finally:
+        unlink(pdf_file.name)
+
+
+@never_cache
+def book_epub(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    from StringIO import StringIO
+    from tempfile import NamedTemporaryFile
+    from librarian import epub
+    from catalogue.ebook_utils import RedakcjaDocProvider
+
+    xml = book.materialize()
+    xml_file = NamedTemporaryFile()
+    xml_file.write(xml.encode('utf-8'))
+    xml_file.flush()
+
+    epub_file = StringIO()
+    epub.transform(RedakcjaDocProvider(), file_path=xml_file.name,
+            output_file=epub_file)
+    response = HttpResponse(mimetype='application/epub+zip')
+    response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
+    response.write(epub_file.getvalue())
+    return response
+
 
 @never_cache
 def revision(request, slug, chunk=None):

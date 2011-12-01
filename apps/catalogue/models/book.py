@@ -8,14 +8,12 @@ from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from slughifi import slughifi
-from librarian import NoDublinCore, ParseError, ValidationError
-from librarian.dcparser import BookInfo
 
 import apiclient
 from catalogue.helpers import cached_in_field
 from catalogue.models import BookPublishRecord, ChunkPublishRecord
 from catalogue.signals import post_publish
-from catalogue.tasks import refresh_instance
+from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
 
 
@@ -36,6 +34,7 @@ class Book(models.Model):
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
+    dc_slug = models.CharField(max_length=128, null=True, blank=True, editable=False)
 
     class NoTextError(BaseException):
         pass
@@ -226,6 +225,9 @@ class Book(models.Model):
             raise AssertionError(_('Not all chunks have publishable revisions.'))
         book_xml = self.materialize(changes=changes)
 
+        from librarian.dcparser import BookInfo
+        from librarian import NoDublinCore, ParseError, ValidationError
+
         try:
             bi = BookInfo.from_string(book_xml.encode('utf-8'))
         except ParseError, e:
@@ -272,7 +274,33 @@ class Book(models.Model):
     def short_html(self):
         return render_to_string('catalogue/book_list/book.html', {'book': self})
 
+    def book_info(self, publishable=True):
+        try:
+            book_xml = self.materialize(publishable=publishable)
+        except self.NoTextError:
+            pass
+        else:
+            from librarian.dcparser import BookInfo
+            from librarian import NoDublinCore, ParseError, ValidationError
+            try:
+                return BookInfo.from_string(book_xml.encode('utf-8'))
+            except (self.NoTextError, ParseError, NoDublinCore, ValidationError):
+                return None
+
+    def refresh_dc_cache(self):
+        update = {
+            'dc_slug': None,
+        }
+
+        info = self.book_info()
+        if info is not None:
+            update['dc_slug'] = info.slug
+        Book.objects.filter(pk=self.pk).update(**update)
+
     def touch(self):
+        # this should only really be done when text or publishable status changes
+        book_content_updated.delay(self)
+
         update = {
             "_new_publishable": self.is_new_publishable(),
             "_published": self.is_published(),
