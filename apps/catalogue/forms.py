@@ -9,7 +9,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import MASTERS
-from catalogue.models import Book, Chunk
+from catalogue.models import Book, Chunk, Image
 
 class DocumentCreateForm(forms.ModelForm):
     """
@@ -154,3 +154,30 @@ class ChooseMasterForm(forms.Form):
     """
 
     master = forms.ChoiceField(choices=((m, m) for m in MASTERS))
+
+
+class ImageForm(forms.ModelForm):
+    """Form used for editing an Image."""
+    user = forms.ModelChoiceField(queryset=
+        User.objects.annotate(count=Count('chunk')).
+        order_by('-count', 'last_name', 'first_name'), required=False,
+        label=_('Assigned to')) 
+
+    class Meta:
+        model = Image
+        fields = ['title', 'slug', 'user', 'stage']
+
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields['slug'].widget.attrs={'class': 'autoslug'}
+        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+
+
+class ReadonlyImageForm(ImageForm):
+    """Form used for not editing a Book."""
+
+    def __init__(self, *args, **kwargs):
+        ret = super(ReadonlyImageForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({"readonly": True})
+        return ret

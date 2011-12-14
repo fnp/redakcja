@@ -7,340 +7,301 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-29 15:34+0200\n"
-"PO-Revision-Date: 2010-09-29 15:36+0100\n"
+"POT-Creation-Date: 2011-12-14 15:25+0100\n"
+"PO-Revision-Date: 2011-12-14 15:26+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: constants.py:6
-msgid "First correction"
-msgstr "Autokorekta"
-
-#: constants.py:7
-msgid "Tagging"
-msgstr "Tagowanie"
-
-#: constants.py:8
-msgid "Initial Proofreading"
-msgstr "Korekta"
-
-#: constants.py:9
-msgid "Annotation Proofreading"
-msgstr "Sprawdzenie przypisów źródła"
-
-#: constants.py:10
-msgid "Modernisation"
-msgstr "Uwspółcześnienie"
-
-#: constants.py:11
-#: templates/wiki/tabs/annotations_view_item.html:3
-msgid "Annotations"
-msgstr "Przypisy"
-
-#: constants.py:12
-msgid "Themes"
-msgstr "Motywy"
-
-#: constants.py:13
-msgid "Editor's Proofreading"
-msgstr "Ostateczna redakcja literacka"
-
-#: constants.py:14
-msgid "Technical Editor's Proofreading"
-msgstr "Ostateczna redakcja techniczna"
-
-#: constants.py:18
-msgid "Ready to publish"
-msgstr "Gotowe do publikacji"
-
-#: forms.py:49
-msgid "ZIP file"
-msgstr "Plik ZIP"
-
-#: forms.py:82
-msgid "Author"
-msgstr "Autor"
-
-#: forms.py:83
-msgid "Your name"
-msgstr "Imię i nazwisko"
-
-#: forms.py:88
-msgid "Author's email"
-msgstr "E-mail autora"
-
-#: forms.py:89
-msgid "Your email address, so we can show a gravatar :)"
-msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
-
-#: forms.py:95
-msgid "Your comments"
-msgstr "Twój komentarz"
-
-#: forms.py:96
-msgid "Describe changes you made."
-msgstr "Opisz swoje zmiany"
-
-#: forms.py:102
+#: forms.py:18
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:103
+#: forms.py:19
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: models.py:93
-#, python-format
-msgid "Finished stage: %s"
-msgstr "Ukończony etap: %s"
+#: views.py:126
+msgid "Publishable"
+msgstr "Gotowe do publikacji"
 
-#: models.py:152
-msgid "name"
-msgstr "nazwa"
-
-#: models.py:156
-msgid "theme"
-msgstr "motyw"
-
-#: models.py:157
-msgid "themes"
-msgstr "motywy"
-
-#: views.py:167
-#, python-format
-msgid "Title already used for %s"
-msgstr "Nazwa taka sama jak dla pliku %s"
-
-#: views.py:169
-msgid "Title already used in repository."
-msgstr "Plik o tej nazwie już istnieje w repozytorium."
-
-#: views.py:175
-msgid "File should be UTF-8 encoded."
-msgstr "Plik powinien mieć kodowanie UTF-8."
-
-#: views.py:358
-msgid "Tag added"
-msgstr "Dodano tag"
-
-#: templates/wiki/base.html:15
+#: templates/wiki_img/base.html:15
 msgid "Platforma Redakcyjna"
 msgstr ""
 
-#: templates/wiki/diff_table.html:5
+#: templates/wiki_img/diff_table.html:5
 msgid "Old version"
 msgstr "Stara wersja"
 
-#: templates/wiki/diff_table.html:6
+#: templates/wiki_img/diff_table.html:6
 msgid "New version"
 msgstr "Nowa wersja"
 
-#: templates/wiki/document_create_missing.html:8
-msgid "Create document"
-msgstr "Utwórz dokument"
-
-#: templates/wiki/document_details.html:32
-msgid "Click to open/close gallery"
-msgstr "Kliknij, aby (ro)zwinąć galerię"
-
-#: templates/wiki/document_details_base.html:36
+#: templates/wiki_img/document_details_base.html:31
 msgid "Help"
 msgstr "Pomoc"
 
-#: templates/wiki/document_details_base.html:38
+#: templates/wiki_img/document_details_base.html:33
 msgid "Version"
 msgstr "Wersja"
 
-#: templates/wiki/document_details_base.html:38
+#: templates/wiki_img/document_details_base.html:33
 msgid "Unknown"
 msgstr "nieznana"
 
-#: templates/wiki/document_details_base.html:40
-#: templates/wiki/tag_dialog.html:15
+#: templates/wiki_img/document_details_base.html:35
+#: templates/wiki_img/tag_dialog.html:15
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/wiki/document_details_base.html:41
+#: templates/wiki_img/document_details_base.html:36
 msgid "Save attempt in progress"
 msgstr "Trwa zapisywanie"
 
-#: templates/wiki/document_details_base.html:42
+#: templates/wiki_img/document_details_base.html:37
 msgid "There is a newer version of this document!"
 msgstr "Istnieje nowsza wersja tego dokumentu!"
 
-#: templates/wiki/document_list.html:30
-msgid "Clear filter"
-msgstr "Wyczyść filtr"
-
-#: templates/wiki/document_list.html:48
-msgid "Your last edited documents"
-msgstr "Twoje ostatnie edycje"
-
-#: templates/wiki/document_upload.html:9
-msgid "Bulk documents upload"
-msgstr "Hurtowe dodawanie dokumentów"
-
-#: templates/wiki/document_upload.html:12
-msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored."
-msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
-
-#: templates/wiki/document_upload.html:17
-msgid "Upload"
-msgstr "Dodaj"
-
-#: templates/wiki/document_upload.html:24
-msgid "There have been some errors. No files have been added to the repository."
-msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
-
-#: templates/wiki/document_upload.html:25
-msgid "Offending files"
-msgstr "Błędne pliki"
-
-#: templates/wiki/document_upload.html:33
-msgid "Correct files"
-msgstr "Poprawne pliki"
-
-#: templates/wiki/document_upload.html:44
-msgid "Files have been successfully uploaded to the repository."
-msgstr "Pliki zostały dodane do repozytorium."
-
-#: templates/wiki/document_upload.html:45
-msgid "Uploaded files"
-msgstr "Dodane pliki"
-
-#: templates/wiki/document_upload.html:55
-msgid "Skipped files"
-msgstr "Pominięte pliki"
-
-#: templates/wiki/document_upload.html:56
-msgid "Files skipped due to no <code>.xml</code> extension"
-msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
-
-#: templates/wiki/tag_dialog.html:16
+#: templates/wiki_img/tag_dialog.html:16
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: templates/wiki/tabs/annotations_view.html:5
-msgid "Refresh"
-msgstr "Odśwież"
-
-#: templates/wiki/tabs/gallery_view.html:7
-msgid "Previous"
-msgstr "Poprzednie"
-
-#: templates/wiki/tabs/gallery_view.html:13
-msgid "Next"
-msgstr "Następne"
-
-#: templates/wiki/tabs/gallery_view.html:15
-msgid "Zoom in"
-msgstr "Powiększ"
-
-#: templates/wiki/tabs/gallery_view.html:16
-msgid "Zoom out"
-msgstr "Zmniejsz"
-
-#: templates/wiki/tabs/gallery_view_item.html:3
-msgid "Gallery"
-msgstr "Galeria"
-
-#: templates/wiki/tabs/history_view.html:5
+#: templates/wiki_img/tabs/history_view.html:5
 msgid "Compare versions"
 msgstr "Porównaj wersje"
 
-#: templates/wiki/tabs/history_view.html:7
-msgid "Mark version"
-msgstr "Oznacz wersję"
+#: templates/wiki_img/tabs/history_view.html:8
+msgid "Mark for publishing"
+msgstr "Oznacz do publikacji"
 
-#: templates/wiki/tabs/history_view.html:9
+#: templates/wiki_img/tabs/history_view.html:11
 msgid "Revert document"
 msgstr "Przywróć wersję"
 
-#: templates/wiki/tabs/history_view.html:12
+#: templates/wiki_img/tabs/history_view.html:14
 msgid "View version"
 msgstr "Zobacz wersję"
 
-#: templates/wiki/tabs/history_view_item.html:3
-msgid "History"
-msgstr "Historia"
+#: templates/wiki_img/tabs/motifs_editor.html:4
+#: templates/wiki_img/tabs/motifs_editor_item.html:3
+msgid "Motifs"
+msgstr "Motywy"
 
-#: templates/wiki/tabs/search_view.html:3
-#: templates/wiki/tabs/search_view.html:5
-msgid "Search"
-msgstr "Szukaj"
+#: templates/wiki_img/tabs/motifs_editor.html:5
+#: templates/wiki_img/tabs/objects_editor.html:5
+msgid "Add"
+msgstr "Dodaj"
 
-#: templates/wiki/tabs/search_view.html:8
-msgid "Replace with"
-msgstr "Zamień na"
+#: templates/wiki_img/tabs/objects_editor.html:4
+msgid "Object name"
+msgstr "Nazwa obiektu"
 
-#: templates/wiki/tabs/search_view.html:10
-msgid "Replace"
-msgstr "Zamień"
+#: templates/wiki_img/tabs/objects_editor_item.html:3
+msgid "Objects"
+msgstr "Obiekty"
 
-#: templates/wiki/tabs/search_view.html:13
-msgid "Options"
-msgstr "Opcje"
-
-#: templates/wiki/tabs/search_view.html:15
-msgid "Case sensitive"
-msgstr "Rozróżniaj wielkość liter"
-
-#: templates/wiki/tabs/search_view.html:17
-msgid "From cursor"
-msgstr "Zacznij od kursora"
-
-#: templates/wiki/tabs/search_view_item.html:3
-msgid "Search and replace"
-msgstr "Znajdź i zamień"
-
-#: templates/wiki/tabs/source_editor_item.html:5
+#: templates/wiki_img/tabs/source_editor_item.html:5
 msgid "Source code"
 msgstr "Kod źródłowy"
 
-#: templates/wiki/tabs/summary_view.html:10
+#: templates/wiki_img/tabs/summary_view.html:8
 msgid "Title"
 msgstr "Tytuł"
 
-#: templates/wiki/tabs/summary_view.html:15
+#: templates/wiki_img/tabs/summary_view.html:13
 msgid "Document ID"
 msgstr "ID dokumentu"
 
-#: templates/wiki/tabs/summary_view.html:19
+#: templates/wiki_img/tabs/summary_view.html:17
 msgid "Current version"
 msgstr "Aktualna wersja"
 
-#: templates/wiki/tabs/summary_view.html:22
+#: templates/wiki_img/tabs/summary_view.html:20
 msgid "Last edited by"
 msgstr "Ostatnio edytowane przez"
 
-#: templates/wiki/tabs/summary_view.html:26
-msgid "Link to gallery"
-msgstr "Link do galerii"
-
-#: templates/wiki/tabs/summary_view.html:31
-msgid "Publish"
-msgstr "Opublikuj"
-
-#: templates/wiki/tabs/summary_view_item.html:4
+#: templates/wiki_img/tabs/summary_view_item.html:4
 msgid "Summary"
 msgstr "Podsumowanie"
 
-#: templates/wiki/tabs/wysiwyg_editor.html:9
-msgid "Insert theme"
-msgstr "Wstaw motyw"
+#~ msgid "First correction"
+#~ msgstr "Autokorekta"
 
-#: templates/wiki/tabs/wysiwyg_editor.html:12
-msgid "Insert annotation"
-msgstr "Wstaw przypis"
+#~ msgid "Tagging"
+#~ msgstr "Tagowanie"
 
-#: templates/wiki/tabs/wysiwyg_editor.html:15
-msgid "Insert special character"
-msgstr "Wstaw znak specjalny"
+#~ msgid "Initial Proofreading"
+#~ msgstr "Korekta"
 
-#: templates/wiki/tabs/wysiwyg_editor_item.html:3
-msgid "Visual editor"
-msgstr "Edytor wizualny"
+#~ msgid "Annotation Proofreading"
+#~ msgstr "Sprawdzenie przypisów źródła"
 
+#~ msgid "Modernisation"
+#~ msgstr "Uwspółcześnienie"
+
+#~ msgid "Annotations"
+#~ msgstr "Przypisy"
+
+#~ msgid "Themes"
+#~ msgstr "Motywy"
+
+#~ msgid "Editor's Proofreading"
+#~ msgstr "Ostateczna redakcja literacka"
+
+#~ msgid "Technical Editor's Proofreading"
+#~ msgstr "Ostateczna redakcja techniczna"
+
+#~ msgid "ZIP file"
+#~ msgstr "Plik ZIP"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Your name"
+#~ msgstr "Imię i nazwisko"
+
+#~ msgid "Author's email"
+#~ msgstr "E-mail autora"
+
+#~ msgid "Your email address, so we can show a gravatar :)"
+#~ msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
+
+#~ msgid "Your comments"
+#~ msgstr "Twój komentarz"
+
+#~ msgid "Describe changes you made."
+#~ msgstr "Opisz swoje zmiany"
+
+#~ msgid "Finished stage: %s"
+#~ msgstr "Ukończony etap: %s"
+
+#~ msgid "name"
+#~ msgstr "nazwa"
+
+#~ msgid "theme"
+#~ msgstr "motyw"
+
+#~ msgid "themes"
+#~ msgstr "motywy"
+
+#~ msgid "Title already used for %s"
+#~ msgstr "Nazwa taka sama jak dla pliku %s"
+
+#~ msgid "Title already used in repository."
+#~ msgstr "Plik o tej nazwie już istnieje w repozytorium."
+
+#~ msgid "File should be UTF-8 encoded."
+#~ msgstr "Plik powinien mieć kodowanie UTF-8."
+
+#~ msgid "Tag added"
+#~ msgstr "Dodano tag"
+
+#~ msgid "Create document"
+#~ msgstr "Utwórz dokument"
+
+#~ msgid "Click to open/close gallery"
+#~ msgstr "Kliknij, aby (ro)zwinąć galerię"
+
+#~ msgid "Clear filter"
+#~ msgstr "Wyczyść filtr"
+
+#~ msgid "Your last edited documents"
+#~ msgstr "Twoje ostatnie edycje"
+
+#~ msgid "Bulk documents upload"
+#~ msgstr "Hurtowe dodawanie dokumentów"
+
+#~ msgid ""
+#~ "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
+#~ "<code>.xml</code> will be ignored."
+#~ msgstr ""
+#~ "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
+#~ "kończące się na <code>.xml</code> zostaną zignorowane."
+
+#~ msgid "Upload"
+#~ msgstr "Dodaj"
+
+#~ msgid ""
+#~ "There have been some errors. No files have been added to the repository."
+#~ msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
+
+#~ msgid "Offending files"
+#~ msgstr "Błędne pliki"
+
+#~ msgid "Correct files"
+#~ msgstr "Poprawne pliki"
+
+#~ msgid "Files have been successfully uploaded to the repository."
+#~ msgstr "Pliki zostały dodane do repozytorium."
+
+#~ msgid "Uploaded files"
+#~ msgstr "Dodane pliki"
+
+#~ msgid "Skipped files"
+#~ msgstr "Pominięte pliki"
+
+#~ msgid "Files skipped due to no <code>.xml</code> extension"
+#~ msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
+
+#~ msgid "Refresh"
+#~ msgstr "Odśwież"
+
+#~ msgid "Previous"
+#~ msgstr "Poprzednie"
+
+#~ msgid "Next"
+#~ msgstr "Następne"
+
+#~ msgid "Zoom in"
+#~ msgstr "Powiększ"
+
+#~ msgid "Zoom out"
+#~ msgstr "Zmniejsz"
+
+#~ msgid "Gallery"
+#~ msgstr "Galeria"
+
+#~ msgid "Mark version"
+#~ msgstr "Oznacz wersję"
+
+#~ msgid "History"
+#~ msgstr "Historia"
+
+#~ msgid "Search"
+#~ msgstr "Szukaj"
+
+#~ msgid "Replace with"
+#~ msgstr "Zamień na"
+
+#~ msgid "Replace"
+#~ msgstr "Zamień"
+
+#~ msgid "Options"
+#~ msgstr "Opcje"
+
+#~ msgid "Case sensitive"
+#~ msgstr "Rozróżniaj wielkość liter"
+
+#~ msgid "From cursor"
+#~ msgstr "Zacznij od kursora"
+
+#~ msgid "Search and replace"
+#~ msgstr "Znajdź i zamień"
+
+#~ msgid "Link to gallery"
+#~ msgstr "Link do galerii"
+
+#~ msgid "Insert theme"
+#~ msgstr "Wstaw motyw"
+
+#~ msgid "Insert annotation"
+#~ msgstr "Wstaw przypis"
+
+#~ msgid "Insert special character"
+#~ msgstr "Wstaw znak specjalny"
+
+#~ msgid "Visual editor"
+#~ msgstr "Edytor wizualny"

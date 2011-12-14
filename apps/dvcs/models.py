@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.db.models.base import ModelBase
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat, ugettext_lazy as _
 from mercurial import mdiff, simplemerge
 
 from django.conf import settings
@@ -26,8 +26,6 @@ class Tag(models.Model):
     class Meta:
         abstract = True
         ordering = ['ordering']
-        verbose_name = _("tag")
-        verbose_name_plural = _("tags")
 
     def __unicode__(self):
         return self.name
@@ -99,8 +97,6 @@ class Change(models.Model):
         abstract = True
         ordering = ('created_at',)
         unique_together = ['tree', 'revision']
-        verbose_name = _("change")
-        verbose_name_plural = _("changes")
 
     def __unicode__(self):
         return u"Id: %r, Tree %r, Parent %r, Data: %s" % (self.id, self.tree_id, self.parent_id, self.data)
@@ -170,11 +166,17 @@ class Change(models.Model):
         post_publishable.send(sender=self, publishable=publishable)
 
 
+
+
 def create_tag_model(model):
     name = model.__name__ + 'Tag'
 
     class Meta(Tag.Meta):
         app_label = model._meta.app_label
+        verbose_name = string_concat(_("tag"), " ", _("for:"), " ", 
+                model._meta.verbose_name)
+        verbose_name_plural = string_concat(_("tags"), " ", _("for:"), " ",
+                model._meta.verbose_name)
 
     attrs = {
         '__module__': model.__module__,
@@ -189,6 +191,10 @@ def create_change_model(model):
 
     class Meta(Change.Meta):
         app_label = model._meta.app_label
+        verbose_name = string_concat(_("change"), " ", _("for:"), " ",
+                model._meta.verbose_name)
+        verbose_name_plural = string_concat(_("changes"), " ", _("for:"), " ",
+                model._meta.verbose_name)
 
     attrs = {
         '__module__': model.__module__,

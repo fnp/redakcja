@@ -42,7 +42,7 @@ class Image(dvcs_models.Document):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("wiki_img_editor", [self.slug])
+        return ("catalogue_image", [self.slug])
 
     # State & cache
     # =============

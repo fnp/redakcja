@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-01 16:21+0100\n"
-"PO-Revision-Date: 2011-12-01 16:23+0100\n"
+"POT-Creation-Date: 2011-12-14 15:25+0100\n"
+"PO-Revision-Date: 2011-12-14 15:27+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -34,6 +34,7 @@ msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
 #: forms.py:76
+#: forms.py:164
 msgid "Assigned to"
 msgstr "Przypisane do"
 
@@ -46,30 +47,33 @@ msgstr "Część z tym slugiem już istnieje"
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:158
+#: views.py:165
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:160
+#: views.py:167
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:166
+#: views.py:173
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
 #: models/book.py:23
 #: models/chunk.py:23
+#: models/image.py:20
 msgid "title"
 msgstr "tytuł"
 
 #: models/book.py:24
 #: models/chunk.py:24
+#: models/image.py:21
 msgid "slug"
 msgstr "slug"
 
 #: models/book.py:25
+#: models/image.py:22
 msgid "public"
 msgstr "publiczna"
 
@@ -85,37 +89,37 @@ msgstr "rodzic"
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:45
+#: models/book.py:46
 #: models/chunk.py:21
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:46
+#: models/book.py:47
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:221
+#: models/book.py:222
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:225
+#: models/book.py:226
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:234
+#: models/book.py:235
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:236
+#: models/book.py:237
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:238
+#: models/book.py:239
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:241
+#: models/book.py:242
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -135,11 +139,23 @@ msgstr "część"
 msgid "chunks"
 msgstr "części"
 
+#: models/image.py:19
+#: models/image.py:33
+#: models/publish_log.py:45
+msgid "image"
+msgstr "obraz"
+
+#: models/image.py:34
+msgid "images"
+msgstr "obrazy"
+
 #: models/publish_log.py:18
+#: models/publish_log.py:46
 msgid "time"
 msgstr "czas"
 
 #: models/publish_log.py:19
+#: models/publish_log.py:47
 #: templates/catalogue/wall.html:18
 msgid "user"
 msgstr "użytkownik"
@@ -154,6 +170,7 @@ msgid "book publish records"
 msgstr "zapisy publikacji książek"
 
 #: models/publish_log.py:34
+#: models/publish_log.py:48
 msgid "change"
 msgstr "zmiana"
 
@@ -164,6 +181,14 @@ msgstr "zapis publikacji części"
 #: models/publish_log.py:39
 msgid "chunk publish records"
 msgstr "zapisy publikacji części"
+
+#: models/publish_log.py:53
+msgid "image publish record"
+msgstr "zapis publikacji obrazu"
+
+#: models/publish_log.py:54
+msgid "image publish records"
+msgstr "zapisy publikacji obrazów"
 
 #: templates/catalogue/activity.html:10
 #: templatetags/catalogue.py:29
@@ -181,6 +206,7 @@ msgstr "Dołącz książkę"
 #: templates/catalogue/book_detail.html:14
 #: templates/catalogue/book_edit.html:9
 #: templates/catalogue/chunk_edit.html:13
+#: templates/catalogue/image_detail.html:14
 msgid "Save"
 msgstr "Zapisz"
 
@@ -234,6 +260,7 @@ msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
 #: templates/catalogue/book_detail.html:87
+#: templates/catalogue/image_detail.html:21
 msgid "Comments"
 msgstr "Komentarze"
 
@@ -290,7 +317,7 @@ msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie
 
 #: templates/catalogue/document_upload.html:17
 #: templates/catalogue/upload_pdf.html:13
-#: templatetags/catalogue.py:35
+#: templatetags/catalogue.py:36
 msgid "Upload"
 msgstr "Załaduj"
 
@@ -322,6 +349,49 @@ msgstr "Pominięte pliki"
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
+#: templates/catalogue/image_short.html:4
+msgid "Image settings"
+msgstr "Ustawienia obrazu"
+
+#: templates/catalogue/image_table.html:19
+#: templates/catalogue/book_list/book_list.html:24
+msgid "Search in book titles"
+msgstr "Szukaj w tytułach książek"
+
+#: templates/catalogue/image_table.html:24
+#: templates/catalogue/book_list/book_list.html:29
+msgid "stage"
+msgstr "etap"
+
+#: templates/catalogue/image_table.html:26
+#: templates/catalogue/image_table.html:37
+#: templates/catalogue/book_list/book_list.html:31
+#: templates/catalogue/book_list/book_list.html:42
+msgid "none"
+msgstr "brak"
+
+#: templates/catalogue/image_table.html:35
+#: templates/catalogue/book_list/book_list.html:40
+msgid "editor"
+msgstr "redaktor"
+
+#: templates/catalogue/image_table.html:46
+#: templates/catalogue/book_list/book_list.html:51
+msgid "status"
+msgstr "status"
+
+#: templates/catalogue/image_table.html:63
+#, python-format
+msgid "%(c)s image"
+msgid_plural "%(c)s images"
+msgstr[0] "%(c)s obraz"
+msgstr[1] "%(c)s obrazy"
+msgstr[2] "%(c)s obrazów"
+
+#: templates/catalogue/image_table.html:68
+msgid "No images found."
+msgstr "Nie znaleziono obrazów."
+
 #: templates/catalogue/my_page.html:13
 msgid "Your last edited documents"
 msgstr "Twoje ostatnie edycje"
@@ -336,7 +406,7 @@ msgid "PDF file upload"
 msgstr ""
 
 #: templates/catalogue/user_list.html:7
-#: templatetags/catalogue.py:31
+#: templatetags/catalogue.py:32
 msgid "Users"
 msgstr "Użytkownicy"
 
@@ -357,27 +427,6 @@ msgstr "Ustawienia książki"
 msgid "Show hidden books"
 msgstr "Pokaż ukryte książki"
 
-#: templates/catalogue/book_list/book_list.html:24
-msgid "Search in book titles"
-msgstr "Szukaj w tytułach książek"
-
-#: templates/catalogue/book_list/book_list.html:29
-msgid "stage"
-msgstr "etap"
-
-#: templates/catalogue/book_list/book_list.html:31
-#: templates/catalogue/book_list/book_list.html:42
-msgid "none"
-msgstr "brak"
-
-#: templates/catalogue/book_list/book_list.html:40
-msgid "editor"
-msgstr "redaktor"
-
-#: templates/catalogue/book_list/book_list.html:51
-msgid "status"
-msgstr "status"
-
 #: templates/catalogue/book_list/book_list.html:75
 #, python-format
 msgid "%(c)s book"
@@ -391,22 +440,27 @@ msgid "No books found."
 msgstr "Nie znaleziono książek."
 
 #: templatetags/book_list.py:84
+#: templatetags/book_list.py:145
 msgid "publishable"
 msgstr "do publikacji"
 
 #: templatetags/book_list.py:85
+#: templatetags/book_list.py:146
 msgid "changed"
 msgstr "zmienione"
 
 #: templatetags/book_list.py:86
+#: templatetags/book_list.py:147
 msgid "published"
 msgstr "opublikowane"
 
 #: templatetags/book_list.py:87
+#: templatetags/book_list.py:148
 msgid "unpublished"
 msgstr "nie opublikowane"
 
 #: templatetags/book_list.py:88
+#: templatetags/book_list.py:149
 msgid "empty"
 msgstr "puste"
 
@@ -418,7 +472,11 @@ msgstr "Moja strona"
 msgid "All"
 msgstr "Wszystkie"
 
-#: templatetags/catalogue.py:34
+#: templatetags/catalogue.py:31
+msgid "Images"
+msgstr "Obrazy"
+
+#: templatetags/catalogue.py:35
 msgid "Add"
 msgstr "Dodaj"
 

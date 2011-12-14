@@ -23,7 +23,8 @@ from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
+from catalogue.models import (Book, Chunk, BookPublishRecord, 
+        ChunkPublishRecord, Image)
 from catalogue.tasks import publishable_error
 
 #
