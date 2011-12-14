@@ -11,14 +11,14 @@
 {% block tabs-menu %}
     {% include "wiki/tabs/summary_view_item.html" %}
     {% include "wiki/tabs/wysiwyg_editor_item.html" %}
-	{% include "wiki/tabs/source_editor_item.html" %}
+    {% include "wiki/tabs/source_editor_item.html" %}
     {% include "wiki/tabs/history_view_item.html" %}
 {% endblock %}
 
 {% block tabs-content %}
     {% include "wiki/tabs/summary_view.html" %}
     {% include "wiki/tabs/wysiwyg_editor.html" %}
-	{% include "wiki/tabs/source_editor.html" %}
+    {% include "wiki/tabs/source_editor.html" %}
     {% include "wiki/tabs/history_view.html" %}
 {% endblock %}
 
@@ -40,6 +40,10 @@
 {% endblock %}
 
 {% block dialogs %}
-	{% include "wiki/save_dialog.html" %}
-	{% include "wiki/tag_dialog.html" %}
+    {% include "wiki/save_dialog.html" %}
+    {% include "wiki/revert_dialog.html" %}
+    {% include "wiki/tag_dialog.html" %}
+    {% if can_pubmark %}
+        {% include "wiki/pubmark_dialog.html" %}
+    {% endif %}
 {% endblock %}

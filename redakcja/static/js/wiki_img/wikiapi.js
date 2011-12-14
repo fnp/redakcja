@@ -18,23 +18,14 @@
 		var base_path = "/images";
 
 		if (vname == "ajax_document_text") {
-			var path = "/" + arguments[1] + "/text";
-
-		    if (arguments[2] !== undefined)
-				path += "/" + arguments[2];
-
-			return base_path + path;
+			return base_path + "/text/" + arguments[1] + "/";
 		}
 
-		/*if (vname == "ajax_document_history") {
+		if (vname == "ajax_document_history") {
 
-			return base_path + "/" + arguments[1] + "/history";
+			return base_path + "/history/" + arguments[1] + "/";
 		}
 */
-		if (vname == "ajax_document_gallery") {
-
-			return base_path + "/" + arguments[1] + "/gallery";
-		}
 /*
 		if (vname == "ajax_document_diff")
 			return base_path + "/" + arguments[1] + "/diff";
@@ -57,14 +48,11 @@
 	 */
 	function WikiDocument(element_id) {
 		var meta = $('#' + element_id);
-		this.id = meta.attr('data-document-name');
+		this.id = meta.attr('data-object-id');
 
 		this.revision = $("*[data-key='revision']", meta).text();
-        this.commit = $("*[data-key='commit']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();
 
-		this.galleryLink = $("*[data-key='gallery']", meta).text();
-		this.galleryImages = [];
 		this.text = null;
 		this.has_local_changes = false;
 		this._lock = -1;
@@ -105,6 +93,33 @@
 			},
 			error: function() {
 				params['failure'](self, "Nie udało się wczytać treści dokumentu.");
+			}
+		});
+	};
+	/*
+	 * Fetch history of this document.
+	 *
+	 * from - First revision to fetch (default = 0) upto - Last revision to
+	 * fetch (default = tip)
+	 *
+	 */
+	WikiDocument.prototype.fetchHistory = function(params) {
+		/* this doesn't modify anything, so no locks */
+		params = $.extend({}, noops, params);
+		var self = this;
+		$.ajax({
+			method: "GET",
+			url: reverse("ajax_document_history", self.id),
+			dataType: 'json',
+			data: {
+				"from": params['from'],
+				"upto": params['upto']
+			},
+			success: function(data) {
+				params['success'](self, data);
+			},
+			error: function() {
+				params['failure'](self, "Nie udało się wczytać historii dokumentu.");
 			}
 		});
 	};
@@ -308,3 +323,28 @@
 
 	$.wikiapi.WikiDocument = WikiDocument;
 })(jQuery);
+
+
+
+// Wykonuje block z załadowanymi kanonicznymi motywami
+function withThemes(code_block, onError)
+{
+    if (typeof withThemes.canon == 'undefined') {
+        $.ajax({
+            url: '/editor/themes',
+            dataType: 'text',
+            success: function(data) {
+                withThemes.canon = data.split('\n');
+                code_block(withThemes.canon);
+            },
+            error: function() {
+                withThemes.canon = null;
+                code_block(withThemes.canon);
+            }
+        })
+    }
+    else {
+        code_block(withThemes.canon);
+    }
+}
+

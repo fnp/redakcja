@@ -37,7 +37,7 @@
  -webkit-border-radius: 4px;
  }
  */
-.htmlview *[x-node = 'RDF'] {
+.htmlview *[x-node = 'RDF'][x-ns = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'] {
     display: none;
 }
 
@@ -169,6 +169,10 @@
 }
 
 /* wersy */
+.htmlview *[x-verse]:after {
+    content: "\feff";
+}
+
 .htmlview .strofa .wers_wciety, .htmlview .strofa .wers_wciety[data-wlf-typ='1'] {
     margin-left: 1em;
 }
@@ -253,9 +257,9 @@ not(.strofa) > *[x-verse]::after {
     padding: 0 1em 1em 1em;
 }
 
-.htmlview br.sekcja_swiatlo {
-    height: 3em;
-    /* visibility: hidden; */
+.htmlview hr.sekcja_swiatlo {
+    margin: 2em 0;
+    visibility: hidden;
 }
 
 .htmlview hr.separator_linia {
@@ -268,6 +272,10 @@ not(.strofa) > *[x-verse]::after {
     padding: 0;
     margin: 1.5em 0;
     text-align: center;
+}
+
+.htmlview p.sekcja_asterysk:after {
+    content: "*";
 }
 
 .htmlview div.lista_osob ol {
@@ -488,7 +496,7 @@ div[x-node] > .uwaga {
     visibility: hidden;
 }
 
-.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button {
+.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
     position: absolute;
     top: -21px;
     left: -1px;
@@ -512,16 +520,20 @@ div[x-node] > .uwaga {
 }
 
 .tytul-button {
-    left:200px;
+    left:150px;
     width:100px;
 }
 
 .wyroznienie-button {
-    left:300px;
+    left:250px;
     width:100px;
 }
 .slowo-button {
-    left: 400px;
+    left:350px;
+    width:100px;
+}
+.znak-button {
+    left:450px;
     width:100px;
 }
 
@@ -530,7 +542,8 @@ div[x-node] > .uwaga {
 .accept-button:hover, .accept-button:active,
 .tytul-button:hover, .tytul-button:active,
 .wyroznienie-button:hover, .wyroznienie-button:active,
-.slowo-button:hover, .slowo-button:active {
+.slowo-button:hover, .slowo-button:active,
+.znak-button:hover, .znak-button:active {
     /*    color: #FFF;*/
     background-color: #999;
     color: #FFF;
@@ -629,23 +642,36 @@ div[x-node] > .uwaga {
     border: 1px solid orange;
 }
 
+.alien {
+    color: red;
+}
+
 /* specialChars */
 #specialCharsContainer {
     text-align: center; 
     width: 600px; 
+    height: 400px;
     padding:20px; 
     background-color: gray; 
     position: absolute; 
     top: 20px; 
     left: 20px; 
     z-index:1000;
+    overflow:auto;
 }
 #specialCharsContainer a {
     color: white;
     font-weight: bold;
 } 
+
 #tableSpecialChars td input {
     background-color: transparent;
     border:0;
     color: white;
+} 
+
+#tableSpecialChars td input.recentSymbol {
+    background-color: white;
+    border:0;
+    color: black;
 } 

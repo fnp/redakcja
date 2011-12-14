@@ -14,11 +14,11 @@ COMPRESS_CSS = {
         ),
         'output_filename': 'compressed/detail_styles_?.css',
     },
-    'listing': {
+    'catalogue': {
         'source_filenames': (
             'css/filelist.css',
         ),
-        'output_filename': 'compressed/listing_styles_?.css',
+        'output_filename': 'compressed/catalogue_styles_?.css',
      }
 }
 
@@ -27,10 +27,10 @@ COMPRESS_JS = {
     'detail': {
         'source_filenames': (
                 # libraries
-                'js/lib/jquery-1.4.2.min.js',
                 'js/lib/jquery/jquery.autocomplete.js',
                 'js/lib/jquery/jquery.blockui.js',
                 'js/lib/jquery/jquery.elastic.js',
+                'js/lib/jquery/jquery.xmlns.js',
                 'js/button_scripts.js',
                 'js/slugify.js',
 
@@ -44,7 +44,8 @@ COMPRESS_JS = {
 
                 # dialogs
                 'js/wiki/dialog_save.js',
-                'js/wiki/dialog_addtag.js',
+                'js/wiki/dialog_revert.js',
+                'js/wiki/dialog_pubmark.js',
 
                 # views
                 'js/wiki/view_history.js',
@@ -85,15 +86,17 @@ COMPRESS_JS = {
                 'js/wiki_img/view_editor_objects.js',
                 'js/wiki_img/view_editor_motifs.js',
                 'js/wiki/view_editor_source.js',
+                'js/wiki/view_history.js',
         ),
         'output_filename': 'compressed/detail_img_scripts_?.js',
      },
-    'listing': {
+    'catalogue': {
         'source_filenames': (
-                'js/lib/jquery-1.4.2.min.js',
+                'js/catalogue/catalogue.js',
                 'js/slugify.js',
+                'email_mangler/email_mangler.js',
         ),
-        'output_filename': 'compressed/listing_scripts_?.js',
+        'output_filename': 'compressed/catalogue_scripts_?.js',
      }
 }
 

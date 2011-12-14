@@ -15,38 +15,40 @@
 	 */
 	function reverse() {
 		var vname = arguments[0];
-		var base_path = "/documents";
+		var base_path = "/editor";
 
 		if (vname == "ajax_document_text") {
-			var path = "/" + arguments[1] + "/text";
+			var path = "/text/" + arguments[1] + '/';
 
 		if (arguments[2] !== undefined)
-				path += "/" + arguments[2];
+				path += arguments[2] + '/';
 
 			return base_path + path;
 		}
 
+        if (vname == "ajax_document_revert") {
+            return base_path + "/revert/" + arguments[1] + '/';
+        }
+
+
 		if (vname == "ajax_document_history") {
 
-			return base_path + "/" + arguments[1] + "/history";
+			return base_path + "/history/" + arguments[1] + '/';
 		}
 
 		if (vname == "ajax_document_gallery") {
 
-			return base_path + "/" + arguments[1] + "/gallery";
+			return base_path + "/gallery/" + arguments[1] + '/';
 		}
 
 		if (vname == "ajax_document_diff")
-			return base_path + "/" + arguments[1] + "/diff";
+			return base_path + "/diff/" + arguments[1] + '/';
 
         if (vname == "ajax_document_rev")
-            return base_path + "/" + arguments[1] + "/rev";
+            return base_path + "/rev/" + arguments[1] + '/';
 
-		if (vname == "ajax_document_addtag")
-			return base_path + "/" + arguments[1] + "/tags";
-
-		if (vname == "ajax_publish")
-			return base_path + "/" + arguments[1] + "/publish";
+		if (vname == "ajax_document_pubmark")
+			return base_path + "/pubmark/" + arguments[1] + '/';
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
@@ -57,12 +59,26 @@
 	 */
 	function WikiDocument(element_id) {
 		var meta = $('#' + element_id);
-		this.id = meta.attr('data-document-name');
+		this.id = meta.attr('data-chunk-id');
 
 		this.revision = $("*[data-key='revision']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();
 
 		this.galleryLink = $("*[data-key='gallery']", meta).text();
+        this.galleryStart = parseInt($("*[data-key='gallery-start']", meta).text());
+
+        var diff = $("*[data-key='diff']", meta).text();
+        if (diff) {
+            diff = diff.split(',');
+            if (diff.length == 2 && diff[0] < diff[1])
+                this.diff = diff;
+            else if (diff.length == 1) {
+                diff = parseInt(diff);
+                if (diff != NaN)
+                    this.diff = [diff - 1, diff];
+            }
+        }
+
 		this.galleryImages = [];
 		this.text = null;
 		this.has_local_changes = false;
@@ -188,9 +204,18 @@
 				self.galleryImages = data;
 				params['success'](self, data);
 			},
-			error: function() {
+			error: function(xhr) {
+                switch (xhr.status) {
+                    case 403:
+                        var msg = 'Galerie dostępne tylko dla zalogowanych użytkowników.';
+                        break;
+                    case 404:
+                        var msg = "Nie znaleziono galerii o nazwie: '" + self.galleryLink + "'.";
+                    default:
+                        var msg = "Nie udało się wczytać galerii o nazwie: '" + self.galleryLink + "'.";
+                }
 				self.galleryImages = [];
-				params['failure'](self, "<p>Nie udało się wczytać galerii pod nazwą: '" + self.galleryLink + "'.</p>");
+				params['failure'](self, "<p>" + msg + "</p>");
 			}
 		});
 	};
@@ -229,11 +254,7 @@
 			data[this.name] = this.value;
 		});
 
-		var metaComment = '<!--';
-		metaComment += '\n\tgallery:' + self.galleryLink;
-		metaComment += '\n-->\n'
-
-		data['textsave-text'] = metaComment + self.text;
+		data['textsave-text'] = self.text;
 
 		$.ajax({
 			url: reverse("ajax_document_text", self.id),
@@ -283,37 +304,50 @@
         });
 	}; /* end of save() */
 
-	WikiDocument.prototype.publish = function(params) {
-		params = $.extend({}, noops, params);
-		var self = this;
-		$.ajax({
-			url: reverse("ajax_publish", self.id),
-			type: "POST",
-			dataType: "json",
-			success: function(data) {
-				params.success(self, data);
-			},
-			error: function(xhr) {
-				if (xhr.status == 403 || xhr.status == 401) {
-					params.failure(self, "Nie masz uprawnień lub nie jesteś zalogowany.");
-				}
-				else {
-					try {
-						params.failure(self, xhr.responseText);
-					}
-					catch (e) {
-						params.failure(self, "Nie udało się - błąd serwera.");
-					};
-				};
+    WikiDocument.prototype.revertToVersion = function(params) {
+        var self = this;
+        params = $.extend({}, noops, params);
 
-			}
-		});
-	};
-	WikiDocument.prototype.setTag = function(params) {
+        if (params.revision >= this.revision) {
+            params.failure(self, 'Proszę wybrać rewizję starszą niż aktualna.');
+            return;
+        }
+
+        // Serialize form to dictionary
+        var data = {};
+        $.each(params['form'].serializeArray(), function() {
+            data[this.name] = this.value;
+        });
+
+        $.ajax({
+            url: reverse("ajax_document_revert", self.id),
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function(data) {
+                if (data.text) {
+                    self.text = data.text;
+                    self.revision = data.revision;
+                    self.gallery = data.gallery;
+                    self.triggerDocumentChanged();
+
+                    params.success(self, "Udało się przywrócić wersję :)");
+                }
+                else {
+                    params.failure(self, "Przywracana wersja identyczna z aktualną. Anulowano przywracanie.");
+                }
+            },
+            error: function(xhr) {
+                params.failure(self, "Nie udało się przywrócić wersji - błąd serwera.");
+            }
+        });
+    };
+
+	WikiDocument.prototype.pubmark = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;
 		var data = {
-			"addtag-id": self.id,
+			"pubmark-id": self.id,
 		};
 
 		/* unpack form */
@@ -322,7 +356,7 @@
 		});
 
 		$.ajax({
-			url: reverse("ajax_document_addtag", self.id),
+			url: reverse("ajax_document_pubmark", self.id),
 			type: "POST",
 			dataType: "json",
 			data: data,
@@ -348,6 +382,23 @@
 			}
 		});
 	};
+
+    WikiDocument.prototype.getLength = function(params) {
+        var xml = this.text.replace(/\/(\s+)/g, '<br />$1');
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(xml, 'text/xml');
+        var error = $('parsererror', doc);
+
+        if (error.length > 0) {
+            throw "Not an XML document.";
+        }
+        $.xmlns["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"; 
+        $('rdf|RDF, motyw, pa, pe, pr, pt', doc).remove();
+        var text = $(doc).text();
+        text = $.trim(text.replace(/\s{2,}/g, ' '));
+        return text.length;
+    }
+
 
 	$.wikiapi.WikiDocument = WikiDocument;
 })(jQuery);

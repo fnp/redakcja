@@ -644,12 +644,12 @@
     -->
     <xsl:template match="sekcja_swiatlo">
         <xsl:param name="mixed" />
-        <br><xsl:call-template name="standard-attributes" /></br>
+        <hr><xsl:call-template name="standard-attributes" /></hr>
     </xsl:template>
 
     <xsl:template match="sekcja_asterysk">
         <xsl:param name="mixed" />
-        <hr><xsl:call-template name="standard-attributes" /></hr>
+        <p><xsl:call-template name="standard-attributes" /></p>
     </xsl:template>
 
     <xsl:template match="separator_linia">
@@ -659,7 +659,12 @@
 
     <xsl:template match="zastepnik_wersu">
         <xsl:param name="mixed" />
-        <hr><xsl:call-template name="standard-attributes" /></hr>
+        <span>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+        </span>
     </xsl:template>
 
     <!--
@@ -820,5 +825,16 @@
 			</xsl:choose>               
         </xsl:for-each>
     </xsl:template>
-    
+
+    <xsl:template match="alien">
+            <span class="alien" x-pass-thru="true">
+                <xsl:apply-templates select="node()">
+                    <xsl:with-param name="mixed" select="true()" />
+                </xsl:apply-templates>
+            </span>
+    </xsl:template>
+
+    <xsl:template match="comment()">
+        <xsl:comment><xsl:value-of select="."/></xsl:comment>
+    </xsl:template>
 </xsl:stylesheet>

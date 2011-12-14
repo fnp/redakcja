@@ -196,13 +196,14 @@
     function addSymbol() {
         if($('div.html-editarea textarea')[0]) {
             var specialCharsContainer = $("<div id='specialCharsContainer'><a href='#' id='specialCharsClose'>Zamknij</a><table id='tableSpecialChars' style='width: 600px;'></table></div>");
+                        
             var specialChars = ['Ą','ą','Ć','ć','Ę','ę','Ł','ł','Ń','ń','Ó','ó','Ś','ś','Ż','ż','Ź','ź','Á','á','À','à',
             'Â','â','Ä','ä','Å','å','Ā','ā','Ă','ă','Ã','ã',
             'Æ','æ','Ç','ç','Č','č','Ċ','ċ','Ď','ď','É','é','È','è',
             'Ê','ê','Ë','ë','Ē','ē','Ě','ě','Ġ','ġ','Ħ','ħ','Í','í','Î','î',
             'Ī','ī','Ĭ','ĭ','Ľ','ľ','Ñ','ñ','Ň','ň','Ó','ó','Ö','ö',
             'Ô','ô','Ō','ō','Ǒ','ǒ','Œ','œ','Ø','ø','Ř','ř','Š',
-            'š','Ş','ş','Ť','ť','Ţ','ţ','Ű','ű','Ú','ú',
+            'š','Ş','ş','Ť','ť','Ţ','ţ','Ű','ű','Ú','ú','Ù','ù',
             'Ü','ü','Ů','ů','Ū','ū','Û','û','Ŭ','ŭ',
             'Ý','ý','Ž','ž','ß','Ð','ð','Þ','þ','А','а','Б',
             'б','В','в','Г','г','Д','д','Е','е','Ё','ё','Ж',
@@ -217,7 +218,7 @@
             'Τ','τ','Υ','υ','Φ','φ','Χ','χ','Ψ','ψ','Ω','ω','–',
             '—','¡','¿','$','¢','£','€','©','®','°','¹','²','³',
             '¼','½','¾','†','§','‰','•','←','↑','→','↓',
-            '„”','«»','’','[',']','[','~','|','−','·',
+            '„','”','„”','«','»','«»','»«','’','[',']','~','|','−','·',
             '×','÷','≈','≠','±','≤','≥','∈'];
             var tableContent = "<tr>";
             
@@ -230,12 +231,82 @@
             
             tableContent += "</tr>";                                   
             $("#content").append(specialCharsContainer);
+            
+            
+             // localStorage for recently used characters - reading
+             if (typeof(localStorage) != 'undefined') {
+                 if (localStorage.getItem("recentSymbols")) {
+                     var recent = localStorage.getItem("recentSymbols");
+                     var recentArray = recent.split(";");
+                     var recentRow = "";
+                     for(var i in recentArray.reverse()) {
+                        recentRow += "<td><input type='button' class='specialBtn recentSymbol' value='"+recentArray[i]+"'/></td>";              
+                     }
+                     recentRow = "<tr>" + recentRow + "</tr>";                              
+                 }
+             }            
+            $("#tableSpecialChars").append(recentRow);
             $("#tableSpecialChars").append(tableContent);
             
             /* events */
             
             $('.specialBtn').click(function(){
-                insertAtCaret($('div.html-editarea textarea')[0], $(this).val());
+                var editArea = $('div.html-editarea textarea')[0];
+                var insertVal = $(this).val();
+                
+                // if we want to surround text with quotes
+                // not sure if just check if value has length == 2
+                
+                if (insertVal.length == 2) {
+                    var startTag = insertVal[0];
+                    var endTag = insertVal[1];
+			        var textAreaOpened = editArea;			                                
+			        //IE support
+		                if (document.selection) {
+		                    textAreaOpened.focus();
+		                    sel = document.selection.createRange();
+		                    sel.text = startTag + sel.text + endTag;
+		                }
+		                //MOZILLA/NETSCAPE support
+		                else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+		                    var startPos = textAreaOpened.selectionStart;
+		                    var endPos = textAreaOpened.selectionEnd;
+		                    textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+				          + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+		                }                
+                } else {
+                    // if we just want to insert single symbol
+                    insertAtCaret(editArea, insertVal);
+                }
+                
+                // localStorage for recently used characters - saving
+                if (typeof(localStorage) != 'undefined') {
+                    if (localStorage.getItem("recentSymbols")) {
+                        var recent = localStorage.getItem("recentSymbols");
+                        var recentArray = recent.split(";");
+                        var valIndex = $.inArray(insertVal, recentArray);
+                        //alert(valIndex);
+                        if(valIndex == -1) {
+                            // value not present in array yet
+                            if(recentArray.length > 13){
+                                recentArray.shift();
+                                recentArray.push(insertVal);
+                            } else {
+                                recentArray.push(insertVal);
+                            }
+                        } else  {
+                            // value already in the array
+                            for(var i = valIndex; i < recentArray.length; i++){
+                                recentArray[i] = recentArray[i+1];
+                            }
+                            recentArray[recentArray.length-1] = insertVal;
+                        }
+                        localStorage.setItem("recentSymbols", recentArray.join(";"));
+                    } else {
+                        localStorage.setItem("recentSymbols", insertVal);
+                    }
+                }
+                
                 $(specialCharsContainer).remove();
             });         
             $('#specialCharsClose').click(function(){
@@ -305,7 +376,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -396,12 +467,10 @@
                         }
                     })
                     
-                    var msg = $("<div class='saveNotify'><p>Twoje zmiany zostały naniesione na tekst źródłowy. Pamiętaj, że aby zmiany zostały utrwalone <span>należy je zapisać</span>!</p><p class='notifyTip'>Ta wiadomość zostanie automatycznie zamknięta za 6 sekund.</p></div>");
+                    var msg = $("<div class='saveNotify'><p>Pamiętaj, żeby zapisać swoje zmiany.</p></div>");
                     $("#base").prepend(msg);
-                    $("#save-button").css({border: '2px solid #801000', backgroundColor: '#E1C1C1'});
-                    $('#base .saveNotify').fadeOut(7000, function(){
+                    $('#base .saveNotify').fadeOut(3000, function(){
                         $(this).remove(); 
-                        $("#save-button").css({border: '1px solid black'});
                     });
                 }
 
@@ -420,7 +489,11 @@
 			} else if (buttonName == "tytuł dzieła") {
 				startTag = "<tytul_dziela>";
 				endTag = "</tytul_dziela>";
+			} else if(buttonName == "znak spec."){
+			    addSymbol();
+			    return false;
 			}
+			
 			var myField = textAreaOpened;			
                         
 			//IE support
@@ -493,12 +566,7 @@
                 $('#insert-theme-button').click(function(){
                     addTheme();
                     return false;
-                });
-                
-                $('#insert-symbol-button').click(function(){
-                    addSymbol();
-                    return false;
-                });                
+                });            
 
                 $('.edit-button').live('click', function(event){
                     event.preventDefault();
@@ -569,7 +637,8 @@
             return _finalize(failure);
 
         html2text({
-            element: $('#html-view div').get(0),
+            element: $('#html-view').get(0),
+            stripOuter: true,
             success: function(text){
                 self.doc.setText(text);
                 _finalize(success);

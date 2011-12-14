@@ -1,0 +1,14 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block leftcolumn %}
+	<form enctype="multipart/form-data" method="POST" action="">
+    {% csrf_token %}
+	{{ form.as_p }}
+
+	<p><button type="submit">{% trans "Append book" %}</button></p>
+	</form>
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+{% endblock rightcolumn %}

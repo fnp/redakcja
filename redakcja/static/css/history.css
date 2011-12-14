@@ -79,15 +79,14 @@ table#changes-list-container {
     font-weight: bold;
 }
 
-#changes-list td[data-stub-value =
-'version'] {
+#changes-list td {
     vertical-align: text-top;
 }
 
-#changes-list *[data-stub-value =
-'date'], #changes-list *[data-stub-value = 'author'] {
-    font-size: 11px;
+#changes-list *[data-stub-value = 'description'] {
+    font-size: .8em;
     color: gray;
+    white-space: pre-line;
 }
 
 /*

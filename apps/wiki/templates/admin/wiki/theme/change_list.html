@@ -1,0 +1,28 @@
+{% extends "admin/change_list.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("#redmine-table-switch").click(function() {
+            $('#redmine-table').toggle()
+        });
+    });
+})(django.jQuery);
+</script>
+{% endblock %}
+
+
+
+{% block pretitle %}
+
+
+<a id="redmine-table-switch">↓ {% trans "Table for Redmine wiki" %} ↓</a>
+<div id="redmine-table" style="display:none; padding:1em; border: 1px solid #aaa;">
+    |{% for theme in cl.get_query_set %}[[{{ theme }}]]|{% if forloop.counter|divisibleby:7 %}<br/>
+        |{% endif %}{% endfor %}
+</div>
+
+{{ block.super }}
+{% endblock %}

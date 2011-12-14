@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{% if book.single %}
+    {% with book.0 as chunk %}
+    <tr>
+        <td><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+        <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
+        <td><a target="_blank"
+                    href="{% url wiki_editor book.slug %}">
+                    {{ book.title }}</a></td>
+        <td>{% if chunk.stage %}
+            {{ chunk.stage }}
+        {% else %}–
+        {% endif %}</td>
+        <td class='user-column'>{% if chunk.user %}<a href="{% url catalogue_user chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
+        <td>
+            {% if chunk.published %}P{% endif %}
+            {% if book.new_publishable %}p{% endif %}
+            {% if chunk.changed %}+{% endif %}
+        </td>
+    </tr>
+    {% endwith %}
+{% else %}
+    <tr>
+        <td class='book-settings-link'><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+        <td></td>
+        <td>{{ book.title }}</td>
+        <td></td>
+        <td class='user-column'></td>
+        <td>
+            {% if book.published %}P{% endif %}
+            {% if book.new_publishable %}p{% endif %}
+        </td>
+    </tr>
+{% endif %}

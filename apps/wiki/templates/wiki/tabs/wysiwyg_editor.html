@@ -4,15 +4,12 @@
     </div>
 
 	<div class="toolbar">
-    	{% if not document_info.readonly %}
+    	{% if not readonly %}
         <button id="insert-theme-button">
             {% trans "Insert theme" %}
         </button>
         <button id="insert-annotation-button">
             {% trans "Insert annotation" %}
-        </button>
-        <button id="insert-symbol-button">
-            {% trans "Insert special character" %}
         </button>
 		{% endif %}
         <div class="toolbar-end">

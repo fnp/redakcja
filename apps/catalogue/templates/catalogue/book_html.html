@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load compressed %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>{{ book.title }}</title>
+    </head>
+    <body>
+        <div id="menu">
+            <ul>
+                <li><a href="#toc">{% trans "Table of contents" %}</a></li>
+                <li><a href="#nota_red">{% trans "Edit. note" %}</a></li>
+                <li><a href="#info">{% trans "Infobox" %}</a></li>
+            </ul>
+        </div>
+        <div id="info">
+            {#% book_info book %#}
+        </div>
+        <div id="header">
+            <div id="logo">
+                <a href="/"><img src="http://static.wolnelektury.pl/img/logo.png" alt="WolneLektury.pl - logo" /></a>
+            </div>
+        </div>
+
+        {{ html|safe }}
+
+    </body>
+</html>

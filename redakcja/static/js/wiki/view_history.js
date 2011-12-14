@@ -5,18 +5,32 @@
 
 		options.callback = function() {
 			var self = this;
+            if (CurrentDocument.diff) {
+                rev_from = CurrentDocument.diff[0];
+                rev_to = CurrentDocument.diff[1];
+                this.doc.fetchDiff({
+                    from: rev_from,
+                    to: rev_to,
+                    success: function(doc, data){
+                        var result = $.wiki.newTab(doc, ''+rev_from +' -> ' + rev_to, 'DiffPerspective');
+
+                        $(result.view).html(data);
+                        $.wiki.switchToTab(result.tab);
+                    }
+                });
+            }
 
 			// first time page is rendered
         	$('#make-diff-button').click(function() {
 				self.makeDiff();
 			});
 
-			$('#tag-changeset-button').click(function() {
-				self.showTagForm();
+			$('#pubmark-changeset-button').click(function() {
+				self.showPubmarkForm();
 			});
 
 	        $('#doc-revert-button').click(function() {
-	            self.revertDocumentToVersion();
+	            self.revertDialog();
 	        });
 
 			$('#open-preview-button').click(function(event) {
@@ -109,9 +123,9 @@
 					stub: $stub,
 					data: this,
 					filters: {
-						tag: function(value) {
-							return tags.filter("*[value='"+value+"']").text();
-						}
+//						tag: function(value) {
+//							return tags.filter("*[value='"+value+"']").text();
+//						}
 //                        description: function(value) {
 //						    return value.replace('\n', ');
 //						}
@@ -128,7 +142,7 @@
         });
     };
 
-	HistoryPerspective.prototype.showTagForm = function(){
+	HistoryPerspective.prototype.showPubmarkForm = function(){
 		var selected = $('#changes-list .entry.selected');
 
 		if (selected.length != 1) {
@@ -137,7 +151,7 @@
         }
 
 		var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
-		$.wiki.showDialog('#add_tag_dialog', {'revision': version});
+		$.wiki.showDialog('#pubmark_dialog', {'revision': version});
 	};
 
 	HistoryPerspective.prototype.makeDiff = function() {
@@ -172,7 +186,8 @@
         });
     };
 
-    HistoryPerspective.prototype.revertDocumentToVersion = function(){
+    HistoryPerspective.prototype.revertDialog = function(){
+        var self = this;
         var selected = $('#changes-list .entry.selected');
 
         if (selected.length != 1) {
@@ -181,7 +196,7 @@
         }
 
         var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
-        this.doc.revertToVersion({'revision': version});
+        $.wiki.showDialog('#revert_dialog', {revision: version});
     };
 
     $.wiki.HistoryPerspective = HistoryPerspective;

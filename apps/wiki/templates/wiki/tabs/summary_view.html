@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load wiki %}
 <div id="summary-view-editor" class="editor" style="display: none">
     <!-- <div class="toolbar">
     </div> -->
@@ -9,25 +8,29 @@
 		<h2>
 			<label for="title">{% trans "Title" %}:</label>
 			<span data-ui-editable="true" data-edit-target="meta.displayTitle"
-			>{{ document.name|wiki_title }}</span>
+			>{{ chunk.pretty_name }}</span>
 		</h2>
+        <p><a href="{{ chunk.book.get_absolute_url }}">{% trans "Go to the book's page" %}</a>
+        </p>
 		<p>
 			<label>{% trans "Document ID" %}:</label>
-			<span>{{ document.name }}</span>
+			<span>{{ chunk.book.slug }}/{{ chunk.slug }}</span>
 		</p>
 		<p>
 			<label>{% trans "Current version" %}:</label>
-			{{ document_info.revision }} ({{document_info.date}})
+			{{ chunk.revision }} ({{ chunk.head.created_at }})
 		<p>
 			<label>{% trans "Last edited by" %}:</label>
-			{{document_info.author}}
+			{{ chunk.head.author }}
 		</p>
 		<p>
 			<label for="gallery">{% trans "Link to gallery" %}:</label>
 			<span data-ui-editable="true" data-edit-target="meta.galleryLink"
-			>{{ document_meta.gallery}}</span>
+			>{{ chunk.book.gallery }}</span>
 		</p>
-
-		<p><button type="button" id="publish_button">{% trans "Publish" %}</button></p>
+		<p>
+		    <label>{% trans "Characters in document" %}:</label>
+		    <span id="charcount"></span> (<span id="charcount_pages"></span> {% trans "pages" %}<span id="charcount_untagged">, {% trans "untagged" %}</span>)
+		</p>
 	</div>
 </div>

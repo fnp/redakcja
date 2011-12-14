@@ -7,40 +7,97 @@
 */
 
 body {
-	background-color: #84BF2A;
+    margin: 0;
+    font-family: verdana, sans-serif;
+    font-size: 10px;
+}
+
+img {
+    border: 0;
+}
+
+th {
+    text-align: left;
+}
+
+td {
+    vertical-align: top;
+    padding: 0 3px;
+}
+.clr {
+    clear: both;
+}
+
+#tabs-nav {
+    padding: 5px 5px 0 10px;
+    background: #ffdfbf;
+    border-bottom: 1px solid #ff8000;
+    position: relative;
+}
+
+#tabs-nav-left {
+    margin-left: 60px;
+}
+
+#tabs-nav-left a {
+    display: block;
+    float: left;
+    padding: 5px 20px 5px 20px;
+    margin-bottom: -1px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0);
+}
+
+#tabs-nav-left .active {
+    background: white;
+    border-color: #ff8000 #ff8000 white #ff8000;
+}
+
+.section {
+    border-top: 1px solid #ffdfbf;
+    margin-top: 2em;
+    padding-top: 1em;
+}
+
+.editable td {
+    padding: 1px;
+}
+.editable input, .editable select, .editable textarea {
+    width: 400px;
+}
+.editable .number-input {
+    width: 100px;
+}
+
+
+#login-box {
+    float: right;
+}
+
+#logo {
+    position: absolute;
+    bottom: 0;
 }
 
 #content {
-    background: #EFEFEF;
-    border: 1px solid black;
-    padding: 0.5em 2em;
-    margin: 1em;
-	overflow: hidden;
+    padding: 10px;
 }
 
-#content h1 img {
-	vertical-align: middle;
-}
 
-#content h1 {
-	border-bottom: 2px solid black;
-	padding: 0.5em;
-	font-size: 2opt;
-	font-family: sans-serif;
-}
 
-#file-list {
+#catalogue_layout_left_column {
 	overflow: visible;
 	float: left;
-	max-width: 50%;
+	max-width: 60%;
 	padding-right: 2%;
 	border-right: 1px dashed black;
 
 }
 
-#last-edited-list {
+#catalogue_layout_right_column {
 	float: left;
-	max-width: 35%;
+	max-width: 30%;
 	margin-left: 5%;
 }
 
@@ -58,7 +115,7 @@ body {
 }
 
 a, a:visited, a:active {
-	color: blue;
+	color: #bf6000;
 	text-decoration: none;
 }
 
@@ -67,9 +124,6 @@ a:hover {
 }
 
 
-#loading-overlay {
-	display: none;
-}
 
 .error {
     color: red;
@@ -86,4 +140,87 @@ a:hover {
 
 #skipped-list {
     color: #666;
+}
+
+.chunkno {
+    font-size: .7em;
+    padding-left: 2em;
+}
+
+
+/* Big cheesy publish button */
+#publish-button {
+        color: black;
+        border: 2px solid black; 
+        border-radius: 20px;
+        box-shadow: 0px 0px 15px #88f;
+        /*moz-border-radius: 20px;
+        -moz-box-shadow: 10px 10px 5px #888;*/
+        font-size:1.5em; 
+        padding: 1em; 
+        background: -moz-linear-gradient(top,  #fff,  #44f);
+        -moz-transition: all 0.5s ease-in-out;        
+        margin: 20px;
+}
+
+#publish-button:hover {
+    -moz-transition: all 0.5s ease-in-out;        
+    -moz-transform: scale(1.1);
+    background: -moz-linear-gradient(top,  #fff,  #88f);
+    -moz-box-shadow: 0px 0px 30px #ff8;
+}
+
+#publish-button:active {
+    background: -moz-linear-gradient(top,  #88f,  #fff);
+}
+
+
+/* book list */
+
+.book-search-column input {
+    width: 96%;
+}
+
+.book-list-user .user-column {
+    display: none;
+}
+
+
+/* wall */
+.wall {
+    padding-left: 0;
+    list-style: none;
+}
+
+.wall li {
+    clear: left;
+    border-top: 1px dotted gray;
+    padding: 0 1em 2em 1em;
+    margin-bottom: 0;
+}
+
+.wall .gravatar {
+    float: left;
+    margin-right: 1em;
+    margin-left: -1em;
+}
+.wall h3 {
+    font-size: 1.25em;
+    margin-top: 0;
+}
+
+.wall .time {
+    /* float:right; */
+}
+
+.wall .anonymous {
+    background-color: #efa;
+}
+
+.wall .comment {
+    background-color: #dfc;
+}
+
+.wall .publish {
+    background-color: #fdc;
 }

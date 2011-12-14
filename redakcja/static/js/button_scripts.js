@@ -48,6 +48,11 @@ function ScriptletCenter()
 {
     this.scriptlets = {};
 
+    this.scriptlets['insert_text'] = function(context, params, text, move_forward, move_up, done)
+    {
+        done(params.text, move_forward, move_up);
+    }.bind(this);
+
     this.scriptlets['insert_tag'] = function(context, params, text, move_forward, move_up, done)
     {
         var padding_top = '';
@@ -241,38 +246,51 @@ function ScriptletCenter()
     {
         if(!text.match(/^\n+$/)) done(text, move_forward, move_up);
 
-        function insert_done(output, mf) {
-            text += output;
+        var output = '';
+
+        function insert_done(text, mf, mu) {
+            output += text;
         }
 
         if (!params.split) params.split = 2;
         if (!params.padding) params.padding = 3;
-
-        chunks = text.replace(/^\n+|\n+$/, '').split(new RegExp("\\n{"+params.split+",}"));
-        text = text.match(/^\n+/);
-        if (!text)
-            text = '';
-        padding = '';
-        for(; params.padding; params.padding--) {
-            padding += "\n";
-        }
 
         if (params.tag == 'strofa')
             tagger = this.scriptlets['insert_stanza'];
         else
             tagger = this.scriptlets['insert_tag'];
 
-        for (i in chunks) {
-            if (chunks[i]) {
-                if (params.tag == 'akap' && chunks[i].match(/^---/))
-                    tag = 'akap_dialog';
-                else tag = params.tag;
-                tagger(context, {tag: tag}, chunks[i], 0, 0, insert_done);
-                text += padding;
-            }
+        var padding_top = text.match(/^\n+/)
+        output = padding_top ? padding_top[0] : '';
+
+        padding = '';
+        for(var i=params.padding; i; --i) {
+            padding += "\n";
         }
 
-        done(text, move_forward, move_up);
+        text = text.substr(output.length);
+        var chunk_reg = new RegExp("^([\\s\\S]+?)(\\n{"+params.split+",}|$)");
+        while (match = text.match(chunk_reg)) {
+            if (params.tag == 'akap' && match[1].match(/^---/))
+                tag = 'akap_dialog';
+            else tag = params.tag;
+            tagger(context, {tag: tag}, match[1], 0, 0, insert_done);
+            if (match[2].length > params.padding)
+                output += match[2];
+            else
+                output += padding;
+            text = text.substr(match[0].length)
+        }
+
+        output += text;
+
+        done(output, move_forward, move_up);
+    }.bind(this);
+
+
+    this.scriptlets['slugify'] = function(context, params, text, move_forward, move_up, done)
+    {
+        done(slugify(text.replace(/_/g, '-')), move_forward, move_up);
     }.bind(this);
 
 }

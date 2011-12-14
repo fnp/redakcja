@@ -1,0 +1,17 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load url from future %}
+{% load wall %}
+
+
+{% block content %}
+
+<h1><a href='{% url "catalogue_activity" prev_day.isoformat %}'>&lt;</a>
+    {% trans "Activity" %}: {{ day }}
+    {% if next_day %}
+        <a href='{% url "catalogue_activity" next_day.isoformat %}'>&gt;</a>
+    {% endif %}
+</h1>
+
+    {% day_wall day %}
+{% endblock content %}

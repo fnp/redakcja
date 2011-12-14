@@ -9,7 +9,7 @@
 # Pliki wyjściowe zapisywane są obok plików źródłowych, z rozszerzeniem
 # zmienionym na .png.
 
-find . -iname '*.tiff' -print0 | while read -d $'\0' file 
+find . -iregex '.*\.tiff?' -print0 | while read -d $'\0' file 
 do
 	echo "$file"
 	convert "$file" -depth 7 -resize 640x960 png:- | pngnq -n 128 -s 1 > "${file%.tiff}.png"

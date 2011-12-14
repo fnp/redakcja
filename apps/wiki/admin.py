@@ -2,4 +2,7 @@ from django.contrib import admin
 
 from wiki import models
 
-#admin.site.register(models.Theme)
+class ThemeAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+admin.site.register(models.Theme, ThemeAdmin)

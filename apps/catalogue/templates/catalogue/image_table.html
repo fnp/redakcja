@@ -1,0 +1,69 @@
+{% load i18n %}
+{% load pagination_tags %}
+
+
+<form name='filter' action=''>
+<input type='hidden' name="title" value="{{ request.GET.title }}" />
+<input type='hidden' name="stage" value="{{ request.GET.stage }}" />
+{% if not viewed_user %}
+    <input type='hidden' name="user" value="{{ request.GET.user }}" />
+{% endif %}
+<input type='hidden' name="status" value="{{ request.GET.status }}" />
+</form>
+
+<table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
+    <thead><tr>
+        <th></th>
+        <th class='book-search-column'>
+            <form>
+            <input title='{% trans "Search in book titles" %}' name="title"
+                class='text-filter' value="{{ request.GET.title }}" />
+            </form>
+        </th>
+        <th><select name="stage" class="filter">
+            <option value=''>- {% trans "stage" %} -</option>
+            <option {% if request.GET.stage == '-' %}selected="selected"
+                    {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for stage in stages %}
+                <option {% if request.GET.stage == stage.slug %}selected="selected"
+                    {% endif %}value="{{ stage.slug }}">{{ stage.name }}</option>
+            {% endfor %}
+        </select></th>
+
+        {% if not viewed_user %}
+            <th><select name="user" class="filter">
+                <option value=''>- {% trans "editor" %} -</option>
+                <option {% if request.GET.user == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+                {% for user in users %}
+                    <option {% if request.GET.user == user.username %}selected="selected"
+                        {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                {% endfor %}
+            </select></th>
+        {% endif %}
+
+        <th><select name="status" class="filter">
+            <option value=''>- {% trans "status" %} -</option>
+            {% for state, label in states %}
+                <option {% if request.GET.status == state %}selected="selected"
+                        {% endif %}value='{{ state }}'>{{ label }}</option>
+            {% endfor %}
+        </select></th>
+
+    </tr></thead>
+
+    {% with cnt=objects|length %}
+    {% autopaginate objects 100 %}
+    <tbody>
+    {% for item in objects %}
+        {{ item.short_html|safe }}
+    {% endfor %}
+    <tr><th class='paginator' colspan="5">
+        {% paginate %}
+        {% blocktrans count c=cnt %}{{c}} image{% plural %}{{c}} images{% endblocktrans %}</th></tr>
+    </tbody>
+    {% endwith %}
+</table>
+{% if not objects %}
+    <p>{% trans "No images found." %}</p>
+{% endif %}
