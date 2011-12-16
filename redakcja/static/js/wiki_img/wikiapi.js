@@ -21,23 +21,19 @@
 			return base_path + "/text/" + arguments[1] + "/";
 		}
 
+        if (vname == "ajax_document_revert") {
+            return base_path + "/revert/" + arguments[1] + '/';
+        }
+
 		if (vname == "ajax_document_history") {
-
-			return base_path + "/history/" + arguments[1] + "/";
+			return base_path + "/history/" + arguments[1] + '/';
 		}
-*/
-/*
+
 		if (vname == "ajax_document_diff")
-			return base_path + "/" + arguments[1] + "/diff";
+			return base_path + "/diff/" + arguments[1] + '/';
 
-        if (vname == "ajax_document_rev")
-            return base_path + "/" + arguments[1] + "/rev";
-
-		if (vname == "ajax_document_addtag")
-			return base_path + "/" + arguments[1] + "/tags";
-
-		if (vname == "ajax_publish")
-			return base_path + "/" + arguments[1] + "/publish";*/
+		if (vname == "ajax_document_pubmark")
+			return base_path + "/pubmark/" + arguments[1] + '/';
 
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
@@ -123,6 +119,29 @@
 			}
 		});
 	};
+	WikiDocument.prototype.fetchDiff = function(params) {
+		/* this doesn't modify anything, so no locks */
+		var self = this;
+		params = $.extend({
+			'from': self.revision,
+			'to': self.revision
+		}, noops, params);
+		$.ajax({
+			method: "GET",
+			url: reverse("ajax_document_diff", self.id),
+			dataType: 'html',
+			data: {
+				"from": params['from'],
+				"to": params['to']
+			},
+			success: function(data) {
+				params['success'](self, data);
+			},
+			error: function() {
+				params['failure'](self, "Nie udało się wczytać porównania wersji.");
+			}
+		});
+	};
 
 	/*
 	 * Set document's text
@@ -200,37 +219,50 @@
         });
 	}; /* end of save() */
 
-	WikiDocument.prototype.publish = function(params) {
-		params = $.extend({}, noops, params);
-		var self = this;
-		$.ajax({
-			url: reverse("ajax_publish", self.id),
-			type: "POST",
-			dataType: "json",
-			success: function(data) {
-				params.success(self, data);
-			},
-			error: function(xhr) {
-				if (xhr.status == 403 || xhr.status == 401) {
-					params.failure(self, "Nie masz uprawnień lub nie jesteś zalogowany.");
-				}
-				else {
-					try {
-						params.failure(self, xhr.responseText);
-					}
-					catch (e) {
-						params.failure(self, "Nie udało się - błąd serwera.");
-					};
-				};
+    WikiDocument.prototype.revertToVersion = function(params) {
+        var self = this;
+        params = $.extend({}, noops, params);
 
-			}
-		});
-	};
-	WikiDocument.prototype.setTag = function(params) {
+        if (params.revision >= this.revision) {
+            params.failure(self, 'Proszę wybrać rewizję starszą niż aktualna.');
+            return;
+        }
+
+        // Serialize form to dictionary
+        var data = {};
+        $.each(params['form'].serializeArray(), function() {
+            data[this.name] = this.value;
+        });
+
+        $.ajax({
+            url: reverse("ajax_document_revert", self.id),
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function(data) {
+                if (data.text) {
+                    self.text = data.text;
+                    self.revision = data.revision;
+                    self.gallery = data.gallery;
+                    self.triggerDocumentChanged();
+
+                    params.success(self, "Udało się przywrócić wersję :)");
+                }
+                else {
+                    params.failure(self, "Przywracana wersja identyczna z aktualną. Anulowano przywracanie.");
+                }
+            },
+            error: function(xhr) {
+                params.failure(self, "Nie udało się przywrócić wersji - błąd serwera.");
+            }
+        });
+    };
+
+	WikiDocument.prototype.pubmark = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;
 		var data = {
-			"addtag-id": self.id,
+			"pubmark-id": self.id,
 		};
 
 		/* unpack form */
@@ -239,7 +271,7 @@
 		});
 
 		$.ajax({
-			url: reverse("ajax_document_addtag", self.id),
+			url: reverse("ajax_document_pubmark", self.id),
 			type: "POST",
 			dataType: "json",
 			data: data,
@@ -266,6 +298,8 @@
 		});
 	};
 
+
+
     WikiDocument.prototype.getImageItems = function(tag) {
         var self = this;
 
@@ -278,15 +312,30 @@
         }
 
         var a = [];
-        $(tag, doc).each(function(i, e) {
+        $('sem[type="'+tag+'"]', doc).each(function(i, e) {
             var $e = $(e);
-            a.push([
-                $e.text(),
-                $e.attr('x1'),
-                $e.attr('y1'),
-                $e.attr('x2'),
-                $e.attr('y2')
-            ]);
+            var $div = $e.children().first()
+            var value = $e.attr(tag);
+            $e.find('div').each(function(i, div) {
+                var $div = $(div);
+                switch ($div.attr('type')) {
+                    case 'area':
+                        a.push([
+                            value,
+                            $div.attr('x1'),
+                            $div.attr('y1'),
+                            $div.attr('x2'),
+                            $div.attr('y2')
+                        ]);
+                        break;
+                    case 'whole':
+                        a.push([
+                            value,
+                            null, null, null, null
+                        ]);
+                        break
+                }
+            });
         });
 
         return a;
@@ -304,20 +353,27 @@
             return null;
         }
 
-        $(tag, doc).remove();
+        $('sem[type="'+tag+'"]', doc).remove();
         $root = $(doc.firstChild);
         $.each(items, function(i, e) {
-            var el = $(doc.createElement(tag));
-            el.text(e[0]);
-            if (e[1] !== null) {
-                el.attr('x1', e[1]);
-                el.attr('y1', e[2]);
-                el.attr('x2', e[3]);
-                el.attr('y2', e[4]);
+            var $sem = $(doc.createElement("sem"));
+            $sem.attr('type', tag);
+            $sem.attr(tag, e[0]);
+            $div = $(doc.createElement("div"));
+            if (e[1]) {
+                $div.attr('type', 'area');
+                $div.attr('x1', e[1]);
+                $div.attr('y1', e[2]);
+                $div.attr('x2', e[3]);
+                $div.attr('y2', e[4]);
             }
-            $root.append(el);
+            else {
+                $div.attr('type', 'whole');
+            }
+            $sem.append($div);
+            $root.append($sem);
         });
-        self.setText(serializer.serializeToString(doc));
+        self.setText(XML(serializer.serializeToString(doc)).toXMLString());
     }
 
 

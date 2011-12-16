@@ -75,18 +75,19 @@ COMPRESS_JS = {
 
                 # base UI
                 'js/wiki_img/base.js',
-                'js/wiki_img/toolbar.js',
+                'js/wiki/toolbar.js',
 
                 # dialogs
-                'js/wiki_img/dialog_save.js',
-                'js/wiki_img/dialog_addtag.js',
+                'js/wiki/dialog_save.js',
+                'js/wiki/dialog_revert.js',
+                'js/wiki/dialog_pubmark.js',
 
                 # views
-                'js/wiki_img/view_summary.js',
                 'js/wiki_img/view_editor_objects.js',
                 'js/wiki_img/view_editor_motifs.js',
                 'js/wiki/view_editor_source.js',
                 'js/wiki/view_history.js',
+                'js/wiki/view_column_diff.js',
         ),
         'output_filename': 'compressed/detail_img_scripts_?.js',
      },

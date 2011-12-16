@@ -8,6 +8,7 @@ if (!window.console) {
 
 DEFAULT_PERSPECTIVE = "#MotifsPerspective";
 
+
 $(function()
 {
 	var tabs = $('ol#tabs li');
@@ -37,10 +38,11 @@ $(function()
 			p.destroy();
 			return false;
         });
-
+/*
         $(window).resize(function(){
             $('iframe').height($(window).height() - $('#tabs').outerHeight() - $('#source-editor .toolbar').outerHeight());
         });
+        */
 
 		$(document).bind('wlapi_document_changed', function(event, doc) {
 			try {
@@ -55,8 +57,6 @@ $(function()
 				console.log("Fetch success");
 				$('#loading-overlay').fadeOut();
 				var active_tab = document.location.hash || DEFAULT_PERSPECTIVE;
-
-				$(window).resize();
 
 				console.log("Initial tab is:", active_tab)
 				$.wiki.switchToTab(active_tab);

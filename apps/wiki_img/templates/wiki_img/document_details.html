@@ -25,7 +25,11 @@
 {% endblock %}
 
 {% block dialogs %}
-    {% include "wiki_img/save_dialog.html" %}
+    {% include "wiki/save_dialog.html" %}
+    {% include "wiki/revert_dialog.html" %}
+    {% if can_pubmark %}
+        {% include "wiki/pubmark_dialog.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block editor-class %}

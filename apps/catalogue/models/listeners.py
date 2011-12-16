@@ -39,16 +39,25 @@ models.signals.post_save.connect(user_changed, sender=User)
 
 
 def publish_listener(sender, *args, **kwargs):
-    sender.book.touch()
-    for c in sender.book:
+    sender.touch()
+    for c in sender:
         c.touch()
-post_publish.connect(publish_listener)
+post_publish.connect(publish_listener, sender=Book)
 
+def publish_listener(sender, *args, **kwargs):
+    sender.touch()
+post_publish.connect(publish_listener, sender=Image)
+
+
+def chunk_publishable_listener(sender, *args, **kwargs):
+    sender.tree.touch()
+    if isinstance(sender.tree, Chunk):
+        sender.tree.book.touch()
+post_publishable.connect(chunk_publishable_listener)
 
 def publishable_listener(sender, *args, **kwargs):
     sender.tree.touch()
-    sender.tree.book.touch()
-post_publishable.connect(publishable_listener)
+post_publishable.connect(publishable_listener, sender=Image)
 
 
 def listener_create(sender, instance, created, **kwargs):
