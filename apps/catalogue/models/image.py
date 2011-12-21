@@ -69,7 +69,9 @@ class Image(dvcs_models.Document):
                 """Returns own file object. Ignores slug ad mime_type."""
                 return open(self.image.path)
 
-        picture_xml = self.publishable().materialize()
+        publishable = self.publishable()
+        assert publishable, _("There is no publishable revision")
+        picture_xml = publishable.materialize()
 
         try:
             picture = WLPicture.from_string(picture_xml.encode('utf-8'),
