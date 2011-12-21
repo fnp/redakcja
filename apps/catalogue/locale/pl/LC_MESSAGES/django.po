@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-14 15:25+0100\n"
-"PO-Revision-Date: 2011-12-14 15:27+0100\n"
+"POT-Creation-Date: 2011-12-21 12:44+0100\n"
+"PO-Revision-Date: 2011-12-21 12:45+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
@@ -60,66 +60,70 @@ msgstr "Dokument o tym slugu już istnieje w repozytorium."
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:23
+#: models/book.py:21
 #: models/chunk.py:23
-#: models/image.py:20
+#: models/image.py:21
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:24
+#: models/book.py:22
 #: models/chunk.py:24
-#: models/image.py:21
+#: models/image.py:22
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:25
-#: models/image.py:22
+#: models/book.py:23
+#: models/image.py:23
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:26
+#: models/book.py:24
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: models/book.py:29
+#: models/book.py:27
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:30
+#: models/book.py:28
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:46
+#: models/book.py:44
 #: models/chunk.py:21
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:47
+#: models/book.py:45
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:222
+#: models/book.py:220
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:226
+#: models/book.py:224
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:235
+#: models/book.py:233
+#: models/image.py:80
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:237
+#: models/book.py:235
+#: models/image.py:82
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:239
+#: models/book.py:237
+#: models/image.py:84
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:242
+#: models/book.py:240
+#: models/image.py:88
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -139,15 +143,19 @@ msgstr "część"
 msgid "chunks"
 msgstr "części"
 
-#: models/image.py:19
-#: models/image.py:33
+#: models/image.py:20
+#: models/image.py:34
 #: models/publish_log.py:45
 msgid "image"
 msgstr "obraz"
 
-#: models/image.py:34
+#: models/image.py:35
 msgid "images"
 msgstr "obrazy"
+
+#: models/image.py:73
+msgid "There is no publishable revision"
+msgstr "Żadna wersja nie została oznaczona do publikacji."
 
 #: models/publish_log.py:18
 #: models/publish_log.py:46
@@ -219,11 +227,13 @@ msgid "Chunks"
 msgstr "Części"
 
 #: templates/catalogue/book_detail.html:42
+#: templates/catalogue/image_detail.html:32
 #: templatetags/wall.py:78
 msgid "Publication"
 msgstr "Publikacja"
 
 #: templates/catalogue/book_detail.html:44
+#: templates/catalogue/image_detail.html:34
 msgid "Last published"
 msgstr "Ostatnio opublikowano"
 
@@ -248,19 +258,22 @@ msgid "EPUB version"
 msgstr "Wersja EPUB"
 
 #: templates/catalogue/book_detail.html:71
+#: templates/catalogue/image_detail.html:53
 msgid "Publish"
 msgstr "Opublikuj"
 
 #: templates/catalogue/book_detail.html:75
+#: templates/catalogue/image_detail.html:57
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
 #: templates/catalogue/book_detail.html:78
+#: templates/catalogue/image_detail.html:60
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
 #: templates/catalogue/book_detail.html:87
-#: templates/catalogue/image_detail.html:21
+#: templates/catalogue/image_detail.html:68
 msgid "Comments"
 msgstr "Komentarze"
 
@@ -348,6 +361,14 @@ msgstr "Pominięte pliki"
 #: templates/catalogue/document_upload.html:56
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
+
+#: templates/catalogue/image_detail.html:22
+msgid "Editor"
+msgstr "Edytor"
+
+#: templates/catalogue/image_detail.html:24
+msgid "Proceed to the editor."
+msgstr "Przejdź do edytora."
 
 #: templates/catalogue/image_short.html:4
 msgid "Image settings"
