@@ -46,7 +46,7 @@ td {
     margin-bottom: -1px;
     border-width: 1px;
     border-style: solid;
-    border-color: rgba(0,0,0,0);
+    border-color: transparent;
 }
 
 #tabs-nav-left .active {
@@ -111,7 +111,7 @@ td {
 
 #last-edited-list .date {
 	font-size: 70%;
-	color: grey;
+	color: #808080;
 }
 
 a, a:visited, a:active {
