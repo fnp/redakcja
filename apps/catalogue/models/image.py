@@ -84,8 +84,8 @@ class Image(dvcs_models.Document):
             raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
 
         valid_about = self.correct_about()
-        assert (picture.picture_info.about == valid_about,
-                _("rdf:about is not") + " " + valid_about)
+        assert picture.picture_info.about == valid_about, \
+                _("rdf:about is not") + " " + valid_about
 
     def accessible(self, request):
         return self.public or request.user.is_authenticated()

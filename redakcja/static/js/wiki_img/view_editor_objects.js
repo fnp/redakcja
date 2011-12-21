@@ -7,8 +7,8 @@
         options.callback = function(){
             var self = this;
 
-            self.$tag_name = $('#objects-editor #tag-name');
-            self.$objects_list = $('#objects-editor #objects-list');
+            self.$tag_name = $('#objects-editor .tag-name');
+            self.$objects_list = $('#objects-editor .objects-list');
 
             self.x1 = null;
             self.x2 = null;
@@ -17,7 +17,7 @@
 
             if (!CurrentDocument.readonly) {
                 self.ias = $('#objects-editor img.area-selectable').imgAreaSelect({ handles: true, onSelectEnd: self._fillCoords(self), instance: true });
-                $('#objects-editor #add').click(self._addObject(self));
+                $('#objects-editor .add').click(self._addObject(self));
 
                 $('.delete', self.$objects_list).live('click', function() {
                     $(this).prev().trigger('click');

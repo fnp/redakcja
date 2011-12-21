@@ -2,7 +2,7 @@
 {% load pagination_tags %}
 
 
-<form name='filter' action=''>
+<form name='filter' action='{{ request.path }}'>
 <input type='hidden' name="title" value="{{ request.GET.title }}" />
 <input type='hidden' name="stage" value="{{ request.GET.stage }}" />
 {% if not viewed_user %}

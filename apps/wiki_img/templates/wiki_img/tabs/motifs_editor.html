@@ -1,10 +1,10 @@
 {% load i18n %}
 <div id="motifs-editor" class="editor" style="display: none">
     <div class="toolbar">
-        <input id='tag-name' title='{% trans "Motifs" %}' />
-        <button id='add'>{% trans "Add" %}</button>
+        <input class='tag-name' title='{% trans "Motifs" %}' />
+        <button class='add'>{% trans "Add" %}</button>
 
-        <span id="objects-list">
+        <span class="objects-list">
         </span>
 
         <div class="toolbar-end">
@@ -12,6 +12,6 @@
     </div>
 
     <div class='scrolled'>
-        <img src="{{ document.image.url }}" class='area-selectable' />
+        <img src="{{ document.image.url }}" class='area-selectable' alt="Tagged image" />
     </div>
 </div>

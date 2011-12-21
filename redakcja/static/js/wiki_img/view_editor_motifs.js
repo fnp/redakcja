@@ -7,7 +7,7 @@
         options.callback = function(){
             var self = this;
 
-            self.$tag_name = $('#motifs-editor #tag-name');
+            self.$tag_name = $('#motifs-editor .tag-name');
             withThemes(function(canonThemes){
                 self.$tag_name.autocomplete(canonThemes, {
                     autoFill: true,
@@ -17,7 +17,7 @@
                 });
             })
 
-            self.$objects_list = $('#motifs-editor #objects-list');
+            self.$objects_list = $('#motifs-editor .objects-list');
 
             self.x1 = null;
             self.x2 = null;
@@ -26,7 +26,7 @@
 
             if (!CurrentDocument.readonly) {
                 self.ias = $('#motifs-editor img.area-selectable').imgAreaSelect({ handles: true, onSelectEnd: self._fillCoords(self), instance: true });
-                $('#motifs-editor #add').click(self._addObject(self));
+                $('#motifs-editor .add').click(self._addObject(self));
 
                 $('.delete', self.$objects_list).live('click', function() {
                     $(this).prev().trigger('click');

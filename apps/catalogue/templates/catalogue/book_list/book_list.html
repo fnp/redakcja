@@ -2,7 +2,7 @@
 {% load pagination_tags %}
 
 
-<form name='filter' action=''>
+<form name='filter' action='{{ request.path }}'>
 <input type='hidden' name="title" value="{{ request.GET.title }}" />
 <input type='hidden' name="stage" value="{{ request.GET.stage }}" />
 {% if not viewed_user %}
@@ -45,6 +45,8 @@
                         {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
                 {% endfor %}
             </select></th>
+        {% else %}
+            <th style='display: none'></th>
         {% endif %}
 
         <th><select name="status" class="filter">
@@ -70,7 +72,7 @@
             {% endif %}
         {% endwith %}
     {% endfor %}
-    <tr><th class='paginator' colspan="5">
+    <tr><th class='paginator' colspan="6">
         {% paginate %}
         {% blocktrans count c=cnt %}{{c}} book{% plural %}{{c}} books{% endblocktrans %}</th></tr>
     </tbody>

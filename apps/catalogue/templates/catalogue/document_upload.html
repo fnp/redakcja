@@ -11,7 +11,7 @@
 {% trans "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored." %}
 </p>
 
-<form enctype="multipart/form-data" method="POST" action="">
+<form enctype="multipart/form-data" method="POST" action="{{ request.path }}">
 {% csrf_token %}
 {{ form.as_p }}
 <p><button type="submit">{% trans "Upload" %}</button></p>

@@ -1,6 +1,6 @@
 {% load i18n %}
 <div id="revert_dialog" class="dialog" data-ui-jsclass="RevertDialog">
-	<form method="POST" action="">
+	<form method="POST" action="#">
     {% csrf_token %}
 	<p>{{ forms.text_revert.comment.label }}</p>
 	<p class="help_text">
@@ -36,7 +36,7 @@
 	<p data-ui-error-for="__all__"> </p>
 
 	<p class="action_area">
-		<button type="submit" class"ok" data-ui-action="revert">{% trans "Revert" %}</button>
+		<button type="submit" class="ok" data-ui-action="revert">{% trans "Revert" %}</button>
 		<button type="button" class="cancel" data-ui-action="cancel">{% trans "Cancel" %}</button>
 	</p>
 	</form>

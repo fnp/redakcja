@@ -144,7 +144,7 @@ class ReadonlyBookForm(BookForm):
     def __init__(self, *args, **kwargs):
         ret = super(ReadonlyBookForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs.update({"readonly": True})
+            field.widget.attrs.update({"disabled": "disabled"})
         return ret
 
 
@@ -179,5 +179,5 @@ class ReadonlyImageForm(ImageForm):
     def __init__(self, *args, **kwargs):
         ret = super(ReadonlyImageForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs.update({"readonly": True})
+            field.widget.attrs.update({"disabled": "disabled"})
         return ret
