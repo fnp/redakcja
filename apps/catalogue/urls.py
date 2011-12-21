@@ -8,6 +8,8 @@ urlpatterns = patterns('catalogue.views',
 
     url(r'^images/$', 'image_list', name='catalogue_image_list'),
     url(r'^image/(?P<slug>[^/]+)/$', 'image', name="catalogue_image"),
+    url(r'^image/(?P<slug>[^/]+)/publish$', 'publish_image',
+            name="catalogue_publish_image"),
 
     url(r'^catalogue/$', 'document_list', name='catalogue_document_list'),
     url(r'^user/$', 'my', name='catalogue_user'),
@@ -26,7 +28,6 @@ urlpatterns = patterns('catalogue.views',
         'create_missing', name='catalogue_create_missing'),
 
     url(r'^book/(?P<slug>[^/]+)/publish$', 'publish', name="catalogue_publish"),
-    #url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="catalogue_publish"),
 
     url(r'^book/(?P<slug>[^/]+)/$', 'book', name="catalogue_book"),
     url(r'^book/(?P<slug>[^/]+)/xml$', 'book_xml', name="catalogue_book_xml"),

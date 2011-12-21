@@ -4,6 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -44,8 +45,45 @@ class Image(dvcs_models.Document):
     def get_absolute_url(self):
         return ("catalogue_image", [self.slug])
 
+    def correct_about(self):
+        return "http://%s%s" % (
+            Site.objects.get_current().domain,
+            self.get_absolute_url()
+        )
+
     # State & cache
     # =============
+
+    def last_published(self):
+        try:
+            return self.publish_log.all()[0].timestamp
+        except IndexError:
+            return None
+
+    def assert_publishable(self):
+        from librarian.picture import WLPicture
+        from librarian import NoDublinCore, ParseError, ValidationError
+
+        class SelfImageStore(object):
+            def path(self_, slug, mime_type):
+                """Returns own file object. Ignores slug ad mime_type."""
+                return open(self.image.path)
+
+        picture_xml = self.publishable().materialize()
+
+        try:
+            picture = WLPicture.from_string(picture_xml.encode('utf-8'),
+                    image_store=SelfImageStore)
+        except ParseError, e:
+            raise AssertionError(_('Invalid XML') + ': ' + str(e))
+        except NoDublinCore:
+            raise AssertionError(_('No Dublin Core found.'))
+        except ValidationError, e:
+            raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
+
+        valid_about = self.correct_about()
+        assert (picture.picture_info.about == valid_about,
+                _("rdf:about is not") + " " + valid_about)
 
     def accessible(self, request):
         return self.public or request.user.is_authenticated()
@@ -54,7 +92,7 @@ class Image(dvcs_models.Document):
         change = self.publishable()
         if not change:
             return False
-        return change.publish_log.exists()
+        return not change.publish_log.exists()
     new_publishable = cached_in_field('_new_publishable')(is_new_publishable)
 
     def is_published(self):
@@ -93,3 +131,25 @@ class Image(dvcs_models.Document):
         """This should be done offline."""
         self.changed
         self.short_html
+
+
+    # Publishing
+    # ==========
+
+    def publish(self, user):
+        """Publishes the picture on behalf of a (local) user."""
+        from base64 import b64encode
+        import apiclient
+        from catalogue.signals import post_publish
+
+        self.assert_publishable()
+        change = self.publishable()
+        picture_xml = change.materialize()
+        picture_data = open(self.image.path).read()
+        apiclient.api_call(user, "pictures/", {
+                "picture_xml": picture_xml,
+                "picture_image_data": b64encode(picture_data),
+            })
+        # record the publish
+        log = self.publish_log.create(user=user, change=change)
+        post_publish.send(sender=log)

@@ -148,8 +148,8 @@ _image_states = [
         ('unpublished', _('unpublished'), Q(_published=False)),
         ('empty', _('empty'), Q(head=None)),
     ]
-_image_states_options = [s[:2] for s in _states]
-_image_states_dict = dict([(s[0], s[2]) for s in _states])
+_image_states_options = [s[:2] for s in _image_states]
+_image_states_dict = dict([(s[0], s[2]) for s in _image_states])
 
 def image_list_filter(request, **kwargs):
 
@@ -181,7 +181,7 @@ def image_list(context, user=None):
     else:
         filters = {}
         new_context = {"users": User.objects.annotate(
-                count=Count('chunk')).filter(count__gt=0).order_by(
+                count=Count('image')).filter(count__gt=0).order_by(
                 '-count', 'last_name', 'first_name')}
 
     new_context.update({

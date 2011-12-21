@@ -76,7 +76,7 @@
 				if (self.text === null || self.commit !== data.commit) {
 					self.text = data.text;
 					if (self.text === '') {
-					    self.text = '<obraz></obraz>';
+					    self.text = '<picture></picture>';
 					}
 					self.revision = data.revision;
                     self.commit = data.commit;
@@ -319,7 +319,7 @@
             $e.find('div').each(function(i, div) {
                 var $div = $(div);
                 switch ($div.attr('type')) {
-                    case 'area':
+                    case 'rect':
                         a.push([
                             value,
                             $div.attr('x1'),
@@ -361,7 +361,7 @@
             $sem.attr(tag, e[0]);
             $div = $(doc.createElement("div"));
             if (e[1]) {
-                $div.attr('type', 'area');
+                $div.attr('type', 'rect');
                 $div.attr('x1', e[1]);
                 $div.attr('y1', e[2]);
                 $div.attr('x2', e[3]);

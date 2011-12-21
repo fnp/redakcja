@@ -23,8 +23,8 @@ from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import (Book, Chunk, BookPublishRecord, 
-        ChunkPublishRecord, Image)
+from catalogue.models import (Book, Chunk, Image, BookPublishRecord, 
+        ChunkPublishRecord, ImagePublishRecord)
 from catalogue.tasks import publishable_error
 
 #
@@ -358,8 +358,7 @@ def image(request, slug):
         form = forms.ReadonlyImageForm(instance=image)
         editable = False
 
-    #publish_error = publishable_error(book)
-    publish_error = 'Publishing not implemented yet.'
+    publish_error = publishable_error(image)
     publishable = publish_error is None
 
     return direct_to_template(request, "catalogue/image_detail.html", extra_context={
@@ -481,3 +480,20 @@ def publish(request, slug):
         return http.HttpResponse(e)
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
+
+
+@require_POST
+@login_required
+def publish_image(request, slug):
+    image = get_object_or_404(Image, slug=slug)
+    if not image.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    try:
+        image.publish(request.user)
+    except NotAuthorizedError:
+        return http.HttpResponseRedirect(reverse('apiclient_oauth'))
+    except BaseException, e:
+        return http.HttpResponse(e)
+    else:
+        return http.HttpResponseRedirect(image.get_absolute_url())

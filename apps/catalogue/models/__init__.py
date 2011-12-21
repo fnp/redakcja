@@ -5,7 +5,8 @@
 #
 from catalogue.models.chunk import Chunk
 from catalogue.models.image import Image
-from catalogue.models.publish_log import BookPublishRecord, ChunkPublishRecord
+from catalogue.models.publish_log import (BookPublishRecord,
+    ChunkPublishRecord, ImagePublishRecord)
 from catalogue.models.book import Book
 from catalogue.models.listeners import *
 

@@ -108,7 +108,7 @@
         var self = this;
         this.$objects_list.children().remove();
 
-        $.each(this.doc.getImageItems('obiekt'), function(i, e) {
+        $.each(this.doc.getImageItems('object'), function(i, e) {
             self._push.apply(self, e);
         });
 
@@ -131,7 +131,7 @@
             args.unshift($(e).text());
             objects.push(args);
         })
-        self.doc.setImageItems('obiekt', objects);
+        self.doc.setImageItems('object', objects);
 
         this.ias.setOptions({disable: true, hide: true});
 

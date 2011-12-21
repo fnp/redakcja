@@ -9,10 +9,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from slughifi import slughifi
 
-import apiclient
 from catalogue.helpers import cached_in_field
 from catalogue.models import BookPublishRecord, ChunkPublishRecord
-from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
 
@@ -350,6 +348,9 @@ class Book(models.Model):
         """
             Publishes a book on behalf of a (local) user.
         """
+        import apiclient
+        from catalogue.signals import post_publish
+
         self.assert_publishable()
         changes = self.get_current_changes(publishable=True)
         book_xml = self.materialize(changes=changes)

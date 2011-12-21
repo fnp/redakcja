@@ -5,7 +5,8 @@
 #
 from django.contrib.auth.models import User
 from django.db import models
-from catalogue.models import Book, Chunk, Image
+from catalogue.models import (Book, Chunk, Image, BookPublishRecord,
+        ImagePublishRecord)
 from catalogue.signals import post_publish
 from dvcs.signals import post_publishable
 
@@ -39,14 +40,13 @@ models.signals.post_save.connect(user_changed, sender=User)
 
 
 def publish_listener(sender, *args, **kwargs):
-    sender.touch()
-    for c in sender:
-        c.touch()
-post_publish.connect(publish_listener, sender=Book)
-
-def publish_listener(sender, *args, **kwargs):
-    sender.touch()
-post_publish.connect(publish_listener, sender=Image)
+    if isinstance(sender, BookPublishRecord):
+        sender.book.touch()
+        for c in sender.book:
+            c.touch()
+    elif isinstance(sender, ImagePublishRecord):
+        sender.image.touch()
+post_publish.connect(publish_listener)
 
 
 def chunk_publishable_listener(sender, *args, **kwargs):
