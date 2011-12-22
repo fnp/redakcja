@@ -19,7 +19,7 @@
 				lineNumbers: true,
 				width: "100%",
 				height: "100%",
-				tabMode: 'spaces',
+				tabMode: 'default',
 				indentUnit: 0,
 				readOnly: CurrentDocument.readonly || false,
 				initCallback: function(){

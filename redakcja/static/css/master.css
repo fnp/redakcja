@@ -189,6 +189,10 @@ body {
     float: left;
 }
 
+.tabs a {
+    color: black;
+}
+
 #tabs-right {
     float: right;
     padding-right: 1em;

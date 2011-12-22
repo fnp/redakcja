@@ -24,6 +24,7 @@ $(function()
 		 * TABS
 		 */
         $('#tabs li').live('click', function(event, callback) {
+            event.preventDefault();
 			$.wiki.switchToTab(this);
         });
 

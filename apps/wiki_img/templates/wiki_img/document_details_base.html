@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load toolbar_tags i18n %}
 
-{% block title %}{{ document.name }} - {{ block.super }}{% endblock %}
+{% block title %}{{ document.title }} - {{ block.super }}{% endblock %}
 {% block extrahead %}
 {% load compressed %}
 {% compressed_css 'detail' %}

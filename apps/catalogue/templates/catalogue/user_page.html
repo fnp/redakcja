@@ -4,6 +4,9 @@
 {% load catalogue book_list wall %}
 
 
+{% block titleextra %}{{ viewed_user|nice_name }}{% endblock %}
+
+
 {% block leftcolumn %}
     <h1>{{ viewed_user|nice_name }}</h1>
     {% book_list viewed_user %}
