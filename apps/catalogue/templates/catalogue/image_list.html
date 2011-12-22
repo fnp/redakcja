@@ -4,6 +4,10 @@
 {% load catalogue book_list %}
 
 
+{% block titleextra %}{% trans "Image list" %}{% endblock %}
+
+
+
 {% block content %}
     {% image_list %}
 {% endblock content %}

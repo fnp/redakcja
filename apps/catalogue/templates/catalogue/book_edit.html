@@ -1,6 +1,10 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
 
+
+{% block titleextra %}{% trans "Edit book" %}{% endblock %}
+
+
 {% block leftcolumn %}
 	<form enctype="multipart/form-data" method="POST" action="">
     {% csrf_token %}

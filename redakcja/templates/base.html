@@ -1,9 +1,10 @@
 <!DOCTYPE html >
 {% load i18n %}
 <html>
-    <head>
+    <head lang="{{ LANGUAGE_CODE }}">
         <meta charset="utf-8" />
-        <title>{% block title %}{% trans "Platforma Redakcyjna" %}{% block subtitle %}{% endblock subtitle %}{% endblock title%}</title>
+        <title>{% block title %}{% trans "Platforma Redakcyjna" %} ::
+            {% block titleextra %}{% endblock titleextra %}{% endblock title%}</title>
         {% block extrahead %}
         {% endblock %}
     </head>

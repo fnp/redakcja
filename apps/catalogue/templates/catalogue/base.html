@@ -2,10 +2,11 @@
 {% load catalogue %}
 <!DOCTYPE html>
 <html>
-<head>
+<head lang="{{ LANGUAGE_CODE }}">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     {% compressed_css 'catalogue' %}
-    <title>{% block title %}{% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
+    <title>{% block title %}{% trans "Platforma Redakcyjna" %} ::
+        {% block titleextra %}{% endblock %}{% endblock title %}</title>
 </head>
 <body>
 

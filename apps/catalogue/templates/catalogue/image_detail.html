@@ -1,6 +1,10 @@
 {% extends "catalogue/base.html" %}
 {% load book_list comments i18n %}
 
+
+{% block titleextra %}{{ object.title }}{% endblock %}
+
+
 {% block content %}
 
 

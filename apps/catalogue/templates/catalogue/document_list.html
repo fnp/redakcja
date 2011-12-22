@@ -3,6 +3,8 @@
 {% load i18n %}
 {% load catalogue book_list %}
 
+{% block titleextra %}{% trans "Book list" %}{% endblock %}
+
 
 {% block content %}
     {% book_list %}
