@@ -3,7 +3,7 @@ from django.utils import translation
 from django.conf import settings
 
 
-@task
+@task(ignore_result=True)
 def _refresh_by_pk(cls, pk, language=None):
     prev_language = translation.get_language()
     language and translation.activate(language)
@@ -34,6 +34,6 @@ def publishable_error(book):
         translation.get_language()).wait()
 
 
-@task
+@task(ignore_result=True)
 def book_content_updated(book):
     book.refresh_dc_cache()

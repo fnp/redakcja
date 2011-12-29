@@ -271,6 +271,8 @@ class Book(models.Model):
     def get_on_track(self):
         if self.published:
             return -1
+        if len(self) == 0:
+            return -1
         return min(ch.stage.ordering for ch in self) or 0
     on_track = cached_in_field('_on_track')(get_on_track)
 
