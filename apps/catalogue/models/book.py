@@ -34,6 +34,7 @@ class Book(models.Model):
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
+    _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
     dc_slug = models.CharField(max_length=128, null=True, blank=True,
             editable=False, db_index=True)
 
@@ -267,6 +268,12 @@ class Book(models.Model):
         return self.publish_log.exists()
     published = cached_in_field('_published')(is_published)
 
+    def get_on_track(self):
+        if self.published:
+            return -1
+        return min(ch.stage.ordering for ch in self) or 0
+    on_track = cached_in_field('_on_track')(get_on_track)
+
     def is_single(self):
         return len(self) == 1
     single = cached_in_field('_single')(is_single)
@@ -306,6 +313,7 @@ class Book(models.Model):
             "_new_publishable": self.is_new_publishable(),
             "_published": self.is_published(),
             "_single": self.is_single(),
+            "_on_track": self.on_track(),
             "_short_html": None,
         }
         Book.objects.filter(pk=self.pk).update(**update)

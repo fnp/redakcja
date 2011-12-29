@@ -1,6 +1,7 @@
 # -*- coding: utf-8
 from django.conf.urls.defaults import *
 from django.views.generic.simple import redirect_to
+from catalogue.feeds import PublishTrackFeed
 
 
 urlpatterns = patterns('catalogue.views',
@@ -38,4 +39,5 @@ urlpatterns = patterns('catalogue.views',
     url(r'^book_append/(?P<slug>[^/]+)/$',
         'book_append', name="catalogue_book_append"),
 
+    url(r'^track/(?P<slug>[^/]*)/$', PublishTrackFeed()),
 )
