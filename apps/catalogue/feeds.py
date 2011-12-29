@@ -14,4 +14,5 @@ class PublishTrackFeed(Feed):
         return get_object_or_404(Chunk.tag_model, slug=slug)
 
     def items(self, obj):
-        return Book.objects.filter(_on_track__gte=obj.ordering).order_by('-_on_track', 'title')[:100]
+        return Book.objects.filter(public=True, _on_track__gte=obj.ordering
+                ).order_by('-_on_track', 'title')
