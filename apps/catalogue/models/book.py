@@ -271,9 +271,10 @@ class Book(models.Model):
     def get_on_track(self):
         if self.published:
             return -1
-        if len(self) == 0:
-            return -1
-        return min(ch.stage.ordering for ch in self) or 0
+        stages = [ch.stage.ordering for ch in self if ch.stage is not None]
+        if not len(stages):
+            return 0
+        return min(stages)
     on_track = cached_in_field('_on_track')(get_on_track)
 
     def is_single(self):
@@ -315,7 +316,7 @@ class Book(models.Model):
             "_new_publishable": self.is_new_publishable(),
             "_published": self.is_published(),
             "_single": self.is_single(),
-            "_on_track": self.on_track(),
+            "_on_track": self.get_on_track(),
             "_short_html": None,
         }
         Book.objects.filter(pk=self.pk).update(**update)
