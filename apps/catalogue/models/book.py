@@ -271,7 +271,8 @@ class Book(models.Model):
     def get_on_track(self):
         if self.published:
             return -1
-        stages = [ch.stage.ordering for ch in self if ch.stage is not None]
+        stages = [ch.stage.ordering if ch.stage is not None else 0
+                    for ch in self]
         if not len(stages):
             return 0
         return min(stages)
