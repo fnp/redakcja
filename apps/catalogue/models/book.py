@@ -209,6 +209,18 @@ class Book(models.Model):
         assert not other.chunk_set.exists()
         other.delete()
 
+    def split(self):
+        """Splits all the chunks into separate books."""
+        self.title
+        for chunk in self:
+            book = Book.objects.create(title=chunk.title, slug=chunk.slug,
+                    public=self.public, gallery=self.gallery)
+            book[0].delete()
+            chunk.book = book
+            chunk.number = 1
+            chunk.save()
+        assert not self.chunk_set.exists()
+        self.delete()
 
     # State & cache
     # =============
