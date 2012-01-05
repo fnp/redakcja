@@ -316,7 +316,7 @@ def book(request, slug):
                 return http.HttpResponseRedirect(book.get_absolute_url())
         else:
             form = forms.BookForm(instance=book)
-            editable = True
+        editable = True
     else:
         form = forms.ReadonlyBookForm(instance=book)
         editable = False
