@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-30 16:07+0100\n"
-"PO-Revision-Date: 2011-11-30 16:08+0100\n"
+"POT-Creation-Date: 2012-02-03 15:08+0100\n"
+"PO-Revision-Date: 2012-02-03 15:09+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: \n"
@@ -219,38 +219,42 @@ msgid "Source code"
 msgstr "Kod źródłowy"
 
 #: templates/wiki/tabs/summary_view.html:9
+msgid "Refresh from working copy"
+msgstr "Odśwież z edytowanej wersji"
+
+#: templates/wiki/tabs/summary_view.html:13
 msgid "Title"
 msgstr "Tytuł"
 
-#: templates/wiki/tabs/summary_view.html:13
+#: templates/wiki/tabs/summary_view.html:17
 msgid "Go to the book's page"
 msgstr "Przejdź do strony książki"
 
-#: templates/wiki/tabs/summary_view.html:16
+#: templates/wiki/tabs/summary_view.html:20
 msgid "Document ID"
 msgstr "ID dokumentu"
 
-#: templates/wiki/tabs/summary_view.html:20
+#: templates/wiki/tabs/summary_view.html:24
 msgid "Current version"
 msgstr "Aktualna wersja"
 
-#: templates/wiki/tabs/summary_view.html:23
+#: templates/wiki/tabs/summary_view.html:27
 msgid "Last edited by"
 msgstr "Ostatnio edytowane przez"
 
-#: templates/wiki/tabs/summary_view.html:27
+#: templates/wiki/tabs/summary_view.html:31
 msgid "Link to gallery"
 msgstr "Link do galerii"
 
-#: templates/wiki/tabs/summary_view.html:32
+#: templates/wiki/tabs/summary_view.html:36
 msgid "Characters in document"
 msgstr "Znaków w dokumencie"
 
-#: templates/wiki/tabs/summary_view.html:33
+#: templates/wiki/tabs/summary_view.html:37
 msgid "pages"
 msgstr "stron maszynopisu"
 
-#: templates/wiki/tabs/summary_view.html:33
+#: templates/wiki/tabs/summary_view.html:37
 msgid "untagged"
 msgstr "nieotagowane"
 

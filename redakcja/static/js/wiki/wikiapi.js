@@ -50,6 +50,9 @@
 		if (vname == "ajax_document_pubmark")
 			return base_path + "/pubmark/" + arguments[1] + '/';
 
+		if (vname == "ajax_cover_preview")
+			return "/cover/preview/";
+
 		console.log("Couldn't reverse match:", vname);
 		return "/404.html";
 	};
@@ -382,6 +385,25 @@
 			}
 		});
 	};
+
+	WikiDocument.prototype.refreshCover = function(params) {
+        var self = this;
+		var data = {
+			xml: self.text // TODO: send just DC
+		};
+        $.ajax({
+            url: reverse("ajax_cover_preview"),
+            type: "POST",
+            data: data,
+            success: function(data) {
+                params.success(data);
+            },
+            error: function(xhr) {
+                // params.failure("Nie udało się odświeżyć okładki - błąd serwera.");
+            }
+        });
+ 	};
+
 
     WikiDocument.prototype.getLength = function(params) {
         var xml = this.text.replace(/\/(\s+)/g, '<br />$1');

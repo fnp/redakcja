@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^documents/', include('catalogue.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
+    url(r'^cover/', include('cover.urls')),
 
     # Static files (should be served by Apache)
     url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',

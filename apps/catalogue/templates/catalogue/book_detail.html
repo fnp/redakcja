@@ -41,6 +41,8 @@
 
 <h2>{% trans "Publication" %}</h2>
 
+<img class="cover-preview" src="{% url cover_preview book.slug %}" />
+
 <p>{% trans "Last published" %}: 
     {% if book.last_published %}
         {{ book.last_published }}
@@ -79,6 +81,7 @@
     <ul><li>{{ publishable_error }}</li></ul>
 {% endif %}
 
+<div style="clear: both;"></div>
 </div>
 
 
