@@ -9,4 +9,6 @@ urlpatterns = patterns('cover.views',
             'preview', name='cover_preview'),
     url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/(?P<rev>\d+)/$',
             'preview', name='cover_preview'),
+
+    url(r'^flickr/$', 'flickr'),
 )

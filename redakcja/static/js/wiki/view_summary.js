@@ -20,9 +20,11 @@
     SummaryPerspective.prototype = new $.wiki.Perspective();
 
 	SummaryPerspective.prototype.refreshCover = function() {
+		$('#summary-cover-refresh').attr('disabled', 'disabled');
 		this.doc.refreshCover({
 			success: function(text) {
 				$('#summary-cover').attr('src', text);
+			$('#summary-cover-refresh').removeAttr('disabled');
 			}
 		});
 	};

@@ -64,3 +64,34 @@ def preview_from_xml(request):
     image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
     image.save(os.path.join(settings.MEDIA_ROOT, fname))
     return HttpResponse(os.path.join(settings.MEDIA_URL, fname))
+
+
+def flickr(request):
+    url = request.POST.get('flickr_url')
+    if url:
+        import re
+        from urllib2 import urlopen
+
+        html = urlopen(url).read()
+        match = re.search(r'<a href="([^"]*)" rel="license cc:license">Some rights reserved</a>', html)
+        if match:
+            license_url = match.group(1)
+
+        re_license = re.compile(r'http://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
+        m = re_license.match(license_url)
+        if m:
+            license_name = 'CC %s %s' % (m.group(1).upper(), m.group(2))
+
+        m = re.search(r'<strong class="username">By <a href="[^"]*">([^<]*)</a></strong>', html)
+        if m:
+            author = m.group(1)
+
+        url_size = url.rstrip('/') + '/sizes/o/'
+        html = urlopen(url_size).read()
+        m = re.search(r'<div id="allsizes-photo">\s*<img src="([^"]*)"', html)
+        if m:
+            image_url = m.group(1)
+    else:
+        url = ""
+
+    return render(request, 'cover/flickr.html', locals())
