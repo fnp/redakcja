@@ -1,6 +1,5 @@
 from celery.task import task
 from django.utils import translation
-from django.conf import settings
 
 
 @task(ignore_result=True)
@@ -25,7 +24,7 @@ def _publishable_error(book, language=None):
     except AssertionError, e:
         return e
     else:
-       return None
+        return None
     finally:
         translation.activate(prev_language)
 

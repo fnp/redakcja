@@ -318,7 +318,7 @@ class Book(models.Model):
 
         info = self.book_info()
         if info is not None:
-            update['dc_slug'] = info.slug
+            update['dc_slug'] = info.url.slug
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):
@@ -369,6 +369,15 @@ class Book(models.Model):
         if changes is None:
             changes = self.get_current_changes(publishable)
         return compile_text(change.materialize() for change in changes)
+
+    def wldocument(self, publishable=True, changes=None, parse_dublincore=True):
+        from catalogue.ebook_utils import RedakcjaDocProvider
+        from librarian.parser import WLDocument
+
+        return WLDocument.from_string(
+                self.materialize(publishable=publishable, changes=changes),
+                provider=RedakcjaDocProvider(publishable=publishable),
+                parse_dublincore=parse_dublincore)
 
     def publish(self, user):
         """

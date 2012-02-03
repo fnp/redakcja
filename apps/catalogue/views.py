@@ -210,13 +210,9 @@ def book_txt(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
-    xml = book.materialize()
-    output = StringIO()
-    # errors?
 
-    import librarian.text
-    librarian.text.transform(StringIO(xml), output)
-    text = output.getvalue()
+    doc = book.wldocument()
+    text = doc.as_text().get_string()
     response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
     response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
     return response
@@ -227,14 +223,9 @@ def book_html(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
-    xml = book.materialize()
-    output = StringIO()
-    # errors?
 
-    import librarian.html
-    librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
-                             flags=['full-page'])
-    html = output.getvalue()
+    doc = book.wldocument()
+    html = doc.as_html(parse_dublincore=False, flags=['full-page']).get_string()
     response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     return response
 
@@ -245,25 +236,13 @@ def book_pdf(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    from tempfile import NamedTemporaryFile
-    from os import unlink
-    from librarian import pdf
-    from catalogue.ebook_utils import RedakcjaDocProvider, serve_file
-
-    xml = book.materialize()
-    xml_file = NamedTemporaryFile()
-    xml_file.write(xml.encode('utf-8'))
-    xml_file.flush()
-
-    try:
-        pdf_file = NamedTemporaryFile(delete=False)
-        pdf.transform(RedakcjaDocProvider(publishable=True),
-                  file_path=xml_file.name,
-                  output_file=pdf_file,
-                  )
-        return serve_file(pdf_file.name, book.slug + '.pdf', 'application/pdf')
-    finally:
-        unlink(pdf_file.name)
+    # TODO: move to celery
+    doc = book.wldocument()
+    # TODO: error handling
+    pdf_file = doc.as_pdf()
+    from catalogue.ebook_utils import serve_file
+    return serve_file(pdf_file.get_filename(),
+                book.slug + '.pdf', 'application/pdf')
 
 
 @never_cache
@@ -272,23 +251,13 @@ def book_epub(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    from StringIO import StringIO
-    from tempfile import NamedTemporaryFile
-    from librarian import epub
-    from catalogue.ebook_utils import RedakcjaDocProvider
-
-    xml = book.materialize()
-    xml_file = NamedTemporaryFile()
-    xml_file.write(xml.encode('utf-8'))
-    xml_file.flush()
-
-    epub_file = StringIO()
-    epub.transform(RedakcjaDocProvider(publishable=True),
-            file_path=xml_file.name,
-            output_file=epub_file)
+    # TODO: move to celery
+    doc = book.wldocument()
+    # TODO: error handling
+    epub = doc.as_epub().get_string()
     response = HttpResponse(mimetype='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
-    response.write(epub_file.getvalue())
+    response.write(epub)
     return response
 
 
