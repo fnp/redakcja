@@ -8,14 +8,22 @@ class PublishTrackFeed(Feed):
     link = "/"
 
     def description(self, obj):
-        return u"Publikacje, które dotarły co najmniej do etapu: %s" % obj.name
+        tag, published = obj
+        return u"Publikacje, które dotarły co najmniej do etapu: %s" % tag.name
 
     def get_object(self, request, slug):
-        return get_object_or_404(Chunk.tag_model, slug=slug)
+        published = request.GET.get('published')
+        if published is not None:
+            published = published == 'true'
+        return get_object_or_404(Chunk.tag_model, slug=slug), published
 
     def item_title(self, item):
         return item.title
 
     def items(self, obj):
-        return Book.objects.filter(public=True, _on_track__gte=obj.ordering
+        tag, published = obj
+        books = Book.objects.filter(public=True, _on_track__gte=tag.ordering
                 ).order_by('-_on_track', 'title')
+        if published is not None:
+            books = books.filter(_published=published)
+        return books
