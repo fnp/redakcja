@@ -243,13 +243,13 @@ class Book(models.Model):
         from librarian import NoDublinCore, ParseError, ValidationError
 
         try:
-            bi = BookInfo.from_string(book_xml.encode('utf-8'))
+            bi = BookInfo.from_string(book_xml.encode('utf-8'), strict=True)
         except ParseError, e:
-            raise AssertionError(_('Invalid XML') + ': ' + str(e))
+            raise AssertionError(_('Invalid XML') + ': ' + unicode(e))
         except NoDublinCore:
             raise AssertionError(_('No Dublin Core found.'))
         except ValidationError, e:
-            raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
+            raise AssertionError(_('Invalid Dublin Core') + ': ' + unicode(e))
 
         valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
