@@ -1,7 +1,7 @@
 # Create your views here.
 import os.path
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from catalogue.models import Chunk
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -9,6 +9,7 @@ from django.shortcuts import render
 
 
 PREVIEW_SIZE = (216, 300)
+
 
 def preview(request, book, chunk=None, rev=None):
     """Creates a cover image.
@@ -31,8 +32,11 @@ def preview(request, book, chunk=None, rev=None):
         if revision is None:
             raise Http404
     xml = revision.materialize().encode('utf-8')
-    
-    info = BookInfo.from_string(xml)
+
+    try:
+        info = BookInfo.from_string(xml)
+    except:
+        return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     cover = WLCover(info)
     response = HttpResponse(mimetype=cover.mime_type())
     image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
@@ -51,7 +55,10 @@ def preview_from_xml(request):
     from librarian.dcparser import BookInfo
 
     xml = request.POST['xml']
-    info = BookInfo.from_string(xml.encode('utf-8'))
+    try:
+        info = BookInfo.from_string(xml.encode('utf-8'))
+    except:
+        return HttpResponse(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     coverid = sha1(etree.tostring(info.to_etree())).hexdigest()
     cover = WLCover(info)
 
@@ -74,17 +81,21 @@ def flickr(request):
 
         html = urlopen(url).read()
         match = re.search(r'<a href="([^"]*)" rel="license cc:license">Some rights reserved</a>', html)
-        if match:
+        try:
+            assert match
             license_url = match.group(1)
-
-        re_license = re.compile(r'http://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
-        m = re_license.match(license_url)
-        if m:
+            re_license = re.compile(r'http://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
+            m = re_license.match(license_url)
+            assert m
             license_name = 'CC %s %s' % (m.group(1).upper(), m.group(2))
+        except AssertionError:
+            license_name = 'NIEZNANA LICENCJA'
 
         m = re.search(r'<strong class="username">By <a href="[^"]*">([^<]*)</a></strong>', html)
         if m:
             author = m.group(1)
+        else:
+            author = "NIEZNANY AUTOR"
 
         url_size = url.rstrip('/') + '/sizes/o/'
         html = urlopen(url_size).read()

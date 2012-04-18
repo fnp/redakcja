@@ -5,7 +5,11 @@
     <div id="summary-view">
     	<div class="summary-cover-area">
 		<p><img id="summary-cover" class="book-cover"
-			{% if revision %}src="{% url cover_preview chunk.book.slug chunk.slug revision %}"{% endif %}></p>
+			{% if revision %}
+			     src="{% url cover_preview chunk.book.slug chunk.slug revision %}"
+			{% else %}
+			     src="{% url cover_preview chunk.book.slug chunk.slug %}"
+			{% endif %}></p>
 		<p><button id="summary-cover-refresh">{% trans "Refresh from working copy" %}</button></p>
 		</div>
 
