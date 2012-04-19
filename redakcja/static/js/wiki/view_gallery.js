@@ -55,7 +55,8 @@
 
             this.dimensions = {};
             this.zoomFactor = 1;
-            this.config().page = CurrentDocument.galleryStart;
+	    if (this.config().page == undefined)
+		this.config().page = CurrentDocument.galleryStart;
             this.$element = $("#side-gallery");
             this.$numberInput = $('.page-number', this.$element);
 

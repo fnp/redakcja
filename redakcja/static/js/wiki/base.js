@@ -10,7 +10,7 @@
 			"perspectives": {
 				"ScanGalleryPerspective": {
 					"show": true,
-					"page": 1
+					"page": undefined
 				},
 				"CodeMirrorPerspective": {}
 				/*
