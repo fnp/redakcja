@@ -72,6 +72,10 @@
                 self.setPage($(this).val());
             });
                     
+	    $('.start-page', this.$element).click(function(){
+		self.setPage(CurrentDocument.galleryStart);
+	    });
+
             $('.previous-page', this.$element).click(function(){
                 self.setPage(parseInt(self.$numberInput.val(),10) - 1);
             });
