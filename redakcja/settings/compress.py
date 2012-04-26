@@ -18,6 +18,12 @@ COMPRESS_CSS = {
             'css/filelist.css',
         ),
         'output_filename': 'compressed/catalogue_styles_?.css',
+     },
+     'book': {
+        'source_filenames': (
+            'css/book.css',
+        ),
+        'output_filename': 'compressed/book_?.css',         
      }
 }
 
@@ -65,7 +71,16 @@ COMPRESS_JS = {
                 'email_mangler/email_mangler.js',
         ),
         'output_filename': 'compressed/catalogue_scripts_?.js',
-     }
+     },
+     'book': {
+        'source_filenames': (
+            'js/book_text/jquery.eventdelegation.js',
+            'js/book_text/jquery.scrollto.js',
+            'js/book_text/jquery.highlightfade.js',
+            'js/book_text/book.js',
+        ),
+        'output_filename': 'compressed/book_?.js',
+         }
 }
 
 COMPRESS = True

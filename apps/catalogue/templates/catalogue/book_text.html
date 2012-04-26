@@ -1,17 +1,13 @@
-{% load i18n %}
+{% load i18n compressed %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <title>{% trans "Redakcja" %} :: {{ book.title }}</title>
-	<link rel="stylesheet" type="text/css" href="/media/static/css/book.css" />
+	{% compressed_css 'book' %}
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/media/static/js/book_text/jquery.eventdelegation.js"></script>
-	<script type="text/javascript" src="/media/static/js/book_text/jquery.scrollto.js"></script>
-	<script type="text/javascript" src="/media/static/js/book_text/jquery.highlightfade.js"></script>
-	<script type="text/javascript" src="/media/static/js/book_text/book.js"></script>
-
+	{% compressed_js 'book' %}
     </head>
     <body>
         <div id="menu">
