@@ -1,0 +1,32 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>{% trans "Redakcja" %} :: {{ book.title }}</title>
+	<link rel="stylesheet" type="text/css" href="/media/static/css/book.css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/media/static/js/book_text/jquery.eventdelegation.js"></script>
+	<script type="text/javascript" src="/media/static/js/book_text/jquery.scrollto.js"></script>
+	<script type="text/javascript" src="/media/static/js/book_text/jquery.highlightfade.js"></script>
+	<script type="text/javascript" src="/media/static/js/book_text/book.js"></script>
+
+    </head>
+    <body>
+        <div id="menu">
+            <ul>
+                <li><a class="menu" href="#toc">{% trans "Table of contents" %}</a></li>
+{#                <li><a class="menu" href="#themes">{% trans "Themes" %}</a></li>#}
+                <li><a class="menu" href="#nota_red">{% trans "Edit. note" %}</a></li>
+{#                <li><a class="menu" href="#info">{% trans "Infobox" %}</a></li>#}
+{#                <li><a href="{{ book.get_absolute_url }}">{% trans "Book's page" %}</a></li> #}
+{#                <li><a class="menu" href="#download">{% trans "Download" %}</a></li>#}
+            </ul>
+        </div>
+        <div id="header">
+            <a href="/"><img src="/media/static/img/logo-220.png" alt="Wolne Lektury" /></a>
+        </div>
+        {{ html|safe }}
+    </body>
+</html>

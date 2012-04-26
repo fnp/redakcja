@@ -12,12 +12,13 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic.simple import direct_to_template
+from django.template import RequestContext
 
 from apiclient import NotAuthorizedError
 from catalogue import forms
@@ -225,10 +226,20 @@ def book_html(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     doc = book.wldocument(parse_dublincore=False)
-    html = doc.as_html(flags=['full-page'])
+    html = doc.as_html()
+
     html = html.get_string() if html is not None else ''
-    response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
-    return response
+    # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
+    # return response
+    # book_themes = {}
+    # for fragment in book.fragments.all().iterator():
+    #     for theme in fragment.tags.filter(category='theme').iterator():
+    #         book_themes.setdefault(theme, []).append(fragment)
+
+    # book_themes = book_themes.items()
+    # book_themes.sort(key=lambda s: s[0].sort_key)
+    return render_to_response('catalogue/book_text.html', locals(),
+        context_instance=RequestContext(request))
 
 
 @never_cache
