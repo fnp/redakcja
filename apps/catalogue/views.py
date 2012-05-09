@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
+from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -385,6 +386,26 @@ def chunk_edit(request, slug, chunk):
         "form": form,
         "go_next": go_next,
     })
+
+
+@transaction.commit_on_success
+def chunk_mass_edit(request):
+    if request.method == 'POST':
+        ids = map(int, request.POST.get('ids').split(','))
+        chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+        try:
+            stage = Chunk.tag_model.objects.get(slug=request.POST.get('stage'))
+            for c in chunks: c.stage = stage
+        except KeyError: pass
+
+        try:
+            user = User.objects.get(username=request.POST.get('user'))
+            for c in chunks: c.user = user
+        except KeyError: pass
+
+        for c in chunks: c.save()
+    else:
+        raise Http404
 
 
 @permission_required('catalogue.change_book')

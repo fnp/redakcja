@@ -3,6 +3,7 @@
 {% if book.single %}
     {% with book.0 as chunk %}
     <tr>
+        <td><input type="checkbox" name="select_book" value="{{book.id}}"/></td>
         <td><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
         <td><a href="{% url catalogue_chunk_edit book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
         <td><a target="_blank"
@@ -22,6 +23,7 @@
     {% endwith %}
 {% else %}
     <tr>
+        <td><input type="checkbox" name="select_book" value="{{book.id}}"/></td>
         <td class='book-settings-link'><a href="{% url catalogue_book book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
         <td></td>
         <td>{{ book.title }}</td>

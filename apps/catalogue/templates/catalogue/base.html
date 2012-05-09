@@ -6,6 +6,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     {% compressed_css 'catalogue' %}
     <title>{% block title %}{% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
+    {% block add_css %}{% endblock %}
 </head>
 <body>
 
@@ -42,8 +43,9 @@
 </div>
 
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 {% compressed_js 'catalogue' %}
+{% block add_js %}{% endblock %}
 {% block extrabody %}
 {% endblock %}
 </body>

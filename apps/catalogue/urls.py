@@ -39,6 +39,8 @@ urlpatterns = patterns('catalogue.views',
         'chunk_edit', name="catalogue_chunk_edit"),
     url(r'^book_append/(?P<slug>[^/]+)/$',
         'book_append', name="catalogue_book_append"),
+    url(r'^chunk_mass_edit',
+        'chunk_mass_edit', name='catalogue_chunk_mass_edit'),
 
     url(r'^track/(?P<slug>[^/]*)/$', PublishTrackFeed()),
 )

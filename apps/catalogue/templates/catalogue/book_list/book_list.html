@@ -12,8 +12,10 @@
 <input type='hidden' name="status" value="{{ request.GET.status }}" />
 </form>
 
+
 <table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
     <thead><tr>
+	<th></th>
         <th></th>
         <th>
             <input class='check-filter' type='checkbox' name='all' title='{% trans "Show hidden books" %}'
@@ -79,3 +81,9 @@
 {% if not books %}
     <p>{% trans "No books found." %}</p>
 {% endif %}
+
+<form name='chunk_mass_edit' action='{% url catalogue_chunk_mass_edit %}' class="hidden">
+{% csrf_token %}
+<input type="hidden" name="ids" />
+<input type="hidden" stage="stage" />
+</form>
