@@ -82,12 +82,15 @@
     <p>{% trans "No books found." %}</p>
 {% endif %}
 
-<form id='chunk_mass_edit' action='{% url catalogue_chunk_mass_edit %}' class="hidden">
+<form id='chunk_mass_edit' action='{% url catalogue_chunk_mass_edit %}' style="display:none;">
 {% csrf_token %}
 <input type="hidden" name="ids" />
-<input type="hidden" name="stage" />
-<input type="hidden" name="user" />
+<label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
+<label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_stage" />
 <input type="hidden" name="status" />
+<label for="mass_edit_publish">{% trans "Mark publishable" %}</label>
+<label for="mass_edit_unpublish">{% trans "Mark not publishable" %}</label>
+<label for="mass_edit_other">{% trans "Other user" %}</label>
 </form>
 
 <select name="other-user" style="display:none;">

@@ -68,16 +68,16 @@
 	    selector: '#file-list',
 	    items: {
 		"stage": { 
-		    name: "Set stage",
+		    name: $("label[for=mass_edit_stage]").text(),
 		    items: get_items("stage"),
 		    icon: "clock",
 		},
 		"user": { 
-		    name: "Set user",
+		    name: $("label[for=mass_edit_user]").text(),
                     items: (function() {
 			var active_users = get_items("user");
 			active_users['other'] = {
-			    name: "Other",
+			    name: $("label[for=mass_edit_other]").text(),
 			    items: get_items("other-user"),
 			};
 			return active_users;
@@ -85,11 +85,11 @@
 		    icon: "user",
                 },
                 "publish": {
-                    name: "Mark publishable",
+                    name:  $("label[for=mass_edit_publish]").text(),
 		    icon: "ok",
                 },
 		"unpublish": {
-		    name: "Mark not publishable",
+		    name:  $("label[for=mass_edit_unpublish]").text(),
 		    icon: "stop",
 		},
 	    },
