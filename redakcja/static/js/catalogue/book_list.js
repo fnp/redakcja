@@ -19,15 +19,21 @@
     
 
 	var set_field = function(key, ops) {
-	    var kp = key.split('_');
-	    var field = kp[0];
-	    var idx = parseInt(kp[1]);
-
             var fds = {}
             fds.stage = "";
             fds.user = "";
             fds.status = "";
-    	    fds[field] = $("select[name="+field+"] option[value!=]").eq(idx).val();
+
+	    if (key == "publish" || key == "unpublish") {
+		fds["status"] = key;
+	    } else {
+		var kp = key.split('_');
+		var field = kp[0];
+		var idx = parseInt(kp[1]);
+
+    		fds[field] = $("select[name="+field+"] option[value!=]").eq(idx).val();
+	    }
+	    /* fill in the form */
             $("#chunk_mass_edit [name=ids]").val(get_ids());
             for (var fn in fds) {
                 $("#chunk_mass_edit [name="+fn+"]").val(fds[fn]);
@@ -65,10 +71,12 @@
 		    name: "Set user",
                     items: get_items("user"),
                 },
-                "status": {
-                    name: "set status",
-                    items: get_items("status"),
+                "publish": {
+                    name: "Mark publishable",
                 },
+		"unpublish": {
+		    name: "Mark not publishable",
+		},
 	    },
 	    callback: set_field,
 	});

@@ -414,6 +414,21 @@ def chunk_mass_edit(request):
                 
             for c in chunks: c.user = user
 
+        status = request.POST.get('status')
+        if status:
+            books_affected = set()
+            for c in chunks:
+                if status == 'publish':
+                    c.head.publishable = True
+                    c.head.save()
+                elif status == 'unpublish':
+                    c.head.publishable = False
+                    c.head.save()
+                c.touch()  # cache
+                books_affected.add(c.book)
+            for b in books_affected:
+                b.touch()  # cache
+
         for c in chunks: c.save()
 
         return HttpResponse("", content_type="text/plain")
