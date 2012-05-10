@@ -31,7 +31,11 @@
 		var field = kp[0];
 		var idx = parseInt(kp[1]);
 
-    		fds[field] = $("select[name="+field+"] option[value!=]").eq(idx).val();
+		var target_field = field;
+		if (field == 'other-user')
+		    target_field = 'user';
+
+    		fds[target_field] = $("select[name="+field+"] option[value!=]").eq(idx).val();
 	    }
 	    /* fill in the form */
             $("#chunk_mass_edit [name=ids]").val(get_ids());
@@ -70,7 +74,14 @@
 		},
 		"user": { 
 		    name: "Set user",
-                    items: get_items("user"),
+                    items: (function() {
+			var active_users = get_items("user");
+			active_users['other'] = {
+			    name: "Other",
+			    items: get_items("other-user"),
+			};
+			return active_users;
+			})(),
 		    icon: "user",
                 },
                 "publish": {

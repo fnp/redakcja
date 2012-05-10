@@ -90,3 +90,10 @@
 <input type="hidden" name="status" />
 </form>
 
+<select name="other-user" style="display:none;">
+  {% for user in other_users %}
+  <option {% if request.GET.user == user.username %}selected="selected"
+          {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+  {% endfor %}
+</select>
+
