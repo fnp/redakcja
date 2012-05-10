@@ -391,19 +391,32 @@ def chunk_edit(request, slug, chunk):
 @transaction.commit_on_success
 def chunk_mass_edit(request):
     if request.method == 'POST':
-        ids = map(int, request.POST.get('ids').split(','))
+        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
         chunks = map(lambda i: Chunk.objects.get(id=i), ids)
-        try:
-            stage = Chunk.tag_model.objects.get(slug=request.POST.get('stage'))
+        
+        stage = request.POST.get('stage')
+        if stage:
+            try:
+                stage = Chunk.tag_model.objects.get(slug=stage)
+            except Chunk.DoesNotExist, e:
+                stage = None
+           
             for c in chunks: c.stage = stage
-        except KeyError: pass
 
-        try:
-            user = User.objects.get(username=request.POST.get('user'))
+        username = request.POST.get('user')
+        logger.info("username: %s" % username)
+        logger.info(request.POST)
+        if username:
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist, e:
+                user = None
+                
             for c in chunks: c.user = user
-        except KeyError: pass
 
         for c in chunks: c.save()
+
+        return HttpResponse("", content_type="text/plain")
     else:
         raise Http404
 

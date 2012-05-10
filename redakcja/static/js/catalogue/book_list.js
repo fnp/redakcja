@@ -11,45 +11,66 @@
 	var get_ids = function() {
 	    return $.map($("input[name=select_chunk]:checked"), function(ele, idx) {
 		return ele.value;
-		}).join();
+		}).concat(
+		    $.map($("input[name=select_book][data-chunk-id!=]:checked"), function(ele, idx) {
+			return $(ele).attr("data-chunk-id");
+			})).join();
+	};
+    
+
+	var set_field = function(key, ops) {
+	    var kp = key.split('_');
+	    var field = kp[0];
+	    var idx = parseInt(kp[1]);
+
+            var fds = {}
+            fds.stage = "";
+            fds.user = "";
+            fds.status = "";
+    	    fds[field] = $("select[name="+field+"] option[value!=]").eq(idx).val();
+            $("#chunk_mass_edit [name=ids]").val(get_ids());
+            for (var fn in fds) {
+                $("#chunk_mass_edit [name="+fn+"]").val(fds[fn]);
+            }
+
+            $.post($("#chunk_mass_edit").attr("action"),
+                   $("#chunk_mass_edit").serialize(),
+                   function(data, status) {
+                       location.reload(true);
+                   }
+                  );
+            return true;
+
+	    
 	};
 
-	var set_stage = function(key, opt) {
-	    var stage = $("select[name=stage] option[value!=]").eq(key).val();
-	    $.post($('input[name=chunk_mass_edit_url]').val(),
-		   {
-		       ids: get_ids(),
-		       stage: stage,
-		   },
-		   function(data, status) {
-		       location.reload(true);
-		   }
-		  );
-	};
+        var get_items = function(field) {
+	    var d = {};
+            $.each($("select[name="+field+"] option[value!=]"),
+                         function(idx, ele) {
+			     d[field+"_"+idx] = { name: $(ele).text() };
+			 });
+	    return d;
+        };
+
 
 	$.contextMenu({
 	    selector: '#file-list',
 	    items: {
 		"stage": { 
 		    name: "Set stage",
-		    items: $.map($("select[name=stage] option[value!=]"),
-				 function(ele, idx) {
-				     return { 
-					 name: $(ele).text(),
-					 callback: set_stage,
-				     };
-				 }),
+		    items: get_items("stage"),
 		},
-/*		"user": { 
+		"user": { 
 		    name: "Set user",
-
-			  },
-		"status": { 
-		    name: "Set status",
-		    items: 
-			  },*/
-
+                    items: get_items("user"),
+                },
+                "status": {
+                    name: "set status",
+                    items: get_items("status"),
+                },
 	    },
+	    callback: set_field,
 	});
 	
     });

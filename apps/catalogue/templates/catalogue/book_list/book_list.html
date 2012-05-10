@@ -82,8 +82,11 @@
     <p>{% trans "No books found." %}</p>
 {% endif %}
 
-<form name='chunk_mass_edit' action='{% url catalogue_chunk_mass_edit %}' class="hidden">
+<form id='chunk_mass_edit' action='{% url catalogue_chunk_mass_edit %}' class="hidden">
 {% csrf_token %}
 <input type="hidden" name="ids" />
-<input type="hidden" stage="stage" />
+<input type="hidden" name="stage" />
+<input type="hidden" name="user" />
+<input type="hidden" name="status" />
 </form>
+
