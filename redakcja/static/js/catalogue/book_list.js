@@ -66,16 +66,20 @@
 		"stage": { 
 		    name: "Set stage",
 		    items: get_items("stage"),
+		    icon: "clock",
 		},
 		"user": { 
 		    name: "Set user",
                     items: get_items("user"),
+		    icon: "user",
                 },
                 "publish": {
                     name: "Mark publishable",
+		    icon: "ok",
                 },
 		"unpublish": {
 		    name: "Mark not publishable",
+		    icon: "stop",
 		},
 	    },
 	    callback: set_field,

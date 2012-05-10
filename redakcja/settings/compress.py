@@ -28,6 +28,7 @@ COMPRESS_CSS = {
     'book_list': {
         'source_filenames': (
             'contextmenu/jquery.contextMenu.css',
+            'css/book_list.css',
         ),
         'output_filename': 'compressed/book_list_?.css',
     },
