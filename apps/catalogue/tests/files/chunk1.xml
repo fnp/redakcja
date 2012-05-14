@@ -20,6 +20,7 @@
 <dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">text</dc:type>
 <dc:type xml:lang="en" xmlns:dc="http://purl.org/dc/elements/1.1/">text</dc:type>
 <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2007-09-06</dc:date>
+<dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">pol</dc:language>
 
 </rdf:Description>
 </rdf:RDF>
