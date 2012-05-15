@@ -7,7 +7,9 @@ from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from slughifi import slughifi
+
 
 import apiclient
 from catalogue.helpers import cached_in_field
@@ -15,7 +17,9 @@ from catalogue.models import BookPublishRecord, ChunkPublishRecord
 from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
-
+import os
+import shutil
+import re
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -191,7 +195,89 @@ class Book(models.Model):
             chunk.save()
             number += 1
         assert not other.chunk_set.exists()
+
+        self.append_gallery(other, len_other)
+        
         other.delete()
+
+
+    def append_gallery(self, other, len_other):
+        if self.gallery is None:
+            self.gallery = other.gallery
+            return
+        if other.gallery is None:
+            return
+        
+        def get_prefix(name):
+            m = re.match(r"^([0-9])-", name)
+            if m:
+                return int(m.groups()[0])
+            return None
+        
+        def set_prefix(name, prefix, always=False):
+            m = not always and re.match(r"^([0-9])-", name)
+            return "%1d-%s" % (prefix, m and name[2:] or name)
+
+        files = os.listdir(os.path.join(settings.MEDIA_ROOT,
+                                        settings.IMAGE_DIR, self.gallery))
+        files_other = os.listdir(os.path.join(settings.MEDIA_ROOT,
+                                              settings.IMAGE_DIR, other.gallery))
+
+        prefixes = {}
+        renamed_files = {}
+        renamed_files_other = {}
+        last_pfx = -1
+
+        # check if all elements of my files have a prefix
+        files_prefixed = True
+        for f in files:
+            p = get_prefix(f)
+            if p:
+                if p > last_pfx: last_pfx = p
+            else:
+                files_prefixed = False
+                break
+
+        # if not, add a 0 prefix to them
+        if not files_prefixed:
+            prefixes[0] = 0
+            for f in files:
+                renamed_files[f] = set_prefix(f, 0, True)
+
+        # two cases here - either all are prefixed or not.
+        files_other_prefixed = True
+        for f in files_other:
+            pfx = get_prefix(f)
+            if pfx is not None:
+                if not pfx in prefixes:
+                    last_pfx += 1
+                    prefixes[pfx] = last_pfx
+                renamed_files_other[f] = set_prefix(f, prefixes[pfx])
+            else:
+                # ops, not all files here were prefixed.
+                files_other_prefixed = False
+                break
+
+        # just set a 1- prefix to all of them
+        if not files_other_prefixed:
+            for f in files_other:
+                renamed_files_other[f] = set_prefix(f, 1, True)
+
+        # finally, move / rename files.
+        for frm, to in renamed_files.items():
+            shutil.move(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery, frm),
+                        os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery, to))
+        for frm, to in renamed_files_other.items():
+            shutil.move(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, other.gallery, frm),
+                        os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery, to))            
+
+        # and move the gallery starts
+        num_files = len(files)
+        for chunk in self[len(self) - len_other:]:
+            chunk.gallery_start += num_files
+            chunk.save()
+            
+
 
     @transaction.commit_on_success
     def prepend_history(self, other):
