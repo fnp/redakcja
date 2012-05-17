@@ -20,11 +20,14 @@ DATABASES = {
 import tempfile
 
 CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo')
+MEDIA_ROOT = tempfile.mkdtemp(prefix='media-root')
 USE_CELERY = False
 
 INSTALLED_APPS += ('django_nose', 'dvcs.tests')
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+#TEST_MODULES = ('catalogue')
+
 TEST_MODULES = ('catalogue', 'dvcs.tests', 'wiki', 'toolbar')
 COVER_APPS = ('catalogue', 'dvcs', 'wiki', 'toolbar')
 NOSE_ARGS = (

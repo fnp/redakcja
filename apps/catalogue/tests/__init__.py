@@ -118,7 +118,7 @@ class GalleryAppendTests(TestCase):
         c.gallery_start = 0
         c = self.book2[1]
         c.gallery_start = 2
-        import nose.tools; nose.tools.set_trace()
+
         self.make_gallery(self.book1, {
             '1-0001_1l' : 'aa',
             '1-0001_2r' : 'bb',
@@ -127,7 +127,7 @@ class GalleryAppendTests(TestCase):
             })
 
         self.make_gallery(self.book2, {
-            '1-0001_1l' : 'ee',
+            '1-0001_1l' : 'dd', # the same, should not be moved
             '1-0001_2r' : 'ff',
             '2-0002_1l' : 'gg',
             '2-0002_2r' : 'hh',
@@ -141,13 +141,13 @@ class GalleryAppendTests(TestCase):
             '1-0001_2r',
             '1-0002_1l',
             '1-0002_2r',
-            '2-0001_1l',
+            #            '2-0001_1l',
             '2-0001_2r',
             '3-0002_1l',
             '3-0002_2r',
             ])        
 
-        self.assertEqual((4, 6), (self.book1[2].gallery_start, self.book1[3].gallery_start))
+        self.assertEqual((3, 5), (self.book1[2].gallery_start, self.book1[3].gallery_start))
         
         
     def test_none_indexed(self):
@@ -183,6 +183,7 @@ class GalleryAppendTests(TestCase):
 
 
     def test_none_indexed(self):
+        import nose.tools
         self.book2 = Book.create(self.user, 'book 2', slug='book2')
         self.make_gallery(self.book1, {
             '1-0001_1l' : 'aa',
