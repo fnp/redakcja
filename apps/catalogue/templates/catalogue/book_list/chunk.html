@@ -1,6 +1,7 @@
 {% load i18n %}
 
 <tr>
+    <td><input type="checkbox" name="select_chunk" value="{{chunk.id}}" data-book-id="{{chunk.book.id}}" /></td>
     <td class='book-settings-column'></td>
     <td><a href="{% url catalogue_chunk_edit chunk.book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
     <td><a target="_blank" href="{{ chunk.get_absolute_url }}">

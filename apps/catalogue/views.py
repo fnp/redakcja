@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
+from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -385,6 +386,54 @@ def chunk_edit(request, slug, chunk):
         "form": form,
         "go_next": go_next,
     })
+
+
+@transaction.commit_on_success
+def chunk_mass_edit(request):
+    if request.method == 'POST':
+        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+        chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+        
+        stage = request.POST.get('stage')
+        if stage:
+            try:
+                stage = Chunk.tag_model.objects.get(slug=stage)
+            except Chunk.DoesNotExist, e:
+                stage = None
+           
+            for c in chunks: c.stage = stage
+
+        username = request.POST.get('user')
+        logger.info("username: %s" % username)
+        logger.info(request.POST)
+        if username:
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist, e:
+                user = None
+                
+            for c in chunks: c.user = user
+
+        status = request.POST.get('status')
+        if status:
+            books_affected = set()
+            for c in chunks:
+                if status == 'publish':
+                    c.head.publishable = True
+                    c.head.save()
+                elif status == 'unpublish':
+                    c.head.publishable = False
+                    c.head.save()
+                c.touch()  # cache
+                books_affected.add(c.book)
+            for b in books_affected:
+                b.touch()  # cache
+
+        for c in chunks: c.save()
+
+        return HttpResponse("", content_type="text/plain")
+    else:
+        raise Http404
 
 
 @permission_required('catalogue.change_book')

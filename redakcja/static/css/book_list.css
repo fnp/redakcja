@@ -1,0 +1,6 @@
+/* icons used in the contex menu of book list */
+
+.context-menu-item.icon-user { background-image: url(../icons/user.png); }
+.context-menu-item.icon-clock { background-image: url(../icons/clock.png); }
+.context-menu-item.icon-ok { background-image: url(../icons/ok.png); }
+.context-menu-item.icon-stop { background-image: url(../icons/stop.png); }

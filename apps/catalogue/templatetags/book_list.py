@@ -125,9 +125,14 @@ def book_list(context, user=None):
         new_context = {"viewed_user": user}
     else:
         filters = {}
-        new_context = {"users": User.objects.annotate(
+        new_context = {
+            "users": User.objects.annotate(
                 count=Count('chunk')).filter(count__gt=0).order_by(
-                '-count', 'last_name', 'first_name')}
+                '-count', 'last_name', 'first_name'),
+            "other_users": User.objects.annotate(
+                count=Count('chunk')).filter(count=0).order_by(
+                'last_name', 'first_name'),
+                }
 
     new_context.update({
         "filters": True,

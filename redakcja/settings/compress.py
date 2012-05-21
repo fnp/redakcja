@@ -24,7 +24,14 @@ COMPRESS_CSS = {
             'css/book.css',
         ),
         'output_filename': 'compressed/book_?.css',         
-     }
+    },
+    'book_list': {
+        'source_filenames': (
+            'contextmenu/jquery.contextMenu.css',
+            'css/book_list.css',
+        ),
+        'output_filename': 'compressed/book_list_?.css',
+    },
 }
 
 COMPRESS_JS = {
@@ -80,7 +87,15 @@ COMPRESS_JS = {
             'js/book_text/book.js',
         ),
         'output_filename': 'compressed/book_?.js',
-         }
+         },
+    'book_list': {
+        'source_filenames': (
+            'contextmenu/jquery.ui.position.js',
+            'contextmenu/jquery.contextMenu.js',
+            'js/catalogue/book_list.js',
+        ),
+        'output_filename': 'compressed/book_list_?.js',
+    }
 }
 
 COMPRESS = True

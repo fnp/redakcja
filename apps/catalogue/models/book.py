@@ -7,15 +7,19 @@ from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from slughifi import slughifi
 
+
 import apiclient
-from catalogue.helpers import cached_in_field
+from catalogue.helpers import cached_in_field, GalleryMerger
 from catalogue.models import BookPublishRecord, ChunkPublishRecord
 from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
-
+import os
+import shutil
+import re
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -191,7 +195,18 @@ class Book(models.Model):
             chunk.save()
             number += 1
         assert not other.chunk_set.exists()
+
+        gm = GalleryMerger(self.gallery, other.gallery)
+        self.gallery = gm.merge()
+
+        # and move the gallery starts
+        num_files = gm.dest_size
+        for chunk in self[len(self) - len_other:]:
+            chunk.gallery_start += gm.dest_size - gm.num_deleted
+            chunk.save()
+
         other.delete()
+
 
     @transaction.commit_on_success
     def prepend_history(self, other):

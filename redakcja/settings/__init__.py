@@ -30,3 +30,5 @@ try:
 except (ImportError,), exc:
     raise
 
+
+from localsettings import *
