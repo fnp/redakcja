@@ -136,6 +136,7 @@ class GalleryAppendTests(TestCase):
         self.book1.append(self.book2)
 
         files = listdir(join(self.scandir, self.book1.gallery))
+        files.sort()
         self.assertEqual(files, [
             '1-0001_1l',
             '1-0001_2r',
@@ -169,6 +170,7 @@ class GalleryAppendTests(TestCase):
         self.book1.append(self.book2)
 
         files = listdir(join(self.scandir, self.book1.gallery))
+        files.sort()
         print files
         self.assertEqual(files, [
             '0-0001_1l',
@@ -202,6 +204,7 @@ class GalleryAppendTests(TestCase):
         self.book1.append(self.book2)
 
         files = listdir(join(self.scandir, self.book1.gallery))
+        files.sort()
         print files
         self.assertEqual(files, [
             '0-1-0001_1l',
