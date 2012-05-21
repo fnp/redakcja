@@ -93,9 +93,9 @@ class GalleryAppendTests(TestCase):
         self.book1.chunk_set.create(number=2, title='Second chunk',
                 slug='book 1 / 2')
         c=self.book1[0]
-        c.gallery_start=0
+        c.gallery_start=1
         c=self.book1[1]
-        c.gallery_start=2
+        c.gallery_start=3
         
         self.scandir = join(settings.MEDIA_ROOT, settings.IMAGE_DIR)
         if not exists(self.scandir):
@@ -114,10 +114,15 @@ class GalleryAppendTests(TestCase):
         self.book2 = Book.create(self.user, 'book 2', slug='book2')
         self.book2.chunk_set.create(number=2, title='Second chunk of second book',
                 slug='book 2 / 2')
+
         c = self.book2[0]
-        c.gallery_start = 0
+        c.gallery_start = 1
+        c.save()
         c = self.book2[1]
-        c.gallery_start = 2
+        c.gallery_start = 3
+        c.save()
+        
+        print "gallery starts:",self.book2[0].gallery_start, self.book2[1].gallery_start
 
         self.make_gallery(self.book1, {
             '1-0001_1l' : 'aa',
@@ -137,6 +142,7 @@ class GalleryAppendTests(TestCase):
 
         files = listdir(join(self.scandir, self.book1.gallery))
         files.sort()
+        print files
         self.assertEqual(files, [
             '1-0001_1l',
             '1-0001_2r',
@@ -148,7 +154,7 @@ class GalleryAppendTests(TestCase):
             '3-0002_2r',
             ])        
 
-        self.assertEqual((3, 5), (self.book1[2].gallery_start, self.book1[3].gallery_start))
+        self.assertEqual((4, 6), (self.book1[2].gallery_start, self.book1[3].gallery_start))
         
         
     def test_none_indexed(self):

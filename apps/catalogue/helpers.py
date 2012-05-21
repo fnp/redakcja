@@ -70,6 +70,11 @@ class GalleryMerger(object):
         m = not always and re.match(r"^([0-9])-", name)
         return "%1d-%s" % (prefix, m and name[2:] or name)
 
+    @property
+    def was_merged(self):
+        "Check if we have gallery size recorded"
+        return self.dest_size is not None
+
     def merge(self):
         if not self.dest:
             return self.src
