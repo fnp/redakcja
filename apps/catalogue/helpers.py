@@ -82,8 +82,10 @@ class GalleryMerger(object):
             return self.dest
 
         files = listdir(self.path(self.dest))
+        files.sort()
         self.dest_size = len(files)
         files_other = listdir(self.path(self.src))
+        files_other.sort()
         self.src_size = len(files_other)
 
         if files and files_other:
