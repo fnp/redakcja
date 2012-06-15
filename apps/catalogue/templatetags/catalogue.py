@@ -34,6 +34,8 @@ def main_tabs(context):
         tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
         tabs.append(Tab('upload', _('Upload'), reverse("catalogue_upload")))
 
+    tabs.append(Tab('cover', _('Covers'), reverse("cover_image_list")))
+
     return {"tabs": tabs, "active_tab": active}
 
 

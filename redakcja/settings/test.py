@@ -26,10 +26,8 @@ USE_CELERY = False
 INSTALLED_APPS += ('django_nose', 'dvcs.tests')
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-#TEST_MODULES = ('catalogue')
-
-TEST_MODULES = ('catalogue', 'dvcs.tests', 'wiki', 'toolbar')
-COVER_APPS = ('catalogue', 'dvcs', 'wiki', 'toolbar')
+TEST_MODULES = ('catalogue', 'cover', 'dvcs.tests', 'wiki', 'toolbar')
+COVER_APPS = ('catalogue', 'cover', 'dvcs', 'wiki', 'toolbar')
 NOSE_ARGS = (
     '--tests=' + ','.join(TEST_MODULES),
     '--cover-package=' + ','.join(COVER_APPS),

@@ -1,0 +1,29 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load build_absolute_uri from common_tags %}
+
+{% block content %}
+<h1>{% trans "Cover image" %}</h1>
+
+<div style="float: right">
+<a href="{{ object.file.url }}"><img style="width:400px" src="{{ object.file.url }}" /></a>
+<br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
+    {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
+        {{ object.license_name }}</a>
+    {% if object.license_url %}</a>{% endif %}
+
+<br/>{% trans "source" %}: {{ object.download_url }}
+</div>
+
+<form method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="{% trans "Change" %}" />
+</form>
+
+<textarea style="width:100%" rows="5">
+&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
+&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.author }}, {{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
+&lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.source_url }}&lt;/dc:relation.coverImage.source>
+</textarea>
+{% endblock %}

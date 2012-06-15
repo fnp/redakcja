@@ -1,0 +1,21 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+<h1>{% trans "Add image" %}</h1>
+
+<form method="post">
+{% csrf_token %}
+<input type="hidden" name='form_id' value="flickr" />
+{{ ff.as_p }}
+<input type="submit" value="{% trans "Load from Flickr" %}" />
+</form>
+
+
+<form method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="{% trans "Add image" %}" />
+</form>
+{% endblock %}

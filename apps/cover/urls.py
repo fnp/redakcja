@@ -1,4 +1,8 @@
-# -*- coding: utf-8
+# -*- coding: utf-8 -*-
+#
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from django.conf.urls.defaults import patterns, url
 
 
@@ -10,5 +14,7 @@ urlpatterns = patterns('cover.views',
     url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/(?P<rev>\d+)/$',
             'preview', name='cover_preview'),
 
-    url(r'^flickr/$', 'flickr'),
+    url(r'^image/$', 'image_list', name='cover_image_list'),
+    url(r'^image/(?P<pk>\d+)/?$', 'image', name='cover_image'),
+    url(r'^add_image/$', 'add_image', name='cover_add_image'),
 )

@@ -1,11 +1,19 @@
-# Create your views here.
+# -*- coding: utf-8 -*-
+#
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import os.path
 from django.conf import settings
+from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from catalogue.models import Chunk
-from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.views.decorators.http import require_POST
+from catalogue.helpers import active_tab
+from catalogue.models import Chunk
+from cover.models import Image
+from cover import forms
 
 
 PREVIEW_SIZE = (216, 300)
@@ -73,36 +81,59 @@ def preview_from_xml(request):
     return HttpResponse(os.path.join(settings.MEDIA_URL, fname))
 
 
-def flickr(request):
-    url = request.POST.get('flickr_url')
-    if url:
-        import re
-        from urllib2 import urlopen
+@active_tab('cover')
+def image(request, pk):
+    image = get_object_or_404(Image, pk=pk)
 
-        html = urlopen(url).read()
-        match = re.search(r'<a href="([^"]*)" rel="license cc:license">Some rights reserved</a>', html)
-        try:
-            assert match
-            license_url = match.group(1)
-            re_license = re.compile(r'http://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
-            m = re_license.match(license_url)
-            assert m
-            license_name = 'CC %s %s' % (m.group(1).upper(), m.group(2))
-        except AssertionError:
-            license_name = 'NIEZNANA LICENCJA'
-
-        m = re.search(r'<strong class="username">By <a href="[^"]*">([^<]*)</a></strong>', html)
-        if m:
-            author = m.group(1)
+    if request.user.has_perm('cover.change_image'):
+        if request.method == "POST":
+            form = forms.ImageEditForm(request.POST, instance=image)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(image.get_absolute_url())
         else:
-            author = "NIEZNANY AUTOR"
-
-        url_size = url.rstrip('/') + '/sizes/o/'
-        html = urlopen(url_size).read()
-        m = re.search(r'<div id="allsizes-photo">\s*<img src="([^"]*)"', html)
-        if m:
-            image_url = m.group(1)
+            form = forms.ImageEditForm(instance=image)
+        editable = True
     else:
-        url = ""
+        form = forms.ReadonlyImageEditForm(instance=image)
+        editable = False
 
-    return render(request, 'cover/flickr.html', locals())
+    return render(request, "cover/image_detail.html", {
+        "object": image,
+        "form": form,
+        "editable": editable,
+    })
+
+
+@active_tab('cover')
+def image_list(request):
+    objects = Image.objects.all()
+    enable_add = request.user.has_perm('cover.add_image')
+    return render(request, "cover/image_list.html", {
+        'object_list': Image.objects.all(),
+        'can_add': request.user.has_perm('cover.add_image'),
+    })
+
+
+@permission_required('cover.add_image')
+@active_tab('cover')
+def add_image(request):
+    form = ff = None
+    if request.method == 'POST':
+        if request.POST.get('form_id') == 'flickr':
+            ff = forms.FlickrForm(request.POST)
+            if ff.is_valid():
+                form = forms.ImageAddForm(ff.cleaned_data)
+        else:
+            form = forms.ImageAddForm(request.POST)
+            if form.is_valid():
+                obj = form.save()
+                return HttpResponseRedirect(obj.get_absolute_url())
+    if form is None:
+        form = forms.ImageAddForm()
+    if ff is None:
+        ff = forms.FlickrForm()
+    return render(request, 'cover/add_image.html', {
+            'form': form,
+            'ff': ff,
+        })
