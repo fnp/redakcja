@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-10 16:00+0200\n"
-"PO-Revision-Date: 2012-05-10 16:05+0100\n"
-"Last-Translator: Marcin Koziej <marcin@bohomass.com>\n"
+"POT-Creation-Date: 2012-06-18 12:52+0200\n"
+"PO-Revision-Date: 2012-06-18 12:53+0100\n"
+"Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -59,63 +59,63 @@ msgstr "Dokument o tym slugu już istnieje w repozytorium."
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:23
+#: models/book.py:27
 #: models/chunk.py:23
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:24
+#: models/book.py:28
 #: models/chunk.py:24
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:25
+#: models/book.py:29
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:26
+#: models/book.py:30
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: models/book.py:29
+#: models/book.py:33
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:30
+#: models/book.py:34
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:47
+#: models/book.py:51
 #: models/chunk.py:21
 #: models/publish_log.py:17
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:48
+#: models/book.py:52
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:235
+#: models/book.py:250
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:239
+#: models/book.py:254
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:248
+#: models/book.py:263
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:250
+#: models/book.py:265
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:252
+#: models/book.py:267
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:255
+#: models/book.py:270
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -436,6 +436,10 @@ msgstr "Wszystkie"
 #: templatetags/catalogue.py:34
 msgid "Add"
 msgstr "Dodaj"
+
+#: templatetags/catalogue.py:37
+msgid "Covers"
+msgstr "Okładki"
 
 #: templatetags/wall.py:49
 msgid "Related edit"

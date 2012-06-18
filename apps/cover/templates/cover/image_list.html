@@ -12,16 +12,17 @@
 {% endif %}
 
 <ul>
-{% autopaginate object_list 100 %}
+{% autopaginate object_list 1 %}
 {% for image in object_list %}
-    <a href="{{ image.get_absolute_url }}">
+    <a href="{{ image.get_absolute_url }}" style="display:inline-block; width:200px;">
     
-    <img style="height: 200px"
-        src="{% thumbnail image.file "x200" as thumb %}
+    <img style="height: 100px"
+        src="{% thumbnail image.file "x100" as thumb %}
                 {{ thumb.url }}
              {% empty %}
                 {{ image.file.url }}
              {% endthumbnail %}" />
+        <br/>
         {{ image }}</a>
 {% endfor %}
 {% paginate %}

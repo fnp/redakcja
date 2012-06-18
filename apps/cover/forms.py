@@ -6,6 +6,7 @@
 import re
 from urllib2 import urlopen
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 from cover.models import Image
 
 class ImageAddForm(forms.ModelForm):
@@ -33,7 +34,7 @@ class ReadonlyImageEditForm(ImageEditForm):
 
 
 class FlickrForm(forms.Form):
-    source_url = forms.URLField()
+    source_url = forms.URLField(label=_('Flickr URL'))
 
     def clean_source_url(self):
         url = self.cleaned_data['source_url']

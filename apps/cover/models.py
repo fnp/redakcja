@@ -15,13 +15,13 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Image(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    license_name = models.CharField(max_length=255)
-    license_url = models.URLField(max_length=255, blank=True)
-    source_url = models.URLField()
-    download_url = models.URLField(unique=True)
-    file = models.ImageField(upload_to='cover/image', editable=False)
+    title = models.CharField(max_length=255, verbose_name=_('title'))
+    author = models.CharField(max_length=255, verbose_name=_('author'))
+    license_name = models.CharField(max_length=255, verbose_name=_('license name'))
+    license_url = models.URLField(max_length=255, blank=True, verbose_name=_('license URL'))
+    source_url = models.URLField(verbose_name=_('source URL'))
+    download_url = models.URLField(unique=True, verbose_name=_('image download URL'))
+    file = models.ImageField(upload_to='cover/image', editable=False, verbose_name=_('file'))
 
     class Meta:
         verbose_name = _('cover image')
