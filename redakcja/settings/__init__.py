@@ -31,4 +31,7 @@ except (ImportError,), exc:
     raise
 
 
-from localsettings import *
+try:
+    from redakcja.localsettings import *
+except ImportError:
+    pass
