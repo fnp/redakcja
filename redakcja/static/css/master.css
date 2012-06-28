@@ -336,7 +336,7 @@ img.tabclose {
 
 .saveNotify {
     position:absolute; 
-    top:22px; 
+    bottom:22px; 
     right:7px; 
     z-index:800;
     background-color: #FFFF69; 
