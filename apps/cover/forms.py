@@ -38,7 +38,7 @@ class FlickrForm(forms.Form):
 
     def clean_source_url(self):
         url = self.cleaned_data['source_url']
-        m = re.match(r'(https?://)?(www\.|secure\.)?flickr\.com/photos/(?P<author>[^/]+)/(?P<img>\d+)', url)
+        m = re.match(r'(https?://)?(www\.|secure\.)?flickr\.com/photos/(?P<author>[^/]+)/(?P<img>\d+)/?', url)
         if not m:
             raise forms.ValidationError("It doesn't look like Flickr URL.")
         author_slug, img_id = m.group('author'), m.group('img')

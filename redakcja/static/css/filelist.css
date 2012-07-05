@@ -225,10 +225,14 @@ a:hover {
     background-color: #fdc;
 }
 
-.cover-preview {
+div.cover-preview {
 	width: 216px;
-	height: 300px;
+	min-height: 300px;
 	float: left;
 	margin-right: 2em;
 }
+
+img.cover-preview {
+	width: 216px;
+	height: 300px;
 }

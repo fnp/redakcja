@@ -12,7 +12,7 @@
 {% endif %}
 
 <ul>
-{% autopaginate object_list 1 %}
+{% autopaginate object_list 100 %}
 {% for image in object_list %}
     <a href="{{ image.get_absolute_url }}" style="display:inline-block; width:200px;">
     

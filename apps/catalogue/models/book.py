@@ -17,6 +17,7 @@ from catalogue.models import BookPublishRecord, ChunkPublishRecord
 from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
+from cover.models import Image
 import os
 import shutil
 import re
@@ -39,6 +40,7 @@ class Book(models.Model):
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
+    dc_cover_image = models.ForeignKey(Image, blank=True, null=True, db_index=True, on_delete=models.SET_NULL)
     dc_slug = models.CharField(max_length=128, null=True, blank=True,
             editable=False, db_index=True)
 
@@ -329,11 +331,20 @@ class Book(models.Model):
     def refresh_dc_cache(self):
         update = {
             'dc_slug': None,
+            'dc_cover_image': None,
         }
 
         info = self.book_info()
         if info is not None:
             update['dc_slug'] = info.url.slug
+            if info.cover_source:
+                try:
+                    image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))
+                except:
+                    pass
+                else:
+                    if info.cover_source == image.get_absolute_url():
+                        update['dc_cover_image'] = image
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):
