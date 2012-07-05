@@ -12,6 +12,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.sites.models import Site
 
 
 class Image(models.Model):
@@ -33,6 +34,9 @@ class Image(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('cover_image', [self.id])
+
+    def get_full_url(self):
+        return "http://%s%s" % (Site.objects.get_current().domain, self.get_absolute_url())
 
 
 @receiver(post_save, sender=Image)

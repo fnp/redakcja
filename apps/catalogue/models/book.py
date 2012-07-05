@@ -343,7 +343,7 @@ class Book(models.Model):
                 except:
                     pass
                 else:
-                    if info.cover_source == image.get_absolute_url():
+                    if info.cover_source == image.get_full_url():
                         update['dc_cover_image'] = image
         Book.objects.filter(pk=self.pk).update(**update)
 
