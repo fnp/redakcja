@@ -29,7 +29,7 @@ def fix(book, author, dry_run=True):
     if dry_run:
         m = re.search(datepd, txt)
         if m:
-            print("%s: %s->%d" % (book.slug, m.groups()[1], int(m.groups()[1])+70))
+            print("%s: %s->%d" % (book.slug, m.groups()[1], int(m.groups()[1])+71))
         else:
             print("%s: date.pd not found??" % (book.slug,))
     else:
@@ -37,14 +37,23 @@ def fix(book, author, dry_run=True):
         def up_date(match):
             tagopen, date, tagclose = match.groups()
             olddate=date
-            date = str(int(date)+70)
+            date = str(int(date)+71)
             dates['date'] = date
             dates['olddate'] = olddate
-            return tagopen+date+tagclose
-        new_txt = re.sub(datepd, up_date, txt)
-        print "%s: %s->%s" % (book.slug, dates['olddate'], dates['date'])
-        fc.commit(new_txt, author=author, description=u"Automatyczne poprawienie daty przejścia do domeny publicznej z %s na %s" % (dates['olddate'], dates['date']))
+            dates['overflow'] = False
+            if int(date) > 2012:
+               dates['overflow'] = True
+               return tagopen+date+tagclose
 
+        new_txt = re.sub(datepd, up_date, txt)
+        if dates:
+            print "%s: %s->%s" % (book.slug, dates['olddate'], dates['date'])
+            if dates['overflow']:
+                print "oops, new date would overfow to the future, i'm not changing"
+                return	
+           # fc.commit(new_txt, author=author, description=u"Automatyczne poprawienie daty przejścia do domeny publicznej z %s na %s" % (dates['olddate'], dates['date']))
+        else:
+            print "skipping %s" % book.slug
 import sys
 import getopt
 from django.contrib.auth.models import User
