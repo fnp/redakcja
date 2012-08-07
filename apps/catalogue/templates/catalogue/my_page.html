@@ -2,7 +2,15 @@
 
 {% load i18n %}
 {% load catalogue book_list wall %}
+{% load compressed %}
 
+{% block add_js %}
+{% compressed_js 'book_list' %}
+{% endblock %}
+
+{% block add_css %}
+{% compressed_css 'book_list' %}
+{% endblock %}
 
 {% block leftcolumn %}
     {% book_list request.user %}
