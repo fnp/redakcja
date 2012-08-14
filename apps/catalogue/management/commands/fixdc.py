@@ -18,7 +18,8 @@ class FixDC(XmlUpdater):
         try:
             WLURI.strict(elem.text)
         except ValidationError:
-            correct_field = unicode(WLURI.from_slug(WLURI(elem.text).slug))
+            correct_field = unicode(WLURI.from_slug(
+                                WLURI(elem.text.strip()).slug))
             if verbose:
                 print "Changing %s from %s to %s" % (
                         elem.tag, elem.text, correct_field
