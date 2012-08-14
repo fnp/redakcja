@@ -139,8 +139,6 @@ class GalleryMerger(object):
                 renamed_files_other[f] = self.set_prefix(f, 1, True)
 
         # finally, move / rename files.
-        from nose.tools import set_trace
-        #        set_trace()
         for frm, to in renamed_files.items():
             move(join(self.path(self.dest), frm),
                         join(self.path(self.dest), to))
