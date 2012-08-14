@@ -40,7 +40,8 @@ class Book(models.Model):
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
-    dc_cover_image = models.ForeignKey(Image, blank=True, null=True, db_index=True, on_delete=models.SET_NULL)
+    dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
+        db_index=True, on_delete=models.SET_NULL, editable=False)
     dc_slug = models.CharField(max_length=128, null=True, blank=True,
             editable=False, db_index=True)
 
