@@ -255,13 +255,11 @@ class Book(models.Model):
             changes = self.get_current_changes(publishable=True)
         except self.NoTextError:
             raise AssertionError(_('Not all chunks have publishable revisions.'))
-        book_xml = self.materialize(changes=changes)
 
-        from librarian.dcparser import BookInfo
         from librarian import NoDublinCore, ParseError, ValidationError
 
         try:
-            bi = BookInfo.from_string(book_xml.encode('utf-8'), strict=True)
+            bi = self.wldocument(changes=changes, strict=True).book_info
         except ParseError, e:
             raise AssertionError(_('Invalid XML') + ': ' + unicode(e))
         except NoDublinCore:
@@ -397,14 +395,16 @@ class Book(models.Model):
             changes = self.get_current_changes(publishable)
         return compile_text(change.materialize() for change in changes)
 
-    def wldocument(self, publishable=True, changes=None, parse_dublincore=True):
+    def wldocument(self, publishable=True, changes=None, 
+            parse_dublincore=True, strict=False):
         from catalogue.ebook_utils import RedakcjaDocProvider
         from librarian.parser import WLDocument
 
         return WLDocument.from_string(
                 self.materialize(publishable=publishable, changes=changes),
                 provider=RedakcjaDocProvider(publishable=publishable),
-                parse_dublincore=parse_dublincore)
+                parse_dublincore=parse_dublincore,
+                strict=strict)
 
     def publish(self, user):
         """
