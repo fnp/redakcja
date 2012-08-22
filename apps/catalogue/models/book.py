@@ -270,6 +270,14 @@ class Book(models.Model):
         valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
 
+    def publishable_error(self):
+        try:
+            return self.assert_publishable()
+        except AssertionError, e:
+            return e
+        else:
+            return None
+
     def hidden(self):
         return self.slug.startswith('.')
 

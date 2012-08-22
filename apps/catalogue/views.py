@@ -26,7 +26,6 @@ from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
 from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
-from catalogue.tasks import publishable_error
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -303,7 +302,7 @@ def book(request, slug):
         form = forms.ReadonlyBookForm(instance=book)
         editable = False
 
-    publish_error = publishable_error(book)
+    publish_error = book.publishable_error()
     publishable = publish_error is None
 
     return direct_to_template(request, "catalogue/book_detail.html", extra_context={
