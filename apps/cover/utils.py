@@ -7,7 +7,7 @@ from urllib import FancyURLopener
 from django.contrib.sites.models import Site
 
 
-class URLOpener(urllib.FancyURLopener):
+class URLOpener(FancyURLopener):
     @property
     def version(self):
         return 'FNP Redakcja (http://%s)' % Site.objects.get_current()
