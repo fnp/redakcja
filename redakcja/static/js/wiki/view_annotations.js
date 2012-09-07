@@ -40,6 +40,45 @@
 
     AnnotationsPerspective.prototype = new $.wiki.Perspective();
 
+    AnnotationsPerspective.prototype.updateAnnotationIds = function(self){
+	self.annotationToAnchor = {};
+	$('#html-view .annotation-inline-box').each(
+	    function(i, annoBox) {
+		var $annoBox = $(annoBox);
+		var $anchor = $("a[name|=anchor]", $annoBox);
+		var htmlContent = $('span', $annoBox).html();
+		// TBD: perhaps use a hash of htmlContent as key
+		self.annotationToAnchor[htmlContent] = $anchor.attr('name');
+		});
+    }
+
+    AnnotationsPerspective.prototype.goToAnnotation = function(self, srcNode){
+	var content = $(srcNode).html();
+	content = content.replace('&gt;', '>', 'g').replace('&lt;', '<', 'g').replace('&amp;', '&', 'g');
+	xml2html({
+	    xml: '<root>'+content+'</root>',
+	    success: function(txt) {
+		content = $(txt).html();
+		},
+            error: function(text) {
+                $.unblockUI();
+                self.$error.html(text);
+                self.$spinner.hide();
+                self.$error.show();
+            }
+	});
+
+	var anchor = self.annotationToAnchor[content];
+	if (anchor != undefined) {
+	    var $htmlView = $("#html-view");
+	    var top = $htmlView.offset().top + 
+		$("[name=" + anchor + "]", $htmlView).offset().top - 
+		$htmlView.children().eq(0).offset().top
+
+	    $htmlView.animate({scrollTop: top}, 250);
+	}
+    }
+
     AnnotationsPerspective.prototype.refresh = function(self, atype) {
         var xml;
 
@@ -59,6 +98,7 @@
                     self.$error.show();
                 }
             });
+	    self.updateAnnotationIds(self);
         }
         else {
             xml = this.doc.text;
@@ -97,6 +137,7 @@
                             elem.sortby = $(elem).text().trim();
                             $(elem).append("<div class='src'>"+ xml_text.replace("&", "&amp;", "g").replace("<", "&lt;", "g") +"</div>")
                             anno_list.push(elem);
+			    $(".src", elem).click(function() { self.goToAnnotation(self, this); });
                             counter--;
 
                             if (!counter) {
