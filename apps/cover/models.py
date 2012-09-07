@@ -4,7 +4,6 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
-from urllib2 import urlopen
 from urlparse import urljoin
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -13,6 +12,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
+from cover.utils import URLOpener
 
 
 class Image(models.Model):
@@ -42,7 +42,7 @@ class Image(models.Model):
 @receiver(post_save, sender=Image)
 def download_image(sender, instance, **kwargs):
     if instance.pk and not instance.file:
-        t = urlopen(instance.download_url).read()
+        t = URLOpener().open(instance.download_url).read()
         instance.file.save("%d.jpg" % instance.pk, ContentFile(t))
         
         
