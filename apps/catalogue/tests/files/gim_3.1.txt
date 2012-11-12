@@ -1,0 +1,158 @@
+I. Informacje
+Numer porządkowy: 3.1
+Dział: Język mediów
+Tytuł modułu: Podróże po hipertekście
+Poziom edukacyjny: gimnazjum
+Autorzy: Piotr Drzewiecki, Michał Wysocki, Urszula Dobrowolska
+
+Wybrana kompetencja z Katalogu: [uzupełnimy na końcu]
+Odniesienie do podstawy programowej: [uzupełnimy na końcu]
+Słowa kluczowe: hipertekst, nowe media
+Moduły powiązane: [uzupełnimy na końcu]
+
+Cele operacyjne
+Uczestnik:
+- rozumie różnice między hipertekstem, a tekstem tradycyjnym;
+- dostrzega logiczne powiązania pomiędzy tekstami tworzącymi hipertekst; 
+- pamięta, że o efektywnym korzystaniu z hipertekstu decyduje precyzyjne określenie potrzeby informacyjnej; 
+- wie, w jaki sposób zaplanować strukturę tworzonego przez siebie hipertekstu.
+
+Wykorzystane metody
+- wykład
+- dyskusja
+- praca w grupach
+
+Pomoce
+*xero
+*tablica
+*kreda lub marker
+*papier dużego formatu
+*przybory do pisania
+*taśma klejąca lub klej
+
+
+II. Wiedza w pigułce
+
+Żyjemy w świecie tekstów. Gdziekolwiek nie zwrócimy naszej uwagi, coś do nas „przemawia”. 
+Niegdyś możliwości przekazywania treści były ograniczone. By wyrazić zamierzony sens posługiwano się przede wszystkim zapisem. Stąd tradycyjne rozumienie „tekstu” jako czegoś zapisanego czy wydrukowanego. 
+Rozwój technologii sprawił, że dziś możemy na szeroką skalę komunikować się również za pośrednictwem radia, telewizji czy internetu. Zdajemy sobie sprawę, że „przemawia” do nas nie tylko pismo, lecz także film, obraz czy dźwięk. Każde z mediów wytworzyło specyficzny język. Mówi się np. o języku filmu. Za jego pośrednictwem można np. tworzyć swoistą atmosferę czy wyrażać emocje bez użycia słów. 
+Aby odróżnić rozmaitość współczesnych tekstów od tych dawnych, tylko drukowanych, powstało określenie „tekstu kultury”. Tekstem kultury jest każdy wytwór człowieka, który jest uporządkowany wedle określonych reguł.  Tekstami kultury są nie tylko dzieła sztuki (obrazy, filmy czy książki), lecz także np. ubrania.
+Internet zajmuje szczególne miejsce pośród dzisiejszych mediów. Dzieje się tak nie tylko dlatego, że każdy może być w nim twórcą i na forum wyrażać swoje myśli. Także dlatego, że każdy sam kieruje w nim swą wędrówką. Nie pozwalają nam na to  klasyczne radio czy telewizja: możemy odbierać określone programy tylko wtedy, gdy są akurat emitowane. W internecie mamy dostęp do wszystkich informacji, gdy tylko sobie tego zażyczymy. To odbiorca określa, jaką drogą podąży w wyborze oglądanych stron, jakie ich elementy pominie, na który link kliknie. Dzięki temu współtworzy otrzymywany przekaz.
+Swobodę w tworzeniu przekazu, jaką daje internet, oddaje pojęcie hipertekstu. Hipertekst to zbiór tekstów połączonych ze sobą odniesieniami. Odbiór hipertekstu można porównać do swobodnej przechadzki po budynku o niezliczonej ilości pokoi. Sam decydujesz, do jakiego pokoju zajrzysz, ile czasu w nim spędzisz i jak dokładnie przyjrzysz się obecnym tam przedmiotom. Odczytywanie tradycyjnego tekstu zaś byłoby podobne do zaplanowanej odgórnie wycieczki z przewodnikiem, który zaprowadzi zwiedzającego tylko do niektórych pomieszczeń, w odpowiedniej kolejności. 
+
+III. Pomysł na lekcję
+
+Opis zawartości 
+Hipertekst to coś więcej niż tylko zbiór odnośników do innych dokumentów. Jego zastosowanie, np. w Wikipedii, sprawia, że czytelnik samodzielnie może decydować o tym, które wątki pominąć, a które interesują go najbardziej, natychmiast zdobywając informacje na ich temat. Za sprawą hipertekstu każdy artykuł staje się swego rodzaju labiryntem, w którym każdy znajduje własną ścieżkę. 
+
+Przebieg zajęć
+1. Omów zagadnienie hipertekstu, korzystając z fragmentów podręcznika.
+ 
+Zwróć szczególną uwagę na najistotniejsze cechy hipertekstu:
+- nieliniowość – nie musimy za każdym razem czytać całości tekstu, a tylko interesujące nas fragmenty;
+- elastyczność – samodzielnie wybieramy te wątki, które chcemy rozwinąć; 
+- zwiększenie roli czytelnika – ten sam hipertekst można przeczytać na wiele różnych sposobów w zależności od zainteresowań i potrzeb poszczególnych osób.
+ 
+Zasygnalizuj uczestnikom zajęć, że praca z hipertekstem jest tym bardziej wymagająca – ze względu na wiele hiperłączy i łatwość pozyskiwania kolejnych informacji, powinniśmy precyzyjnie określić nasze potrzeby informacyjne tak, by móc wybrać te tematy, które rzeczywiście nas interesują. W przeciwnym razie łatwo o dekoncentrację i mimowolne podążanie za kolejnymi odnośnikami na zasadzie luźnej gry skojarzeń.
+ 
+Fakultatywnie możesz skorzystać z prezentacji  „Hipertekst_prezentacja”
+ 
+Jako pytania pomocnicze rozważ:
+- czy za każdym razem musimy przeczytać cały artykuł na Wikipedii, by dotrzeć do interesujących nas zagadnień?
+- czym różni się sposób pozyskiwania informacji z Wikipedii od tradycyjnej encyklopedii?
+- w jaki sposób hiperłącza stosowane np. w Wikipedii ułatwiają nam dostęp do informacji?
+ 
+pomoce: -
+forma pracy: wykład
+czas: 5 minut
+
+2. Podziel grupę na cztery zespoły. Dwa zespoły powinny otrzymać wydruk karty pracy „Hipertekst__A”, dwa zespoły wydruk karty pracy „Hipertekst__B”.
+Poproś zespoły o przygotowanie na papierze dużego formatu prezentacji/plakatu w formie krótkiego tekstu:
+            zespoły rozwiązujące zadanie A – w jaki sposób można przygotować jajka na śniadanie?
+            zespoły rozwiązujące zadanie B – jaka pogoda panuje w Polsce w październiku?
+
+Zwróć uwagę uczestników zajęć na konieczność wykorzystania przygotowanych hiperłączy – powinny zostać wkomponowane w powstające opisy. Dodatkowo każdy zespół powinien przygotować jedno własne hiperłącze i samodzielnie je opisać. 
+  
+pomoce: papier dużego formatu, karta pracy „Hipertekst__A”, karta pracy „Hipertekst__B”, taśma klejąca lub klej
+forma pracy: praca w grupach
+czas: 15 minut
+ 
+3. Poproś kolejne grupy o prezentacje. Pozostałe zespoły nakłoń do zadawania pytań i dzielenia się komentarzami.
+Zadaj pytania: czy zespoły opracowujące to samo zadanie przygotowały identyczne teksty? Czy hiperłącza zostały ułożone w ten sam sposób?
+ 
+Celem zadania jest uświadomienie uczestnikom zajęć, że hiperteksty mogą zostać skonstruowane na wiele różnych sposobów. Ich podstawowym celem jest umożliwienie odbiorcom elastycznego pozyskiwania wiedzy. 
+ 
+pomoce: papier dużego formatu
+forma pracy: prezentacja, dyskusja
+czas: 20 minut
+ 
+4. Zadaj pytanie: na czym polega największa zaleta informacji prezentowanych za pomocą hipertekstu?
+ 
+Jako pytania pomocnicze rozważ:
+- jak długie musiałby być tradycyjny tekst, aby zawrzeć wszystkie informacje, które zostały przedstawione w prezentacjach opracowywanych w czasie zajęć?
+- która forma – hipertekst czy tekst tradycyjny – jest bardziej użyteczna dla czytelnika?
+- dlaczego wygodniej korzystać z Wikipedii niż tradycyjnej encyklopedii?
+ 
+pomoce: -
+forma pracy: dyskusja
+czas: 5 minut
+ 
+ 
+Opcje dodatkowe
+Zajęcia mogą zostać rozbudowane w punkcie III.2 i III.3 o przygotowanie kolejnych odnośników do hiperłączy zawartych w karcie pracy. Poproś uczestników zajęć o podkreślenie na poszczególnych wydrukach słów, które mogą zostać wyjaśnione za pomocą kolejnych odniesień. Zasugeruj uczestnikom przygotowanie 2-3 hiperłączy wraz z krótkim wyjaśnieniem pojęć.
+
+IV. Materiały 
+karta pracy "Podróże po hipertekście"
+
+V. Zadania sprawdzające
+1.   Dobierz właściwe hiperłącza do oznaczonych fragmentów poniższego tekstu:
+
+„Sukces - działanie na najwyższym poziomie możliwości jednostki (HIPERŁĄCZE_1), w kierunku spełnienia jej marzeń (HIPERŁĄCZE_2) i pragnień przy jednoczesnym zachowaniu równowagi pomiędzy wszystkimi płaszczyznami życia.
+Innymi słowy sukces jest to stan zamierzony, zrealizowany w przeciągu czasu. Do zdefiniowania sukcesu określa się wartości, które są jego wyznacznikiem. Dla każdego człowieka sukces jest widziany w inny sposób. Ważną rolę odgrywa tutaj hierarchia wartości  i doświadczenia wyznawane przez każdego z osobna. Miarą sukcesu mogą być: zrealizowane plany, szczęście (HIPERŁĄCZE_3), zdrowie (HIPERŁĄCZE_4), własność materialna itp.
+Człowiek osiąga sukces, wtedy gdy spełniają się wszystkie jego oczekiwania.”
+Sukces, Wikipedia.pl, CC BY-SA, http://pl.wikipedia.org/wiki/Sukces_%28stan%29, dostęp 1.10.2012.
+
+Hiperłącza:
+a. Marzenia dzienne - fantazje, myśli i wyobrażenia występujące w czasie pełnej świadomości.
+Marzenia dzienne mogą dotyczyć przeszłości, teraźniejszości lub przyszłości. Dotyczą różnych tematów, wyróżnia się m.in. marzenia dotyczące sukcesu, czynów bohaterskich, relacji z innymi ludźmi, religijne itp. Dotyczą bardziej złożonych konstruktów myślowych, bądź bardzo prozaicznych.
+Badania prowadzone przez Jerome'a Singera (Marzenia dzienne) wykazały pewne różnice dotyczące treści marzeń dziennych w zależności od płci, wieku, pozycji społecznej itp. Wpływają one znacząco na funkcjonowanie człowieka. Freud przypisywał im rolę kompensacyjną. Mogą występować jako mechanizm obronny - uciekanie w świat fantazji, eskapizm.
+Marzenia dzienne, Wikipedia.pl, CC BY-SA, http://pl.wikipedia.org/wiki/Marzenia_dzienne, dostęp 1.10.2012.
+b. W konstytucji z 1946 roku Światowa Organizacja Zdrowia (WHO) określiła zdrowie jako „stan pełnego, dobrego samopoczucia fizycznego, psychicznego i społecznego, a nie wyłącznie brak choroby lub niedomagania (ułomności)”. W ostatnich latach definicja ta została uzupełniona o sprawność do „prowadzenia produktywnego życia społecznego i ekonomicznego” a także wymiar duchowy.
+Zdrowie, Wikipedia.pl, CC BY-SA, http://pl.wikipedia.org/wiki/Zdrowie, dostęp 1.10.2012.
+c. Szczęście jest emocją, spowodowaną doświadczeniami ocenianymi przez podmiot jako pozytywne. Psychologia wydziela w pojęciu szczęście rozbawienie i zadowolenie.
+rozważaniach o jego naturze szczęście najczęściej określane jest w dwu aspektach:
+*mieć szczęście oznacza: 
+*sprzyjający zbieg, splot okoliczności;
+*pomyślny los, fortuna, dola, traf, przypadek;
+*powodzenie w realizacji celów życiowych, korzystny bilans doświadczeń życiowych
+*odczuwać szczęście oznacza: 
+*(chwilowe) odczucie bezgranicznej radości, przyjemności, euforii,zadowolenia, upojenia,
+*(trwałe) zadowolenie z życia połączone z pogodą ducha i optymizmem; ocena własnego życia jako udanego, wartościowego, sensownego. 
+Trzeba tu zauważyć, że są to aspekty rozdzielne.
+Według niektórych neurologów, szczęście pozostaje w ścisłym związku z poziomem serotoniny w synapsach jąder szwu, a także dopaminy w jądrze półleżącym oraz endorfin. Jako dowód przytacza się odczuwane szczęścia pod wpływem substancji dopaminergicznych, serotoninergicznych oraz agonistów receptora opioidowego.
+Szczęście, Wikipedia.pl, CC BY-SA, http://pl.wikipedia.org/wiki/Szcz%C4%99%C5%9Bcie, dostęp 1.10.2012.
+d. Osoba (πρόσωπον /prosopon/, łac. persona) - pierwotnie, zarówno po grecku, jak i po łacinie słowo to oznaczało "maskę", którą zakładali aktorzy w teatrze starożytnym. Następnie zaczęto je używać do roli, jaką jednostka odgrywa w dramacie życia. Podmiot o rozumnej naturze. Może nim być człowiek, a także Bóg, rozumiany jako byt wyróżniający się najdoskonalszą formą istnienia. We współczesnej filozofii pojęcie kluczowe dla chrześcijańskiego i niechrześcijańskiego personalizmu, mającego źródła w chrześcijańskim (zwłaszcza tomistycznym) rozumieniu człowieka jako bytu odrębnego od świata rzeczy, przyrody, w tym także zwierząt.
+Osoba, Wikipedia.pl, CC BY-SA, http://pl.wikipedia.org/wiki/Osoba, dostęp 1.10.2012.
+
+ROZWIĄZANIE:
+1 – d
+2 – a
+3 – c
+4 – b
+
+VI. Słowniczek 
+http://pad.nowoczesnapolska.org.pl/p/slowniczek
+Tekst kultury - każdy  wytwór kulturalnej działalności człowieka, stanowiący uporządkowaną  całość wedle określonych reguł np. dzieło sztuki (obraz, film, książka),  ale też ubiór, przyjęty wzór zachowań społecznych
+Hipertekst  - nielinearny sposób organizacji tekstów lub ich fragmentów połączonych  odsyłaczami, umozliwiający czytelnikowi bardziej swobodną lekturę.  Przykładem hipertekstu jest strona www połączona z innymi za pomocą  linków
+
+VII. Czytelnia 
+M. Filiciak, A. Tarkowski, Alfabet nowej kultury: H jak hipertekst,  http://www.dwutygodnik.com/artykul/323 (dostęp 16.09.2012)
+M. Pisarski, Hipertekst - punkt węzłowy, http://www.techsty.art.pl/hipertekst.htm
+
+VIII. Ewaluacja 
+Czy po przeprowadzeniu zajęć ich uczestnicy:
+- rozumieją różnicę pomiędzy hipertekstem a tekstem tradycyjnym?
+- potrafią wskazać najistotniejsze zalety prezentowania informacji w formie hipertekstu?
+- wiedzą, w jaki sposób zaplanować strukturę hipertekstu?
+- rozumieją, że o efektywnym wykorzystaniu hipertekstu decyduje precyzyjne określenie potrzeby informacyjnej (--> rozważ realizację modułu 1.1 Jak planować pracę z informacją?)
+

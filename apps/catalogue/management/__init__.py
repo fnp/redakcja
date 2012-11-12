@@ -120,3 +120,9 @@ class XmlUpdater(object):
         """Prints the counters."""
         for item in sorted(self.counters.items()):
             print "%s: %d" % item
+
+
+auto_taggers = {}
+from . import edumed
+auto_taggers['edumed'] = edumed.tagger
+
