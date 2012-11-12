@@ -15,7 +15,7 @@ class Tagger:
     def line(self, position):
         return self.lines[position]
 
-    ignore = [ re.compile(r"^[\[][PA][\]] - [^ ]+$") ]
+    ignore = [re.compile(r"^[\[][PA][\]] - [^ ]+$")]
     empty_line = re.compile(r"^\s+$")
     
     def skip_empty(self, position):
@@ -26,7 +26,6 @@ class Tagger:
             position += 1
         return position
 
-
     def tag(self, position):
         """
 Return None -- means that we can't tag it in any way
@@ -35,6 +34,11 @@ Return None -- means that we can't tag it in any way
 
     def wrap(self, tagname, content):
         return u"<%s>%s</%s>" % (tagname, content, tagname)
+
+    @staticmethod
+    def anymatches(regex):
+        return lambda x: regex.match(x)
+        
 
 
 class Section(Tagger):
@@ -87,11 +91,14 @@ class Informacje(Tagger):
 
 
 class List(Tagger):
+    point = re.compile(r"^[\s]*([-*])")
+    
     def tag(self, pos):
         self.items = []
         while True:
             l = self.line(pos)
-            if l and l[0] in ('-', '*'):
+            m = self.point.match(l)
+            if l and m:
                 self.items.append(l[1:].strip())
                 pos += 1
             else:
@@ -100,10 +107,10 @@ class List(Tagger):
             return pos
 
     def __unicode__(self):
-        s = "<lista>\n"
+        s = '<lista typ="punkt">'
         for i in self.items:
-            s += "<punkt>%s</punkt>\n" % i
-        s += "</lista>\n"
+            s += "\n<punkt>%s</punkt>" % i
+        s += "\n</lista>\n"
         return s
 
 

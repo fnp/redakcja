@@ -75,11 +75,25 @@ class Command(BaseCommand):
             except ValueError:
                 print "pad '%s' does not exist" % pid
                 continue
-            slug = slughifi(pid)
-            print "Importing %s..." % pid
+
+            open("/tmp/pad_%s.txt" % pid, 'w').write(text.encode('utf-8'))
+            
+            if options.get('tag_edumed'):
+                auto_tagger = 'edumed'
+            else:
+                auto_tagger = options.get('auto_tagger')
+            if auto_tagger:
+                text = auto_taggers[auto_tagger](text)
+            try:
+                info = BookInfo.from_string(text.encode('utf-8'))
+                slug = info.url.slug
+            except (ParseError, ValidationError):
+                slug = slughifi(pid)
+
+            print "Importing %s (slug %s)..." % (pid, slug)
             title = pid
 
-            print slugs, slug
+            #            print slugs, slug
             previous_books = slugs.get(slug)
             if previous_books:
                 if len(previous_books) > 1:
@@ -94,6 +108,7 @@ class Command(BaseCommand):
 
             if previous_book:
                 book = previous_book
+                book.slug = slug
             else:
                 book = Book()
                 book.slug = slug
@@ -108,12 +123,6 @@ class Command(BaseCommand):
             else:
                 chunk = book.add(slug, title)
 
-            if options.get('tag_edumed'):
-                auto_tagger = 'edumed'
-            else:
-                auto_tagger = options.get('auto_tagger')
-            if auto_tagger:
-                text = auto_taggers[auto_tagger](text)
             chunk.commit(text, **commit_args)
 
             book_count += 1
