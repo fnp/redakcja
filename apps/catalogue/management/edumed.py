@@ -15,13 +15,17 @@ class Tagger:
     def line(self, position):
         return self.lines[position]
 
-    empty_line = re.compile(r"\s+")
+    ignore = [ re.compile(r"^[\[][PA][\]] - [^ ]+$") ]
+    empty_line = re.compile(r"^\s+$")
     
     def skip_empty(self, position):
         while self.line(position) == "" or \
-            self.empty_line.match(self.line(position)):
+            self.empty_line.match(self.line(position)) or \
+            filter(lambda r: r.match(self.line(position)),
+                             self.ignore[:]):
             position += 1
         return position
+
 
     def tag(self, position):
         """
@@ -105,7 +109,7 @@ class List(Tagger):
 
 class Paragraph(Tagger):
     remove_this = [
-        re.compile(r"[\s]*opis zawartości[\s]*", re.I),
+        re.compile(r"[\s]*opis zawarto.ci[\s]*", re.I),
         re.compile(r"^[\s]*$")
         ]
     podrozdzial = [

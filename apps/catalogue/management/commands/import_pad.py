@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
 from django.db import transaction
 from librarian.dcparser import BookInfo
-from librarian import ParseError, ValidationError
+from librarian import ParseError, ValidationError, WLURI
 from django.conf import settings
 from catalogue.models import Book
 from catalogue.management import auto_taggers
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             text = b.materialize().encode('utf-8')
             try:
                 info = BookInfo.from_string(text)
-                slugs[info.slug].append(b)
+                slugs[info.url.slug].append(b)
             except (ParseError, ValidationError):
                 slugs[b.slug].append(b)
 
@@ -76,8 +76,10 @@ class Command(BaseCommand):
                 print "pad '%s' does not exist" % pid
                 continue
             slug = slughifi(pid)
+            print "Importing %s..." % pid
             title = pid
 
+            print slugs, slug
             previous_books = slugs.get(slug)
             if previous_books:
                 if len(previous_books) > 1:
