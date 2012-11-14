@@ -96,7 +96,7 @@ class Informacje(Tagger):
 
 class List(Tagger):
     point = re.compile(r"^[\s]*[-*·]{1,2}(.*)")
-    num = re.compile(r"^[\s]*[0-9a-z]{1,2}[.]\s+(.*)")
+    num = re.compile(r"^[\s]*[a-z]{1,2}[.]\s+(.*)")
 
     def __init__(self, *args):
 
@@ -260,7 +260,7 @@ dc_fixed = {
 
 def find_block(content, title_re, begin=-1, end=-1):
     title_re = re.compile(title_re, re.I | re.UNICODE)
-    print "looking for %s" % title_re.pattern
+    ##   print "looking for %s" % title_re.pattern
     if title_re.pattern[0:6] == 'pomoce':
         import pdb; pdb.set_trace()
 
