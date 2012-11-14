@@ -4,7 +4,7 @@ import re
 from slughifi import slughifi
 
 
-class Tagger:
+class Tagger(object):
     def __init__(self, state, lines):
         self.state = state
         self.lines = lines
@@ -17,7 +17,7 @@ class Tagger:
 
     ignore = [re.compile(r"^[\[][PA][\]] - [^ ]+$")]
     empty_line = re.compile(r"^\s+$")
-    
+
     def skip_empty(self, position):
         while self.line(position) == "" or \
             self.empty_line.match(self.line(position)) or \
@@ -38,11 +38,14 @@ Return None -- means that we can't tag it in any way
     @staticmethod
     def anymatches(regex):
         return lambda x: regex.match(x)
-        
 
 
 class Section(Tagger):
     looks_like = re.compile(r"^[IVX]+[.]\s+(.*)$")
+
+    def __init__(self, *a):
+        super(Section, self).__init__(*a)
+        self.is_podrozdzial = False
 
     def tag(self, pos):
         pos2 = self.skip_empty(pos)
@@ -53,7 +56,8 @@ class Section(Tagger):
             return pos + 1
 
     def __unicode__(self):
-        return self.wrap("naglowek_rozdzial", self.title)
+        return self.wrap(self.is_podrozdzial and "naglowek_podrozdzial" or "naglowek_rozdzial",
+                         self.title)
 
 
 class Meta(Tagger):
@@ -91,25 +95,41 @@ class Informacje(Tagger):
 
 
 class List(Tagger):
-    point = re.compile(r"^[\s]*([-*])")
-    
-    def tag(self, pos):
+    point = re.compile(r"^[\s]*[-*·]{1,2}(.*)")
+    num = re.compile(r"^[\s]*[0-9a-z]{1,2}[.]\s+(.*)")
+
+    def __init__(self, *args):
+
+        super(List, self).__init__(*args)
         self.items = []
+        self.type = 'punkt'
+
+    def tag(self, pos):
         while True:
             l = self.line(pos)
             m = self.point.match(l)
+            if not m:
+                m = self.num.match(l)
+                if m: self.type = 'num'
             if l and m:
-                self.items.append(l[1:].strip())
+                self.items.append(m.groups()[0].lstrip())
                 pos += 1
             else:
                 break
         if self.items:
             return pos
 
+    def append(self, tagger):
+        self.items.append(tagger)
+
     def __unicode__(self):
-        s = '<lista typ="punkt">'
+        s = '<lista typ="%s">' % self.type
         for i in self.items:
-            s += "\n<punkt>%s</punkt>" % i
+            if isinstance(i, list):
+                x = "\n".join(map(lambda elem: unicode(elem), i))
+            else:
+                x = unicode(i)
+            s += "\n<punkt>%s</punkt>" % x
         s += "\n</lista>\n"
         return s
 
@@ -120,21 +140,22 @@ class Paragraph(Tagger):
         re.compile(r"^[\s]*$")
         ]
     podrozdzial = [
-        re.compile(r"[\s]*(przebieg zajęć|opcje dodatkowe)[\s]*", re.I),
+        re.compile(r"[\s]*(przebieg zaj..|opcje dodatkowe)[\s]*", re.I),
         ]
+
     def tag(self, pos):
         self.line = self.lines[pos]
         self.ignore = False
         self.is_podrozdzial = False
-        
+
         for x in self.remove_this:
             if x.match(self.line):
                 self.ignore = True
-                
+
         for x in self.podrozdzial:
             if x.match(self.line):
                 self.is_podrozdzial = True
-                
+
         return pos + 1
 
     def __unicode__(self):
@@ -196,7 +217,7 @@ def eatseq(pos, *taggers):
     return (tuple(good), pos)
 
 
-def tagger(text):
+def tagger(text, pretty_print=False):
     """
 tagger(text) function name and signature is a contract.
 returns auto-tagged text
@@ -208,7 +229,7 @@ returns auto-tagged text
     content = []
     state = {}
     info = Informacje(state, lines)
-    
+
     ((info,), pos) = eatseq(pos, info)
 
     # print "[i] %d. %s" % (pos, lines[pos])
@@ -226,22 +247,61 @@ returns auto-tagged text
             pos += 1
             if pos >= len(lines):
                 break
-            
-    return toxml(content)
+
+    return toxml(content, pretty_print=pretty_print)
 
 dc_fixed = {
     'description': u'Publikacja zrealizowana w ramach projektu Cyfrowa Przyszłość (http://cyfrowaprzyszlosc.pl).',
-    'relation':  u'moduły powiązane linki',
+    'relation': u'moduły powiązane linki',
     'description.material': u'linki do załączników',
     'rights': u'Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0',
     }
+
+
+def find_block(content, title_re, begin=-1, end=-1):
+    title_re = re.compile(title_re, re.I | re.UNICODE)
+    print "looking for %s" % title_re.pattern
+    if title_re.pattern[0:6] == 'pomoce':
+        import pdb; pdb.set_trace()
+
+    rb = -1
+    if begin < 0: begin = 0
+    if end < 0: end = len(content)
+
+    for i in range(begin, end):
+        elem = content[i]
+        if isinstance(elem, Paragraph):
+            if title_re.match(elem.line):
+                rb = i
+                continue
+        if isinstance(elem, Section):
+            if title_re.match(elem.title):
+                rb = i
+                continue
+        if rb >= 0:
+            if isinstance(elem, List):
+                continue
+            if isinstance(elem, Paragraph) and elem.line:
+                continue
+            break
+    if rb >= 0:
+        return rb, i
+
+
+def remove_block(content, title_re, removed=None):
+    rb, re = find_block(content, title_re)
+
+    if removed is not None and isinstance(removed, list):
+        removed += content[rb:re][:]
+    content[rb:re] = []
+    return content
 
 
 def mark_activities(content):
     i = 0
     tl = len(content)
     is_przebieg = re.compile(r"[\s]*przebieg zaj..[\s]*", re.I)
-    #    import pdb; pdb.set_trace()
+
     is_next_section = re.compile(r"^[IVX]+[.]? ")
     is_activity = re.compile(r"^[0-9]+[.]? (.+)")
 
@@ -306,7 +366,8 @@ def mark_dictionary(content):
     i = 0
     is_dictionary = re.compile(r"[\s]*s.owniczek[\s]*", re.I)
     is_dictentry = re.compile(r"([^-]+) - (.+)")
-    slowniczek = []
+    slowniczek = content[0].spawn(List)
+    slowniczek.type = 'slowniczek'
     while i < len(content):
         e = content[i]
         if isinstance(e, Section):
@@ -314,14 +375,15 @@ def mark_dictionary(content):
                 db = i + 1
             elif db >= 1:
                 de = i
-                content[db:de] = [Container('slowniczek', *slowniczek)]
+                content[db:de] = [slowniczek]
                 break
         elif db >= 0:
             if isinstance(e, Paragraph):
                 m = is_dictentry.match(e.line)
                 if m:
-                    slowniczek.append(Container('definiendum', m.groups()[0]))
-                    slowniczek.append(Container('definiens', m.groups()[1]))
+                    slowniczek.append([Container('definiendum', m.groups()[0]),
+                                       Container('definiens', m.groups()[1])])
+
                 else:
                     slowniczek.append(e)
         i += 1
@@ -329,9 +391,36 @@ def mark_dictionary(content):
     return content
 
 
-def toxml(content):
+def move_evaluation(content):
+    evaluation = []
+
+    content = remove_block(content, r"ewaluacja[+ PA\[\].]*", evaluation)
+    if evaluation:
+        #        print "found evaluation %s" % (evaluation,)
+        evaluation[0].is_podrozdzial = True
+        # evaluation place
+        opcje_dodatkowe = find_block(content, r"opcje dodatkowe\s*")
+        if opcje_dodatkowe:
+            #            print "putting evaluation just before opcje dodatkowe @ %s" % (opcje_dodatkowe, )
+            content[opcje_dodatkowe[0]:opcje_dodatkowe[0]] = evaluation
+        else:
+            materialy = find_block(content, r"materia.y[+ AP\[\].]*")
+            if materialy:
+                #                print "putting evaluation just before materialy @ %s" % (materialy, )
+                content[materialy[0]:materialy[0]] = evaluation
+            else:
+                print "er.. no idea where to place evaluation"
+    return content
+
+
+def toxml(content, pretty_print=False):
+    # some transformations
     content = mark_activities(content)
     content = mark_dictionary(content)
+    content = remove_block(content, r"wykorzyst(yw)?ane metody[+ PA\[\].]*")
+    content = remove_block(content, r"(pomoce|potrzebne materia.y)[+ PA\[\]]*")
+    content = move_evaluation(content)
+
     info = content.pop(0)
 
     state = info.state
@@ -387,9 +476,9 @@ def toxml(content):
 
     p(u'<powiesc>')
     t(u'nazwa_utworu', meta.get(u'Tytuł modułu', u''))
-    p(u'<nota>')
-    a(u'Numer porządkowy: %s' % meta.get(u'Numer porządkowy', u''))
-    p(u'</nota>')
+    #    p(u'<nota>')
+    a(u'<!-- Numer porządkowy: %s -->' % meta.get(u'Numer porządkowy', u''))
+    #    p(u'</nota>')
 
     p(unicode(info.title))
     for elm in content:
@@ -400,6 +489,12 @@ def toxml(content):
 
     p(u'</powiesc>')
     p(u'</utwor>')
+
+    if pretty_print:
+        from lxml import etree
+        from StringIO import StringIO
+        xml = etree.parse(StringIO(holder['xml']))
+        holder['xml'] = etree.tostring(xml, pretty_print=pretty_print, encoding=unicode)
 
     return holder['xml']
 
