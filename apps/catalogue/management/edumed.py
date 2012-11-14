@@ -226,7 +226,7 @@ returns auto-tagged text
             pos += 1
             if pos >= len(lines):
                 break
-
+            
     return toxml(content)
 
 dc_fixed = {
@@ -315,6 +315,7 @@ def mark_dictionary(content):
             elif db >= 1:
                 de = i
                 content[db:de] = [Container('slowniczek', *slowniczek)]
+                break
         elif db >= 0:
             if isinstance(e, Paragraph):
                 m = is_dictentry.match(e.line)
