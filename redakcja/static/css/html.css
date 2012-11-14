@@ -675,3 +675,10 @@ div[x-node] > .uwaga {
     border:0;
     color: black;
 } 
+
+/* XXX */
+
+.htmlview span.punkt {
+    display: list-item;
+    list-style: bullet;
+}
