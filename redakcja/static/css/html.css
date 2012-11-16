@@ -683,6 +683,7 @@ body {
 
 .htmlview span.lista[data-wlf-typ="num"] 
 {
+    counter-reset: listanum;
     list-style-type: none;
     list-style-position: inside;
 }
@@ -736,3 +737,6 @@ body {
     padding-left: 50px;
 }
 
+.htmlview .link {
+    color: #990066;
+}
