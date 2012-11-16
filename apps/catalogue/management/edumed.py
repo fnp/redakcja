@@ -96,7 +96,7 @@ class Informacje(Tagger):
 
 class List(Tagger):
     point = re.compile(r"^[\s]*[-*·]{1,2}(.*)")
-    num = re.compile(r"^[\s]*[a-z]{1,2}[.]\s+(.*)")
+    num = re.compile(r"^[\s]*[a-z][.]\s+(.*)")
 
     def __init__(self, *args):
 
@@ -264,9 +264,6 @@ class NotFound(Exception):
 
 def find_block(content, title_re, begin=-1, end=-1):
     title_re = re.compile(title_re, re.I | re.UNICODE)
-    ##   print "looking for %s" % title_re.pattern
-    if title_re.pattern[0:6] == 'pomoce':
-        import pdb; pdb.set_trace()
 
     rb = -1
     if begin < 0: begin = 0
@@ -307,7 +304,7 @@ def mark_activities(content):
     is_przebieg = re.compile(r"[\s]*przebieg zaj..[\s]*", re.I)
 
     is_next_section = re.compile(r"^[IVX]+[.]? ")
-    is_activity = re.compile(r"^[0-9]+[.]? (.+)")
+    is_activity = re.compile(r"^[0-9]+[.] (.+)")
 
     is_activity_tools = re.compile(r"^pomoce:[\s]*(.+)")
     is_activity_work = re.compile(r"^forma pracy:[\s]*(.+)")
@@ -324,14 +321,16 @@ def mark_activities(content):
     ae = -1
     while True:
         e = content[i]
+        if isinstance(e, Section):
+            if in_activities and \
+                is_next_section.match(e.title):
+                in_activities = False
+            
         if isinstance(e, Paragraph):
             if not in_activities and \
                 is_przebieg.match(e.line):
                 in_activities = True
 
-            if in_activities and \
-                is_next_section.match(e.line):
-                in_activities = False
             if in_activities:
                 m = is_activity.match(e.line)
                 if m:
