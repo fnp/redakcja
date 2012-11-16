@@ -258,6 +258,10 @@ dc_fixed = {
     }
 
 
+class NotFound(Exception):
+    pass
+
+
 def find_block(content, title_re, begin=-1, end=-1):
     title_re = re.compile(title_re, re.I | re.UNICODE)
     ##   print "looking for %s" % title_re.pattern
@@ -286,11 +290,11 @@ def find_block(content, title_re, begin=-1, end=-1):
             break
     if rb >= 0:
         return rb, i
+    raise NotFound()
 
 
 def remove_block(content, title_re, removed=None):
     rb, re = find_block(content, title_re)
-
     if removed is not None and isinstance(removed, list):
         removed += content[rb:re][:]
     content[rb:re] = []
@@ -417,8 +421,14 @@ def toxml(content, pretty_print=False):
     # some transformations
     content = mark_activities(content)
     content = mark_dictionary(content)
-    content = remove_block(content, r"wykorzyst(yw)?ane metody[+ PA\[\].]*")
-    content = remove_block(content, r"(pomoce|potrzebne materia.y)[+ PA\[\]]*")
+    try:
+        content = remove_block(content, r"wykorzyst(yw)?ane metody[+ PA\[\].]*")
+    except NotFound:
+        pass
+    try:
+        content = remove_block(content, r"(pomoce|potrzebne materia.y)[+ PA\[\]]*")
+    except NotFound:
+        pass
     content = move_evaluation(content)
 
     info = content.pop(0)
