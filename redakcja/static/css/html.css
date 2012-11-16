@@ -677,8 +677,62 @@ div[x-node] > .uwaga {
 } 
 
 /* XXX */
+body {
+    counter-reset: listanum;
+}
+
+.htmlview span.lista[data-wlf-typ="num"] 
+{
+    list-style-type: none;
+    list-style-position: inside;
+}
+.htmlview span.lista[data-wlf-typ="num"] .punkt:before {
+    counter-increment:listanum;
+    content: counter(listanum) ". ";
+}
+
+.htmlview span.lista[data-wlf-typ="punk"] 
+{
+    list-style-type: disc;
+}
+
+.htmlview span.lista[data-wlf-typ="slowniczek"] 
+{
+    list-style-type: none;
+}
 
 .htmlview span.punkt {
     display: list-item;
-    list-style: bullet;
+    list-style-position: inside;
 }
+
+.htmlview span.aktywnosc span.opis {
+    font-style: italic;
+}
+.htmlview span.aktywnosc span.wskazowki {
+    font-style: italic;
+    color: #202020;
+}
+
+.htmlview .pomoce, .htmlview .czas, .htmlview .forma {
+    display: block;
+}
+.htmlview .pomoce:before { content: "Pomoce: "; }
+.htmlview .czas:before { content: "Czas: "; }
+.htmlview .czas:after { content: " min"; }
+.htmlview .forma:before { content: "Forma:"; }
+
+.htmlview .aktywnosc {
+    display: block;
+    border: 1px dotted #996600;
+}
+
+.htmlview .definiendum {
+    font-weight: bold;
+    display: block;
+}
+
+.htmlview .definiens {
+    padding-left: 50px;
+}
+
