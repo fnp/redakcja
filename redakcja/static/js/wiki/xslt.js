@@ -59,12 +59,15 @@ function withThemes(code_block, onError)
 
 
 function xml2html(options) {
+    ALIEN_REGEX = /([^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s<>«»\\*_!,:;?&%."'=#()\/-]+)/g;
+
     withStylesheets(function() {
         var xml = options.xml.replace(/\/(\s+)/g, '<br />$1');
-        xml = xml.replace(/([^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s<>«»\\*_!,:;?&%."'=#()\/-]+)/g, '<alien>$1</alien>');
+//        xml = xml.replace(/([^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s<>«»\\*_!,:;?&%."'=#()\/-]+)/g, '<alien>$1</alien>');
         var parser = new DOMParser();
         var serializer = new XMLSerializer();
         var doc = parser.parseFromString(xml, 'text/xml');
+	walk(doc.firstChild, wrapInTag(ALIEN_REGEX, 'alien'))
         var error = $('parsererror', doc);
 
         if (error.length == 0) {

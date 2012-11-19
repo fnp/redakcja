@@ -49,6 +49,7 @@ COMPRESS_JS = {
                 # wiki scripts
                 'js/wiki/wikiapi.js',
                 'js/wiki/xslt.js',
+                'js/wiki/xml-tools.js',
 
                 # base UI
                 'js/wiki/base.js',
