@@ -14,6 +14,7 @@ from librarian import ParseError, ValidationError, WLURI
 from django.conf import settings
 from catalogue.models import Book
 from catalogue.management import auto_taggers
+import re
 
 
 class Command(BaseCommand):
@@ -25,6 +26,7 @@ class Command(BaseCommand):
         make_option('-E', '--edumed', dest="tag_edumed", default=False,
                     action='store_true', help="Perform EduMed pre-tagging"),
         make_option('-a', '--autotagger', dest="auto_tagger", default=None, help="Use auto-tagger (one of: %s)" % ', '.join(auto_taggers.keys())),
+        make_option('-S', '--use-pad-prefix', dest="pad_prefix", default=False, action='store_true', help="use pad name prefix in slug"),
     )
     help = 'Imports Text files from EtherPad Lite.'
 
@@ -52,6 +54,7 @@ class Command(BaseCommand):
             if verbose:
                 print b.slug
             text = b.materialize().encode('utf-8')
+
             try:
                 info = BookInfo.from_string(text)
                 slugs[info.url.slug].append(b)
@@ -106,6 +109,11 @@ class Command(BaseCommand):
                 comm = '*'
             print book_count, slug, '-->', comm
 
+            # add pad prefix now.
+            if options.get('pad_prefix'):
+                pad_prefix = re.split(r"[-_]", pid)[0]
+                slug = pad_prefix + "-" + slug
+                
             if previous_book:
                 book = previous_book
                 book.slug = slug

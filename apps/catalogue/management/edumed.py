@@ -137,7 +137,8 @@ class List(Tagger):
 class Paragraph(Tagger):
     remove_this = [
         re.compile(r"[\s]*opis zawarto.ci[\s]*", re.I),
-        re.compile(r"^[\s]*$")
+        re.compile(r"^[\s]*$"),
+        re.compile(r"http://pad.nowoczesnapolska.org.pl/p/slowniczek")
         ]
     podrozdzial = [
         re.compile(r"[\s]*(przebieg zaj..|opcje dodatkowe)[\s]*", re.I),
