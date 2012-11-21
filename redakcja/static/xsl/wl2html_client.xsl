@@ -733,6 +733,15 @@
     </xsl:template>
 
 
+    <xsl:template match="punkt">
+      <span x-editable="true" x-node="punkt" class="punkt">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>	
+      </span>
+    </xsl:template>
+
     <!--
         ****************
          TEKST WŁAŚCIWY
