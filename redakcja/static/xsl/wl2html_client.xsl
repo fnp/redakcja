@@ -732,14 +732,58 @@
         </span>
     </xsl:template>
 
+    <xsl:template match="lista">
+      <xsl:variable name="listtag">
+	<xsl:choose>
+	  <xsl:when test="@typ='num' or @typ='alfa'">ol</xsl:when>
+	  <xsl:when test="@typ='punkt' or @typ='slowniczek' or @typ='czytelnia'">ul</xsl:when>
+	  <xsl:otherwise>ul</xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <xsl:element name="{$listtag}">
+        <xsl:call-template name="standard-attributes" />
+        <xsl:apply-templates select="child::node()">
+          <xsl:with-param name="mixed" select="true()" />
+        </xsl:apply-templates>	
+      </xsl:element>
+    </xsl:template>
 
-    <xsl:template match="punkt">
-      <span x-editable="true" x-node="punkt" class="punkt">
+
+    <xsl:template match="punkt[../@typ='slowniczek']">
+      <dl x-node="punkt" class="punkt">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>	
-      </span>
+      </dl>
+    </xsl:template>
+
+    <xsl:template match="punkt[../@typ!='slowniczek']">
+      <li x-editable="true" x-node="punkt" class="punkt">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>	
+      </li>
+    </xsl:template>
+
+
+    <xsl:template match="definiendum">
+      <dt x-editable="true" x-node="definiendum" class="definiendum">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+      </dt>
+    </xsl:template>
+
+    <xsl:template match="definiens">
+      <dd x-editable="true" x-node="definiendum" class="definiendum">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+      </dd>
     </xsl:template>
 
     <!--

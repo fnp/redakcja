@@ -252,7 +252,7 @@ returns auto-tagged text
     return toxml(content, pretty_print=pretty_print)
 
 dc_fixed = {
-    'description': u'Publikacja zrealizowana w ramach projektu Cyfrowa Przyszłość (http://cyfrowaprzyszlosc.pl).',
+    'description': u'Publikacja zrealizowana w ramach projektu Cyfrowa Przyszłość (http://edukacjamedialna.edu.pl).',
     'relation': u'moduły powiązane linki',
     'description.material': u'linki do załączników',
     'rights': u'Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0',
@@ -395,6 +395,32 @@ def mark_dictionary(content):
     return content
 
 
+def mark_czytelnia(content):
+    db = -1
+    de = -1
+    i = 0
+    czy_czytelnia = re.compile(r"[\s]*czytelnia[\s]*", re.I)
+    czytelnia = content[0].spawn(List)
+    czytelnia.type = 'czytelnia'
+    while i < len(content):
+        e = content[i]
+        if isinstance(e, Section):
+            if czy_czytelnia.match(e.title):
+                db = i + 1
+            elif db >= 1:
+                de = i
+                content[db:de] = [czytelnia]
+                break
+        elif db >= 0:
+            if isinstance(e, Paragraph):
+                if e.line:
+                    czytelnia.append(e.line)
+        i += 1
+
+    return content
+
+
+
 def move_evaluation(content):
     evaluation = []
 
@@ -421,6 +447,8 @@ def toxml(content, pretty_print=False):
     # some transformations
     content = mark_activities(content)
     content = mark_dictionary(content)
+    content = mark_czytelnia(content)
+    
     try:
         content = remove_block(content, r"wykorzyst(yw)?ane metody[+ PA\[\].]*")
     except NotFound:
@@ -454,7 +482,7 @@ def toxml(content, pretty_print=False):
 
     p("<utwor>")
     p(u'<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">')
-    p(u'<rdf:Description rdf:about="http://redakcja.cyfrowaprzyszlosc.pl/documents/">')
+    p(u'<rdf:Description rdf:about="http://redakcja.edukacjamedialna.edu.pl/documents/">')
     authors = map(unicode.strip, meta[u'Autorzy'].split(u','))
     for author in authors:
         names = author.split(u' ')
@@ -473,7 +501,7 @@ def toxml(content, pretty_print=False):
     dc(u'description', dc_fixed['description'])
     dc(u'description.material', dc_fixed['description.material'])
     dc(u'relation', dc_fixed['relation'])
-    dc(u'identifier.url', u'http://cyfrowaprzyszlosc.pl/%s' % slug)
+    dc(u'identifier.url', u'http://edukacjamedialna.edu.pl/%s' % slug)
     dc(u'rights', dc_fixed['rights'])
     dc(u'rights.license', u'http://creativecommons.org/licenses/by-sa/3.0/')
     dc(u'format', u'xml')

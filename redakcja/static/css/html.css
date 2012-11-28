@@ -676,28 +676,13 @@ div[x-node] > .uwaga {
     color: black;
 } 
 
-/* XXX */
-body {
-    counter-reset: listanum;
-}
 
-.htmlview span.lista[data-wlf-typ="num"] 
+.htmlview .lista[data-wlf-typ="alfa"] 
 {
-    counter-reset: listanum;
-    list-style-type: none;
-    list-style-position: inside;
-}
-.htmlview span.lista[data-wlf-typ="num"] .punkt:before {
-    counter-increment:listanum;
-    content: counter(listanum) ". ";
+    list-style-type: lower-alpha;
 }
 
-.htmlview span.lista[data-wlf-typ="punk"] 
-{
-    list-style-type: disc;
-}
-
-.htmlview span.lista[data-wlf-typ="slowniczek"] 
+.htmlview .lista[data-wlf-typ="slowniczek"] 
 {
     list-style-type: none;
 }
