@@ -202,12 +202,12 @@ def gallery(request, directory):
     try:
         base_url = ''.join((
                         smart_unicode(settings.MEDIA_URL),
-                        smart_unicode(settings.FILEBROWSER_DIRECTORY),
+                        smart_unicode(settings.IMAGE_DIR),
                         smart_unicode(directory)))
 
         base_dir = os.path.join(
                     smart_unicode(settings.MEDIA_ROOT),
-                    smart_unicode(settings.FILEBROWSER_DIRECTORY),
+                    smart_unicode(settings.IMAGE_DIR),
                     smart_unicode(directory))
 
         def map_to_url(filename):

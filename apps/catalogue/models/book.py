@@ -205,7 +205,8 @@ class Book(models.Model):
         # and move the gallery starts
         if gm.was_merged:
                 for chunk in self[len(self) - len_other:]:
-                        chunk.gallery_start += gm.dest_size - gm.num_deleted
+                        old_start = chunk.gallery_start or 1
+                        chunk.gallery_start = old_start + gm.dest_size - gm.num_deleted
                         chunk.save()
 
         other.delete()
