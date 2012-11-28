@@ -46,8 +46,6 @@ def parse_isodate(isodate):
 
 class GalleryMerger(object):
     def __init__(self, dest_gallery, src_gallery):
-        assert isinstance(dest_gallery, str)
-        assert isinstance(src_gallery, str)
         self.dest = dest_gallery
         self.src = src_gallery
         self.dest_size = None

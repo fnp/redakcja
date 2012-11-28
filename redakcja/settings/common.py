@@ -139,6 +139,8 @@ FILEBROWSER_VERSIONS_BASEDIR = 'thumbnails/'
 FILEBROWSER_DEFAULT_ORDER = "path_relative"
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
+
+# Must match FILEBROWSER_DIRECTORY
 IMAGE_DIR = 'images'
 
 

@@ -20,8 +20,6 @@ class GalleryAppendTests(TestCase):
         self.book1 = Book.create(self.user, 'book 1', slug='book1')
         self.book1.chunk_set.create(number=2, title='Second chunk',
                 slug='book 1 / 2')
-        c=self.book1[0]
-        c.gallery_start=1
         c=self.book1[1]
         c.gallery_start=3
         
@@ -43,9 +41,6 @@ class GalleryAppendTests(TestCase):
         self.book2.chunk_set.create(number=2, title='Second chunk of second book',
                 slug='book 2 / 2')
 
-        c = self.book2[0]
-        c.gallery_start = 1
-        c.save()
         c = self.book2[1]
         c.gallery_start = 3
         c.save()
