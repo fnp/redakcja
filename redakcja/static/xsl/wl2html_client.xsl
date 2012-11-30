@@ -786,6 +786,45 @@
       </dd>
     </xsl:template>
 
+
+    <xsl:template match="tabela">
+      <table x-node="tabela" class="tabela">
+        <xsl:call-template name="standard-attributes" />
+	<tbody x-pass-thru="true">
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+	</tbody>
+      </table>
+    </xsl:template>
+
+    <xsl:template match="wiersz">
+      <tr x-node="wiersz" class="wiersz">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+      </tr>
+    </xsl:template>
+
+
+    <xsl:template match="kol">
+      <td x-pass-thru="true">
+	    <div x-editable="true" x-node="kol" class="kol">
+	      <!-- this wrapper div is necessary for 
+		   relative element to appear correctly
+		   here it's a 'edit' button -->
+            <xsl:call-template name="standard-attributes" />
+              <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+              </xsl:apply-templates>
+	    </div>
+      </td>
+    </xsl:template>
+
+
+
+
     <!--
         ****************
          TEKST WŁAŚCIWY

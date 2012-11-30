@@ -724,3 +724,7 @@ div[x-node] > .uwaga {
 .htmlview .link {
     color: #990066;
 }
+
+.htmlview .kol div {
+    position: relative;
+}
