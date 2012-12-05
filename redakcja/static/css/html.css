@@ -1,7 +1,6 @@
 /* Style widoku HTML. Nie należy tu ustawiać position ani marginesów */
 .htmlview {
-    counter-reset: main;
-    counter-reset: aktywnosc;
+    counter-reset: main aktywnosc;
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
