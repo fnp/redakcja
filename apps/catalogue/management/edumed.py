@@ -389,7 +389,7 @@ def mark_dictionary(content):
                                        Container('definiens', m.groups()[1])])
 
                 else:
-                    slowniczek.append(e)
+                    slowniczek.append(e.line)
         i += 1
 
     return content
