@@ -1,6 +1,7 @@
 /* Style widoku HTML. Nie należy tu ustawiać position ani marginesów */
 .htmlview {
     counter-reset: main;
+    counter-reset: aktywnosc;
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
@@ -695,6 +696,12 @@ div[x-node] > .uwaga {
 .htmlview span.aktywnosc span.opis {
     font-style: italic;
 }
+.htmlview span.aktywnosc span.opis p:before {
+    content: counter(aktywnosc) ". ";
+    counter-increment: aktywnosc;
+    font-weight: bold;
+}
+
 .htmlview span.aktywnosc span.wskazowki {
     font-style: italic;
     color: #202020;
@@ -706,7 +713,7 @@ div[x-node] > .uwaga {
 .htmlview .pomoce:before { content: "Pomoce: "; }
 .htmlview .czas:before { content: "Czas: "; }
 .htmlview .czas:after { content: " min"; }
-.htmlview .forma:before { content: "Forma:"; }
+.htmlview .forma:before { content: "Forma: "; }
 
 .htmlview .aktywnosc {
     display: block;
@@ -727,4 +734,13 @@ div[x-node] > .uwaga {
 
 .htmlview .kol div {
     position: relative;
+}
+
+.htmlview img.obraz {
+    max-width: 640px;
+}
+
+.htmlview span.luka {
+    color: #808080;
+    text-decoration: underline;
 }

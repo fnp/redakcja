@@ -732,6 +732,15 @@
         </span>
     </xsl:template>
 
+    <!--
+        **************************
+           MATERIAŁY EDUKACYJNE
+        **************************
+    -->
+
+    <!--
+        Listy
+    -->
     <xsl:template match="lista">
       <xsl:variable name="listtag">
 	<xsl:choose>
@@ -767,7 +776,9 @@
       </li>
     </xsl:template>
 
-
+    <!--
+        Słowniczek
+    -->
     <xsl:template match="definiendum">
       <dt x-editable="true" x-node="definiendum" class="definiendum">
             <xsl:call-template name="standard-attributes" />
@@ -786,7 +797,9 @@
       </dd>
     </xsl:template>
 
-
+    <!--
+        Tabela
+    -->
     <xsl:template match="tabela">
       <table x-node="tabela" class="tabela">
         <xsl:call-template name="standard-attributes" />
@@ -822,6 +835,26 @@
       </td>
     </xsl:template>
 
+    <!--
+        Obraz
+    -->
+    <xsl:template match="obraz">
+      <img x-node="obraz" src="http://i.imgur.com/{@name}.jpg" class="obraz">
+            <xsl:call-template name="standard-attributes" />
+      </img>
+    </xsl:template>
+
+    <!--
+        Semantyczne pudełka
+    -->
+    <xsl:template match="pomoce|forma|czas|opis">
+      <span x-editable="true">
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+              <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+      </span>
+    </xsl:template>
 
 
 
