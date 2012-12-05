@@ -800,40 +800,28 @@
     <!--
         Tabela
     -->
-    <xsl:template match="tabela">
-      <table x-node="tabela" class="tabela">
-        <xsl:call-template name="standard-attributes" />
-	<tbody x-pass-thru="true">
-            <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="true()" />
-            </xsl:apply-templates>
-	</tbody>
-      </table>
-    </xsl:template>
 
     <xsl:template match="wiersz">
-      <tr x-node="wiersz" class="wiersz">
-            <xsl:call-template name="standard-attributes" />
-            <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="true()" />
-            </xsl:apply-templates>
-      </tr>
+      <span>
+        <xsl:call-template name="standard-attributes" />
+        <xsl:apply-templates select="child::node()">
+	  <xsl:with-param name="mixed" select="true()" />
+        </xsl:apply-templates>
+      </span>
     </xsl:template>
 
 
     <xsl:template match="kol">
-      <td x-pass-thru="true">
-	    <div x-editable="true" x-node="kol" class="kol">
-	      <!-- this wrapper div is necessary for 
-		   relative element to appear correctly
-		   here it's a 'edit' button -->
+      <span>
             <xsl:call-template name="standard-attributes" />
+	    <div x-editable="true" x-node="kol-inside" x-pass-thru="true">
               <xsl:apply-templates select="child::node()">
-                <xsl:with-param name="mixed" select="true()" />
+		<xsl:with-param name="mixed" select="true()" />
               </xsl:apply-templates>
 	    </div>
-      </td>
+      </span>
     </xsl:template>
+
 
     <!--
         Obraz
@@ -847,7 +835,7 @@
     <!--
         Semantyczne pudełka
     -->
-    <xsl:template match="pomoce|forma|czas|opis">
+    <xsl:template match="pomoce|forma|czas|opis|kol-inside">
       <span x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">

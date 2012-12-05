@@ -604,6 +604,7 @@ div[x-node] > .uwaga {
     margin: 0px;
     padding: 0px;
     width: 100%;
+    min-width: 600px; /* for editing narrow elements */
     height: 100%;
     z-index: 0;
     font-size: 10pt;
@@ -731,7 +732,21 @@ div[x-node] > .uwaga {
     color: #990066;
 }
 
-.htmlview .kol div {
+.htmlview .tabela {
+    display: table;
+}
+
+.htmlview .wiersz {
+    display: table-row;
+}
+
+.htmlview .kol {
+    min-width: 200px;
+    display: table-cell;
+    padding: 5px;
+}
+
+.htmlview .kol span {
     position: relative;
 }
 
