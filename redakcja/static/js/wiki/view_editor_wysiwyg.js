@@ -376,7 +376,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><button class="luka-button akap-edit-button">luka</button><button class="zastap-button akap-edit-button">zastąp</button><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -492,6 +492,12 @@
 			} else if(buttonName == "znak spec."){
 			    addSymbol();
 			    return false;
+			} else if (buttonName == "luka") {
+				startTag = "<luka>";
+				endTag = "</luka>";
+			} else if (buttonName == "zastąp") {
+				startTag = "<zastap rozw=\"\">";
+				endTag = "</zastap>";
 			}
 			
 			var myField = textAreaOpened;			

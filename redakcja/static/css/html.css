@@ -496,7 +496,8 @@ div[x-node] > .uwaga {
     visibility: hidden;
 }
 
-.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
+/*.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button, .luka-button */
+.edit-button, .delete-button, .accept-button, .akap-edit-button {
     position: absolute;
     top: -21px;
     left: -1px;
@@ -537,13 +538,31 @@ div[x-node] > .uwaga {
     width:100px;
 }
 
-.edit-button:hover, .edit-button:active,
+.luka-button {
+    left:550px;
+    width:100px;
+}
+
+.zastap-button {
+    top: -50px;
+    left:550px;
+    width:100px;
+}
+
+
+/*.edit-button:hover, .edit-button:active,
 .delete-button:hover, .delete-button:active,
 .accept-button:hover, .accept-button:active,
 .tytul-button:hover, .tytul-button:active,
 .wyroznienie-button:hover, .wyroznienie-button:active,
 .slowo-button:hover, .slowo-button:active,
-.znak-button:hover, .znak-button:active {
+.znak-button:hover, .znak-button:active,
+.luka-button:hover, .luka-button:active */
+
+.edit-button:hover, .edit-button:active,
+.delete-button:hover, .delete-button:active,
+.accept-button:hover, .accept-button:active,
+.akap-edit-button:hover, .akap-edit-button:active {
     /*    color: #FFF;*/
     background-color: #999;
     color: #FFF;
@@ -756,5 +775,17 @@ div[x-node] > .uwaga {
 
 .htmlview span.luka {
     color: #808080;
-    text-decoration: underline;
+    display: inline-block;
+    padding: 0px 8px;
+    border-bottom: 1px solid grey;
 }
+
+.htmlview span.zastap {
+    color: darkred;
+}
+
+.htmlview span.zastap:after {
+    content: "→" attr(data-wlf-rozw);
+    color: darkgoldenrod;
+}
+
