@@ -47,7 +47,7 @@ class Command(BaseCommand):
             except (ParseError, ValidationError):
                 pass
             else:
-                slugs[info.slug].append(b)
+                slugs[info.url.slug].append(b)
 
         book_count = 0
         commit_args = {
@@ -62,7 +62,7 @@ class Command(BaseCommand):
             book_detail = json.load(urllib2.urlopen(book['href']))
             xml_text = urllib2.urlopen(book_detail['xml']).read()
             info = BookInfo.from_string(xml_text)
-            previous_books = slugs.get(info.slug)
+            previous_books = slugs.get(info.url.slug)
             if previous_books:
                 if len(previous_books) > 1:
                     print self.style.ERROR("There is more than one book "
@@ -72,9 +72,9 @@ class Command(BaseCommand):
             else:
                 previous_book = None
                 comm = '*'
-            print book_count, info.slug , '-->', comm
+            print book_count, info.url.slug , '-->', comm
             Book.import_xml_text(xml_text, title=info.title[:255],
-                slug=info.slug[:128], previous_book=previous_book,
+                slug=info.url.slug[:128], previous_book=previous_book,
                 commit_args=commit_args)
             book_count += 1
 
