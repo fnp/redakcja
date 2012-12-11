@@ -789,3 +789,18 @@ div[x-node] > .uwaga {
     color: darkgoldenrod;
 }
 
+.htmlview .punkt[data-wlf-nazwa]:before {
+    content: "[" attr(data-wlf-nazwa) "] ";
+    color: darkgoldenrod;
+}
+
+.htmlview .punkt[data-wlf-name]:before {
+    content: "!name![" attr(data-wlf-name) "] ";
+    color: red;
+}
+
+
+.htmlview .punkt[data-wlf-rozw]:before {
+    content: "[" attr(data-wlf-rozw) "] ";
+    color: darkblue;
+}
