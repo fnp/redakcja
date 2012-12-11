@@ -61,7 +61,7 @@ class Section(Tagger):
 
 
 class Meta(Tagger):
-    looks_like = re.compile(r"([^:]+): (.*)", re.UNICODE)
+    looks_like = re.compile(r"([^:]+): ?(.*)", re.UNICODE)
 
     def tag(self, pos):
         pos = self.skip_empty(pos)
