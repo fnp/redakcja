@@ -348,6 +348,33 @@
         txtarea.scrollTop = scrollPos; 
     } 
 
+    function getXNodeAttributes(node) {
+	var m = {}
+	$.map(node.attributes, function(attrNode) {
+	    if (attrNode.nodeName.startsWith('data-wlf-')) {
+		var n = attrNode.nodeName.substr(9);
+		var v = attrNode.nodeValue;
+		m[n] = v;
+	    };
+	});
+	return m;
+    }
+
+    function setXNodeAttributes(node, attrs) {
+	$.map(node.attributes, function(attrNode) {
+	    var xName = attrNode.nodeName.substr(9);
+	    if (attrNode.nodeName.startsWith('data-wlf-')
+		&& xName in attrs) {
+		attrNode.nodeValue = attrs[xName];
+	    }
+	    if (attrNode.nodeName.startsWith('x-attr-name-') 
+		&& attrNode.nodeValue in attrs) {
+		node.setAttribute('x-attr-value-' + attrNode.nodeName.substr("x-attr-name-".length),
+				  attrs[attrNode.nodeValue]);
+	    }
+	});
+    }
+
     /* open edition window for selected fragment */
     function openForEdit($origin){
         var $box = null
@@ -376,7 +403,17 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><button class="luka-button akap-edit-button">luka</button><button class="zastap-button akap-edit-button">zastąp</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><button class="luka-button akap-edit-button">luka</button><button class="zastap-button akap-edit-button">zastąp</button><textarea></textarea></div>');
+	
+	$attributes = $('<div class="html-editarea-attributes"></div>')
+	
+	$.map(getXNodeAttributes($origin.get(0)),
+	      function(v, n) {
+		$attributes.append('<span><label for="attr-'+n+'">'+n+'</label><input type="text" name="'+n+'" id="attr-'+n+'" value="'+v+'"/></span>');
+	      });
+	$overlay.append($attributes);
+
+	$overlay.css({
             position: 'absolute',
             height: h,
             left: x,
@@ -459,6 +496,14 @@
                             else {
                                 $origin.html($(element).html());
                             }
+			    /* Set attributres back to the node */
+			    var attrs = {};
+			    $(".html-editarea-attributes [name]")
+				.each(function(i, textField) {
+				    attrs[textField.name] = textField.value;
+				});
+			    setXNodeAttributes($origin.get(0), attrs);
+
                             $overlay.remove();
                         },
                         error: function(text){
