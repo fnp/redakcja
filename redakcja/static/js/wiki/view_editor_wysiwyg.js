@@ -351,7 +351,7 @@
     function getXNodeAttributes(node) {
 	var m = {}
 	$.map(node.attributes, function(attrNode) {
-	    if (attrNode.nodeName.startsWith('data-wlf-')) {
+	    if (attrNode.nodeName.indexOf('data-wlf-') === 0) {
 		var n = attrNode.nodeName.substr(9);
 		var v = attrNode.nodeValue;
 		m[n] = v;
@@ -363,11 +363,11 @@
     function setXNodeAttributes(node, attrs) {
 	$.map(node.attributes, function(attrNode) {
 	    var xName = attrNode.nodeName.substr(9);
-	    if (attrNode.nodeName.startsWith('data-wlf-')
+	    if (attrNode.nodeName.indexOf('data-wlf-') === 0
 		&& xName in attrs) {
 		attrNode.nodeValue = attrs[xName];
 	    }
-	    if (attrNode.nodeName.startsWith('x-attr-name-') 
+	    if (attrNode.nodeName.indexOf('x-attr-name-') === 0
 		&& attrNode.nodeValue in attrs) {
 		node.setAttribute('x-attr-value-' + attrNode.nodeName.substr("x-attr-name-".length),
 				  attrs[attrNode.nodeValue]);
