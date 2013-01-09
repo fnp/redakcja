@@ -77,7 +77,7 @@
 
     Excercise.prototype.get_value_list = function(elem, data_key, numbers) {
       var vl;
-      vl = $(elem).data(data_key).split(/[ ,]+/).map($.trim);
+      vl = $(elem).attr("data-" + data_key).split(/[ ,]+/).map($.trim);
       if (numbers) {
         vl = vl.map(function(x) {
           return parseInt(x);
