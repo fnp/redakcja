@@ -190,6 +190,55 @@ class Zastap extends Excercise
         $(chld).remove()
 
 
+class Przyporzadkuj extends Excercise
+  constructor: (element) ->
+    super element
+
+    if @element.attr('multiple')?
+      @multiple = true
+    else
+      @multiple = false
+
+    $(".question", @element).each (i, question) =>
+      draggable_opts =
+        revert: 'invalid'
+        helper: if @multiple then "clone" else null
+
+      $(".draggable", question).draggable(draggable_opts)
+        .droppable({
+          accept: ".draggable"
+          })
+
+      $(".predicate .droppable", question).droppable
+        accept: ".draggable"
+        drop: (ev, ui) ->
+          is_multiple = ui.draggable.is(".multiple")
+
+          added = ui.draggable.clone()
+
+          added.attr('style', '')
+          $(this).append(added)
+          added.draggable(draggable_opts)
+
+          if not is_multiple
+            ui.draggable.remove()
+
+      $(".subject", question).droppable
+        accept: ".draggable"
+        drop: (ev, ui) ->
+          is_multiple = ui.draggable.is(".multiple")
+
+          added = ui.draggable.clone()
+
+          added.attr('style', '')
+          if not is_multiple
+            $(this).append(added)
+            added.draggable(draggable_opts)
+
+          ui.draggable.remove()
+
+
+
 
 ##########
 
@@ -199,6 +248,7 @@ excercise = (ele) ->
     uporzadkuj: Uporzadkuj
     luki: Luki
     zastap: Zastap
+    przyporzadkuj: Przyporzadkuj
 
 
   cls = es[$(ele).attr('data-type')]

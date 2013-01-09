@@ -1,5 +1,5 @@
 (function() {
-  var $, Binding, EduModule, Excercise, Luki, Uporzadkuj, Wybor, Zastap, excercise,
+  var $, Binding, EduModule, Excercise, Luki, Przyporzadkuj, Uporzadkuj, Wybor, Zastap, excercise,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -280,13 +280,68 @@
 
   })(Excercise);
 
+  Przyporzadkuj = (function(_super) {
+
+    __extends(Przyporzadkuj, _super);
+
+    function Przyporzadkuj(element) {
+      var _this = this;
+      Przyporzadkuj.__super__.constructor.call(this, element);
+      if (this.element.attr('multiple') != null) {
+        this.multiple = true;
+      } else {
+        this.multiple = false;
+      }
+      $(".question", this.element).each(function(i, question) {
+        var draggable_opts;
+        draggable_opts = {
+          revert: 'invalid',
+          helper: _this.multiple ? "clone" : null
+        };
+        $(".draggable", question).draggable(draggable_opts).droppable({
+          accept: ".draggable"
+        });
+        $(".predicate .droppable", question).droppable({
+          accept: ".draggable",
+          drop: function(ev, ui) {
+            var added, is_multiple;
+            is_multiple = ui.draggable.is(".multiple");
+            added = ui.draggable.clone();
+            added.attr('style', '');
+            $(this).append(added);
+            added.draggable(draggable_opts);
+            if (!is_multiple) return ui.draggable.remove();
+          }
+        });
+        return $(".subject", question).droppable({
+          accept: ".draggable",
+          drop: function(ev, ui) {
+            var added, is_multiple;
+            is_multiple = ui.draggable.is(".multiple");
+            added = ui.draggable.clone();
+            added.attr('style', '');
+            if (!is_multiple) {
+              $(this).append(added);
+              added.draggable(draggable_opts);
+            }
+            return ui.draggable.remove();
+          }
+        });
+      });
+    }
+
+    return Przyporzadkuj;
+
+  })(Excercise);
+
   excercise = function(ele) {
     var cls, es;
     es = {
       wybor: Wybor,
       uporzadkuj: Uporzadkuj,
       luki: Luki,
-      zastap: Zastap
+      zastap: Zastap,
+      przyporzadkuj: Przyporzadkuj
     };
     cls = es[$(ele).attr('data-type')];
     return new cls(ele);
