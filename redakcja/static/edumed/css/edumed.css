@@ -458,3 +458,13 @@ em.person {
 .question-piece.incorrect {
     background-color: orange;
 }
+
+
+.zastap.question-piece {
+    padding: 3px;
+}
+
+.question-piece.editing {
+    margin: 2px;
+    border: 1px solid;
+}
