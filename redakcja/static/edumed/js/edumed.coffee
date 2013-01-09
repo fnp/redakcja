@@ -44,7 +44,7 @@ class Excercise extends Binding
     @show_score(score)
 
   get_value_list: (elem, data_key, numbers) ->
-    vl = $(elem).data(data_key).split(/[ ,]+/).map($.trim) #.map((x) -> parseInt(x))
+    vl = $(elem).attr("data-" + data_key).split(/[ ,]+/).map($.trim) #.map((x) -> parseInt(x))
     if numbers
       vl = vl.map((x) -> parseInt(x))
     return vl
