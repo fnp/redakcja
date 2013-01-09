@@ -34,7 +34,7 @@ class Excercise extends Binding
 
   check: ->
     scores = []
-    $(".question").each (i, question) =>
+    $(".question", @element).each (i, question) =>
       scores.push(@check_question question)
 
     score = [0, 0]

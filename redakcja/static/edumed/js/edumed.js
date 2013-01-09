@@ -64,7 +64,7 @@
       var score, scores,
         _this = this;
       scores = [];
-      $(".question").each(function(i, question) {
+      $(".question", this.element).each(function(i, question) {
         return scores.push(_this.check_question(question));
       });
       score = [0, 0];
