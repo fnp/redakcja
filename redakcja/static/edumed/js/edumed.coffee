@@ -43,9 +43,22 @@ class Excercise extends Binding
       score[1] += s[1]
     @show_score(score)
 
-  get_value_list: (elem, data_key) ->
-    $(elem).data(data_key).split(',').map($.trim).map((x) -> parseInt(x))
+  get_value_list: (elem, data_key, numbers) ->
+    vl = $(elem).data(data_key).split(/[ ,]+/).map($.trim) #.map((x) -> parseInt(x))
+    if numbers
+      vl = vl.map((x) -> parseInt(x))
+    return vl
 
+  get_value_optional_list: (elem, data_key) ->
+    vals = @get_value_list(elem, data_key)
+    mandat = []
+    opt = []
+    for v in vals
+      if v.slice(-1) == "?"
+        opt.push v.slice(0, -1)
+      else
+        mandat.push v
+    return [mandat, opt]
 
   show_score: (score) ->
     $(".message", @element).text("Wynik: #{score[0]} / #{score[1]}")
@@ -59,7 +72,7 @@ class Wybor extends Excercise
   check_question: (question) ->
     all = 0
     good = 0
-    solution = @get_value_list(question, 'solution')
+    solution = @get_value_list(question, 'solution', true)
     $(".question-piece", question).each (i, qpiece) =>
       piece_no = parseInt $(qpiece).attr 'data-no'
       should_be_checked = solution.indexOf(piece_no) >= 0
@@ -88,7 +101,7 @@ class Uporzadkuj extends Excercise
     $('ol, ul', @element).sortable({ items: "> li" })
 
   check_question: (question) ->
-    positions = @get_value_list(question, 'original')
+    positions = @get_value_list(question, 'original', true)
     sorted = positions.sort()
     pkts = $('.question-piece', question)
 
@@ -105,6 +118,7 @@ class Uporzadkuj extends Excercise
     return [correct, all]
 
 
+# XXX propozycje="1/0"
 class Luki extends Excercise
   constructor: (element) ->
     super element
@@ -191,51 +205,98 @@ class Zastap extends Excercise
 
 
 class Przyporzadkuj extends Excercise
+  is_multiple: ->
+    for qp in $(".question-piece", @element)
+      if $(qp).data('solution').split(/[ ,]+/).length > 1
+        return true
+    return false
+
   constructor: (element) ->
     super element
 
-    if @element.attr('multiple')?
-      @multiple = true
-    else
-      @multiple = false
+    @multiple = @is_multiple()
 
     $(".question", @element).each (i, question) =>
       draggable_opts =
         revert: 'invalid'
-        helper: if @multiple then "clone" else null
+      if @multiple
+        helper_opts = { helper: "clone" }
+      else helper_opts = {}
 
-      $(".draggable", question).draggable(draggable_opts)
-        .droppable({
-          accept: ".draggable"
-          })
+      $(".draggable", question).draggable($.extend({}, draggable_opts,
+        helper_opts))
 
       $(".predicate .droppable", question).droppable
-        accept: ".draggable"
-        drop: (ev, ui) ->
-          is_multiple = ui.draggable.is(".multiple")
+        accept: (draggable) ->
+          $draggable = $(draggable)
+          if not $draggable.is(".draggable")
+            return false
+          $predicate = $(this)
 
+          for added in $predicate.find("li")
+            if $(added).text() == $draggable.text()
+              return false
+          return true
+
+        drop: (ev, ui) =>
           added = ui.draggable.clone()
 
           added.attr('style', '')
-          $(this).append(added)
+          $(ev.target).append(added)
           added.draggable(draggable_opts)
 
-          if not is_multiple
+          if not @multiple or ui.draggable.closest(".predicate").length > 0
             ui.draggable.remove()
+
 
       $(".subject", question).droppable
         accept: ".draggable"
-        drop: (ev, ui) ->
-          is_multiple = ui.draggable.is(".multiple")
+        drop: (ev, ui) =>
+          # this is to prevent a situation of dragging out and
+          # dropping back to the same place
+          if $(ui.draggable).closest(".subject").length > 0
+            return
+
 
           added = ui.draggable.clone()
 
           added.attr('style', '')
-          if not is_multiple
-            $(this).append(added)
-            added.draggable(draggable_opts)
+          if not @multiple
+            $(ev.target).append(added)
+            added.draggable($.extend({}, draggable_opts, helper_opts))
 
           ui.draggable.remove()
+
+  check_question: (question) ->
+    # subjects placed in predicates
+    count = 0
+    all = 0
+    all_multiple = 0
+    for qp in $(".predicate .question-piece", question)
+      pred = $(qp).closest("[data-predicate]")
+      v = @get_value_optional_list qp, 'solution'
+      mandatory = v[0]
+      optional = v[1]
+      all_multiple += mandatory.length + optional.length
+      pn = pred.data('predicate')
+      if mandatory.indexOf(pn) >= 0 or optional.indexOf(pn) >= 0
+        count += 1
+        @piece_correct qp
+      else
+        @piece_incorrect qp
+      all += 1
+
+    if @multiple
+      for qp in $(".subject .question-piece", question)
+        v = @get_value_optional_list qp, 'solution'
+        mandatory = v[0]
+        optional = v[1]
+        all_multiple += mandatory.length + optional.length
+      return [count, all_multiple]
+    else
+      return [count, all]
+
+
 
 
 

@@ -75,10 +75,31 @@
       return this.show_score(score);
     };
 
-    Excercise.prototype.get_value_list = function(elem, data_key) {
-      return $(elem).data(data_key).split(',').map($.trim).map(function(x) {
-        return parseInt(x);
-      });
+    Excercise.prototype.get_value_list = function(elem, data_key, numbers) {
+      var vl;
+      vl = $(elem).data(data_key).split(/[ ,]+/).map($.trim);
+      if (numbers) {
+        vl = vl.map(function(x) {
+          return parseInt(x);
+        });
+      }
+      return vl;
+    };
+
+    Excercise.prototype.get_value_optional_list = function(elem, data_key) {
+      var mandat, opt, v, vals, _i, _len;
+      vals = this.get_value_list(elem, data_key);
+      mandat = [];
+      opt = [];
+      for (_i = 0, _len = vals.length; _i < _len; _i++) {
+        v = vals[_i];
+        if (v.slice(-1) === "?") {
+          opt.push(v.slice(0, -1));
+        } else {
+          mandat.push(v);
+        }
+      }
+      return [mandat, opt];
     };
 
     Excercise.prototype.show_score = function(score) {
@@ -102,7 +123,7 @@
         _this = this;
       all = 0;
       good = 0;
-      solution = this.get_value_list(question, 'solution');
+      solution = this.get_value_list(question, 'solution', true);
       $(".question-piece", question).each(function(i, qpiece) {
         var is_checked, piece_no, should_be_checked;
         piece_no = parseInt($(qpiece).attr('data-no'));
@@ -142,7 +163,7 @@
 
     Uporzadkuj.prototype.check_question = function(question) {
       var all, correct, pkt, pkts, positions, sorted, _ref;
-      positions = this.get_value_list(question, 'original');
+      positions = this.get_value_list(question, 'original', true);
       sorted = positions.sort();
       pkts = $('.question-piece', question);
       correct = 0;
@@ -284,51 +305,110 @@
 
     __extends(Przyporzadkuj, _super);
 
+    Przyporzadkuj.prototype.is_multiple = function() {
+      var qp, _i, _len, _ref;
+      _ref = $(".question-piece", this.element);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        qp = _ref[_i];
+        if ($(qp).data('solution').split(/[ ,]+/).length > 1) return true;
+      }
+      return false;
+    };
+
     function Przyporzadkuj(element) {
       var _this = this;
       Przyporzadkuj.__super__.constructor.call(this, element);
-      if (this.element.attr('multiple') != null) {
-        this.multiple = true;
-      } else {
-        this.multiple = false;
-      }
+      this.multiple = this.is_multiple();
       $(".question", this.element).each(function(i, question) {
-        var draggable_opts;
+        var draggable_opts, helper_opts;
         draggable_opts = {
-          revert: 'invalid',
-          helper: _this.multiple ? "clone" : null
+          revert: 'invalid'
         };
-        $(".draggable", question).draggable(draggable_opts).droppable({
-          accept: ".draggable"
-        });
+        if (_this.multiple) {
+          helper_opts = {
+            helper: "clone"
+          };
+        } else {
+          helper_opts = {};
+        }
+        $(".draggable", question).draggable($.extend({}, draggable_opts, helper_opts));
         $(".predicate .droppable", question).droppable({
-          accept: ".draggable",
+          accept: function(draggable) {
+            var $draggable, $predicate, added, _i, _len, _ref;
+            $draggable = $(draggable);
+            if (!$draggable.is(".draggable")) return false;
+            $predicate = $(this);
+            _ref = $predicate.find("li");
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              added = _ref[_i];
+              if ($(added).text() === $draggable.text()) return false;
+            }
+            return true;
+          },
           drop: function(ev, ui) {
-            var added, is_multiple;
-            is_multiple = ui.draggable.is(".multiple");
+            var added;
             added = ui.draggable.clone();
             added.attr('style', '');
-            $(this).append(added);
+            $(ev.target).append(added);
             added.draggable(draggable_opts);
-            if (!is_multiple) return ui.draggable.remove();
+            if (!_this.multiple || ui.draggable.closest(".predicate").length > 0) {
+              return ui.draggable.remove();
+            }
           }
         });
         return $(".subject", question).droppable({
           accept: ".draggable",
           drop: function(ev, ui) {
-            var added, is_multiple;
-            is_multiple = ui.draggable.is(".multiple");
+            var added;
+            if ($(ui.draggable).closest(".subject").length > 0) return;
             added = ui.draggable.clone();
             added.attr('style', '');
-            if (!is_multiple) {
-              $(this).append(added);
-              added.draggable(draggable_opts);
+            if (!_this.multiple) {
+              $(ev.target).append(added);
+              added.draggable($.extend({}, draggable_opts, helper_opts));
             }
             return ui.draggable.remove();
           }
         });
       });
     }
+
+    Przyporzadkuj.prototype.check_question = function(question) {
+      var all, all_multiple, count, mandatory, optional, pn, pred, qp, v, _i, _j, _len, _len2, _ref, _ref2;
+      count = 0;
+      all = 0;
+      all_multiple = 0;
+      _ref = $(".predicate .question-piece", question);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        qp = _ref[_i];
+        pred = $(qp).closest("[data-predicate]");
+        v = this.get_value_optional_list(qp, 'solution');
+        mandatory = v[0];
+        optional = v[1];
+        all_multiple += mandatory.length + optional.length;
+        pn = pred.data('predicate');
+        if (mandatory.indexOf(pn) >= 0 || optional.indexOf(pn) >= 0) {
+          count += 1;
+          this.piece_correct(qp);
+        } else {
+          this.piece_incorrect(qp);
+        }
+        all += 1;
+      }
+      if (this.multiple) {
+        _ref2 = $(".subject .question-piece", question);
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          qp = _ref2[_j];
+          v = this.get_value_optional_list(qp, 'solution');
+          mandatory = v[0];
+          optional = v[1];
+          all_multiple += mandatory.length + optional.length;
+        }
+        return [count, all_multiple];
+      } else {
+        return [count, all];
+      }
+    };
 
     return Przyporzadkuj;
 

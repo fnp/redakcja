@@ -468,3 +468,32 @@ em.person {
     margin: 2px;
     border: 1px solid;
 }
+
+.przyporzadkuj .lista.predicate {
+    list-style: none;
+    position: relative;
+    clear: both;
+}
+
+.przyporzadkuj .lista.predicate > li {
+    list-style: none;
+    display: block;
+    float: left;
+    width: 250px;
+}
+
+.przyporzadkuj .lista.predicate .droppable {
+    min-height: 50px;
+    border: 1px dotted black;
+}
+
+
+.przyporzadkuj .draggable {
+    padding: 3px;
+    border: 1px dotted black;
+    display: inline-block;
+}
+
+.clr {
+    clear: both;
+}
