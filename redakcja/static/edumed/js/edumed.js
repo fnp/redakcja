@@ -123,11 +123,16 @@
         _this = this;
       all = 0;
       good = 0;
-      solution = this.get_value_list(question, 'solution', true);
+      solution = this.get_value_list(question, 'solution');
       $(".question-piece", question).each(function(i, qpiece) {
-        var is_checked, piece_no, should_be_checked;
-        piece_no = parseInt($(qpiece).attr('data-no'));
-        should_be_checked = solution.indexOf(piece_no) >= 0;
+        var is_checked, piece_name, piece_no, should_be_checked;
+        piece_no = $(qpiece).attr('data-no');
+        piece_name = $(qpiece).attr('data-name');
+        if (piece_name) {
+          should_be_checked = solution.indexOf(piece_name) >= 0;
+        } else {
+          should_be_checked = solution.indexOf(piece_no) >= 0;
+        }
         is_checked = $("input", qpiece).is(":checked");
         if (should_be_checked) all += 1;
         if (is_checked) {
