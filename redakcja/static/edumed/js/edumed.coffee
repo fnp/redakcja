@@ -72,10 +72,14 @@ class Wybor extends Excercise
   check_question: (question) ->
     all = 0
     good = 0
-    solution = @get_value_list(question, 'solution', true)
+    solution = @get_value_list(question, 'solution')
     $(".question-piece", question).each (i, qpiece) =>
-      piece_no = parseInt $(qpiece).attr 'data-no'
-      should_be_checked = solution.indexOf(piece_no) >= 0
+      piece_no = $(qpiece).attr 'data-no'
+      piece_name = $(qpiece).attr 'data-name'
+      if piece_name
+        should_be_checked = solution.indexOf(piece_name) >= 0
+      else
+        should_be_checked = solution.indexOf(piece_no) >= 0
       is_checked = $("input", qpiece).is(":checked")
 
       if should_be_checked
