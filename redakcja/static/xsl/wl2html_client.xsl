@@ -835,13 +835,13 @@
     <!--
         Semantyczne pudełka
     -->
-    <xsl:template match="pomoce|forma|czas|opis|kol-inside|cwiczenie|pytanie">
-      <p x-editable="true">
+    <xsl:template match="pomoce|forma|czas|opis|kol-inside">
+      <span x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:apply-templates select="child::node()">
               <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-      </p>
+      </span>
     </xsl:template>
 
 
