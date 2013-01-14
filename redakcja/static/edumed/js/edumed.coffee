@@ -230,15 +230,17 @@ class Przyporzadkuj extends Excercise
       $(".draggable", question).draggable($.extend({}, draggable_opts,
         helper_opts))
 
-      $(".predicate .droppable", question).droppable
+      $(".predicate .droppable", question).parent().droppable
         accept: (draggable) ->
           $draggable = $(draggable)
           if not $draggable.is(".draggable")
+            console.log('not draggable?')
             return false
           $predicate = $(this)
 
           for added in $predicate.find("li")
             if $(added).text() == $draggable.text()
+              console.log('already here:' + $draggable.text())
               return false
           return true
 
@@ -246,12 +248,14 @@ class Przyporzadkuj extends Excercise
           added = ui.draggable.clone()
 
           added.attr('style', '')
-          $(ev.target).append(added)
+          $(ev.target).find(".droppable").append(added)
           added.draggable(draggable_opts)
 
           if not @multiple or ui.draggable.closest(".predicate").length > 0
             ui.draggable.remove()
 
+      $(".predicate .droppable", question).sortable
+        items: "> li"
 
       $(".subject", question).droppable
         accept: ".draggable"
@@ -301,9 +305,34 @@ class Przyporzadkuj extends Excercise
       return [count, all]
 
 
+class PrawdaFalsz extends Excercise
+  constructor: (element) ->
+    super element
+
+    for qp in $(".question-piece", @element)
+      $(".true", qp).click (ev) ->
+        ev.preventDefault()
+        $(this).closest(".question-piece").data("value", "true")
+        $(this).addClass('chosen').siblings('a').removeClass('chosen')
+      $(".false", qp).click (ev) ->
+        ev.preventDefault()
+        $(this).closest(".question-piece").data("value", "false")
+        $(this).addClass('chosen').siblings('a').removeClass('chosen')
 
 
+  check_question: ->
+    all = 0
+    good = 0
+    for qp in $(".question-piece", @element)
+      if $(qp).data("solution").toString() == $(qp).data("value")
+        good += 1
+        @piece_correct qp
+      else
+        @piece_incorrect qp
 
+      all += 1
+
+    return [good, all]
 
 ##########
 
@@ -314,6 +343,7 @@ excercise = (ele) ->
     luki: Luki
     zastap: Zastap
     przyporzadkuj: Przyporzadkuj
+    prawdafalsz: PrawdaFalsz
 
 
   cls = es[$(ele).attr('data-type')]

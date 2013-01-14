@@ -1,5 +1,5 @@
 (function() {
-  var $, Binding, EduModule, Excercise, Luki, Przyporzadkuj, Uporzadkuj, Wybor, Zastap, excercise,
+  var $, Binding, EduModule, Excercise, Luki, PrawdaFalsz, Przyporzadkuj, Uporzadkuj, Wybor, Zastap, excercise,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -337,16 +337,22 @@
           helper_opts = {};
         }
         $(".draggable", question).draggable($.extend({}, draggable_opts, helper_opts));
-        $(".predicate .droppable", question).droppable({
+        $(".predicate .droppable", question).parent().droppable({
           accept: function(draggable) {
             var $draggable, $predicate, added, _i, _len, _ref;
             $draggable = $(draggable);
-            if (!$draggable.is(".draggable")) return false;
+            if (!$draggable.is(".draggable")) {
+              console.log('not draggable?');
+              return false;
+            }
             $predicate = $(this);
             _ref = $predicate.find("li");
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               added = _ref[_i];
-              if ($(added).text() === $draggable.text()) return false;
+              if ($(added).text() === $draggable.text()) {
+                console.log('already here:' + $draggable.text());
+                return false;
+              }
             }
             return true;
           },
@@ -354,12 +360,15 @@
             var added;
             added = ui.draggable.clone();
             added.attr('style', '');
-            $(ev.target).append(added);
+            $(ev.target).find(".droppable").append(added);
             added.draggable(draggable_opts);
             if (!_this.multiple || ui.draggable.closest(".predicate").length > 0) {
               return ui.draggable.remove();
             }
           }
+        });
+        $(".predicate .droppable", question).sortable({
+          items: "> li"
         });
         return $(".subject", question).droppable({
           accept: ".draggable",
@@ -419,6 +428,51 @@
 
   })(Excercise);
 
+  PrawdaFalsz = (function(_super) {
+
+    __extends(PrawdaFalsz, _super);
+
+    function PrawdaFalsz(element) {
+      var qp, _i, _len, _ref;
+      PrawdaFalsz.__super__.constructor.call(this, element);
+      _ref = $(".question-piece", this.element);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        qp = _ref[_i];
+        $(".true", qp).click(function(ev) {
+          ev.preventDefault();
+          $(this).closest(".question-piece").data("value", "true");
+          return $(this).addClass('chosen').siblings('a').removeClass('chosen');
+        });
+        $(".false", qp).click(function(ev) {
+          ev.preventDefault();
+          $(this).closest(".question-piece").data("value", "false");
+          return $(this).addClass('chosen').siblings('a').removeClass('chosen');
+        });
+      }
+    }
+
+    PrawdaFalsz.prototype.check_question = function() {
+      var all, good, qp, _i, _len, _ref;
+      all = 0;
+      good = 0;
+      _ref = $(".question-piece", this.element);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        qp = _ref[_i];
+        if ($(qp).data("solution").toString() === $(qp).data("value")) {
+          good += 1;
+          this.piece_correct(qp);
+        } else {
+          this.piece_incorrect(qp);
+        }
+        all += 1;
+      }
+      return [good, all];
+    };
+
+    return PrawdaFalsz;
+
+  })(Excercise);
+
   excercise = function(ele) {
     var cls, es;
     es = {
@@ -426,7 +480,8 @@
       uporzadkuj: Uporzadkuj,
       luki: Luki,
       zastap: Zastap,
-      przyporzadkuj: Przyporzadkuj
+      przyporzadkuj: Przyporzadkuj,
+      prawdafalsz: PrawdaFalsz
     };
     cls = es[$(ele).attr('data-type')];
     return new cls(ele);

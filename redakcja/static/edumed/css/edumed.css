@@ -12,7 +12,7 @@ a {
 
 #book-text {
     margin: 3em;
-    max-width: 500px;
+    max-width: 640px;
 }
 
 /* ================================== */
@@ -459,6 +459,10 @@ em.person {
     background-color: orange;
 }
 
+.buttons .chosen {
+    background-color: lightblue;
+}
+
 
 .zastap.question-piece {
     padding: 3px;
@@ -473,13 +477,20 @@ em.person {
     list-style: none;
     position: relative;
     clear: both;
+    padding-left: 0;
 }
 
 .przyporzadkuj .lista.predicate > li {
     list-style: none;
     display: block;
     float: left;
-    width: 250px;
+    width: 208px;
+    margin: 2px;
+}
+
+.przyporzadkuj.wide .lista.predicate > li {
+    width: 100%;
+    margin: 2px;
 }
 
 .przyporzadkuj .lista.predicate .droppable {
@@ -494,6 +505,11 @@ em.person {
     display: inline-block;
 }
 
+.przyporzadkuj .lista.subjects {
+    padding-left: 0px;
+}
+
 .clr {
     clear: both;
 }
+
