@@ -473,14 +473,20 @@ em.person {
     border: 1px solid;
 }
 
-.przyporzadkuj .lista.predicate {
+.excercise .lista.predicate {
     list-style: none;
     position: relative;
     clear: both;
     padding-left: 0;
 }
 
-.przyporzadkuj .lista.predicate > li {
+
+.excercise .subjects {
+    padding-left: 0;
+}
+
+
+.excercise .lista.predicate > li {
     list-style: none;
     display: block;
     float: left;
@@ -488,26 +494,49 @@ em.person {
     margin: 2px;
 }
 
-.przyporzadkuj.wide .lista.predicate > li {
+.excercise.wide .lista.predicate > li {
     width: 100%;
     margin: 2px;
 }
 
-.przyporzadkuj .lista.predicate .droppable {
+.excercise .lista.predicate .droppable {
     min-height: 50px;
     border: 1px dotted black;
 }
 
 
-.przyporzadkuj .draggable {
+.excercise .draggable {
     padding: 3px;
     border: 1px dotted black;
     display: inline-block;
 }
 
-.przyporzadkuj .lista.subjects {
+.excercise .draggable.disabled {
+    background-color: grey;
+}
+
+.excercise .placeholder {
+    padding: 3px;
+    border: 1px dotted black;
+    display: inline-block;
+    min-width: 200px;
+    min-height: 1em;
+}
+
+
+.excercise .lista.subjects {
     padding-left: 0px;
 }
+
+
+.draggable .remove {
+    font-family: sans-serif;
+    padding: 2px 4px;
+    background-color: #ee6666;
+    margin-left: 5px;
+}
+
+/* utils */
 
 .clr {
     clear: both;

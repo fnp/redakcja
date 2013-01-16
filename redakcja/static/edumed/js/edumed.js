@@ -106,6 +106,65 @@
       return $(".message", this.element).text("Wynik: " + score[0] + " / " + score[1]);
     };
 
+    Excercise.prototype.draggable_equal = function($draggable1, $draggable2) {
+      return false;
+    };
+
+    Excercise.prototype.draggable_accept = function($draggable, $droppable) {
+      var d, dropped, _i, _len;
+      dropped = $droppable.closest("ul, ol").find(".draggable");
+      for (_i = 0, _len = dropped.length; _i < _len; _i++) {
+        d = dropped[_i];
+        if (this.draggable_equal($draggable, $(d))) return false;
+      }
+      return true;
+    };
+
+    Excercise.prototype.draggable_dropped = function($draggable) {
+      return $draggable.append('<span class="close">x</span>');
+    };
+
+    Excercise.prototype.dragging = function(ismultiple, issortable) {
+      var _this = this;
+      return $(".question", this.element).each(function(i, question) {
+        var draggable_opts, self;
+        draggable_opts = {
+          revert: 'invalid',
+          helper: 'clone'
+        };
+        $(".draggable", question).draggable(draggable_opts);
+        self = _this;
+        return $(".placeholder", question).droppable({
+          accept: function(draggable) {
+            var $draggable;
+            $draggable = $(draggable);
+            if (!$draggable.is(".draggable")) return false;
+            return self.draggable_accept($draggable, $(this));
+          },
+          drop: function(ev, ui) {
+            var $added, added,
+              _this = this;
+            added = $(ui.draggable).clone();
+            $added = added;
+            $added.data("original", ui.draggable);
+            if (!ismultiple) {
+              $(ui.draggable).addClass('disabled').draggable('disable');
+            }
+            $(ev.target).after(added);
+            if (!$(ev.target).hasClass('multiple')) $(ev.target).hide();
+            $added.append('<span class="remove">x</span>');
+            return $('.remove', added).click(function(ev) {
+              $added.prev(".placeholder:not(.multiple)").show();
+              if (!ismultiple) {
+                $added.data('original').removeClass('disabled').draggable('enable');
+              }
+              return $(added).remove();
+            });
+          }
+        });
+      });
+    };
+
     return Excercise;
 
   })(Binding);
@@ -195,6 +254,7 @@
 
     function Luki(element) {
       Luki.__super__.constructor.call(this, element);
+      this.dragging(false, false);
     }
 
     Luki.prototype.check = function() {
@@ -202,8 +262,10 @@
         _this = this;
       all = 0;
       correct = 0;
-      $(".question-piece", this.element).each(function(i, qpiece) {
-        if ($(qpiece).data('solution') === $(qpiece).val()) {
+      $(".placeholder + .question-piece", this.element).each(function(i, qpiece) {
+        var $placeholder;
+        $placeholder = $(qpiece).prev(".placeholder");
+        if ($placeholder.data('solution') === $(qpiece).data('no')) {
           _this.piece_correct(qpiece);
           correct += 1;
         } else {
@@ -321,71 +383,14 @@
     };
 
     function Przyporzadkuj(element) {
-      var _this = this;
       Przyporzadkuj.__super__.constructor.call(this, element);
       this.multiple = this.is_multiple();
-      $(".question", this.element).each(function(i, question) {
-        var draggable_opts, helper_opts;
-        draggable_opts = {
-          revert: 'invalid'
-        };
-        if (_this.multiple) {
-          helper_opts = {
-            helper: "clone"
-          };
-        } else {
-          helper_opts = {};
-        }
-        $(".draggable", question).draggable($.extend({}, draggable_opts, helper_opts));
-        $(".predicate .droppable", question).parent().droppable({
-          accept: function(draggable) {
-            var $draggable, $predicate, added, _i, _len, _ref;
-            $draggable = $(draggable);
-            if (!$draggable.is(".draggable")) {
-              console.log('not draggable?');
-              return false;
-            }
-            $predicate = $(this);
-            _ref = $predicate.find("li");
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              added = _ref[_i];
-              if ($(added).text() === $draggable.text()) {
-                console.log('already here:' + $draggable.text());
-                return false;
-              }
-            }
-            return true;
-          },
-          drop: function(ev, ui) {
-            var added;
-            added = ui.draggable.clone();
-            added.attr('style', '');
-            $(ev.target).find(".droppable").append(added);
-            added.draggable(draggable_opts);
-            if (!_this.multiple || ui.draggable.closest(".predicate").length > 0) {
-              return ui.draggable.remove();
-            }
-          }
-        });
-        $(".predicate .droppable", question).sortable({
-          items: "> li"
-        });
-        return $(".subject", question).droppable({
-          accept: ".draggable",
-          drop: function(ev, ui) {
-            var added;
-            if ($(ui.draggable).closest(".subject").length > 0) return;
-            added = ui.draggable.clone();
-            added.attr('style', '');
-            if (!_this.multiple) {
-              $(ev.target).append(added);
-              added.draggable($.extend({}, draggable_opts, helper_opts));
-            }
-            return ui.draggable.remove();
-          }
-        });
-      });
+      this.dragging(this.multiple, true);
     }
+
+    Przyporzadkuj.prototype.draggable_equal = function(d1, d2) {
+      return d1.data("no") === d2.data("no");
+    };
 
     Przyporzadkuj.prototype.check_question = function(question) {
       var all, all_multiple, count, mandatory, optional, pn, pred, qp, v, _i, _j, _len, _len2, _ref, _ref2;

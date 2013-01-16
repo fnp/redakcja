@@ -64,6 +64,98 @@ class Excercise extends Binding
     $(".message", @element).text("Wynik: #{score[0]} / #{score[1]}")
 
 
+  draggable_equal: ($draggable1, $draggable2) ->
+    return false
+
+  draggable_accept: ($draggable, $droppable) ->
+    dropped = $droppable.closest("ul, ol").find(".draggable")
+    for d in dropped
+      if @draggable_equal $draggable, $(d)
+        return false
+    return true
+
+  draggable_dropped: ($draggable) ->
+    $draggable.append('<span class="close">x</span>')
+
+  dragging: (ismultiple, issortable) ->
+    $(".question", @element).each (i, question) =>
+      draggable_opts =
+        revert: 'invalid'
+        helper: 'clone'
+
+      $(".draggable", question).draggable(draggable_opts)
+      self = this
+      $(".placeholder", question).droppable
+        accept: (draggable) ->
+          $draggable = $(draggable)
+          if not $draggable.is(".draggable")
+            return false
+          return self.draggable_accept $draggable, $(this)
+
+        drop: (ev, ui) ->
+          added = $(ui.draggable).clone()
+          $added = added
+          $added.data("original", ui.draggable)
+          if not ismultiple
+            $(ui.draggable).addClass('disabled').draggable('disable')
+
+          $(ev.target).after(added)
+          if not $(ev.target).hasClass('multiple')
+            $(ev.target).hide()
+          $added.append('<span class="remove">x</span>')
+          $('.remove', added).click (ev) =>
+            $added.prev(".placeholder:not(.multiple)").show()
+            if not ismultiple
+              $added.data('original').removeClass('disabled').draggable('enable')
+            $(added).remove()
+
+
+
+#       $(".droppable", question).each (i, droppable) =>
+#         $droppable = $(droppable)
+#         $droppable.droppable
+#           accept: (draggable) =>
+#             return false
+#             $draggable = $(draggable)
+#             if not $draggable.is(".draggable")
+#               console.log('not draggable?')
+#               return false
+
+#             for added in $droppable.children(".draggable")
+#               if @draggable_equal($(added), $draggable)
+#                 console.log('already here:' + $draggable.text())
+#                 return false
+
+#             return @draggable_accept $draggable
+
+#           drop: (ev, ui) =>
+#             added = ui.draggable.clone()
+# #          added.attr('style', '')
+#             $(ev.target).append(added)
+#             added.draggable(draggable_opts)
+#             @draggable_dropped added
+
+#             if not @multiple
+#               $(ui.draggable).draggable("disable")
+
+
+      # if issortable
+      #   $(".droppable", question).sortable
+      #     items: "> li"
+
+      #     receive: (event, ui) =>
+      #       console.log("receive " + $(ui.item).text())
+      #       if not accept(ui.item, event.target)
+      #         console.log("REVERT")
+      #         $(event.target).sortable('cancel')
+
+          # over: (event, ui) =>
+          #   if not accept(ui.item, event.target)
+          #     $(event.target).sortable('disable')
+          # out: (event, ui) =>
+          #   $(event.target).sortable('enable')
+
+
 class Wybor extends Excercise
   constructor: (element) ->
     super element
@@ -126,12 +218,14 @@ class Uporzadkuj extends Excercise
 class Luki extends Excercise
   constructor: (element) ->
     super element
+    @dragging false, false
 
   check: ->
     all = 0
     correct = 0
-    $(".question-piece", @element).each (i, qpiece) =>
-      if $(qpiece).data('solution') == $(qpiece).val()
+    $(".placeholder + .question-piece", @element).each (i, qpiece) =>
+      $placeholder = $(qpiece).prev(".placeholder")
+      if $placeholder.data('solution') == $(qpiece).data('no')
         @piece_correct qpiece
         correct += 1
       else
@@ -220,60 +314,11 @@ class Przyporzadkuj extends Excercise
 
     @multiple = @is_multiple()
 
-    $(".question", @element).each (i, question) =>
-      draggable_opts =
-        revert: 'invalid'
-      if @multiple
-        helper_opts = { helper: "clone" }
-      else helper_opts = {}
+    @dragging @multiple, true
 
-      $(".draggable", question).draggable($.extend({}, draggable_opts,
-        helper_opts))
+  draggable_equal: (d1, d2) ->
+    return d1.data("no") == d2.data("no")
 
-      $(".predicate .droppable", question).parent().droppable
-        accept: (draggable) ->
-          $draggable = $(draggable)
-          if not $draggable.is(".draggable")
-            console.log('not draggable?')
-            return false
-          $predicate = $(this)
-
-          for added in $predicate.find("li")
-            if $(added).text() == $draggable.text()
-              console.log('already here:' + $draggable.text())
-              return false
-          return true
-
-        drop: (ev, ui) =>
-          added = ui.draggable.clone()
-
-          added.attr('style', '')
-          $(ev.target).find(".droppable").append(added)
-          added.draggable(draggable_opts)
-
-          if not @multiple or ui.draggable.closest(".predicate").length > 0
-            ui.draggable.remove()
-
-      $(".predicate .droppable", question).sortable
-        items: "> li"
-
-      $(".subject", question).droppable
-        accept: ".draggable"
-        drop: (ev, ui) =>
-          # this is to prevent a situation of dragging out and
-          # dropping back to the same place
-          if $(ui.draggable).closest(".subject").length > 0
-            return
-
-
-          added = ui.draggable.clone()
-
-          added.attr('style', '')
-          if not @multiple
-            $(ev.target).append(added)
-            added.draggable($.extend({}, draggable_opts, helper_opts))
-
-          ui.draggable.remove()
 
   check_question: (question) ->
     # subjects placed in predicates
