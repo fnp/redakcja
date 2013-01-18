@@ -43,12 +43,25 @@ class Excercise extends Binding
       score[1] += s[1]
     @show_score(score)
 
+  # Parses a list of values, separated by space or comma.
+  # The list is read from data attribute of elem using data_key
+  # Returns a list with elements
+  # eg.: things_i_need: "house bike tv playstation"
+  # yields ["house", "bike", "tv", "playstation"]
+  # If optional numbers argument is true, returns list of numbers
+  # instead of strings
   get_value_list: (elem, data_key, numbers) ->
     vl = $(elem).attr("data-" + data_key).split(/[ ,]+/).map($.trim) #.map((x) -> parseInt(x))
     if numbers
       vl = vl.map((x) -> parseInt(x))
     return vl
 
+  # Parses a list of values, separated by space or comma.
+  # The list is read from data attribute of elem using data_key
+  # Returns a 2-element list with mandatory and optional
+  # items. optional items are marked with a question mark on the end
+  # eg.: things_i_need: "house bike tv? playstation?"
+  # yields [[ "house", "bike"], ["tv", "playstation"]]
   get_value_optional_list: (elem, data_key) ->
     vals = @get_value_list(elem, data_key)
     mandat = []
@@ -88,11 +101,23 @@ class Excercise extends Binding
       $(".placeholder", question).droppable
         accept: (draggable) ->
           $draggable = $(draggable)
+          is_accepted = true
+
           if not $draggable.is(".draggable")
-            return false
-          return self.draggable_accept $draggable, $(this)
+            is_accepted = false
+
+          if is_accepted
+            is_accepted= self.draggable_accept $draggable, $(this)
+
+          if is_accepted
+            $(this).addClass 'accepting'
+          else
+            $(this).removeClass 'accepting'
+          return is_accepted
 
         drop: (ev, ui) ->
+          $(ev.target).removeClass 'accepting'
+
           added = $(ui.draggable).clone()
           $added = added
           $added.data("original", ui.draggable)
@@ -109,51 +134,12 @@ class Excercise extends Binding
               $added.data('original').removeClass('disabled').draggable('enable')
             $(added).remove()
 
+        over: (ev, ui) ->
+          $(ev.target).addClass 'dragover'
 
 
-#       $(".droppable", question).each (i, droppable) =>
-#         $droppable = $(droppable)
-#         $droppable.droppable
-#           accept: (draggable) =>
-#             return false
-#             $draggable = $(draggable)
-#             if not $draggable.is(".draggable")
-#               console.log('not draggable?')
-#               return false
-
-#             for added in $droppable.children(".draggable")
-#               if @draggable_equal($(added), $draggable)
-#                 console.log('already here:' + $draggable.text())
-#                 return false
-
-#             return @draggable_accept $draggable
-
-#           drop: (ev, ui) =>
-#             added = ui.draggable.clone()
-# #          added.attr('style', '')
-#             $(ev.target).append(added)
-#             added.draggable(draggable_opts)
-#             @draggable_dropped added
-
-#             if not @multiple
-#               $(ui.draggable).draggable("disable")
-
-
-      # if issortable
-      #   $(".droppable", question).sortable
-      #     items: "> li"
-
-      #     receive: (event, ui) =>
-      #       console.log("receive " + $(ui.item).text())
-      #       if not accept(ui.item, event.target)
-      #         console.log("REVERT")
-      #         $(event.target).sortable('cancel')
-
-          # over: (event, ui) =>
-          #   if not accept(ui.item, event.target)
-          #     $(event.target).sortable('disable')
-          # out: (event, ui) =>
-          #   $(event.target).sortable('enable')
+        out: (ev, ui) ->
+          $(ev.target).removeClass 'dragover'
 
 
 class Wybor extends Excercise
@@ -239,34 +225,25 @@ class Zastap extends Excercise
   constructor: (element) ->
     super element
     $(".paragraph", @element).each (i, par) =>
-      @wrap_words $(par), $('<span class="zastap question-piece"/>')
-      spans = $("> span", par).attr("contenteditable", "true")
-      spans.click (ev) =>
-        spans.filter(':not(:empty)').removeClass('editing')
-        $(ev.target).addClass('editing')
-
+      @wrap_words $(par), $('<span class="placeholder zastap"/>')
+    @dragging false, false
 
   check: ->
     all = 0
     correct = 0
-    $(".question-piece", @element).each (i, qpiece) =>
-      txt = $(qpiece).data('original')
-      should_be_changed = false
-      if not txt?
-        txt = $(qpiece).data('solution')
-        should_be_changed = true
-      if not txt?
-        return
 
-      if should_be_changed
-        all += 1
+    $(".paragraph", @element).each (i, par) =>
+      $(".placeholder", par).each (j, qpiece) =>
+        should_be_checked = false
+        $qp = $(qpiece)
+        $dragged = $qp.next(".draggable")
+        if $qp.data("solution")
+          if $dragged and $qp.data("solution") == $dragged.data("no")
+            @piece_correct $dragged
+            correct += 1
+#          else -- we dont mark enything here, so not to hint user about solution. He sees he hasn't used all the draggables
 
-      if txt != $(qpiece).text()
-        @piece_incorrect qpiece
-      else
-        if should_be_changed
-          @piece_correct qpiece
-          correct += 1
+          all += 1
 
     @show_score [correct, all]
 

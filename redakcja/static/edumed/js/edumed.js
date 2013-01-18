@@ -136,14 +136,24 @@
         self = _this;
         return $(".placeholder", question).droppable({
           accept: function(draggable) {
-            var $draggable;
+            var $draggable, is_accepted;
             $draggable = $(draggable);
-            if (!$draggable.is(".draggable")) return false;
-            return self.draggable_accept($draggable, $(this));
+            is_accepted = true;
+            if (!$draggable.is(".draggable")) is_accepted = false;
+            if (is_accepted) {
+              is_accepted = self.draggable_accept($draggable, $(this));
+            }
+            if (is_accepted) {
+              $(this).addClass('accepting');
+            } else {
+              $(this).removeClass('accepting');
+            }
+            return is_accepted;
           },
           drop: function(ev, ui) {
             var $added, added,
               _this = this;
+            $(ev.target).removeClass('accepting');
             added = $(ui.draggable).clone();
             $added = added;
             $added.data("original", ui.draggable);
@@ -160,6 +170,12 @@
               }
               return $(added).remove();
             });
+          },
+          over: function(ev, ui) {
+            return $(ev.target).addClass('dragover');
+          },
+          out: function(ev, ui) {
+            return $(ev.target).removeClass('dragover');
           }
         });
       });
@@ -288,14 +304,9 @@
       var _this = this;
       Zastap.__super__.constructor.call(this, element);
       $(".paragraph", this.element).each(function(i, par) {
-        var spans;
-        _this.wrap_words($(par), $('<span class="zastap question-piece"/>'));
-        spans = $("> span", par).attr("contenteditable", "true");
-        return spans.click(function(ev) {
-          spans.filter(':not(:empty)').removeClass('editing');
-          return $(ev.target).addClass('editing');
-        });
+        return _this.wrap_words($(par), $('<span class="placeholder zastap"/>'));
       });
+      this.dragging(false, false);
     }
 
     Zastap.prototype.check = function() {
@@ -303,24 +314,20 @@
         _this = this;
       all = 0;
       correct = 0;
-      $(".question-piece", this.element).each(function(i, qpiece) {
-        var should_be_changed, txt;
-        txt = $(qpiece).data('original');
-        should_be_changed = false;
-        if (!(txt != null)) {
-          txt = $(qpiece).data('solution');
-          should_be_changed = true;
-        }
-        if (!(txt != null)) return;
-        if (should_be_changed) all += 1;
-        if (txt !== $(qpiece).text()) {
-          return _this.piece_incorrect(qpiece);
-        } else {
-          if (should_be_changed) {
-            _this.piece_correct(qpiece);
-            return correct += 1;
+      $(".paragraph", this.element).each(function(i, par) {
+        return $(".placeholder", par).each(function(j, qpiece) {
+          var $dragged, $qp, should_be_checked;
+          should_be_checked = false;
+          $qp = $(qpiece);
+          $dragged = $qp.next(".draggable");
+          if ($qp.data("solution")) {
+            if ($dragged && $qp.data("solution") === $dragged.data("no")) {
+              _this.piece_correct($dragged);
+              correct += 1;
+            }
+            return all += 1;
           }
-        }
+        });
       });
       return this.show_score([correct, all]);
     };

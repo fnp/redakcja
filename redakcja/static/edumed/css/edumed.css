@@ -464,14 +464,6 @@ em.person {
 }
 
 
-.zastap.question-piece {
-    padding: 3px;
-}
-
-.question-piece.editing {
-    margin: 2px;
-    border: 1px solid;
-}
 
 .excercise .lista.predicate {
     list-style: none;
@@ -522,6 +514,20 @@ em.person {
     min-width: 200px;
     min-height: 1em;
 }
+
+.excercise .placeholder.accepting.dragover:hover {
+    background-color: #ffff99;
+}
+
+
+.excercise.zastap .paragraph .placeholder {
+    display: inline;
+    min-width: none;
+    min-height: none;
+    border: inherit;
+    padding: inherit;
+}
+
 
 
 .excercise .lista.subjects {
