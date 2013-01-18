@@ -153,7 +153,7 @@
           drop: function(ev, ui) {
             var $added, added,
               _this = this;
-            $(ev.target).removeClass('accepting');
+            $(ev.target).removeClass('accepting dragover');
             added = $(ui.draggable).clone();
             $added = added;
             $added.data("original", ui.draggable);

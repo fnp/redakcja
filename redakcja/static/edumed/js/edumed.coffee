@@ -116,7 +116,7 @@ class Excercise extends Binding
           return is_accepted
 
         drop: (ev, ui) ->
-          $(ev.target).removeClass 'accepting'
+          $(ev.target).removeClass 'accepting dragover'
 
           added = $(ui.draggable).clone()
           $added = added
