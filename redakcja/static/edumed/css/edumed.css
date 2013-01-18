@@ -515,7 +515,7 @@ em.person {
     min-height: 1em;
 }
 
-.excercise .placeholder.accepting.dragover:hover {
+.excercise .placeholder.accepting.dragover {
     background-color: #ffff99;
 }
 
