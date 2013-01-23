@@ -20,11 +20,19 @@ class EduModule extends Binding
 class Excercise extends Binding
   constructor: (element) ->
     super 'excercise', element
+    # just save the html to reset the excercise
+    $(@element).data("excercise-html", $(@element).html())
 
     $(".check", @element).click =>
       @check()
     $('.solutions', @element).click =>
       @show_solutions()
+    $('.reset', @element).click =>
+      @reset()
+
+  reset: ->
+    $(@element).html($(@element).data('excercise-html'))
+    excercise @element
 
   piece_correct: (qpiece) ->
     $(qpiece).removeClass('incorrect').addClass('correct')
@@ -42,6 +50,11 @@ class Excercise extends Binding
       score[0] += s[0]
       score[1] += s[1]
     @show_score(score)
+
+  show_solutions: ->
+    @reset()
+    $(".question", @element).each (i, question) =>
+      @solve_question question
 
   # Parses a list of values, separated by space or comma.
   # The list is read from data attribute of elem using data_key
@@ -87,8 +100,22 @@ class Excercise extends Binding
         return false
     return true
 
-  draggable_dropped: ($draggable) ->
-    $draggable.append('<span class="close">x</span>')
+  draggable_move: ($draggable, $placeholder, ismultiple) ->
+    $added = $draggable.clone()
+    $added.data("original", $draggable.get(0))
+    if not ismultiple
+      $draggable.addClass('disabled').draggable('disable')
+
+    $placeholder.after($added)
+    if not $placeholder.hasClass('multiple')
+      $placeholder.hide()
+    $added.append('<span class="remove">x</span>')
+    $('.remove', $added).click (ev) =>
+      $added.prev(".placeholder:not(.multiple)").show()
+      if not ismultiple
+        $($added.data('original')).removeClass('disabled').draggable('enable')
+      $added.remove()
+
 
   dragging: (ismultiple, issortable) ->
     $(".question", @element).each (i, question) =>
@@ -115,24 +142,25 @@ class Excercise extends Binding
             $(this).removeClass 'accepting'
           return is_accepted
 
-        drop: (ev, ui) ->
+        drop: (ev, ui) =>
           $(ev.target).removeClass 'accepting dragover'
 
-          added = $(ui.draggable).clone()
-          $added = added
-          $added.data("original", ui.draggable)
-          if not ismultiple
-            $(ui.draggable).addClass('disabled').draggable('disable')
+          @draggable_move $(ui.draggable), $(ev.target), ismultiple
 
-          $(ev.target).after(added)
-          if not $(ev.target).hasClass('multiple')
-            $(ev.target).hide()
-          $added.append('<span class="remove">x</span>')
-          $('.remove', added).click (ev) =>
-            $added.prev(".placeholder:not(.multiple)").show()
-            if not ismultiple
-              $added.data('original').removeClass('disabled').draggable('enable')
-            $(added).remove()
+          # $added = $(ui.draggable).clone()
+          # $added.data("original", ui.draggable)
+          # if not ismultiple
+          #   $(ui.draggable).addClass('disabled').draggable('disable')
+
+          # $(ev.target).after(added)
+          # if not $(ev.target).hasClass('multiple')
+          #   $(ev.target).hide()
+          # $added.append('<span class="remove">x</span>')
+          # $('.remove', added).click (ev) =>
+          #   $added.prev(".placeholder:not(.multiple)").show()
+          #   if not ismultiple
+          #     $added.data('original').removeClass('disabled').draggable('enable')
+          #   $(added).remove()
 
         over: (ev, ui) ->
           $(ev.target).addClass 'dragover'
@@ -140,6 +168,7 @@ class Excercise extends Binding
 
         out: (ev, ui) ->
           $(ev.target).removeClass 'dragover'
+
 
 
 class Wybor extends Excercise
@@ -174,7 +203,18 @@ class Wybor extends Excercise
 
     return [good, all]
 
-  show_solutions: ->
+  solve_question: (question) ->
+    solution = @get_value_list(question, 'solution')
+    $(".question-piece", question).each (i, qpiece) =>
+      piece_no = $(qpiece).attr 'data-no'
+      piece_name = $(qpiece).attr 'data-name'
+      if piece_name
+        should_be_checked = solution.indexOf(piece_name) >= 0
+      else
+        should_be_checked = solution.indexOf(piece_no) >= 0
+      console.log("check " + $("input[type=checkbox]", qpiece).attr("id") + " -> " + should_be_checked)
+      $("input[type=checkbox]", qpiece).prop 'checked', should_be_checked
+
 
 
 class Uporzadkuj extends Excercise
@@ -191,13 +231,28 @@ class Uporzadkuj extends Excercise
     all = 0
 
     for pkt in [0...pkts.length]
-      all +=1
+      all += 1
       if pkts.eq(pkt).data('pos') == sorted[pkt]
         correct += 1
         @piece_correct pkts.eq(pkt)
       else
         @piece_incorrect pkts.eq(pkt)
     return [correct, all]
+
+  solve_question: (question) ->
+    positions = @get_value_list(question, 'original', true)
+    sorted = positions.sort()
+    pkts = $('.question-piece', question)
+    pkts.sort (a, b) ->
+      q = $(a).data('pos')
+      w = $(b).data('pos')
+      return 1 if q < w
+      return -1 if q > w
+      return 0
+
+    parent = pkts.eq(0).parent()
+    for p in pkts
+      parent.prepend(p)
 
 
 # XXX propozycje="1/0"
@@ -220,6 +275,11 @@ class Luki extends Excercise
 
     @show_score [correct, all]
 
+  solve_question: (question) ->
+    $(".placeholder", question).each (i, placeholder) =>
+      $qp = $(".question-piece[data-no=" + $(placeholder).data('solution') + "]", question)
+      @draggable_move $qp, $(placeholder), false
+
 
 class Zastap extends Excercise
   constructor: (element) ->
@@ -234,7 +294,6 @@ class Zastap extends Excercise
 
     $(".paragraph", @element).each (i, par) =>
       $(".placeholder", par).each (j, qpiece) =>
-        should_be_checked = false
         $qp = $(qpiece)
         $dragged = $qp.next(".draggable")
         if $qp.data("solution")
@@ -246,6 +305,15 @@ class Zastap extends Excercise
           all += 1
 
     @show_score [correct, all]
+
+  show_solutions: ->
+    @reset()
+    $(".paragraph", @element).each (i, par) =>
+      $(".placeholder[data-solution]", par).each (j, qpiece) =>
+        $qp = $(qpiece)
+        $dr = $(".draggable[data-no=" + $qp.data('solution') + "]", @element)
+        @draggable_move $dr, $qp, false
+
 
   wrap_words: (element, wrapper) ->
     # This function wraps each word of element in wrapper, but does not descend into child-tags of element.
@@ -326,6 +394,17 @@ class Przyporzadkuj extends Excercise
     else
       return [count, all]
 
+  solve_question: (question) ->
+    for qp in $(".subject .question-piece", question)
+      v = @get_value_optional_list qp, 'solution'
+      mandatory = v[0]
+      optional = v[1]
+      for m in mandatory.concat(optional)
+        $pr = $(".predicate [data-predicate=" + m + "]", question)
+        $ph = $pr.find ".placeholder"
+        @draggable_move $(qp), $ph, @multiple
+
+
 
 class PrawdaFalsz extends Excercise
   constructor: (element) ->
@@ -355,6 +434,15 @@ class PrawdaFalsz extends Excercise
       all += 1
 
     return [good, all]
+
+  show_solutions: ->
+    reset()
+    for qp in $(".question-piece", @element)
+      if $(qp).data('solution') == 'true'
+        $(".true", qp).click()
+      else
+        $(".false", qp).click()
+
 
 ##########
 
