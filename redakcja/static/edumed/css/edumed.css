@@ -542,6 +542,10 @@ em.person {
     margin-left: 5px;
 }
 
+.excercise.wybor li[data-name] {
+    list-style: none;
+}
+
 /* utils */
 
 .clr {
