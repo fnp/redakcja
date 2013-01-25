@@ -376,7 +376,7 @@ class Przyporzadkuj extends Excercise
       mandatory = v[0]
       optional = v[1]
       all_multiple += mandatory.length + optional.length
-      pn = pred.data('predicate')
+      pn = pred.attr('data-predicate')
       if mandatory.indexOf(pn) >= 0 or optional.indexOf(pn) >= 0
         count += 1
         @piece_correct qp
