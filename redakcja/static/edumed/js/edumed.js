@@ -38,11 +38,19 @@
       var _this = this;
       Excercise.__super__.constructor.call(this, 'excercise', element);
       $(this.element).data("excercise-html", $(this.element).html());
-      $(".check", this.element).click(function() {
-        return _this.check();
+      $(".check", this.element).click(function(ev) {
+        _this.check();
+        $(ev.target).next(".retry").show();
+        return $(ev.target).hide();
+      });
+      $(".retry", this.element).click(function(ev) {
+        $(".correct, .incorrect", _this.element).removeClass("correct incorrect");
+        $(ev.target).prev(".check").show();
+        return $(ev.target).hide();
       });
       $('.solutions', this.element).click(function() {
-        return _this.show_solutions();
+        _this.show_solutions();
+        return $(".comment", _this.element).show();
       });
       $('.reset', this.element).click(function() {
         return _this.reset();

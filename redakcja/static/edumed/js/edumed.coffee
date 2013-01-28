@@ -23,10 +23,17 @@ class Excercise extends Binding
     # just save the html to reset the excercise
     $(@element).data("excercise-html", $(@element).html())
 
-    $(".check", @element).click =>
+    $(".check", @element).click (ev) =>
       @check()
+      $(ev.target).next(".retry").show()
+      $(ev.target).hide()
+    $(".retry", @element).click (ev) =>
+      $(".correct, .incorrect", @element).removeClass("correct incorrect")
+      $(ev.target).prev(".check").show()
+      $(ev.target).hide()
     $('.solutions', @element).click =>
       @show_solutions()
+      $(".comment", @element).show()
     $('.reset', @element).click =>
       @reset()
 
