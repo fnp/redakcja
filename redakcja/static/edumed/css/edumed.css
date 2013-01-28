@@ -444,12 +444,12 @@ em.person {
 }
 
 .teacher {
-    display: none;
+/*    display: none;*/
 }
 
-.teacher.show {
+/*.teacher.show {
     display: inherit;
-}
+}*/
 
 .question-piece.correct {
     background-color: darkgreen;
@@ -534,6 +534,10 @@ em.person {
     padding-left: 0px;
 }
 
+
+.excercise.uporzadkuj li {
+    cursor: move;
+}
 
 .draggable .remove {
     font-family: sans-serif;

@@ -10,11 +10,11 @@ class EduModule extends Binding
   constructor: (element) ->
     super 'edumodule', element
 
-    $("[name=teacher-toggle]").change (ev) =>
-      if $(ev.target).is(":checked")
-        $(".teacher", @element).addClass "show"
-      else
-        $(".teacher", @element).removeClass "show"
+    # $("[name=teacher-toggle]").change (ev) =>
+    #   if $(ev.target).is(":checked")
+    #     $(".teacher", @element).addClass "show"
+    #   else
+    #     $(".teacher", @element).removeClass "show"
 
 
 class Excercise extends Binding
@@ -116,7 +116,7 @@ class Excercise extends Binding
         $($added.data('original')).removeClass('disabled').draggable('enable')
       $added.remove()
 
-
+## XXX co z issortable?
   dragging: (ismultiple, issortable) ->
     $(".question", @element).each (i, question) =>
       draggable_opts =
@@ -367,41 +367,45 @@ class Przyporzadkuj extends Excercise
 
   check_question: (question) ->
     # subjects placed in predicates
+    minimum = $(question).data("minimum")
     count = 0
     all = 0
-    all_multiple = 0
-    for qp in $(".predicate .question-piece", question)
-      pred = $(qp).closest("[data-predicate]")
-      v = @get_value_optional_list qp, 'solution'
-      mandatory = v[0]
-      optional = v[1]
-      all_multiple += mandatory.length + optional.length
-      pn = pred.attr('data-predicate')
-      if mandatory.indexOf(pn) >= 0 or optional.indexOf(pn) >= 0
-        count += 1
-        @piece_correct qp
-      else
-        @piece_incorrect qp
-      all += 1
+    if not minimum
+      all = $(".subjects .question-piece", question).length
 
-    if @multiple
-      for qp in $(".subject .question-piece", question)
+    for pred in $(".predicate [data-predicate]", question)
+      pn = $(pred).attr('data-predicate')
+      if minimum?
+        all += minimum
+
+      for qp in $(".question-piece", pred)
         v = @get_value_optional_list qp, 'solution'
         mandatory = v[0]
         optional = v[1]
-        all_multiple += mandatory.length + optional.length
-      return [count, all_multiple]
-    else
-      return [count, all]
+
+        if mandatory.indexOf(pn) >= 0 or (minimum and optional.indexOf(pn) >= 0)
+          count += 1
+          @piece_correct qp
+        else
+          @piece_incorrect qp
+
+    return [count, all]
 
   solve_question: (question) ->
+    minimum = $(question).data("min")
+
     for qp in $(".subject .question-piece", question)
       v = @get_value_optional_list qp, 'solution'
       mandatory = v[0]
       optional = v[1]
-      for m in mandatory.concat(optional)
+
+      if minimum
+        draggables = mandatory.count(optional)[0...minimum]
+      else
+        draggables = mandatory
+      for m in draggables
         $pr = $(".predicate [data-predicate=" + m + "]", question)
-        $ph = $pr.find ".placeholder"
+        $ph = $pr.find ".placeholder:visible"
         @draggable_move $(qp), $ph, @multiple
 
 

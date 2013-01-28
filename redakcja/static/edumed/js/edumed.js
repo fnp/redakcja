@@ -23,15 +23,7 @@
     __extends(EduModule, _super);
 
     function EduModule(element) {
-      var _this = this;
       EduModule.__super__.constructor.call(this, 'edumodule', element);
-      $("[name=teacher-toggle]").change(function(ev) {
-        if ($(ev.target).is(":checked")) {
-          return $(".teacher", _this.element).addClass("show");
-        } else {
-          return $(".teacher", _this.element).removeClass("show");
-        }
-      });
     }
 
     return EduModule;
@@ -490,44 +482,40 @@
     };
 
     Przyporzadkuj.prototype.check_question = function(question) {
-      var all, all_multiple, count, mandatory, optional, pn, pred, qp, v, _i, _j, _len, _len1, _ref, _ref1;
+      var all, count, mandatory, minimum, optional, pn, pred, qp, v, _i, _j, _len, _len1, _ref, _ref1;
+      minimum = $(question).data("minimum");
       count = 0;
       all = 0;
-      all_multiple = 0;
-      _ref = $(".predicate .question-piece", question);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        qp = _ref[_i];
-        pred = $(qp).closest("[data-predicate]");
-        v = this.get_value_optional_list(qp, 'solution');
-        mandatory = v[0];
-        optional = v[1];
-        all_multiple += mandatory.length + optional.length;
-        pn = pred.attr('data-predicate');
-        if (mandatory.indexOf(pn) >= 0 || optional.indexOf(pn) >= 0) {
-          count += 1;
-          this.piece_correct(qp);
-        } else {
-          this.piece_incorrect(qp);
-        }
-        all += 1;
+      if (!minimum) {
+        all = $(".subjects .question-piece", question).length;
       }
-      if (this.multiple) {
-        _ref1 = $(".subject .question-piece", question);
+      _ref = $(".predicate [data-predicate]", question);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        pred = _ref[_i];
+        pn = $(pred).attr('data-predicate');
+        if (minimum != null) {
+          all += minimum;
+        }
+        _ref1 = $(".question-piece", pred);
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           qp = _ref1[_j];
           v = this.get_value_optional_list(qp, 'solution');
           mandatory = v[0];
           optional = v[1];
-          all_multiple += mandatory.length + optional.length;
+          if (mandatory.indexOf(pn) >= 0 || (minimum && optional.indexOf(pn) >= 0)) {
+            count += 1;
+            this.piece_correct(qp);
+          } else {
+            this.piece_incorrect(qp);
+          }
         }
-        return [count, all_multiple];
-      } else {
-        return [count, all];
       }
+      return [count, all];
     };
 
     Przyporzadkuj.prototype.solve_question = function(question) {
-      var $ph, $pr, m, mandatory, optional, qp, v, _i, _len, _ref, _results;
+      var $ph, $pr, draggables, m, mandatory, minimum, optional, qp, v, _i, _len, _ref, _results;
+      minimum = $(question).data("min");
       _ref = $(".subject .question-piece", question);
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -535,14 +523,18 @@
         v = this.get_value_optional_list(qp, 'solution');
         mandatory = v[0];
         optional = v[1];
+        if (minimum) {
+          draggables = mandatory.count(optional).slice(0, minimum);
+        } else {
+          draggables = mandatory;
+        }
         _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-          _ref1 = mandatory.concat(optional);
+          var _j, _len1, _results1;
           _results1 = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            m = _ref1[_j];
+          for (_j = 0, _len1 = draggables.length; _j < _len1; _j++) {
+            m = draggables[_j];
             $pr = $(".predicate [data-predicate=" + m + "]", question);
-            $ph = $pr.find(".placeholder");
+            $ph = $pr.find(".placeholder:visible");
             _results1.push(this.draggable_move($(qp), $ph, this.multiple));
           }
           return _results1;
