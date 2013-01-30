@@ -464,6 +464,16 @@ em.person {
 }
 
 
+table.framed {
+    border-collapse:collapse;
+    border: 1px solid black;
+}
+
+table.framed td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
 
 .exercise .lista.predicate {
     list-style: none;
