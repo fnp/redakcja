@@ -439,7 +439,7 @@ em.person {
 }
 
 
-.excercise .buttons {
+.exercise .buttons {
     text-align: right;
 }
 
@@ -465,7 +465,7 @@ em.person {
 
 
 
-.excercise .lista.predicate {
+.exercise .lista.predicate {
     list-style: none;
     position: relative;
     clear: both;
@@ -473,12 +473,12 @@ em.person {
 }
 
 
-.excercise .subjects {
+.exercise .subjects {
     padding-left: 0;
 }
 
 
-.excercise .lista.predicate > li {
+.exercise .lista.predicate > li {
     list-style: none;
     display: block;
     float: left;
@@ -486,28 +486,28 @@ em.person {
     margin: 2px;
 }
 
-.excercise.wide .lista.predicate > li {
+.exercise.wide .lista.predicate > li {
     width: 100%;
     margin: 2px;
 }
 
-.excercise .lista.predicate .droppable {
+.exercise .lista.predicate .droppable {
     min-height: 50px;
     border: 1px dotted black;
 }
 
 
-.excercise .draggable {
+.exercise .draggable {
     padding: 3px;
     border: 1px dotted black;
     display: inline-block;
 }
 
-.excercise .draggable.disabled {
+.exercise .draggable.disabled {
     background-color: grey;
 }
 
-.excercise .placeholder {
+.exercise .placeholder {
     padding: 3px;
     border: 1px dotted black;
     display: inline-block;
@@ -515,12 +515,12 @@ em.person {
     min-height: 1em;
 }
 
-.excercise .placeholder.accepting.dragover {
+.exercise .placeholder.accepting.dragover {
     background-color: #ffff99;
 }
 
 
-.excercise.zastap .paragraph .placeholder {
+.exercise.zastap .paragraph .placeholder {
     display: inline;
     min-width: none;
     min-height: none;
@@ -530,12 +530,12 @@ em.person {
 
 
 
-.excercise .lista.subjects {
+.exercise .lista.subjects {
     padding-left: 0px;
 }
 
 
-.excercise.uporzadkuj li {
+.exercise.uporzadkuj li {
     cursor: move;
 }
 
@@ -546,7 +546,7 @@ em.person {
     margin-left: 5px;
 }
 
-.excercise.wybor li[data-name] {
+.exercise.wybor li[data-name] {
     list-style: none;
 }
 

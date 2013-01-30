@@ -17,11 +17,11 @@ class EduModule extends Binding
     #     $(".teacher", @element).removeClass "show"
 
 
-class Excercise extends Binding
+class Exercise extends Binding
   constructor: (element) ->
-    super 'excercise', element
-    # just save the html to reset the excercise
-    $(@element).data("excercise-html", $(@element).html())
+    super 'exercise', element
+    # just save the html to reset the exercise
+    $(@element).data("exercise-html", $(@element).html())
 
     $(".check", @element).click (ev) =>
       @check()
@@ -38,8 +38,8 @@ class Excercise extends Binding
       @reset()
 
   reset: ->
-    $(@element).html($(@element).data('excercise-html'))
-    excercise @element
+    $(@element).html($(@element).data('exercise-html'))
+    exercise @element
 
   piece_correct: (qpiece) ->
     $(qpiece).removeClass('incorrect').addClass('correct')
@@ -178,7 +178,7 @@ class Excercise extends Binding
 
 
 
-class Wybor extends Excercise
+class Wybor extends Exercise
   constructor: (element) ->
     super element
 
@@ -224,7 +224,7 @@ class Wybor extends Excercise
 
 
 
-class Uporzadkuj extends Excercise
+class Uporzadkuj extends Exercise
   constructor: (element) ->
     super element
     $('ol, ul', @element).sortable({ items: "> li" })
@@ -263,7 +263,7 @@ class Uporzadkuj extends Excercise
 
 
 # XXX propozycje="1/0"
-class Luki extends Excercise
+class Luki extends Exercise
   constructor: (element) ->
     super element
     @dragging false, false
@@ -288,7 +288,7 @@ class Luki extends Excercise
       @draggable_move $qp, $(placeholder), false
 
 
-class Zastap extends Excercise
+class Zastap extends Exercise
   constructor: (element) ->
     super element
     $(".paragraph", @element).each (i, par) =>
@@ -354,7 +354,7 @@ class Zastap extends Excercise
         $(chld).remove()
 
 
-class Przyporzadkuj extends Excercise
+class Przyporzadkuj extends Exercise
   is_multiple: ->
     for qp in $(".question-piece", @element)
       if $(qp).data('solution').split(/[ ,]+/).length > 1
@@ -417,7 +417,7 @@ class Przyporzadkuj extends Excercise
 
 
 
-class PrawdaFalsz extends Excercise
+class PrawdaFalsz extends Exercise
   constructor: (element) ->
     super element
 
@@ -457,7 +457,7 @@ class PrawdaFalsz extends Excercise
 
 ##########
 
-excercise = (ele) ->
+exercise = (ele) ->
   es =
     wybor: Wybor
     uporzadkuj: Uporzadkuj
@@ -480,5 +480,5 @@ window.edumed =
 $(document).ready () ->
   new EduModule($("#book-text"))
 
-  $(".excercise").each (i, el) ->
-    excercise(this)
+  $(".exercise").each (i, el) ->
+    exercise(this)
