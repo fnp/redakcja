@@ -10,6 +10,7 @@ sys.path.append('./lib')
 
 from django.core.management import setup_environ
 from redakcja import settings
+from lxml import etree
 
 setup_environ(settings)
 
@@ -21,9 +22,6 @@ fixed = {}
 tag_with_name = r"<([^>]+)name=\"([^>]+)>"
 
 def fix(book, author, dry_run=True):
-    if len(book) == 0:
-        print "%s ==> does not contain chunks" % book.slug
-        return
     fc = book[0]
     txt = fc.materialize()
 
@@ -38,6 +36,25 @@ def fix(book, author, dry_run=True):
     else:
         print "%s ==> i would change this" % book.slug
 
+def fix_empty_opis(book, author, dry_run=True):
+    fc = book[0]
+    txt = fc.materialize()
+    try:
+        t = etree.fromstring(txt)
+        empty_opis = t.xpath('//opis[not(node())]')
+        empty_cwiczenie = t.xpath('//cwiczenie[not(node())]')
+        
+        if empty_opis:
+            print "%s: opis/ x %d" % (book.slug, len(empty_opis))
+
+        if empty_cwiczenie:
+            print "%s: cwiczenie/ x %d" % (book.slug, len(empty_cwiczenie))
+
+    except:
+        print "%s didn't parse" % b.slug
+        return
+
+    
 
 import sys
 import getopt
@@ -50,7 +67,10 @@ me = User.objects.get(username='marcinkoziej')
 if dry_run:
     print "This is a dry run, to really fix something, run with --seriously"
 for b in Book.objects.all():
-    fix(b, me, dry_run)
+    if len(b) == 0:
+        print "%s ==> does not contain chunks" % b.slug
+        continue
+    fix_empty_opis(b, me, dry_run)
 
     
     

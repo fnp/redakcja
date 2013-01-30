@@ -26,12 +26,12 @@ class Command(BaseCommand):
     )
     help = 'Create a master module skeleton'
 
-    def looks_like_syntetic(self, slug):
-        if re.match(r"^(gim|lic) \d[.]? ", slug):
+    def looks_like_synthetic(self, title):
+        if re.match(r"^(gim|lic)_\d[.]? ", title):
             return True
         return False
 
-    def gen_xml(self, options, syntetic_modules=[], course_modules=[], project_modules=[]):
+    def gen_xml(self, options, synthetic_modules=[], course_modules=[], project_modules=[]):
         holder = {}
         holder['xml'] = u""
 
@@ -52,8 +52,8 @@ class Command(BaseCommand):
         p(u'<rdf:Description rdf:about="http://redakcja.edukacjamedialna.edu.pl/documents/">')
 
         dc(u'title', options['title'])
-        for slug in syntetic_modules:
-            dc(u'relation.hasChild.syntetic', slug_url(slug))
+        for slug in synthetic_modules:
+            dc(u'relation.hasChild.synthetic', slug_url(slug))
         for slug in course_modules:
             dc(u'relation.hasChild.course', slug_url(slug))
         for slug in project_modules:
@@ -68,17 +68,24 @@ class Command(BaseCommand):
         dc(u'identifier.url', u'http://edukacjamedialna.edu.pl/%s' % options['slug'])
         dc(u'rights', dc_fixed['rights'])
         dc(u'rights.license', dc_fixed['rights_license'])
-        dc(u'format', u'syntetic, course, project')
+        dc(u'format', u'synthetic, course, project')
         dc(u'type', u'text')
         dc(u'date', date.strftime(date.today(), "%Y-%m-%d"))
         dc(u'audience', options['audience'])
         dc(u'language', u'pol')
         p(u'</rdf:Description>')
         p(u'</rdf:RDF>')
+        p(u'</utwor>')
 
         return holder['xml']
 
     def handle(self, *args, **options):
+        commit_args = {
+            "author_name": 'Platforma',
+            "description": 'Automatycznie zaimportowane z EtherPad',
+            "publishable": False,
+        }
+
         slug = options['slug']
         if not slug:
             slug = slughifi(options['title'])
@@ -99,7 +106,7 @@ class Command(BaseCommand):
         if len(master) == 0:
             master.add(slug, options['title'])
 
-        syntetic_modules = []
+        synthetic_modules = []
         course_modules = []
         if 'slugs_file' in options:
             f = open(options['slugs_file'], 'r')
@@ -113,18 +120,19 @@ class Command(BaseCommand):
                     except Book.DoesNotExist:
                         print "Book for title %s does not exist" % t
                         continue
-                    if self.looks_like_syntetic(t):
-                        syntetic_modules.append(b.slug)
+                    if self.looks_like_synthetic(t):
+                        synthetic_modules.append(b.slug)
                     else:
                         course_modules.append(b.slug)
             except Exception, e:
                 print "Error getting slug list (file %s): %s" % (options['slugs_file'], e)
 
-        print "syntetic: %s" % syntetic_modules
+        print "synthetic: %s" % synthetic_modules
         print "course: %s" % course_modules
 
-        xml = self.gen_xml(options, syntetic_modules, course_modules)
-
+        xml = self.gen_xml(options, synthetic_modules, course_modules)
+        c = master[0]
         print xml
+        if confirm("Commit?", True):
+            c.commit(xml, **commit_args)
 
-        #        master.save()
