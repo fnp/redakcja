@@ -9,6 +9,7 @@ from datetime import date
 import re
 from slughifi import slughifi
 from lxml import etree
+from librarian import WLURI
 
 
 dc_fixed = {
@@ -33,8 +34,7 @@ class Command(BaseCommand):
             return True
         return False
 
-    def fix_part(self, child, master, typ_, audience_, commit_args):
-        print "checking child %s" % child.slug
+    def adopt(self, child, master, typ_, audience_, commit_args):
         fc = child[0]
         txt = fc.materialize()
         changed = False
@@ -44,6 +44,7 @@ class Command(BaseCommand):
             print "cannot read xml in part: %s" % child.slug
             print unicode(e)
             return
+        wluri = WLURI(t.xpath("//dc:identifier.url", namespaces=dc_namespaces)[0].text)
         typ = t.xpath("//dc:type", namespaces=dc_namespaces)
         if not typ:
             print "no type in DC, inserting under format" 
@@ -66,11 +67,15 @@ class Command(BaseCommand):
         if changed:
             print "will commit."
             fc.commit(etree.tostring(t, encoding=unicode), **commit_args)
+        return wluri
 
 
     def gen_xml(self, options, synthetic_modules=[], course_modules=[], project_modules=[]):
         holder = {}
         holder['xml'] = u""
+        slug = options['slug']
+        if not slug:
+            slug = slughifi(options['title'])
 
         def p(t):
             holder['xml'] += u"%s\n" % t
@@ -89,12 +94,12 @@ class Command(BaseCommand):
         p(u'<rdf:Description rdf:about="http://redakcja.edukacjamedialna.edu.pl/documents/">')
 
         dc(u'title', options['title'])
-        for slug in synthetic_modules:
-            dc(u'relation.hasPart', slug_url(slug))
-        for slug in course_modules:
-            dc(u'relation.hasPart', slug_url(slug))
-        for slug in project_modules:
-            dc(u'relation.hasPart', slug_url(slug))
+        for s in synthetic_modules:
+            dc(u'relation.hasPart', unicode(s))
+        for s in course_modules:
+            dc(u'relation.hasPart', unicode(s))
+        for s in project_modules:
+            dc(u'relation.hasPart', unicode(s))
         dc(u'publisher', u'Fundacja Nowoczesna Polska')
         #        dc(u'subject.competence', meta.get(u'Wybrana kompetencja z Katalogu', u''))
         #        dc(u'subject.curriculum', meta.get(u'Odniesienie do podstawy programowej', u''))
@@ -102,7 +107,7 @@ class Command(BaseCommand):
         ##     keyword = keyword.strip()
         ##     dc(u'subject', keyword)
         dc(u'description', dc_fixed['description'])
-        dc(u'identifier.url', u'http://edukacjamedialna.edu.pl/%s' % options['slug'])
+        dc(u'identifier.url', u'http://edukacjamedialna.edu.pl/%s' % slug)
         dc(u'rights', dc_fixed['rights'])
         dc(u'rights.license', dc_fixed['rights_license'])
         dc(u'format', u'xml')
@@ -158,16 +163,16 @@ class Command(BaseCommand):
                         print "Book for title %s does not exist" % t
                         continue
                     if self.looks_like_synthetic(t):
-                        synthetic_modules.append(b.slug)
-                        self.fix_part(b, master, 'synthetic', options['audience'], commit_args)
+                        wlurl = self.adopt(b, master, 'synthetic', options['audience'], commit_args)
+                        synthetic_modules.append(wlurl)
                     else:
-                        course_modules.append(b.slug)
-                        self.fix_part(b, master, 'course', options['audience'], commit_args)
+                        wlurl = self.adopt(b, master, 'course', options['audience'], commit_args)
+                        course_modules.append(wlurl)
             except Exception, e:
                 print "Error getting slug list (file %s): %s" % (options['slugs_file'], e)
 
-        print "synthetic: %s" % synthetic_modules
-        print "course: %s" % course_modules
+        print "synthetic: %s" % [unicode(z) for z in synthetic_modules]
+        print "course: %s" % [unicode(z) for z in course_modules]
 
         xml = self.gen_xml(options, synthetic_modules, course_modules)
         c = master[0]
