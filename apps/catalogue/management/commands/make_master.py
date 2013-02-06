@@ -59,11 +59,11 @@ class Command(BaseCommand):
             print "type is '%s', setting to '%s'" % (typ.text, typ_)
             changed = True
             typ.text = typ_
-        audience = t.xpath("//dc:audience", namespaces=dc_namespaces)[0]
-        if audience.text != audience_:
-            print "audience is '%s', setting to '%s'" % (audience.text, audience_)
-            changed = True
-            audience.text = audience_
+        #audience = t.xpath("//dc:audience", namespaces=dc_namespaces)[0]
+        #if audience.text != audience_:
+        #    print "audience is '%s', setting to '%s'" % (audience.text, audience_)
+        #    changed = True
+        #    audience.text = audience_
         if changed:
             print "will commit."
             fc.commit(etree.tostring(t, encoding=unicode), **commit_args)
