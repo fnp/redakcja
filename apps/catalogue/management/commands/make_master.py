@@ -22,8 +22,8 @@ dc_namespaces = { "dc": "http://purl.org/dc/elements/1.1/" }
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-s', '--slug', dest='slug', help="Slug for master module"),
-        make_option('-F', '--file', dest='slugs_file', help="file with child module slugs per line"),
+        make_option('-s', '--slug', dest='slug', help="Slug for master module (if empty will be generated from title)"),
+        make_option('-F', '--file', dest='slugs_file', help="file with child module titles per line"),
         make_option('-t', '--title', dest='title', default='', help="title of master module"),
         make_option('-l', '--level', dest='audience', default='', help='Audience level'),
     )
