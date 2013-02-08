@@ -2,6 +2,7 @@
 
 from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
+from django.utils.encoding import smart_unicode
 from catalogue.management.prompt import confirm
 from catalogue.models import Book
 from optparse import make_option
@@ -81,6 +82,7 @@ class Command(BaseCommand):
             holder['xml'] += u"%s\n" % t
 
         def dc(k, v):
+            v = smart_unicode(v)
             p(u'<dc:%s xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">%s</dc:%s>' % (k, v, k))
 
         def t(tag, ct):
