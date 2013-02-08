@@ -426,7 +426,7 @@ class Przyporzadkuj extends Exercise
       for m in draggables
         $pr = $(".predicate [data-predicate=" + m + "]", question)
         $ph = $pr.find ".placeholder:visible"
-        @draggable_move $(qp), $ph, @multiple
+        @draggable_move $(qp), $ph.eq(0), @multiple
 
 
 
@@ -435,16 +435,16 @@ class PrawdaFalsz extends Exercise
     super element
 
     for qp in $(".question-piece", @element)
-      $(".true", qp).click (ev) ->
+      $(".true", qp).click (ev) =>
         ev.preventDefault()
         @retry()
-        $(this).closest(".question-piece").data("value", "true")
-        $(this).addClass('chosen').siblings('a').removeClass('chosen')
-      $(".false", qp).click (ev) ->
+        $(ev.target).closest(".question-piece").data("value", "true")
+        $(ev.target).addClass('chosen').siblings('a').removeClass('chosen')
+      $(".false", qp).click (ev) =>
         ev.preventDefault()
         @retry()
-        $(this).closest(".question-piece").data("value", "false")
-        $(this).addClass('chosen').siblings('a').removeClass('chosen')
+        $(ev.target).closest(".question-piece").data("value", "false")
+        $(ev.target).addClass('chosen').siblings('a').removeClass('chosen')
 
 
   check_question: ->
