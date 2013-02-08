@@ -152,12 +152,18 @@
       if (!$placeholder.hasClass('multiple')) {
         $placeholder.hide();
       }
+      if ($added.is(".add-li")) {
+        $added.wrap("<li/>");
+      }
       $added.append('<span class="remove">x</span>');
       return $('.remove', $added).click(function(ev) {
-        $added.prev(".placeholder:not(.multiple)").show();
         if (!ismultiple) {
           $($added.data('original')).removeClass('disabled').draggable('enable');
         }
+        if ($added.is(".add-li")) {
+          $added = $added.closest('li');
+        }
+        $added.prev(".placeholder:not(.multiple)").show();
         return $added.remove();
       });
     };

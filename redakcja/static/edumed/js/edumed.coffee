@@ -116,12 +116,19 @@ class Exercise extends Binding
     $placeholder.after($added)
     if not $placeholder.hasClass('multiple')
       $placeholder.hide()
+    if $added.is(".add-li")
+      $added.wrap("<li/>")
+
     $added.append('<span class="remove">x</span>')
     $('.remove', $added).click (ev) =>
-      $added.prev(".placeholder:not(.multiple)").show()
       if not ismultiple
         $($added.data('original')).removeClass('disabled').draggable('enable')
+
+      if $added.is(".add-li")
+        $added = $added.closest('li')
+      $added.prev(".placeholder:not(.multiple)").show()
       $added.remove()
+
 
 ## XXX co z issortable?
   dragging: (ismultiple, issortable) ->
