@@ -609,7 +609,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         qp = _ref[_i];
-        if ($(qp).data('solution') === 'true') {
+        if ($(qp).data('solution') === true) {
           _results.push($(".true", qp).click());
         } else {
           _results.push($(".false", qp).click());

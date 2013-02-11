@@ -456,7 +456,7 @@ class PrawdaFalsz extends Exercise
   show_solutions: ->
     @reset()
     for qp in $(".question-piece", @element)
-      if $(qp).data('solution') == 'true'
+      if $(qp).data('solution') == true
         $(".true", qp).click()
       else
         $(".false", qp).click()
