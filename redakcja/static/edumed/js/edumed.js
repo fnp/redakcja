@@ -269,7 +269,7 @@
           should_be_checked = solution.indexOf(piece_no) >= 0;
         }
         console.log("check " + $("input[type=checkbox]", qpiece).attr("id") + " -> " + should_be_checked);
-        return $("input[type=checkbox]", qpiece).prop('checked', should_be_checked);
+        return $("input[type=checkbox],input[type=radio]", qpiece).prop('checked', should_be_checked);
       });
     };
 
