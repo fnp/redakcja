@@ -28,14 +28,17 @@ class Exercise extends Binding
       $(ev.target).next(".retry").show()
       $(ev.target).hide()
     $(".retry", @element).click (ev) =>
-      $(".correct, .incorrect", @element).removeClass("correct incorrect")
-      $(ev.target).prev(".check").show()
-      $(ev.target).hide()
+      @retry()
     $('.solutions', @element).click =>
       @show_solutions()
       $(".comment", @element).show()
     $('.reset', @element).click =>
       @reset()
+
+  retry: ->
+    $(".correct, .incorrect", @element).removeClass("correct incorrect")
+    $(".check", @element).show()
+    $(".retry", @element).hide()
 
   reset: ->
     $(@element).html($(@element).data('exercise-html'))
@@ -136,6 +139,7 @@ class Exercise extends Binding
       draggable_opts =
         revert: 'invalid'
         helper: 'clone'
+        start: @retry
 
       $(".draggable", question).draggable(draggable_opts)
       self = this
@@ -188,6 +192,7 @@ class Exercise extends Binding
 class Wybor extends Exercise
   constructor: (element) ->
     super element
+    $(".question-piece input", element).change(@retry);
 
 
   check_question: (question) ->
@@ -234,7 +239,7 @@ class Wybor extends Exercise
 class Uporzadkuj extends Exercise
   constructor: (element) ->
     super element
-    $('ol, ul', @element).sortable({ items: "> li" })
+    $('ol, ul', @element).sortable({ items: "> li", start: @retry })
 
   check_question: (question) ->
     positions = @get_value_list(question, 'original', true)
@@ -431,10 +436,12 @@ class PrawdaFalsz extends Exercise
     for qp in $(".question-piece", @element)
       $(".true", qp).click (ev) ->
         ev.preventDefault()
+        @retry()
         $(this).closest(".question-piece").data("value", "true")
         $(this).addClass('chosen').siblings('a').removeClass('chosen')
       $(".false", qp).click (ev) ->
         ev.preventDefault()
+        @retry()
         $(this).closest(".question-piece").data("value", "false")
         $(this).addClass('chosen').siblings('a').removeClass('chosen')
 
