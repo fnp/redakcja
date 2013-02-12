@@ -119,7 +119,7 @@ class Exercise extends Binding
     if $added.is(".add-li")
       $added.wrap("<li/>")
 
-    $added.append('<span class="remove">x</span>')
+    $added.append('<span class="remove">x</span><div class="clr"></div>')
     $('.remove', $added).click (ev) =>
       if not ismultiple
         $($added.data('original')).removeClass('disabled').draggable('enable')
