@@ -161,6 +161,7 @@
       }
       $added.append('<span class="remove">x</span><div class="clr"></div>');
       return $('.remove', $added).click(function(ev) {
+        _this.retry();
         if (!ismultiple) {
           $($added.data('original')).removeClass('disabled').draggable('enable');
         }

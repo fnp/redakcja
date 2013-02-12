@@ -124,6 +124,7 @@ class Exercise extends Binding
 
     $added.append('<span class="remove">x</span><div class="clr"></div>')
     $('.remove', $added).click (ev) =>
+      @retry()
       if not ismultiple
         $($added.data('original')).removeClass('disabled').draggable('enable')
 
