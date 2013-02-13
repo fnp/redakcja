@@ -493,7 +493,7 @@
       _ref = $(".question-piece", this.element);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         qp = _ref[_i];
-        if ($(qp).data('solution').split(/[ ,]+/).length > 1) {
+        if ($(qp).attr('data-solution').split(/[ ,]+/).length > 1) {
           return true;
         }
       }

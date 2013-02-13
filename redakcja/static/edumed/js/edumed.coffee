@@ -375,7 +375,7 @@ class Zastap extends Exercise
 class Przyporzadkuj extends Exercise
   is_multiple: ->
     for qp in $(".question-piece", @element)
-      if $(qp).data('solution').split(/[ ,]+/).length > 1
+      if $(qp).attr('data-solution').split(/[ ,]+/).length > 1
         return true
     return false
 
