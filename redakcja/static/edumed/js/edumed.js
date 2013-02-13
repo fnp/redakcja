@@ -125,7 +125,14 @@
     };
 
     Exercise.prototype.show_score = function(score) {
-      return $(".message", this.element).text("Wynik: " + score[0] + " / " + score[1]);
+      var $msg;
+      $msg = $(".message", this.element);
+      $msg.text("Wynik: " + score[0] + " / " + score[1]);
+      if (score[0] === score[1]) {
+        return $msg.addClass("maxscore");
+      } else {
+        return $msg.removeClass("maxscore");
+      }
     };
 
     Exercise.prototype.draggable_equal = function($draggable1, $draggable2) {

@@ -97,7 +97,12 @@ class Exercise extends Binding
     return [mandat, opt]
 
   show_score: (score) ->
-    $(".message", @element).text("Wynik: #{score[0]} / #{score[1]}")
+    $msg = $(".message", @element)
+    $msg.text("Wynik: #{score[0]} / #{score[1]}")
+    if score[0] == score[1]
+      $msg.addClass("maxscore")
+    else
+      $msg.removeClass("maxscore")
 
 
   draggable_equal: ($draggable1, $draggable2) ->
