@@ -225,7 +225,7 @@ def book_html(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    doc = book.wldocument(parse_dublincore=False)
+    doc = book.wldocument(parse_dublincore=True)
     html = doc.as_html()
 
     html = html.get_string() if html is not None else ''
