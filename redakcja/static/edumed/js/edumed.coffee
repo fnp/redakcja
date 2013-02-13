@@ -396,7 +396,7 @@ class Przyporzadkuj extends Exercise
     count = 0
     all = 0
     if not minimum
-      all = $(".subjects .question-piece", question).length
+      all = $(".subject .question-piece", question).length
 
     for pred in $(".predicate [data-predicate]", question)
       pn = $(pred).attr('data-predicate')

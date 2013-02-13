@@ -516,7 +516,7 @@
       count = 0;
       all = 0;
       if (!minimum) {
-        all = $(".subjects .question-piece", question).length;
+        all = $(".subject .question-piece", question).length;
       }
       _ref = $(".predicate [data-predicate]", question);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
