@@ -25,8 +25,8 @@ class Exercise extends Binding
 
     $(".check", @element).click (ev) =>
       @check()
-      $(ev.target).next(".retry").show()
-      $(ev.target).hide()
+      $(".retry", @element).show()
+      $(".check", @element).hide()
     $(".retry", @element).click (ev) =>
       @retry()
     $('.solutions', @element).click =>
@@ -287,7 +287,7 @@ class Luki extends Exercise
     @dragging false, false
 
   check: ->
-    all = 0
+    all = $(".placeholder", @element).length
     correct = 0
     $(".placeholder + .question-piece", @element).each (i, qpiece) =>
       $placeholder = $(qpiece).prev(".placeholder")
@@ -296,7 +296,6 @@ class Luki extends Exercise
         correct += 1
       else
         @piece_incorrect qpiece
-      all += 1
 
     @show_score [correct, all]
 
