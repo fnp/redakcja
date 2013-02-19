@@ -55,10 +55,11 @@ class Exercise extends Binding
     $(".question", @element).each (i, question) =>
       scores.push(@check_question question)
 
-    score = [0, 0]
+    score = [0, 0, 0]
     $.each scores, (i, s) ->
       score[0] += s[0]
       score[1] += s[1]
+      score[2] += s[2]
     @show_score(score)
 
   show_solutions: ->
@@ -98,8 +99,8 @@ class Exercise extends Binding
 
   show_score: (score) ->
     $msg = $(".message", @element)
-    $msg.text("Wynik: #{score[0]} / #{score[1]}")
-    if score[0] == score[1]
+    $msg.text("Wynik: #{score[0]} / #{score[2]}")
+    if score[0] >= score[2] and score[1] == 0
       $msg.addClass("maxscore")
     else
       $msg.removeClass("maxscore")
@@ -204,6 +205,7 @@ class Wybor extends Exercise
   check_question: (question) ->
     all = 0
     good = 0
+    bad = 0
     solution = @get_value_list(question, 'solution')
     $(".question-piece", question).each (i, qpiece) =>
       piece_no = $(qpiece).attr 'data-no'
@@ -222,11 +224,12 @@ class Wybor extends Exercise
           good += 1
           @piece_correct qpiece
         else
+          bad += 1
           @piece_incorrect qpiece
       else
         $(qpiece).removeClass("correct,incorrect")
 
-    return [good, all]
+    return [good, bad, all]
 
   solve_question: (question) ->
     solution = @get_value_list(question, 'solution')
@@ -253,6 +256,7 @@ class Uporzadkuj extends Exercise
     pkts = $('.question-piece', question)
 
     correct = 0
+    bad = 0
     all = 0
 
     for pkt in [0...pkts.length]
@@ -261,8 +265,9 @@ class Uporzadkuj extends Exercise
         correct += 1
         @piece_correct pkts.eq(pkt)
       else
+        bad += 1
         @piece_incorrect pkts.eq(pkt)
-    return [correct, all]
+    return [correct, bad, all]
 
   solve_question: (question) ->
     positions = @get_value_list(question, 'original', true)
@@ -289,15 +294,17 @@ class Luki extends Exercise
   check: ->
     all = $(".placeholder", @element).length
     correct = 0
+    bad = 0
     $(".placeholder + .question-piece", @element).each (i, qpiece) =>
       $placeholder = $(qpiece).prev(".placeholder")
       if $placeholder.data('solution') == $(qpiece).data('no')
         @piece_correct qpiece
         correct += 1
       else
+        bad += 1
         @piece_incorrect qpiece
 
-    @show_score [correct, all]
+    @show_score [correct, bad, all]
 
   solve_question: (question) ->
     $(".placeholder", question).each (i, placeholder) =>
@@ -315,6 +322,7 @@ class Zastap extends Exercise
   check: ->
     all = 0
     correct = 0
+    bad = 0
 
     $(".paragraph", @element).each (i, par) =>
       $(".placeholder", par).each (j, qpiece) =>
@@ -328,7 +336,7 @@ class Zastap extends Exercise
 
           all += 1
 
-    @show_score [correct, all]
+    @show_score [correct, bad, all]
 
   show_solutions: ->
     @reset()
@@ -393,14 +401,19 @@ class Przyporzadkuj extends Exercise
     # subjects placed in predicates
     minimum = $(question).data("minimum")
     count = 0
+    bad_count = 0
     all = 0
     if not minimum
-      all = $(".subject .question-piece", question).length
+      self = this
+      $(".subject .question-piece", question).each (i, el) ->
+        v = self.get_value_optional_list el, 'solution'
+        mandatory = v[0]
+        all += mandatory.length
 
     for pred in $(".predicate [data-predicate]", question)
       pn = $(pred).attr('data-predicate')
-      if minimum?
-        all += minimum
+      #if minimum?
+      #  all += minimum
 
       for qp in $(".question-piece", pred)
         v = @get_value_optional_list qp, 'solution'
@@ -411,9 +424,10 @@ class Przyporzadkuj extends Exercise
           count += 1
           @piece_correct qp
         else
+          bad_count += 1
           @piece_incorrect qp
 
-    return [count, all]
+    return [count, bad_count, all]
 
   solve_question: (question) ->
     minimum = $(question).data("min")
@@ -454,16 +468,18 @@ class PrawdaFalsz extends Exercise
   check_question: ->
     all = 0
     good = 0
+    bad = 0
     for qp in $(".question-piece", @element)
       if $(qp).data("solution").toString() == $(qp).data("value")
         good += 1
         @piece_correct qp
       else
+        bad += 1
         @piece_incorrect qp
 
       all += 1
 
-    return [good, all]
+    return [good, bad, all]
 
   show_solutions: ->
     @reset()

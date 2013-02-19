@@ -81,10 +81,11 @@
       $(".question", this.element).each(function(i, question) {
         return scores.push(_this.check_question(question));
       });
-      score = [0, 0];
+      score = [0, 0, 0];
       $.each(scores, function(i, s) {
         score[0] += s[0];
-        return score[1] += s[1];
+        score[1] += s[1];
+        return score[2] += s[2];
       });
       return this.show_score(score);
     };
@@ -127,8 +128,8 @@
     Exercise.prototype.show_score = function(score) {
       var $msg;
       $msg = $(".message", this.element);
-      $msg.text("Wynik: " + score[0] + " / " + score[1]);
-      if (score[0] === score[1]) {
+      $msg.text("Wynik: " + score[0] + " / " + score[2]);
+      if (score[0] >= score[2] && score[1] === 0) {
         return $msg.addClass("maxscore");
       } else {
         return $msg.removeClass("maxscore");
@@ -237,10 +238,11 @@
     }
 
     Wybor.prototype.check_question = function(question) {
-      var all, good, solution,
+      var all, bad, good, solution,
         _this = this;
       all = 0;
       good = 0;
+      bad = 0;
       solution = this.get_value_list(question, 'solution');
       $(".question-piece", question).each(function(i, qpiece) {
         var is_checked, piece_name, piece_no, should_be_checked;
@@ -260,13 +262,14 @@
             good += 1;
             return _this.piece_correct(qpiece);
           } else {
+            bad += 1;
             return _this.piece_incorrect(qpiece);
           }
         } else {
           return $(qpiece).removeClass("correct,incorrect");
         }
       });
-      return [good, all];
+      return [good, bad, all];
     };
 
     Wybor.prototype.solve_question = function(question) {
@@ -304,11 +307,12 @@
     }
 
     Uporzadkuj.prototype.check_question = function(question) {
-      var all, correct, pkt, pkts, positions, sorted, _i, _ref;
+      var all, bad, correct, pkt, pkts, positions, sorted, _i, _ref;
       positions = this.get_value_list(question, 'original', true);
       sorted = positions.sort();
       pkts = $('.question-piece', question);
       correct = 0;
+      bad = 0;
       all = 0;
       for (pkt = _i = 0, _ref = pkts.length; 0 <= _ref ? _i < _ref : _i > _ref; pkt = 0 <= _ref ? ++_i : --_i) {
         all += 1;
@@ -316,10 +320,11 @@
           correct += 1;
           this.piece_correct(pkts.eq(pkt));
         } else {
+          bad += 1;
           this.piece_incorrect(pkts.eq(pkt));
         }
       }
-      return [correct, all];
+      return [correct, bad, all];
     };
 
     Uporzadkuj.prototype.solve_question = function(question) {
@@ -362,10 +367,11 @@
     }
 
     Luki.prototype.check = function() {
-      var all, correct,
+      var all, bad, correct,
         _this = this;
       all = $(".placeholder", this.element).length;
       correct = 0;
+      bad = 0;
       $(".placeholder + .question-piece", this.element).each(function(i, qpiece) {
         var $placeholder;
         $placeholder = $(qpiece).prev(".placeholder");
@@ -373,10 +379,11 @@
           _this.piece_correct(qpiece);
           return correct += 1;
         } else {
+          bad += 1;
           return _this.piece_incorrect(qpiece);
         }
       });
-      return this.show_score([correct, all]);
+      return this.show_score([correct, bad, all]);
     };
 
     Luki.prototype.solve_question = function(question) {
@@ -406,10 +413,11 @@
     }
 
     Zastap.prototype.check = function() {
-      var all, correct,
+      var all, bad, correct,
         _this = this;
       all = 0;
       correct = 0;
+      bad = 0;
       $(".paragraph", this.element).each(function(i, par) {
         return $(".placeholder", par).each(function(j, qpiece) {
           var $dragged, $qp;
@@ -424,7 +432,7 @@
           }
         });
       });
-      return this.show_score([correct, all]);
+      return this.show_score([correct, bad, all]);
     };
 
     Zastap.prototype.show_solutions = function() {
@@ -510,20 +518,24 @@
     };
 
     Przyporzadkuj.prototype.check_question = function(question) {
-      var all, count, mandatory, minimum, optional, pn, pred, qp, v, _i, _j, _len, _len1, _ref, _ref1;
+      var all, bad_count, count, mandatory, minimum, optional, pn, pred, qp, self, v, _i, _j, _len, _len1, _ref, _ref1;
       minimum = $(question).data("minimum");
       count = 0;
+      bad_count = 0;
       all = 0;
       if (!minimum) {
-        all = $(".subject .question-piece", question).length;
+        self = this;
+        $(".subject .question-piece", question).each(function(i, el) {
+          var mandatory, v;
+          v = self.get_value_optional_list(el, 'solution');
+          mandatory = v[0];
+          return all += mandatory.length;
+        });
       }
       _ref = $(".predicate [data-predicate]", question);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         pred = _ref[_i];
         pn = $(pred).attr('data-predicate');
-        if (minimum != null) {
-          all += minimum;
-        }
         _ref1 = $(".question-piece", pred);
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           qp = _ref1[_j];
@@ -534,11 +546,12 @@
             count += 1;
             this.piece_correct(qp);
           } else {
+            bad_count += 1;
             this.piece_incorrect(qp);
           }
         }
       }
-      return [count, all];
+      return [count, bad_count, all];
     };
 
     Przyporzadkuj.prototype.solve_question = function(question) {
@@ -602,9 +615,10 @@
     }
 
     PrawdaFalsz.prototype.check_question = function() {
-      var all, good, qp, _i, _len, _ref;
+      var all, bad, good, qp, _i, _len, _ref;
       all = 0;
       good = 0;
+      bad = 0;
       _ref = $(".question-piece", this.element);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         qp = _ref[_i];
@@ -612,11 +626,12 @@
           good += 1;
           this.piece_correct(qp);
         } else {
+          bad += 1;
           this.piece_incorrect(qp);
         }
         all += 1;
       }
-      return [good, all];
+      return [good, bad, all];
     };
 
     PrawdaFalsz.prototype.show_solutions = function() {
