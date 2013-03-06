@@ -20,9 +20,11 @@ STATIC_ROOT = '/srv/redakcja/static/'
 MEDIA_ROOT = '/srv/redakcja/media/'
 
 # Subdirectory of MEDIA_ROOT containing images
-IMAGE_DIR = 'images'
+IMAGE_DIR = 'images/'
 
 CAS_SERVER_URL = 'http://logowanie.nowoczesnapolska.org.pl/cas/'
+CAS_VERSION = '1'
+
 REDMINE_URL = 'http://redmine.nowoczesnapolska.org.pl/'
 DEBUG = True
 MAINTENANCE_MODE = False
@@ -32,3 +34,5 @@ APICLIENT_WL_CONSUMER_KEY = None
 APICLIENT_WL_CONSUMER_SECRET = None
 
 CELERY_ALWAYS_EAGER = False
+
+SECRET_KEY = ''

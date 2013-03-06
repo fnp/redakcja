@@ -12,8 +12,7 @@ from django.utils.encoding import smart_unicode
 from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
-from django.views.generic.simple import direct_to_template
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from catalogue.models import Book, Chunk
 import nice_diff
@@ -62,7 +61,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
-    return direct_to_template(request, template_name, extra_context={
+    return render(request, template_name, {
         'chunk': chunk,
         'forms': {
             "text_save": forms.DocumentTextSaveForm(user=request.user, prefix="textsave"),
@@ -96,7 +95,7 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
-    return direct_to_template(request, template_name, extra_context={
+    return render(request, template_name, {
         'chunk': chunk,
         'revision': revision,
         'readonly': True,

@@ -1,5 +1,18 @@
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+PIPELINE_CSS_COMPRESSOR = None
+PIPELINE_JS_COMPRESSOR = None
+PIPELINE_STORAGE = 'pipeline.storage.PipelineFinderStorage'
+
+
 # CSS and JS files to compress
-COMPRESS_CSS = {
+PIPELINE_CSS = {
     'detail': {
          'source_filenames': (
             'css/master.css',
@@ -34,7 +47,7 @@ COMPRESS_CSS = {
     },
 }
 
-COMPRESS_JS = {
+PIPELINE_JS = {
     # everything except codemirror
     'detail': {
         'source_filenames': (
@@ -97,10 +110,3 @@ COMPRESS_JS = {
         'output_filename': 'compressed/book_list_?.js',
     }
 }
-
-COMPRESS = True
-COMPRESS_CSS_FILTERS = None
-COMPRESS_JS_FILTERS = None
-COMPRESS_AUTO = True
-COMPRESS_VERSION = True
-COMPRESS_VERSIONING = 'compress.versioning.hash.MD5Versioning'
