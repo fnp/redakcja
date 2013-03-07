@@ -36,3 +36,5 @@ NOSE_ARGS = (
     '--with-xunit',
     '--with-xcoverage',
 )
+
+SECRET_KEY = "not-so-secret"
