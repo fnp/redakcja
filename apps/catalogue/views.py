@@ -479,6 +479,12 @@ class GalleryView(UploadView):
     def get_object(self, request, slug):
         return get_object_or_404(Book, slug=slug)
 
+    def breadcrumbs(self):
+        return [
+            (_('books'), reverse('catalogue_document_list')),
+            (self.object.title, self.object.get_absolute_url()),
+            (_('scan gallery'),),
+        ]
+
     def get_directory(self):
         return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
-

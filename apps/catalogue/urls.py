@@ -1,5 +1,5 @@
 # -*- coding: utf-8
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import permission_required
 from django.views.generic import RedirectView
 from catalogue.feeds import PublishTrackFeed
