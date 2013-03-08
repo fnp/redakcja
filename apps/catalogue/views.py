@@ -477,7 +477,10 @@ def publish(request, slug):
 
 class GalleryView(UploadView):
     def get_object(self, request, slug):
-        return get_object_or_404(Book, slug=slug)
+        book = get_object_or_404(Book, slug=slug)
+        if not book.gallery:
+            raise Http404
+        return book
 
     def breadcrumbs(self):
         return [

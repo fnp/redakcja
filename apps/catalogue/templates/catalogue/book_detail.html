@@ -17,7 +17,9 @@
 {% if editable %}</form>{% endif %}
 
 {% if editable %}
+    {% if book.gallery %}
     <p><a href="{% url 'catalogue_book_gallery' book.slug %}">{% trans "Edit gallery" %}</a></p>
+    {% endif %}
 
     <p><a href="{% url 'catalogue_book_append' book.slug %}">{% trans "Append to other book" %}</a></p>
 {% endif %}
