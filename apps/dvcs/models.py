@@ -45,7 +45,7 @@ class Tag(models.Model):
     def listener_changed(sender, instance, **kwargs):
         sender._object_cache = {}
 
-    def next(self):
+    def get_next(self):
         """
             Returns the next tag - stage to work on.
             Returns None for the last stage.
@@ -280,7 +280,7 @@ class Document(models.Model):
         tags = kwargs.get('tags', [])
         if tags:
             # set stage to next tag after the commited one
-            self.stage = max(tags, key=lambda t: t.ordering).next()
+            self.stage = max(tags, key=lambda t: t.ordering).get_next()
 
         change = self.change_set.create(author=author,
                     author_name=author_name,
