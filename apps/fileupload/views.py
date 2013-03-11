@@ -137,7 +137,7 @@ class UploadView(FormView):
                 'url': self.get_url(f.name),
                 'thumbnail_url': thumbnail(self.get_directory() + f.name),
                         'delete_url': "%s?file=%s" % (
-                            request.get_full_path(),
+                            self.request.get_full_path(),
                             quote(f.name.encode('utf-8'))),
                 'delete_type': "DELETE"
             })

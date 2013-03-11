@@ -24,26 +24,26 @@ PIPELINE_CSS = {
             'css/jquery.autocomplete.css',
             'css/dialogs.css',
         ),
-        'output_filename': 'compressed/detail_styles_?.css',
+        'output_filename': 'compressed/detail_styles.css',
     },
     'catalogue': {
         'source_filenames': (
             'css/filelist.css',
         ),
-        'output_filename': 'compressed/catalogue_styles_?.css',
+        'output_filename': 'compressed/catalogue_styles.css',
      },
      'book': {
         'source_filenames': (
             'css/book.css',
         ),
-        'output_filename': 'compressed/book_?.css',         
+        'output_filename': 'compressed/book.css',
     },
     'book_list': {
         'source_filenames': (
             'contextmenu/jquery.contextMenu.css',
             'css/book_list.css',
         ),
-        'output_filename': 'compressed/book_list_?.css',
+        'output_filename': 'compressed/book_list.css',
     },
 }
 
@@ -82,7 +82,7 @@ PIPELINE_JS = {
                 'js/wiki/view_search.js',
                 'js/wiki/view_column_diff.js',
         ),
-        'output_filename': 'compressed/detail_scripts_?.js',
+        'output_filename': 'compressed/detail_scripts.js',
      },
     'catalogue': {
         'source_filenames': (
@@ -90,7 +90,7 @@ PIPELINE_JS = {
                 'js/slugify.js',
                 'email_mangler/email_mangler.js',
         ),
-        'output_filename': 'compressed/catalogue_scripts_?.js',
+        'output_filename': 'compressed/catalogue_scripts.js',
      },
      'book': {
         'source_filenames': (
@@ -99,7 +99,7 @@ PIPELINE_JS = {
             'js/book_text/jquery.highlightfade.js',
             'js/book_text/book.js',
         ),
-        'output_filename': 'compressed/book_?.js',
+        'output_filename': 'compressed/book.js',
          },
     'book_list': {
         'source_filenames': (
@@ -107,6 +107,6 @@ PIPELINE_JS = {
             'contextmenu/jquery.contextMenu.js',
             'js/catalogue/book_list.js',
         ),
-        'output_filename': 'compressed/book_list_?.js',
+        'output_filename': 'compressed/book_list.js',
     }
 }
