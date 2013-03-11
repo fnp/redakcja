@@ -99,7 +99,7 @@ class UploadView(FormView):
             files = []
             path = self.get_safe_path()
             if os.path.isdir(path):
-                for f in os.listdir(path):
+                for f in sorted(os.listdir(path)):
                     file_info = {
                         "name": f,
                     }
