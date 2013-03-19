@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-03 15:08+0100\n"
+"POT-Creation-Date: 2013-03-19 15:50+0100\n"
 "PO-Revision-Date: 2012-02-03 15:09+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
@@ -145,7 +145,11 @@ msgstr "wszystkie"
 msgid "Annotations"
 msgstr "Przypisy"
 
-#: templates/wiki/tabs/gallery_view.html:7
+#: templates/wiki/tabs/gallery_view.html:5
+msgid "Go to first image of this part"
+msgstr "Przejdź na początek"
+
+#: templates/wiki/tabs/gallery_view.html:8
 msgid "Previous"
 msgstr "Poprzednie"
 
@@ -153,11 +157,11 @@ msgstr "Poprzednie"
 msgid "Next"
 msgstr "Następne"
 
-#: templates/wiki/tabs/gallery_view.html:15
+#: templates/wiki/tabs/gallery_view.html:16
 msgid "Zoom in"
 msgstr "Powiększ"
 
-#: templates/wiki/tabs/gallery_view.html:16
+#: templates/wiki/tabs/gallery_view.html:17
 msgid "Zoom out"
 msgstr "Zmniejsz"
 
