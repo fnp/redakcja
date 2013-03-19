@@ -307,7 +307,6 @@
                     }
                 }
                 
-                $(specialCharsContainer).remove();
             });         
             $('#specialCharsClose').click(function(){
                 $(specialCharsContainer).remove();
@@ -516,7 +515,7 @@
                 });
 
                 $(document).bind('click.blur-overlay', function(event){
-                    if ($(event.target).parents('.html-editarea').length > 0) {
+                    if ($(event.target).closest('.html-editarea, #specialCharsContainer').length > 0) {
                         return;
                     }
                     save();
