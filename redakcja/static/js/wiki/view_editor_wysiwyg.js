@@ -461,7 +461,6 @@
                             $overlay.remove();
                         },
                         error: function(text){
-                            $overlay.remove();
                             alert('Błąd! ' + text);
                         }
                     })
