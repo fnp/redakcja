@@ -306,7 +306,7 @@
                         localStorage.setItem("recentSymbols", insertVal);
                     }
                 }
-                
+                $(specialCharsContainer).remove();
             });         
             $('#specialCharsClose').click(function(){
                 $(specialCharsContainer).remove();
