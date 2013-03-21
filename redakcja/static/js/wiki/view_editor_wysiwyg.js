@@ -37,7 +37,7 @@
         }
 
         // don't allow themes inside annotations
-        if (node.is('*[x-annotation-box] *'))
+        if (node.closest('[x-node="pe"]').length > 0)
             return false;
 
         return true;
