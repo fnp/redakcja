@@ -155,12 +155,21 @@
         var random = Math.floor(4000000000 * Math.random());
         var id = ('' + date) + '-' + ('' + random);
 
-        var spoint = document.createRange();
-        var epoint = document.createRange();
-
-        spoint.setStart(range.startContainer, range.startOffset);
-        epoint.setStart(range.endContainer, range.endOffset);
-
+        var createPoint = function(container, offset) {
+            var offsetBetweenCommas = function(text, offset) {
+                if(text.length < 2 || offset < 1 || offset > text.length)
+                    return false;
+                return text[offset-1] === ',' && text[offset] === ',';
+            }
+            var point = document.createRange();
+            offset = offsetBetweenCommas(container.textContent, offset) ? offset - 1 : offset;
+            point.setStart(container, offset);
+            return point;
+        }
+        
+        var spoint = createPoint(range.startContainer, range.startOffset);
+        var epoint = createPoint(range.endContainer, range.endOffset);
+               
         var mtag, btag, etag, errors;
 
         // insert theme-ref
