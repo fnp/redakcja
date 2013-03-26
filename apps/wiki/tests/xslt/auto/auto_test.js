@@ -81,7 +81,7 @@ function assertNodesEqual(lhs, rhs, areHTMLNodes) {
         throwError();
 }
 
-suite('Auto tests', function() {
+suite('wiki.tests.xslt.auto', function() {
         
         var tempFileName = '.temp.xml';
         var xsltStyleSheetPath = __dirname + '/../../../../../redakcja/static/xsl/wl2html_client.xsl';
