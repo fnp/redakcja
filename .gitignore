@@ -29,3 +29,5 @@ nbproject/*
 .project
 .pydevproject
 .settings
+
+node_modules
