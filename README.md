@@ -38,3 +38,14 @@ Wdrożenie
 
 	fab production deploy
 
+Testy
+====
+
+    $ pip install -r requirements-test.txt
+    $ python redakcja/manage.py test --settings=settings.test
+
+JavaScript (wymagany node.js i xsltproc):
+
+    $ npm install
+    $ ./node_modules/.bin/mocha -u tdd $(find -name *_test.js)
+    
