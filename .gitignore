@@ -31,3 +31,6 @@ nbproject/*
 .settings
 
 node_modules
+
+/static_test
+chromedriver.log
