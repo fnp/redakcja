@@ -413,13 +413,14 @@
 	      });
 	$overlay.append($attributes);
 
+    var overlayParent = $box[0].offsetParent || $box.parent();
 	$overlay.css({
             position: 'absolute',
             height: h,
             left: x,
             top: y,
             width: w
-        }).appendTo($box[0].offsetParent || $box.parent()).show();
+        }).appendTo(overlayParent).show();
         
 
         if ($origin.is('.motyw')) {
@@ -498,7 +499,7 @@
                             }
 			    /* Set attributres back to the node */
 			    var attrs = {};
-			    $(".html-editarea-attributes [name]")
+			    $(".html-editarea-attributes [name]", overlayParent)
 				.each(function(i, textField) {
 				    attrs[textField.name] = textField.value;
 				});
@@ -564,6 +565,7 @@
 
                 $('.accept-button', $overlay).click(function(){
                     save();
+                    $(document).unbind('click.blur-overlay');
                 });
 
                 $(document).bind('click.blur-overlay', function(event){
