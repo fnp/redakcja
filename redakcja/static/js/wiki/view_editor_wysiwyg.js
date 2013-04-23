@@ -524,6 +524,7 @@
 
                 $('.accept-button', $overlay).click(function(){
                     save();
+                    $(document).unbind('click.blur-overlay');
                 });
 
                 $(document).bind('click.blur-overlay', function(event){
