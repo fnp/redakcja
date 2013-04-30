@@ -37,6 +37,9 @@ class FlickrForm(forms.Form):
     source_url = forms.URLField(label=_('Flickr URL'))
 
     def clean_source_url(self):
+        def normalize_html(html):
+            return re.sub('[\t\n]', '', html)
+    
         url = self.cleaned_data['source_url']
         m = re.match(r'(https?://)?(www\.|secure\.)?flickr\.com/photos/(?P<author>[^/]+)/(?P<img>\d+)/?', url)
         if not m:
@@ -45,7 +48,7 @@ class FlickrForm(forms.Form):
         base_url = "https://www.flickr.com/photos/%s/%s/" % (author_slug, img_id)
 
         try:
-            html = urlopen(url).read().decode('utf-8')
+            html = normalize_html(urlopen(url).read().decode('utf-8'))
         except:
             raise forms.ValidationError('Error reading page.')
         match = re.search(r'<a href="([^"]*)" rel="license cc:license">Some rights reserved</a>', html)
@@ -72,7 +75,7 @@ class FlickrForm(forms.Form):
         self.cleaned_data['title'] = m.group(1)
 
         url_size = base_url + "sizes/o/"
-        html = urlopen(url_size).read().decode('utf-8')
+        html = normalize_html(urlopen(url_size).read().decode('utf-8'))
         m = re.search(r'<div id="allsizes-photo">\s*<img src="([^"]*)"', html)
         if m:
             self.cleaned_data['download_url'] = m.group(1)
