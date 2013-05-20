@@ -210,7 +210,7 @@ def gallery(request, directory):
                     smart_unicode(directory))
 
         def map_to_url(filename):
-            return "%s/%s" % (base_url, smart_unicode(filename))
+            return ("%s/%s" % (base_url, smart_unicode(filename))).replace('?', '%3f')
 
         def is_image(filename):
             return os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
