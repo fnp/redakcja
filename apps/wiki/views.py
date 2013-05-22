@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import logging
+import urllib
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -210,7 +211,7 @@ def gallery(request, directory):
                     smart_unicode(directory))
 
         def map_to_url(filename):
-            return ("%s/%s" % (base_url, smart_unicode(filename))).replace('?', '%3f')
+            return urllib.quote("%s/%s" % (base_url, smart_unicode(filename)))
 
         def is_image(filename):
             return os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
