@@ -63,7 +63,7 @@ class FlickrForm(forms.Form):
         except AssertionError:
             raise forms.ValidationError('Error reading license name.')
 
-        m = re.search(r'<strong class="username">By <a href="[^"]*">([^<]*)</a></strong>', html)
+        m = re.search(r'<span class="photo-name-line-2">([^<]*)</span>', html)
         if m:
             self.cleaned_data['author'] = "%s@Flickr" % m.group(1)
         else:
