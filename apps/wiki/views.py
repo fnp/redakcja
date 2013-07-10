@@ -278,6 +278,9 @@ def history(request, chunk_id):
                 "date": localize(change.created_at),
                 "publishable": _("Publishable") + "\n" if change.publishable else "",
                 "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
+                "published": _("Published") + ": " + \
+                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
+                    if change.publish_log.exists() else "",
             })
     return JSONResponse(changes)
 
