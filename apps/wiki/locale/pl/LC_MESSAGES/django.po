@@ -199,7 +199,10 @@ msgstr "Zamień na"
 msgid "Replace"
 msgstr "Zamień"
 
-#: templates/wiki/tabs/search_view.html:13
+#: templates/wiki/tabs/search_view.html:12
+msgid "Replace all"
+msgstr "Zamień wszystko"
+
 msgid "Options"
 msgstr "Opcje"
 
