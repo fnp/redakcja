@@ -99,6 +99,7 @@
 <label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
 <label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_stage" />
 <input type="hidden" name="status" />
+<label for="mass_edit_project">{% trans "Project" %}</label><input type="hidden" name="project" id="mass_edit_project" />
 <label for="mass_edit_publish">{% trans "Mark publishable" %}</label>
 <label for="mass_edit_unpublish">{% trans "Mark not publishable" %}</label>
 <label for="mass_edit_other">{% trans "Other user" %}</label>
@@ -110,4 +111,3 @@
           {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
   {% endfor %}
 </select>
-

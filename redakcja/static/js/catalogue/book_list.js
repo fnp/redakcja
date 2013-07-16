@@ -88,6 +88,14 @@
                     name:  $("label[for=mass_edit_publish]").text(),
 		    icon: "ok",
                 },
+        "project" :{
+            name: $("label[for=mass_edit_project]").text(),
+            items: get_items("project"),
+            },
+        "publish": {
+            name:  $("label[for=mass_edit_publish]").text(),
+            icon: "ok",
+            },
 		"unpublish": {
 		    name:  $("label[for=mass_edit_unpublish]").text(),
 		    icon: "stop",

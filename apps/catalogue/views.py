@@ -25,7 +25,7 @@ from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
+from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord, Project
 from fileupload.views import UploadView
 
 #
@@ -428,6 +428,17 @@ def chunk_mass_edit(request):
                 books_affected.add(c.book)
             for b in books_affected:
                 b.touch()  # cache
+
+        project_id = request.POST.get('project')
+        if project_id:
+            try:
+                project = Project.objects.get(pk=int(project_id))
+            except (Project.DoesNotExist, ValueError), e:
+                project = None
+            for c in chunks:
+                book = c.book
+                book.project = project
+                book.save()
 
         for c in chunks: c.save()
 
