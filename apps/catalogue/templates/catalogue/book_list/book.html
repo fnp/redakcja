@@ -19,6 +19,7 @@
             {% if book.new_publishable %}p{% endif %}
             {% if chunk.changed %}+{% endif %}
         </td>
+        <td>{{ book.project.name }}</td>
     </tr>
     {% endwith %}
 {% else %}
@@ -33,5 +34,6 @@
             {% if book.published %}P{% endif %}
             {% if book.new_publishable %}p{% endif %}
         </td>
+        <td>{{ book.project.name }}</td>
     </tr>
 {% endif %}

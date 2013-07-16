@@ -10,6 +10,7 @@
 {% endif %}
 <input type='hidden' name="all" value="{{ request.GET.all }}" />
 <input type='hidden' name="status" value="{{ request.GET.status }}" />
+<input type='hidden' name="project" value="{{ request.GET.project }}" />
 </form>
 
 
@@ -54,6 +55,16 @@
             {% for state, label in states %}
                 <option {% if request.GET.status == state %}selected="selected"
                         {% endif %}value='{{ state }}'>{{ label }}</option>
+            {% endfor %}
+        </select></th>
+
+        <th><select name="project" class="filter">
+            <option value=''>- {% trans "project" %} -</option>
+                <option {% if request.GET.project == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for project in projects %}
+                <option {% if request.GET.project == project.pk|slugify %}selected="selected"
+                        {% endif %}value='{{ project.pk }}'>{{ project.name }}</option>
             {% endfor %}
         </select></th>
 

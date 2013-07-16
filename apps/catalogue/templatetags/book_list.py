@@ -5,7 +5,7 @@ from django.db.models import Q, Count
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from catalogue.models import Chunk
+from catalogue.models import Chunk, Project
 
 register = template.Library()
 
@@ -113,6 +113,7 @@ def document_list_filter(request, **kwargs):
     chunks = foreign_filter(chunks, arg_or_GET('user'), 'user', User, 'username')
     chunks = foreign_filter(chunks, arg_or_GET('stage'), 'stage', Chunk.tag_model, 'slug')
     chunks = search_filter(chunks, arg_or_GET('title'), ['book__title', 'title'])
+    chunks = foreign_filter(chunks, arg_or_GET('project'), 'book__project', Project, 'pk')
     return chunks
 
 
@@ -140,6 +141,7 @@ def book_list(context, user=None):
         "books": ChunksList(document_list_filter(request, **filters)),
         "stages": Chunk.tag_model.objects.all(),
         "states": _states_options,
+        "projects": Project.objects.all(),
     })
 
     return new_context
