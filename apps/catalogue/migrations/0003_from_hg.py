@@ -7,7 +7,6 @@ import re
 import urllib
 
 from django.db import models
-from mercurial import hg, ui
 from south.db import db
 from south.v2 import DataMigration
 
@@ -160,6 +159,8 @@ class Migration(DataMigration):
         except:
             print 'repository not configured, skipping'
         else:
+            from mercurial import hg, ui
+
             print 'migrate from', hg_path
             repo = hg.repository(ui.ui(), hg_path)
             tip = repo['tip']

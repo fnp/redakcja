@@ -2,7 +2,7 @@
 
 ## Python libraries
 lxml>=2.2.2
-mercurial>=1.6,<1.7
+Mercurial>=2.6,<2.7
 PyYAML>=3.0
 Pillow
 oauth2

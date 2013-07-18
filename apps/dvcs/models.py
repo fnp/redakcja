@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.db.models.base import ModelBase
 from django.utils.translation import ugettext_lazy as _
-from mercurial import mdiff, simplemerge
+from mercurial import simplemerge
 
 from django.conf import settings
 from dvcs.signals import post_commit, post_publishable
