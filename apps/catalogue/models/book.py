@@ -13,7 +13,7 @@ from slughifi import slughifi
 
 import apiclient
 from catalogue.helpers import cached_in_field, GalleryMerger
-from catalogue.models import BookPublishRecord, ChunkPublishRecord
+from catalogue.models import BookPublishRecord, ChunkPublishRecord, Project
 from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
@@ -29,6 +29,7 @@ class Book(models.Model):
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
+    project = models.ForeignKey(Project, null=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)

@@ -895,8 +895,10 @@
     </xsl:template>
 
     <xsl:template match="*">
-        <span class="unknown-tag" x-node="{name()}">
-            <xsl:call-template name="standard-attributes" />
+        <span>
+            <xsl:call-template name="standard-attributes">
+                <xsl:with-param name="extra-class">unknown-tag</xsl:with-param>
+            </xsl:call-template>
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>        

@@ -7,15 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-18 12:52+0200\n"
-"PO-Revision-Date: 2012-06-18 12:53+0100\n"
+"POT-Creation-Date: 2013-07-16 13:22+0200\n"
+"PO-Revision-Date: 2013-07-16 13:22+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
+"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
+"pl>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: forms.py:39
 msgid "Text file must be UTF-8 encoded."
@@ -37,8 +40,7 @@ msgstr "Katalogi zawierają dokumenty w częściach"
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:97
-#: forms.py:111
+#: forms.py:97 forms.py:111
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
@@ -59,63 +61,63 @@ msgstr "Dokument o tym slugu już istnieje w repozytorium."
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:27
-#: models/chunk.py:23
-msgid "title"
-msgstr "tytuł"
-
-#: models/book.py:28
-#: models/chunk.py:24
-msgid "slug"
-msgstr "slug"
-
-#: models/book.py:29
-msgid "public"
-msgstr "publiczna"
-
-#: models/book.py:30
-msgid "scan gallery name"
-msgstr "nazwa galerii skanów"
-
-#: models/book.py:33
-msgid "parent"
-msgstr "rodzic"
-
-#: models/book.py:34
-msgid "parent number"
-msgstr "numeracja rodzica"
-
-#: models/book.py:51
-#: models/chunk.py:21
-#: models/publish_log.py:17
-msgid "book"
-msgstr "książka"
-
-#: models/book.py:52
+#: views.py:498 models/book.py:56
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:250
+#: views.py:500
+msgid "scan gallery"
+msgstr "galeria skanów"
+
+#: models/book.py:28 models/chunk.py:23
+msgid "title"
+msgstr "tytuł"
+
+#: models/book.py:29 models/chunk.py:24
+msgid "slug"
+msgstr "slug"
+
+#: models/book.py:30
+msgid "public"
+msgstr "publiczna"
+
+#: models/book.py:31
+msgid "scan gallery name"
+msgstr "nazwa galerii skanów"
+
+#: models/book.py:35
+msgid "parent"
+msgstr "rodzic"
+
+#: models/book.py:36
+msgid "parent number"
+msgstr "numeracja rodzica"
+
+#: models/book.py:55 models/chunk.py:21 models/publish_log.py:17
+msgid "book"
+msgstr "książka"
+
+#: models/book.py:255
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:254
+#: models/book.py:259
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:263
+#: models/book.py:266
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:265
+#: models/book.py:268
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:267
+#: models/book.py:270
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:270
+#: models/book.py:273
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -135,17 +137,31 @@ msgstr "część"
 msgid "chunks"
 msgstr "części"
 
+#: models/project.py:13
+msgid "name"
+msgstr "nazwa"
+
+#: models/project.py:14
+msgid "notes"
+msgstr "notatki"
+
+#: models/project.py:19 templates/catalogue/book_list/book_list.html:62
+msgid "project"
+msgstr "projekt"
+
+#: models/project.py:20
+msgid "projects"
+msgstr "projekty"
+
 #: models/publish_log.py:18
 msgid "time"
 msgstr "czas"
 
-#: models/publish_log.py:19
-#: templates/catalogue/wall.html:18
+#: models/publish_log.py:19 templates/catalogue/wall.html:18
 msgid "user"
 msgstr "użytkownik"
 
-#: models/publish_log.py:24
-#: models/publish_log.py:33
+#: models/publish_log.py:24 models/publish_log.py:33
 msgid "book publish record"
 msgstr "zapis publikacji książki"
 
@@ -165,8 +181,7 @@ msgstr "zapis publikacji części"
 msgid "chunk publish records"
 msgstr "zapisy publikacji części"
 
-#: templates/catalogue/activity.html:10
-#: templatetags/catalogue.py:29
+#: templates/catalogue/activity.html:9 templatetags/catalogue.py:29
 msgid "Activity"
 msgstr "Aktywność"
 
@@ -179,61 +194,63 @@ msgid "Append book"
 msgstr "Dołącz książkę"
 
 #: templates/catalogue/book_detail.html:14
-#: templates/catalogue/book_edit.html:9
-#: templates/catalogue/chunk_edit.html:13
+#: templates/catalogue/book_edit.html:9 templates/catalogue/chunk_edit.html:12
 msgid "Save"
 msgstr "Zapisz"
 
 #: templates/catalogue/book_detail.html:21
+msgid "Edit gallery"
+msgstr "Edytuj galerię"
+
+#: templates/catalogue/book_detail.html:24
 msgid "Append to other book"
 msgstr "Dołącz do innej książki"
 
-#: templates/catalogue/book_detail.html:27
+#: templates/catalogue/book_detail.html:30
 msgid "Chunks"
 msgstr "Części"
 
-#: templates/catalogue/book_detail.html:42
-#: templatetags/wall.py:78
+#: templates/catalogue/book_detail.html:45 templatetags/wall.py:78
 msgid "Publication"
 msgstr "Publikacja"
 
-#: templates/catalogue/book_detail.html:46
+#: templates/catalogue/book_detail.html:54
 msgid "Last published"
 msgstr "Ostatnio opublikowano"
 
-#: templates/catalogue/book_detail.html:56
+#: templates/catalogue/book_detail.html:64
 msgid "Full XML"
 msgstr "Pełny XML"
 
-#: templates/catalogue/book_detail.html:57
+#: templates/catalogue/book_detail.html:65
 msgid "HTML version"
 msgstr "Wersja HTML"
 
-#: templates/catalogue/book_detail.html:58
+#: templates/catalogue/book_detail.html:66
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/catalogue/book_detail.html:59
+#: templates/catalogue/book_detail.html:67
 msgid "PDF version"
 msgstr "Wersja PDF"
 
-#: templates/catalogue/book_detail.html:60
+#: templates/catalogue/book_detail.html:68
 msgid "EPUB version"
 msgstr "Wersja EPUB"
 
-#: templates/catalogue/book_detail.html:73
+#: templates/catalogue/book_detail.html:81
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: templates/catalogue/book_detail.html:77
+#: templates/catalogue/book_detail.html:85
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
-#: templates/catalogue/book_detail.html:80
+#: templates/catalogue/book_detail.html:88
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
-#: templates/catalogue/book_detail.html:90
+#: templates/catalogue/book_detail.html:98
 msgid "Comments"
 msgstr "Komentarze"
 
@@ -249,8 +266,7 @@ msgstr "Spis treści"
 msgid "Edit. note"
 msgstr "Nota red."
 
-#: templates/catalogue/chunk_add.html:5
-#: templates/catalogue/chunk_edit.html:19
+#: templates/catalogue/chunk_add.html:5 templates/catalogue/chunk_edit.html:18
 msgid "Split chunk"
 msgstr "Podziel część"
 
@@ -262,13 +278,13 @@ msgstr "Wstaw pustą część po"
 msgid "Add chunk"
 msgstr "Dodaj część"
 
-#: templates/catalogue/chunk_edit.html:6
+#: templates/catalogue/chunk_edit.html:5
 #: templates/catalogue/book_list/book.html:8
 #: templates/catalogue/book_list/chunk.html:6
 msgid "Chunk settings"
 msgstr "Ustawienia części"
 
-#: templates/catalogue/chunk_edit.html:11
+#: templates/catalogue/chunk_edit.html:10
 msgid "Book"
 msgstr "Książka"
 
@@ -285,16 +301,20 @@ msgid "Bulk documents upload"
 msgstr "Hurtowe dodawanie dokumentów"
 
 #: templates/catalogue/document_upload.html:11
-msgid "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored."
-msgstr "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie kończące się na <code>.xml</code> zostaną zignorowane."
+msgid ""
+"Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
+"<code>.xml</code> will be ignored."
+msgstr ""
+"Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
+"kończące się na <code>.xml</code> zostaną zignorowane."
 
-#: templates/catalogue/document_upload.html:17
-#: templatetags/catalogue.py:35
+#: templates/catalogue/document_upload.html:17 templatetags/catalogue.py:35
 msgid "Upload"
 msgstr "Załaduj"
 
 #: templates/catalogue/document_upload.html:24
-msgid "There have been some errors. No files have been added to the repository."
+msgid ""
+"There have been some errors. No files have been added to the repository."
 msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
 
 #: templates/catalogue/document_upload.html:25
@@ -321,17 +341,15 @@ msgstr "Pominięte pliki"
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
-#: templates/catalogue/my_page.html:13
+#: templates/catalogue/my_page.html:21
 msgid "Your last edited documents"
 msgstr "Twoje ostatnie edycje"
 
-#: templates/catalogue/my_page.html:22
-#: templates/catalogue/user_page.html:13
+#: templates/catalogue/my_page.html:30 templates/catalogue/user_page.html:13
 msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
 
-#: templates/catalogue/user_list.html:7
-#: templatetags/catalogue.py:31
+#: templates/catalogue/user_list.html:7 templatetags/catalogue.py:31
 msgid "Users"
 msgstr "Użytkownicy"
 
@@ -344,36 +362,37 @@ msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
 #: templates/catalogue/book_list/book.html:7
-#: templates/catalogue/book_list/book.html:27
+#: templates/catalogue/book_list/book.html:28
 msgid "Book settings"
 msgstr "Ustawienia książki"
 
-#: templates/catalogue/book_list/book_list.html:21
+#: templates/catalogue/book_list/book_list.html:22
 msgid "Show hidden books"
 msgstr "Pokaż ukryte książki"
 
-#: templates/catalogue/book_list/book_list.html:26
+#: templates/catalogue/book_list/book_list.html:27
 msgid "Search in book titles"
 msgstr "Szukaj w tytułach książek"
 
-#: templates/catalogue/book_list/book_list.html:31
+#: templates/catalogue/book_list/book_list.html:32
 msgid "stage"
 msgstr "etap"
 
-#: templates/catalogue/book_list/book_list.html:33
-#: templates/catalogue/book_list/book_list.html:44
+#: templates/catalogue/book_list/book_list.html:34
+#: templates/catalogue/book_list/book_list.html:45
+#: templates/catalogue/book_list/book_list.html:64
 msgid "none"
 msgstr "brak"
 
-#: templates/catalogue/book_list/book_list.html:42
+#: templates/catalogue/book_list/book_list.html:43
 msgid "editor"
 msgstr "redaktor"
 
-#: templates/catalogue/book_list/book_list.html:53
+#: templates/catalogue/book_list/book_list.html:54
 msgid "status"
 msgstr "status"
 
-#: templates/catalogue/book_list/book_list.html:77
+#: templates/catalogue/book_list/book_list.html:88
 #, python-format
 msgid "%(c)s book"
 msgid_plural "%(c)s books"
@@ -381,27 +400,31 @@ msgstr[0] "%(c)s książka"
 msgstr[1] "%(c)s książki"
 msgstr[2] "%(c)s książek"
 
-#: templates/catalogue/book_list/book_list.html:82
+#: templates/catalogue/book_list/book_list.html:93
 msgid "No books found."
 msgstr "Nie znaleziono książek."
 
-#: templates/catalogue/book_list/book_list.html:88
+#: templates/catalogue/book_list/book_list.html:99
 msgid "Set stage"
 msgstr "Ustaw etap"
 
-#: templates/catalogue/book_list/book_list.html:89
+#: templates/catalogue/book_list/book_list.html:100
 msgid "Set user"
 msgstr "Przypisz redaktora"
 
-#: templates/catalogue/book_list/book_list.html:91
+#: templates/catalogue/book_list/book_list.html:102
+msgid "Project"
+msgstr "Projekt"
+
+#: templates/catalogue/book_list/book_list.html:103
 msgid "Mark publishable"
 msgstr "Oznacz do publikacji"
 
-#: templates/catalogue/book_list/book_list.html:92
+#: templates/catalogue/book_list/book_list.html:104
 msgid "Mark not publishable"
 msgstr "Odznacz do publikacji"
 
-#: templates/catalogue/book_list/book_list.html:93
+#: templates/catalogue/book_list/book_list.html:105
 msgid "Other user"
 msgstr "Inny użytkownik"
 
@@ -512,9 +535,6 @@ msgstr "Komentarz"
 
 #~ msgid "Describe the reason for reverting."
 #~ msgstr "Opisz powód przywrócenia."
-
-#~ msgid "name"
-#~ msgstr "nazwa"
 
 #~ msgid "theme"
 #~ msgstr "motyw"
@@ -629,9 +649,6 @@ msgstr "Komentarz"
 
 #~ msgid "Last edited by"
 #~ msgstr "Ostatnio edytowane przez"
-
-#~ msgid "Link to gallery"
-#~ msgstr "Link do galerii"
 
 #~ msgid "Summary"
 #~ msgstr "Podsumowanie"

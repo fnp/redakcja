@@ -1,11 +1,13 @@
 # -*- coding: utf-8
-from django.conf.urls.defaults import *
-from django.views.generic.simple import redirect_to
+from django.conf.urls import patterns, url
+from django.contrib.auth.decorators import permission_required
+from django.views.generic import RedirectView
 from catalogue.feeds import PublishTrackFeed
+from catalogue.views import GalleryView
 
 
 urlpatterns = patterns('catalogue.views',
-    url(r'^$', redirect_to, {'url': 'catalogue/'}),
+    url(r'^$', RedirectView.as_view(url='catalogue/')),
 
     url(r'^catalogue/$', 'document_list', name='catalogue_document_list'),
     url(r'^user/$', 'my', name='catalogue_user'),
@@ -27,6 +29,9 @@ urlpatterns = patterns('catalogue.views',
     #url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="catalogue_publish"),
 
     url(r'^book/(?P<slug>[^/]+)/$', 'book', name="catalogue_book"),
+    url(r'^book/(?P<slug>[^/]+)/gallery/$',
+            permission_required('catalogue.change_book')(GalleryView.as_view()),
+            name="catalogue_book_gallery"),
     url(r'^book/(?P<slug>[^/]+)/xml$', 'book_xml', name="catalogue_book_xml"),
     url(r'^book/(?P<slug>[^/]+)/txt$', 'book_txt', name="catalogue_book_txt"),
     url(r'^book/(?P<slug>[^/]+)/html$', 'book_html', name="catalogue_book_html"),

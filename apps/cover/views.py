@@ -25,7 +25,7 @@ def preview(request, book, chunk=None, rev=None):
     If chunk and rev number are given, use version from given revision.
     If rev is not given, use publishable version.
     """
-    import Image
+    from PIL import Image
     from librarian.cover import WLCover
     from librarian.dcparser import BookInfo
 
@@ -56,7 +56,7 @@ def preview(request, book, chunk=None, rev=None):
 @require_POST
 def preview_from_xml(request):
     from hashlib import sha1
-    import Image
+    from PIL import Image
     from os import makedirs
     from lxml import etree
     from librarian.cover import WLCover

@@ -17,4 +17,4 @@ class FlickrTests(TestCase):
         self.assertEqual(form.cleaned_data['title'], u"Pirate Stańczyk")
         self.assertEqual(form.cleaned_data['license_name'], "CC BY 2.0")
         self.assertEqual(form.cleaned_data['license_url'], "http://creativecommons.org/licenses/by/2.0/deed.en")
-        self.assertEqual(form.cleaned_data['download_url'], "http://farm8.staticflickr.com/7069/6941928577_2a0306f6a6_b.jpg")
+        self.assertEqual(form.cleaned_data['download_url'], "https://farm8.staticflickr.com/7069/6941928577_415844c58e_o.jpg")

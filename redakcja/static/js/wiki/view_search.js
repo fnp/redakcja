@@ -90,7 +90,13 @@
         else {}
         self.searchCursor.select();
         self.searchCursor.replace(query);
-        self.search();
+        var found = self.search();
+        if(self.options['replace-all']) {
+            while(found) {
+                self.replace();
+                found = self.search();
+            }
+        }
     };
 
     SearchPerspective.prototype.onEnter = function(success, failure){

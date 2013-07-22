@@ -5,6 +5,7 @@ from StringIO import StringIO
 from urllib import unquote
 from urlparse import urlsplit, urlunsplit
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
@@ -18,14 +19,14 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.views.generic.simple import direct_to_template
 from django.template import RequestContext
 
 from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord
+from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord, Project
+from fileupload.views import UploadView
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -61,7 +62,7 @@ def my(request):
 
 @active_tab('users')
 def users(request):
-    return direct_to_template(request, 'catalogue/user_list.html', extra_context={
+    return render(request, 'catalogue/user_list.html', {
         'users': User.objects.all().annotate(count=Count('chunk')).order_by(
             '-count', 'last_name', 'first_name'),
     })
@@ -121,7 +122,7 @@ def create_missing(request, slug=None):
                 "gallery": slug,
         })
 
-    return direct_to_template(request, "catalogue/document_create_missing.html", extra_context={
+    return render(request, "catalogue/document_create_missing.html", {
         "slug": slug,
         "form": form,
 
@@ -176,7 +177,7 @@ def upload(request):
                         title=title,
                     )
 
-            return direct_to_template(request, "catalogue/document_upload.html", extra_context={
+            return render(request, "catalogue/document_upload.html", {
                 "form": form,
                 "ok_list": ok_list,
                 "skipped_list": skipped_list,
@@ -187,7 +188,7 @@ def upload(request):
     else:
         form = forms.DocumentsUploadForm()
 
-    return direct_to_template(request, "catalogue/document_upload.html", extra_context={
+    return render(request, "catalogue/document_upload.html", {
         "form": form,
 
         "logout_to": '/',
@@ -305,7 +306,7 @@ def book(request, slug):
     publish_error = book.publishable_error()
     publishable = publish_error is None
 
-    return direct_to_template(request, "catalogue/book_detail.html", extra_context={
+    return render(request, "catalogue/book_detail.html", {
         "book": book,
         "publishable": publishable,
         "publishable_error": publish_error,
@@ -345,7 +346,7 @@ def chunk_add(request, slug, chunk):
                 "title": "cz. %d" % (doc.number + 1, ),
         })
 
-    return direct_to_template(request, "catalogue/chunk_add.html", extra_context={
+    return render(request, "catalogue/chunk_add.html", {
         "chunk": doc,
         "form": form,
     })
@@ -380,7 +381,7 @@ def chunk_edit(request, slug, chunk):
     else:
         go_next = ''
 
-    return direct_to_template(request, "catalogue/chunk_edit.html", extra_context={
+    return render(request, "catalogue/chunk_edit.html", {
         "chunk": doc,
         "form": form,
         "go_next": go_next,
@@ -428,6 +429,17 @@ def chunk_mass_edit(request):
             for b in books_affected:
                 b.touch()  # cache
 
+        project_id = request.POST.get('project')
+        if project_id:
+            try:
+                project = Project.objects.get(pk=int(project_id))
+            except (Project.DoesNotExist, ValueError), e:
+                project = None
+            for c in chunks:
+                book = c.book
+                book.project = project
+                book.save()
+
         for c in chunks: c.save()
 
         return HttpResponse("", content_type="text/plain")
@@ -449,7 +461,7 @@ def book_append(request, slug):
             return http.HttpResponseRedirect(append_to.get_absolute_url())
     else:
         form = forms.BookAppendForm(book)
-    return direct_to_template(request, "catalogue/book_append_to.html", extra_context={
+    return render(request, "catalogue/book_append_to.html", {
         "book": book,
         "form": form,
 
@@ -472,3 +484,21 @@ def publish(request, slug):
         return http.HttpResponse(e)
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
+
+
+class GalleryView(UploadView):
+    def get_object(self, request, slug):
+        book = get_object_or_404(Book, slug=slug)
+        if not book.gallery:
+            raise Http404
+        return book
+
+    def breadcrumbs(self):
+        return [
+            (_('books'), reverse('catalogue_document_list')),
+            (self.object.title, self.object.get_absolute_url()),
+            (_('scan gallery'),),
+        ]
+
+    def get_directory(self):
+        return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)

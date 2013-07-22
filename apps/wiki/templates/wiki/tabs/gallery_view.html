@@ -2,19 +2,16 @@
 <div id="side-gallery">
     <!-- gallery toolbar -->
     <div class="toolbar">
-        <button class="start-page">
-            <img src="{{STATIC_URL}}icons/revert.png"
-            	alt="{% trans "Go to first image of this part" %}" title="{% trans "Go to first image of this part" %}"/>
+        <button class="start-page" alt="{% trans "Go to first image of this part" %}" title="{% trans "Go to first image of this part" %}">
+            <img src="{{STATIC_URL}}icons/revert.png"/>
         </button>
-        <button class="previous-page">
-            <img src="{{STATIC_URL}}icons/go-previous.png"
-            	alt="{% trans "Previous" %}" title="{% trans "Previous" %}"/>
+        <button class="previous-page" alt="{% trans "Previous" %}" title="{% trans "Previous" %}">
+            <img src="{{STATIC_URL}}icons/go-previous.png"/>
         </button>
         <input type="text" size="3" maxlength="3" value="0" class="page-number" />
         <span id="imagesCount" id="">/0</span>
-        <button class="next-page">
-            <img src="{{STATIC_URL}}icons/go-next.png"
-            	alt="{% trans "Next" %}" title="{% trans "Next" %}"/>
+        <button class="next-page" alt="{% trans "Next" %}" title="{% trans "Next" %}">
+            <img src="{{STATIC_URL}}icons/go-next.png"/>
         </button>
         <button class="zoom-in">{% trans "Zoom in" %}</button>
         <button class="zoom-out">{% trans "Zoom out" %}</button>

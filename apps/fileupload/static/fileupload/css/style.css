@@ -1,0 +1,10 @@
+.preview img {
+    max-height: 50px;
+}
+
+.delete button[data-type=""] {
+    display: none;
+}
+.delete button[data-type=""] + input {
+    display: none;
+}

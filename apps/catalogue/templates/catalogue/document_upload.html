@@ -45,7 +45,7 @@
         <h3>{% trans "Uploaded files" %}</h3>
         <ul id='ok-list'>
         {% for filename, slug, title in ok_list %}
-            <li><a href='{% url wiki_editor slug %}'>{{ title }}</a> (<code>{{ filename }})</a></li>
+            <li><a href='{% url "wiki_editor" slug %}'>{{ title }}</a> (<code>{{ filename }})</a></li>
         {% endfor %}
         </ul>
     {% endif %}

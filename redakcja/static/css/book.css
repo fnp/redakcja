@@ -66,12 +66,12 @@ img {
 
 #menu li a.menu:hover, #menu li a.menu:active {
     color: #000;
-    background: #FFF url(/media/static/img/arrow-down.png) no-repeat center right;
+    background: #FFF;
 }
 
 #menu li a.menu.selected {
     color: #000;
-    background: #FFF url(/media/static/img/arrow-up.png) no-repeat center right;
+    background: #FFF;
 }
 #menu a.menu-link {
     display: block;

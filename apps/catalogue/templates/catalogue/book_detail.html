@@ -16,9 +16,12 @@
 </tbody></table>
 {% if editable %}</form>{% endif %}
 
-
 {% if editable %}
-    <p><a href="{% url catalogue_book_append book.slug %}">{% trans "Append to other book" %}</a></p>
+    {% if book.gallery %}
+    <p><a href="{% url 'catalogue_book_gallery' book.slug %}">{% trans "Edit gallery" %}</a></p>
+    {% endif %}
+
+    <p><a href="{% url 'catalogue_book_append' book.slug %}">{% trans "Append to other book" %}</a></p>
 {% endif %}
 
 
@@ -42,7 +45,7 @@
 <h2>{% trans "Publication" %}</h2>
 
 <div class="cover-preview">
-<img class="cover-preview" src="{% url cover_preview book.slug %}" />
+<img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
 {% if book.dc_cover_image %}
     <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
 {% endif %}
@@ -58,11 +61,11 @@
 
 {% if publishable %}
     <p>
-    <a href="{% url catalogue_book_xml book.slug %}">{% trans "Full XML" %}</a><br/>
-    <a target="_blank" href="{% url catalogue_book_html book.slug %}">{% trans "HTML version" %}</a><br/>
-    <a href="{% url catalogue_book_txt book.slug %}">{% trans "TXT version" %}</a><br/>
-    <a href="{% url catalogue_book_pdf book.slug %}">{% trans "PDF version" %}</a><br/>
-    <a href="{% url catalogue_book_epub book.slug %}">{% trans "EPUB version" %}</a><br/>
+    <a href="{% url 'catalogue_book_xml' book.slug %}" rel="nofollow">{% trans "Full XML" %}</a><br/>
+    <a target="_blank" href="{% url 'catalogue_book_html' book.slug %}" rel="nofollow">{% trans "HTML version" %}</a><br/>
+    <a href="{% url 'catalogue_book_txt' book.slug %}" rel="nofollow">{% trans "TXT version" %}</a><br/>
+    <a href="{% url 'catalogue_book_pdf' book.slug %}" rel="nofollow">{% trans "PDF version" %}</a><br/>
+    <a href="{% url 'catalogue_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a><br/>
     </p>
 
     {% if user.is_authenticated %}
@@ -72,14 +75,14 @@
         mira66 (http://www.flickr.com/photos/21804434@N02/) /
         CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
         -->
-        <form method="POST" action="{% url catalogue_publish book.slug %}">{% csrf_token %}
+        <form method="POST" action="{% url 'catalogue_publish' book.slug %}">{% csrf_token %}
             <img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" />
             <button id="publish-button" type="submit">
                 <span>{% trans "Publish" %}</span></button>
             <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
             </form>
     {% else %}
-        <a href="{% url login %}">{% trans "Log in to publish." %}</a>
+        <a href="{% url 'login' %}">{% trans "Log in to publish." %}</a>
     {% endif %}
 {% else %}
     <p>{% trans "This book can't be published yet, because:" %}</p>

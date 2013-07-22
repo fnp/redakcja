@@ -40,7 +40,11 @@ USE_L10N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = PROJECT_ROOT + '/media/dynamic'
-STATIC_ROOT = PROJECT_ROOT + '/static/'
+STATIC_ROOT = PROJECT_ROOT + '/../static/'
+
+STATICFILES_DIRS = [
+    PROJECT_ROOT + '/static/'
+]
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -48,13 +52,6 @@ STATIC_ROOT = PROJECT_ROOT + '/static/'
 MEDIA_URL = '/media/dynamic/'
 STATIC_URL = '/media/static/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/admin-media/'
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'ife@x^_lak+x84=lxtr!-ur$5g$+s6xt85gbbm@e_fk6q3r8=+'
 SESSION_COOKIE_NAME = "redakcja_sessionid"
 
 # List of callables that know how to import templates from various sources.
@@ -77,6 +74,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_cas.middleware.CASMiddleware',
@@ -103,19 +101,21 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.comments',
 
-    'compress',
     'south',
     'sorl.thumbnail',
-    'filebrowser',
     'pagination',
     'gravatar',
     'djcelery',
     'djkombu',
+    'fileupload',
+    'pipeline',
 
     'catalogue',
     'cover',
@@ -131,17 +131,9 @@ LOGIN_REDIRECT_URL = '/documents/user'
 CAS_USER_ATTRS_MAP = {
     'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
 
-
-FILEBROWSER_URL_FILEBROWSER_MEDIA = STATIC_URL + 'filebrowser/'
-FILEBROWSER_DIRECTORY = 'images/'
-FILEBROWSER_ADMIN_VERSIONS = []
-FILEBROWSER_VERSIONS_BASEDIR = 'thumbnails/'
-FILEBROWSER_DEFAULT_ORDER = "path_relative"
-
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 
-# Must match FILEBROWSER_DIRECTORY
-IMAGE_DIR = 'images'
+IMAGE_DIR = 'images/'
 
 
 import djcelery

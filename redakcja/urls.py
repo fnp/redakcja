@@ -1,41 +1,35 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls.defaults import *
+from django.conf.urls import include, patterns, url
 from django.contrib import admin
 from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import RedirectView
 
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     # Auth
-    #url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
-    #url(r'^accounts/logout/$', 'catalogue.views.logout_then_redirect', name='logout'),
-
     url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
     url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
+    url(r'^admin/login/$', 'django_cas.views.login', name='login'),
+    url(r'^admin/logout/$', 'django_cas.views.logout', name='logout'),
 
     # Admin panel
-    (r'^admin/filebrowser/', include('filebrowser.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     (r'^comments/', include('django.contrib.comments.urls')),
 
-    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
+    url(r'^$', RedirectView.as_view(url= '/documents/')),
     url(r'^documents/', include('catalogue.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
     url(r'^cover/', include('cover.urls')),
-
-    # Static files (should be served by Apache)
-    url(r'^%s(?P<path>.+)$' % settings.MEDIA_URL[1:], 'django.views.static.serve',
-        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-    url(r'^%s(?P<path>.+)$' % settings.ADMIN_MEDIA_PREFIX[1:], 'django.views.static.serve',
-        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-    url(r'^%s(?P<path>.+)$' % settings.STATIC_URL[1:], 'django.views.static.serve',
-        {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
-
-    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': '/documents/'}),
-
 )
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

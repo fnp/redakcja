@@ -37,7 +37,7 @@
         }
 
         // don't allow themes inside annotations
-        if (node.is('*[x-annotation-box] *'))
+        if (node.closest('[x-node="pe"]').length > 0)
             return false;
 
         return true;
@@ -155,12 +155,21 @@
         var random = Math.floor(4000000000 * Math.random());
         var id = ('' + date) + '-' + ('' + random);
 
-        var spoint = document.createRange();
-        var epoint = document.createRange();
-
-        spoint.setStart(range.startContainer, range.startOffset);
-        epoint.setStart(range.endContainer, range.endOffset);
-
+        var createPoint = function(container, offset) {
+            var offsetBetweenCommas = function(text, offset) {
+                if(text.length < 2 || offset < 1 || offset > text.length)
+                    return false;
+                return text[offset-1] === ',' && text[offset] === ',';
+            }
+            var point = document.createRange();
+            offset = offsetBetweenCommas(container.textContent, offset) ? offset - 1 : offset;
+            point.setStart(container, offset);
+            return point;
+        }
+        
+        var spoint = createPoint(range.startContainer, range.startOffset);
+        var epoint = createPoint(range.endContainer, range.endOffset);
+               
         var mtag, btag, etag, errors;
 
         // insert theme-ref
@@ -306,7 +315,6 @@
                         localStorage.setItem("recentSymbols", insertVal);
                     }
                 }
-                
                 $(specialCharsContainer).remove();
             });         
             $('#specialCharsClose').click(function(){
@@ -322,15 +330,19 @@
         /* http://www.scottklarr.com/topic/425/how-to-insert-text-into-a-textarea-where-the-cursor-is/ */
         var scrollPos = txtarea.scrollTop; 
         var strPos = 0; 
+        var backStart = 0;
         var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? "ff" : (document.selection ? "ie" : false ) );
         if (br == "ie") { 
             txtarea.focus();
             var range = document.selection.createRange(); 
             range.moveStart ('character', -txtarea.value.length); 
-            strPos = range.text.length; 
-        } else if (br == "ff") strPos = txtarea.selectionStart; 
+            strPos = backStart = range.text.length; 
+        } else if (br == "ff") {
+            strPos = txtarea.selectionStart; 
+            backStart = txtarea.selectionEnd;
+        }
         var front = (txtarea.value).substring(0,strPos); 
-        var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+        var back = (txtarea.value).substring(backStart,txtarea.value.length); 
         txtarea.value=front+text+back; 
         strPos = strPos + text.length; 
         if (br == "ie") { 
@@ -462,7 +474,6 @@
                             $overlay.remove();
                         },
                         error: function(text){
-                            $overlay.remove();
                             alert('Błąd! ' + text);
                         }
                     })
@@ -513,10 +524,11 @@
 
                 $('.accept-button', $overlay).click(function(){
                     save();
+                    $(document).unbind('click.blur-overlay');
                 });
 
                 $(document).bind('click.blur-overlay', function(event){
-                    if ($(event.target).parents('.html-editarea').length > 0) {
+                    if ($(event.target).closest('.html-editarea, #specialCharsContainer').length > 0) {
                         return;
                     }
                     save();
@@ -607,7 +619,16 @@
         xml2html({
             xml: this.doc.text,
             success: function(element){
-                $('#html-view').html(element);
+                var htmlView = $('#html-view');
+                htmlView.html(element);
+                htmlView.find('*[x-node]').dblclick(function(e) {
+                    if($(e.target).is('textarea'))
+                        return;
+                    var selection = window.getSelection();
+                    selection.collapseToStart();
+                    selection.modify('extend', 'forward', 'word');
+                    e.stopPropagation();
+                });
                 _finalize(success);
             },
             error: function(text, source){
