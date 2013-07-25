@@ -352,6 +352,7 @@ def chunk_add(request, slug, chunk):
     })
 
 
+@login_required
 def chunk_edit(request, slug, chunk):
     try:
         doc = Chunk.get(slug, chunk)
@@ -389,6 +390,7 @@ def chunk_edit(request, slug, chunk):
 
 
 @transaction.commit_on_success
+@login_required
 def chunk_mass_edit(request):
     if request.method == 'POST':
         ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
