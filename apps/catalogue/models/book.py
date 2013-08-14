@@ -29,7 +29,7 @@ class Book(models.Model):
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
-    project = models.ForeignKey(Project, null=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
