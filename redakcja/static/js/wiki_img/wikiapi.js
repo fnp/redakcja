@@ -373,7 +373,7 @@
             $sem.append($div);
             $root.append($sem);
         });
-        self.setText(XML(serializer.serializeToString(doc)).toXMLString());
+        self.setText(serializer.serializeToString(doc));
     }
 
 

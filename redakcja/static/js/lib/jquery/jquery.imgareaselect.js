@@ -39,13 +39,13 @@ $.imgAreaSelect = function (img, options) {
 
         left, top,
 
-        imgOfs,
+        imgOfs = { left: 0, top: 0 },
 
         imgWidth, imgHeight,
 
         $parent,
 
-        parOfs,
+        parOfs = { left: 0, top: 0 },
 
         zIndex = 0,
 
