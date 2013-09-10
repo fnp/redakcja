@@ -353,7 +353,7 @@ def image(request, slug):
                 return http.HttpResponseRedirect(image.get_absolute_url())
         else:
             form = forms.ImageForm(instance=image)
-            editable = True
+        editable = True
     else:
         form = forms.ReadonlyImageForm(instance=image)
         editable = False
