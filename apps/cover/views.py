@@ -125,7 +125,7 @@ def add_image(request):
             if ff.is_valid():
                 form = forms.ImageAddForm(ff.cleaned_data)
         else:
-            form = forms.ImageAddForm(request.POST)
+            form = forms.ImageAddForm(request.POST, request.FILES)
             if form.is_valid():
                 obj = form.save()
                 return HttpResponseRedirect(obj.get_absolute_url())

@@ -13,6 +13,20 @@ class ImageAddForm(forms.ModelForm):
     class Meta:
         model = Image
 
+    def __init__(self, *args, **kwargs):
+        super(ImageAddForm, self).__init__(*args, **kwargs)
+        self.fields['file'].required = self.fields['download_url'].required = False
+
+    def clean_download_url(self):
+        return self.cleaned_data['download_url'] or None
+
+    def clean(self):
+        cleaned_data = super(ImageAddForm, self).clean()
+        if not cleaned_data.get('download_url', None) and not cleaned_data.get('file', None):
+            raise forms.ValidationError('No image specified')
+        return cleaned_data
+
+
 class ImageEditForm(forms.ModelForm):
     """Form used for editing a Book."""
     class Meta:
