@@ -15,10 +15,13 @@ class ImageAddForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ImageAddForm, self).__init__(*args, **kwargs)
-        self.fields['file'].required = self.fields['download_url'].required = False
+        self.fields['file'].required = self.fields['download_url'].required = self.fields['source_url'].required = False
 
     def clean_download_url(self):
         return self.cleaned_data['download_url'] or None
+
+    def clean_source_url(self):
+        return self.cleaned_data['source_url'] or None
 
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
