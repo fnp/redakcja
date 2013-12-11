@@ -55,10 +55,14 @@
                 );
             {% endif %}
 
-            var data = {% autoescape off%}{{serialized_document_data}}{%endautoescape%};
+            {% autoescape off%}
+            var data = {{serialized_document_data}},
+                templates = {{serialized_templates}}
+            {%endautoescape%}
 
             var editor_init = function(Editor) {            
                 Editor.setBootstrappedData('data', data);
+                Editor.setBootstrappedData('documentToolbar', templates);
                 Editor.start(config);
             };
         </script>

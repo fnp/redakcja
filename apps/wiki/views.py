@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
 from django.utils import simplejson
 
-from catalogue.models import Book, Chunk
+from catalogue.models import Book, Chunk, Template
 import nice_diff
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
@@ -89,6 +89,9 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
             'history': get_history(chunk),
             'version': chunk.revision()
         }),
+        'serialized_templates': simplejson.dumps([
+            {'id': t.id, 'name': t.name, 'content': t.content} for t in Template.objects.filter(is_partial=True)
+        ]),
         'forms': {
             "text_save": save_form,
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert")
