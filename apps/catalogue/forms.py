@@ -28,6 +28,7 @@ class DocumentCreateForm(forms.ModelForm):
         self.fields['slug'].widget.attrs={'class': 'autoslug'}
         self.fields['gallery'].widget.attrs={'class': 'autoslug'}
         self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+        self.fields['template'].queryset = Template.objects.filter(is_main=True)
 
     def clean(self):
         super(DocumentCreateForm, self).clean()
