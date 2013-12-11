@@ -9,13 +9,14 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import MASTERS
-from catalogue.models import Book, Chunk
+from catalogue.models import Book, Chunk, Template
 
 class DocumentCreateForm(forms.ModelForm):
     """
         Form used for creating new documents.
     """
     file = forms.FileField(required=False)
+    template = forms.ModelChoiceField(Template.objects, required=False)
     text = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
@@ -31,15 +32,18 @@ class DocumentCreateForm(forms.ModelForm):
     def clean(self):
         super(DocumentCreateForm, self).clean()
         file = self.cleaned_data['file']
+        template = self.cleaned_data['template']
 
         if file is not None:
             try:
                 self.cleaned_data['text'] = file.read().decode('utf-8')
             except UnicodeDecodeError:
                 raise forms.ValidationError(_("Text file must be UTF-8 encoded."))
+        elif template is not None:
+            self.cleaned_data['text'] = template.content
 
         if not self.cleaned_data["text"]:
-            self._errors["file"] = self.error_class([_("You must either enter text or upload a file")])
+            self._errors["file"] = self.error_class([_("You must enter text, upload a file or select a template")])
 
         return self.cleaned_data
 
