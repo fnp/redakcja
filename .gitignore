@@ -34,3 +34,6 @@ node_modules
 
 /static_test
 chromedriver.log
+
+deployment/environments.py
+apps/wiki/static/wiki/build

@@ -1,0 +1,4 @@
+-i http://pypi.nowoczesnapolska.org.pl/simple
+
+fabric
+fnpdjango>=0.1.10,<0.2

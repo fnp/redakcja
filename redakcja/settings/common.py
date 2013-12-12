@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     'toolbar',
     'apiclient',
     'email_mangler',
+    'build'
 )
 
 LOGIN_REDIRECT_URL = '/documents/user'
