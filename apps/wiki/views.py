@@ -14,6 +14,7 @@ from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
+from django.utils import simplejson
 
 from catalogue.models import Book, Chunk
 import nice_diff
@@ -32,8 +33,25 @@ logger = logging.getLogger("fnp.wiki")
 MAX_LAST_DOCS = 10
 
 
+def get_history(chunk):
+    changes = []
+    for change in chunk.history():
+        changes.append({
+                "version": change.revision,
+                "description": change.description,
+                "author": change.author_str(),
+                "date": localize(change.created_at),
+                "publishable": _("Publishable") + "\n" if change.publishable else "",
+                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
+                "published": _("Published") + ": " + \
+                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
+                    if change.publish_log.exists() else "",
+            })
+    return changes
+
+
 @never_cache
-def editor(request, slug, chunk=None, template_name='wiki/document_details.html'):
+def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     try:
         chunk = Chunk.get(slug, chunk)
     except Chunk.MultipleObjectsReturned:
@@ -62,15 +80,21 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
+    save_form = forms.DocumentTextSaveForm(user=request.user, prefix="textsave")
     return render(request, template_name, {
-        'chunk': chunk,
+        'serialized_document_data': simplejson.dumps({
+            'document': chunk.materialize(),
+            'document_id': chunk.id,
+            'title': chunk.book.title,
+            'history': get_history(chunk),
+            'version': chunk.revision()
+        }),
         'forms': {
-            "text_save": forms.DocumentTextSaveForm(user=request.user, prefix="textsave"),
-            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
-            "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
+            "text_save": save_form,
+            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert")
         },
+        'tags': list(save_form.fields['stage_completed'].choices),
         'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
-        'REDMINE_URL': settings.REDMINE_URL,
     })
 
 
@@ -141,7 +165,7 @@ def text(request, chunk_id):
             return JSONResponse({
                 'text': doc.materialize() if parent_revision != revision else None,
                 'meta': {},
-                'revision': revision,
+                'version': revision,
             })
         else:
             return JSONFormInvalid(form)
@@ -269,20 +293,7 @@ def history(request, chunk_id):
     if not doc.book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    changes = []
-    for change in doc.history().reverse():
-        changes.append({
-                "version": change.revision,
-                "description": change.description,
-                "author": change.author_str(),
-                "date": localize(change.created_at),
-                "publishable": _("Publishable") + "\n" if change.publishable else "",
-                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
-                "published": _("Published") + ": " + \
-                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
-                    if change.publish_log.exists() else "",
-            })
-    return JSONResponse(changes)
+    return JSONResponse(get_history(doc))
 
 
 @require_POST

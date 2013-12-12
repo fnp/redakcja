@@ -1,0 +1,67 @@
+{% load staticfiles %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript" charset="utf-8"></script>
+        
+        {% if DEBUG %}
+            <link rel="stylesheet/less" type="text/css" href="{% static 'wiki/rng/src/editor/styles/main.less' %}"/>
+            <script type="text/javascript">less = {relativeUrls: true};</script>
+            <script src="{% static 'wiki/rng/libs/less-1.3.3.min.js' %}"></script>
+            <script src="{% static 'wiki/rng/libs/require.js' %}" data-main="{% static 'wiki/rng/src/editor/entrypoint.js' %}" ></script>
+        {% else %}
+            <link href="{% static 'wiki/build/rng.css' %}" rel="stylesheet">
+            <script src="{% static 'wiki/build/rng.js' %}"></script>
+        {% endif %}
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            var config = {
+                rootSelector: '#editor_root',
+                jsonifySentPayload: false,
+                
+                documentSaveUrl: function(id) { return '/editor/text/' + id + '/'; },
+                documentHistoryUrl: function(id) { return '/editor/history/' + id + '/'},
+
+                documentSaveForm: {
+                    fields: [
+                        {label: '{{forms.text_save.comment.label}}', name: '{{forms.text_save.comment.html_name}}', type: 'textarea'},
+                        {label: '{{forms.text_save.stage_completed.label}}', name: '{{forms.text_save.stage_completed.html_name}}', type: 'select', options: [
+                            {% for value,text in tags %}
+                                {value:'{{value|default:''}}', text:'{{text}}'} {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        ], description: '{{forms.text_save.stage_completed.help_text}}'},
+                    ],
+                    content_field_name: '{{forms.text_save.text.html_name}}',
+                    version_field_name: '{{forms.text_save.parent_revision.html_name}}'
+                }
+            };
+
+            {% if can_pubmark %}
+                config.documentSaveForm.fields.push(
+                    {label: '{{forms.text_save.publishable.label}}', name: '{{forms.text_save.publishable.html_name}}', type: 'checkbox', description: '{{forms.text_save.publishable.help_text}}'}
+                );
+            {% endif %}
+
+            {% if not request.user.is_authenticated %}
+                config.documentSaveForm.fields.push(
+                    {label: '{{forms.text_save.author_name.label}}', name: '{{forms.text_save.author_name.html_name}}', type: 'input', description: '{{forms.text_save.author_name.help_text}}'},
+                    {label: '{{forms.text_save.author_email.label}}', name: '{{forms.text_save.author_email.html_name}}', type: 'input', description: '{{forms.text_save.author_email.help_text}}'}
+                );
+            {% endif %}
+
+            var data = {% autoescape off%}{{serialized_document_data}}{%endautoescape%};
+
+            var editor_init = function(Editor) {            
+                Editor.setBootstrappedData('data', data);
+                Editor.start(config);
+            };
+        </script>
+        <div id="editor_root"></div>
+    </body>
+</html>
