@@ -90,12 +90,8 @@
         else {}
         self.searchCursor.select();
         self.searchCursor.replace(query);
-        var found = self.search();
-        if(self.options['replace-all']) {
-            while(found) {
-                self.replace();
-                found = self.search();
-            }
+        if(self.options['replace-all'] && self.search()) {
+            self.replace();
         }
     };
 
