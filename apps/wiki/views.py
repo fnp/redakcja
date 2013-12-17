@@ -216,9 +216,9 @@ def revert(request, chunk_id):
         doc.at_revision(revision).revert(author=author, description=comment)
 
         return JSONResponse({
-            'text': doc.materialize() if before != doc.revision() else None,
+            'document': doc.materialize() if before != doc.revision() else None,
             'meta': {},
-            'revision': doc.revision(),
+            'version': doc.revision(),
         })
     else:
         return JSONFormInvalid(form)
