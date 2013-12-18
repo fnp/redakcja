@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-17 16:41+0100\n"
+"POT-Creation-Date: 2013-12-18 10:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,46 +19,56 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:79
+#: static/wiki/editor/src/editor/modules/data/data.js:80
 msgid "Save Document"
 msgstr "Zapisz dokument"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:80
+#: static/wiki/editor/src/editor/modules/data/data.js:81
+#: static/wiki/editor/src/editor/modules/mainBar/template.html:4
 msgid "Save"
 msgstr "Zapisz"
-#: static/wiki/rng/src/editor/modules/data/data.js:117
-#: static/wiki/rng/src/editor/modules/data/data.js:130
-#: static/wiki/rng/src/editor/modules/rng/rng.js:231
-msgid "editor"
-msgstr "edytor"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:135
+#: static/wiki/editor/src/editor/modules/data/data.js:136
 msgid "Restore Version"
 msgstr "Przywracanie wersji"
-#: static/wiki/rng/src/editor/modules/nodePane/template.html:3
+
+#: static/wiki/editor/src/editor/modules/data/data.js:137
+msgid "Restore"
+msgstr "Przywróć"
+
+#: static/wiki/editor/src/editor/modules/mainBar/template.html:5
+msgid "Exit"
+msgstr "Wyjdź"
+
+#: static/wiki/editor/src/editor/modules/nodePane/template.html:3
 msgid "Current node"
 msgstr "Bieżący węzeł"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:136
-msgid "Restore"
-msgstr "Przywróć"
-#: static/wiki/rng/src/editor/modules/rng/rng.js:62
+#: static/wiki/editor/src/editor/modules/rng/rng.js:63
 msgid "Editor"
 msgstr "Edytor"
 
-#: static/wiki/rng/src/editor/modules/rng/rng.js:63
-#: static/wiki/rng/src/editor/modules/rng/rng.js:77
+#: static/wiki/editor/src/editor/modules/rng/rng.js:64
+#: static/wiki/editor/src/editor/modules/rng/rng.js:78
 msgid "Source"
 msgstr "Źródło"
 
-#: static/wiki/rng/src/editor/modules/rng/rng.js:64
+#: static/wiki/editor/src/editor/modules/rng/rng.js:65
 msgid "History"
 msgstr "Historia"
 
-#: static/wiki/rng/src/editor/modules/rng/rng.js:92
+#: static/wiki/editor/src/editor/modules/rng/rng.js:93
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
-#: static/wiki/rng/src/editor/modules/rng/rng.js:102
+#: static/wiki/editor/src/editor/modules/rng/rng.js:103
 msgid "Restoring version "
 msgstr "Przywracanie wersji"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:232
+msgid "editor"
+msgstr "edytor"
+
+#: static/wiki/editor/src/editor/modules/data/dialog.html:10
+msgid "Cancel"
+msgstr "Anuluj"
