@@ -78,7 +78,7 @@ class UploadView(FormView):
                 settings.MEDIA_ROOT,
                 self.get_directory(),
                 filename))
-        if not path.startswith(settings.MEDIA_ROOT):
+        if not path.startswith(os.path.abspath(settings.MEDIA_ROOT)):
             raise Http404
         if filename:
             if not path.startswith(self.get_safe_path()):
