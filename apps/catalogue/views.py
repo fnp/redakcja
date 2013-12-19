@@ -26,7 +26,7 @@ from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
 from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord, Project
-from fileupload.views import UploadView
+from fileupload.views import UploadView, PackageView
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -488,12 +488,16 @@ def publish(request, slug):
         return http.HttpResponseRedirect(book.get_absolute_url())
 
 
-class GalleryView(UploadView):
+class GalleryMixin(object):
+    def get_directory(self):
+        return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
     def get_object(self, request, slug):
         book = get_object_or_404(Book, slug=slug)
         if not book.gallery:
             raise Http404
         return book
+
+class GalleryView(GalleryMixin, UploadView):
 
     def breadcrumbs(self):
         return [
@@ -502,5 +506,8 @@ class GalleryView(UploadView):
             (_('scan gallery'),),
         ]
 
-    def get_directory(self):
-        return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
+
+class GalleryPackageView(GalleryMixin, PackageView):
+
+    def get_redirect_url(self, slug):
+        return reverse('catalogue_book_gallery', kwargs = dict(slug=slug))

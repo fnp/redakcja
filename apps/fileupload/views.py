@@ -1,11 +1,12 @@
 import json
 import os
+from zipfile import ZipFile
 from urllib import quote
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import FormView, View
+from django.views.generic import FormView, View, RedirectView
 from .forms import UploadForm
 
 
@@ -30,8 +31,25 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
+class UploadViewMixin(object):
+    def get_safe_path(self, filename=""):
+        """Finds absolute filesystem path of the browsed dir of file.
+        
+        Makes sure it's inside MEDIA_ROOT.
+        
+        """
+        path = os.path.abspath(os.path.join(
+                settings.MEDIA_ROOT,
+                self.get_directory(),
+                filename))
+        if not path.startswith(os.path.abspath(settings.MEDIA_ROOT)):
+            raise Http404
+        if filename:
+            if not path.startswith(self.get_safe_path()):
+                raise Http404
+        return path
 
-class UploadView(FormView):
+class UploadView(UploadViewMixin, FormView):
     template_name = "fileupload/picture_form.html"
     form_class = UploadForm
 
@@ -67,23 +85,6 @@ class UploadView(FormView):
         else:
             crumbs = [('media',)]
         return crumbs
-
-    def get_safe_path(self, filename=""):
-        """Finds absolute filesystem path of the browsed dir of file.
-        
-        Makes sure it's inside MEDIA_ROOT.
-        
-        """
-        path = os.path.abspath(os.path.join(
-                settings.MEDIA_ROOT,
-                self.get_directory(),
-                filename))
-        if not path.startswith(os.path.abspath(settings.MEDIA_ROOT)):
-            raise Http404
-        if filename:
-            if not path.startswith(self.get_safe_path()):
-                raise Http404
-        return path
 
     def get_url(self, filename):
         """Finds URL of a file in browsed dir."""
@@ -150,3 +151,15 @@ class UploadView(FormView):
         response = JSONResponse(True)
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
+
+
+class PackageView(UploadViewMixin, RedirectView):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object(request, *args, **kwargs)
+        path = self.get_safe_path()
+        with ZipFile(os.path.join(path, 'package.zip'), 'w') as zip_file:
+            for f in os.listdir(path):
+                if f == 'package.zip':
+                    continue
+                zip_file.write(os.path.join(path, f), arcname = f)
+        return super(PackageView, self).dispatch(request, *args, **kwargs)

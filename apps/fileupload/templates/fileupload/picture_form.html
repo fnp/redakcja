@@ -29,7 +29,7 @@
 
     <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
         <div class="row fileupload-buttonbar">
-            <div class="span7">
+            <div class="span9">
                 <span class="btn btn-success fileinput-button">
                     <i class="icon-plus icon-white"></i>
                     <span>{% trans "Add files..." %}</span>
@@ -47,6 +47,10 @@
                     <i class="icon-trash icon-white"></i>
                     <span>{% trans "Delete" %}</span>
                 </button>
+                <a class="btn btn-info" href="package">
+                    <i class="icon-gift icon-white"></i>
+                    <span>{% trans "Create package" %}</span>
+                </a>
                 <input type="checkbox" class="toggle">
             </div>
             <div class="span5 fileupload-progress fade">
