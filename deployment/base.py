@@ -1,4 +1,6 @@
-from fabric.api import env
+import os
+
+from fabric.api import env, require
 from fabric.tasks import Task
 from fnpdjango.deploy import Command
 
@@ -17,7 +19,10 @@ class Environment(Task):
         for k,v in self.env_vars.items():
             env[k] = v
 
-        build_cmd = '../../ve/bin/python manage.py build --npm-bin=%s' % self.npm_bin
+        require('app_path')
+
+        build_cmd = '../../ve/bin/python manage.py build --npm-bin=%s --editor-npm-env=%s' \
+            % (self.npm_bin, os.path.join(env['app_path'], 'npm_env'))
         if 'node_bin_path' in self.env_vars:
             build_cmd += ' --node-bin-path=%s' % self.env_vars['node_bin_path']
 

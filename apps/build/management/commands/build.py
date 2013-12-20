@@ -21,6 +21,12 @@ class Command(BaseCommand):
             type='string',
             default='npm',
             help='Path to npm binary'),
+        make_option('--editor-npm-env',
+            action='store',
+            dest='editor_npm_env',
+            type='string',
+            default=None,
+            help='Destination path of npm environment, defaults to ./node_modules'),
         )
 
     def handle(self, **options):
@@ -29,6 +35,12 @@ class Command(BaseCommand):
         build_dir = os.path.join(wiki_base_dir, 'build')
 
         self.stdout.write('Installing editor dependencies')
+        if options['editor_npm_env']:
+            npm_env = os.path.join(rng_base_dir, options['editor_npm_env'])
+            if not os.path.exists(npm_env):
+                os.makedirs(npm_env)
+            assert os.path.isdir(npm_env)
+            os.symlink(npm_env, os.path.join(rng_base_dir, 'node_modules'))
         try:
             call([options['npm_bin'], 'install'], cwd = rng_base_dir)
         except OSError:
