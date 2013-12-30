@@ -227,16 +227,24 @@
 	 * Set document's text
 	 */
 	WikiDocument.prototype.setText = function(text) {
-		this.text = text;
-		this.has_local_changes = true;
+		return this.setDocumentProperty('text', text);
 	};
 
 	/*
 	 * Set document's gallery link
 	 */
 	WikiDocument.prototype.setGalleryLink = function(gallery) {
-		this.galleryLink = gallery;
-		this.has_local_changes = true;
+		return this.setDocumentProperty('galleryLink', gallery);
+	};
+
+	/*
+	 * Set document's property
+	 */
+	WikiDocument.prototype.setDocumentProperty = function(property, value) {
+		if(this[property] !== value) {
+			this[property] = value;
+			this.has_local_changes = true;
+		}
 	};
 
 	/*
