@@ -16,5 +16,6 @@ def settings(request):
         'MEDIA_URL': settings.MEDIA_URL,
         'STATIC_URL': settings.STATIC_URL,
         'DEBUG': settings.DEBUG,
+        'RAVEN_CONFIG': getattr(settings, 'RAVEN_CONFIG'),
         'APP_VERSION': VERSION,
     }
