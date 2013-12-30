@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-18 10:25+0100\n"
+"POT-Creation-Date: 2013-12-30 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,20 +19,23 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:80
+#: static/wiki/build/rng.js:23
+#: static/wiki/editor/src/editor/modules/data/data.js:92
 msgid "Save Document"
 msgstr "Zapisz dokument"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:81
-#: static/wiki/editor/src/editor/modules/mainBar/template.html:4
+#: static/wiki/build/rng.js:23
+#: static/wiki/editor/src/editor/modules/data/data.js:93
 msgid "Save"
 msgstr "Zapisz"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:136
+#: static/wiki/build/rng.js:23
+#: static/wiki/editor/src/editor/modules/data/data.js:148
 msgid "Restore Version"
 msgstr "Przywracanie wersji"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:137
+#: static/wiki/build/rng.js:23
+#: static/wiki/editor/src/editor/modules/data/data.js:149
 msgid "Restore"
 msgstr "Przywróć"
 
@@ -44,27 +47,33 @@ msgstr "Wyjdź"
 msgid "Current node"
 msgstr "Bieżący węzeł"
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:63
 msgid "Editor"
 msgstr "Edytor"
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:64
 #: static/wiki/editor/src/editor/modules/rng/rng.js:78
 msgid "Source"
 msgstr "Źródło"
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:65
 msgid "History"
 msgstr "Historia"
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:93
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:103
 msgid "Restoring version "
 msgstr "Przywracanie wersji"
 
+#: static/wiki/build/rng.js:23
 #: static/wiki/editor/src/editor/modules/rng/rng.js:232
 msgid "editor"
 msgstr "edytor"
@@ -72,3 +81,10 @@ msgstr "edytor"
 #: static/wiki/editor/src/editor/modules/data/dialog.html:10
 msgid "Cancel"
 msgstr "Anuluj"
+#: static/wiki/editor/src/editor/modules/data/data.js:13
+msgid "This is an empty document."
+msgstr "To jest pusty dokument."
+
+#: static/wiki/editor/src/editor/modules/data/data.js:27
+msgid "This document contains errors and can't be loaded. :("
+msgstr "Ten dokument zawiera błędy i nie może być załadowany. :("
