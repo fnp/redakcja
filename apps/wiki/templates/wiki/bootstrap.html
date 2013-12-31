@@ -41,13 +41,18 @@
                     handlers: {
                         'sentry': {
                             level: 'info',
-                            handler: 'raven'
+                            handler: 'raven',
+                            formatter: 'noop'
+                        },
+                        'console': {
+                            level: 'debug',
+                            handler: 'console'
                         }
                     },
                     loggers: {
                         '': {
-                            level: 'info',
-                            handlers: ['sentry']
+                            level: 'debug',
+                            handlers: ['sentry', 'console']
                         }
                     }
                 },
