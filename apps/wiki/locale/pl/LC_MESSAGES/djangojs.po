@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-30 14:39+0100\n"
+"POT-Creation-Date: 2013-12-31 12:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,22 +19,32 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
+#: static/wiki/editor/src/editor/modules/data/data.js:13
+msgid "This is an empty document."
+msgstr "To jest pusty dokument."
+
+#: static/wiki/build/rng.js:6
+#: static/wiki/editor/src/editor/modules/data/data.js:27
+msgid "This document contains errors and can't be loaded. :("
+msgstr "Ten dokument zawiera błędy i nie może być załadowany. :("
+
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/data/data.js:92
 msgid "Save Document"
 msgstr "Zapisz dokument"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/data/data.js:93
 msgid "Save"
 msgstr "Zapisz"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/data/data.js:148
 msgid "Restore Version"
 msgstr "Przywracanie wersji"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/data/data.js:149
 msgid "Restore"
 msgstr "Przywróć"
@@ -47,44 +57,44 @@ msgstr "Wyjdź"
 msgid "Current node"
 msgstr "Bieżący węzeł"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/rng/rng.js:63
 msgid "Editor"
 msgstr "Edytor"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/rng/rng.js:64
-#: static/wiki/editor/src/editor/modules/rng/rng.js:78
+#: static/wiki/editor/src/editor/modules/rng/rng.js:79
 msgid "Source"
 msgstr "Źródło"
 
-#: static/wiki/build/rng.js:23
+#: static/wiki/build/rng.js:6
 #: static/wiki/editor/src/editor/modules/rng/rng.js:65
 msgid "History"
 msgstr "Historia"
 
-#: static/wiki/build/rng.js:23
-#: static/wiki/editor/src/editor/modules/rng/rng.js:93
+#: static/wiki/build/rng.js:6
+#: static/wiki/editor/src/editor/modules/rng/rng.js:103
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
-#: static/wiki/build/rng.js:23
-#: static/wiki/editor/src/editor/modules/rng/rng.js:103
+#: static/wiki/build/rng.js:6
+#: static/wiki/editor/src/editor/modules/rng/rng.js:114
 msgid "Restoring version "
 msgstr "Przywracanie wersji"
 
-#: static/wiki/build/rng.js:23
-#: static/wiki/editor/src/editor/modules/rng/rng.js:232
+#: static/wiki/build/rng.js:6
+#: static/wiki/editor/src/editor/modules/rng/rng.js:244
 msgid "editor"
 msgstr "edytor"
 
+#: static/wiki/editor/src/editor/modules/rng/rng.js:255
+msgid "Do you really want to exit?"
+msgstr "Czy na pewno chcesz zakończyć pracę?"
 #: static/wiki/editor/src/editor/modules/data/dialog.html:10
 msgid "Cancel"
 msgstr "Anuluj"
-#: static/wiki/editor/src/editor/modules/data/data.js:13
-msgid "This is an empty document."
-msgstr "To jest pusty dokument."
 
-#: static/wiki/editor/src/editor/modules/data/data.js:27
-msgid "This document contains errors and can't be loaded. :("
-msgstr "Ten dokument zawiera błędy i nie może być załadowany. :("
+#: static/wiki/editor/src/editor/modules/rng/rng.js:257
+msgid "Document contains unsaved changes!"
+msgstr "Dokument zawiera niezapisane zmiany"
