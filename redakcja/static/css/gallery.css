@@ -1,10 +1,9 @@
 #sidebar {
-    display:none;
     position: absolute;
     top: 0px;
     right: 0px;
     bottom: 0px;
-    width: 480px;
+    width: 0px;
     background-color: #FFF;
 }
 

@@ -28,12 +28,13 @@ body {
     border-right: 2px solid #999;
     cursor: pointer;  
     background: #C1C1C1; 
+    z-index:100;
+    cursor: col-resize;
 }
 
 .vsplitbar:hover {
 	background-color: #E6E6E6;
 }
-
 
 .vsplitbar p {
     font: 12px Helvetica,Verdana,sans-serif;
@@ -46,6 +47,17 @@ body {
   -o-transform-origin:  bottom left;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   margin: 250px auto;
+}
+
+#drag-layer {
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:1000;
+    display: none;
+    cursor: col-resize;
 }
 
 .editor {
