@@ -8,7 +8,7 @@
             <script src="http://cdn.ravenjs.com/1.1.3/jquery,native/raven.min.js"></script>
             <script>
                 Raven.config('{{RAVEN_CONFIG.SENTRY_URL}}', {{RAVEN_CONFIG.SETTINGS|default:'{}'}}).install();
-                {% if request.user %}
+                {% if request.user.is_authenticated %}
                     Raven.setUser({
                         name: '{{request.user.username}}',
                         email: '{{request.user.email}}',
