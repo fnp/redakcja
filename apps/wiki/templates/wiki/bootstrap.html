@@ -37,6 +37,14 @@
                 rootSelector: '#editor_root',
                 jsonifySentPayload: false,
 
+                {% if request.user.is_authenticated %}
+                user: {
+                    name: '{{request.user.username}}',
+                    email: '{{request.user.email}}',
+                    id: {{request.user.id}}
+                },
+                {% endif %}
+
                 logging: {
                     handlers: {
                         'sentry': {
