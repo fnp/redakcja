@@ -25,6 +25,8 @@ class Environment(Task):
             % (self.npm_bin, os.path.join(env['app_path'], 'npm_env'))
         if 'node_bin_path' in self.env_vars:
             build_cmd += ' --node-bin-path=%s' % self.env_vars['node_bin_path']
+        if 'editor_optimize' in self.env_vars:
+            build_cmd += ' --editor-optimize=%s' % self.env_vars['editor_optimize']
 
         env.pre_collectstatic = [
             Command([build_cmd], '')

@@ -27,6 +27,12 @@ class Command(BaseCommand):
             type='string',
             default=None,
             help='Destination path of npm environment, defaults to ./node_modules'),
+        make_option('--editor-optimize',
+            action='store',
+            dest='editor_optimize',
+            type='string',
+            default=None,
+            help='Optimization strategy for editor build'),
         )
 
     def handle(self, **options):
@@ -50,6 +56,9 @@ class Command(BaseCommand):
         if options['node_bin_path']:
             # grunt needs npm binary to be foundable in PATH
             os.environ['PATH'] = '%s:%s' % (options['node_bin_path'], os.environ['PATH'])
-        call(['./node_modules/.bin/grunt', 'build', '--output-dir=%s' % build_dir], cwd = rng_base_dir)
+        args =  ['./node_modules/.bin/grunt', 'build', '--output-dir=%s' % build_dir]
+        if options['editor_optimize']:
+            args.append('--optimize=%s' % options['editor_optimize'])
+        call(args, cwd = rng_base_dir)
 
         call_command('collectstatic', interactive = False, ignore_patterns = ['editor'])
