@@ -26,7 +26,7 @@ def preview(request, book, chunk=None, rev=None):
     If rev is not given, use publishable version.
     """
     from PIL import Image
-    from librarian.cover import WLCover
+    from librarian.cover import DefaultEbookCover
     from librarian.dcparser import BookInfo
 
     chunk = Chunk.get(book, chunk)
@@ -45,7 +45,7 @@ def preview(request, book, chunk=None, rev=None):
         info = BookInfo.from_string(xml)
     except:
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
-    cover = WLCover(info)
+    cover = DefaultEbookCover(info)
     response = HttpResponse(mimetype=cover.mime_type())
     image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
     image.save(response, cover.format)
@@ -59,7 +59,7 @@ def preview_from_xml(request):
     from PIL import Image
     from os import makedirs
     from lxml import etree
-    from librarian.cover import WLCover
+    from librarian.cover import DefaultEbookCover
     from librarian.dcparser import BookInfo
 
     xml = request.POST['xml']
@@ -68,7 +68,7 @@ def preview_from_xml(request):
     except:
         return HttpResponse(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     coverid = sha1(etree.tostring(info.to_etree())).hexdigest()
-    cover = WLCover(info)
+    cover = DefaultEbookCover(info)
 
     cover_dir = 'cover/preview'
     try:
