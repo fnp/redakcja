@@ -9,7 +9,7 @@
 <div style="float: right; margin-bottom:1em;">
 
 <a href="{{ object.file.url }}"><img style="width:400px"
-        src="{% thumbnail object.file "400x" as thumb %}
+        src="{% thumbnail object.file "400x400" as thumb %}
                 {{ thumb.url }}
              {% empty %}
                 {{ object.file.url }}
@@ -17,14 +17,18 @@
     </a>
 <br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
     {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
-        {{ object.license_name }}</a>
+        {{ object.license_name }}
     {% if object.license_url %}</a>{% endif %}
 
 <br/>{% trans "source" %}: {{ object.download_url }}
 </div>
 
 
-{% if editable %}<form method="post">{% csrf_token %}{% endif %}
+{% if editable %}
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+{% endif %}
 <table class='editable'><tbody>
     {{ form.as_table }}
     {% if editable %}

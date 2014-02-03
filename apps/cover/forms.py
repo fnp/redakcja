@@ -15,7 +15,7 @@ class ImageAddForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ImageAddForm, self).__init__(*args, **kwargs)
-        self.fields['file'].required = self.fields['download_url'].required = self.fields['source_url'].required = False
+        self.fields['file'].required = False
 
     def clean_download_url(self):
         return self.cleaned_data['download_url'] or None
@@ -38,7 +38,7 @@ class ImageEditForm(forms.ModelForm):
 
 
 class ReadonlyImageEditForm(ImageEditForm):
-    """Form used for not editing a Book."""
+    """Form used for not editing an Image."""
 
     def __init__(self, *args, **kwargs):
         ret = super(ReadonlyImageEditForm, self).__init__(*args, **kwargs)

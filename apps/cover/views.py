@@ -87,7 +87,7 @@ def image(request, pk):
 
     if request.user.has_perm('cover.change_image'):
         if request.method == "POST":
-            form = forms.ImageEditForm(request.POST, instance=image)
+            form = forms.ImageEditForm(request.POST, request.FILES, instance=image)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect(image.get_absolute_url())
