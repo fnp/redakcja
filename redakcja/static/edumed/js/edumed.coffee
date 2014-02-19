@@ -252,7 +252,7 @@ class Uporzadkuj extends Exercise
 
   check_question: (question) ->
     positions = @get_value_list(question, 'original', true)
-    sorted = positions.sort()
+    sorted = positions.sort (a, b) -> a - b
     pkts = $('.question-piece', question)
 
     correct = 0
@@ -270,19 +270,11 @@ class Uporzadkuj extends Exercise
     return [correct, bad, all]
 
   solve_question: (question) ->
-    positions = @get_value_list(question, 'original', true)
-    sorted = positions.sort()
     pkts = $('.question-piece', question)
-    pkts.sort (a, b) ->
-      q = $(a).data('pos')
-      w = $(b).data('pos')
-      return 1 if q < w
-      return -1 if q > w
-      return 0
-
+    pkts.sort (a, b) -> return $(a).data('pos') - $(b).data('pos')
     parent = pkts.eq(0).parent()
     for p in pkts
-      parent.prepend(p)
+      parent.append(p)
 
 
 # XXX propozycje="1/0"
