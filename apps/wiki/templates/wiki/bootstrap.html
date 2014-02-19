@@ -54,13 +54,14 @@
                         },
                         'console': {
                             level: 'debug',
-                            handler: 'console'
+                            handler: 'console',
+                            formatter: 'simple'
                         }
                     },
                     loggers: {
                         '': {
                             level: 'debug',
-                            handlers: ['sentry', 'console']
+                            handlers: ['console', 'sentry']
                         }
                     }
                 },
@@ -258,6 +259,29 @@
                         {name: 'assignment', label: '{% trans 'Assignment' %}'}
                     ]
                 },
+
+                plugins: {
+                    core: {templates: {{serialized_templates|safe}}}
+                },
+
+                toolbar: [
+                    ['core.undo', 'core.redo'],
+                    
+                    [
+                    {actionName: 'core.switchToHeader', actionConfig: {label: 'nagłówek'}},
+                    {actionName: 'core.switchToParagraph', actionConfig: {label: 'paragraf'}},
+                    'core.toggleBulletList', 'core.toggleEnumList'
+                    ],
+
+                    [
+                        {actionName: 'core.emphasis', actionConfig: {label: 'wyróżnienie'}},
+                        {actionName: 'core.cite', actionConfig: {label: 'cytat'}},
+                        {actionName: 'core.link'}
+                    ],
+                    
+                    ['core.template'],
+                    ['core.comment'],
+                ],
                 
                 documentSaveUrl: function(id) { return '/editor/text/' + id + '/'; },
                 documentHistoryUrl: function(id) { return '/editor/history/' + id + '/'},
@@ -304,13 +328,11 @@
             {% endif %}
 
             {% autoescape off%}
-            var data = {{serialized_document_data}},
-                templates = {{serialized_templates}}
+            var data = {{serialized_document_data}};
             {%endautoescape%}
 
             var editor_init = function(Editor) {            
                 Editor.setBootstrappedData('data', data);
-                Editor.setBootstrappedData('documentToolbar', templates);
                 Editor.start(config);
             };
         </script>
