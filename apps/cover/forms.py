@@ -6,8 +6,9 @@
 import re
 from urllib2 import urlopen
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from cover.models import Image
+from django.utils.text import mark_safe
 
 class ImageAddForm(forms.ModelForm):
     class Meta:
@@ -18,17 +19,23 @@ class ImageAddForm(forms.ModelForm):
         self.fields['file'].required = False
 
     def clean_download_url(self):
-        return self.cleaned_data['download_url'] or None
-
-    def clean_source_url(self):
-        return self.cleaned_data['source_url'] or None
+        cl = self.cleaned_data['download_url'] or None
+        if cl is not None:
+            try:
+                img = Image.objects.get(download_url=cl)
+            except Image.DoesNotExist:
+                pass
+            else:
+                raise forms.ValidationError(mark_safe(
+                    ugettext('Image <a href="%(url)s">already in repository</a>.'
+                        ) % {'url': img.get_absolute_url()}))
+        return cl
 
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
         if not cleaned_data.get('download_url', None) and not cleaned_data.get('file', None):
             raise forms.ValidationError('No image specified')
         return cleaned_data
-
 
 class ImageEditForm(forms.ModelForm):
     """Form used for editing a Book."""
