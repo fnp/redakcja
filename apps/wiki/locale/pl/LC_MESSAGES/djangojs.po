@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-28 15:04+0100\n"
+"POT-Creation-Date: 2014-03-21 14:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,21 +96,23 @@ msgstr "Czy na pewno chcesz zakończyć pracę?"
 msgid "Document contains unsaved changes!"
 msgstr "Dokument zawiera niezapisane zmiany"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:116
+#: static/wiki/editor/src/editor/modules/data/data.js:137
 msgid "Local draft of a document exists"
 msgstr "Istnieje kopia lokalna dokumentu"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:117
+#: static/wiki/editor/src/editor/modules/data/data.js:138
 msgid ""
 "Unsaved local draft of this version of the document exists in your browser. "
 "Do you want to load it instead?"
-msgstr "Twoja przeglądarka posiada niezapisaną jeszcze na serwerze lokalną kopię tej wersji dokumentu. Czy chcesz jej teraz użyć?"
+msgstr ""
+"Twoja przeglądarka posiada niezapisaną jeszcze na serwerze lokalną kopię tej "
+"wersji dokumentu. Czy chcesz jej teraz użyć?"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:118
+#: static/wiki/editor/src/editor/modules/data/data.js:139
 msgid "Yes, restore local draft"
 msgstr "Tak, chcę użyć lokalną kopię"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:119
+#: static/wiki/editor/src/editor/modules/data/data.js:140
 msgid "No, use version loaded from the server"
 msgstr "Nie, chcę załadować wersję z serwera"
 
@@ -122,18 +124,31 @@ msgstr "Zatwierdź"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:104
+#: static/wiki/editor/src/editor/modules/mainBar/mainBar.js:15
+msgid "anonymous"
+msgstr "anonim"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:119
 msgid "Saving document"
 msgstr "Zapisywanie dokumentu"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:105
+#: static/wiki/editor/src/editor/modules/rng/rng.js:120
 msgid "Saving local copy"
 msgstr "Zapisywanie kopii lokalnej"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:113
+#: static/wiki/editor/src/editor/modules/rng/rng.js:128
 msgid "Document saved"
 msgstr "Dokument zapisany"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:114
+#: static/wiki/editor/src/editor/modules/rng/rng.js:129
 msgid "Local copy saved"
-msgstr "Kopia lokalna zapisana"
+msgstr "Wersja robocza zapisana"
+
+msgid "Draft Saved"
+msgstr "Zapisana wersja robocza"
+
+msgid "no draft exists"
+msgstr "brak wersji roboczej"
+
+msgid "drop a working draft"
+msgstr "porzuć wersję roboczą"

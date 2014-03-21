@@ -85,6 +85,14 @@
                     'date',
                     'audience'
                 ],
+
+                documentSummaryView: {
+                    title: '{% trans 'Informations about lesson' %}',
+                    properties: [
+                        {name: 'stage', label: '{% trans 'Stage' %}'},
+                        {name: 'assignment', label: '{% trans 'Assignment' %}'}
+                    ]
+                },
                 
                 documentSaveUrl: function(id) { return '/editor/text/' + id + '/'; },
                 documentHistoryUrl: function(id) { return '/editor/history/' + id + '/'},

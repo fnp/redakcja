@@ -87,7 +87,9 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
             'document_id': chunk.id,
             'title': chunk.book.title,
             'history': get_history(chunk),
-            'version': chunk.revision()
+            'version': chunk.revision(),
+            'stage': chunk.stage.name if chunk.stage else None,
+            'assignment': chunk.user.username if chunk.user else None
         }),
         'serialized_templates': simplejson.dumps([
             {'id': t.id, 'name': t.name, 'content': t.content} for t in Template.objects.filter(is_partial=True)
@@ -167,8 +169,9 @@ def text(request, chunk_id):
             revision = doc.revision()
             return JSONResponse({
                 'text': doc.materialize() if parent_revision != revision else None,
-                'meta': {},
                 'version': revision,
+                'stage': doc.stage.name if doc.stage else None,
+                'assignment': doc.user.username if doc.user else None
             })
         else:
             return JSONFormInvalid(form)
@@ -217,7 +220,6 @@ def revert(request, chunk_id):
 
         return JSONResponse({
             'document': doc.materialize() if before != doc.revision() else None,
-            'meta': {},
             'version': doc.revision(),
         })
     else:

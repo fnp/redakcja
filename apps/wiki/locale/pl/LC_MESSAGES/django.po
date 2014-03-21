@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-10 16:58+0200\n"
+"POT-Creation-Date: 2014-03-21 14:34+0100\n"
 "PO-Revision-Date: 2013-07-10 16:58+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -278,6 +278,18 @@ msgstr "Wstaw przypis"
 msgid "Visual editor"
 msgstr "Edytor wizualny"
 
+#: templates/wiki/bootstrap.html:95
+msgid "Informations about lesson"
+msgstr "Informacje o lekcji"
+
+#: templates/wiki/bootstrap.html:97
+msgid "Stage"
+msgstr "Etap"
+
+#: templates/wiki/bootstrap.html:98
+msgid "Assignment"
+msgstr "Przypisano"
+
 #~ msgid "ZIP file"
 #~ msgstr "Plik ZIP"
 
@@ -420,9 +432,6 @@ msgstr "Edytor wizualny"
 
 #~ msgid "Users"
 #~ msgstr "Użytkownicy"
-
-#~ msgid "Assigned to me"
-#~ msgstr "Przypisane do mnie"
 
 #~ msgid "Unassigned"
 #~ msgstr "Nie przypisane"
