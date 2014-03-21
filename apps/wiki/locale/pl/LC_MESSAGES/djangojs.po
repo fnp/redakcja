@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-31 12:49+0100\n"
+"POT-Creation-Date: 2014-02-28 15:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,10 +91,49 @@ msgstr "edytor"
 #: static/wiki/editor/src/editor/modules/rng/rng.js:255
 msgid "Do you really want to exit?"
 msgstr "Czy na pewno chcesz zakończyć pracę?"
-#: static/wiki/editor/src/editor/modules/data/dialog.html:10
-msgid "Cancel"
-msgstr "Anuluj"
 
 #: static/wiki/editor/src/editor/modules/rng/rng.js:257
 msgid "Document contains unsaved changes!"
 msgstr "Dokument zawiera niezapisane zmiany"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:116
+msgid "Local draft of a document exists"
+msgstr "Istnieje kopia lokalna dokumentu"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:117
+msgid ""
+"Unsaved local draft of this version of the document exists in your browser. "
+"Do you want to load it instead?"
+msgstr "Twoja przeglądarka posiada niezapisaną jeszcze na serwerze lokalną kopię tej wersji dokumentu. Czy chcesz jej teraz użyć?"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:118
+msgid "Yes, restore local draft"
+msgstr "Tak, chcę użyć lokalną kopię"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:119
+msgid "No, use version loaded from the server"
+msgstr "Nie, chcę załadować wersję z serwera"
+
+#: static/wiki/editor/src/editor/modules/data/dialog.js:30
+msgid "Submit"
+msgstr "Zatwierdź"
+
+#: static/wiki/editor/src/editor/modules/data/dialog.js:31
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:104
+msgid "Saving document"
+msgstr "Zapisywanie dokumentu"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:105
+msgid "Saving local copy"
+msgstr "Zapisywanie kopii lokalnej"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:113
+msgid "Document saved"
+msgstr "Dokument zapisany"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:114
+msgid "Local copy saved"
+msgstr "Kopia lokalna zapisana"
