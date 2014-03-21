@@ -64,6 +64,27 @@
                         }
                     }
                 },
+
+                metadataKeys: [
+                    'creator.expert',
+                    'creator.scenario',
+                    'creator.textbook',
+                    'title',
+                    'relation.isPartOf',
+                    'publisher',
+                    'subject.competence',
+                    'subject.curriculum',
+                    'subject',
+                    'description',
+                    'description.material',
+                    'identifier.url',
+                    'rights',
+                    'rights.license',
+                    'format',
+                    'type',
+                    'date',
+                    'audience'
+                ],
                 
                 documentSaveUrl: function(id) { return '/editor/text/' + id + '/'; },
                 documentHistoryUrl: function(id) { return '/editor/history/' + id + '/'},
