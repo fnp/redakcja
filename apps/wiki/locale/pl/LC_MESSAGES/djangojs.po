@@ -49,6 +49,24 @@ msgstr "Przywracanie wersji"
 msgid "Restore"
 msgstr "Przywróć"
 
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:141
+msgid "Create link"
+msgstr "Utwórz link"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:142
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:224
+msgid "Apply"
+msgstr "Zatwierdź"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:145
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:227
+msgid "Link"
+msgstr "Link"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:223
+msgid "Edit link"
+msgstr "Edytuj link"
+
 #: static/wiki/editor/src/editor/modules/mainBar/template.html:5
 msgid "Exit"
 msgstr "Wyjdź"
