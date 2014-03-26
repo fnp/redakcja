@@ -46,5 +46,5 @@ def api_call(user, path, data=None):
     elif status == '401':
         raise ApiError('User not authorized for publishing.')
     else:
-        raise ApiError("WL API call error")
+        raise ApiError("WL API call error %s, path: %s" % (status, path))
 
