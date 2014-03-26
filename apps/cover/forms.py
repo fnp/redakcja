@@ -80,7 +80,7 @@ class FlickrForm(forms.Form):
             assert match
             license_url = match.group(1)
             self.cleaned_data['license_url'] = license_url
-            re_license = re.compile(r'http://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
+            re_license = re.compile(r'https?://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
             m = re_license.match(license_url)
             assert m
             self.cleaned_data['license_name'] = 'CC %s %s' % (m.group(1).upper(), m.group(2))
