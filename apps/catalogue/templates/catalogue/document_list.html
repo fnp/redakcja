@@ -2,9 +2,18 @@
 
 {% load i18n %}
 {% load catalogue book_list %}
+{% load compressed %}
 
 {% block titleextra %}{% trans "Book list" %}{% endblock %}
 
+
+{% block add_js %}
+{% compressed_js 'book_list' %}
+{% endblock %}
+
+{% block add_css %}
+{% compressed_css 'book_list' %}
+{% endblock %}
 
 {% block content %}
     {% book_list %}

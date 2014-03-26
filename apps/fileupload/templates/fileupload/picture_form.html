@@ -1,0 +1,86 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load upload_tags %}
+
+{% block add_css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/style.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap-image-gallery.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/jquery.fileupload-ui.css">
+    <!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+{% endblock %}
+
+
+{% block content %}
+
+<h1>
+{% trans "Browse:" %}
+{% for crumb in view.breadcrumbs %}
+    {% if crumb.1 %}
+        <a href="{{ crumb.1 }}">{{ crumb.0 }}</a>
+    {% else %}
+        {{ crumb.0 }}
+    {% endif %}
+    {% if not forloop.last %}/{% endif %}
+{% endfor %}
+</h1>
+
+
+    <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
+        <div class="row fileupload-buttonbar">
+            <div class="span7">
+                <span class="btn btn-success fileinput-button">
+                    <i class="icon-plus icon-white"></i>
+                    <span>{% trans "Add files..." %}</span>
+                    <input type="file" multiple="" name="files">
+                </span>
+                <button class="btn btn-primary start" type="submit">
+                    <i class="icon-upload icon-white"></i>
+                    <span>{% trans "Start upload" %}</span>
+                </button>
+                <button class="btn btn-warning cancel" type="reset">
+                    <i class="icon-ban-circle icon-white"></i>
+                    <span>{% trans "Cancel upload" %}</span>
+                </button>
+                <button class="btn btn-danger delete" type="button">
+                    <i class="icon-trash icon-white"></i>
+                    <span>{% trans "Delete" %}</span>
+                </button>
+                <input type="checkbox" class="toggle">
+            </div>
+            <div class="span5 fileupload-progress fade">
+                <div class="progress progress-success progres-striped active">
+                    <div class="bar" style="width:0%"></div>
+                </div>
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <div class="fileupload-loading"></div>
+        <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    </form>
+    <div class="fileupload-content">
+        <table class="files"></table>
+        <div class="fileupload-progressbar"></div>
+    </div>
+
+{% endblock %}
+
+{% block add_js %}
+
+{% upload_js %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/jquery.ui.widget.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/tmpl.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/load-image.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/canvas-to-blob.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/bootstrap-image-gallery.min.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/jquery.iframe-transport.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload-fp.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload-ui.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/locale-{{ LANGUAGE_CODE }}.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/main.js"></script>
+<script src="{{ STATIC_URL }}fileupload/js/csrf.js"></script>
+{% endblock %}

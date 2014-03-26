@@ -5,11 +5,13 @@ from StringIO import StringIO
 from urllib import unquote
 from urlparse import urlsplit, urlunsplit
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Q
+from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
@@ -17,15 +19,14 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.views.generic.simple import direct_to_template
 
 from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
 from catalogue.models import (Book, Chunk, Image, BookPublishRecord, 
-        ChunkPublishRecord, ImagePublishRecord)
-from catalogue.tasks import publishable_error
+        ChunkPublishRecord, ImagePublishRecord, Project)
+from fileupload.views import UploadView
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -67,7 +68,7 @@ def my(request):
 
 @active_tab('users')
 def users(request):
-    return direct_to_template(request, 'catalogue/user_list.html', extra_context={
+    return render(request, 'catalogue/user_list.html', {
         'users': User.objects.all().annotate(count=Count('chunk')).order_by(
             '-count', 'last_name', 'first_name'),
     })
@@ -127,7 +128,7 @@ def create_missing(request, slug=None):
                 "gallery": slug,
         })
 
-    return direct_to_template(request, "catalogue/document_create_missing.html", extra_context={
+    return render(request, "catalogue/document_create_missing.html", {
         "slug": slug,
         "form": form,
 
@@ -182,7 +183,7 @@ def upload(request):
                         title=title,
                     )
 
-            return direct_to_template(request, "catalogue/document_upload.html", extra_context={
+            return render(request, "catalogue/document_upload.html", {
                 "form": form,
                 "ok_list": ok_list,
                 "skipped_list": skipped_list,
@@ -193,7 +194,7 @@ def upload(request):
     else:
         form = forms.DocumentsUploadForm()
 
-    return direct_to_template(request, "catalogue/document_upload.html", extra_context={
+    return render(request, "catalogue/document_upload.html", {
         "form": form,
 
         "logout_to": '/',
@@ -217,13 +218,9 @@ def book_txt(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
-    xml = book.materialize()
-    output = StringIO()
-    # errors?
 
-    import librarian.text
-    librarian.text.transform(StringIO(xml), output)
-    text = output.getvalue()
+    doc = book.wldocument()
+    text = doc.as_text().get_string()
     response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
     response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
     return response
@@ -234,16 +231,21 @@ def book_html(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
-    xml = book.materialize()
-    output = StringIO()
-    # errors?
 
-    import librarian.html
-    librarian.html.transform(StringIO(xml), output, parse_dublincore=False,
-                             flags=['full-page'])
-    html = output.getvalue()
-    response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
-    return response
+    doc = book.wldocument(parse_dublincore=False)
+    html = doc.as_html()
+
+    html = html.get_string() if html is not None else ''
+    # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
+    # return response
+    # book_themes = {}
+    # for fragment in book.fragments.all().iterator():
+    #     for theme in fragment.tags.filter(category='theme').iterator():
+    #         book_themes.setdefault(theme, []).append(fragment)
+
+    # book_themes = book_themes.items()
+    # book_themes.sort(key=lambda s: s[0].sort_key)
+    return render(request, 'catalogue/book_text.html', locals())
 
 
 @never_cache
@@ -252,25 +254,13 @@ def book_pdf(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    from tempfile import NamedTemporaryFile
-    from os import unlink
-    from librarian import pdf
-    from catalogue.ebook_utils import RedakcjaDocProvider, serve_file
-
-    xml = book.materialize()
-    xml_file = NamedTemporaryFile()
-    xml_file.write(xml.encode('utf-8'))
-    xml_file.flush()
-
-    try:
-        pdf_file = NamedTemporaryFile(delete=False)
-        pdf.transform(RedakcjaDocProvider(publishable=True),
-                  file_path=xml_file.name,
-                  output_file=pdf_file,
-                  )
-        return serve_file(pdf_file.name, book.slug + '.pdf', 'application/pdf')
-    finally:
-        unlink(pdf_file.name)
+    # TODO: move to celery
+    doc = book.wldocument()
+    # TODO: error handling
+    pdf_file = doc.as_pdf()
+    from catalogue.ebook_utils import serve_file
+    return serve_file(pdf_file.get_filename(),
+                book.slug + '.pdf', 'application/pdf')
 
 
 @never_cache
@@ -279,23 +269,13 @@ def book_epub(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    from StringIO import StringIO
-    from tempfile import NamedTemporaryFile
-    from librarian import epub
-    from catalogue.ebook_utils import RedakcjaDocProvider
-
-    xml = book.materialize()
-    xml_file = NamedTemporaryFile()
-    xml_file.write(xml.encode('utf-8'))
-    xml_file.flush()
-
-    epub_file = StringIO()
-    epub.transform(RedakcjaDocProvider(publishable=True),
-            file_path=xml_file.name,
-            output_file=epub_file)
+    # TODO: move to celery
+    doc = book.wldocument()
+    # TODO: error handling
+    epub = doc.as_epub().get_string()
     response = HttpResponse(mimetype='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
-    response.write(epub_file.getvalue())
+    response.write(epub)
     return response
 
 
@@ -323,15 +303,15 @@ def book(request, slug):
                 return http.HttpResponseRedirect(book.get_absolute_url())
         else:
             form = forms.BookForm(instance=book)
-            editable = True
+        editable = True
     else:
         form = forms.ReadonlyBookForm(instance=book)
         editable = False
 
-    publish_error = publishable_error(book)
+    publish_error = book.publishable_error()
     publishable = publish_error is None
 
-    return direct_to_template(request, "catalogue/book_detail.html", extra_context={
+    return render(request, "catalogue/book_detail.html", {
         "book": book,
         "publishable": publishable,
         "publishable_error": publish_error,
@@ -358,10 +338,10 @@ def image(request, slug):
         form = forms.ReadonlyImageForm(instance=image)
         editable = False
 
-    publish_error = publishable_error(image)
+    publish_error = image.publishable_error()
     publishable = publish_error is None
 
-    return direct_to_template(request, "catalogue/image_detail.html", extra_context={
+    return render(request, "catalogue/image_detail.html", {
         "object": image,
         "publishable": publishable,
         "publishable_error": publish_error,
@@ -401,12 +381,13 @@ def chunk_add(request, slug, chunk):
                 "title": "cz. %d" % (doc.number + 1, ),
         })
 
-    return direct_to_template(request, "catalogue/chunk_add.html", extra_context={
+    return render(request, "catalogue/chunk_add.html", {
         "chunk": doc,
         "form": form,
     })
 
 
+@login_required
 def chunk_edit(request, slug, chunk):
     try:
         doc = Chunk.get(slug, chunk)
@@ -436,11 +417,71 @@ def chunk_edit(request, slug, chunk):
     else:
         go_next = ''
 
-    return direct_to_template(request, "catalogue/chunk_edit.html", extra_context={
+    return render(request, "catalogue/chunk_edit.html", {
         "chunk": doc,
         "form": form,
         "go_next": go_next,
     })
+
+
+@transaction.commit_on_success
+@login_required
+def chunk_mass_edit(request):
+    if request.method == 'POST':
+        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+        chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+        
+        stage = request.POST.get('stage')
+        if stage:
+            try:
+                stage = Chunk.tag_model.objects.get(slug=stage)
+            except Chunk.DoesNotExist, e:
+                stage = None
+           
+            for c in chunks: c.stage = stage
+
+        username = request.POST.get('user')
+        logger.info("username: %s" % username)
+        logger.info(request.POST)
+        if username:
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist, e:
+                user = None
+                
+            for c in chunks: c.user = user
+
+        status = request.POST.get('status')
+        if status:
+            books_affected = set()
+            for c in chunks:
+                if status == 'publish':
+                    c.head.publishable = True
+                    c.head.save()
+                elif status == 'unpublish':
+                    c.head.publishable = False
+                    c.head.save()
+                c.touch()  # cache
+                books_affected.add(c.book)
+            for b in books_affected:
+                b.touch()  # cache
+
+        project_id = request.POST.get('project')
+        if project_id:
+            try:
+                project = Project.objects.get(pk=int(project_id))
+            except (Project.DoesNotExist, ValueError), e:
+                project = None
+            for c in chunks:
+                book = c.book
+                book.project = project
+                book.save()
+
+        for c in chunks: c.save()
+
+        return HttpResponse("", content_type="text/plain")
+    else:
+        raise Http404
 
 
 @permission_required('catalogue.change_book')
@@ -457,7 +498,7 @@ def book_append(request, slug):
             return http.HttpResponseRedirect(append_to.get_absolute_url())
     else:
         form = forms.BookAppendForm(book)
-    return direct_to_template(request, "catalogue/book_append_to.html", extra_context={
+    return render(request, "catalogue/book_append_to.html", {
         "book": book,
         "form": form,
 
@@ -497,3 +538,21 @@ def publish_image(request, slug):
         return http.HttpResponse(e)
     else:
         return http.HttpResponseRedirect(image.get_absolute_url())
+
+
+class GalleryView(UploadView):
+    def get_object(self, request, slug):
+        book = get_object_or_404(Book, slug=slug)
+        if not book.gallery:
+            raise Http404
+        return book
+
+    def breadcrumbs(self):
+        return [
+            (_('books'), reverse('catalogue_document_list')),
+            (self.object.title, self.object.get_absolute_url()),
+            (_('scan gallery'),),
+        ]
+
+    def get_directory(self):
+        return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)

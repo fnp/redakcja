@@ -17,6 +17,23 @@ $(function()
 
     function initialize()
 	{
+        var splitter = $('#splitter'),
+            editors = $('#editor .editor'),
+            vsplitbar = $('.vsplitbar'),
+            sidebar = $('#sidebar'),
+            dragLayer = $('#drag-layer'),
+            vsplitbarWidth = vsplitbar.outerWidth(),
+            isHolding = false;
+
+        // Moves panes so that left border of the vsplitbar lands x pixels from the left border of the splitter
+        function setSplitbarAt(x) {
+            var right = splitterWidth - x;
+            editors.each(function() {
+                this.style.right = right + 'px';
+            });
+            vsplitbar[0].style.right = sidebar[0].style.width = (right - vsplitbarWidth) + 'px';
+        };
+
 		$(document).keydown(function(event) {
 			console.log("Received key:", event);
 		});
@@ -52,30 +69,50 @@ $(function()
 
         $(window).resize(function(){
             $('iframe').height($(window).height() - $('#tabs').outerHeight() - $('#source-editor .toolbar').outerHeight());
+            splitterWidth = splitter.width();
         });
 
         $(window).resize();
 
-        $('.vsplitbar').toggle(
+        vsplitbar.toggle(
 			function() {
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
-				$('#sidebar').show();
-				$('.vsplitbar').css('right', 480).addClass('active');
-				$('#editor .editor').css('right', 510);
+				setSplitbarAt(splitterWidth - (480 + vsplitbarWidth));
+				$('.vsplitbar').addClass('active');
 				$(window).resize();
 				$.wiki.perspectiveForTab('#tabs-right .active').onEnter();
 			},
 			function() {
 			    var active_right = $.wiki.perspectiveForTab('#tabs-right .active');
 				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
-				$('#sidebar').hide();
-				$('.vsplitbar').css('right', 0).removeClass('active');
 				$(".vsplitbar-title").html("&uarr;&nbsp;" + active_right.vsplitbar + "&nbsp;&uarr;");
-				$('#editor .editor').css('right', 30);
+				setSplitbarAt(splitterWidth - vsplitbarWidth);
+				$('.vsplitbar').removeClass('active');
 				$(window).resize();
 				active_right.onExit();
 			}
 		);
+
+
+        /* Splitbar dragging support */
+        vsplitbar
+            .mousedown(function(e) {
+                e.preventDefault();
+                isHolding = true;
+            })
+            .mousemove(function(e) {
+                if(isHolding) {
+                    dragLayer.show(); // We don't show it up until now so that we don't lose single click events on vsplitbar
+                }
+            });
+        dragLayer.mousemove(function(e) {
+            setSplitbarAt(e.clientX - vsplitbarWidth/2);
+        });
+        $('body').mouseup(function(e) {
+            dragLayer.hide();
+            isHolding = false;
+        });
+
 
 		if($.wiki.state.perspectives.ScanGalleryPerspective.show){
             $('.vsplitbar').trigger('click');

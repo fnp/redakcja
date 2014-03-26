@@ -2,7 +2,15 @@
 
 {% load i18n %}
 {% load catalogue book_list wall %}
+{% load compressed %}
 
+{% block add_js %}
+{% compressed_js 'book_list' %}
+{% endblock %}
+
+{% block add_css %}
+{% compressed_css 'book_list' %}
+{% endblock %}
 
 {% block titleextra %}{% trans "My page" %}{% endblock %}
 
@@ -16,7 +24,7 @@
         <h2>{% trans "Your last edited documents" %}</h2>
         <ol>
             {% for slugs, item in last_books %}
-            <li><a href="{% url wiki_editor slugs.0 slugs.1 %}"
+            <li><a href="{% url 'wiki_editor' slugs.0 slugs.1 %}"
                 target="_blank">{{ item.title }}</a><br/><span class="date">({{ item.time|date:"H:i:s, d/m/Y" }})</span></li>
             {% endfor %}
         </ol>

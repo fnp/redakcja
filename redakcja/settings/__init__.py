@@ -30,3 +30,8 @@ try:
 except (ImportError,), exc:
     raise
 
+
+try:
+    from redakcja.localsettings import *
+except ImportError:
+    pass

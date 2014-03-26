@@ -87,6 +87,14 @@ class Image(dvcs_models.Document):
         assert picture.picture_info.about == valid_about, \
                 _("rdf:about is not") + " " + valid_about
 
+    def publishable_error(self):
+        try:
+            return self.assert_publishable()
+        except AssertionError, e:
+            return e
+        else:
+            return None
+
     def accessible(self, request):
         return self.public or request.user.is_authenticated()
 

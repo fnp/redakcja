@@ -25,6 +25,6 @@ class ButtonAdmin(admin.ModelAdmin):
     list_editable = ('label', 'tooltip', 'accesskey')
     prepopulated_fields = {'slug': ('label',)}
 
-#admin.site.register(models.Button, ButtonAdmin)
-#admin.site.register(models.ButtonGroup)
-#admin.site.register(models.Scriptlet)
+admin.site.register(models.Button, ButtonAdmin)
+admin.site.register(models.ButtonGroup)
+admin.site.register(models.Scriptlet)

@@ -5,7 +5,7 @@ from django.db.models import Q, Count
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from catalogue.models import Chunk, Image
+from catalogue.models import Chunk, Image, Project
 
 register = template.Library()
 
@@ -113,6 +113,7 @@ def document_list_filter(request, **kwargs):
     chunks = foreign_filter(chunks, arg_or_GET('user'), 'user', User, 'username')
     chunks = foreign_filter(chunks, arg_or_GET('stage'), 'stage', Chunk.tag_model, 'slug')
     chunks = search_filter(chunks, arg_or_GET('title'), ['book__title', 'title'])
+    chunks = foreign_filter(chunks, arg_or_GET('project'), 'book__project', Project, 'pk')
     return chunks
 
 
@@ -125,9 +126,14 @@ def book_list(context, user=None):
         new_context = {"viewed_user": user}
     else:
         filters = {}
-        new_context = {"users": User.objects.annotate(
+        new_context = {
+            "users": User.objects.annotate(
                 count=Count('chunk')).filter(count__gt=0).order_by(
-                '-count', 'last_name', 'first_name')}
+                '-count', 'last_name', 'first_name'),
+            "other_users": User.objects.annotate(
+                count=Count('chunk')).filter(count=0).order_by(
+                'last_name', 'first_name'),
+                }
 
     new_context.update({
         "filters": True,
@@ -135,6 +141,7 @@ def book_list(context, user=None):
         "books": ChunksList(document_list_filter(request, **filters)),
         "stages": Chunk.tag_model.objects.all(),
         "states": _states_options,
+        "projects": Project.objects.all(),
     })
 
     return new_context

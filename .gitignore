@@ -3,6 +3,9 @@ dev.sqlite
 requirements.pybundle
 *~
 *.orig
+/redakcja/media
+/static
+.sass-cache
 
 # Python garbage
 *.pyc
@@ -26,5 +29,8 @@ nbproject/*
 .project
 .pydevproject
 .settings
-platforma/static/compressed
-platforma/static/compressed/*
+
+node_modules
+
+/static_test
+chromedriver.log

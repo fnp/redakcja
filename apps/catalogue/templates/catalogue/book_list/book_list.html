@@ -10,10 +10,13 @@
 {% endif %}
 <input type='hidden' name="all" value="{{ request.GET.all }}" />
 <input type='hidden' name="status" value="{{ request.GET.status }}" />
+<input type='hidden' name="project" value="{{ request.GET.project }}" />
 </form>
+
 
 <table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
     <thead><tr>
+	<th></th>
         <th></th>
         <th>
             <input class='check-filter' type='checkbox' name='all' title='{% trans "Show hidden books" %}'
@@ -57,6 +60,16 @@
             {% endfor %}
         </select></th>
 
+        <th><select name="project" class="filter">
+            <option value=''>- {% trans "project" %} -</option>
+                <option {% if request.GET.project == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for project in projects %}
+                <option {% if request.GET.project == project.pk|slugify %}selected="selected"
+                        {% endif %}value='{{ project.pk }}'>{{ project.name }}</option>
+            {% endfor %}
+        </select></th>
+
     </tr></thead>
 
     {% with cnt=books|length %}
@@ -81,3 +94,22 @@
 {% if not books %}
     <p>{% trans "No books found." %}</p>
 {% endif %}
+
+<form id='chunk_mass_edit' action='{% url "catalogue_chunk_mass_edit" %}' style="display:none;">
+{% csrf_token %}
+<input type="hidden" name="ids" />
+<label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
+<label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_stage" />
+<input type="hidden" name="status" />
+<label for="mass_edit_project">{% trans "Project" %}</label><input type="hidden" name="project" id="mass_edit_project" />
+<label for="mass_edit_publish">{% trans "Mark publishable" %}</label>
+<label for="mass_edit_unpublish">{% trans "Mark not publishable" %}</label>
+<label for="mass_edit_other">{% trans "Other user" %}</label>
+</form>
+
+<select name="other-user" style="display:none;">
+  {% for user in other_users %}
+  <option {% if request.GET.user == user.username %}selected="selected"
+          {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+  {% endfor %}
+</select>

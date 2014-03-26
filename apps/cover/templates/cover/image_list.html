@@ -1,0 +1,30 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load thumbnail pagination_tags %}
+
+
+{% block content %}
+<h1>{% trans "Cover images" %}</h1>
+
+{% if can_add %}
+    <a href="{% url 'cover_add_image' %}">{% trans "Add new" %}</a>
+{% endif %}
+
+<ul>
+{% autopaginate object_list 100 %}
+{% for image in object_list %}
+    <a href="{{ image.get_absolute_url }}" style="display:inline-block; width:200px;">
+    
+    <img style="height: 100px"
+        src="{% thumbnail image.file "x100" as thumb %}
+                {{ thumb.url }}
+             {% empty %}
+                {{ image.file.url }}
+             {% endthumbnail %}" />
+        <br/>
+        {{ image }}</a>
+{% endfor %}
+{% paginate %}
+</ul>
+
+{% endblock %}

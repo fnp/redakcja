@@ -6,16 +6,15 @@
 	padding: 1em;
 }
 
-#summary-view .book-cover {
+#summary-view .summary-cover-area {
 	float: left;
 	margin: 1em;
 	margin-right: 2em;
+}
 
+#summary-view .book-cover {
 	height: 300px;
-	width: 212px;
-
-
-	border: 1px dashed black;
+	width: 216px;
 }
 
 #summary-view p {

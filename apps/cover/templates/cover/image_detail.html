@@ -1,0 +1,58 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load thumbnail %}
+{% load build_absolute_uri from common_tags %}
+
+{% block content %}
+<h1>{% trans "Cover image" %}</h1>
+
+<div style="float: right; margin-bottom:1em;">
+
+<a href="{{ object.file.url }}"><img
+        src="{% thumbnail object.file "565x833" as thumb %}
+                {{ thumb.url }}
+             {% empty %}
+                {{ object.file.url }}
+             {% endthumbnail %}" />
+    </a>
+<br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
+    {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
+        {{ object.license_name }}
+    {% if object.license_url %}</a>{% endif %}
+
+<br/>{% trans "source" %}: {{ object.download_url }}
+</div>
+
+
+{% if editable %}
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+{% endif %}
+<table class='editable'><tbody>
+    {{ form.as_table }}
+    {% if editable %}
+        <tr><td></td><td><button type="submit">{% trans "Change" %}</button></td></tr>
+    {% endif %}
+</tbody></table>
+{% if editable %}</form>{% endif %}
+
+
+<h2>{% trans "Used in:" %}</h2>
+{% if object.book_set %}
+<ul>
+    {% for book in object.book_set.all %}
+        <li><a href="{{ book.get_absolute_url }}">{{ book }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>{% trans "None" %}</p>
+{% endif %}
+
+
+<textarea style="width:100%" rows="5">
+&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
+&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.author }}, {{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
+&lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source>
+</textarea>
+{% endblock %}

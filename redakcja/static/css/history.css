@@ -89,6 +89,11 @@ table#changes-list-container {
     white-space: pre-line;
 }
 
+#changes-list *[data-stub-value = 'published'] {
+    font-size: .7em;
+    color: gray;
+}
+
 /*
  * Graphical DIFF view
  *

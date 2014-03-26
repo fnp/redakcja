@@ -18,7 +18,7 @@
         <a target="_blank" href='{{ item.url }}'>{{ item.title }}</a>
         <br/><strong>{% trans "user" %}:</strong>
         {% if item.user %}
-            <a href="{% url catalogue_user item.user.username %}">
+            <a href="{% url 'catalogue_user' item.user.username %}">
             {{ item.user.first_name }} {{ item.user.last_name }}</a>
             &lt;{{ item.user.email|email_link }}>
         {% else %}

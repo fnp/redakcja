@@ -25,7 +25,7 @@
 <div class='section'>
     <h2>{% trans "Editor" %}</h2>
 
-    <p><a href="{% url wiki_img_editor object.slug %}">{% trans "Proceed to the editor." %}</a></p>
+    <p><a href="{% url 'wiki_img_editor' object.slug %}">{% trans "Proceed to the editor." %}</a></p>
 </div>
 
 
@@ -51,14 +51,14 @@
         mira66 (http://www.flickr.com/photos/21804434@N02/) /
         CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
         -->
-        <form method="POST" action="{% url catalogue_publish_image object.slug %}">{% csrf_token %}
+        <form method="POST" action="{% url 'catalogue_publish_image' object.slug %}">{% csrf_token %}
             <!--img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" /-->
             <button id="publish-button" type="submit">
                 <span>{% trans "Publish" %}</span></button>
             <!--img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" /-->
             </form>
     {% else %}
-        <a href="{% url login %}">{% trans "Log in to publish." %}</a>
+        <a href="{% url 'login' %}">{% trans "Log in to publish." %}</a>
     {% endif %}
 {% else %}
     <p>{% trans "This book can't be published yet, because:" %}</p>

@@ -3,13 +3,12 @@ import functools
 import logging
 logger = logging.getLogger("fnp.wiki_img")
 
-from django.views.generic.simple import direct_to_template
 from django.core.urlresolvers import reverse
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
 
 from django import http
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
 from django.conf import settings
 from django.utils.formats import localize
@@ -30,7 +29,7 @@ from django.views.decorators.cache import never_cache
 def editor(request, slug, template_name='wiki_img/document_details.html'):
     doc = get_object_or_404(Image, slug=slug)
 
-    return direct_to_template(request, template_name, extra_context={
+    return render(request, template_name, {
         'document': doc,
         'forms': {
             "text_save": ImageSaveForm(user=request.user, prefix="textsave"),
@@ -50,7 +49,7 @@ def editor_readonly(request, slug, template_name='wiki_img/document_details_read
     except (KeyError):
         raise Http404
 
-    return direct_to_template(request, template_name, extra_context={
+    return render(request, template_name, {
         'document': doc,
         'revision': revision,
         'readonly': True,

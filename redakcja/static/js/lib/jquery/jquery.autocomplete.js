@@ -99,7 +99,8 @@ $.Autocompleter = function(input, options) {
 		switch(event.keyCode) {
 
             // changed by fnp
-            case 0:
+            case 18:
+            case 17:
                 break;
             // changed by fnp
 

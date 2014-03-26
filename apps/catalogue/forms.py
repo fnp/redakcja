@@ -20,7 +20,7 @@ class DocumentCreateForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['parent', 'parent_number']
+        exclude = ['parent', 'parent_number', 'project']
 
     def __init__(self, *args, **kwargs):
         super(DocumentCreateForm, self).__init__(*args, **kwargs)
@@ -72,7 +72,7 @@ class ChunkForm(forms.ModelForm):
     """
     user = forms.ModelChoiceField(queryset=
         User.objects.annotate(count=Count('chunk')).
-        order_by('-count', 'last_name', 'first_name'), required=False,
+        order_by('last_name', 'first_name'), required=False,
         label=_('Assigned to')) 
 
     class Meta:
@@ -130,6 +130,7 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
+        exclude = ['project']
 
     def __init__(self, *args, **kwargs):
         ret = super(BookForm, self).__init__(*args, **kwargs)

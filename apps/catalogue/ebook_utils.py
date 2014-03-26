@@ -13,7 +13,8 @@ class RedakcjaDocProvider(DocProvider):
 
     def by_slug(self, slug):
         return StringIO(Book.objects.get(dc_slug=slug
-                    ).materialize(publishable=self.publishable))
+                    ).materialize(publishable=self.publishable
+                    ).encode('utf-8'))
 
 
 def serve_file(file_path, name, mime_type):

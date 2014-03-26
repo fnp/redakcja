@@ -7,13 +7,20 @@ from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from slughifi import slughifi
 
-from catalogue.helpers import cached_in_field
-from catalogue.models import BookPublishRecord, ChunkPublishRecord
+
+import apiclient
+from catalogue.helpers import cached_in_field, GalleryMerger
+from catalogue.models import BookPublishRecord, ChunkPublishRecord, Project
+from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
-
+from cover.models import Image
+import os
+import shutil
+import re
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -22,6 +29,7 @@ class Book(models.Model):
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
@@ -32,6 +40,9 @@ class Book(models.Model):
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
+    _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
+    dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
+        db_index=True, on_delete=models.SET_NULL, editable=False)
     dc_slug = models.CharField(max_length=128, null=True, blank=True,
             editable=False, db_index=True)
 
@@ -188,7 +199,19 @@ class Book(models.Model):
             chunk.save()
             number += 1
         assert not other.chunk_set.exists()
+
+        gm = GalleryMerger(self.gallery, other.gallery)
+        self.gallery = gm.merge()
+
+        # and move the gallery starts
+        if gm.was_merged:
+                for chunk in self[len(self) - len_other:]:
+                        old_start = chunk.gallery_start or 1
+                        chunk.gallery_start = old_start + gm.dest_size - gm.num_deleted
+                        chunk.save()
+
         other.delete()
+
 
     @transaction.commit_on_success
     def prepend_history(self, other):
@@ -206,6 +229,18 @@ class Book(models.Model):
         assert not other.chunk_set.exists()
         other.delete()
 
+    def split(self):
+        """Splits all the chunks into separate books."""
+        self.title
+        for chunk in self:
+            book = Book.objects.create(title=chunk.title, slug=chunk.slug,
+                    public=self.public, gallery=self.gallery)
+            book[0].delete()
+            chunk.book = book
+            chunk.number = 1
+            chunk.save()
+        assert not self.chunk_set.exists()
+        self.delete()
 
     # State & cache
     # =============
@@ -222,22 +257,28 @@ class Book(models.Model):
             changes = self.get_current_changes(publishable=True)
         except self.NoTextError:
             raise AssertionError(_('Not all chunks have publishable revisions.'))
-        book_xml = self.materialize(changes=changes)
 
-        from librarian.dcparser import BookInfo
         from librarian import NoDublinCore, ParseError, ValidationError
 
         try:
-            bi = BookInfo.from_string(book_xml.encode('utf-8'))
+            bi = self.wldocument(changes=changes, strict=True).book_info
         except ParseError, e:
-            raise AssertionError(_('Invalid XML') + ': ' + str(e))
+            raise AssertionError(_('Invalid XML') + ': ' + unicode(e))
         except NoDublinCore:
             raise AssertionError(_('No Dublin Core found.'))
         except ValidationError, e:
-            raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
+            raise AssertionError(_('Invalid Dublin Core') + ': ' + unicode(e))
 
         valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
+
+    def publishable_error(self):
+        try:
+            return self.assert_publishable()
+        except AssertionError, e:
+            return e
+        else:
+            return None
 
     def hidden(self):
         return self.slug.startswith('.')
@@ -265,6 +306,16 @@ class Book(models.Model):
         return self.publish_log.exists()
     published = cached_in_field('_published')(is_published)
 
+    def get_on_track(self):
+        if self.published:
+            return -1
+        stages = [ch.stage.ordering if ch.stage is not None else 0
+                    for ch in self]
+        if not len(stages):
+            return 0
+        return min(stages)
+    on_track = cached_in_field('_on_track')(get_on_track)
+
     def is_single(self):
         return len(self) == 1
     single = cached_in_field('_single')(is_single)
@@ -289,11 +340,20 @@ class Book(models.Model):
     def refresh_dc_cache(self):
         update = {
             'dc_slug': None,
+            'dc_cover_image': None,
         }
 
         info = self.book_info()
         if info is not None:
-            update['dc_slug'] = info.slug
+            update['dc_slug'] = info.url.slug
+            if info.cover_source:
+                try:
+                    image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))
+                except:
+                    pass
+                else:
+                    if info.cover_source == image.get_full_url():
+                        update['dc_cover_image'] = image
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):
@@ -304,6 +364,7 @@ class Book(models.Model):
             "_new_publishable": self.is_new_publishable(),
             "_published": self.is_published(),
             "_single": self.is_single(),
+            "_on_track": self.get_on_track(),
             "_short_html": None,
         }
         Book.objects.filter(pk=self.pk).update(**update)
@@ -344,13 +405,21 @@ class Book(models.Model):
             changes = self.get_current_changes(publishable)
         return compile_text(change.materialize() for change in changes)
 
+    def wldocument(self, publishable=True, changes=None, 
+            parse_dublincore=True, strict=False):
+        from catalogue.ebook_utils import RedakcjaDocProvider
+        from librarian.parser import WLDocument
+
+        return WLDocument.from_string(
+                self.materialize(publishable=publishable, changes=changes),
+                provider=RedakcjaDocProvider(publishable=publishable),
+                parse_dublincore=parse_dublincore,
+                strict=strict)
+
     def publish(self, user):
         """
             Publishes a book on behalf of a (local) user.
         """
-        import apiclient
-        from catalogue.signals import post_publish
-
         self.assert_publishable()
         changes = self.get_current_changes(publishable=True)
         book_xml = self.materialize(changes=changes)

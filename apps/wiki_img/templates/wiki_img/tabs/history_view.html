@@ -11,7 +11,7 @@
 			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
 		<button id="open-preview-button" disabled="disabled"
 			data-enabled-when="1"
-			data-basehref="{% url wiki_img_editor_readonly document.slug %}">{% trans "View version" %}</button>
+			data-basehref="{% url 'wiki_img_editor_readonly' document.slug %}">{% trans "View version" %}</button>
 
 	</div>
     <div id="history-view">
