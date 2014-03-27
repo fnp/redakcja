@@ -175,7 +175,7 @@ class ImageForm(forms.ModelForm):
 
 
 class ReadonlyImageForm(ImageForm):
-    """Form used for not editing a Book."""
+    """Form used for not editing an Image."""
 
     def __init__(self, *args, **kwargs):
         ret = super(ReadonlyImageForm, self).__init__(*args, **kwargs)

@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load username from common_tags %}
 
 <tr>
     <td><input type="checkbox" name="select_chunk" value="{{chunk.id}}" data-book-id="{{chunk.book.id}}" /></td>
@@ -14,7 +15,7 @@
         {% endif %}</td>
         <td class='user-column'>{% if chunk.user %}
             <a href="{% url 'catalogue_user' chunk.user.username %}">
-                {{ chunk.user.first_name }} {{ chunk.user.last_name }}
+                {{ chunk.user|username }}
             </a>{% else %}
             
             {% endif %}</td>

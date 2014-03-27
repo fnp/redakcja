@@ -175,6 +175,7 @@ def image_list_filter(request, **kwargs):
     images = foreign_filter(images, arg_or_GET('user'), 'user', User, 'username')
     images = foreign_filter(images, arg_or_GET('stage'), 'stage', Image.tag_model, 'slug')
     images = search_filter(images, arg_or_GET('title'), ['title', 'title'])
+    images = foreign_filter(images, arg_or_GET('project'), 'project', Project, 'pk')
     return images
 
 
@@ -187,9 +188,14 @@ def image_list(context, user=None):
         new_context = {"viewed_user": user}
     else:
         filters = {}
-        new_context = {"users": User.objects.annotate(
+        new_context = {
+            "users": User.objects.annotate(
                 count=Count('image')).filter(count__gt=0).order_by(
-                '-count', 'last_name', 'first_name')}
+                '-count', 'last_name', 'first_name'),
+            "other_users": User.objects.annotate(
+                count=Count('image')).filter(count=0).order_by(
+                'last_name', 'first_name'),
+                }
 
     new_context.update({
         "filters": True,
@@ -197,6 +203,7 @@ def image_list(context, user=None):
         "objects": image_list_filter(request, **filters),
         "stages": Image.tag_model.objects.all(),
         "states": _image_states_options,
+        "projects": Project.objects.all(),
     })
 
     return new_context

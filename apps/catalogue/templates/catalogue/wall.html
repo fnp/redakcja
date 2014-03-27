@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load gravatar %}
 {% load email %}
+{% load username from common_tags %}
 
 <ul class='wall'>
 {% for item in wall %}
@@ -19,7 +20,7 @@
         <br/><strong>{% trans "user" %}:</strong>
         {% if item.user %}
             <a href="{% url 'catalogue_user' item.user.username %}">
-            {{ item.user.first_name }} {{ item.user.last_name }}</a>
+            {{ item.user|username }}</a>
             &lt;{{ item.user.email|email_link }}>
         {% else %}
             {{ item.user_name }}

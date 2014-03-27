@@ -1,5 +1,7 @@
 {% load i18n %}
 {% load pagination_tags %}
+{% load username from common_tags %}
+
 
 
 <form name='filter' action='{{ request.path }}'>
@@ -9,10 +11,12 @@
     <input type='hidden' name="user" value="{{ request.GET.user }}" />
 {% endif %}
 <input type='hidden' name="status" value="{{ request.GET.status }}" />
+<input type='hidden' name="project" value="{{ request.GET.project }}" />
 </form>
 
 <table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
     <thead><tr>
+        <th></th>
         <th></th>
         <th class='book-search-column'>
             <form>
@@ -37,7 +41,7 @@
                         {% endif %}value="-">- {% trans "none" %} -</option>
                 {% for user in users %}
                     <option {% if request.GET.user == user.username %}selected="selected"
-                        {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+                        {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
                 {% endfor %}
             </select></th>
         {% endif %}
@@ -50,6 +54,16 @@
             {% endfor %}
         </select></th>
 
+        <th><select name="project" class="filter">
+            <option value=''>- {% trans "project" %} -</option>
+                <option {% if request.GET.project == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for project in projects %}
+                <option {% if request.GET.project == project.pk|slugify %}selected="selected"
+                        {% endif %}value='{{ project.pk }}'>{{ project.name }}</option>
+            {% endfor %}
+        </select></th>
+
     </tr></thead>
 
     {% with cnt=objects|length %}
@@ -58,7 +72,7 @@
     {% for item in objects %}
         {{ item.short_html|safe }}
     {% endfor %}
-    <tr><th class='paginator' colspan="5">
+    <tr><th class='paginator' colspan="6">
         {% paginate %}
         {% blocktrans count c=cnt %}{{c}} image{% plural %}{{c}} images{% endblocktrans %}</th></tr>
     </tbody>
@@ -67,3 +81,20 @@
 {% if not objects %}
     <p>{% trans "No images found." %}</p>
 {% endif %}
+
+<form id='chunk_mass_edit' action='{% url "catalogue_image_mass_edit" %}' style="display:none;">
+{% csrf_token %}
+<input type="hidden" name="ids" />
+<label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
+<label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_stage" />
+<input type="hidden" name="status" />
+<label for="mass_edit_project">{% trans "Project" %}</label><input type="hidden" name="project" id="mass_edit_project" />
+<label for="mass_edit_more_users">{% trans "More users" %}</label>
+</form>
+
+<select name="other-user" style="display:none;">
+  {% for user in other_users %}
+  <option {% if request.GET.user == user.username %}selected="selected"
+          {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
+  {% endfor %}
+</select>

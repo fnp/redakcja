@@ -1,6 +1,7 @@
 {% extends "catalogue/base.html" %}
 
 {% load i18n %}
+{% load username from common_tags %}
 
 
 {% block titleextra %}{% trans "Users" %}{% endblock %}
@@ -14,7 +15,7 @@
 {% for user in users %}
     <li><a href="{% url 'catalogue_user' user.username %}">
         <span class="chunkno">{{ forloop.counter }}.</span>
-        {{ user.first_name }} {{ user.last_name }}</a>
+        {{ user|username }}</a>
         ({{ user.count }})</li>
 {% endfor %}
 </ul>

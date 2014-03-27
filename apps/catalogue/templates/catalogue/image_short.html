@@ -1,6 +1,8 @@
 {% load i18n %}
+{% load username from common_tags %}
 
 <tr>
+    <td><input type="checkbox" name="select_chunk" value="{{image.id}}"/></td>
     <td><a href="{% url 'catalogue_image' image.slug %}" title='{% trans "Image settings" %}'>[B]</a></td>
     <td><a target="_blank"
                 href="{% url 'wiki_img_editor' image.slug %}">
@@ -9,10 +11,11 @@
         {{ image.stage }}
     {% else %}–
     {% endif %}</td>
-    <td class='user-column'>{% if image.user %}<a href="{% url 'catalogue_user' image.user.username %}">{{ image.user.first_name }} {{ image.user.last_name }}</a>{% endif %}</td>
+    <td class='user-column'>{% if image.user %}<a href="{% url 'catalogue_user' image.user.username %}">{{ image.user|username }}</a>{% endif %}</td>
     <td>
         {% if image.published %}P{% endif %}
         {% if image.new_publishable %}p{% endif %}
         {% if image.changed %}+{% endif %}
     </td>
+    <td>{{ image.project.name }}</td>
 </tr>

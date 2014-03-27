@@ -9,6 +9,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from catalogue.helpers import cached_in_field
+from catalogue.models import Project
 from catalogue.tasks import refresh_instance
 from dvcs import models as dvcs_models
 
@@ -21,6 +22,7 @@ class Image(dvcs_models.Document):
     title = models.CharField(_('title'), max_length=255, blank=True)
     slug = models.SlugField(_('slug'), unique=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
 
     # cache
     _short_html = models.TextField(null=True, blank=True, editable=False)

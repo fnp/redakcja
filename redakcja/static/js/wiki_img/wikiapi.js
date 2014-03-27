@@ -49,6 +49,18 @@
 		this.revision = $("*[data-key='revision']", meta).text();
 		this.readonly = !!$("*[data-key='readonly']", meta).text();
 
+        var diff = $("*[data-key='diff']", meta).text();
+        if (diff) {
+            diff = diff.split(',');
+            if (diff.length == 2 && diff[0] < diff[1])
+                this.diff = diff;
+            else if (diff.length == 1) {
+                diff = parseInt(diff);
+                if (diff != NaN)
+                    this.diff = [diff - 1, diff];
+            }
+        }
+
 		this.text = null;
 		this.has_local_changes = false;
 		this._lock = -1;

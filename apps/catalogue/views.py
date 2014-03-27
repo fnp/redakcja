@@ -426,62 +426,86 @@ def chunk_edit(request, slug, chunk):
 
 @transaction.commit_on_success
 @login_required
+@require_POST
 def chunk_mass_edit(request):
-    if request.method == 'POST':
-        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
-        chunks = map(lambda i: Chunk.objects.get(id=i), ids)
-        
-        stage = request.POST.get('stage')
-        if stage:
-            try:
-                stage = Chunk.tag_model.objects.get(slug=stage)
-            except Chunk.DoesNotExist, e:
-                stage = None
-           
-            for c in chunks: c.stage = stage
+    ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+    chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+    
+    stage = request.POST.get('stage')
+    if stage:
+        try:
+            stage = Chunk.tag_model.objects.get(slug=stage)
+        except Chunk.DoesNotExist, e:
+            stage = None
+       
+        for c in chunks: c.stage = stage
 
-        username = request.POST.get('user')
-        logger.info("username: %s" % username)
-        logger.info(request.POST)
-        if username:
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist, e:
-                user = None
-                
-            for c in chunks: c.user = user
+    username = request.POST.get('user')
+    logger.info("username: %s" % username)
+    logger.info(request.POST)
+    if username:
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist, e:
+            user = None
+            
+        for c in chunks: c.user = user
 
-        status = request.POST.get('status')
-        if status:
-            books_affected = set()
-            for c in chunks:
-                if status == 'publish':
-                    c.head.publishable = True
-                    c.head.save()
-                elif status == 'unpublish':
-                    c.head.publishable = False
-                    c.head.save()
-                c.touch()  # cache
-                books_affected.add(c.book)
-            for b in books_affected:
-                b.touch()  # cache
+    project_id = request.POST.get('project')
+    if project_id:
+        try:
+            project = Project.objects.get(pk=int(project_id))
+        except (Project.DoesNotExist, ValueError), e:
+            project = None
+        for c in chunks:
+            book = c.book
+            book.project = project
+            book.save()
 
-        project_id = request.POST.get('project')
-        if project_id:
-            try:
-                project = Project.objects.get(pk=int(project_id))
-            except (Project.DoesNotExist, ValueError), e:
-                project = None
-            for c in chunks:
-                book = c.book
-                book.project = project
-                book.save()
+    for c in chunks: c.save()
 
-        for c in chunks: c.save()
+    return HttpResponse("", content_type="text/plain")
 
-        return HttpResponse("", content_type="text/plain")
-    else:
-        raise Http404
+
+@transaction.commit_on_success
+@login_required
+@require_POST
+def image_mass_edit(request):
+    ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+    images = map(lambda i: Image.objects.get(id=i), ids)
+    
+    stage = request.POST.get('stage')
+    if stage:
+        try:
+            stage = Image.tag_model.objects.get(slug=stage)
+        except Image.DoesNotExist, e:
+            stage = None
+       
+        for c in images: c.stage = stage
+
+    username = request.POST.get('user')
+    logger.info("username: %s" % username)
+    logger.info(request.POST)
+    if username:
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist, e:
+            user = None
+            
+        for c in images: c.user = user
+
+    project_id = request.POST.get('project')
+    if project_id:
+        try:
+            project = Project.objects.get(pk=int(project_id))
+        except (Project.DoesNotExist, ValueError), e:
+            project = None
+        for c in images:
+            c.project = project
+
+    for c in images: c.save()
+
+    return HttpResponse("", content_type="text/plain")
 
 
 @permission_required('catalogue.change_book')
