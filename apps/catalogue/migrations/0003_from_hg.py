@@ -11,7 +11,7 @@ from south.db import db
 from south.v2 import DataMigration
 
 from django.conf import settings
-from slughifi import slughifi
+from fnpdjango.utils.text.slughifi import slughifi
 
 META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)

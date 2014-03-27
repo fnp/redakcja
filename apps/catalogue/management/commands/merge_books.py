@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
 from django.db import transaction
 
-from slughifi import slughifi
+from fnpdjango.utils.text.slughifi import slughifi
 from catalogue.models import Book
 
 

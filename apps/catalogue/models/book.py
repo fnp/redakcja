@@ -8,7 +8,7 @@ from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from slughifi import slughifi
+from fnpdjango.utils.text.slughifi import slughifi
 
 
 import apiclient

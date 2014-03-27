@@ -142,7 +142,7 @@ def upload(request):
     if request.method == "POST":
         form = forms.DocumentsUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            import slughifi
+            from fnpdjango.utils.text.slughifi import slughifi
 
             if request.user.is_authenticated():
                 creator = request.user
