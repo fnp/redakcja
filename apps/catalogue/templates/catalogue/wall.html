@@ -8,7 +8,7 @@
     <li class="{{ item.tag }}{% if not item.user %} anonymous{% endif %}">
         <div class='gravatar'>
             {% if item.get_email %}
-                <img src="{% gravatar_for_email item.get_email 32 %}"
+                <img src="{% gravatar_url item.get_email 32 %}"
                     height="32" width="32" alt='Avatar' />
                 <br/>
             {% endif %}

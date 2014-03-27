@@ -111,7 +111,7 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'pagination',
-    'gravatar',
+    'django_gravatar',
     'djcelery',
     'djkombu',
     'fileupload',
