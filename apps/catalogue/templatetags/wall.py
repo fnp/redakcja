@@ -127,9 +127,9 @@ def image_published_wall(user=None, max_len=None, day=None):
     for item in qs:
         w = WallItem('publish')
         w.header = _('Publication')
-        w.title = item.book.title
+        w.title = item.image.title
         w.timestamp = item.timestamp
-        w.url = item.book.get_absolute_url()
+        w.url = item.image.get_absolute_url()
         w.user = item.user
         w.email = item.user.email
         yield w
