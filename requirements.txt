@@ -21,6 +21,7 @@ django-pagination
 django-gravatar
 django-celery
 django-kombu
+fnpdjango
 
 # migrations
 south>=0.6

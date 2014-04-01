@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-16 13:22+0200\n"
-"PO-Revision-Date: 2013-07-16 13:22+0100\n"
+"POT-Creation-Date: 2014-04-01 11:28+0200\n"
+"PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
@@ -20,54 +20,42 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:39
-msgid "Text file must be UTF-8 encoded."
-msgstr "Plik powinien mieć kodowanie UTF-8."
+#: forms.py:38
+msgid "You must select a template"
+msgstr "Musisz wybrać szablon"
 
-#: forms.py:42
-msgid "You must either enter text or upload a file"
-msgstr "Proszę wpisać tekst albo wybrać plik do załadowania"
-
-#: forms.py:51
+#: forms.py:47
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:52
+#: forms.py:48
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:76
+#: forms.py:72
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:97 forms.py:111
+#: forms.py:93 forms.py:107
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:120
+#: forms.py:116
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:160
+#: views.py:161
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:162
+#: views.py:163
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:168
+#: views.py:169
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
-
-#: views.py:498 models/book.py:56
-msgid "books"
-msgstr "książki"
-
-#: views.py:500
-msgid "scan gallery"
-msgstr "galeria skanów"
 
 #: models/book.py:28 models/chunk.py:23
 msgid "title"
@@ -81,10 +69,6 @@ msgstr "slug"
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:31
-msgid "scan gallery name"
-msgstr "nazwa galerii skanów"
-
 #: models/book.py:35
 msgid "parent"
 msgstr "rodzic"
@@ -96,6 +80,10 @@ msgstr "numeracja rodzica"
 #: models/book.py:55 models/chunk.py:21 models/publish_log.py:17
 msgid "book"
 msgstr "książka"
+
+#: models/book.py:56
+msgid "books"
+msgstr "książki"
 
 #: models/book.py:255
 msgid "No chunks in the book."
@@ -144,14 +132,6 @@ msgstr "nazwa"
 #: models/project.py:14
 msgid "notes"
 msgstr "notatki"
-
-#: models/project.py:19 templates/catalogue/book_list/book_list.html:62
-msgid "project"
-msgstr "projekt"
-
-#: models/project.py:20
-msgid "projects"
-msgstr "projekty"
 
 #: models/publish_log.py:18
 msgid "time"
@@ -279,7 +259,6 @@ msgid "Add chunk"
 msgstr "Dodaj część"
 
 #: templates/catalogue/chunk_edit.html:5
-#: templates/catalogue/book_list/book.html:8
 #: templates/catalogue/book_list/chunk.html:6
 msgid "Chunk settings"
 msgstr "Ustawienia części"
@@ -287,14 +266,6 @@ msgstr "Ustawienia części"
 #: templates/catalogue/chunk_edit.html:10
 msgid "Book"
 msgstr "Książka"
-
-#: templates/catalogue/document_create_missing.html:5
-msgid "Create a new book"
-msgstr "Utwórz nową książkę"
-
-#: templates/catalogue/document_create_missing.html:11
-msgid "Create book"
-msgstr "Utwórz książkę"
 
 #: templates/catalogue/document_upload.html:8
 msgid "Bulk documents upload"
@@ -308,7 +279,7 @@ msgstr ""
 "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
 "kończące się na <code>.xml</code> zostaną zignorowane."
 
-#: templates/catalogue/document_upload.html:17 templatetags/catalogue.py:35
+#: templates/catalogue/document_upload.html:17
 msgid "Upload"
 msgstr "Załaduj"
 
@@ -361,70 +332,45 @@ msgstr "nie zalogowany"
 msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
-#: templates/catalogue/book_list/book.html:7
-#: templates/catalogue/book_list/book.html:28
-msgid "Book settings"
-msgstr "Ustawienia książki"
-
-#: templates/catalogue/book_list/book_list.html:22
-msgid "Show hidden books"
-msgstr "Pokaż ukryte książki"
-
 #: templates/catalogue/book_list/book_list.html:27
-msgid "Search in book titles"
-msgstr "Szukaj w tytułach książek"
-
-#: templates/catalogue/book_list/book_list.html:32
 msgid "stage"
 msgstr "etap"
 
-#: templates/catalogue/book_list/book_list.html:34
-#: templates/catalogue/book_list/book_list.html:45
-#: templates/catalogue/book_list/book_list.html:64
+#: templates/catalogue/book_list/book_list.html:29
+#: templates/catalogue/book_list/book_list.html:40
+#: templates/catalogue/book_list/book_list.html:51
 msgid "none"
 msgstr "brak"
 
-#: templates/catalogue/book_list/book_list.html:43
+#: templates/catalogue/book_list/book_list.html:38
 msgid "editor"
 msgstr "redaktor"
 
-#: templates/catalogue/book_list/book_list.html:54
-msgid "status"
-msgstr "status"
-
-#: templates/catalogue/book_list/book_list.html:88
+#: templates/catalogue/book_list/book_list.html:76
 #, python-format
-msgid "%(c)s book"
-msgid_plural "%(c)s books"
-msgstr[0] "%(c)s książka"
-msgstr[1] "%(c)s książki"
-msgstr[2] "%(c)s książek"
+msgid "%(c)s module"
+msgid_plural "%(c)s modules"
+msgstr[0] "%(c)s moduł"
+msgstr[1] "%(c)s moduły"
+msgstr[2] "%(c)s modułów"
 
-#: templates/catalogue/book_list/book_list.html:93
-msgid "No books found."
-msgstr "Nie znaleziono książek."
-
-#: templates/catalogue/book_list/book_list.html:99
+#: templates/catalogue/book_list/book_list.html:87
 msgid "Set stage"
 msgstr "Ustaw etap"
 
-#: templates/catalogue/book_list/book_list.html:100
+#: templates/catalogue/book_list/book_list.html:88
 msgid "Set user"
 msgstr "Przypisz redaktora"
 
-#: templates/catalogue/book_list/book_list.html:102
-msgid "Project"
-msgstr "Projekt"
-
-#: templates/catalogue/book_list/book_list.html:103
+#: templates/catalogue/book_list/book_list.html:91
 msgid "Mark publishable"
 msgstr "Oznacz do publikacji"
 
-#: templates/catalogue/book_list/book_list.html:104
+#: templates/catalogue/book_list/book_list.html:92
 msgid "Mark not publishable"
 msgstr "Odznacz do publikacji"
 
-#: templates/catalogue/book_list/book_list.html:105
+#: templates/catalogue/book_list/book_list.html:93
 msgid "Other user"
 msgstr "Inny użytkownik"
 
@@ -460,10 +406,6 @@ msgstr "Wszystkie"
 msgid "Add"
 msgstr "Dodaj"
 
-#: templatetags/catalogue.py:37
-msgid "Covers"
-msgstr "Okładki"
-
 #: templatetags/wall.py:49
 msgid "Related edit"
 msgstr "Powiązana zmiana"
@@ -475,6 +417,51 @@ msgstr "Zmiana"
 #: templatetags/wall.py:99
 msgid "Comment"
 msgstr "Komentarz"
+
+#~ msgid "Text file must be UTF-8 encoded."
+#~ msgstr "Plik powinien mieć kodowanie UTF-8."
+
+#~ msgid "You must either enter text or upload a file"
+#~ msgstr "Proszę wpisać tekst albo wybrać plik do załadowania"
+
+#~ msgid "scan gallery"
+#~ msgstr "galeria skanów"
+
+#~ msgid "scan gallery name"
+#~ msgstr "nazwa galerii skanów"
+
+#~ msgid "project"
+#~ msgstr "projekt"
+
+#~ msgid "projects"
+#~ msgstr "projekty"
+
+#~ msgid "Create a new book"
+#~ msgstr "Utwórz nową książkę"
+
+#~ msgid "Create book"
+#~ msgstr "Utwórz książkę"
+
+#~ msgid "Book settings"
+#~ msgstr "Ustawienia książki"
+
+#~ msgid "Show hidden books"
+#~ msgstr "Pokaż ukryte książki"
+
+#~ msgid "Search in book titles"
+#~ msgstr "Szukaj w tytułach książek"
+
+#~ msgid "status"
+#~ msgstr "status"
+
+#~ msgid "No books found."
+#~ msgstr "Nie znaleziono książek."
+
+#~ msgid "Project"
+#~ msgstr "Projekt"
+
+#~ msgid "Covers"
+#~ msgstr "Okładki"
 
 #~ msgid "Infobox"
 #~ msgstr "Informacje"

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, date, timedelta
 import logging
 import os
@@ -114,12 +115,11 @@ def create_missing(request, slug=None):
                 gallery=form.cleaned_data['gallery'],
             )
 
-            return http.HttpResponseRedirect(reverse("catalogue_book", args=[book.slug]))
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
     else:
         form = forms.DocumentCreateForm(initial={
                 "slug": slug,
                 "title": slug.replace('-', ' ').title(),
-                "gallery": slug,
         })
 
     return render(request, "catalogue/document_create_missing.html", {
@@ -501,9 +501,9 @@ class GalleryView(GalleryMixin, UploadView):
 
     def breadcrumbs(self):
         return [
-            (_('books'), reverse('catalogue_document_list')),
+            (u'moduły', reverse('catalogue_document_list')),
             (self.object.title, self.object.get_absolute_url()),
-            (_('scan gallery'),),
+            (u'materiały'),
         ]
 
 

@@ -16,8 +16,8 @@ class Project(models.Model):
     class Meta:
         app_label = 'catalogue'
         ordering = ['name']
-        verbose_name = _('project')
-        verbose_name_plural = _('projects')
+        verbose_name = u'poziom edukacyjny'
+        verbose_name_plural = u'poziomy edukacyjne'
 
     def __unicode__(self):
         return self.name

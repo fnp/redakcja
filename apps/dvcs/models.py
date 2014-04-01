@@ -176,6 +176,10 @@ def create_tag_model(model):
     class Meta(Tag.Meta):
         app_label = model._meta.app_label
 
+    if hasattr(model, 'TagMeta'):
+        for attr, value in model.TagMeta.__dict__.items():
+            setattr(Meta, attr, value)
+
     attrs = {
         '__module__': model.__module__,
         'Meta': Meta,

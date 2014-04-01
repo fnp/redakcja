@@ -28,7 +28,7 @@ class Book(models.Model):
     title = models.CharField(_('title'), max_length=255, db_index=True)
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
-    gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
+    gallery = models.CharField(u'materiały', max_length=255, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
@@ -52,8 +52,8 @@ class Book(models.Model):
     class Meta:
         app_label = 'catalogue'
         ordering = ['title', 'slug']
-        verbose_name = _('book')
-        verbose_name_plural = _('books')
+        verbose_name = u'moduł'
+        verbose_name_plural = u'moduły'
 
 
     # Representing

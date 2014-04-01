@@ -15,36 +15,28 @@ class DocumentCreateForm(forms.ModelForm):
     """
         Form used for creating new documents.
     """
-    file = forms.FileField(required=False)
     template = forms.ModelChoiceField(Template.objects, required=False)
-    text = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
         model = Book
-        exclude = ['parent', 'parent_number', 'project']
+        exclude = ['parent', 'parent_number', 'project', 'gallery', 'public']
 
     def __init__(self, *args, **kwargs):
         super(DocumentCreateForm, self).__init__(*args, **kwargs)
         self.fields['slug'].widget.attrs={'class': 'autoslug'}
-        self.fields['gallery'].widget.attrs={'class': 'autoslug'}
         self.fields['title'].widget.attrs={'class': 'autoslug-source'}
         self.fields['template'].queryset = Template.objects.filter(is_main=True)
 
     def clean(self):
         super(DocumentCreateForm, self).clean()
-        file = self.cleaned_data['file']
         template = self.cleaned_data['template']
+        self.cleaned_data['gallery'] = self.cleaned_data['slug']
 
-        if file is not None:
-            try:
-                self.cleaned_data['text'] = file.read().decode('utf-8')
-            except UnicodeDecodeError:
-                raise forms.ValidationError(_("Text file must be UTF-8 encoded."))
-        elif template is not None:
+        if template is not None:
             self.cleaned_data['text'] = template.content
 
-        if not self.cleaned_data["text"]:
-            self._errors["file"] = self.error_class([_("You must enter text, upload a file or select a template")])
+        if not self.cleaned_data.get("text"):
+            self._errors["template"] = self.error_class([_("You must select a template")])
 
         return self.cleaned_data
 

@@ -2,13 +2,13 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans "Create a new book" %}</h1>
+    <h1>Utwórz nowy moduł</h1>
 
     <form enctype="multipart/form-data" method="POST">
     {% csrf_token %}
     <table class='editable'>
         {{ form.as_table}}
-        <tr><td></td><td><button type="submit">{% trans "Create book" %}</button></td></tr>
+        <tr><td></td><td><button type="submit">Utwórz moduł</button></td></tr>
     </table>
     </form>
 {% endblock content %}

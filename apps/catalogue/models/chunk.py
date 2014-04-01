@@ -41,6 +41,10 @@ class Chunk(dvcs_models.Document):
         verbose_name_plural = _('chunks')
         permissions = [('can_pubmark', 'Can mark for publishing')]
 
+    class TagMeta:
+        verbose_name = u'etap pracy'
+        verbose_name_plural = u'etapy pracy'
+
     # Representing
     # ============
 
