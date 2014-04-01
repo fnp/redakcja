@@ -503,7 +503,7 @@ class GalleryView(GalleryMixin, UploadView):
         return [
             (u'moduły', reverse('catalogue_document_list')),
             (self.object.title, self.object.get_absolute_url()),
-            (u'materiały'),
+            (u'materiały',),
         ]
 
 
