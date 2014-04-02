@@ -46,7 +46,7 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     comment = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.Textarea,
         label=_(u"Your comments"),
         help_text=_(u"Describe changes you made."),
@@ -97,7 +97,7 @@ class DocumentTextRevertForm(forms.Form):
     )
 
     comment = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.Textarea,
         label=_(u"Your comments"),
         help_text=_(u"Describe the reason for reverting."),
