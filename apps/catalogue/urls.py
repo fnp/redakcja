@@ -1,6 +1,6 @@
 # -*- coding: utf-8
 from django.conf.urls import patterns, url
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.views.generic import RedirectView
 from catalogue.feeds import PublishTrackFeed
 from catalogue.views import GalleryView, GalleryPackageView
@@ -30,7 +30,7 @@ urlpatterns = patterns('catalogue.views',
 
     url(r'^book/(?P<slug>[^/]+)/$', 'book', name="catalogue_book"),
     url(r'^book/(?P<slug>[^/]+)/gallery/$',
-            permission_required('catalogue.change_book')(GalleryView.as_view()),
+            login_required()(GalleryView.as_view()),
             name="catalogue_book_gallery"),
     url(r'^book/(?P<slug>[^/]+)/gallery/package$',
             permission_required('catalogue.change_book')(GalleryPackageView.as_view()),
