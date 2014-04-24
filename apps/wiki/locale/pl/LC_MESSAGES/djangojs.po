@@ -232,8 +232,8 @@ msgid "unknown operation"
 msgstr "Nieznana operacja"
 
 #: static/wiki/editor/src/editor/plugins/core/core.js:126
-msgid "Insert comment after current node"
-msgstr "Wstaw komentarz za bieżącym węzłem"
+msgid "Insert comment"
+msgstr "Wstaw komentarz"
 
 #: static/wiki/editor/src/editor/plugins/core/core.js:148
 msgid "Hide grid"
@@ -358,5 +358,8 @@ msgstr "Wybrany niepoprawny węzeł"
 
 #: static/wiki/editor/src/editor/plugins/core/templates.js:37
 #, c-format
-msgid "Insert template %s after %s"
-msgstr "Wstaw template %s za %s"
+msgid "Insert template %s"
+msgstr "Wstaw template %s"
+
+msgid "Switch to"
+msgstr "Zamień na"
