@@ -61,6 +61,9 @@ msgstr "Utwórz link"
 msgid "Apply"
 msgstr "Zatwierdź"
 
+#: static/wiki/editor/src/editor/modules/data/document.js:29
+msgid "Something wrong happend when applying this change so it was undone."
+msgstr "Coś poszło nie tak podczas wprowadzania tej zmiany, więc została ona cofnięta."
 #: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:145
 #: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:227
 msgid "Link"
