@@ -255,9 +255,19 @@ msgstr "Utwórz link z zaznaczonego tekstu"
 msgid "Mark as emphasized"
 msgstr "Oznacz jako wyróżnione"
 
+#: static/wiki/editor/src/editor/plugins/core/core.js:365
+msgid "Remove emphasis"
+msgstr "Usuń wyróżnienie"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:366
 #: static/wiki/editor/src/editor/plugins/core/core.js:326
 msgid "Mark as citation"
 msgstr "Oznacz jako cytat"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:366
+msgid "Remove citation"
+msgstr "Usuń cytat"
+
 msgid "Create footnote from selection"
 msgstr "Utwórz przypis z zaznaczonego tekstu"
 
