@@ -376,3 +376,12 @@ msgstr "Wstaw template %s"
 
 msgid "Switch to"
 msgstr "Zamień na"
+
+msgid "change"
+msgstr "zmień"
+
+msgid "remove"
+msgstr "usuń"
+
+msgid "Remove link"
+msgstr "Usuń link"

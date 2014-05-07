@@ -100,6 +100,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
         },
         'tags': list(save_form.fields['stage_completed'].choices),
         'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
+        'slug': chunk.book.slug
     })
 
 
