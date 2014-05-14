@@ -90,7 +90,7 @@
         else {}
         self.searchCursor.select();
         self.searchCursor.replace(query);
-        if(self.options['replace-all'] && self.search()) {
+        if(self.search() && self.options['replace-all']) {
             self.replace();
         }
     };
