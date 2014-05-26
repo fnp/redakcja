@@ -416,14 +416,15 @@ class Book(models.Model):
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 
-    def publish(self, user):
+    def publish(self, user, fake=False):
         """
             Publishes a book on behalf of a (local) user.
         """
         self.assert_publishable()
         changes = self.get_current_changes(publishable=True)
         book_xml = self.materialize(changes=changes)
-        apiclient.api_call(user, "books/", {"book_xml": book_xml})
+        if not fake:
+            apiclient.api_call(user, "books/", {"book_xml": book_xml})
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
