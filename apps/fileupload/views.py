@@ -41,7 +41,7 @@ class UploadView(FormView):
 
     def get_directory(self):
         """Directory relative to MEDIA_ROOT. Must end with a slash."""
-        return self.kwargs['path']
+        return self.kwargs['path'].encode('utf-8')
 
     def breadcrumbs(self):
         """List of tuples (name, url) or just (name,) for breadcrumbs.
