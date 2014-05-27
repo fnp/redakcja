@@ -42,7 +42,7 @@ class UploadView(FormView):
 
     def get_directory(self):
         """Directory relative to MEDIA_ROOT. Must end with a slash."""
-        return self.kwargs['path'].encode('utf-8')
+        return self.kwargs['path']
 
     def breadcrumbs(self):
         """List of tuples (name, url) or just (name,) for breadcrumbs.
@@ -78,7 +78,7 @@ class UploadView(FormView):
         filename = smart_bytes(filename)
         path = os.path.abspath(os.path.join(
                 settings.MEDIA_ROOT,
-                self.get_directory(),
+                smart_bytes(self.get_directory()),
                 filename))
         if not path.startswith(settings.MEDIA_ROOT):
             raise Http404
