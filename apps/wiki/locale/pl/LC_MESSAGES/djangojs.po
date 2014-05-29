@@ -385,3 +385,18 @@ msgstr "usuń"
 
 msgid "Remove link"
 msgstr "Usuń link"
+
+msgid "edit"
+msgstr "edytuj"
+
+msgid "Delete"
+msgstr "Usuń"
+
+msgid "Respond"
+msgstr "Odpowiedz"
+
+msgid "Comment"
+msgstr "Skomentuj"
+
+msgid "Delete this comment?"
+msgstr "Usunąć ten komentarz?"
