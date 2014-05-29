@@ -15,6 +15,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
 from django.utils import simplejson
+from django.contrib.auth.decorators import login_required
 
 from catalogue.models import Book, Chunk, Template
 import nice_diff
@@ -51,6 +52,7 @@ def get_history(chunk):
 
 
 @never_cache
+@login_required
 def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     try:
         chunk = Chunk.get(slug, chunk)
