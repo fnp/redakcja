@@ -30,7 +30,7 @@ models.signals.post_save.connect(image_changed, sender=Image)
 
 
 def user_changed(sender, instance, *args, **kwargs):
-    if 'last_login' in kwargs.get('update_fields', []):
+    if 'last_login' in (kwargs.get('update_fields') or {}):
         # Quick hack - this change seems to result from logging user in so just ignore it.
         return
     books = set()
