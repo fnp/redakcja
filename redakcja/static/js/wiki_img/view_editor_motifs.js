@@ -77,7 +77,7 @@
         if (x1 !== null)
             $e.data('coords', [x1, y1, x2, y2]);
         this.$objects_list.append($e);
-        this.$objects_list.append('<span class="delete">(x)</span>');
+        this.$objects_list.append('<span class="delete">(x) </span>');
     }
 
 

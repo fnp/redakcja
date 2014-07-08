@@ -125,3 +125,11 @@
 .gallery-image img[src=''] {
 	background-color: red;
 }
+
+#motifs-editor .toolbar {
+    height: auto;
+}
+
+#objects-editor .toolbar {
+    height: auto;
+}
