@@ -8,6 +8,8 @@
             var self = this;
 
             self.$tag_name = $('#motifs-editor .tag-name');
+            self.$toolbar = $('#motifs-editor .toolbar');
+            self.$scrolled = $('#motifs-editor .scrolled');
             withThemes(function(canonThemes){
                 self.$tag_name.autocomplete(canonThemes, {
                     autoFill: true,
@@ -33,6 +35,7 @@
                     if (window.confirm("Czy na pewno chcesz usunąć ten motyw?")) {
                         $(this).prev().remove();
                         $(this).remove();
+                        self._refreshLayout();
                     }
                     self._resetSelection();
                     return false;
@@ -70,6 +73,9 @@
         self.ias.setOptions({ hide: true });
     }
 
+    MotifsPerspective.prototype._refreshLayout = function() {
+        this.$scrolled.css({top: this.$toolbar.height()});
+    };
 
     MotifsPerspective.prototype._push = function(name, x1, y1, x2, y2) {
         var $e = $('<span class="image-object"></span>')
@@ -78,6 +84,7 @@
             $e.data('coords', [x1, y1, x2, y2]);
         this.$objects_list.append($e);
         this.$objects_list.append('<span class="delete">(x) </span>');
+        this._refreshLayout();
     }
 
 

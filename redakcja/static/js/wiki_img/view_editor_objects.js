@@ -8,6 +8,8 @@
             var self = this;
 
             self.$tag_name = $('#objects-editor .tag-name');
+            self.$toolbar = $('#objects-editor .toolbar');
+            self.$scrolled = $('#objects-editor .scrolled');
             self.$objects_list = $('#objects-editor .objects-list');
 
             self.x1 = null;
@@ -24,6 +26,7 @@
                     if (window.confirm("Czy na pewno chcesz usunąć ten obiekt?")) {
                         $(this).prev().remove();
                         $(this).remove();
+                        self._refreshLayout();
                     }
                     self._resetSelection();
                     return false;
@@ -61,6 +64,9 @@
         self.ias.setOptions({ hide: true });
     }
 
+    ObjectsPerspective.prototype._refreshLayout = function() {
+        this.$scrolled.css({top: this.$toolbar.height()});
+    };
 
     ObjectsPerspective.prototype._push = function(name, x1, y1, x2, y2) {
         var $e = $('<span class="image-object"></span>')
@@ -69,6 +75,7 @@
             $e.data('coords', [x1, y1, x2, y2]);
         this.$objects_list.append($e);
         this.$objects_list.append('<span class="delete">(x) </span>');
+        this._refreshLayout();
     }
 
 
