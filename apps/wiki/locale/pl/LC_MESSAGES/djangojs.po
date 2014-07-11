@@ -400,3 +400,12 @@ msgstr "Skomentuj"
 
 msgid "Delete this comment?"
 msgstr "Usunąć ten komentarz?"
+
+msgid "Metadata"
+msgstr "Metadane"
+
+msgid "Document Metadata"
+msgstr "Metadane dokumentu"
+
+msgid "Close"
+msgstr "Zamknij"
