@@ -307,22 +307,26 @@ ScriptletCenter.prototype.callInteractive = function(opts) {
 
 	$.blockUI({message: $progress, showOverlay: false});
 
+    $('#save-button').attr('disabled', true);
     var input = self.XMLEditorSelectedText(opts.context);
-	self.scriptlets[opts.action](opts.context, opts.extra, input, 0, 0, function(output, move_forward, move_up){
-	    /*if(timer)
-	        clearTimeout(timer);
-	    else */
-        if (input != output) {
-            self.XMLEditorReplaceSelectedText(opts.context, output)
-        }
-        if (move_forward || move_up) {
-            try {
-                self.XMLEditorMoveCursorForward(opts.context, move_forward, move_up)
+    window.setTimeout(function() {
+        self.scriptlets[opts.action](opts.context, opts.extra, input, 0, 0, function(output, move_forward, move_up){
+            /*if(timer)
+                clearTimeout(timer);
+            else */
+            if (input != output) {
+                self.XMLEditorReplaceSelectedText(opts.context, output)
             }
-            catch(e) {}
-        }
-	    $.unblockUI(); // done
-	});
+            if (move_forward || move_up) {
+                try {
+                    self.XMLEditorMoveCursorForward(opts.context, move_forward, move_up)
+                }
+                catch(e) {}
+            }
+            $.unblockUI({onUnblock: function() { $('#save-button').attr('disabled', null)}}); // done
+        });
+    }, 0);
+
 }
 
 ScriptletCenter.prototype.XMLEditorSelectedText = function(editor) {
