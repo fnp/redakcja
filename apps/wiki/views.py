@@ -83,13 +83,21 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     request.session['wiki_last_books'] = last_books
 
     save_form = forms.DocumentTextSaveForm(user=request.user, prefix="textsave")
+    try:
+        version = int(request.GET.get('version', None))
+    except:
+        version = None
+    if version:
+        text = chunk.at_revision(version).materialize()
+    else:
+        text = chunk.materialize()
     return render(request, template_name, {
         'serialized_document_data': simplejson.dumps({
-            'document': chunk.materialize(),
+            'document': text,
             'document_id': chunk.id,
             'title': chunk.book.title,
             'history': get_history(chunk),
-            'version': chunk.revision(),
+            'version': version or chunk.revision(),
             'stage': chunk.stage.name if chunk.stage else None,
             'assignment': chunk.user.username if chunk.user else None
         }),
