@@ -9,10 +9,10 @@
         <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript" charset="utf-8"></script>
         
         {% if DEBUG %}
-            <link rel="stylesheet/less" type="text/css" href="{% static 'wiki/rng/src/editor/styles/main.less' %}"/>
+            <link rel="stylesheet/less" type="text/css" href="{% static 'wiki/editor/src/editor/styles/main.less' %}"/>
             <script type="text/javascript">less = {relativeUrls: true};</script>
-            <script src="{% static 'wiki/rng/libs/less-1.3.3.min.js' %}"></script>
-            <script src="{% static 'wiki/rng/libs/require.js' %}" data-main="{% static 'wiki/rng/src/editor/entrypoint.js' %}" ></script>
+            <script src="{% static 'wiki/editor/libs/less-1.3.3.min.js' %}"></script>
+            <script src="{% static 'wiki/editor/libs/require.js' %}" data-main="{% static 'wiki/editor/src/editor/entrypoint.js' %}" ></script>
         {% else %}
             <link href="{% static 'wiki/build/rng.css' %}" rel="stylesheet">
             <script src="{% static 'wiki/build/rng.js' %}"></script>

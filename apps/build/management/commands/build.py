@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         wiki_base_dir = os.path.join(os.getcwd(), 'apps', 'wiki', 'static', 'wiki')
-        rng_base_dir = os.path.join(wiki_base_dir, 'rng')
+        rng_base_dir = os.path.join(wiki_base_dir, 'editor')
         build_dir = os.path.join(wiki_base_dir, 'build')
 
         self.stdout.write('Installing editor dependencies')
@@ -40,4 +40,4 @@ class Command(BaseCommand):
             os.environ['PATH'] = '%s:%s' % (options['node_bin_path'], os.environ['PATH'])
         call(['./node_modules/.bin/grunt', 'build', '--output-dir=%s' % build_dir], cwd = rng_base_dir)
 
-        call_command('collectstatic', interactive = False, ignore_patterns = ['rng'])
+        call_command('collectstatic', interactive = False, ignore_patterns = ['editor'])

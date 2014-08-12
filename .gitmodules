@@ -1,3 +1,6 @@
 [submodule "lib/librarian"]
 	path = lib/librarian
 	url = git://git.nowoczesnapolska.org.pl/librarian.git
+[submodule "apps/wiki/static/wiki/editor"]
+	path = apps/wiki/static/wiki/editor
+	url = git://git.nowoczesnapolska.org.pl/fnpeditor.git
