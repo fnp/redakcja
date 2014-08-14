@@ -409,3 +409,78 @@ msgstr "Metadane dokumentu"
 
 msgid "Close"
 msgstr "Zamknij"
+
+msgid "Exercise"
+msgstr "Zadanie"
+
+msgid "Insert exercise"
+msgstr "Wstaw zadanie"
+
+msgid "Single Choice"
+msgstr "Wybór jednokrotny"
+
+msgid "Multiple Choice"
+msgstr "Wybór wielokrotny"
+
+msgid "Gaps"
+msgstr "Luki"
+
+msgid "Replace"
+msgstr "Zastąp"
+
+msgid "Order"
+msgstr "Uporządkuj"
+
+msgid "True or False"
+msgstr "Prawda lub fałsz"
+
+msgid "True"
+msgstr "Prawda"
+
+msgid "False"
+msgstr "Fałsz"
+
+msgid "Mark to replace"
+msgstr "Oznacz do zastąpienia"
+
+msgid "Edit replace mark"
+msgstr "Edytuj zastąpienie"
+
+msgid "Remove replace mark"
+msgstr "Usuń zastąpienie"
+
+msgid "Create a gap"
+msgstr "Stwórz lukę"
+
+msgid "Remove a gap"
+msgstr "Usuń lukę"
+
+msgid "Description goes here"
+msgstr "Tu wpisz polecenie"
+
+msgid "Removing exercise"
+msgstr "Usuwanie zadania"
+
+msgid "Do you really want to remove this exercise?"
+msgstr "Czy na pewno chcesz usunąć to zadanie?"
+
+msgid "Yes"
+msgstr "Tak"
+
+msgid "No, don't do anything!"
+msgstr "Nie, nic nie rób!"
+
+msgid "Edit text to replace with"
+msgstr "Edytuj tekst zastępujący"
+
+msgid "Initial"
+msgstr "Inicjalnie"
+
+msgid "Solution"
+msgstr "Rozwiązanie"
+
+msgid "Change solution"
+msgstr "Zmień rozwiązanie"
+
+msgid "First item"
+msgstr "Pierwszy element"
