@@ -8,7 +8,7 @@ from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from fnpdjango.utils.text.slughifi import slughifi
+from slugify import slugify
 
 
 import apiclient
@@ -127,7 +127,7 @@ class Book(models.Model):
             if not title:
                 title = u'część %d' % (i + 1)
 
-            slug = slughifi(title)
+            slug = slugify(title)
 
             if i < book_len:
                 chunk = instance[i]
@@ -167,7 +167,7 @@ class Book(models.Model):
         if titles is not None:
             assert len(titles) == len_other
             if slugs is None:
-                slugs = [slughifi(t) for t in titles]
+                slugs = [slugify(t) for t in titles]
 
         for i, chunk in enumerate(other):
             # move chunk to new book
@@ -220,7 +220,7 @@ class Book(models.Model):
 
         for i in range(len(self), len(other)):
             title = u"pusta część %d" % i
-            chunk = self.add(slughifi(title), title)
+            chunk = self.add(slugify(title), title)
             chunk.commit('')
 
         for i in range(len(other)):

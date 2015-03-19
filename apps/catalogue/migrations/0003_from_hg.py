@@ -11,7 +11,7 @@ from south.db import db
 from south.v2 import DataMigration
 
 from django.conf import settings
-from fnpdjango.utils.text.slughifi import slughifi
+from slugify import slugify
 
 META_REGEX = re.compile(r'\s*<!--\s(.*?)-->', re.DOTALL | re.MULTILINE)
 STAGE_TAGS_RE = re.compile(r'^#stage-finished: (.*)$', re.MULTILINE)
@@ -54,7 +54,7 @@ def gallery(slug, text):
             except ValueError:
                 continue
 
-    gallery = result.get('gallery', slughifi(slug))
+    gallery = result.get('gallery', slugify(slug))
 
     if gallery.startswith('/'):
         gallery = os.path.basename(gallery)
@@ -68,7 +68,7 @@ def migrate_file_from_hg(orm, fname, entry):
     if fname.endswith('.xml'):
         fname = fname[:-4]
     title = file_to_title(fname)
-    fname = slughifi(fname)
+    fname = slugify(fname)
 
     # create all the needed objects
     # what if it already exists?

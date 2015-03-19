@@ -144,7 +144,7 @@ def upload(request):
     if request.method == "POST":
         form = forms.DocumentsUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            from fnpdjango.utils.text.slughifi import slughifi
+            from slugify import slugify
 
             if request.user.is_authenticated():
                 creator = request.user
@@ -161,7 +161,7 @@ def upload(request):
                 if filename[-1] == '/':
                     continue
                 title = os.path.basename(filename)[:-4]
-                slug = slughifi(title)
+                slug = slugify(title)
                 if not (slug and filename.endswith('.xml')):
                     skipped_list.append(filename)
                 elif slug in slugs:

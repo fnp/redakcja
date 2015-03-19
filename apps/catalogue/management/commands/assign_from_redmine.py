@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
 from django.db import transaction
 
-from fnpdjango.utils.text.slughifi import slughifi
+from slugify import slugify
 from catalogue.models import Chunk
 
 
@@ -91,7 +91,7 @@ class Command(BaseCommand):
                 if fname.endswith('.xml'):
                     fname = fname[:-4]
                 fname = fname.replace(' ', '_')
-                fname = slughifi(fname)
+                fname = slugify(fname)
 
                 chunks = Chunk.objects.filter(book__slug=fname)
                 if not chunks:

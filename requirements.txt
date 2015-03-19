@@ -1,4 +1,4 @@
--i http://py.mdrn.pl:8443/simple
+-i https://py.mdrn.pl:8443/simple
 
 ## Python libraries
 lxml>=2.2.2
@@ -13,13 +13,14 @@ httplib2 # oauth2 dependency
 
 ## Django
 Django>=1.6,<1.7
-fnpdjango<0.2
+fnpdjango>=0.2,<0.3
 django-pipeline>=1.2,<1.3
 django_cas>=2.1,<2.2
 sorl-thumbnail>=11.09,<12
 django-maintenancemode>=0.9
 django-pagination
 django-gravatar2
+python-slugify
 
 celery>=3.1.12,<3.2
 kombu>=3.0,<3.1
