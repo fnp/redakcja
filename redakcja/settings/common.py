@@ -112,9 +112,8 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'pagination',
     'django_gravatar',
-    'djcelery',
-    'djkombu',
     'fileupload',
+    'kombu.transport.django',
     'pipeline',
     'fnpdjango',
 
@@ -138,15 +137,10 @@ CAS_USER_ATTRS_MAP = {
 IMAGE_DIR = 'images/'
 
 
-import djcelery
-djcelery.setup_loader()
-
-BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
-BROKER_HOST = "localhost"
-BROKER_PORT = 5672
-BROKER_USER = "guest"
-BROKER_PASSWORD = "guest"
-BROKER_VHOST = "/"
+BROKER_URL = 'django://'
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+CELERY_SEND_TASK_ERROR_EMAILS = True
+CELERY_ACCEPT_CONTENT = ['pickle']  # Remove when all tasks jsonable.
 
 SHOW_APP_VERSION = False
 

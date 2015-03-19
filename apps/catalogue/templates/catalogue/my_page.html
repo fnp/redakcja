@@ -23,8 +23,14 @@
     <div id="last-edited-list">
         <h2>{% trans "Your last edited documents" %}</h2>
         <ol>
-            {% for slugs, item in last_books %}
-            <li><a href="{% url 'wiki_editor' slugs.0 slugs.1 %}"
+            {% for edit_url, item in last_books %}
+                <li><a
+                {% if edit_url|length == 2 %}
+                    {# Temporary support for old-style last_books. #}
+                    href="{% url 'wiki_editor' edit_url.0 edit_url.1 %}"
+                {% else %}
+                    href="{{ edit_url }}"
+                {% endif %}
                 target="_blank">{{ item.title }}</a><br/><span class="date">({{ item.time|date:"H:i:s, d/m/Y" }})</span></li>
             {% endfor %}
         </ol>

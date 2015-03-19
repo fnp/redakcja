@@ -1,8 +1,8 @@
--i http://pypi.nowoczesnapolska.org.pl/simple
+-i http://py.mdrn.pl:8443/simple
 
 ## Python libraries
 lxml>=2.2.2
-Mercurial>=2.6,<2.7
+Mercurial>=3.3,<3.4
 PyYAML>=3.0
 Pillow
 oauth2
@@ -20,8 +20,9 @@ sorl-thumbnail>=11.09,<12
 django-maintenancemode>=0.9
 django-pagination
 django-gravatar2
-django-celery
-django-kombu
+
+celery>=3.1.12,<3.2
+kombu>=3.0,<3.1
 
 # migrations
-south>=0.6
+South>=1.0.2

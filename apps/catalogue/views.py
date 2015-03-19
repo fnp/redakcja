@@ -58,10 +58,12 @@ def user(request, username):
 @active_tab('my')
 @never_cache
 def my(request):
+    last_books = sorted(request.session.get("wiki_last_books", {}).items(),
+        key=lambda x: x[1]['time'], reverse=True)
+    for k, v in last_books:
+        v['time'] = datetime.fromtimestamp(v['time'])
     return render(request, 'catalogue/my_page.html', {
-        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
-                        key=lambda x: x[1]['time'], reverse=True),
-
+        'last_books': last_books,
         "logout_to": '/',
         })
 

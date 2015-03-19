@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import logging
+from time import mktime
 import urllib
 
 from django.conf import settings
@@ -52,8 +53,8 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
 
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
-    last_books[slug, chunk.slug] = {
-        'time': access_time,
+    last_books[reverse(editor, args=[chunk.book.slug, chunk.slug])] = {
+        'time': mktime(access_time.timetuple()),
         'title': chunk.pretty_name(),
         }
 
@@ -87,7 +88,7 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
     access_time = datetime.now()
     last_books = request.session.get("wiki_last_books", {})
     last_books[slug, chunk.slug] = {
-        'time': access_time,
+        'time': mktime(access_time.timetuple()),
         'title': chunk.book.title,
         }
 
