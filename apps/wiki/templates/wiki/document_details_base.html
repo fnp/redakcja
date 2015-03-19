@@ -3,15 +3,15 @@
 
 {% block titleextra %}{{ chunk.pretty_title }}{% endblock %}
 {% block extrahead %}
-{% load compressed %}
-{% compressed_css 'detail' %}
+{% load pipeline %}
+{% stylesheet 'detail' %}
 {% endblock %}
 
 {% block extrabody %}
 <script type="text/javascript">
     var STATIC_URL = '{{STATIC_URL}}';
 </script>
-{% compressed_js 'detail' %}
+{% javascript 'detail' %}
 {% endblock %}
 
 {% block maincontent %}

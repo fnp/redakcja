@@ -1,10 +1,10 @@
-{% load compressed i18n %}
+{% load pipeline i18n %}
 {% load catalogue %}
 <!DOCTYPE html>
 <html>
 <head lang="{{ LANGUAGE_CODE }}">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    {% compressed_css 'catalogue' %}
+    {% stylesheet 'catalogue' %}
     <title>{% block title %}{% trans "Platforma Redakcyjna" %} ::
         {% block titleextra %}{% endblock %}{% endblock title %}</title>
     {% block add_css %}{% endblock %}
@@ -45,7 +45,7 @@
 
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-{% compressed_js 'catalogue' %}
+{% javascript 'catalogue' %}
 {% block add_js %}{% endblock %}
 {% block extrabody %}
 {% endblock %}

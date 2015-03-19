@@ -2,14 +2,14 @@
 
 {% load i18n %}
 {% load catalogue book_list wall %}
-{% load compressed %}
+{% load pipeline %}
 
 {% block add_js %}
-{% compressed_js 'book_list' %}
+{% javascript 'book_list' %}
 {% endblock %}
 
 {% block add_css %}
-{% compressed_css 'book_list' %}
+{% stylesheet 'book_list' %}
 {% endblock %}
 
 {% block titleextra %}{% trans "My page" %}{% endblock %}
