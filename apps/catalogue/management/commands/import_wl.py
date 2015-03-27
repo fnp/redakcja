@@ -31,9 +31,7 @@ class Command(BaseCommand):
         verbose = options.get('verbose')
 
         # Start transaction management.
-        transaction.commit_unless_managed()
         transaction.enter_transaction_management()
-        transaction.managed(True)
 
         if verbose:
             print 'Reading currently managed files (skipping hidden ones).'

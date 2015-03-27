@@ -47,9 +47,7 @@ class Command(BaseCommand):
             redmine_csv = REDMINE_CSV
 
         # Start transaction management.
-        transaction.commit_unless_managed()
         transaction.enter_transaction_management()
-        transaction.managed(True)
 
         redakcja_link = re.compile(re.escape(redakcja) + r'([-_.:?&%/a-zA-Z0-9]*)')
 

@@ -210,7 +210,7 @@ def book_xml(request, slug):
         return HttpResponseForbidden("Not authorized.")
     xml = book.materialize()
 
-    response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
+    response = http.HttpResponse(xml, content_type='application/xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
     return response
 
@@ -223,7 +223,7 @@ def book_txt(request, slug):
 
     doc = book.wldocument()
     text = doc.as_text().get_string()
-    response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
+    response = http.HttpResponse(text, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
     return response
 
@@ -238,7 +238,7 @@ def book_html(request, slug):
     html = doc.as_html()
 
     html = html.get_string() if html is not None else ''
-    # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
+    # response = http.HttpResponse(html, content_type='text/html')
     # return response
     # book_themes = {}
     # for fragment in book.fragments.all().iterator():
@@ -275,7 +275,7 @@ def book_epub(request, slug):
     doc = book.wldocument()
     # TODO: error handling
     epub = doc.as_epub().get_string()
-    response = HttpResponse(mimetype='application/epub+zip')
+    response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
     return response
@@ -426,7 +426,7 @@ def chunk_edit(request, slug, chunk):
     })
 
 
-@transaction.commit_on_success
+@transaction.atomic
 @login_required
 @require_POST
 def chunk_mass_edit(request):
@@ -469,7 +469,7 @@ def chunk_mass_edit(request):
     return HttpResponse("", content_type="text/plain")
 
 
-@transaction.commit_on_success
+@transaction.atomic
 @login_required
 @require_POST
 def image_mass_edit(request):

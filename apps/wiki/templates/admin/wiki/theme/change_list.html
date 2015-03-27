@@ -21,7 +21,7 @@
 
 <a id="redmine-table-switch">↓ {% trans "Table for Redmine wiki" %} ↓</a>
 <div id="redmine-table" style="display:none; padding:1em; border: 1px solid #aaa;">
-    |{% for theme in cl.get_query_set %}[[{{ theme }}]]|{% if forloop.counter|divisibleby:7 %}<br/>
+    |{% for theme in cl.get_queryset %}[[{{ theme }}]]|{% if forloop.counter|divisibleby:7 %}<br/>
         |{% endif %}{% endfor %}
 </div>
 

@@ -329,7 +329,7 @@ class Document(models.Model):
         else:
             return None
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def prepend_history(self, other):
         """Takes over the the other document's history and prepends to own."""
 

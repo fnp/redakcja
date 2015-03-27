@@ -46,7 +46,7 @@ def preview(request, book, chunk=None, rev=None):
     except:
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     cover = DefaultEbookCover(info)
-    response = HttpResponse(mimetype=cover.mime_type())
+    response = HttpResponse(content_type=cover.mime_type())
     image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
     image.save(response, cover.format)
     return response

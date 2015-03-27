@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.utils import simplejson as json
+import json
 
 from toolbar import models
 
@@ -9,6 +9,7 @@ from toolbar import models
 class ButtonAdminForm(forms.ModelForm):
     class Meta:
         model = models.Button
+        exclude = []
 
     def clean_params(self):
         value = self.cleaned_data['params']

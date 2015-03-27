@@ -94,7 +94,7 @@ class Book(models.Model):
         return self.public or request.user.is_authenticated()
 
     @classmethod
-    @transaction.commit_on_success
+    @transaction.atomic
     def create(cls, creator, text, *args, **kwargs):
         b = cls.objects.create(*args, **kwargs)
         b.chunk_set.all().update(creator=creator)
@@ -106,7 +106,7 @@ class Book(models.Model):
         return self.chunk_set.reverse()[0].split(*args, **kwargs)
 
     @classmethod
-    @transaction.commit_on_success
+    @transaction.atomic
     def import_xml_text(cls, text=u'', previous_book=None,
                 commit_args=None, **kwargs):
         """Imports a book from XML, splitting it into chunks as necessary."""
@@ -153,7 +153,7 @@ class Book(models.Model):
             i += 1
         return new_slug
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def append(self, other, slugs=None, titles=None):
         """Add all chunks of another book to self."""
         assert self != other
@@ -213,7 +213,7 @@ class Book(models.Model):
         other.delete()
 
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def prepend_history(self, other):
         """Prepend history from all the other book's chunks to own."""
         assert self != other

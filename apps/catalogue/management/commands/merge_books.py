@@ -126,9 +126,7 @@ class Command(BaseCommand):
             return
 
         # Start transaction management.
-        transaction.commit_unless_managed()
         transaction.enter_transaction_management()
-        transaction.managed(True)
 
         books = [Book.objects.get(slug=slug) for slug in slugs]
         common_slug = common_prefix(slugs)

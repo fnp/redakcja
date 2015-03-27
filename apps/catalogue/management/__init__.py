@@ -100,9 +100,7 @@ class XmlUpdater(object):
             books = Book.objects.all()
 
         # Start transaction management.
-        transaction.commit_unless_managed()
         transaction.enter_transaction_management()
-        transaction.managed(True)
 
         for book in books:
             self.counters['All books'] += 1

@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
 
-from django import http
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET, require_POST
 from django.conf import settings
@@ -188,7 +188,7 @@ def diff(request, object_id):
         docA = ""
     docB = doc.at_revision(revB).materialize()
 
-    return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
+    return HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
                                          docB.splitlines(), context=3))
 
 

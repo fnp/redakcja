@@ -1,9 +1,8 @@
 import urllib
 
-from django.utils import simplejson
+import json
 import oauth2
 
-from apiclient.models import OAuthConnection
 from apiclient.settings import WL_CONSUMER_KEY, WL_CONSUMER_SECRET, WL_API_URL
 
 
@@ -22,13 +21,14 @@ class NotAuthorizedError(BaseException):
 
 
 def api_call(user, path, data=None):
+    from .models import OAuthConnection
     conn = OAuthConnection.get(user)
     if not conn.access:
         raise NotAuthorizedError("No WL authorization for user %s." % user)
     token = oauth2.Token(conn.token, conn.token_secret)
     client = oauth2.Client(wl_consumer, token)
     if data is not None:
-        data = simplejson.dumps(data)
+        data = json.dumps(data)
         data = urllib.urlencode({"data": data})
         resp, content = client.request(
                 "%s%s" % (WL_API_URL, path),
@@ -40,7 +40,7 @@ def api_call(user, path, data=None):
     status = resp['status']
 
     if status == '200':
-        return simplejson.loads(content)
+        return json.loads(content)
     elif status.startswith('2'):
         return
     elif status == '401':

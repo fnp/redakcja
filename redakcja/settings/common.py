@@ -79,7 +79,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_cas.middleware.CASMiddleware',
 
-    'django.middleware.doc.XViewMiddleware',
+    'django.contrib.admindocs.middleware.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
 )
