@@ -22,6 +22,7 @@ django-gravatar2
 python-slugify
 django-forms-bootstrap
 jsonfield
+django-email-extras
 
 celery>=3.1.12,<3.2
 kombu>3.0,<3.1
