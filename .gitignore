@@ -30,6 +30,9 @@ nbproject/*
 .pydevproject
 .settings
 
+# PyCharm
+.idea
+
 node_modules
 
 /static_test
