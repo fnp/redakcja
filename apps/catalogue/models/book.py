@@ -3,13 +3,13 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from slughifi import slughifi
-
 
 import apiclient
 from catalogue.helpers import cached_in_field, GalleryMerger
@@ -18,9 +18,11 @@ from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
 from cover.models import Image
+from organizations.models import Organization
 import os
 import shutil
 import re
+
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -30,6 +32,9 @@ class Book(models.Model):
     public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(u'materiały', max_length=255, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
+
+    owner_user = models.ForeignKey(User, null=True)
+    owner_organization = models.ForeignKey(Organization, null=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
     parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
@@ -320,7 +325,7 @@ class Book(models.Model):
         return len(self) == 1
     single = cached_in_field('_single')(is_single)
 
-    @cached_in_field('_short_html')
+    #@cached_in_field('_short_html')
     def short_html(self):
         return render_to_string('catalogue/book_list/book.html', {'book': self})
 

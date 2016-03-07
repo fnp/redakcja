@@ -4,11 +4,11 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from catalogue.models.template import Template
-from catalogue.models.project import Project
-from catalogue.models.chunk import Chunk
-from catalogue.models.publish_log import BookPublishRecord, ChunkPublishRecord
-from catalogue.models.book import Book
-from catalogue.models.listeners import *
+from catalogue.models.document import Document
+from catalogue.models.plan import Plan
+from catalogue.models.publish_log import PublishRecord
+#from catalogue.models.book import Book
+#from catalogue.models.listeners import *
 
 from django.contrib.auth.models import User as AuthUser
 

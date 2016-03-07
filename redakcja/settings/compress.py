@@ -28,7 +28,9 @@ PIPELINE_CSS = {
     },
     'catalogue': {
         'source_filenames': (
-            'css/filelist.css',
+            #'css/filelist.css',
+            'css/base.css',
+            'datepicker/css/datepicker.css',
         ),
         'output_filename': 'compressed/catalogue_styles.css',
      },
@@ -89,6 +91,7 @@ PIPELINE_JS = {
                 'js/catalogue/catalogue.js',
                 'js/slugify.js',
                 'email_mangler/email_mangler.js',
+                'datepicker/js/bootstrap-datepicker.js',
         ),
         'output_filename': 'compressed/catalogue_scripts.js',
      },

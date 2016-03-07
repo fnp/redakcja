@@ -1,0 +1,142 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load thumbnail %}
+{% load catalogue_files %}
+
+
+{% block content %}
+
+<div class="jumbotron" style="margin-top: -20px">
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+
+    <h1><span style="color: #dd8000">MIL</span>/<span style="color: #0a0">PEER</span>
+    </h1>
+
+<div class="row">
+
+<div class="col-md-6">
+
+{% blocktrans %}
+    <p>Media &amp; Information Literacy<br>
+    Platform for Exchanging<br>
+    Educational Resources<br>
+    </p>
+{% endblocktrans %}
+    <a class="btn btn-success btn-lg" id="tuton">{% trans "Create and share your resources<br>Start tutorial" %}</a>
+</div>
+<div class="col-md-6">
+    <a href="/competition/" class="btn btn-success btn-lg">{% trans "Competition" %}</a>
+    <p style="margin-top: 17px;">{% trans "Joint project by:" %}</p>
+    <a target="_blank" href="http://evensfoundation.be"><img style="margin-top: 20px; width: 145px;margin-right: 40px;" src="http://evensfoundation.be/sites/all/themes/evens/images/logo2.png"></a>
+    <a target="_blank" href="https://nowoczesnapolska.org.pl"><img style="margin-top: 20px; width: 135px;" src="//nowoczesnapolska.org.pl/wp-content/themes/koed/images/nowoczesnapolska.org.pl.png"></a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+{{ block.super }}
+{% endblock %}
+
+{% block inner_content %}
+
+
+<section>
+<h1>{% trans "See active organizations and join" %}</h1>
+{% for org in organizations %}
+    <div style="width: 182px; height: 180px; position: relative; border: 1px solid #aaa; margin: 10px; display: inline-block; padding: 0px; vertical-align: bottom">
+        <a style='display:block' href="{% url 'organizations_main' org.pk %}">
+        {% if org.logo %}
+            {% thumbnail org.logo "160x100" format="PNG"  padding=True as th %}
+            <img src="{{ th.url }}" style="margin: 10px;">
+            {% endthumbnail %}
+        {% endif %}
+        <div style="position: absolute; bottom: 10px; left: 10px; width: 160px; height: 40px; overflow:hidden">{{ org.name }}</div>
+        </a>
+    </div>
+{% endfor %}
+{% if more_organizations %}
+<p style="text-align: right"><a href="{% url 'organizations' %}">{% trans "More organizations" %}</a></p>
+{% endif %}
+</section>
+
+
+
+
+<section>
+<h1>{% trans "Finished resources" %}</h1>
+{% for doc in finished %}
+    <div class="resource-box" style="width: 182px; height: 180px; position: relative; border: 1px solid #aaa; margin: 10px; display: inline-block; padding: 0px; vertical-align: bottom">
+        <a style='display:block' href="{% url 'catalogue_html' doc.pk %}">
+        {% if doc.meta.cover_url %}
+            {% thumbnail doc.meta.cover_url|as_media_for:doc "180x120" crop="center" format="PNG"  as th %}
+            <img src="{{ th.url }}">
+            {% endthumbnail %}
+        {% elif doc.owner_organization.logo %}
+            {% thumbnail doc.owner_organization.logo "160x100" format="PNG"  padding=True as th %}
+            <img src="{{ th.url }}">
+            {% endthumbnail %}
+        {% endif %}
+        <div style="position: absolute; bottom: 10px; left: 10px; width: 160px; height: 40px; overflow:hidden">{{ doc.meta.title }}</div>
+        <div class="box-overlay" style="position: absolute; top:0; left: 0; padding: 5px; width: 180px; height: 120px; background: black; color: white; opacity: .7">
+            {% if doc.meta.audience %}
+                {% trans "Audience" %}: {{ doc.meta.audience }}<br>
+            {% endif %}
+            {% trans "Owner" %}: {{ doc.owner_organization|default:"" }}
+            {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}<br/>
+        </div>
+        </a>
+    </div>
+{% endfor %}
+{% if more_finished %}
+<p style="text-align: right"><a href="{% url 'catalogue_finished' %}">{% trans "More finished resources" %}</a></p>
+{% endif %}
+</section>
+
+<section>
+<h1>{% trans "Upcoming resources" %}</h1>
+{% for doc in upcoming %}
+    <div class="resource-box" style="width: 182px; height: 180px; position: relative; border: 1px solid #aaa; margin: 10px; display: inline-block; padding: 0px; vertical-align: bottom">
+        <a style='display:block' href="{% url 'catalogue_preview' doc.pk %}">
+        {% if doc.meta.cover_url %}
+            {% thumbnail doc.meta.cover_url|as_media_for:doc "180x120" crop="center" format="PNG"  as th %}
+            <img src="{{ th.url }}">
+            {% endthumbnail %}
+        {% elif doc.owner_organization.logo %}
+            {% thumbnail doc.owner_organization.logo "160x100" format="PNG"  padding=True as th %}
+            <img src="{{ th.url }}" style="margin: 10px;">
+            {% endthumbnail %}
+        {% endif %}
+        <div style="position: absolute; bottom: 10px; left: 10px; width: 160px; height: 40px; overflow:hidden">{{ doc.meta.title }}</div>
+        <div class="box-overlay" style="position: absolute; top:0; left: 0; padding: 5px; width: 180px; height: 120px; background: black; color: white; opacity: .7">
+            {% if doc.meta.audience %}
+                {% trans "Audience" %}: {{ doc.meta.audience }}<br>
+            {% endif %}
+            {% trans "Owner" %}: {{ doc.owner_organization|default:"" }}
+            {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}<br/>
+        </div>
+        </a>
+    </div>
+{% endfor %}
+{% if more_upcoming %}
+<p style="text-align: right"><a href="{% url 'catalogue_upcoming' %}">{% trans "More upcoming resources" %}</a></p>
+{% endif %}
+</section>
+
+
+
+
+<div id="tutModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header"><h4>{% trans "Tutorial mode" %}</h4></div>
+        <div class="modal-body"><p>{% trans "Tutorial will help you navigate through the platform. You can disable it at any point." %}</p></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 {% load i18n %}
-<div id="save_dialog" class="dialog" data-ui-jsclass="SaveDialog">
+<div id="DATOLDsave_dialog" class="dialog" data-ui-jsclass="SaveDialog">
 	<form method="POST" action="">
     {% csrf_token %}
 	<p>{{ forms.text_save.comment.label }}</p>
@@ -28,10 +28,10 @@
     </table>
 	{% else %}
 	<p>
-		{{ forms.text_save.stage_completed.label }}:
-		{{ forms.text_save.stage_completed }}
-		<span class="help_text">{{ forms.text_save.stage_completed.help_text }}</span>
-		<span data-ui-error-for="{{ forms.text_save.stage_completed.name }}"> </span>
+		{{ forms.text_save.stage.label }}:
+		{{ forms.text_save.stage }}
+		<br><span class="help_text">{{ forms.text_save.stage.help_text }}</span>
+		<span data-ui-error-for="{{ forms.text_save.stage.name }}"> </span>
 	</p>
     {% if can_pubmark %}
 	<p>

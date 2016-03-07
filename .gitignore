@@ -1,11 +1,12 @@
 localsettings.py
-dev.sqlite
+*.sqlite
 requirements.pybundle
 *~
 *.orig
 /redakcja/media
 /static
 .sass-cache
+var
 
 # Python garbage
 *.pyc

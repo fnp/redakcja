@@ -1,0 +1,22 @@
+.overdue {
+    background-color: #A94442;
+}
+.box-overlay {
+    display: none;
+}
+.resource-box:hover .box-overlay {
+    display: block;
+}
+
+
+.popover {
+    color: #333;
+}
+
+
+
+
+
+.required-field:before {
+  content: "* ";
+}

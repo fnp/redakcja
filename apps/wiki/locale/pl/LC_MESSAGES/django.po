@@ -3,91 +3,74 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Platforma Redakcyjna\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-21 14:34+0100\n"
-"PO-Revision-Date: 2013-07-10 16:58+0100\n"
-"Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
-"pl>\n"
+"POT-Creation-Date: 2016-01-26 10:40+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
 
-#: forms.py:19 forms.py:63 views.py:279
-msgid "Publishable"
-msgstr "Gotowe do publikacji"
-
-#: forms.py:38 forms.py:89
+#: forms.py:28 forms.py:74
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:39 forms.py:90
+#: forms.py:29 forms.py:75
 msgid "Your name"
-msgstr "Imię i nazwisko"
+msgstr "Twoje imię i nazwisko"
 
-#: forms.py:44 forms.py:95
+#: forms.py:34 forms.py:80
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:45 forms.py:96
+#: forms.py:35 forms.py:81
 msgid "Your email address, so we can show a gravatar :)"
-msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
+msgstr "Twój e-mail, do pokazania gravatara :)"
 
-#: forms.py:51 forms.py:102
+#: forms.py:41 forms.py:87
 msgid "Your comments"
-msgstr "Twój komentarz"
+msgstr "Twoje komentarze"
 
-#: forms.py:52
+#: forms.py:42
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:58
-msgid "Completed"
-msgstr "Ukończono"
+#: forms.py:48 templates/wiki/bootstrap.html:72
+msgid "Stage"
+msgstr "Etap"
 
-#: forms.py:59
-msgid "If you completed a life cycle stage, select it."
-msgstr "Jeśli został ukończony etap prac, wskaż go."
+#: forms.py:49
+msgid "If completed a work stage, change to another one."
+msgstr "Jeśli etap pracy został zakończony, zmień go na inny."
 
-#: forms.py:64
-msgid "Mark this revision as publishable."
-msgstr "Oznacz tę wersję jako gotową do publikacji."
-
-#: forms.py:103
+#: forms.py:88
 msgid "Describe the reason for reverting."
-msgstr "Opisz powód przywrócenia."
-
-#: models.py:14
-msgid "name"
-msgstr "nazwa"
-
-#: models.py:18
-msgid "theme"
-msgstr "motyw"
-
-#: models.py:19
-msgid "themes"
-msgstr "motywy"
-
-#: views.py:281
-msgid "Published"
-msgstr "Opublikowano"
-
-#: views.py:302
-msgid "Revision marked"
-msgstr "Wersja oznaczona"
-
-#: views.py:304
-msgid "Nothing changed"
-msgstr "Nic nie uległo zmianie"
+msgstr "Podaj powód wycofania zmian."
 
 #: templates/admin/wiki/theme/change_list.html:22
 msgid "Table for Redmine wiki"
 msgstr "Tabela do wiki na Redmine"
+
+#: templates/wiki/bootstrap.html:69
+msgid "Informations about lesson"
+msgstr "Informacje o lekcji"
+
+#: templates/wiki/bootstrap.html:71
+#: templates/wiki/document_details_base.html:35
+msgid "Version"
+msgstr "Wersja"
+
+#: templates/wiki/bootstrap.html:73
+msgid "Assignment"
+msgstr "Przypisanie"
 
 #: templates/wiki/diff_table.html:5
 msgid "Old version"
@@ -99,19 +82,15 @@ msgstr "Nowa wersja"
 
 #: templates/wiki/document_details.html:32
 msgid "Click to open/close gallery"
-msgstr "Kliknij, aby (ro)zwinąć galerię"
+msgstr "Kliknij, by otworzyć/zamknąć galerię"
 
 #: templates/wiki/document_details_base.html:33
 msgid "Help"
 msgstr "Pomoc"
 
 #: templates/wiki/document_details_base.html:35
-msgid "Version"
-msgstr "Wersja"
-
-#: templates/wiki/document_details_base.html:35
 msgid "Unknown"
-msgstr "nieznana"
+msgstr "Nieznany"
 
 #: templates/wiki/document_details_base.html:37
 #: templates/wiki/pubmark_dialog.html:16
@@ -120,11 +99,11 @@ msgstr "Zapisz"
 
 #: templates/wiki/document_details_base.html:38
 msgid "Save attempt in progress"
-msgstr "Trwa zapisywanie"
+msgstr "Trwa próba zapisu"
 
 #: templates/wiki/document_details_base.html:39
 msgid "There is a newer version of this document!"
-msgstr "Istnieje nowsza wersja tego dokumentu!"
+msgstr "Istnieje nowsza wersja tego dokumentu"
 
 #: templates/wiki/pubmark_dialog.html:17 templates/wiki/revert_dialog.html:40
 msgid "Cancel"
@@ -132,7 +111,7 @@ msgstr "Anuluj"
 
 #: templates/wiki/revert_dialog.html:39
 msgid "Revert"
-msgstr "Przywróć"
+msgstr "Wycofaj"
 
 #: templates/wiki/tabs/annotations_view.html:9
 msgid "all"
@@ -144,15 +123,15 @@ msgstr "Przypisy"
 
 #: templates/wiki/tabs/gallery_view.html:5
 msgid "Go to first image of this part"
-msgstr "Przejdź na początek"
+msgstr "Idź do pierwszego obrazka dla tej części"
 
 #: templates/wiki/tabs/gallery_view.html:8
 msgid "Previous"
-msgstr "Poprzednie"
+msgstr "Poprzedni"
 
 #: templates/wiki/tabs/gallery_view.html:13
 msgid "Next"
-msgstr "Następne"
+msgstr "Następny"
 
 #: templates/wiki/tabs/gallery_view.html:16
 msgid "Zoom in"
@@ -160,7 +139,7 @@ msgstr "Powiększ"
 
 #: templates/wiki/tabs/gallery_view.html:17
 msgid "Zoom out"
-msgstr "Zmniejsz"
+msgstr "Pomniejsz"
 
 #: templates/wiki/tabs/gallery_view_item.html:3
 msgid "Gallery"
@@ -176,11 +155,11 @@ msgstr "Oznacz do publikacji"
 
 #: templates/wiki/tabs/history_view.html:11
 msgid "Revert document"
-msgstr "Przywróć wersję"
+msgstr "Wycofaj zmiany w dokumencie"
 
 #: templates/wiki/tabs/history_view.html:14
 msgid "View version"
-msgstr "Zobacz wersję"
+msgstr "Pokaż wersję"
 
 #: templates/wiki/tabs/history_view_item.html:3
 msgid "History"
@@ -201,18 +180,19 @@ msgstr "Zamień"
 
 #: templates/wiki/tabs/search_view.html:12
 msgid "Replace all"
-msgstr "Zamień wszystko"
+msgstr "Zamień wszystkie"
 
+#: templates/wiki/tabs/search_view.html:15
 msgid "Options"
 msgstr "Opcje"
 
-#: templates/wiki/tabs/search_view.html:15
-msgid "Case sensitive"
-msgstr "Rozróżniaj wielkość liter"
-
 #: templates/wiki/tabs/search_view.html:17
+msgid "Case sensitive"
+msgstr "Wielkość znaków istotna"
+
+#: templates/wiki/tabs/search_view.html:19
 msgid "From cursor"
-msgstr "Zacznij od kursora"
+msgstr "Od kursora"
 
 #: templates/wiki/tabs/search_view_item.html:3
 msgid "Search and replace"
@@ -224,7 +204,7 @@ msgstr "Kod źródłowy"
 
 #: templates/wiki/tabs/summary_view.html:13
 msgid "Refresh from working copy"
-msgstr "Odśwież z edytowanej wersji"
+msgstr "Odśwież z wersji roboczej"
 
 #: templates/wiki/tabs/summary_view.html:17
 msgid "Title"
@@ -232,7 +212,7 @@ msgstr "Tytuł"
 
 #: templates/wiki/tabs/summary_view.html:21
 msgid "Go to the book's page"
-msgstr "Przejdź do strony książki"
+msgstr "Idź do strony książki"
 
 #: templates/wiki/tabs/summary_view.html:24
 msgid "Document ID"
@@ -256,11 +236,11 @@ msgstr "Znaków w dokumencie"
 
 #: templates/wiki/tabs/summary_view.html:41
 msgid "pages"
-msgstr "stron maszynopisu"
+msgstr "stron"
 
 #: templates/wiki/tabs/summary_view.html:41
 msgid "untagged"
-msgstr "nieotagowane"
+msgstr "nie oznaczone"
 
 #: templates/wiki/tabs/summary_view_item.html:3
 msgid "Summary"
@@ -278,202 +258,6 @@ msgstr "Wstaw przypis"
 msgid "Visual editor"
 msgstr "Edytor wizualny"
 
-#: templates/wiki/bootstrap.html:95
-msgid "Informations about lesson"
-msgstr "Informacje o lekcji"
-
-#: templates/wiki/bootstrap.html:97
-msgid "Stage"
-msgstr "Etap"
-
-#: templates/wiki/bootstrap.html:98
-msgid "Assignment"
-msgstr "Przypisano"
-
-#~ msgid "ZIP file"
-#~ msgstr "Plik ZIP"
-
-#~ msgid "Chunk with this slug already exists"
-#~ msgstr "Część z tym slugiem już istnieje"
-
-#~ msgid "Append to"
-#~ msgstr "Dołącz do"
-
-#~ msgid "title"
-#~ msgstr "tytuł"
-
-#~ msgid "scan gallery name"
-#~ msgstr "nazwa galerii skanów"
-
-#~ msgid "parent"
-#~ msgstr "rodzic"
-
-#~ msgid "parent number"
-#~ msgstr "numeracja rodzica"
-
-#~ msgid "book"
-#~ msgstr "książka"
-
-#~ msgid "books"
-#~ msgstr "książki"
-
-#~ msgid "Slug already used for %s"
-#~ msgstr "Slug taki sam jak dla pliku %s"
-
-#~ msgid "Slug already used in repository."
-#~ msgstr "Dokument o tym slugu już istnieje w repozytorium."
-
-#~ msgid "File should be UTF-8 encoded."
-#~ msgstr "Plik powinien mieć kodowanie UTF-8."
-
-#~ msgid "Tag added"
-#~ msgstr "Dodano tag"
-
-#~ msgid "Append book"
-#~ msgstr "Dołącz książkę"
-
-#~ msgid "edit"
-#~ msgstr "edytuj"
-
-#~ msgid "add basic document structure"
-#~ msgstr "dodaj podstawową strukturę dokumentu"
-
-#~ msgid "change master tag to"
-#~ msgstr "zmień tak master na"
-
-#~ msgid "add begin trimming tag"
-#~ msgstr "dodaj początkowy ogranicznik"
-
-#~ msgid "add end trimming tag"
-#~ msgstr "dodaj końcowy ogranicznik"
-
-#~ msgid "unstructured text"
-#~ msgstr "tekst bez struktury"
-
-#~ msgid "unknown XML"
-#~ msgstr "nieznany XML"
-
-#~ msgid "broken document"
-#~ msgstr "uszkodzony dokument"
-
-#~ msgid "Apply fixes"
-#~ msgstr "Wykonaj zmiany"
-
-#~ msgid "Append to other book"
-#~ msgstr "Dołącz do innej książki"
-
-#~ msgid "Last published"
-#~ msgstr "Ostatnio opublikowano"
-
-#~ msgid "Full XML"
-#~ msgstr "Pełny XML"
-
-#~ msgid "HTML version"
-#~ msgstr "Wersja HTML"
-
-#~ msgid "TXT version"
-#~ msgstr "Wersja TXT"
-
-#~ msgid "EPUB version"
-#~ msgstr "Wersja EPUB"
-
-#~ msgid "PDF version"
-#~ msgstr "Wersja PDF"
-
-#~ msgid "This book cannot be published yet"
-#~ msgstr "Ta książka nie może jeszcze zostać opublikowana"
-
-#~ msgid "Add chunk"
-#~ msgstr "Dodaj część"
-
-#~ msgid "Clear filter"
-#~ msgstr "Wyczyść filtr"
-
-#~ msgid "No books found."
-#~ msgstr "Nie znaleziono książek."
-
-#~ msgid "Your last edited documents"
-#~ msgstr "Twoje ostatnie edycje"
-
-#~ msgid "Bulk documents upload"
-#~ msgstr "Hurtowe dodawanie dokumentów"
-
-#~ msgid ""
-#~ "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
-#~ "<code>.xml</code> will be ignored."
-#~ msgstr ""
-#~ "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
-#~ "kończące się na <code>.xml</code> zostaną zignorowane."
-
-#~ msgid "Upload"
-#~ msgstr "Załaduj"
-
-#~ msgid ""
-#~ "There have been some errors. No files have been added to the repository."
-#~ msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
-
-#~ msgid "Offending files"
-#~ msgstr "Błędne pliki"
-
-#~ msgid "Correct files"
-#~ msgstr "Poprawne pliki"
-
-#~ msgid "Files have been successfully uploaded to the repository."
-#~ msgstr "Pliki zostały dodane do repozytorium."
-
-#~ msgid "Uploaded files"
-#~ msgstr "Dodane pliki"
-
-#~ msgid "Skipped files"
-#~ msgstr "Pominięte pliki"
-
-#~ msgid "Files skipped due to no <code>.xml</code> extension"
-#~ msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
-
-#~ msgid "Users"
-#~ msgstr "Użytkownicy"
-
-#~ msgid "Unassigned"
-#~ msgstr "Nie przypisane"
-
-#~ msgid "All"
-#~ msgstr "Wszystkie"
-
-#~ msgid "Add"
-#~ msgstr "Dodaj"
-
-#~ msgid "Admin"
-#~ msgstr "Administracja"
-
-#~ msgid "First correction"
-#~ msgstr "Autokorekta"
-
-#~ msgid "Tagging"
-#~ msgstr "Tagowanie"
-
-#~ msgid "Initial Proofreading"
-#~ msgstr "Korekta"
-
-#~ msgid "Annotation Proofreading"
-#~ msgstr "Sprawdzenie przypisów źródła"
-
-#~ msgid "Modernisation"
-#~ msgstr "Uwspółcześnienie"
-
-#~ msgid "Themes"
-#~ msgstr "Motywy"
-
-#~ msgid "Editor's Proofreading"
-#~ msgstr "Ostateczna redakcja literacka"
-
-#~ msgid "Technical Editor's Proofreading"
-#~ msgstr "Ostateczna redakcja techniczna"
-
-#~ msgid "Finished stage: %s"
-#~ msgstr "Ukończony etap: %s"
-
-#~ msgid "Refresh"
-#~ msgstr "Odśwież"
-
-#~ msgid "Insert special character"
-#~ msgstr "Wstaw znak specjalny"
+#: views.py:47
+msgid "Published"
+msgstr "Opublikowane"

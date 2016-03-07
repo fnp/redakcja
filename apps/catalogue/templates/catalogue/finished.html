@@ -1,0 +1,34 @@
+{% extends "catalogue/base.html" %}
+{% load i18n thumbnail catalogue_files %}
+
+
+{% block inner_content %}
+
+
+<h1>{% trans "Finished resources" %}</h1>
+{% for doc in objects_list %}
+    <div class="resource-box" style="width: 182px; height: 180px; position: relative; border: 1px solid #aaa; margin: 10px; display: inline-block; padding: 0px; vertical-align: bottom">
+        <a style='display:block' href="{% url 'catalogue_html' doc.pk %}">
+        {% if doc.meta.cover_url %}
+            {% thumbnail doc.meta.cover_url|as_media_for:doc "180x120" crop="center" format="PNG"  as th %}
+            <img src="{{ th.url }}">
+            {% endthumbnail %}
+        {% elif doc.owner_organization.logo %}
+            {% thumbnail doc.owner_organization.logo "160x100" format="PNG"  padding=True as th %}
+            <img src="{{ th.url }}">
+            {% endthumbnail %}
+        {% endif %}
+        <div style="position: absolute; bottom: 10px; left: 10px; width: 160px; height: 40px; overflow:hidden">{{ doc.meta.title }}</div>
+        <div class="box-overlay" style="position: absolute; top:0; left: 0; padding: 5px; width: 180px; height: 120px; background: black; color: white; opacity: .7">
+            {% if doc.meta.audience %}
+                {% trans "Audience" %}: {{ doc.meta.audience }}<br>
+            {% endif %}
+            {% trans "Owner" %}: {{ doc.owner_organization|default:"" }}
+            {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}<br/>
+        </div>
+        </a>
+    </div>
+{% endfor %}
+
+
+{% endblock %}

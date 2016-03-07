@@ -1,32 +1,24 @@
 {% extends "catalogue/base.html" %}
 
 {% load i18n %}
-{% load catalogue book_list wall %}
-{% load compressed %}
+{% load catalogue document_list %}
 
-{% block add_js %}
-{% compressed_js 'book_list' %}
+{% block content %}
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+
+    <a style="float:right" class="btn btn-default" href="{% url 'catalogue_create_missing' %}">{% trans "New resource +" %}</a>
+
+    <h1 style="margin-bottom: 1em">{% trans "My resources" %}</h1>
+
+    <!--ul class="nav nav-tabs">
+      <li role="presentation" class="active"><a href="#">{% trans "Projects" %}</a></li>
+    </ul-->
+
+    {% document_list user=user %}
+
+</div>
+</div>
+
 {% endblock %}
 
-{% block add_css %}
-{% compressed_css 'book_list' %}
-{% endblock %}
-
-{% block leftcolumn %}
-    {% book_list request.user %}
-{% endblock leftcolumn %}
-
-{% block rightcolumn %}
-    <div id="last-edited-list">
-        <h2>{% trans "Your last edited documents" %}</h2>
-        <ol>
-            {% for slugs, item in last_books %}
-            <li><a href="{% url 'wiki_editor' slugs.0 slugs.1 %}"
-                target="_blank">{{ item.title }}</a><br/><span class="date">({{ item.time|date:"H:i:s, d/m/Y" }})</span></li>
-            {% endfor %}
-        </ol>
-    </div>
-
-    <h2>{% trans "Recent activity for" %} {{ request.user|nice_name }}</h2>
-    {% wall request.user 10 %}
-{% endblock rightcolumn %}

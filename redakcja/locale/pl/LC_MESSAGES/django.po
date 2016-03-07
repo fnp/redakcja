@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-18 11:18+0200\n"
+"POT-Creation-Date: 2016-01-26 11:21+0100\n"
 "PO-Revision-Date: 2011-10-18 11:19+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,27 +16,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: templates/404.html:8
+#: templates/404.html:7
 msgid "Page not found"
 msgstr "Strona nie została znaleziona"
 
-#: templates/404.html:10
+#: templates/404.html:9
 #, python-format
 msgid ""
 "The page you're trying\n"
 "to reach (<tt>%(p)s</tt>) could not be found. If it's a document, try\n"
 "looking for it on the <a href=\"/\">document list</a>."
-msgstr "Strona, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj poszukać jej na <a href=\"/\">liście dokumentów</a>."
+msgstr ""
+"Strona, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj "
+"poszukać jej na <a href=\"/\">liście dokumentów</a>."
 
-#: templates/404.html:15
+#: templates/404.html:14
 #, python-format
 msgid ""
 "If you\n"
 "still can't find what you're looking for, please\n"
 "<a href=\"%(m)s\">contact the administrator</a>."
-msgstr "Jeśli nadal nie możesz znaleźć tego, czego szukasz, <a href=\"%(m)s\">skontaktuj się z administratorem</a>."
+msgstr ""
+"Jeśli nadal nie możesz znaleźć tego, czego szukasz, <a href=\"%(m)s"
+"\">skontaktuj się z administratorem</a>."
 
-#: templates/404.html:22
+#: templates/404.html:21
 #, python-format
 msgid ""
 "If you're coming from Redmine, please note that\n"
@@ -44,7 +48,9 @@ msgid ""
 "Go to the <a href=\"/\">document list</a>\n"
 "or to <a href=\"%(m)s\">your page</a> instead."
 msgstr ""
-"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on już do koordynowania prac redakcyjnych. Możesz za to przejść do <a href=\"/\">listy dokumentów</a>\n"
+"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on już do "
+"koordynowania prac redakcyjnych. Możesz za to przejść do <a href=\"/\">listy "
+"dokumentów</a>\n"
 "albo do <a href=\"%(m)s\">swojej strony</a>."
 
 #: templates/base.html:7
@@ -55,43 +61,70 @@ msgstr ""
 msgid "Loading"
 msgstr "Ładowanie"
 
-#: templates/admin/index.html:21
-#, python-format
-msgid "Models available in the %(name)s application."
+#: templates/main.html:20
+msgid ""
+"\n"
+"    <p>Media &amp; Information Literacy<br>\n"
+"    Platform for Exchanging<br>\n"
+"    Educational Resources<br>\n"
+"    </p>\n"
 msgstr ""
 
-#: templates/admin/index.html:22
-#, python-format
-msgid "%(name)s"
-msgstr ""
+#: templates/main.html:26
+msgid "Create and share your resources<br>Start tutorial"
+msgstr "Twórz zasoby i dziel się nimi<br>Zobacz przewodnik"
 
-#: templates/admin/index.html:32
-msgid "Add"
-msgstr ""
+#: templates/main.html:29 templates/registration/head_login.html:17
+msgid "Competition"
+msgstr "Konkurs"
 
-#: templates/admin/index.html:38
-msgid "Change"
-msgstr ""
+#: templates/main.html:30
+msgid "Joint project by:"
+msgstr "Wspólny projekt:"
 
-#: templates/admin/index.html:48
-msgid "You don't have permission to edit anything."
-msgstr ""
+#: templates/main.html:47
+msgid "See active organizations and join"
+msgstr "Zobacz aktywne organizacje i dołącz"
 
-#: templates/admin/index.html:56
-msgid "Recent Actions"
-msgstr ""
+#: templates/main.html:61
+msgid "More organizations"
+msgstr "Więcej organizacji"
 
-#: templates/admin/index.html:57
-msgid "My Actions"
-msgstr ""
+#: templates/main.html:69
+msgid "Finished resources"
+msgstr "Ukończone zasoby"
 
-#: templates/admin/index.html:61
-msgid "None available"
-msgstr ""
+#: templates/main.html:85 templates/main.html.py:115
+msgid "Audience"
+msgstr "Przeznaczone dla"
 
-#: templates/admin/index.html:75
-msgid "Unknown content"
+#: templates/main.html:87 templates/main.html.py:117
+msgid "Owner"
+msgstr "Właściciel"
+
+#: templates/main.html:94
+msgid "More finished resources"
+msgstr "Więcej ukończonych zasobów"
+
+#: templates/main.html:99
+msgid "Upcoming resources"
+msgstr "Nadchodzące zasoby"
+
+#: templates/main.html:124
+msgid "More upcoming resources"
+msgstr "Więcej nadchodzących zasobów"
+
+#: templates/main.html:134
+msgid "Tutorial mode"
+msgstr "Tryb przewodnika"
+
+#: templates/main.html:135
+msgid ""
+"Tutorial will help you navigate through the platform. You can disable it at "
+"any point."
 msgstr ""
+"Przewodnik pomoże Ci odnaleźć się na platformie. Możesz go wyłączyć w "
+"dowolnej chwili."
 
 #: templates/pagination/pagination.html:5
 #: templates/pagination/pagination.html:7
@@ -103,13 +136,141 @@ msgstr "poprzednie"
 msgid "next"
 msgstr "następne"
 
-#: templates/registration/head_login.html:5
-msgid "Log Out"
+#: templates/registration.html:8 templates/registration.html.py:27
+#: templates/registration/head_login.html:104
+msgid "Register"
+msgstr "Załóż konto"
+
+#: templates/registration.html:14
+msgid "First name"
+msgstr "Imię"
+
+#: templates/registration.html:17
+msgid "Last name"
+msgstr "Nazwisko"
+
+#: templates/registration.html:20 templates/registration/head_login.html:85
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/registration.html:23
+msgid "Your new password"
+msgstr "Nowe hasło"
+
+#: templates/registration/head_login.html:16
+msgid "About"
+msgstr "O platformie"
+
+#: templates/registration/head_login.html:21
+msgid "Create an organization here. Organizations help manage team's work."
+msgstr ""
+"Tu możesz utworzyć organizację. Organizacje pomagają zarządzać pracą zespołu."
+
+#: templates/registration/head_login.html:23
+#: templates/registration/head_login.html:53
+msgid "New organization"
+msgstr "Nowa organizacja"
+
+#: templates/registration/head_login.html:27
+msgid "Start editing a new resource."
+msgstr "Zacznij edytować nowy zasób."
+
+#: templates/registration/head_login.html:29
+msgid "New resource"
+msgstr "Nowy zasób"
+
+#: templates/registration/head_login.html:32
+msgid "My resources"
+msgstr "Moje zasoby"
+
+#: templates/registration/head_login.html:46
+msgid "My organizations"
+msgstr "Moje organizacje"
+
+#: templates/registration/head_login.html:51
+msgid "You are not a member of any organizations"
+msgstr "Nie należysz do żadnej organizacji"
+
+#: templates/registration/head_login.html:55
+msgid "Edit my data"
+msgstr "Moje dane"
+
+#: templates/registration/head_login.html:57
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/registration/head_login.html:59
+msgid "Logout"
 msgstr "Wyloguj"
 
-#: templates/registration/head_login.html:9
-msgid "Log In"
+#: templates/registration/head_login.html:70
+msgid "First, you will need an account."
+msgstr "Najpierw potrzebujesz konta."
+
+#: templates/registration/head_login.html:74
+#: templates/registration/head_login.html:79
+msgid "Log in / Register"
+msgstr "Zaloguj / Załóż konto"
+
+#: templates/registration/head_login.html:89
+msgid "Password"
+msgstr "Hasło"
+
+#: templates/registration/head_login.html:97
+#: templates/registration/password_reset_complete.html:9
+msgid "Log in"
 msgstr "Logowanie"
+
+#: templates/registration/head_login.html:101
+msgid "I forgot my password"
+msgstr "Nie pamiętam hasła"
+
+#: templates/registration/head_login.html:103
+msgid "<strong>Register now</strong> to start editing your own materials."
+msgstr ""
+"<strong>Załóż konto teraz</strong> by zacząć edytować własne materiały."
+
+#: templates/registration/password_reset_complete.html:7
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr "Hasło zostało ustawione. Możesz się teraz zalogować."
+
+#: templates/registration/password_reset_confirm.html:10
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Wpisz swoje hasło dwukrotnie, by potwierdzić, że zostało podane prawidłowo."
+
+#: templates/registration/password_reset_confirm.html:14
+msgid "Change my password"
+msgstr "Zmień hasło"
+
+#: templates/registration/password_reset_confirm.html:19
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"Link odzyskiwania hasła jest nieprawidłowy, być może został już "
+"wykorzystany.  Spróbuj ponownie wybrać opcję odzyskiwania hasła."
+
+#: templates/registration/password_reset_done.html:7
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"Wysłaliśmy instrukcję odzyskiwania hasła na podany e-mail, o ile istnieje "
+"dla niego konto.  E-mail powinien dotrzeć wkrótce."
+
+#: templates/registration/password_reset_done.html:9
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"Jeśli e-mail nie dotrze, prosimy o sprawdzenie, czy jest to adres użyty do "
+"założenia konta, oraz o sprawdzenie folderu spamu w skrzynce pocztowej."
+
+#~ msgid "Log Out"
+#~ msgstr "Wyloguj"
 
 #~ msgid "Refresh panel"
 #~ msgstr "Odśwież panel"

@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import os
 import logging
 import urllib
@@ -14,15 +15,14 @@ from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
-from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 
-from catalogue.models import Book, Chunk, Template
+from catalogue.models import Document, Template
+from dvcs.models import Revision
 import nice_diff
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
-from wiki.models import Theme
 
 #
 # Quick hack around caching problems, TODO: use ETags
@@ -34,53 +34,31 @@ logger = logging.getLogger("fnp.wiki")
 MAX_LAST_DOCS = 10
 
 
-def get_history(chunk):
-    changes = []
-    for change in chunk.history():
-        changes.append({
-                "version": change.revision,
-                "description": change.description,
-                "author": change.author_str(),
-                "date": localize(change.created_at),
-                "publishable": _("Publishable") + "\n" if change.publishable else "",
-                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
+def get_history(document):
+    revisions = []
+    for i, revision in enumerate(document.history()):
+        revisions.append({
+                "version": i + 1,
+                "description": revision.description,
+                "author": revision.author_str(),
+                "date": localize(revision.created_at),
+                "published": "",
+                "revision": revision.pk,
                 "published": _("Published") + ": " + \
-                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
-                    if change.publish_log.exists() else "",
+                    localize(revision.publish_log.order_by('-timestamp')[0].timestamp) \
+                    if revision.publish_log.exists() else "",
             })
-    return changes
+    return revisions
 
 
 @never_cache
-@login_required
-def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
-    try:
-        chunk = Chunk.get(slug, chunk)
-    except Chunk.MultipleObjectsReturned:
-        # TODO: choice page
-        raise Http404
-    except Chunk.DoesNotExist:
-        if chunk is None:
-            try:
-                book = Book.objects.get(slug=slug)
-            except Book.DoesNotExist:
-                return http.HttpResponseRedirect(reverse("catalogue_create_missing", args=[slug]))
-        else:
-            raise Http404
-    if not chunk.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+#@login_required
+def editor(request, pk, chunk=None, template_name='wiki/bootstrap.html'):
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    #~ if not doc.accessible(request):
+        #~ return HttpResponseForbidden("Not authorized.")
 
     access_time = datetime.now()
-    last_books = request.session.get("wiki_last_books", {})
-    last_books[slug, chunk.slug] = {
-        'time': access_time,
-        'title': chunk.pretty_name(),
-        }
-
-    if len(last_books) > MAX_LAST_DOCS:
-        oldest_key = min(last_books, key=lambda x: last_books[x]['time'])
-        del last_books[oldest_key]
-    request.session['wiki_last_books'] = last_books
 
     save_form = forms.DocumentTextSaveForm(user=request.user, prefix="textsave")
     try:
@@ -88,29 +66,31 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     except:
         version = None
     if version:
-        text = chunk.at_revision(version).materialize()
+        text = doc.at_revision(version).materialize()
     else:
-        text = chunk.materialize()
+        text = doc.materialize()
+        revision = doc.revision
+    history = get_history(doc)
     return render(request, template_name, {
-        'serialized_document_data': simplejson.dumps({
+        'serialized_document_data': json.dumps({
             'document': text,
-            'document_id': chunk.id,
-            'title': chunk.book.title,
-            'history': get_history(chunk),
-            'version': version or chunk.revision(),
-            'stage': chunk.stage.name if chunk.stage else None,
-            'assignment': chunk.user.username if chunk.user else None
+            'document_id': doc.pk,
+            'title': doc.meta().get('title', ''),
+            'history': history,
+            'version': len(history), #version or chunk.revision(),
+            'revision': revision.pk,
+            'stage': doc.stage,
+            'assignment': str(doc.assigned_to),
         }),
-        'serialized_templates': simplejson.dumps([
+        'serialized_templates': json.dumps([
             {'id': t.id, 'name': t.name, 'content': t.content} for t in Template.objects.filter(is_partial=True)
         ]),
         'forms': {
             "text_save": save_form,
-            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert")
+            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
+            "text_publish": forms.DocumentTextPublishForm(prefix="textpublish"),
         },
-        'tags': list(save_form.fields['stage_completed'].choices),
-        'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
-        'slug': chunk.book.slug
+        'pk': doc.pk,
     })
 
 
@@ -146,10 +126,10 @@ def editor_readonly(request, slug, chunk=None, template_name='wiki/document_deta
 
 @never_cache
 @decorator_from_middleware(GZipMiddleware)
-def text(request, chunk_id):
-    doc = get_object_or_404(Chunk, pk=chunk_id)
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+def text(request, doc_id):
+    doc = get_object_or_404(Document, pk=doc_id, deleted=False)
+    #~ if not doc.book.accessible(request):
+        #~ return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
@@ -159,30 +139,34 @@ def text(request, chunk_id):
             else:
                 author = None
             text = form.cleaned_data['text']
-            parent_revision = form.cleaned_data['parent_revision']
-            if parent_revision is not None:
-                parent = doc.at_revision(parent_revision)
-            else:
-                parent = None
-            stage = form.cleaned_data['stage_completed']
-            tags = [stage] if stage else []
-            publishable = (form.cleaned_data['publishable'] and
-                    request.user.has_perm('catalogue.can_pubmark'))
-            doc.commit(author=author,
+            #~ parent_revision = form.cleaned_data['parent_revision']
+            #~ if parent_revision is not None:
+                #~ parent = doc.at_revision(parent_revision)
+            #~ else:
+                #~ parent = None
+            stage = form.cleaned_data['stage']
+            #~ tags = [stage] if stage else []
+            #~ publishable = (form.cleaned_data['publishable'] and
+                    #~ request.user.has_perm('catalogue.can_pubmark'))
+            try:
+                doc.commit(author=author,
                        text=text,
-                       parent=parent,
+                       parent=False,
                        description=form.cleaned_data['comment'],
-                       tags=tags,
                        author_name=form.cleaned_data['author_name'],
                        author_email=form.cleaned_data['author_email'],
-                       publishable=publishable,
                        )
-            revision = doc.revision()
+                doc.set_stage(stage)
+            except:
+                from traceback import print_exc
+                print_exc()
+                raise
+            #revision = doc.revision()
             return JSONResponse({
-                'text': doc.materialize() if parent_revision != revision else None,
-                'version': revision,
-                'stage': doc.stage.name if doc.stage else None,
-                'assignment': doc.user.username if doc.user else None
+                'text': None, #doc.materialize() if parent_revision != revision else None,
+                #'version': revision,
+                #'stage': doc.stage.name if doc.stage else None,
+                'assignment': doc.assigned_to.username if doc.assigned_to else None
             })
         else:
             return JSONFormInvalid(form)
@@ -208,30 +192,34 @@ def text(request, chunk_id):
 
 @never_cache
 @require_POST
-def revert(request, chunk_id):
+def revert(request, doc_id):
     form = forms.DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
-        doc = get_object_or_404(Chunk, pk=chunk_id)
-        if not doc.book.accessible(request):
-            return HttpResponseForbidden("Not authorized.")
-
-        revision = form.cleaned_data['revision']
+        doc = get_object_or_404(Document, pk=doc_id, deleted=False)
+        rev = get_object_or_404(Revision, pk=form.cleaned_data['revision'])
 
         comment = form.cleaned_data['comment']
-        comment += "\n#revert to %s" % revision
+        comment += "\n#revert to %s" % rev.pk
 
         if request.user.is_authenticated():
             author = request.user
         else:
             author = None
 
-        before = doc.revision()
-        logger.info("Reverting %s to %s", chunk_id, revision)
-        doc.at_revision(revision).revert(author=author, description=comment)
+        #before = doc.revision
+        logger.info("Reverting %s to %s", doc_id, rev.pk)
+
+        doc.commit(author=author,
+               text=rev.materialize(),
+               parent=False, #?
+               description=comment,
+               #author_name=form.cleaned_data['author_name'], #?
+               #author_email=form.cleaned_data['author_email'], #?
+               )
 
         return JSONResponse({
-            'document': doc.materialize() if before != doc.revision() else None,
-            'version': doc.revision(),
+            #'document': None, #doc.materialize() if before != doc.revision else None,
+            #'version': doc.revision(),
         })
     else:
         return JSONFormInvalid(form)
@@ -239,6 +227,9 @@ def revert(request, chunk_id):
 
 @never_cache
 def gallery(request, directory):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden("Not authorized.")
+
     try:
         base_url = ''.join((
                         smart_unicode(settings.MEDIA_URL),
@@ -259,9 +250,6 @@ def gallery(request, directory):
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
 
-        if not request.user.is_authenticated():
-            return HttpResponseForbidden("Not authorized.")
-
         return JSONResponse(images)
     except (IndexError, OSError):
         logger.exception("Unable to fetch gallery")
@@ -269,7 +257,7 @@ def gallery(request, directory):
 
 
 @never_cache
-def diff(request, chunk_id):
+def diff(request, doc_id):
     revA = int(request.GET.get('from', 0))
     revB = int(request.GET.get('to', 0))
 
@@ -279,16 +267,16 @@ def diff(request, chunk_id):
     if revB == 0:
         revB = None
 
-    doc = get_object_or_404(Chunk, pk=chunk_id)
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+    # TODO: check if revisions in line.
+
+    doc = get_object_or_404(Document, pk=doc_id, deleted=False)
 
     # allow diff from the beginning
     if revA:
-        docA = doc.at_revision(revA).materialize()
+        docA = Revision.objects.get(pk=revA).materialize()
     else:
         docA = ""
-    docB = doc.at_revision(revB).materialize()
+    docB = Revision.objects.get(pk=revB).materialize()
 
     return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
                                          docB.splitlines(), context=3))
@@ -303,36 +291,8 @@ def revision(request, chunk_id):
 
 
 @never_cache
-def history(request, chunk_id):
+def history(request, doc_id):
     # TODO: pagination
-    doc = get_object_or_404(Chunk, pk=chunk_id)
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+    doc = get_object_or_404(Document, pk=doc_id, deleted=False)
 
     return JSONResponse(get_history(doc))
-
-
-@require_POST
-@ajax_require_permission('catalogue.can_pubmark')
-def pubmark(request, chunk_id):
-    form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
-    if form.is_valid():
-        doc = get_object_or_404(Chunk, pk=chunk_id)
-        if not doc.book.accessible(request):
-            return HttpResponseForbidden("Not authorized.")
-
-        revision = form.cleaned_data['revision']
-        publishable = form.cleaned_data['publishable']
-        change = doc.at_revision(revision)
-        if publishable != change.publishable:
-            change.set_publishable(publishable)
-            return JSONResponse({"message": _("Revision marked")})
-        else:
-            return JSONResponse({"message": _("Nothing changed")})
-    else:
-        return JSONFormInvalid(form)
-
-
-def themes(request):
-    prefix = request.GET.get('q', '')
-    return http.HttpResponse('\n'.join([str(t) for t in Theme.objects.filter(name__istartswith=prefix)]))

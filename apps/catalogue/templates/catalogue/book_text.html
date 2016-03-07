@@ -1,28 +1,178 @@
-{% load i18n compressed %}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <title>{% trans "Redakcja" %} :: {{ book.title }}</title>
-	{% compressed_css 'book' %}
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	{% compressed_js 'book' %}
-    </head>
-    <body>
-        <div id="menu">
-            <ul>
-                <li><a class="menu" href="#toc">{% trans "Table of contents" %}</a></li>
-{#                <li><a class="menu" href="#themes">{% trans "Themes" %}</a></li>#}
-                <li><a class="menu" href="#nota_red">{% trans "Edit. note" %}</a></li>
-{#                <li><a class="menu" href="#info">{% trans "Infobox" %}</a></li>#}
-{#                <li><a href="{{ book.get_absolute_url }}">{% trans "Book's page" %}</a></li> #}
-{#                <li><a class="menu" href="#download">{% trans "Download" %}</a></li>#}
-            </ul>
+{% extends "catalogue/base.html" %}
+{% load i18n pipeline catalogue_files %}
+
+{% block title %}{{ sst.meta.title }}{% endblock %}
+
+{% load thumbnail %}
+
+{% block content %}
+<div class="navbar navbar-default row" style="margin-top:-20px;">
+    <div class="col-md-8 col-md-offset-2">
+
+{% if doc.owner_organization %}
+
+{% if doc.owner_organization.logo %}
+
+{% thumbnail doc.owner_organization.logo '80x50'  format='PNG' as th %}
+<a class="navbar-brand" href="{{ doc.owner_organization.get_absolute_url }}" style="padding: 0;">
+    <img src="{{ th.url }}" style="padding: {{ th|margin:'80x50' }}" title="{{ doc.owner_organization }}">
+</a>
+{% endthumbnail %}
+
+{% else %}
+<span class="navbar-text">{% trans "Resource owner" %}:</span>
+<a class="navbar-text" href="{{ doc.owner_organization.get_absolute_url }}">
+    {{ doc.owner_organization }}
+</a>
+{% endif %}
+
+{% else %}
+<div class="navbar-text" href="">{% trans "Resource owner" %}: {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}</div>
+{% endif %}
+
+<div class="btn-group navbar-right">
+
+{% if can_edit %}
+<a class="btn btn-default navbar-btn" href="{% url 'wiki_editor' doc.pk %}"
+            data-toggle="tutorial" data-tutorial="3" data-placement="bottom"
+            data-content="{% trans "You can edit your resource here." %}"
+>Edit</a>
+<a class="btn btn-default navbar-btn" href="{% url 'catalogue_book_schedule' doc.pk %}"
+            data-toggle="tutorial" data-tutorial="4" data-placement="bottom"
+            data-content="{% trans "You can assign work stages and deadlines to people on your team." %}"
+>Schedule</a>
+<a class="btn btn-default navbar-btn" href="{% url 'catalogue_fork' doc.pk %}"
+            data-toggle="tutorial" data-tutorial="5" data-placement="bottom"
+            data-content="{% trans "You can also create another, independent version of this resource – e.g. for translation to other language or simply for adapting it to your needs." %}"
+>{% trans "Create another version" %}</a>
+<a class="btn btn-default navbar-btn" href="{% url 'catalogue_book_owner' doc.pk %}">{% trans "Change owner" %}</a>
+<a class="btn btn-default navbar-btn" href="{% url 'catalogue_book_delete' doc.pk %}">{% trans "Delete" %}</a>
+
+{% elif doc %}
+<a class="navbar-right btn btn-default navbar-btn" href="{% url 'catalogue_fork' doc.pk %}"
+            data-toggle="tutorial" data-tutorial="5" data-placement="bottom"
+            data-content="{% trans "You can create and edit another, independent version of this resource – e.g. for translation to other language or simply for adapting it to your needs." %}"
+>{% trans "Create another version" %}</a>
+{% endif %}
+
+</div>
+
+</div>
+</div>
+
+{% if preview or can_edit and revision == published_revision %}
+<div class="jumbotron" style="margin-top:-20px; margin-bottom: 20px;">
+<p style="text-align: center">
+    
+{% if specific %}
+{% url 'catalogue_html' doc.pk as url %}
+{% blocktrans %}This is a preview of a specific revision of <a href="{{ url }}">this resource</a>.{% endblocktrans %}<br>
+{% endif %}
+
+{% if revision.pk != doc.revision.pk and doc.revision.pk != published_revision.pk %}
+{% url 'catalogue_preview' doc.pk as url %}
+{% blocktrans %}There have been some changes since this revision. <a href="{{ url }}">See the current revision.</a>{% endblocktrans %}<br>
+{% endif %}
+
+{% if published_revision %}
+    {% if published_revision != revision %}
+        {% url 'catalogue_html' doc.pk as url %}
+        {% blocktrans %}This resource has a <a href="{{ url }}">published version</a>.{% endblocktrans %}
+    {% endif %}
+{% else %}
+    {% trans "This resource hasn't been published yet." %}
+{% endif %}
+
+</p>
+
+{% if can_edit and not revision == published_revision %}
+    <form onsubmit="return confirm('{% trans "Do you really want to publish this revision?" %}');" method="POST" action="{% url 'catalogue_publish' doc.pk %}" style="text-align: center;">
+        {% csrf_token %}
+        <input type="hidden" name="textpublish-revision" value="{{ revision.pk }}">
+        <button class="btn btn-default btn-warning"
+            data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
+            data-content="{% trans "When the resource is ready for use, you can mark its specific revision as published here." %}"
+>{% trans "Publish this revision" %}</button>
+    </form>
+{% endif %}
+{% if can_edit and revision == published_revision %}
+    <form onsubmit="return confirm('{% trans "Do you really want to undo publishing this resource?" %}');" method="POST" action="{% url 'catalogue_unpublish' doc.pk %}" style="text-align: center;">
+        {% csrf_token %}
+        <button class="btn btn-default btn-danger"
+            data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
+            data-content="{% trans "If you have published the resource by mistake, you can un-publish it here." %}"
+        >{% trans "Undo publishing this resource" %}</button>
+    </form>
+{% endif %}
+
+</div>
+{% endif %}
+
+
+
+<style>
+    #cover {
+        margin-top: -20px;
+        display: block;
+        width: 100%;
+        position: relative;
+
+{% if doc.meta.cover_url %}
+        height: 300px;
+        background-image: url('{{ doc.meta.cover_url|as_media_for:doc }}');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-position: 0 15%;
+{% else %}
+    height: 150px;
+{% endif %}
+    }
+    #cover-info {
+        position: absolute;
+        left:0;
+        right:0;
+        bottom: 0;
+        margin: 0;
+        padding: 3em 0 2em 0;
+        color: white;
+/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-8 */
+    }
+</style>
+<div id="cover">
+    <div id="cover-info" class="row">
+        <div class="col-md-4 col-md-offset-2">
+{% trans "Audience" %}: {{ doc.meta.audience|default:"–" }}
         </div>
-        <div id="header">
-            <a href="/"><img src="/media/static/img/logo-220.png" alt="Wolne Lektury" /></a>
+        <div class="col-md-4">
+<a class="btn btn-default" href="{% url 'catalogue_pdf' doc.pk revision.pk %}"
+            data-toggle="tutorial" data-tutorial="2" data-placement="top"
+            data-content="{% trans "You can download and share a PDF version – and more formats in the future." %}"
+
+>{% trans "Download PDF" %}</a>
         </div>
+    </div>
+</div>
+
+<div id="digcontent"
+            data-toggle="tutorial" data-tutorial="9" data-placement="top"
+            data-content="{% trans "And, of course, you can read and share the resource in a handy webpage form right here." %}"
+>
+    {{ block.super }}
+</div>
+
+
+
+
+{% endblock %}
+
+{% block inner_content %}
         {{ html|safe }}
-    </body>
-</html>
+{% endblock %}

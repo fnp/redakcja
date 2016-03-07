@@ -14,3 +14,11 @@ MASTERS = ['powiesc',
            'dramat_wierszowany_lp',
            'dramat_wspolczesny',
            ]
+
+STAGES = [
+    'Draft',
+    'Comments',
+    'Comments review',
+    'Proofreading',
+    'Publication',
+    ]

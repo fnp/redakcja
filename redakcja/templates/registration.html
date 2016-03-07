@@ -1,0 +1,32 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-6 col-md-offset-3">
+
+    <h1 style="margin-bottom:1em">{% trans "Register" %}</h1>
+
+
+    <form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label for="title">{% trans "First name" %}</label>
+            {{ form.first_name.errors }}
+            <input class="form-control" name="first_name" type="text">
+        <label for="title">{% trans "Last name" %}</label>
+            {{ form.last_name.errors }}
+            <input class="form-control" name="last_name" type="text">
+        <label for="title">{% trans "E-mail" %}</label>
+            {{ form.email.errors }}
+            <input class="form-control" name="email" type="email">
+        <label for="title">{% trans "Your new password" %}</label>
+            {{ form.password.errors }}
+            <input class="form-control" name="password" type="password">
+
+        <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Register" %}</button></td></tr>
+    </form>
+
+</div>
+</div>
+{% endblock content %}

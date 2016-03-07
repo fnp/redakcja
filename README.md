@@ -14,11 +14,15 @@ Instalacja i użycie
 
 	pip install -r requirements.txt
 
+#. Skopiuj zawartość pliku `project/localsettings.sample` do `project/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
+
+#. Pobierz edytor::
+
+    git submodule update --init
+
 #. Wypełnij bazę danych (Django poprosi o utworzenie pierwszego użytkownika)::
 
-	./project/manage.py syncdb
-
-#. Skopiuj zawartość pliku `project/localsettings.sample` do `project/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
+	./project/manage.py syncdb --migrate
 
 #. Uruchom serwer deweloperski::
 

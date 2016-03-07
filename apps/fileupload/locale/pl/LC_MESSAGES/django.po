@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-19 12:38+0100\n"
+"POT-Creation-Date: 2016-01-26 10:37+0100\n"
 "PO-Revision-Date: 2013-03-07 16:27+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,26 +18,29 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: templates/fileupload/picture_form.html:18
-msgid "Browse:"
-msgstr "Przeglądanie:"
+#: templates/fileupload/picture_form.html:16
+msgid "Attachments for:"
+msgstr "Załączniki dla:"
 
-#: templates/fileupload/picture_form.html:34
+#: templates/fileupload/picture_form.html:33
 msgid "Add files..."
 msgstr "Dodaj pliki..."
 
-#: templates/fileupload/picture_form.html:39
+#: templates/fileupload/picture_form.html:38
 msgid "Start upload"
 msgstr "Zacznij wysyłać"
 
-#: templates/fileupload/picture_form.html:43
+#: templates/fileupload/picture_form.html:42
 msgid "Cancel upload"
 msgstr "Anuluj wysyłanie"
 
-#: templates/fileupload/picture_form.html:47
+#: templates/fileupload/picture_form.html:46
 msgid "Delete"
 msgstr "Usuń"
 
-#: templates/fileupload/picture_form.html:51
+#: templates/fileupload/picture_form.html:50
 msgid "Create package"
 msgstr "Stwórz paczkę"
+
+#~ msgid "Browse:"
+#~ msgstr "Przeglądanie:"

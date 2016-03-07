@@ -17,6 +17,6 @@ def settings(request):
         'STATIC_URL': settings.STATIC_URL,
         'IMAGE_DIR': settings.IMAGE_DIR,
         'DEBUG': settings.DEBUG,
-        'RAVEN_CONFIG': getattr(settings, 'RAVEN_CONFIG'),
+        'RAVEN_CONFIG': getattr(settings, 'RAVEN_CONFIG', None),
         'APP_VERSION': VERSION,
     }

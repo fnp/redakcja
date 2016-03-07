@@ -3,19 +3,17 @@
 {% load upload_tags %}
 
 {% block add_css %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap.min.css">
+    <!--link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/style.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap-image-gallery.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap-image-gallery.min.css"-->
     <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/jquery.fileupload-ui.css">
-    <!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 {% endblock %}
 
 
-{% block content %}
+{% block inner_content %}
 
-<h1>
-{% trans "Browse:" %}
+<h1 style="margin-bottom: 1em">
+{% trans "Attachments for:" %}
 {% for crumb in view.breadcrumbs %}
     {% if crumb.1 %}
         <a href="{{ crumb.1 }}">{{ crumb.0 }}</a>
@@ -47,10 +45,10 @@
                     <i class="icon-trash icon-white"></i>
                     <span>{% trans "Delete" %}</span>
                 </button>
-                <a class="btn btn-info" href="package">
+                <!--a class="btn btn-info" href="package">
                     <i class="icon-gift icon-white"></i>
                     <span>{% trans "Create package" %}</span>
-                </a>
+                </a-->
                 <input type="checkbox" class="toggle">
             </div>
             <div class="span5 fileupload-progress fade">
@@ -73,12 +71,12 @@
 {% block add_js %}
 
 {% upload_js %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script-->
 <script src="{{ STATIC_URL }}fileupload/js/jquery.ui.widget.js"></script>
 <script src="{{ STATIC_URL }}fileupload/js/tmpl.min.js"></script>
 <script src="{{ STATIC_URL }}fileupload/js/load-image.min.js"></script>
 <script src="{{ STATIC_URL }}fileupload/js/canvas-to-blob.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/bootstrap.min.js"></script>
+<!--script src="{{ STATIC_URL }}fileupload/js/bootstrap.min.js"></script-->
 <script src="{{ STATIC_URL }}fileupload/js/bootstrap-image-gallery.min.js"></script>
 <script src="{{ STATIC_URL }}fileupload/js/jquery.iframe-transport.js"></script>
 <script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload.js"></script>

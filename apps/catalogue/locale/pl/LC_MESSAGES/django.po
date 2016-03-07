@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-01 11:28+0200\n"
+"POT-Creation-Date: 2016-01-26 12:15+0100\n"
 "PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -20,231 +20,304 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:38
-msgid "You must select a template"
-msgstr "Musisz wybrać szablon"
-
-#: forms.py:47
+#: forms.py:59
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:48
+#: forms.py:60
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:72
+#: forms.py:83 templates/catalogue/book_list/book_list.html:11
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:93 forms.py:107
+#: forms.py:101
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:116
-msgid "Append to"
-msgstr "Dołącz do"
-
-#: views.py:161
-#, python-format
-msgid "Slug already used for %s"
-msgstr "Slug taki sam jak dla pliku %s"
-
-#: views.py:163
-msgid "Slug already used in repository."
-msgstr "Dokument o tym slugu już istnieje w repozytorium."
-
-#: views.py:169
-msgid "File should be UTF-8 encoded."
-msgstr "Plik powinien mieć kodowanie UTF-8."
-
-#: models/book.py:28 models/chunk.py:23
+#: models/book.py:30
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:29 models/chunk.py:24
+#: models/book.py:31
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:30
+#: models/book.py:32
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:35
+#: models/book.py:40
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:36
+#: models/book.py:41
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:55 models/chunk.py:21 models/publish_log.py:17
-msgid "book"
-msgstr "książka"
-
-#: models/book.py:56
-msgid "books"
-msgstr "książki"
-
-#: models/book.py:255
+#: models/book.py:260
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:259
+#: models/book.py:264
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:266
+#: models/book.py:271
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:268
+#: models/book.py:273
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:270
+#: models/book.py:275
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:273
+#: models/book.py:278
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
-#: models/chunk.py:22
-msgid "number"
-msgstr "numer"
+#: models/document.py:23
+msgid "stage"
+msgstr "etap"
 
-#: models/chunk.py:25
-msgid "gallery start"
-msgstr "początek galerii"
+#: models/document.py:31 models/publish_log.py:15
+msgid "document"
+msgstr "dokument"
 
-#: models/chunk.py:40
-msgid "chunk"
-msgstr "część"
+#: models/document.py:32
+msgid "documents"
+msgstr "dokumenty"
 
-#: models/chunk.py:41
-msgid "chunks"
-msgstr "części"
+#: models/publish_log.py:16
+msgid "revision"
+msgstr "rewizja"
 
-#: models/project.py:13
-msgid "name"
-msgstr "nazwa"
-
-#: models/project.py:14
-msgid "notes"
-msgstr "notatki"
-
-#: models/publish_log.py:18
+#: models/publish_log.py:17
 msgid "time"
 msgstr "czas"
 
-#: models/publish_log.py:19 templates/catalogue/wall.html:18
+#: models/publish_log.py:18 templates/catalogue/wall.html:18
 msgid "user"
 msgstr "użytkownik"
 
-#: models/publish_log.py:24 models/publish_log.py:33
+#: models/publish_log.py:22
 msgid "book publish record"
 msgstr "zapis publikacji książki"
 
-#: models/publish_log.py:25
+#: models/publish_log.py:23
 msgid "book publish records"
 msgstr "zapisy publikacji książek"
 
-#: models/publish_log.py:34
-msgid "change"
-msgstr "zmiana"
-
-#: models/publish_log.py:38
-msgid "chunk publish record"
-msgstr "zapis publikacji części"
-
-#: models/publish_log.py:39
-msgid "chunk publish records"
-msgstr "zapisy publikacji części"
-
-#: templates/catalogue/activity.html:9 templatetags/catalogue.py:29
+#: templates/catalogue/activity.html:9
 msgid "Activity"
 msgstr "Aktywność"
-
-#: templates/catalogue/base.html:8
-msgid "Platforma Redakcyjna"
-msgstr "Platforma Redakcyjna"
 
 #: templates/catalogue/book_append_to.html:9
 msgid "Append book"
 msgstr "Dołącz książkę"
 
-#: templates/catalogue/book_detail.html:14
+#: templates/catalogue/book_delete.html:5
+#: templates/catalogue/book_owner.html:5
+#: templates/catalogue/book_schedule.html:10
+#: templates/catalogue/my_page.html:12
+msgid "My resources"
+msgstr "Moje zasoby"
+
+#: templates/catalogue/book_delete.html:13
+msgid "Really delete the resource?"
+msgstr "Naprawdę usunąć zasób"
+
+#: templates/catalogue/book_delete.html:17
+#: templates/catalogue/book_list/book.html:23
+#: templates/catalogue/book_text.html:49
+msgid "Delete"
+msgstr "Usun"
+
+#: templates/catalogue/book_delete.html:18
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: templates/catalogue/book_detail.html:13
+#: templates/catalogue/book_list/book.html:22
+msgid "Schedule"
+msgstr "Plan"
+
 #: templates/catalogue/book_edit.html:9 templates/catalogue/chunk_edit.html:12
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/catalogue/book_detail.html:21
-msgid "Edit gallery"
-msgstr "Edytuj galerię"
+#: templates/catalogue/book_list/book.html:12
+msgid "change"
+msgstr "zmiana"
 
-#: templates/catalogue/book_detail.html:24
-msgid "Append to other book"
-msgstr "Dołącz do innej książki"
+#: templates/catalogue/book_list/book.html:21
+#: templates/catalogue/book_schedule.html:7 templatetags/wall.py:51
+msgid "Edit"
+msgstr "Zmień"
 
-#: templates/catalogue/book_detail.html:30
-msgid "Chunks"
-msgstr "Części"
+#: templates/catalogue/book_list/book_list.html:8
+#: templates/catalogue/document_create_missing.html:24
+msgid "Title"
+msgstr "Tytuł"
 
-#: templates/catalogue/book_detail.html:45 templatetags/wall.py:78
-msgid "Publication"
-msgstr "Publikacja"
+#: templates/catalogue/book_list/book_list.html:9
+#: templates/catalogue/book_owner.html:16
+#: templates/catalogue/document_create_missing.html:11
+#: templates/catalogue/finished.html:26 templates/catalogue/upcoming.html:26
+msgid "Owner"
+msgstr "Właściciel"
 
-#: templates/catalogue/book_detail.html:54
-msgid "Last published"
-msgstr "Ostatnio opublikowano"
+#: templates/catalogue/book_list/book_list.html:10
+#: templates/catalogue/book_schedule.html:28
+msgid "Stage"
+msgstr "Etap"
 
-#: templates/catalogue/book_detail.html:64
-msgid "Full XML"
-msgstr "Pełny XML"
+#: templates/catalogue/book_list/book_list.html:12
+#: templates/catalogue/book_schedule.html:30
+msgid "Deadline"
+msgstr "Termin"
 
-#: templates/catalogue/book_detail.html:65
-msgid "HTML version"
-msgstr "Wersja HTML"
+#: templates/catalogue/book_list/book_list.html:25
+msgid "No resources found."
+msgstr "Nie znaleziono zasobów."
 
-#: templates/catalogue/book_detail.html:66
-msgid "TXT version"
-msgstr "Wersja TXT"
+#: templates/catalogue/book_list/chunk.html:6
+#: templates/catalogue/chunk_edit.html:5
+msgid "Chunk settings"
+msgstr "Ustawienia części"
 
-#: templates/catalogue/book_detail.html:67
-msgid "PDF version"
-msgstr "Wersja PDF"
+#: templates/catalogue/book_owner.html:26
+#: templates/catalogue/book_text.html:48
+msgid "Change owner"
+msgstr "Zmień właściciela"
 
-#: templates/catalogue/book_detail.html:68
-msgid "EPUB version"
-msgstr "Wersja EPUB"
+#: templates/catalogue/book_schedule.html:8
+#: templates/catalogue/book_text.html:47 templates/catalogue/book_text.html:55
+#: templates/catalogue/document_fork.html:20
+msgid "Create another version"
+msgstr "Utwórz odrębną wersję"
 
-#: templates/catalogue/book_detail.html:81
-msgid "Publish"
-msgstr "Opublikuj"
+#: templates/catalogue/book_schedule.html:29
+msgid "Person"
+msgstr "Osoba"
 
-#: templates/catalogue/book_detail.html:85
-msgid "Log in to publish."
-msgstr "Zaloguj się, aby opublikować."
+#: templates/catalogue/book_schedule.html:57
+msgid "Current stage"
+msgstr "Aktualny etap"
 
-#: templates/catalogue/book_detail.html:88
-msgid "This book can't be published yet, because:"
-msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
+#: templates/catalogue/book_schedule.html:72
+msgid "Update"
+msgstr "Zaktualizuj"
 
-#: templates/catalogue/book_detail.html:98
-msgid "Comments"
-msgstr "Komentarze"
+#: templates/catalogue/book_text.html:23 templates/catalogue/book_text.html:30
+msgid "Resource owner"
+msgstr "Właściciel zasobu"
 
-#: templates/catalogue/book_text.html:7
-msgid "Redakcja"
+#: templates/catalogue/book_text.html:38
+msgid "You can edit your resource here."
+msgstr "Tutaj możesz edytować zasób"
+
+#: templates/catalogue/book_text.html:42
+msgid "You can assign work stages and deadlines to people on your team."
+msgstr "Możesz przypisywać etapy prac i terminy osobom w Twoim zespole."
+
+#: templates/catalogue/book_text.html:46
+msgid ""
+"You can also create another, independent version of this resource – e.g. for "
+"translation to other language or simply for adapting it to your needs."
 msgstr ""
+"Możesz też utworzyć osobną, niezależną wersję tego zasobu – np. w celu "
+"tłumaczenia na inny język albo po prostu aby dostosować go do swoich potrzeb."
 
-#: templates/catalogue/book_text.html:15
-msgid "Table of contents"
-msgstr "Spis treści"
+#: templates/catalogue/book_text.html:54
+msgid ""
+"You can create and edit another, independent version of this resource – e.g. "
+"for translation to other language or simply for adapting it to your needs."
+msgstr ""
+"Możesz utworzyć osobną, niezależną wersję tego zasobu – np. w celu "
+"tłumaczenia na inny język albo po prostu aby dostosować go do swoich potrzeb."
 
-#: templates/catalogue/book_text.html:17
-msgid "Edit. note"
-msgstr "Nota red."
+
+#: templates/catalogue/book_text.html:69
+#, python-format
+msgid ""
+"This is a preview of a specific revision of <a href=\"%(url)s\">this "
+"resource</a>."
+msgstr ""
+"To jest podgląd konkretnej rewizji  <a href=\"%(url)s\">tego zasobu</a>."
+
+#: templates/catalogue/book_text.html:74
+#, python-format
+msgid ""
+"There have been some changes since this revision. <a href=\"%(url)s\">See "
+"the current revision.</a>"
+msgstr ""
+"W dokumencie są zmiany nowsze od aktualnie oglądanej rewizji. <a href=\"%(url)s\">Zobacz aktualną rewizję.</a>"
+
+#: templates/catalogue/book_text.html:80
+#, python-format
+msgid "This resource has a <a href=\"%(url)s\">published version</a>."
+msgstr "Ten zasób posiada<a href=\"%(url)s\">opublikowaną wersję</a>."
+
+#: templates/catalogue/book_text.html:83
+msgid "This resource hasn't been published yet."
+msgstr "Ten zasób nie został jeszcze opublikowany."
+
+#: templates/catalogue/book_text.html:89
+msgid "Do you really want to publish this revision?"
+msgstr "Na pewno chcesz opublikować tę rewizję?"
+
+#: templates/catalogue/book_text.html:94
+msgid ""
+"When the resource is ready for use, you can mark its specific revision as "
+"published here."
+msgstr ""
+"Kiedy zasób jest gotowy do użytku, możesz oznaczyć go jako opublikowany."
+
+#: templates/catalogue/book_text.html:95
+msgid "Publish this revision"
+msgstr "Opublikuj tę rewizję"
+
+#: templates/catalogue/book_text.html:99
+msgid "Do you really want to undo publishing this resource?"
+msgstr "Na pewno chcesz wycofać publikację tego zasobu?"
+
+#: templates/catalogue/book_text.html:103
+msgid ""
+"If you have published the resource by mistake, you can un-publish it here."
+msgstr ""
+"Jeśli zasób został opublikowany przez pomyłkę, możesz to cofnąć tutaj."
+
+#: templates/catalogue/book_text.html:104
+msgid "Undo publishing this resource"
+msgstr "Wycofaj publikację tego zasobu"
+
+#: templates/catalogue/book_text.html:152
+#: templates/catalogue/document_create_missing.html:57
+#: templates/catalogue/finished.html:24 templates/catalogue/upcoming.html:24
+msgid "Audience"
+msgstr "Odbiorcy"
+
+#: templates/catalogue/book_text.html:157
+msgid ""
+"You can download and share a PDF version – and more formats in the future."
+msgstr ""
+"Możesz pobrać i opublikować wersję PDF – a w przyszłości również inne formaty."
+
+#: templates/catalogue/book_text.html:159
+msgid "Download PDF"
+msgstr "Pobierz PDF"
+
+#: templates/catalogue/book_text.html:166
+msgid ""
+"And, of course, you can read and share the resource in a handy webpage form "
+"right here."
+msgstr ""
+"I, oczywiście, możesz czytać zasób i dzielić się nim w postaci strony internetowej, właśnie tutaj."
 
 #: templates/catalogue/chunk_add.html:5 templates/catalogue/chunk_edit.html:18
 msgid "Split chunk"
@@ -258,14 +331,114 @@ msgstr "Wstaw pustą część po"
 msgid "Add chunk"
 msgstr "Dodaj część"
 
-#: templates/catalogue/chunk_edit.html:5
-#: templates/catalogue/book_list/chunk.html:6
-msgid "Chunk settings"
-msgstr "Ustawienia części"
-
 #: templates/catalogue/chunk_edit.html:10
 msgid "Book"
 msgstr "Książka"
+
+#: templates/catalogue/document_create_missing.html:5
+msgid "Create a new resource"
+msgstr "Utwórz nowy zasób"
+
+#: templates/catalogue/document_create_missing.html:15
+msgid ""
+"You can choose whether the resource should be owned by you or by your "
+"organization. This can be changed later."
+msgstr ""
+"Możesz wybrać, czy właścicielem zasobu masz być Ty, czy Twoja organizacja. "
+"Można to zmienić później."
+
+#: templates/catalogue/document_create_missing.html:27
+msgid "Cover image"
+msgstr "Obraz na okładkę"
+
+#: templates/catalogue/document_create_missing.html:30
+msgid "Language"
+msgstr "Język"
+
+#: templates/catalogue/document_create_missing.html:33
+msgid "Publisher"
+msgstr "Wydawca"
+
+#: templates/catalogue/document_create_missing.html:36
+msgid "Rights"
+msgstr "Prawa autorskie"
+
+#: templates/catalogue/document_create_missing.html:40
+msgid ""
+"You should choose a free license for your resource. We recommend using "
+"Creative Commons Attribution - Share Alike."
+msgstr ""
+"Wybierz wolną licencję dla swojego zasobu. Rekomendujemy "
+"Creative Commons Uznanie autorstwa - Na tych samych warunkach."
+
+#: templates/catalogue/document_create_missing.html:44
+msgid "Only set for resources that are not restricted with copyright."
+msgstr "Tylko dla zasobów nie objętych majątkowym prawem autorskim"
+
+#: templates/catalogue/document_create_missing.html:45
+msgid "public domain"
+msgstr "domena publiczna"
+
+#: templates/catalogue/document_create_missing.html:47
+msgid ""
+"Non-copyleft free culture license. See <a target='_blank' href='//"
+"creativecommons.org/choose/'>creativecommons.org</a>"
+msgstr ""
+"Nie-copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
+"creativecommons.org/choose/'>creativecommons.org</a>"
+
+#: templates/catalogue/document_create_missing.html:48
+msgid "Creative Commons Attribution"
+msgstr "Creative Commons Uznanie autorstwa"
+
+#: templates/catalogue/document_create_missing.html:50
+msgid ""
+"Copyleft free culture license. See <a target='_blank' href='//"
+"creativecommons.org/choose/'>creativecommons.org</a>"
+msgstr ""
+"Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
+"creativecommons.org/choose/'>creativecommons.org</a>"
+
+#: templates/catalogue/document_create_missing.html:51
+msgid "Creative Commons Attribution – Share Alike"
+msgstr "Creative Commons Uznanie autorstwa – Na tych samych warunkach"
+
+#: templates/catalogue/document_create_missing.html:53
+msgid ""
+"Copyleft free culture license. See <a target='_blank' href='http://artlibre."
+"org/'>artlibre.org</a>"
+msgstr ""
+"Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='http://artlibre."
+"org/'>artlibre.org</a>"
+
+
+#: templates/catalogue/document_create_missing.html:54
+msgid "Free Art License"
+msgstr "Licencja Wolnej Sztuki (FAL)"
+
+#: templates/catalogue/document_create_missing.html:61
+msgid "Choose primary audience for your resource."
+msgstr "Wybierz główną grupę odbiorców Twojego zasobu"
+
+#: templates/catalogue/document_create_missing.html:71
+msgid "Summary"
+msgstr "Podsumowanie"
+
+#: templates/catalogue/document_create_missing.html:75
+msgid "You can provide a short description of the document here."
+msgstr "Możesz tu dodać krótki opis dokumentu."
+
+#: templates/catalogue/document_create_missing.html:79
+msgid "Create resource"
+msgstr "Utwórz zasób"
+
+#: templates/catalogue/document_fork.html:5
+msgid "Create another version of a resource"
+msgstr "Utwórz odrębną wersję zasobu"
+
+#: templates/catalogue/document_fork.html:11
+msgid "Create as"
+msgstr "Utwórz jako"
 
 #: templates/catalogue/document_upload.html:8
 msgid "Bulk documents upload"
@@ -312,17 +485,29 @@ msgstr "Pominięte pliki"
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
-#: templates/catalogue/my_page.html:21
-msgid "Your last edited documents"
-msgstr "Twoje ostatnie edycje"
+#: templates/catalogue/finished.html:8
+msgid "Finished resources"
+msgstr "Ukończone zasoby"
 
-#: templates/catalogue/my_page.html:30 templates/catalogue/user_page.html:13
-msgid "Recent activity for"
-msgstr "Ostatnia aktywność dla:"
+#: templates/catalogue/my_page.html:10
+msgid "New resource +"
+msgstr "Nowy zasób +"
 
-#: templates/catalogue/user_list.html:7 templatetags/catalogue.py:31
+#: templates/catalogue/my_page.html:15
+msgid "Projects"
+msgstr "Projekty"
+
+#: templates/catalogue/upcoming.html:8
+msgid "Upcoming resources"
+msgstr "Nadchodzące zasoby"
+
+#: templates/catalogue/user_list.html:7
 msgid "Users"
 msgstr "Użytkownicy"
+
+#: templates/catalogue/user_page.html:13
+msgid "Recent activity for"
+msgstr "Ostatnia aktywność dla:"
 
 #: templates/catalogue/wall.html:28
 msgid "not logged in"
@@ -332,91 +517,161 @@ msgstr "nie zalogowany"
 msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
-#: templates/catalogue/book_list/book_list.html:27
-msgid "stage"
-msgstr "etap"
-
-#: templates/catalogue/book_list/book_list.html:29
-#: templates/catalogue/book_list/book_list.html:40
-#: templates/catalogue/book_list/book_list.html:51
-msgid "none"
-msgstr "brak"
-
-#: templates/catalogue/book_list/book_list.html:38
-msgid "editor"
-msgstr "redaktor"
-
-#: templates/catalogue/book_list/book_list.html:76
-#, python-format
-msgid "%(c)s module"
-msgid_plural "%(c)s modules"
-msgstr[0] "%(c)s moduł"
-msgstr[1] "%(c)s moduły"
-msgstr[2] "%(c)s modułów"
-
-#: templates/catalogue/book_list/book_list.html:87
-msgid "Set stage"
-msgstr "Ustaw etap"
-
-#: templates/catalogue/book_list/book_list.html:88
-msgid "Set user"
-msgstr "Przypisz redaktora"
-
-#: templates/catalogue/book_list/book_list.html:91
-msgid "Mark publishable"
-msgstr "Oznacz do publikacji"
-
-#: templates/catalogue/book_list/book_list.html:92
-msgid "Mark not publishable"
-msgstr "Odznacz do publikacji"
-
-#: templates/catalogue/book_list/book_list.html:93
-msgid "Other user"
-msgstr "Inny użytkownik"
-
-#: templatetags/book_list.py:84
+#: templatetags/document_list.py:85
 msgid "publishable"
 msgstr "do publikacji"
 
-#: templatetags/book_list.py:85
+#: templatetags/document_list.py:86
 msgid "changed"
 msgstr "zmienione"
 
-#: templatetags/book_list.py:86
+#: templatetags/document_list.py:87
 msgid "published"
 msgstr "opublikowane"
 
-#: templatetags/book_list.py:87
+#: templatetags/document_list.py:88
 msgid "unpublished"
 msgstr "nie opublikowane"
 
-#: templatetags/book_list.py:88
+#: templatetags/document_list.py:89
 msgid "empty"
 msgstr "puste"
-
-#: templatetags/catalogue.py:27
-msgid "My page"
-msgstr "Moja strona"
-
-#: templatetags/catalogue.py:30
-msgid "All"
-msgstr "Wszystkie"
-
-#: templatetags/catalogue.py:34
-msgid "Add"
-msgstr "Dodaj"
 
 #: templatetags/wall.py:49
 msgid "Related edit"
 msgstr "Powiązana zmiana"
 
-#: templatetags/wall.py:51
-msgid "Edit"
-msgstr "Zmiana"
+#: templatetags/wall.py:78
+msgid "Publication"
+msgstr "Publikacja"
 
 #: templatetags/wall.py:99
 msgid "Comment"
 msgstr "Komentarz"
+
+#: views.py:206
+#, python-format
+msgid "Slug already used for %s"
+msgstr "Slug taki sam jak dla pliku %s"
+
+#: views.py:208
+msgid "Slug already used in repository."
+msgstr "Dokument o tym slugu już istnieje w repozytorium."
+
+#: views.py:214
+msgid "File should be UTF-8 encoded."
+msgstr "Plik powinien mieć kodowanie UTF-8."
+
+#~ msgid "You must select a template"
+#~ msgstr "Musisz wybrać szablon"
+
+#~ msgid "Append to"
+#~ msgstr "Dołącz do"
+
+#~ msgid "book"
+#~ msgstr "książka"
+
+#~ msgid "books"
+#~ msgstr "książki"
+
+#~ msgid "number"
+#~ msgstr "numer"
+
+#~ msgid "gallery start"
+#~ msgstr "początek galerii"
+
+#~ msgid "chunk"
+#~ msgstr "część"
+
+#~ msgid "chunks"
+#~ msgstr "części"
+
+#~ msgid "name"
+#~ msgstr "nazwa"
+
+#~ msgid "notes"
+#~ msgstr "notatki"
+
+#~ msgid "chunk publish record"
+#~ msgstr "zapis publikacji części"
+
+#~ msgid "chunk publish records"
+#~ msgstr "zapisy publikacji części"
+
+#~ msgid "Platforma Redakcyjna"
+#~ msgstr "Platforma Redakcyjna"
+
+#~ msgid "Edit gallery"
+#~ msgstr "Edytuj galerię"
+
+#~ msgid "Append to other book"
+#~ msgstr "Dołącz do innej książki"
+
+#~ msgid "Chunks"
+#~ msgstr "Części"
+
+#~ msgid "Last published"
+#~ msgstr "Ostatnio opublikowano"
+
+#~ msgid "Full XML"
+#~ msgstr "Pełny XML"
+
+#~ msgid "HTML version"
+#~ msgstr "Wersja HTML"
+
+#~ msgid "TXT version"
+#~ msgstr "Wersja TXT"
+
+#~ msgid "PDF version"
+#~ msgstr "Wersja PDF"
+
+#~ msgid "EPUB version"
+#~ msgstr "Wersja EPUB"
+
+#~ msgid "Log in to publish."
+#~ msgstr "Zaloguj się, aby opublikować."
+
+#~ msgid "Table of contents"
+#~ msgstr "Spis treści"
+
+#~ msgid "Edit. note"
+#~ msgstr "Nota red."
+
+#~ msgid "Your last edited documents"
+#~ msgstr "Twoje ostatnie edycje"
+
+#~ msgid "none"
+#~ msgstr "brak"
+
+#~ msgid "editor"
+#~ msgstr "redaktor"
+
+#~ msgid "%(c)s module"
+#~ msgid_plural "%(c)s modules"
+#~ msgstr[0] "%(c)s moduł"
+#~ msgstr[1] "%(c)s moduły"
+#~ msgstr[2] "%(c)s modułów"
+
+#~ msgid "Set user"
+#~ msgstr "Przypisz redaktora"
+
+#~ msgid "Mark publishable"
+#~ msgstr "Oznacz do publikacji"
+
+#~ msgid "Mark not publishable"
+#~ msgstr "Odznacz do publikacji"
+
+#~ msgid "Other user"
+#~ msgstr "Inny użytkownik"
+
+#~ msgid "My page"
+#~ msgstr "Moja strona"
+
+#~ msgid "All"
+#~ msgstr "Wszystkie"
+
+#~ msgid "Add"
+#~ msgstr "Dodaj"
 
 #~ msgid "Text file must be UTF-8 encoded."
 #~ msgstr "Plik powinien mieć kodowanie UTF-8."
@@ -436,12 +691,6 @@ msgstr "Komentarz"
 #~ msgid "projects"
 #~ msgstr "projekty"
 
-#~ msgid "Create a new book"
-#~ msgstr "Utwórz nową książkę"
-
-#~ msgid "Create book"
-#~ msgstr "Utwórz książkę"
-
 #~ msgid "Book settings"
 #~ msgstr "Ustawienia książki"
 
@@ -453,12 +702,6 @@ msgstr "Komentarz"
 
 #~ msgid "status"
 #~ msgstr "status"
-
-#~ msgid "No books found."
-#~ msgstr "Nie znaleziono książek."
-
-#~ msgid "Project"
-#~ msgstr "Projekt"
 
 #~ msgid "Covers"
 #~ msgstr "Okładki"
@@ -547,9 +790,6 @@ msgstr "Komentarz"
 #~ msgid "Help"
 #~ msgstr "Pomoc"
 
-#~ msgid "Version"
-#~ msgstr "Wersja"
-
 #~ msgid "Unknown"
 #~ msgstr "nieznana"
 
@@ -561,9 +801,6 @@ msgstr "Komentarz"
 
 #~ msgid "Clear filter"
 #~ msgstr "Wyczyść filtr"
-
-#~ msgid "Cancel"
-#~ msgstr "Anuluj"
 
 #~ msgid "Revert"
 #~ msgstr "Przywróć"
@@ -622,23 +859,8 @@ msgstr "Komentarz"
 #~ msgid "Search and replace"
 #~ msgstr "Znajdź i zamień"
 
-#~ msgid "Source code"
-#~ msgstr "Kod źródłowy"
-
-#~ msgid "Title"
-#~ msgstr "Tytuł"
-
-#~ msgid "Document ID"
-#~ msgstr "ID dokumentu"
-
-#~ msgid "Current version"
-#~ msgstr "Aktualna wersja"
-
 #~ msgid "Last edited by"
 #~ msgstr "Ostatnio edytowane przez"
-
-#~ msgid "Summary"
-#~ msgstr "Podsumowanie"
 
 #~ msgid "Insert theme"
 #~ msgstr "Wstaw motyw"
@@ -675,9 +897,6 @@ msgstr "Komentarz"
 
 #~ msgid "Technical Editor's Proofreading"
 #~ msgstr "Ostateczna redakcja techniczna"
-
-#~ msgid "Finished stage: %s"
-#~ msgstr "Ukończony etap: %s"
 
 #~ msgid "Refresh"
 #~ msgstr "Odśwież"

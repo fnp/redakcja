@@ -1,10 +1,21 @@
 {% extends "catalogue/base.html" %}
-{% load book_list comments i18n %}
+{% load book_list i18n %}
 
-{% block content %}
+{% block inner_content %}
 
 
-<h1>{{ book.title }}</h1>
+<h1 style="margin-bottom: 1em">{{ book.title }}</h1>
+
+
+{% if tab == 'plan' %}
+
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#">{% trans "Schedule" %}</a></li>
+    </ul>
+
+{% endif %}
+
+{% comment %}
 
 
 {% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
@@ -27,7 +38,7 @@
 
 <div class='section'>
 
-    <h2>{% trans "Chunks" %}</h2>
+    <h2>{% trans "Edit" %}</h2>
 
     <table class='single-book-list'><tbody>
     {% for chunk in book %}
@@ -36,7 +47,6 @@
     </tbody></table>
 
 </div>
-
 
 
 <div class='section'>
@@ -93,14 +103,6 @@
 </div>
 
 
+{% endcomment %}
 
-<div class='section'>
-    <h2>{% trans "Comments" %}</h2>
-
-    {% render_comment_list for book %}
-    {% with book.get_absolute_url as next %}
-        {% render_comment_form for book %}
-    {% endwith %}
-</div>
-
-{% endblock content %}
+{% endblock %}

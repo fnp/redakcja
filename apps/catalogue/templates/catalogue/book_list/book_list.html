@@ -1,97 +1,29 @@
 {% load i18n %}
 {% load pagination_tags %}
+{% load document_short_html from document_list %}
 
-
-<form name='filter' action=''>
-<input type='hidden' name="title" value="{{ request.GET.title }}" />
-<input type='hidden' name="stage" value="{{ request.GET.stage }}" />
-{% if not viewed_user %}
-    <input type='hidden' name="user" value="{{ request.GET.user }}" />
-{% endif %}
-<input type='hidden' name="all" value="{{ request.GET.all }}" />
-<input type='hidden' name="status" value="{{ request.GET.status }}" />
-<input type='hidden' name="project" value="{{ request.GET.project }}" />
-</form>
-
-
-<table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
-    <thead><tr>
-	<th></th>
-        <th class='book-search-column'>
-            <form>
-            <input title='Szukaj w tytułach modułów' name="title"
-                class='text-filter' value="{{ request.GET.title }}" />
-            </form>
-        </th>
-        <th><select name="stage" class="filter">
-            <option value=''>- {% trans "stage" %} -</option>
-            <option {% if request.GET.stage == '-' %}selected="selected"
-                    {% endif %}value="-">- {% trans "none" %} -</option>
-            {% for stage in stages %}
-                <option {% if request.GET.stage == stage.slug %}selected="selected"
-                    {% endif %}value="{{ stage.slug }}">{{ stage.name }}</option>
-            {% endfor %}
-        </select></th>
-
-        {% if not viewed_user %}
-            <th><select name="user" class="filter">
-                <option value=''>- {% trans "editor" %} -</option>
-                <option {% if request.GET.user == '-' %}selected="selected"
-                        {% endif %}value="-">- {% trans "none" %} -</option>
-                {% for user in users %}
-                    <option {% if request.GET.user == user.username %}selected="selected"
-                        {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
-                {% endfor %}
-            </select></th>
-        {% endif %}
-
-        <th><select name="project" class="filter">
-            <option value=''>- poziom edukacyjny -</option>
-                <option {% if request.GET.project == '-' %}selected="selected"
-                        {% endif %}value="-">- {% trans "none" %} -</option>
-            {% for project in projects %}
-                <option {% if request.GET.project == project.pk|slugify %}selected="selected"
-                        {% endif %}value='{{ project.pk }}'>{{ project.name }}</option>
-            {% endfor %}
-        </select></th>
-
-        <th></th>
-    </tr></thead>
-
-    {% with cnt=books|length %}
+<table class="table table-striped">
     {% autopaginate books 100 %}
+    <thead>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Owner" %}</th>
+        <th>{% trans "Stage" %}</th>
+        <th>{% trans "Assigned to" %}</th>
+        <th>{% trans "Deadline" %}</th>
+        <th></th>
+    </thead>
     <tbody>
-    {% for item in books %}
-        {% with item.book as book %}
-            {{ book.short_html|safe }}
-            {% if not book.single %}
-                {% for chunk in item.chunks %}
-                    {{ chunk.short_html|safe }}
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    {% for doc in books %}
+        {% document_short_html doc %}
     {% endfor %}
     <tr><th class='paginator' colspan="5">
         {% paginate %}
-        {% blocktrans count c=cnt %}{{c}} module{% plural %}{{c}} modules{% endblocktrans %}</th></tr>
+        </th></tr>
     </tbody>
-    {% endwith %}
 </table>
 {% if not books %}
-    <p>Nie znaleziono modułów.</p>
+    <p>{% trans "No resources found." %}</p>
 {% endif %}
-
-<form id='chunk_mass_edit' action='{% url "catalogue_chunk_mass_edit" %}' style="display:none;">
-{% csrf_token %}
-<input type="hidden" name="ids" />
-<label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
-<label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_stage" />
-<input type="hidden" name="status" />
-<label for="mass_edit_project">Poziom edukacyjny</label><input type="hidden" name="project" id="mass_edit_project" />
-<label for="mass_edit_publish">{% trans "Mark publishable" %}</label>
-<label for="mass_edit_unpublish">{% trans "Mark not publishable" %}</label>
-<label for="mass_edit_other">{% trans "Other user" %}</label>
-</form>
 
 <select name="other-user" style="display:none;">
   {% for user in other_users %}

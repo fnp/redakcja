@@ -24,14 +24,14 @@ def main_tabs(context):
 
     tabs = []
     user = context['user']
-    tabs.append(Tab('my', _('My page'), reverse("catalogue_user")))
+    #tabs.append(Tab('my', _('My page'), reverse("catalogue_user")))
 
-    tabs.append(Tab('activity', _('Activity'), reverse("catalogue_activity")))
-    tabs.append(Tab('all', _('All'), reverse("catalogue_document_list")))
-    tabs.append(Tab('users', _('Users'), reverse("catalogue_users")))
+    #tabs.append(Tab('activity', _('Activity'), reverse("catalogue_activity")))
+    #tabs.append(Tab('all', _('All'), reverse("catalogue_document_list")))
+    #tabs.append(Tab('users', _('Users'), reverse("catalogue_users")))
 
-    if user.has_perm('catalogue.add_book'):
-        tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
+    #if user.has_perm('catalogue.add_book'):
+    #    tabs.append(Tab('create', _('Add'), reverse("catalogue_create_missing")))
 
     return {"tabs": tabs, "active_tab": active}
 

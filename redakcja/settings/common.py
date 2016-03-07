@@ -24,7 +24,7 @@ TIME_ZONE = 'Europe/Warsaw'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'pl'
+LANGUAGE_CODE = 'en'
 
 #import locale
 #locale.setlocale(locale.LC_ALL, '')
@@ -35,7 +35,10 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 USE_L10N = True
-
+LANGUAGES = [
+    ('en', 'English'),
+    ('pl', 'polski'),
+]
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -44,6 +47,10 @@ STATIC_ROOT = PROJECT_ROOT + '/../static/'
 
 STATICFILES_DIRS = [
     PROJECT_ROOT + '/static/'
+]
+
+LOCALE_PATHS = [
+    PROJECT_ROOT + '/locale/',
 ]
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -75,19 +82,21 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas.middleware.CASMiddleware',
+    #'django_cas.middleware.CASMiddleware',
 
-    'django.middleware.doc.XViewMiddleware',
+    'django.contrib.admindocs.middleware.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
-    'maintenancemode.middleware.MaintenanceModeMiddleware',
+    #'maintenancemode.middleware.MaintenanceModeMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'fnpdjango.auth_backends.AttrCASBackend',
-)
+#AUTHENTICATION_BACKENDS = (
+#    'django.contrib.auth.backends.ModelBackend',
+#    'fnpdjango.auth_backends.AttrCASBackend',
+#)
 
 ROOT_URLCONF = 'redakcja.urls'
 
@@ -106,39 +115,44 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.comments',
+    'django.contrib.flatpages',
+    #'django.contrib.comments',
 
-    'south',
+    #'south',
     'sorl.thumbnail',
     'pagination',
-    'gravatar',
-    'djcelery',
-    'djkombu',
+    #'gravatar',
+    #'kombu.transport.django',
     'fileupload',
     'pipeline',
 
     'catalogue',
     'cover',
     'dvcs',
+    'organizations',
     'wiki',
-    'toolbar',
-    'apiclient',
+    #'toolbar',
+    #'apiclient',
     'email_mangler',
-    'build'
+    'build',
+
+    'django_forms_bootstrap',
+    'forms_builder.forms',
+    'fnpdjango',
 )
 
-LOGIN_REDIRECT_URL = '/documents/user'
+LOGIN_REDIRECT_URL = '/'
 
-CAS_USER_ATTRS_MAP = {
-    'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
+#CAS_USER_ATTRS_MAP = {
+#    'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 
 IMAGE_DIR = 'images/'
 
 
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
 
 BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
 BROKER_HOST = "localhost"
@@ -148,6 +162,12 @@ BROKER_PASSWORD = "guest"
 BROKER_VHOST = "/"
 
 SHOW_APP_VERSION = False
+
+
+FORMS_BUILDER_EDITABLE_SLUGS = True
+FORMS_BUILDER_LABEL_MAX_LENGTH = 2048
+
+
 
 try:
     from redakcja.settings.compress import *

@@ -1,0 +1,18 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load document_list from document_list %}
+
+{% block inner_content %}
+
+    {% if card.user.pk == request.user.pk %}
+    <a style="float:right" class="btn btn-default" href="{% url 'organizations_user_edit' %}">{% trans "Edit" %}</a>
+    {% endif %}
+
+    {{ card.get_preview_html|safe }}
+
+    <h2>{% trans "Resources" %}</h2>
+    {% document_list user=card.user.pk %}
+
+
+
+{% endblock %}

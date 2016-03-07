@@ -3,29 +3,26 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('wiki.views',
-    url(r'^edit/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^edit/(?P<pk>[^/]+)/$',
         'editor', name="wiki_editor"),
 
-    url(r'^readonly/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
+    url(r'^readonly/(?P<pk>[^/]+)/$',
         'editor_readonly', name="wiki_editor_readonly"),
 
     url(r'^gallery/(?P<directory>[^/]+)/$',
         'gallery', name="wiki_gallery"),
 
-    url(r'^history/(?P<chunk_id>\d+)/$',
+    url(r'^history/(?P<doc_id>\d+)/$',
         'history', name="wiki_history"),
 
     url(r'^rev/(?P<chunk_id>\d+)/$',
         'revision', name="wiki_revision"),
 
-    url(r'^text/(?P<chunk_id>\d+)/$',
+    url(r'^text/(?P<doc_id>\d+)/$',
         'text', name="wiki_text"),
 
-    url(r'^revert/(?P<chunk_id>\d+)/$',
+    url(r'^revert/(?P<doc_id>\d+)/$',
         'revert', name='wiki_revert'),
 
-    url(r'^diff/(?P<chunk_id>\d+)/$', 'diff', name="wiki_diff"),
-    url(r'^pubmark/(?P<chunk_id>\d+)/$', 'pubmark', name="wiki_pubmark"),
-
-    url(r'^themes$', 'themes', name="themes"),
+    url(r'^diff/(?P<doc_id>\d+)/$', 'diff', name="wiki_diff"),
 )

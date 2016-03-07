@@ -1,0 +1,23 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block inner_content %}
+    <h1>{% trans "Create another version of a resource" %}</h1>
+
+
+    <form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label for="owner">{% trans "Create as" %}</label>
+            {{ form.owner_organization.errors }}
+            <select class="form-control" name="owner_organization">
+                <option>{{ request.user }}</option>
+                {% for org in request.user.membership_set.all %}
+                    <option value="{{ org.organization.pk }}">{{ org.organization }}</option>
+                {% endfor %}
+            </select>
+
+        <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Create another version" %}</button></td></tr>
+    </form>
+
+{% endblock %}

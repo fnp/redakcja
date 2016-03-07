@@ -87,7 +87,6 @@ class GalleryMerger(object):
         self.src_size = len(files_other)
 
         if files and files_other:
-            print "compare %s with %s" % (files[-1], files_other[0])
             if filecmp.cmp(
                     join(self.path(self.dest), files[-1]),
                     join(self.path(self.src), files_other[0]),
@@ -146,3 +145,13 @@ class GalleryMerger(object):
 
         rmtree(join(self.path(self.src)))
         return self.dest
+
+
+# Maybe subclass?
+def sstdocument(text):
+    #from catalogue.ebook_utils import RedakcjaDocProvider
+    from librarian.document import Document
+
+    return Document.from_string(
+        text,
+        )

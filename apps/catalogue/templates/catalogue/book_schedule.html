@@ -1,0 +1,80 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block inner_content %}
+
+
+<a style="float:right" class="btn btn-default" href="{% url 'wiki_editor' book.pk %}">{% trans "Edit" %}</a>
+<a style="float:right; margin-right: 5px;" class="btn btn-default" href="{% url 'catalogue_fork' book.pk %}">{% trans "Create another version" %}</a>
+
+<a href="{% url 'catalogue_user' %}">{% trans "My resources" %}</a> /
+{% if book.owner_organization %}
+    <a href="{% url 'organizations_main' book.owner_organization.pk %}">{{ book.owner_organization }}</a>
+{% else %}
+    {{ book.owner_user.first_name }} {{ book.owner_user.last_name }}
+{% endif %} /
+<h1 style="margin-bottom: 1em">{{ book.meta.title }}</h1>
+
+
+<!--ul class="nav nav-tabs">
+    <li role="presentation" class="disabled"><a href="#">Details</a></li>
+    <li role="presentation" class="active"><a href="#">Schedule</a></li>
+    <li role="presentation" class="disabled"><a href="#">Publication</a></li>
+</ul-->
+
+<form method="POST">
+<table class="table table-striped">
+    <thead>
+        <th>{% trans "Stage" %}</th>
+        <th>{% trans "Person" %}</th>
+        <th>{% trans "Deadline" %}</th>
+    </thead>
+    <tbody>
+        {% for i, sch, data in schedule %}
+            <tr>
+            <td>{{ sch }}</td>
+            <td>
+            {% if people|length > 1 %}
+                <select name="s{{ i }}-user" class="form-control">
+                    <option value="">---</option>
+                    {% for u in people %}
+                        <option value="{{ u.pk }}"
+                        {% if u.pk == data.0 %}
+                            selected="selected"
+                        {% endif %}
+                        >{{ u.first_name }} {{ u.last_name }}</option>
+                    {% endfor %}
+                </select>
+            {% else %}
+                {{ people.0.first_name }} {{ people.0.last_name }}
+            {% endif %}
+            </td>
+            <td><input placeholder="YYYY-MM-DD" name="s{{ i }}-deadline" value="{{ data.1|default:'' }}" class="form-control datepicker-field"></td>
+            </tr>
+        {% endfor %}
+
+        <tr>
+            <td>{% trans "Current stage" %}</td>
+            <td colspan="2"><select name="stage" class="form-control">
+                <option value="">–</option>
+                {% for i, sch, data in schedule %}
+                    <option value="{{ sch }}"
+                    {% if sch == book.stage %}
+                        selected="selected"
+                    {% endif %}
+                    >{{ sch }}</option>
+                {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><button type="submit" class="btn btn-default">{% trans "Update" %}</button></td>
+        </tr>
+    </tbody>
+</table>
+{% csrf_token %}
+</form>
+
+
+{% endblock %}

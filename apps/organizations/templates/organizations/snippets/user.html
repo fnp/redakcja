@@ -1,0 +1,39 @@
+{% load thumbnail %}
+{% load i18n %}
+{% load urlinfo %}
+
+
+{% if org.logo %}
+<img style="margin: 2em 2em 0 0; float: left;" src="{% thumbnail org.logo '180x180' format="PNG" as th %}{{ th.url }}{% endthumbnail %}">
+{% endif %}
+
+<h1>{{ org.user.first_name }} {{ org.user.last_name }}</h1>
+    <table class="table table-striped" style="width: auto"><tbody>
+    {% if org.country %}<tr><th>{% trans "Country" %}:</th><td>{{ org.get_country_display }}</td></tr>{% endif %}
+    {% if org.www %}<tr><th>{% trans "WWW" %}:</th><td><a href="{{ org.www }}" target="_blank">{{ org.www }}</a></td></tr>{% endif %}
+
+    {% if org.description %}
+    <tr><th>{% trans "Description" %}:</th><td>{{ org.description }}</td></tr>
+    {% endif %}
+
+    {% for url, lang, desc in org.get_projects %}
+        {% if forloop.first %}
+            <tr><th colspan="2">{% trans "Main projects and publications" %}:</th></tr>
+        {% endif %}
+        {% urlinfo url as ui %}
+            <tr>
+                <td style="text-align: center">
+                    {% if ui.picture_url %}
+                    <a href="{{ url }}" target="_blank">
+                    {% thumbnail ui.picture_url '120x40' format="PNG" as th %}
+                        <img src="{{ th.url }}">
+                    {% endthumbnail %}
+                    </a>
+                    {% endif %}
+                </td>
+            <td>{{ desc }}<br>
+                <a href="{{ url }}" target="_blank">{{ url }}</a> {% if lang %}({{ lang }}){% endif %}
+                </td>
+        </tr>
+    {% endfor %}
+    </tbody></table>

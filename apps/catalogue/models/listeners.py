@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from catalogue.models import Book, Chunk
 from catalogue.signals import post_publish
-from dvcs.signals import post_publishable
 
 
 def book_changed(sender, instance, created, **kwargs):
@@ -38,12 +37,6 @@ def publish_listener(sender, *args, **kwargs):
     for c in sender.book:
         c.touch()
 post_publish.connect(publish_listener)
-
-
-def publishable_listener(sender, *args, **kwargs):
-    sender.tree.touch()
-    sender.tree.book.touch()
-post_publishable.connect(publishable_listener)
 
 
 def listener_create(sender, instance, created, **kwargs):

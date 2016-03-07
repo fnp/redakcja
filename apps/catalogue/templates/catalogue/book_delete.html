@@ -1,0 +1,21 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block inner_content %}
+    <a href="{% url 'catalogue_user' %}">{% trans "My resources" %}</a> /
+    {% if doc.owner_organization %}
+        <a href="{% url 'organizations_main' doc.owner_organization.pk %}">{{ doc.owner_organization }}</a>
+    {% else %}
+        {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}
+    {% endif %} /
+    <h1 style='margin-bottom: 1em'>{{ doc.meta.title }}</h1>
+
+    <p>{% trans "Really delete the resource?" %}</p>
+
+    <form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+        <button style="margin-top:1em;" class="btn btn-danger" type="submit">{% trans "Delete" %}</button>
+        <a  style="margin-top:1em;" class="btn btn-default" href="{% url 'catalogue_html' doc.pk %}">{% trans "Cancel" %}</a>
+    </form>
+
+{% endblock %}

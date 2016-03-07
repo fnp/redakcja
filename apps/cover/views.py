@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from catalogue.helpers import active_tab
-from catalogue.models import Chunk
+from catalogue.models import Document
 from cover.models import Image
 from cover import forms
 

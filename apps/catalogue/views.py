@@ -2,6 +2,7 @@
 from datetime import datetime, date, timedelta
 import logging
 import os
+import shutil
 from StringIO import StringIO
 from urllib import unquote
 from urlparse import urlsplit, urlunsplit
@@ -15,24 +16,27 @@ from django.db.models import Count, Q
 from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.template import RequestContext
 
-from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
-from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord, Project
+from catalogue.helpers import active_tab, sstdocument
+from .constants import STAGES
+from .models import Document, Plan
+from dvcs.models import Revision
+from organizations.models import Organization
 from fileupload.views import UploadView, PackageView
 
 #
 # Quick hack around caching problems, TODO: use ETags
 #
 from django.views.decorators.cache import never_cache
+#from fnpdjango.utils.text.slughifi import slughifi
 
 logger = logging.getLogger("fnp.catalogue")
 
@@ -92,13 +96,10 @@ def logout_then_redirect(request):
     return http.HttpResponseRedirect(urlquote_plus(request.GET.get('next', '/'), safe='/?='))
 
 
-@permission_required('catalogue.add_book')
+#@permission_required('catalogue.add_book')
+@login_required
 @active_tab('create')
-def create_missing(request, slug=None):
-    if slug is None:
-        slug = ''
-    slug = slug.replace(' ', '-')
-
+def create_missing(request):
     if request.method == "POST":
         form = forms.DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
@@ -107,23 +108,68 @@ def create_missing(request, slug=None):
                 creator = request.user
             else:
                 creator = None
-            book = Book.create(
-                text=form.cleaned_data['text'],
-                creator=creator,
-                slug=form.cleaned_data['slug'],
-                title=form.cleaned_data['title'],
-                gallery=form.cleaned_data['gallery'],
-            )
 
-            return http.HttpResponseRedirect(reverse("wiki_editor", args=[book.slug]))
+            title = form.cleaned_data['title']
+            try:
+                org = request.user.membership_set.get(
+                    organization=int(form.cleaned_data['owner_organization'])).organization
+                kwargs = {'owner_organization': org}
+            except:
+                kwargs = {'owner_user': request.user}
+
+            doc = Document.objects.create(**kwargs)
+
+            cover = request.FILES.get('cover')
+            if cover:
+                uppath = 'uploads/%d/' % doc.pk
+                path = settings.MEDIA_ROOT + uppath
+                if not os.path.isdir(path):
+                    os.makedirs(path)
+                dest_path = path + cover.name   # UNSAFE
+                with open(dest_path, 'w') as destination:
+                    for chunk in cover.chunks():
+                        destination.write(chunk)
+                cover_url = 'http://milpeer.eu/media/dynamic/' + uppath + cover.name
+            else:
+                cover_url = ''
+
+            doc.commit(
+                text = '''<section xmlns="http://nowoczesnapolska.org.pl/sst#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+                <metadata>
+                    <dc:publisher>''' + form.cleaned_data['publisher'] + '''</dc:publisher>
+                    <dc:description>''' + form.cleaned_data['description'] + '''</dc:description>
+                    <dc:language>''' + form.cleaned_data['language'] + '''</dc:language>
+                    <dc:rights>''' + form.cleaned_data['rights'] + '''</dc:rights>
+                    <dc:audience>''' + form.cleaned_data['audience'] + '''</dc:audience>
+                    <dc:relation.coverImage.url>''' + cover_url + '''</dc:relation.coverImage.url>
+                </metadata>
+                <header>''' + title + '''</header>
+                <div class="p"> </div>
+                </section>''',
+                author=creator
+            )
+            doc.assigned_to = request.user
+            doc.save()
+
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[doc.pk]))
     else:
-        form = forms.DocumentCreateForm(initial={
-                "slug": slug,
-                "title": slug.replace('-', ' ').title(),
-        })
+        org_pk = request.GET.get('organization')
+        if org_pk:
+            try:
+                org = Organization.objects.get(pk=org_pk)
+            except Organization.DoesNotExist:
+                org = None
+            else:
+                if not org.is_member(request.user):
+                    org = None
+        else:
+            org = None
+        if org is not None:
+            org = org.pk
+
+        form = forms.DocumentCreateForm(initial={'owner_organization': org})
 
     return render(request, "catalogue/document_create_missing.html", {
-        "slug": slug,
         "form": form,
 
         "logout_to": '/',
@@ -221,15 +267,35 @@ def book_txt(request, slug):
 
 
 @never_cache
-def book_html(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+def book_html(request, pk, rev_pk=None, preview=False):
+    from librarian.document import Document as SST
+    from librarian.formats.html import HtmlFormat
 
-    doc = book.wldocument(parse_dublincore=False)
-    html = doc.as_html()
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
 
-    html = html.get_string() if html is not None else ''
+    try:
+        published_revision = doc.publish_log.all()[0].revision
+    except IndexError:
+        published_revision = None
+
+    if rev_pk is None:
+        if preview:
+            revision = doc.revision
+        else:
+            if published_revision is not None:
+                revision = published_revision
+            else:
+                # No published version, fallback to preview mode.
+                preview = True
+                revision = doc.revision
+    else:
+        revision = get_object_or_404(Revision, pk=rev_pk)
+
+    was_published = revision == published_revision or doc.publish_log.filter(revision=revision).exists()
+
+    sst = SST.from_string(revision.materialize())
+    html = HtmlFormat(sst).build(files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk)).get_string()
+
     # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     # return response
     # book_themes = {}
@@ -239,23 +305,41 @@ def book_html(request, slug):
 
     # book_themes = book_themes.items()
     # book_themes.sort(key=lambda s: s[0].sort_key)
-    return render_to_response('catalogue/book_text.html', locals(),
-        context_instance=RequestContext(request))
+    return render(request, 'catalogue/book_text.html', {
+        'doc': doc,
+        'preview': preview,
+        'revision': revision,
+        'published_revision': published_revision,
+        'specific': rev_pk is not None,
+        'html': html,
+        'can_edit': doc.can_edit(request.user) if doc else None,
+        'was_published': was_published,
+    })
 
 
 @never_cache
-def book_pdf(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+def book_pdf(request, pk, rev_pk):
+    from librarian.utils import Context
+    from librarian.document import Document as SST
+    from librarian.formats.pdf import PdfFormat
 
-    # TODO: move to celery
-    doc = book.wldocument()
-    # TODO: error handling
-    pdf_file = doc.as_pdf()
+    doc = get_object_or_404(Document, pk=pk)
+    rev = get_object_or_404(Revision, pk=rev_pk)
+    # Test
+
+    sst = SST.from_string(rev.materialize())
+    
+    ctx = Context(
+        files_path = 'http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
+        source_url = 'http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
+        )
+    if doc.owner_organization is not None and doc.owner_organization.logo:
+        ctx.cover_logo = 'http://%s%s' %(request.get_host(), doc.owner_organization.logo.url)
+    pdf_file = PdfFormat(sst).build(ctx)
+
     from catalogue.ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
-                book.slug + '.pdf', 'application/pdf')
+                '%d.pdf' % doc.pk, 'application/pdf')
 
 
 @never_cache
@@ -283,6 +367,85 @@ def revision(request, slug, chunk=None):
     if not doc.book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
     return http.HttpResponse(str(doc.revision()))
+
+
+@login_required
+def book_schedule(request, pk):
+    book = get_object_or_404(Document, pk=pk, deleted=False)
+    if request.method == 'POST':
+        Plan.objects.filter(document=book).delete()
+        for i, s in enumerate(STAGES):
+            user_id = request.POST.get('s%d-user' % i)
+            deadline = request.POST.get('s%d-deadline' % i) or None
+            Plan.objects.create(document=book, stage=s, user_id=user_id, deadline=deadline)
+
+        book.set_stage(request.POST.get('stage', ''))
+        return redirect('catalogue_user')
+
+    current = {}
+    for p in Plan.objects.filter(document=book):
+        current[p.stage] = (getattr(p.user, 'pk', None), (p.deadline.isoformat() if p.deadline else None))
+
+    schedule = [(i, s, current.get(s, ())) for (i, s) in enumerate(STAGES)]
+    
+    if book.owner_organization:
+        people = [m.user for m in book.owner_organization.membership_set.exclude(status='pending')]
+    else:
+        people = [book.owner_user]
+    return render(request, 'catalogue/book_schedule.html', {
+        'book': book,
+        'schedule': schedule,
+        'people': people,
+    })
+
+
+@login_required
+def book_owner(request, pk):
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not (doc.owner_user == request.user or doc.owner_organization.is_member(request.user)):
+        raise Http404
+
+    error = ''
+
+    if request.method == 'POST':
+        # TODO: real form
+        new_org_pk = request.POST.get('owner_organization')
+        if not new_org_pk:
+            doc.owner_organization = None
+            doc.owner_user = request.user
+            doc.save()
+        else:
+            org = Organization.objects.get(pk=new_org_pk)
+            if not org.is_member(request.user):
+                error = 'Bad organization'
+            else:
+                doc.owner_organization = org
+                doc.owner_user = None
+                doc.save()
+        if not error:
+            return redirect('catalogue_user')
+
+    return render(request, 'catalogue/book_owner.html', {
+        'doc': doc,
+        'error': error,
+    })
+
+
+@login_required
+def book_delete(request, pk):
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not (doc.owner_user == request.user or doc.owner_organization.is_member(request.user)):
+        raise Http404
+
+    if request.method == 'POST':
+        doc.deleted = True
+        doc.save()
+        return redirect('catalogue_user')
+
+    return render(request, 'catalogue/book_delete.html', {
+        'doc': doc,
+    })
+
 
 
 def book(request, slug):
@@ -389,7 +552,7 @@ def chunk_edit(request, slug, chunk):
     })
 
 
-@transaction.commit_on_success
+@transaction.atomic
 @login_required
 def chunk_mass_edit(request):
     if request.method == 'POST':
@@ -473,41 +636,122 @@ def book_append(request, slug):
 
 @require_POST
 @login_required
-def publish(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+def publish(request, pk):
+    from wiki import forms
+    from .models import PublishRecord
+    from dvcs.models import Revision
 
-    try:
-        book.publish(request.user)
-    except NotAuthorizedError:
-        return http.HttpResponseRedirect(reverse('apiclient_oauth'))
-    except BaseException, e:
-        return http.HttpResponse(e)
+    # FIXME: check permissions
+
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    form = forms.DocumentTextPublishForm(request.POST, prefix="textpublish")
+    if form.is_valid():
+        rev = Revision.objects.get(pk=form.cleaned_data['revision'])
+        # FIXME: check if in tree
+        #if PublishRecord.objects.filter(revision=rev, document=doc).exists():
+        #    return http.HttpResponse('exists')
+        pr = PublishRecord.objects.create(revision=rev, document=doc, user=request.user)
+        if request.is_ajax():
+            return http.HttpResponse('ok')
+        else:
+            return redirect('catalogue_html', doc.pk)
     else:
-        return http.HttpResponseRedirect(book.get_absolute_url())
+        if request.is_ajax():
+            return http.HttpResponse('error')
+        else:
+            try:
+                return redirect('catalogue_preview_rev', doc.pk, form.cleaned_data['revision'])
+            except KeyError:
+                return redirect('catalogue_preview', doc.pk)
+
+
+@require_POST
+@login_required
+def unpublish(request, pk):
+    from wiki import forms
+    from .models import PublishRecord
+    from dvcs.models import Revision
+
+    # FIXME: check permissions
+
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    doc.publish_log.all().delete()
+    if request.is_ajax():
+        return http.HttpResponse('ok')
+    else:
+        return redirect('catalogue_html', doc.pk)
+
 
 
 class GalleryMixin(object):
     def get_directory(self):
-        return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
-    def get_object(self, request, slug):
-        book = get_object_or_404(Book, slug=slug)
-        if not book.gallery:
-            raise Http404
-        return book
+        #return "%s%s/" % (settings.IMAGE_DIR, 'org%d' % self.org.pk if self.org is not None else self.request.user.pk)
+        return "uploads/%d/" % (self.doc.pk)
+
 
 class GalleryView(GalleryMixin, UploadView):
 
     def breadcrumbs(self):
         return [
-            (u'moduły', reverse('catalogue_document_list')),
-            (self.object.title, self.object.get_absolute_url()),
-            (u'materiały',),
-        ]
+                (self.doc.meta()['title'], '/documents/%d/' % self.doc.pk),
+            ]
+
+    def get_object(self, request, pk=None):
+        self.doc = Document.objects.get(pk=pk, deleted=False)
 
 
 class GalleryPackageView(GalleryMixin, PackageView):
 
     def get_redirect_url(self, slug):
         return reverse('catalogue_book_gallery', kwargs = dict(slug=slug))
+
+@login_required
+def fork(request, pk):
+    doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if request.method == "POST":
+        form = forms.DocumentForkForm(request.POST, request.FILES)
+        if form.is_valid():
+            
+            if request.user.is_authenticated():
+                creator = request.user
+            else:
+                creator = None
+
+            try:
+                org = request.user.membership_set.get(
+                    organization=int(form.cleaned_data['owner_organization'])).organization
+                kwargs = {'owner_organization': org}
+            except:
+                kwargs = {'owner_user': request.user}
+
+            new_doc = Document.objects.create(revision=doc.revision, **kwargs)
+
+            if os.path.isdir(settings.MEDIA_ROOT + "uploads/%d" % (doc.pk)):
+                shutil.copytree(
+                    settings.MEDIA_ROOT + "uploads/%d" % (doc.pk),
+                    settings.MEDIA_ROOT + "uploads/%d" % (new_doc.pk)
+                )
+
+            new_doc.assigned_to = request.user
+            new_doc.save()
+
+            return http.HttpResponseRedirect(reverse("wiki_editor", args=[new_doc.pk]))
+    else:
+        form = forms.DocumentForkForm()
+
+    return render(request, "catalogue/document_fork.html", {
+        "form": form,
+
+        "logout_to": '/',
+    })
+
+
+def upcoming(request):
+    return render(request, "catalogue/upcoming.html", {
+        'objects_list': Document.objects.filter(deleted=False).filter(publish_log=None),
+    })
+
+def finished(request):
+    return render(request, "catalogue/finished.html", {
+        'objects_list': Document.objects.filter(deleted=False).exclude(publish_log=None),
+    })

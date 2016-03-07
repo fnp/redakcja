@@ -1,0 +1,105 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+{% load document_list from document_list %}
+
+{% block inner_content %}
+
+    {% if am_owner %}
+    <a style="float:right" class="btn btn-default" href="{% url 'organizations_edit' org.pk %}">{% trans "Edit" %}</a>
+    {% elif not my_status %}
+    <a style="float:right" class="btn btn-default" href="{% url 'organizations_join' org.pk %}">{% trans "Join" %}</a>
+    {% endif %}
+    {% if am_member %}
+    <a style="float:right; margin-right: 5px" class="btn btn-default" href="{% url 'catalogue_create_missing' %}?organization={{ org.pk }}">{% trans "New resource +" %}</a>
+    {% endif %}
+
+    {{ org.get_preview_html|safe }}
+
+    {% if tab == 'members' %}
+
+    <ul class="nav nav-tabs">
+        <li role="presentation"><a href="{% url 'organizations_main' org.pk %}">{% trans "Resources" %}</a></li>
+        <li role="presentation" class="active"><a href="#">{% trans "Members" %}</a></li>
+    </ul>
+
+
+    <table class="table table-striped">
+    <thead>
+        <th>{% trans "Name" %}</th>
+        {% if am_owner %}<th>{% trans "E-mail" %}</th>{% endif %}
+        <th>{% trans "Status" %}</th>
+        {% if am_owner %}<th></th>{% endif %}
+    </thead>
+    <tbody>
+
+
+    {% for m in org.membership_set.all %}
+        {% if am_owner or m.status != 'pending' or m.user == request.user %}
+            <tr class="member-{{ m.status }}">
+                <td>{{ m.user.first_name }} {{ m.user.last_name }}</td>
+                {% if am_owner %}<td>{{ m.user.email }}</td>{% endif %}
+                <td>
+                    {% if m.status == 'owner' %}
+                        {% trans "owner" %}
+                        {% if am_owner %}
+                        </td><td>
+                        {% if not m.user == user %}
+                        <form action="{% url 'organizations_membership' org.pk %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user" value="{{ m.user.pk }}">
+                            <div class="btn-group" role="group">
+                                <button type="submit" name="action" value="regular" class="btn btn-info">{% trans "Make regular" %}</button>
+                                <button type="submit" name="action" value="remove" class="btn btn-danger">{% trans "Remove" %}</button>
+                            </div>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    {% elif m.status == 'pending' %}
+                        {% trans "pending" %}
+                        {% if am_owner %}
+                        </td><td>
+                        <form action="{% url 'organizations_membership' org.pk %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user" value="{{ m.user.pk }}">
+                            <div class="btn-group" role="group">
+                                <button type="submit" name="action" value="regular" class="btn btn-success">{% trans "Accept" %}</button>
+                                <button type="submit" name="action" value="remove" class="btn btn-danger">{% trans "Reject" %}</button>
+                            </div>
+                        </form>
+                        {% elif m.user == request.user %}
+                            <br><small>{% trans "Waiting for the owner of the organization to accept you as a member." %}</small>
+                        {% endif %}
+                    {% else %}
+                        regular
+                        {% if am_owner %}
+                        </td><td>
+                        <form action="{% url 'organizations_membership' org.pk %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user" value="{{ m.user.pk }}">
+                            <div class="btn-group" role="group">
+                                <button type="submit" name="action" value="owner" class="btn btn-warning">{% trans "Make owner" %}</button>
+                                <button type="submit" name="action" value="remove" class="btn btn-danger">{% trans "Remove" %}</button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+    </table>
+
+    {% elif tab == 'documents' %}
+
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="">{% trans "Resources" %}</a></li>
+        <li role="presentation"><a href="{% url 'organizations_members' org.pk %}">{% trans "Members" %}</a></li>
+    </ul>
+
+    {% document_list organization=org %}
+
+    {% endif %}
+
+
+{% endblock %}

@@ -1,28 +1,30 @@
 {% load i18n %}
 
-{% if book.single %}
-    {% with book.0 as chunk %}
     <tr>
-        <td><input type="checkbox" name="select_book" value="{{book.id}}" data-chunk-id="{{chunk.id}}"/></td>
-        <td><a target="_blank"
-                    href="{% url 'wiki_editor' book.slug %}">
-                    {{ book.title }}</a></td>
-        <td>{% if chunk.stage %}
-            {{ chunk.stage }}
-        {% else %}–
-        {% endif %}</td>
-        <td class='user-column'>{% if chunk.user %}<a href="{% url 'catalogue_user' chunk.user.username %}">{{ chunk.user.first_name }} {{ chunk.user.last_name }}</a>{% endif %}</td>
-        <td>{{ book.project.name }}</td>
-        <td><a href="{% url 'catalogue_book_gallery' book.slug %}">Materiały</a></td>
+        <td><a href="{% url 'catalogue_html' book.pk %}">{{ book.meta.title }}</a></td>
+        <td>
+            {% if book.owner_user %}
+                {{ book.owner_user.first_name }} {{ book.owner_user.last_name }}
+            {% else %}
+                <a href="{{ book.owner_organization.get_absolute_url }}">{{ book.owner_organization }}</a>
+            {% endif %}
+            {% if am_owner %}
+                <a href="{% url 'catalogue_book_owner' book.pk %}">({% trans "change" %})</a>
+            {% endif %}
+            </td>
+        <td>{{ book.stage|default:"–" }}</td>
+        <td class="{% if book.is_overdue %}alert-danger{% endif %}">{% if book.assigned_to %}{{ book.assigned_to.first_name }} {{ book.assigned_to.last_name }}{% endif %}</td>
+        <td class="{% if book.is_overdue %}alert-danger{% endif %}">{{ book.get_plan.deadline|default:"–" }}</td>
+        <td>
+            {% if am_owner %}
+                <div class="btn-group-vertical">
+                    <a class="btn btn-default" href="{% url 'wiki_editor' book.pk %}">{% trans "Edit" %}</a>
+                    <a class="btn btn-default" href="{% url 'catalogue_book_schedule' book.pk %}">{% trans "Schedule" %}</a>
+                    <a class="btn btn-default" href="{% url 'catalogue_book_delete' book.pk %}">{% trans "Delete" %}</a>
+                </div>
+            {% endif %}
+        </td>
     </tr>
-    {% endwith %}
-{% else %}
-    <tr>
-        <td><input type="checkbox" name="select_book" value="{{book.id}}"/></td>
-        <td>{{ book.title }}</td>
-        <td></td>
-        <td class='user-column'></td>
-        <td>{{ book.project.name }}</td>
-        <td></td>
-    </tr>
-{% endif %}
+
+</div>
+</div>

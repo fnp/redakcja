@@ -1,0 +1,42 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+{% block inner_content %}
+
+    <h1>{% trans "Edit organization" %}</h1>
+
+
+    <form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label for="title">{% trans "Name" %}</label>
+            {{ form.name.errors }}
+            <input class="form-control" name="name" type="text" value="{{ form.name.value|default:"" }}">
+        <label for="logo">{% trans "Logo" %}</label>
+            {{ form.logo.errors }}
+            <div>
+            {{ form.logo }}
+            </div>
+        <label for="country">{% trans "Country" %}</label>
+            {{ form.country.errors }}
+            <select class="form-control" name="country">
+                {% for c, t in form.cts %}
+                    <option value='{{ c }}' {% if form.country.value == c %}selected="selected"{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        <label for="www">{% trans "WWW" %}</label>
+            {{ form.www.errors }}
+            <input class="form-control" name="www" type="www" value="{{ form.www.value|default:"" }}">
+        <label for="title">{% trans "Description" %}</label>
+            {{ form.description.errors }}
+            <textarea class="form-control" name="description">{{ form.description.value|default:"" }}</textarea>
+        <label for="title">{% trans "Projects" %}</label>
+            {{ form.projects.errors }}
+            <textarea class="form-control" name="projects">{{ form.projects.value|default:"" }}</textarea>
+	    {% trans "Enter each line as: URL language description" %}<br/>
+
+        <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Change" %}</button></td></tr>
+    </form>
+
+
+{% endblock %}

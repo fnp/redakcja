@@ -1,0 +1,15 @@
+{% extends "catalogue/base.html" %}
+{% load fnp_markup %}
+{% load flat_lang %}
+
+{% block title %}
+{% flat_lang flatpage as flatpagelang %}
+{{ flatpagelang.title }} | {{ block.super }}{% endblock %}
+
+{% block inner_content %}
+{% flat_lang flatpage as flatpagelang %}
+<h1>{{ flatpagelang.title }}</h1>
+
+{{ flatpagelang.content|textile_pl }}
+
+{% endblock %}

@@ -1,16 +1,112 @@
 {% load i18n %}
 
+<ul class="nav navbar-nav navbar-right">
+
+
+<li><a style="color: white">
+  <form action="{% url 'django.views.i18n.set_language' %}" method="post" style="display: inline">
+  {% csrf_token %}
+  <input type="hidden" name="language" value="en" /><button type="submit" style="border: 0; background: none">en</button></form> |
+  <form action="{% url 'django.views.i18n.set_language' %}" method="post" style="display: inline">
+  {% csrf_token %}
+  <input type="hidden" name="language" value="pl" /><button type="submit" style="border: 0; background: none">pl</button></form> |
+</a>
+</li>
+
+<li><a href="/platform/" style="color: white">{% trans "About" %}</a></li>
+<li><a href="/competition/" style="color: white">{% trans "Competition" %}</a></li>
+<li><a href="{% url 'organizations_new' %}" style="color: white"
+    {% if request.path == '/' %}
+    data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
+    data-content='{% trans "Create an organization here. Organizations help manage team's work." %}'
+    {% endif %}
+>{% trans "New organization" %}</a></li>
+<li><a href="{% url 'catalogue_create_missing' %}" style="color: white"
+    {% if request.path == '/' %}
+    data-toggle="tutorial" data-tutorial="2" data-placement="bottom"
+    data-content="{% trans 'Start editing a new resource.' %}"
+    {% endif %}
+>{% trans "New resource" %}</a></li>
+
 {% if user.is_authenticated %}
-<span class="user_name">{{ user.username }}</span> |
+<li><a href="{% url 'catalogue_user' %}" style="color: white">{% trans "My resources" %}</a></li>
 
-{% if user.is_staff %}
-    <a href="{% url 'admin:index' %}">{% trans "Admin" %}</a> |
-{% endif %}
+    <li class="dropdown">
+        <style>
+            #main-navbar .dropdown.open > a {
+                background: #888
+            }
+        </style>
+        <a href="#" class="dropdown-toggle" type="button" data-toggle="dropdown" style="color: white">
+            {{ user.username }}
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" style="">
+            {% if user.membership_set.all.exists %}
+            <li role="presentation" class="dropdown-header">{% trans "My organizations" %}:</li>
+            {% for membership in user.membership_set.all %}
+                <li><a href="{% url 'organizations_main' membership.organization.pk %}">{{ membership.organization }}</a></li>
+            {% endfor %}
+            {% else %}
+            <li role="presentation" class="dropdown-header">{% trans "You are not a member of any organizations" %}</li>
+            {% endif %}
+            <li><a href="{% url 'organizations_new' %}">{% trans "New organization" %}</a></li>
+            <li role="presentation" class="divider"></li>
+            <li><a href="{% url 'organizations_user_edit' %}">{% trans "Edit my data" %}</a></li>
+            {% if user.is_staff %}
+                <li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+            {% endif %}
+            <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+        </ul>
+      </div>
+    </li>
 
-<a href='{% url "logout" %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
+
 {% else %}
 {% url "login" as login_url %}
 {% ifnotequal login_url request.path %}
-    <a href='{{ login_url }}'>{% trans "Log In" %}</a>
+    <li class="dropdown"
+            data-toggle="tutorial" data-tutorial="0" data-placement="bottom"
+            data-content="{% trans 'First, you will need an account.' %}"
+    >
+        <button class="btn btn-default navbar-btn dropdown-toggle" type="button" data-toggle="dropdown" style=""
+        >
+            {% trans "Log in / Register" %}
+        </button>
+        <div class="dropdown-menu" style="padding:0;margin-top:-5px; border:none;box-shadow:none; min-width:240px">
+      <div class="panel panel-default" style="color: #333;">
+          <div class="panel-heading">
+            <h3 class="panel-title">{% trans "Log in / Register" %}</h3>
+          </div>
+          <div class="panel-body">
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <label for="email">
+                    {% trans "E-mail" %}</label>
+                    <input name="username" class="form-control" type="email">
+                
+                <label for="password">
+                    {% trans "Password" %}</label>
+                    <input name="password" class="form-control" type="password">
+                
+                
+                    <!--input type="checkbox" name="keep">
+                    <label for="keep">Keep me logged in</label-->
+                
+                <div><button class="btn btn-default">
+                    {% trans "Log in" %}
+                </button>
+                </div>
+            </form>
+            <p><a href="{% url 'password_reset' %}">{% trans "I forgot my password" %}</a></p>
+            <hr>
+            <p style="margin-bottom:1em">{% trans "<strong>Register now</strong> to start editing your own materials." %}</p>
+            <a class="btn btn-default" href="{% url 'register' %}">{% trans "Register" %}</a>
+          </div>
+      </div>
+    </li>
 {% endifnotequal %}
 {% endif %}
+
+</ul>
+

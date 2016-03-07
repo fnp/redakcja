@@ -1,51 +1,79 @@
-{% load compressed i18n %}
+{% load i18n %}
 {% load catalogue %}
+{% load javascript stylesheet from pipeline %}
+{% load static from staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    {% compressed_css 'catalogue' %}
-    <title>{% block title %}{% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% stylesheet 'catalogue' %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <title>{% block title %}MIL/PEER{% endblock title %}</title>
     {% block add_css %}{% endblock %}
+    <style>
+        tr.member-owner {
+            font-weight: bold;
+        }
+        tr.member-pending {
+            font-style: italic;
+            color: #888;
+        }
+        tr.member-pending form {
+            font-style: normal;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
 
-<div id="tabs-nav">
-
-    <a href="{% url 'catalogue_document_list' %}">
-        <img src="http://edukacjamedialna.edu.pl/static/img/logo.png" id="logo" width="70px">
+<nav class="navbar navbar-default" id="main-navbar" style="color: #ddd; background: #444; box-shadow: 0 0 5px #888; border-color: #888">
+    <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+        <span style="font-weight: bold; color: #ddd"><span style="color: orange">MIL</span>/<span style="color: #0d0">PEER</span></span>
     </a>
+    <a target="_blank" href='//evensfoundation.be'><img src="{% static "img/evens.png" %}" style="height: 36px; margin: 7px 20px 7px 30px"></a>
+    <a target="_blank" href='//nowoczesnapolska.org.pl'><img src="{% static "img/fnp.png" %}" style="height: 30px; margin: 10px"></a>
 
-    <div id="tabs-nav-left">
-        {% main_tabs %}
+    {% include "registration/head_login.html" %}
     </div>
-
-    <span id="login-box">
-        {% include "registration/head_login.html" %}
-    </span>
-
-    <div class='clr' ></div>
-</div>
+</nav>
 
 <div id="content">
 
 {% block content %}
-<div id="catalogue_layout_left_column">
-	{% block leftcolumn %}
-	{% endblock leftcolumn %}
+
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+
+{% block inner_content %}
+{% endblock %}
+
 </div>
-<div id="catalogue_layout_right_column">
-	{% block rightcolumn %}
-	{% endblock rightcolumn %}
 </div>
+
 {% endblock content %}
 
 </div>
 
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-{% compressed_js 'catalogue' %}
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+{% javascript 'catalogue' %}
 {% block add_js %}{% endblock %}
+    <!-- Piwik --> 
+    <script type="text/javascript">
+      var pkBaseURL = "//piwik.nowoczesnapolska.org.pl/nocas/";
+      document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      </script><script type="text/javascript">
+      try {
+      var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 23);
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+      } catch( err ) {}
+      </script><noscript><p><img src="//piwik.nowoczesnapolska.org.pl/nocas/piwik.php?idsite=23" style="border:0" alt="" /></p></noscript>
+      <!-- End Piwik Tracking Code -->
 {% block extrabody %}
 {% endblock %}
 </body>

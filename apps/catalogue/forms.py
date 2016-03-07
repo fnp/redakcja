@@ -9,36 +9,47 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import MASTERS
-from catalogue.models import Book, Chunk, Template
+from catalogue.models import Document, Template
 
-class DocumentCreateForm(forms.ModelForm):
+class DocumentCreateForm(forms.Form):
     """
         Form used for creating new documents.
     """
-    template = forms.ModelChoiceField(Template.objects, required=False)
+    owner_organization = forms.CharField(required=False)
+    title = forms.CharField(required=True)
+    language = forms.CharField(required=True)
+    publisher = forms.CharField(required=False)
+    description = forms.CharField(required=False)
+    rights = forms.CharField(required=False)
+    audience = forms.CharField()
+    
+    cover = forms.FileField(required=False)
+    
+    #summary = forms.CharField(required=True)
+    #template = forms.ModelChoiceField(Template.objects, required=False)
 
-    class Meta:
-        model = Book
-        exclude = ['parent', 'parent_number', 'project', 'gallery', 'public']
+    #class Meta:
+        #model = Book
+        #exclude = ['parent', 'parent_number', 'project', 'gallery', 'public']
 
-    def __init__(self, *args, **kwargs):
-        super(DocumentCreateForm, self).__init__(*args, **kwargs)
-        self.fields['slug'].widget.attrs={'class': 'autoslug'}
-        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
-        self.fields['template'].queryset = Template.objects.filter(is_main=True)
+    #def __init__(self, *args, org=None, **kwargs):
+    #    super(DocumentCreateForm, self).__init__(*args, **kwargs)
+        #self.fields['slug'].widget.attrs={'class': 'autoslug'}
+        #self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+        #self.fields['template'].queryset = Template.objects.filter(is_main=True)
 
-    def clean(self):
-        super(DocumentCreateForm, self).clean()
-        template = self.cleaned_data['template']
-        self.cleaned_data['gallery'] = self.cleaned_data['slug']
+    #~ def clean(self):
+        #~ super(DocumentCreateForm, self).clean()
+        #template = self.cleaned_data['template']
+        #self.cleaned_data['gallery'] = self.cleaned_data['slug']
 
-        if template is not None:
-            self.cleaned_data['text'] = template.content
+        #~ if template is not None:
+            #~ self.cleaned_data['text'] = template.content
 
-        if not self.cleaned_data.get("text"):
-            self._errors["template"] = self.error_class([_("You must select a template")])
+        #~ if not self.cleaned_data.get("text"):
+            #~ self._errors["template"] = self.error_class([_("You must select a template")])
 
-        return self.cleaned_data
+        #~ return self.cleaned_data
 
 
 class DocumentsUploadForm(forms.Form):
@@ -63,38 +74,20 @@ class DocumentsUploadForm(forms.Form):
         return self.cleaned_data
 
 
-class ChunkForm(forms.ModelForm):
+class DocumentForm(forms.ModelForm):
     """
         Form used for editing a chunk.
     """
     user = forms.ModelChoiceField(queryset=
-        User.objects.annotate(count=Count('chunk')).
-        order_by('last_name', 'first_name'), required=False,
+        User.objects.order_by('last_name', 'first_name'), required=False,
         label=_('Assigned to')) 
 
     class Meta:
-        model = Chunk
-        fields = ['title', 'slug', 'gallery_start', 'user', 'stage']
-        exclude = ['number']
-
-    def __init__(self, *args, **kwargs):
-        super(ChunkForm, self).__init__(*args, **kwargs)
-        self.fields['gallery_start'].widget.attrs={'class': 'number-input'}
-        self.fields['slug'].widget.attrs={'class': 'autoslug'}
-        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
-
-    def clean_slug(self):
-        slug = self.cleaned_data['slug']
-        try:
-            chunk = Chunk.objects.get(book=self.instance.book, slug=slug)
-        except Chunk.DoesNotExist:
-            return slug
-        if chunk == self.instance:
-            return slug
-        raise forms.ValidationError(_('Chunk with this slug already exists'))
+        model = Document
+        fields = ['user', 'stage']
 
 
-class ChunkAddForm(ChunkForm):
+class DocumentAddForm(DocumentForm):
     """
         Form used for adding a chunk to a document.
     """
@@ -108,25 +101,11 @@ class ChunkAddForm(ChunkForm):
         raise forms.ValidationError(_('Chunk with this slug already exists'))
 
 
-class BookAppendForm(forms.Form):
-    """
-        Form for appending a book to another book.
-        It means moving all chunks from book A to book B and deleting A.
-    """
-    append_to = forms.ModelChoiceField(queryset=Book.objects.all(),
-            label=_("Append to"))
-
-    def __init__(self, book, *args, **kwargs):
-        ret =  super(BookAppendForm, self).__init__(*args, **kwargs)
-        self.fields['append_to'].queryset = Book.objects.exclude(pk=book.pk)
-        return ret
-
-
 class BookForm(forms.ModelForm):
     """Form used for editing a Book."""
 
     class Meta:
-        model = Book
+        model = Document
         exclude = ['project']
 
     def __init__(self, *args, **kwargs):
@@ -152,3 +131,10 @@ class ChooseMasterForm(forms.Form):
     """
 
     master = forms.ChoiceField(choices=((m, m) for m in MASTERS))
+
+
+class DocumentForkForm(forms.Form):
+    """
+        Form used for forking documents.
+    """
+    owner_organization = forms.CharField(required=False)
