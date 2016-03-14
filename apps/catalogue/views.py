@@ -252,7 +252,7 @@ def book_pdf(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    pdf_file = doc.as_pdf()
+    pdf_file = doc.as_pdf(cover=True, ilustr_path=os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, book.gallery))
     from catalogue.ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
                 book.slug + '.pdf', 'application/pdf')

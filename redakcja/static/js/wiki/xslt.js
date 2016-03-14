@@ -366,7 +366,7 @@ HTMLSerializer.prototype._serializeElement = function(node) {
     		};
 
     		self.result += ' ' + self._join(nsData.prefix, node.getAttribute('x-attr-name-'+this));
-    		self.result += '="'+node.getAttribute('x-attr-value-'+this) +'"';
+                self.result += '="'+node.getAttribute('x-attr-value-'+this).replace(/&/g, '&amp;').replace(/</g, '&lt;')+'"';
     	});
 
     	/* print new namespace declarations */
