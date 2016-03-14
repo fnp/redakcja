@@ -7,6 +7,7 @@ PyYAML>=3.0
 Pillow
 oauth2
 httplib2 # oauth2 dependency
+http://prdownloads.sourceforge.net/getfo/texml-2.0.2.tar.gz?download
 
 ## Book conversion library
 # git+git://github.com/fnp/librarian.git@master#egg=librarian
