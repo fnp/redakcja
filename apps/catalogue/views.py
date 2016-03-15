@@ -235,7 +235,7 @@ def book_html(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     doc = book.wldocument(parse_dublincore=False)
-    html = doc.as_html()
+    html = doc.as_html(options={'gallery': "'%s'" % book.gallery_url()})
 
     html = html.get_string() if html is not None else ''
     # response = http.HttpResponse(html, content_type='text/html')
@@ -259,7 +259,7 @@ def book_pdf(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    pdf_file = doc.as_pdf(cover=True, ilustr_path=os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, book.gallery))
+    pdf_file = doc.as_pdf(cover=True, ilustr_path=book.gallery_path())
     from catalogue.ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
                 book.slug + '.pdf', 'application/pdf')
@@ -540,7 +540,8 @@ def publish(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     try:
-        book.publish(request.user)
+        protocol = 'https://' if request.is_secure() else 'http://'
+        book.publish(request.user, host=protocol + request.get_host())
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth'))
     except BaseException, e:

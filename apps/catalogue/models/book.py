@@ -87,6 +87,12 @@ class Book(models.Model):
             self.get_absolute_url()
         )
 
+    def gallery_path(self):
+        return os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery)
+
+    def gallery_url(self):
+        return '%s%s%s/' % (settings.MEDIA_URL, settings.IMAGE_DIR, self.gallery)
+
     # Creating & manipulating
     # =======================
 
@@ -416,7 +422,7 @@ class Book(models.Model):
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 
-    def publish(self, user, fake=False):
+    def publish(self, user, fake=False, host=None):
         """
             Publishes a book on behalf of a (local) user.
         """
@@ -424,7 +430,10 @@ class Book(models.Model):
         changes = self.get_current_changes(publishable=True)
         book_xml = self.materialize(changes=changes)
         if not fake:
-            apiclient.api_call(user, "books/", {"book_xml": book_xml})
+            data = {"book_xml": book_xml}
+            if host:
+                data['gallery_url'] = 'http://' + host + self.gallery_url()
+            apiclient.api_call(user, "books/", data)
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
