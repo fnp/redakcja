@@ -432,7 +432,7 @@ class Book(models.Model):
         if not fake:
             data = {"book_xml": book_xml}
             if host:
-                data['gallery_url'] = 'http://' + host + self.gallery_url()
+                data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data)
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
