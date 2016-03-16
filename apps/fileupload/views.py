@@ -20,7 +20,7 @@ else:
     def thumbnail(relpath):
         try:
             return default.backend.get_thumbnail(relpath, "x50").url
-        except IOError:
+        except (IOError, ValueError):
             # That's not an image. No thumb.
             return None
 

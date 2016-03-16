@@ -145,7 +145,7 @@ msgstr "obraz"
 msgid "images"
 msgstr "obrazy"
 
-#: models/image.py:75
+#: models/image.py:79
 msgid "There is no publishable revision"
 msgstr "Żadna wersja nie została oznaczona do publikacji."
 
@@ -202,6 +202,14 @@ msgstr "zapis publikacji obrazu"
 #: models/publish_log.py:54
 msgid "image publish records"
 msgstr "zapisy publikacji obrazów"
+
+#: templates/catalogue/active_users_list.html:5
+msgid "Active users"
+msgstr "Aktywni użytkownicy"
+
+#: templates/catalogue/active_users_list.html:11
+msgid "Active users since"
+msgstr "Użytkownicy aktywni od"
 
 #: templates/catalogue/activity.html:6 templates/catalogue/activity.html:12
 #: templatetags/catalogue.py:29

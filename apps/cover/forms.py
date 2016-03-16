@@ -3,6 +3,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import json
 import re
 from urllib2 import urlopen
 from django import forms
@@ -62,6 +63,7 @@ class FlickrForm(forms.Form):
 
     def clean_source_url(self):
         def normalize_html(html):
+            return html
             return re.sub('[\t\n]', '', html)
     
         url = self.cleaned_data['source_url']
@@ -75,7 +77,7 @@ class FlickrForm(forms.Form):
             html = normalize_html(urlopen(url).read().decode('utf-8'))
         except:
             raise forms.ValidationError('Error reading page.')
-        match = re.search(r'<a href="([^"]*)" rel="license cc:license">Some rights reserved</a>', html)
+        match = re.search(r'<a href="([^"]*)"[^>]* rel="license ', html)
         try:
             assert match
             license_url = match.group(1)
@@ -87,22 +89,21 @@ class FlickrForm(forms.Form):
         except AssertionError:
             raise forms.ValidationError('Error reading license name.')
 
-        m = re.search(r'"ownername":"([^"]*)', html)
+        m = re.search(r'<a[^>]* class="owner-name [^>]*>([^<]*)<', html)
         if m:
             self.cleaned_data['author'] = "%s@Flickr" % m.group(1)
         else:
             raise forms.ValidationError('Error reading author name.')
 
-        m = re.search(r'<h1[^>]*>(.*?)</h1>', html)
+        m = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.S)
         if not m:
             raise forms.ValidationError('Error reading image title.')
-        self.cleaned_data['title'] = m.group(1)
+        self.cleaned_data['title'] = m.group(1).strip()
 
-        url_size = base_url + "sizes/o/"
-        html = normalize_html(urlopen(url_size).read().decode('utf-8'))
-        m = re.search(r'<div id="allsizes-photo">\s*<img src="([^"]*)"', html)
-        if m:
-            self.cleaned_data['download_url'] = m.group(1)
-        else:
+        m = re.search(r'modelExport: (\{.*\})', html)
+        try:
+            assert m
+            self.cleaned_data['download_url'] = 'https:' + json.loads(m.group(1))['photo-models'][0]['sizes']['o']['url']
+        except (AssertionError, ValueError, IndexError, KeyError):
             raise forms.ValidationError('Error reading image URL.')
         return base_url
