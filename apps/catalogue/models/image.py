@@ -48,10 +48,14 @@ class Image(dvcs_models.Document):
         return ("catalogue_image", [self.slug])
 
     def correct_about(self):
-        return "http://%s%s" % (
+        return ["http://%s%s" % (
             Site.objects.get_current().domain,
             self.get_absolute_url()
-        )
+            ),
+            "http://%s%s" % (
+                'obrazy.redakcja.wolnelektury.pl',
+                self.get_absolute_url()
+            )]
 
     # State & cache
     # =============
@@ -86,8 +90,8 @@ class Image(dvcs_models.Document):
             raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
 
         valid_about = self.correct_about()
-        assert picture.picture_info.about == valid_about, \
-                _("rdf:about is not") + " " + valid_about
+        assert picture.picture_info.about in valid_about, \
+                _("rdf:about is not") + " " + valid_about[0]
 
     def publishable_error(self):
         try:

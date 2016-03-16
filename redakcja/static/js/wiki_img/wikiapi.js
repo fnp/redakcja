@@ -17,9 +17,9 @@
 		var vname = arguments[0];
 		var base_path = "/images";
 
-		if (vname == "ajax_document_text") {
-			return base_path + "/text/" + arguments[1] + "/";
-		}
+		if (vname == "ajax_document_text")
+		    return base_path + "/text/" + arguments[1] + "/";
+
 
         if (vname == "ajax_document_revert") {
             return base_path + "/revert/" + arguments[1] + '/';
@@ -80,18 +80,18 @@
 		$.ajax({
 			method: "GET",
 			url: reverse("ajax_document_text", self.id),
-			data: {"commit": self.commit},
+			data: {"revision": self.revision},
 			dataType: 'json',
 			success: function(data) {
 				var changed = false;
 
-				if (self.text === null || self.commit !== data.commit) {
+				if (self.text === null || self.revision !== data.revision) {
 					self.text = data.text;
 					if (self.text === '') {
 					    self.text = '<picture></picture>';
 					}
 					self.revision = data.revision;
-                    self.commit = data.commit;
+//                    self.commit = data.commit;
 					changed = true;
 					self.triggerDocumentChanged();
 				};
@@ -196,7 +196,7 @@
 				if (data.text) {
 					self.text = data.text;
 					self.revision = data.revision;
-                    self.commit = data.commit;
+//                    self.commit = data.commit;
 					changed = true;
 					self.triggerDocumentChanged();
 				};

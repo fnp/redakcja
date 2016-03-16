@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging
 import os
@@ -599,3 +600,36 @@ class GalleryView(UploadView):
 
     def get_directory(self):
         return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
+
+
+def active_users_list(request):
+    since = date(date.today().year, 1, 1)
+    by_user = defaultdict(lambda: 0)
+    by_email = defaultdict(lambda: 0)
+    names_by_email = defaultdict(set)
+    for change_model in (Chunk.change_model, Image.change_model):
+        for c in change_model.objects.filter(
+                created_at__gte=since).order_by(
+                'author', 'author_email', 'author_name').values(
+                'author', 'author_name', 'author_email').annotate(
+                c=Count('author'), ce=Count('author_email')).distinct():
+            if c['author']:
+                by_user[c['author']] += c['c']
+            else:
+                by_email[c['author_email']] += c['ce']
+                if c['author_name'].strip():
+                    names_by_email[c['author_email']].add(c['author_name'])
+    for user in User.objects.filter(pk__in=by_user):
+        by_email[user.email] += by_user[user.pk]
+        names_by_email[user.email].add("%s %s" % (user.first_name, user.last_name))
+
+    active_users = []
+    for email, count in by_email.items():
+        active_users.append((email, names_by_email[email], count))
+    active_users.sort(key=lambda x: -x[2])
+    return render(request, 'catalogue/active_users_list.html', {
+        'users': active_users,
+        'since': since,
+    })
+
+

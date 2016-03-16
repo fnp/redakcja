@@ -75,9 +75,9 @@
             "<akap_dialog>--- "]]}], ["lineregexp", {"exprs": [["^\\s+|\\s+$", ""],
             ["\\s+", " "], ["(,,)\\s+", "$1"], ["\\s+(\")", "$1"], ["([^\\.])(\\s*)</p",
             "$1.$2</p"], ["([\\.:;!\\?])([^\\s\\\\])", "$1 $2"], ["([^\\s])\\s+([\\.:;!\\?])",
-            "$1$2"], ["\\s+,([^,])", ",$1"], ["([^,]),([^\\s\\\\,])", "$1, $2"],
-            ["([A-Za-z])0", "$1o"], ["(\\. )0([A-Za-z])", "$1O$2"], [" 0([A-Za-z])", " o$1"],
-            ["([A-Za-z])1", "$1l"], ["(\\. )1([A-Za-z])", "$1L$2"], [" 1([A-Za-z])", " l$1"]]}]]'
+            "$1$2"], ["\\s+,([^,])", ",$1"], ["([^,]),([^\\s\\\\,])", "$1, $2"], ["([A-Za-z])0",
+            "$1o"], ["(\\. )0([A-Za-z])", "$1O$2"], [" 0([A-Za-z])", " o$1"], ["([A-Za-z])1",
+            "$1l"], ["(\\. )1([A-Za-z])", "$1L$2"], [" 1([A-Za-z])", " l$1"]]}]]'
         scriptlet: macro
         slug: basic_correction
         tooltip: "Wykonuj\u0119 podstawow\u0105 korekt\u0119 tekstu."
@@ -917,6 +917,17 @@
         tooltip: "Wstawia ko\u0144cowy znacznik ci\u0119cia cz\u0119\u015Bci"
     model: toolbar.button
     pk: 107
+-   fields:
+        accesskey: ''
+        group: [11]
+        label: etap
+        link: ''
+        params: '{"tag": "developmentStage"}'
+        scriptlet: insert_tag
+        slug: etap
+        tooltip: "wymaga uwsp\xF3\u0142czesnienia: 0.3"
+    model: toolbar.button
+    pk: 108
 -   fields: {code: '-'}
     model: toolbar.scriptlet
     pk: autotag

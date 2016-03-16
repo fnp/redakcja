@@ -55,4 +55,5 @@ urlpatterns = patterns('catalogue.views',
         'image_mass_edit', name='catalogue_image_mass_edit'),
 
     url(r'^track/(?P<slug>[^/]*)/$', PublishTrackFeed()),
+    url(r'^active/$', 'active_users_list', name='active_users_list'),
 )
