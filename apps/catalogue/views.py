@@ -274,10 +274,26 @@ def book_epub(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    epub = doc.as_epub().get_string()
+    epub = doc.as_epub(ilustr_path=book.gallery_path()).get_string()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
+    return response
+
+
+@never_cache
+def book_mobi(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    # TODO: move to celery
+    doc = book.wldocument()
+    # TODO: error handling
+    mobi = doc.as_mobi(ilustr_path=book.gallery_path()).get_string()
+    response = HttpResponse(content_type='application/x-mobipocket-ebook')
+    response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
+    response.write(mobi)
     return response
 
 

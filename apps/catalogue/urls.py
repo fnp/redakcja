@@ -40,6 +40,7 @@ urlpatterns = patterns('catalogue.views',
     url(r'^book/(?P<slug>[^/]+)/txt$', 'book_txt', name="catalogue_book_txt"),
     url(r'^book/(?P<slug>[^/]+)/html$', 'book_html', name="catalogue_book_html"),
     url(r'^book/(?P<slug>[^/]+)/epub$', 'book_epub', name="catalogue_book_epub"),
+    url(r'^book/(?P<slug>[^/]+)/mobi$', 'book_mobi', name="catalogue_book_mobi"),
     url(r'^book/(?P<slug>[^/]+)/pdf$', 'book_pdf', name="catalogue_book_pdf"),
 
     url(r'^chunk_add/(?P<slug>[^/]+)/(?P<chunk>[^/]+)/$',
