@@ -52,7 +52,7 @@ def get_history(chunk):
 
 
 @never_cache
-@login_required
+# @login_required
 def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     try:
         chunk = Chunk.get(slug, chunk)
