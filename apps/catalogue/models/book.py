@@ -7,9 +7,7 @@ from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from slughifi import slughifi
-
 
 import apiclient
 from catalogue.helpers import cached_in_field, GalleryMerger
@@ -18,9 +16,7 @@ from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
 from cover.models import Image
-import os
-import shutil
-import re
+
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -31,8 +27,9 @@ class Book(models.Model):
     gallery = models.CharField(u'materiały', max_length=255, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
 
-    #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
-    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
+    # wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
@@ -41,10 +38,9 @@ class Book(models.Model):
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
-    dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
-        db_index=True, on_delete=models.SET_NULL, editable=False)
-    dc_slug = models.CharField(max_length=128, null=True, blank=True,
-            editable=False, db_index=True)
+    dc_cover_image = models.ForeignKey(
+        Image, blank=True, null=True, db_index=True, on_delete=models.SET_NULL, editable=False)
+    dc_slug = models.CharField(max_length=128, null=True, blank=True, editable=False, db_index=True)
 
     class NoTextError(BaseException):
         pass
@@ -54,7 +50,6 @@ class Book(models.Model):
         ordering = ['title', 'slug']
         verbose_name = u'moduł'
         verbose_name_plural = u'moduły'
-
 
     # Representing
     # ============
@@ -79,7 +74,7 @@ class Book(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("catalogue_book", [self.slug])
+        return "catalogue_book", [self.slug]
 
     def correct_about(self):
         return "http://%s%s" % (
@@ -95,8 +90,8 @@ class Book(models.Model):
 
     @classmethod
     @transaction.commit_on_success
-    def create(cls, creator, text, *args, **kwargs):
-        b = cls.objects.create(*args, **kwargs)
+    def create(cls, creator, text, **kwargs):
+        b = cls.objects.create(**kwargs)
         b.chunk_set.all().update(creator=creator)
         b[0].commit(text, author=creator)
         return b
@@ -107,8 +102,7 @@ class Book(models.Model):
 
     @classmethod
     @transaction.commit_on_success
-    def import_xml_text(cls, text=u'', previous_book=None,
-                commit_args=None, **kwargs):
+    def import_xml_text(cls, text=u'', previous_book=None, commit_args=None, **kwargs):
         """Imports a book from XML, splitting it into chunks as necessary."""
         texts = split_xml(text)
         if previous_book:
@@ -122,7 +116,6 @@ class Book(models.Model):
         for i in range(book_len - len(texts)):
             texts.append((u'pusta część %d' % (i + 1), u''))
 
-        i = 0
         for i, (title, text) in enumerate(texts):
             if not title:
                 title = u'część %d' % (i + 1)
@@ -212,7 +205,6 @@ class Book(models.Model):
 
         other.delete()
 
-
     @transaction.commit_on_success
     def prepend_history(self, other):
         """Prepend history from all the other book's chunks to own."""
@@ -231,10 +223,8 @@ class Book(models.Model):
 
     def split(self):
         """Splits all the chunks into separate books."""
-        self.title
         for chunk in self:
-            book = Book.objects.create(title=chunk.title, slug=chunk.slug,
-                    public=self.public, gallery=self.gallery)
+            book = Book.objects.create(title=chunk.title, slug=chunk.slug, public=self.public, gallery=self.gallery)
             book[0].delete()
             chunk.book = book
             chunk.number = 1
@@ -277,8 +267,6 @@ class Book(models.Model):
             return self.assert_publishable()
         except AssertionError, e:
             return e
-        else:
-            return None
 
     def hidden(self):
         return self.slug.startswith('.')
@@ -309,8 +297,7 @@ class Book(models.Model):
     def get_on_track(self):
         if self.published:
             return -1
-        stages = [ch.stage.ordering if ch.stage is not None else 0
-                    for ch in self]
+        stages = [ch.stage.ordering if ch.stage is not None else 0 for ch in self]
         if not len(stages):
             return 0
         return min(stages)
@@ -349,7 +336,7 @@ class Book(models.Model):
             if info.cover_source:
                 try:
                     image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))
-                except:
+                except Image.DoesNotExist:
                     pass
                 else:
                     if info.cover_source == image.get_full_url():
@@ -405,8 +392,7 @@ class Book(models.Model):
             changes = self.get_current_changes(publishable)
         return compile_text(change.materialize() for change in changes)
 
-    def wldocument(self, publishable=True, changes=None, 
-            parse_dublincore=True, strict=False):
+    def wldocument(self, publishable=True, changes=None, parse_dublincore=True, strict=False):
         from catalogue.ebook_utils import RedakcjaDocProvider
         from librarian.parser import WLDocument
 
