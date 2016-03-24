@@ -82,7 +82,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
         del last_books[oldest_key]
     request.session['wiki_last_books'] = last_books
 
-    save_form = forms.DocumentTextSaveForm(user=request.user, prefix="textsave")
+    save_form = forms.DocumentTextSaveForm(user=request.user, chunk=chunk, prefix="textsave")
     try:
         version = int(request.GET.get('version', None))
     except:
@@ -152,7 +152,7 @@ def text(request, chunk_id):
         return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
-        form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
+        form = forms.DocumentTextSaveForm(request.POST, user=request.user, chunk=doc, prefix="textsave")
         if form.is_valid():
             if request.user.is_authenticated():
                 author = request.user
@@ -177,6 +177,8 @@ def text(request, chunk_id):
                        author_email=form.cleaned_data['author_email'],
                        publishable=publishable,
                        )
+            doc.book.for_cybernauts = form.cleaned_data['for_cybernauts']
+            doc.book.save()
             revision = doc.revision()
             return JSONResponse({
                 'text': doc.materialize() if parent_revision != revision else None,

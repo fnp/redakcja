@@ -70,7 +70,7 @@
                     properties: [
                         {name: 'version', label: '{% trans 'Version' %}'},
                         {name: 'stage', label: '{% trans 'Stage' %}'},
-                        {name: 'assignment', label: '{% trans 'Assignment' %}'},
+                        {name: 'assignment', label: '{% trans 'Assignment' %}'}
                     ]
                 },
 
@@ -347,7 +347,7 @@
                     return '{{MEDIA_URL}}{{IMAGE_DIR}}{{slug}}/' + attachmentName;
                 },
                 documentUrl: function(id, version) {
-                    var url = '{% url 'wiki_editor' slug %}'
+                    var url = '{% url 'wiki_editor' slug %}';
                     if(version) {
                         url = url + '?version=' + version;
                     }
@@ -361,7 +361,7 @@
                             {% for value,text in tags %}
                                 {value:'{{value|default:''}}', text:'{{text}}'} {% if not forloop.last %}, {% endif %}
                             {% endfor %}
-                        ], description: '{{forms.text_save.stage_completed.help_text}}'},
+                        ], description: '{{forms.text_save.stage_completed.help_text}}'}
                     ],
                     content_field_name: '{{forms.text_save.text.html_name}}',
                     version_field_name: '{{forms.text_save.parent_revision.html_name}}'
@@ -376,9 +376,20 @@
             };
 
             {% if can_pubmark %}
-                config.documentSaveForm.fields.push(
-                    {label: '{{forms.text_save.publishable.label}}', name: '{{forms.text_save.publishable.html_name}}', type: 'checkbox', description: '{{forms.text_save.publishable.help_text}}'}
-                );
+                config.documentSaveForm.fields.push({
+                    label: '{{forms.text_save.publishable.label}}',
+                    name: '{{forms.text_save.publishable.html_name}}',
+                    type: 'checkbox',
+                    description: '{{forms.text_save.publishable.help_text}}',
+                    checked: false
+                });
+                config.documentSaveForm.fields.push({
+                    label: '{{forms.text_save.for_cybernauts.label}}',
+                    name: '{{forms.text_save.for_cybernauts.html_name}}',
+                    type: 'checkbox',
+                    description: '{{forms.text_save.for_cybernauts.help_text}}',
+                    checked: {{ forms.text_save.for_cybernauts.field.initial|yesno:"true,false" }}
+                });
             {% endif %}
 
             {% if not request.user.is_authenticated %}

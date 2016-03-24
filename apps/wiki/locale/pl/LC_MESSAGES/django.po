@@ -7,37 +7,38 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-21 14:34+0100\n"
+"POT-Creation-Date: 2016-03-24 12:11+0100\n"
 "PO-Revision-Date: 2013-07-10 16:58+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:19 forms.py:63 views.py:279
+#: forms.py:19 forms.py:63 views.py:45
 msgid "Publishable"
-msgstr "Gotowe do publikacji"
+msgstr "Do publikacji"
 
-#: forms.py:38 forms.py:89
+#: forms.py:38 forms.py:96
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:39 forms.py:90
+#: forms.py:39 forms.py:97
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
-#: forms.py:44 forms.py:95
+#: forms.py:44 forms.py:102
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:45 forms.py:96
+#: forms.py:45 forms.py:103
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: forms.py:51 forms.py:102
+#: forms.py:51 forms.py:109
 msgid "Your comments"
 msgstr "Twój komentarz"
 
@@ -57,7 +58,15 @@ msgstr "Jeśli został ukończony etap prac, wskaż go."
 msgid "Mark this revision as publishable."
 msgstr "Oznacz tę wersję jako gotową do publikacji."
 
-#: forms.py:103
+#: forms.py:69
+msgid "For Cybernauts"
+msgstr "Dla Cybernautów"
+
+#: forms.py:70
+msgid "Mark this document for Cybernauts."
+msgstr "Oznacz dokument do użytku w Cybernautach"
+
+#: forms.py:110
 msgid "Describe the reason for reverting."
 msgstr "Opisz powód przywrócenia."
 
@@ -73,21 +82,38 @@ msgstr "motyw"
 msgid "themes"
 msgstr "motywy"
 
-#: views.py:281
+#: views.py:47
 msgid "Published"
 msgstr "Opublikowano"
 
-#: views.py:302
+#: views.py:329
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: views.py:304
+#: views.py:331
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
 #: templates/admin/wiki/theme/change_list.html:22
 msgid "Table for Redmine wiki"
 msgstr "Tabela do wiki na Redmine"
+
+#: templates/wiki/bootstrap.html:69
+msgid "Informations about lesson"
+msgstr "Informacje o lekcji"
+
+#: templates/wiki/bootstrap.html:71
+#: templates/wiki/document_details_base.html:35
+msgid "Version"
+msgstr "Wersja"
+
+#: templates/wiki/bootstrap.html:72
+msgid "Stage"
+msgstr "Etap"
+
+#: templates/wiki/bootstrap.html:73
+msgid "Assignment"
+msgstr "Przypisano"
 
 #: templates/wiki/diff_table.html:5
 msgid "Old version"
@@ -104,10 +130,6 @@ msgstr "Kliknij, aby (ro)zwinąć galerię"
 #: templates/wiki/document_details_base.html:33
 msgid "Help"
 msgstr "Pomoc"
-
-#: templates/wiki/document_details_base.html:35
-msgid "Version"
-msgstr "Wersja"
 
 #: templates/wiki/document_details_base.html:35
 msgid "Unknown"
@@ -203,14 +225,15 @@ msgstr "Zamień"
 msgid "Replace all"
 msgstr "Zamień wszystko"
 
+#: templates/wiki/tabs/search_view.html:15
 msgid "Options"
 msgstr "Opcje"
 
-#: templates/wiki/tabs/search_view.html:15
+#: templates/wiki/tabs/search_view.html:17
 msgid "Case sensitive"
 msgstr "Rozróżniaj wielkość liter"
 
-#: templates/wiki/tabs/search_view.html:17
+#: templates/wiki/tabs/search_view.html:19
 msgid "From cursor"
 msgstr "Zacznij od kursora"
 
@@ -277,18 +300,6 @@ msgstr "Wstaw przypis"
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
-
-#: templates/wiki/bootstrap.html:95
-msgid "Informations about lesson"
-msgstr "Informacje o lekcji"
-
-#: templates/wiki/bootstrap.html:97
-msgid "Stage"
-msgstr "Etap"
-
-#: templates/wiki/bootstrap.html:98
-msgid "Assignment"
-msgstr "Przypisano"
 
 #~ msgid "ZIP file"
 #~ msgstr "Plik ZIP"

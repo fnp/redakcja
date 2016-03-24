@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-01 11:28+0200\n"
+"POT-Creation-Date: 2016-03-24 11:04+0100\n"
 "PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -20,94 +20,94 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:38
+#: forms.py:39
 msgid "You must select a template"
 msgstr "Musisz wybrać szablon"
 
-#: forms.py:47
+#: forms.py:48
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:48
+#: forms.py:49
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:72
+#: forms.py:73
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:93 forms.py:107
+#: forms.py:94 forms.py:108
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:116
+#: forms.py:117
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:161
+#: views.py:160
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:163
+#: views.py:162
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:169
+#: views.py:168
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: models/book.py:28 models/chunk.py:23
+#: models/book.py:24 models/chunk.py:23
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:29 models/chunk.py:24
+#: models/book.py:25 models/chunk.py:24
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:30
+#: models/book.py:26
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:35
+#: models/book.py:32
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:36
+#: models/book.py:33
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:55 models/chunk.py:21 models/publish_log.py:17
-msgid "book"
-msgstr "książka"
+#: models/book.py:35
+msgid "for Cybernauts"
+msgstr "dla Cybernautów"
 
-#: models/book.py:56
-msgid "books"
-msgstr "książki"
-
-#: models/book.py:255
+#: models/book.py:247
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:259
+#: models/book.py:251
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:266
+#: models/book.py:258
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:268
+#: models/book.py:260
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:270
+#: models/book.py:262
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:273
+#: models/book.py:265
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
+
+#: models/chunk.py:21 models/publish_log.py:17
+msgid "book"
+msgstr "książka"
 
 #: models/chunk.py:22
 msgid "number"
@@ -417,6 +417,9 @@ msgstr "Zmiana"
 #: templatetags/wall.py:99
 msgid "Comment"
 msgstr "Komentarz"
+
+#~ msgid "books"
+#~ msgstr "książki"
 
 #~ msgid "Text file must be UTF-8 encoded."
 #~ msgstr "Plik powinien mieć kodowanie UTF-8."

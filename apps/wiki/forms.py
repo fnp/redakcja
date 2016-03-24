@@ -64,13 +64,20 @@ class DocumentTextSaveForm(forms.Form):
         help_text=_(u"Mark this revision as publishable.")
     )
 
+    for_cybernauts = forms.BooleanField(
+        required=False, initial=False,
+        label=_(u"For Cybernauts"),
+        help_text=_(u"Mark this document for Cybernauts.")
+    )
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        r = super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
+        chunk = kwargs.pop('chunk')
+        super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
         if user and user.is_authenticated():
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
-        return r
+        self.fields['for_cybernauts'].initial = chunk.book.for_cybernauts
 
 
 class DocumentTextRevertForm(forms.Form):

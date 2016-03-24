@@ -32,6 +32,8 @@ class Book(models.Model):
         'self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
+    for_cybernauts = models.BooleanField(_('for Cybernauts'), default=False)
+
     # Cache
     _short_html = models.TextField(null=True, blank=True, editable=False)
     _single = models.NullBooleanField(editable=False, db_index=True)

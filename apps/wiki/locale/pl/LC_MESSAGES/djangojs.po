@@ -148,7 +148,7 @@ msgstr ""
 
 #: static/wiki/editor/src/editor/modules/data/data.js:139
 msgid "Yes, restore local draft"
-msgstr "Tak, chcę użyć lokalną kopię"
+msgstr "Tak, chcę użyć lokalnej kopii"
 
 #: static/wiki/editor/src/editor/modules/data/data.js:140
 msgid "No, use version loaded from the server"
