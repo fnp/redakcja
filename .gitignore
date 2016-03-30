@@ -6,6 +6,7 @@ requirements.pybundle
 /redakcja/media
 /static
 .sass-cache
+var
 
 # Python garbage
 *.pyc
