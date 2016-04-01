@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 import logging
 import os
-from StringIO import StringIO
 from urllib import unquote
 from urlparse import urlsplit, urlunsplit
 
@@ -11,7 +10,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
@@ -26,7 +25,7 @@ from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
-from catalogue.models import Book, Chunk, BookPublishRecord, ChunkPublishRecord, Project
+from catalogue.models import Book, Chunk, Project
 from fileupload.views import UploadView, PackageView
 
 #
@@ -54,11 +53,11 @@ def user(request, username):
 @never_cache
 def my(request):
     return render(request, 'catalogue/my_page.html', {
-        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
-                        key=lambda x: x[1]['time'], reverse=True),
-
-        "logout_to": '/',
-        })
+        'last_books': sorted(
+            request.session.get("wiki_last_books", {}).items(),
+            key=lambda x: x[1]['time'], reverse=True),
+        'logout_to': '/',
+    })
 
 
 @active_tab('users')
@@ -136,7 +135,7 @@ def upload(request):
     if request.method == "POST":
         form = forms.DocumentsUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            import slughifi
+            from slughifi import slughifi
 
             if request.user.is_authenticated():
                 creator = request.user
@@ -162,7 +161,7 @@ def upload(request):
                     error_list.append((filename, slug, _('Slug already used in repository.')))
                 else:
                     try:
-                        zip.read(filename).decode('utf-8') # test read
+                        zip.read(filename).decode('utf-8')  # test read
                         ok_list.append((filename, slug, title))
                     except UnicodeDecodeError:
                         error_list.append((filename, title, _('File should be UTF-8 encoded.')))
@@ -239,7 +238,8 @@ def book_html(request, slug):
 
     # book_themes = book_themes.items()
     # book_themes.sort(key=lambda s: s[0].sort_key)
-    return render_to_response('catalogue/book_text.html', locals(),
+    return render_to_response(
+        'catalogue/book_text.html', locals(),
         context_instance=RequestContext(request))
 
 
@@ -254,8 +254,7 @@ def book_pdf(request, slug):
     # TODO: error handling
     pdf_file = doc.as_pdf()
     from catalogue.ebook_utils import serve_file
-    return serve_file(pdf_file.get_filename(),
-                book.slug + '.pdf', 'application/pdf')
+    return serve_file(pdf_file.get_filename(), book.slug + '.pdf', 'application/pdf')
 
 
 @never_cache
@@ -331,7 +330,8 @@ def chunk_add(request, slug, chunk):
                 creator = request.user
             else:
                 creator = None
-            doc.split(creator=creator,
+            doc.split(
+                creator=creator,
                 slug=form.cleaned_data['slug'],
                 title=form.cleaned_data['title'],
                 gallery_start=form.cleaned_data['gallery_start'],
@@ -393,17 +393,18 @@ def chunk_edit(request, slug, chunk):
 @login_required
 def chunk_mass_edit(request):
     if request.method == 'POST':
-        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+        ids = map(int, filter(lambda i: i.strip() != '', request.POST.get('ids').split(',')))
         chunks = map(lambda i: Chunk.objects.get(id=i), ids)
         
         stage = request.POST.get('stage')
         if stage:
             try:
                 stage = Chunk.tag_model.objects.get(slug=stage)
-            except Chunk.DoesNotExist, e:
+            except Chunk.DoesNotExist:
                 stage = None
            
-            for c in chunks: c.stage = stage
+            for c in chunks:
+                c.stage = stage
 
         username = request.POST.get('user')
         logger.info("username: %s" % username)
@@ -414,7 +415,8 @@ def chunk_mass_edit(request):
             except User.DoesNotExist, e:
                 user = None
                 
-            for c in chunks: c.user = user
+            for c in chunks:
+                c.user = user
 
         status = request.POST.get('status')
         if status:
@@ -442,7 +444,8 @@ def chunk_mass_edit(request):
                 book.project = project
                 book.save()
 
-        for c in chunks: c.save()
+        for c in chunks:
+            c.save()
 
         return HttpResponse("", content_type="text/plain")
     else:
@@ -491,11 +494,14 @@ def publish(request, slug):
 class GalleryMixin(object):
     def get_directory(self):
         return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
-    def get_object(self, request, slug):
+
+    @staticmethod
+    def get_object(request, slug):
         book = get_object_or_404(Book, slug=slug)
         if not book.gallery:
             raise Http404
         return book
+
 
 class GalleryView(GalleryMixin, UploadView):
 
@@ -510,4 +516,4 @@ class GalleryView(GalleryMixin, UploadView):
 class GalleryPackageView(GalleryMixin, PackageView):
 
     def get_redirect_url(self, slug):
-        return reverse('catalogue_book_gallery', kwargs = dict(slug=slug))
+        return reverse('catalogue_book_gallery', kwargs={'slug': slug})

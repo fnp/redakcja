@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from functools import wraps
 
 from django import http
-from django.utils import simplejson as json
+import json
 from django.utils.functional import Promise
 
 
@@ -21,7 +22,9 @@ class ExtendedEncoder(json.JSONEncoder):
 # shortcut for JSON reponses
 class JSONResponse(http.HttpResponse):
 
-    def __init__(self, data={}, **kwargs):
+    def __init__(self, data=None, **kwargs):
+        if data is None:
+            data = {}
         # get rid of mimetype
         kwargs.pop('mimetype', None)
 
