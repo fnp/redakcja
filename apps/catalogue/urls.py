@@ -51,4 +51,6 @@ urlpatterns = patterns('catalogue.views',
         'chunk_mass_edit', name='catalogue_chunk_mass_edit'),
 
     url(r'^track/(?P<slug>[^/]*)/$', PublishTrackFeed()),
+
+    url(r'^cybernauci/$', 'lessons_for_cybernauts'),
 )

@@ -24,7 +24,7 @@ from django.template import RequestContext
 from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
-from catalogue.helpers import active_tab
+from catalogue.helpers import active_tab, ajax
 from catalogue.models import Book, Chunk, Project
 from fileupload.views import UploadView, PackageView
 
@@ -517,3 +517,22 @@ class GalleryPackageView(GalleryMixin, PackageView):
 
     def get_redirect_url(self, slug):
         return reverse('catalogue_book_gallery', kwargs={'slug': slug})
+
+
+@ajax(method='get')
+def lessons_for_cybernauts(request):
+    books = Book.objects.filter(for_cybernauts=True)
+    data = []
+    for book in books:
+        try:
+            changes = book.get_current_changes()
+            time_changed = max(change.created_at for change in changes)
+            xml_url = reverse('catalogue_book_xml', args=[book.slug])
+            data.append({
+                'slug': book.slug,
+                'url': xml_url,
+                'time_changed': time_changed.isoformat(),
+            })
+        except Book.NoTextError:
+            pass
+    return {'lessons': data}
