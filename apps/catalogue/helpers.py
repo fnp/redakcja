@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
+import filecmp
+import json
+import re
 from datetime import date
 from functools import wraps
-from os.path import join
+from inspect import getargspec
 from os import listdir
+from os.path import join
 from shutil import move, rmtree
+
 from django.conf import settings
-import re
-import filecmp
+from django.http import HttpResponse
+from django.template import RequestContext
+from django.template.loader import render_to_string
 
 
 def active_tab(tab):
@@ -33,6 +39,60 @@ def cached_in_field(field_name):
                 type(self)._default_manager.filter(pk=self.pk).update(**{field_name: value})
             return value
         return wrapped
+    return decorator
+
+
+class AjaxError(Exception):
+    pass
+
+
+def ajax(method, template=None, login_required=False, permission_required=None):
+    def decorator(fun):
+        @wraps(fun)
+        def ajax_view(request):
+            kwargs = {}
+            request_params = None
+            if method == 'post':
+                request_params = request.POST
+            elif method == 'get':
+                request_params = request.GET
+            fun_params, xx, fun_kwargs, defaults = getargspec(fun)
+            if defaults:
+                required_params = fun_params[1:-len(defaults)]
+            else:
+                required_params = fun_params[1:]
+            missing_params = set(required_params) - set(request_params)
+            if missing_params:
+                res = {
+                    'result': 'error',
+                    'msg': 'missing params: %s' % ', '.join(missing_params),
+                }
+            else:
+                if request_params:
+                    request_params = dict(
+                        (key, json.loads(value))
+                        for key, value in request_params.iteritems()
+                        if fun_kwargs or key in fun_params)
+                    kwargs.update(request_params)
+                res = None
+                if login_required and not request.user.is_authenticated():
+                    res = {'result': 'error', 'msg': 'logout'}
+                if (permission_required and
+                        not request.user.has_perm(permission_required)):
+                    res = {'result': 'error', 'msg': 'access denied'}
+            if not res:
+                try:
+                    res = fun(request, **kwargs)
+                    if res and template:
+                        res = {'html': render_to_string(template, res, RequestContext(request))}
+                except AjaxError as e:
+                    res = {'result': e.args[0]}
+            if 'result' not in res:
+                res['result'] = 'ok'
+            return HttpResponse(json.dumps(res), content_type='application/json; charset=utf-8')
+
+        return ajax_view
+
     return decorator
 
 
