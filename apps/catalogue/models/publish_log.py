@@ -22,7 +22,7 @@ class BookPublishRecord(models.Model):
         app_label = 'catalogue'
         ordering = ['-timestamp']
         verbose_name = _('book publish record')
-        verbose_name = _('book publish records')
+        verbose_name_plural = _('book publish records')
 
 
 class ChunkPublishRecord(models.Model):
@@ -36,7 +36,7 @@ class ChunkPublishRecord(models.Model):
     class Meta:
         app_label = 'catalogue'
         verbose_name = _('chunk publish record')
-        verbose_name = _('chunk publish records')
+        verbose_name_plural = _('chunk publish records')
 
 
 class ImagePublishRecord(models.Model):
@@ -51,4 +51,4 @@ class ImagePublishRecord(models.Model):
         app_label = 'catalogue'
         ordering = ['-timestamp']
         verbose_name = _('image publish record')
-        verbose_name = _('image publish records')
+        verbose_name_plural = _('image publish records')
