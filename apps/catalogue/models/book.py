@@ -246,7 +246,7 @@ class Book(models.Model):
     def assert_publishable(self):
         assert self.chunk_set.exists(), _('No chunks in the book.')
         try:
-            changes = self.get_current_changes(publishable=True)
+            changes = self.get_current_changes()
         except self.NoTextError:
             raise AssertionError(_('Not all chunks have publishable revisions.'))
 
@@ -254,6 +254,10 @@ class Book(models.Model):
 
         try:
             bi = self.wldocument(changes=changes, strict=True).book_info
+            if not bi.audience:
+                raise ValidationError('No audience specified')
+            if not bi.type:
+                raise ValidationError('No type specified')
         except ParseError, e:
             raise AssertionError(_('Invalid XML') + ': ' + unicode(e))
         except NoDublinCore:
@@ -399,7 +403,7 @@ class Book(models.Model):
         from librarian.parser import WLDocument
 
         return WLDocument.from_string(
-                self.materialize(publishable=publishable, changes=changes),
+                self.wl1_xml(publishable=publishable, changes=changes),
                 provider=RedakcjaDocProvider(publishable=publishable),
                 parse_dublincore=parse_dublincore,
                 strict=strict)
@@ -409,11 +413,72 @@ class Book(models.Model):
             Publishes a book on behalf of a (local) user.
         """
         self.assert_publishable()
-        changes = self.get_current_changes(publishable=True)
-        book_xml = self.materialize(changes=changes)
-        apiclient.api_call(user, "books/", {"book_xml": book_xml})
+        changes = self.get_current_changes()
+        book_xml = self.wl1_xml(changes=changes)
+        apiclient.api_call(user, "lessons/", {"lesson_xml": book_xml})
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
             ChunkPublishRecord.objects.create(book_record=br, change=c)
         post_publish.send(sender=br)
+
+    def wl1_xml(self, publishable=True, changes=None):
+        from lxml import etree
+        import re
+        from StringIO import StringIO
+        from urllib import unquote
+        import os.path
+        from django.conf import settings
+        from fnpdjango.utils.text.slughifi import slughifi
+
+        def _register_function(f):
+            """ Register extension function with lxml """
+            ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
+            ns[f.__name__] = f
+            return f
+
+        @_register_function
+        def slugify(context, text):
+            """Remove unneeded whitespace from beginning and end"""
+            if isinstance(text, list):
+                text = ''.join(text)
+            return slughifi(text)
+
+        @_register_function
+        def rmext(context, text):
+            if isinstance(text, list):
+                text = ''.join(text)
+            text = unquote(text)
+            if '.' in text:
+                name, ext = text.rsplit('.', 1)
+                if ext.lower() in ('doc', 'docx', 'odt', 'pdf', 'jpg', 'jpeg'):
+                    text = name
+            return text
+
+        t = etree.parse(os.path.join(settings.PROJECT_ROOT, 'xslt/wl2to1.xslt'))
+        ft = self.materialize(publishable=publishable, changes=changes)
+        ft = ft.replace('&nbsp;', ' ')
+        f2 = StringIO(ft)
+        i1 = etree.parse(f2)
+
+        for sect in i1.findall('//section'):
+            if sect[0].text == u'Przebieg zajęć':
+                # Prostujemy.
+                first = sect.find('section')
+                subs = first.findall('.//section')
+                for sub in subs:
+                    sect.append(sub)
+                break
+        else:
+            # print 'BRAK PRZEBIEGU'
+            raise ValueError('Brak przebiegu')
+
+        i1.getroot().attrib['redslug'] = self.slug
+        i1.getroot().attrib['wlslug'] = self.slug  # THIS!
+        # print '.',
+        w1t = i1.xslt(t)
+        for h in w1t.findall('//aktywnosc/opis'):
+            if not re.match(r'\d\.\s', h[0].text):
+                raise AssertionError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
+            h[0].text = h[0].text[3:]
+        return etree.tostring(w1t, encoding='utf-8')

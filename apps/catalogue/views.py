@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.template import RequestContext
 
-from apiclient import NotAuthorizedError
+from apiclient import NotAuthorizedError, ApiError
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab, ajax
@@ -485,7 +485,7 @@ def publish(request, slug):
         book.publish(request.user)
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth'))
-    except BaseException, e:
+    except ApiError, e:
         return http.HttpResponse(e)
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
