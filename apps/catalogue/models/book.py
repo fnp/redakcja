@@ -463,7 +463,7 @@ class Book(models.Model):
         i1 = etree.parse(f2)
 
         for sect in i1.findall('//section'):
-            if sect[0].text == u'Przebieg zajęć':
+            if sect[0].text and sect[0].text.strip() == u'Przebieg zajęć':
                 # Prostujemy.
                 first = sect.find('section')
                 subs = first.findall('.//section')
