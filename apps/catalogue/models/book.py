@@ -430,6 +430,7 @@ class Book(models.Model):
         import os.path
         from django.conf import settings
         from fnpdjango.utils.text.slughifi import slughifi
+        from librarian import ParseError
 
         def _register_function(f):
             """ Register extension function with lxml """
@@ -471,7 +472,7 @@ class Book(models.Model):
                 break
         else:
             # print 'BRAK PRZEBIEGU'
-            raise ValueError('Brak przebiegu')
+            raise ParseError('Brak przebiegu')
 
         i1.getroot().attrib['redslug'] = self.slug
         i1.getroot().attrib['wlslug'] = self.slug  # THIS!
@@ -479,6 +480,6 @@ class Book(models.Model):
         w1t = i1.xslt(t)
         for h in w1t.findall('//aktywnosc/opis'):
             if not re.match(r'\d\.\s', h[0].text):
-                raise AssertionError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
+                raise ParseError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
             h[0].text = h[0].text[3:]
         return etree.tostring(w1t, encoding='utf-8')
