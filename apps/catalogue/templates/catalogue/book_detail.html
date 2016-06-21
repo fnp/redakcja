@@ -44,14 +44,7 @@
 
 <h2>{% trans "Publication" %}</h2>
 
-<div class="cover-preview">
-<img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
-{% if book.dc_cover_image %}
-    <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
-{% endif %}
-</div>
-
-<p>{% trans "Last published" %}: 
+<p>{% trans "Last published" %}:
     {% if book.last_published %}
         {{ book.last_published }}
     {% else %}
