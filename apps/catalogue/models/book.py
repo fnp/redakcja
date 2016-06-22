@@ -479,7 +479,8 @@ class Book(models.Model):
         # print '.',
         w1t = i1.xslt(t)
         for h in w1t.findall('//aktywnosc/opis'):
-            if not re.match(r'\d\.\s', h[0].text):
+            # FIXME assumption that every lesson has at most 9 parts
+            if not h[0].text or not re.match(r'\d\.\s', h[0].text):
                 raise ParseError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
             h[0].text = h[0].text[3:]
         return etree.tostring(w1t, encoding='utf-8')
