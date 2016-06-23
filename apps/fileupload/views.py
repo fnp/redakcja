@@ -157,6 +157,9 @@ class UploadView(UploadViewMixin, FormView):
 
 
 class PackageView(UploadViewMixin, RedirectView):
+    # usage of RedirectView here is really really ugly
+    permanent = False
+
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object(request, *args, **kwargs)
         path = self.get_safe_path()
