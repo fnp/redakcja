@@ -479,6 +479,8 @@ class Book(models.Model):
         # print '.',
         w1t = i1.xslt(t)
         for h in w1t.findall('//aktywnosc/opis'):
+            if len(h) == 0:
+                raise ParseError('Pusty element aktywnosc/opis')
             # FIXME assumption that every lesson has at most 9 parts
             if not h[0].text or not re.match(r'\d\.\s', h[0].text):
                 raise ParseError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
