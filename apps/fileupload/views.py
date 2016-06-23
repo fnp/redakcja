@@ -6,6 +6,7 @@ from urllib import quote
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_unicode
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import FormView, RedirectView
 from .forms import UploadForm
@@ -48,7 +49,7 @@ class UploadViewMixin(object):
         if filename:
             if not path.startswith(self.get_safe_path()):
                 raise Http404
-        return path
+        return force_unicode(path)
 
 
 class UploadView(UploadViewMixin, FormView):
