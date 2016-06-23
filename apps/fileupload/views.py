@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 import json
 import os
 from zipfile import ZipFile
 from urllib import quote
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
+from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import FormView, View, RedirectView
+from django.views.generic import FormView, RedirectView
 from .forms import UploadForm
 
 
@@ -16,6 +17,7 @@ try:
 except ImportError:
     def thumbnail(relpath):
         return settings.MEDIA_URL + relpath
+    default = None
 else:
     def thumbnail(relpath):
         try:
@@ -27,9 +29,10 @@ else:
 
 class JSONResponse(HttpResponse):
     """JSON response class."""
-    def __init__(self, obj='', mimetype="application/json", *args, **kwargs):
+    def __init__(self, obj=None, mimetype="application/json", *args, **kwargs):
         content = json.dumps(obj)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
+
 
 class UploadViewMixin(object):
     def get_safe_path(self, filename=""):
@@ -38,16 +41,15 @@ class UploadViewMixin(object):
         Makes sure it's inside MEDIA_ROOT.
         
         """
-        path = os.path.abspath(os.path.join(
-                settings.MEDIA_ROOT,
-                self.get_directory(),
-                filename))
+        path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, self.get_directory(), filename))
+        # WTF how would that be possible?
         if not path.startswith(os.path.abspath(settings.MEDIA_ROOT)):
             raise Http404
         if filename:
             if not path.startswith(self.get_safe_path()):
                 raise Http404
         return path
+
 
 class UploadView(UploadViewMixin, FormView):
     template_name = "fileupload/picture_form.html"
@@ -109,15 +111,15 @@ class UploadView(UploadViewMixin, FormView):
                             "url": "%s%s/" % (request.get_full_path(), f),
                         })
                     else:
+                        thumbnail_url = thumbnail(self.get_directory() + f)
                         file_info.update({
                             "url": self.get_url(f),
-                            'thumbnail_url': thumbnail(self.get_directory() + f),
+                            'thumbnail_url': thumbnail_url,
                             'delete_url': "%s?file=%s" % (
                                 request.get_full_path(),
                                 quote(f.encode('utf-8'))),
                             'delete_type': "DELETE"
                         })
-                        thumbnail_url = thumbnail(self.get_directory() + f),
                     files.append(file_info)
             return JSONResponse(files)
         else:
@@ -137,10 +139,10 @@ class UploadView(UploadViewMixin, FormView):
                 'name': f.name, 
                 'url': self.get_url(f.name),
                 'thumbnail_url': thumbnail(self.get_directory() + f.name),
-                        'delete_url': "%s?file=%s" % (
-                            self.request.get_full_path(),
-                            quote(f.name.encode('utf-8'))),
-                'delete_type': "DELETE"
+                'delete_url': "%s?file=%s" % (
+                    self.request.get_full_path(),
+                    quote(f.name.encode('utf-8'))),
+                'delete_type': "DELETE",
             })
         response = JSONResponse(data)
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -161,5 +163,5 @@ class PackageView(UploadViewMixin, RedirectView):
             for f in os.listdir(path):
                 if f == 'package.zip':
                     continue
-                zip_file.write(os.path.join(path, f), arcname = f)
+                zip_file.write(os.path.join(path, f), arcname=f)
         return super(PackageView, self).dispatch(request, *args, **kwargs)
