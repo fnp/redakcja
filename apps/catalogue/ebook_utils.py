@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from StringIO import StringIO
 from catalogue.models import Book
-from librarian import DocProvider
+from librarian import DocProvider, IOFile
 from django.http import HttpResponse
 
 
@@ -12,7 +11,7 @@ class RedakcjaDocProvider(DocProvider):
         self.publishable = publishable
 
     def by_slug(self, slug):
-        return StringIO(Book.objects.get(dc_slug=slug
+        return IOFile.from_string(Book.objects.get(dc_slug=slug
                     ).materialize(publishable=self.publishable
                     ).encode('utf-8'))
 

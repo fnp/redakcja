@@ -225,7 +225,7 @@ def book_html(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    doc = book.wldocument(parse_dublincore=False)
+    doc = book.wldocument()
     html = doc.as_html()
 
     html = html.get_string() if html is not None else ''
@@ -482,7 +482,8 @@ def publish(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     try:
-        book.publish(request.user)
+        protocol = 'https://' if request.is_secure() else 'http://'
+        book.publish(request.user, host=protocol + request.get_host())
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth'))
     except ApiError, e:

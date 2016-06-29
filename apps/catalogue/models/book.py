@@ -319,14 +319,14 @@ class Book(models.Model):
 
     def book_info(self, publishable=True):
         try:
-            book_xml = self.materialize(publishable=publishable)
+            book_xml = self.wl1_xml(publishable=publishable)
         except self.NoTextError:
             pass
         else:
             from librarian.dcparser import BookInfo
             from librarian import NoDublinCore, ParseError, ValidationError
             try:
-                return BookInfo.from_string(book_xml.encode('utf-8'))
+                return BookInfo.from_string(book_xml)
             except (self.NoTextError, ParseError, NoDublinCore, ValidationError):
                 return None
 
@@ -408,14 +408,23 @@ class Book(models.Model):
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 
-    def publish(self, user):
+    def publish(self, user, host=None):
         """
             Publishes a book on behalf of a (local) user.
         """
+        import json
+        import os
+        from django.conf import settings
         self.assert_publishable()
         changes = self.get_current_changes()
-        book_xml = self.wl1_xml(changes=changes)
-        apiclient.api_call(user, "lessons/", {"lesson_xml": book_xml})
+        data = {"lesson_xml": self.wl1_xml(changes=changes)}
+        if host:
+            gallery_url = u'%s%s%s%s/' % (host, settings.MEDIA_URL, settings.IMAGE_DIR, self.slug)
+            gallery_dir = os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.slug)
+            if os.path.isdir(gallery_dir):
+                data['gallery_url'] = gallery_url
+                data['attachments'] = json.dumps(os.listdir(gallery_dir))
+        apiclient.api_call(user, "lessons/", data)
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
@@ -430,7 +439,7 @@ class Book(models.Model):
         import os.path
         from django.conf import settings
         from fnpdjango.utils.text.slughifi import slughifi
-        from librarian import ParseError
+        from librarian import ParseError, DCNS
 
         def _register_function(f):
             """ Register extension function with lxml """
@@ -472,7 +481,9 @@ class Book(models.Model):
                 break
         else:
             # print 'BRAK PRZEBIEGU'
-            raise ParseError('Brak przebiegu')
+            dc_type = i1.findall('//dc:type', namespaces={'dc': DCNS.uri})
+            if dc_type and dc_type[0] in ('course', 'synthetic'):
+                raise ParseError('Brak przebiegu')
 
         i1.getroot().attrib['redslug'] = self.slug
         i1.getroot().attrib['wlslug'] = self.slug  # THIS!

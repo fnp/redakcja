@@ -58,7 +58,6 @@
     <a target="_blank" href="{% url 'catalogue_book_html' book.slug %}" rel="nofollow">{% trans "HTML version" %}</a><br/>
     <a href="{% url 'catalogue_book_txt' book.slug %}" rel="nofollow">{% trans "TXT version" %}</a><br/>
     <a href="{% url 'catalogue_book_pdf' book.slug %}" rel="nofollow">{% trans "PDF version" %}</a><br/>
-    <a href="{% url 'catalogue_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a><br/>
     </p>
 
     {% if user.is_authenticated %}
