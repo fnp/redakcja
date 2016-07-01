@@ -16,14 +16,19 @@ class XmlUpdaterCommand(BaseCommand):
     In a subclass, provide an XmlUpdater class in the `updater' attribute.
     """
     option_list = BaseCommand.option_list + (
-        make_option('-q', '--quiet', action='store_false', dest='verbose',
+        make_option(
+            '-q', '--quiet', action='store_false', dest='verbose',
             default=True, help='Less output'),
-        make_option('-d', '--dry-run', action='store_true', dest='dry_run',
+        make_option(
+            '-d', '--dry-run', action='store_true', dest='dry_run',
             default=False, help="Don't actually touch anything"),
-        make_option('-u', '--username', dest='username', metavar='USER',
+        make_option(
+            '-u', '--username', dest='username', metavar='USER',
             help='Assign commits to this user (required, preferably yourself).'),
     )
     args = "[slug]..."
+
+    updater = NotImplemented
 
     def handle(self, *args, **options):
         verbose = options.get('verbose')

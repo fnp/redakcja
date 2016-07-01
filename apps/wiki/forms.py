@@ -15,8 +15,7 @@ class DocumentPubmarkForm(forms.Form):
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
-    publishable = forms.BooleanField(required=False, initial=True,
-            label=_('Publishable'))
+    publishable = forms.BooleanField(required=False, initial=True, label=_('Publishable'))
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
@@ -59,10 +58,10 @@ class DocumentTextSaveForm(forms.Form):
         help_text=_(u"If you completed a life cycle stage, select it."),
     )
 
-    publishable = forms.BooleanField(required=False, initial=False,
+    publishable = forms.BooleanField(
+        required=False, initial=False,
         label=_('Publishable'),
-        help_text=_(u"Mark this revision as publishable.")
-    )
+        help_text=_(u"Mark this revision as publishable."))
 
     for_cybernauts = forms.BooleanField(
         required=False, initial=False,

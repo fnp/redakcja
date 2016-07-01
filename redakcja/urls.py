@@ -10,7 +10,8 @@ from django.views.generic import RedirectView
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Auth
     url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
     url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
@@ -23,13 +24,12 @@ urlpatterns = patterns('',
 
     (r'^comments/', include('django.contrib.comments.urls')),
 
-    url(r'^$', RedirectView.as_view(url= '/documents/')),
+    url(r'^$', RedirectView.as_view(url='/documents/')),
     url(r'^documents/', include('catalogue.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
     url(r'^cover/', include('cover.urls')),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', dict(packages=['wiki'])),
-
 )
 
 if settings.DEBUG:
@@ -37,7 +37,16 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if getattr(settings, 'SERVE_FILES_WITH_DEBUG_FALSE', False):
-    urlpatterns += patterns('',
-    (r'^%s(?P<path>.*)$' % settings.STATIC_URL[1:], 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    (r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-)
+    urlpatterns += patterns(
+        '',
+        (
+            r'^%s(?P<path>.*)$' % settings.STATIC_URL[1:],
+            'django.views.static.serve',
+            {'document_root': settings.STATIC_ROOT}
+        ),
+        (
+            r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
+            'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}
+        ),
+    )

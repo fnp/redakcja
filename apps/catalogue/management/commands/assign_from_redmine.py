@@ -3,7 +3,6 @@
 import csv
 from optparse import make_option
 import re
-import sys
 import urllib
 import urllib2
 
@@ -22,12 +21,15 @@ REDAKCJA_URL = 'http://redakcja.wolnelektury.pl/documents/'
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-r', '--redakcja', dest='redakcja', metavar='URL',
+        make_option(
+            '-r', '--redakcja', dest='redakcja', metavar='URL',
             help='Base URL of Redakcja documents',
             default=REDAKCJA_URL),
-        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True,
+        make_option(
+            '-q', '--quiet', action='store_false', dest='verbose', default=True,
             help='Less output'),
-        make_option('-f', '--force', action='store_true', dest='force', default=False,
+        make_option(
+            '-f', '--force', action='store_true', dest='force', default=False,
             help='Force assignment overwrite'),
     )
     help = 'Imports ticket assignments from Redmine.'
@@ -123,7 +125,6 @@ class Command(BaseCommand):
             if ticket_done:
                 done_tickets += 1
 
-
         # Print results
         print
         print "Results:"
@@ -147,7 +148,5 @@ class Command(BaseCommand):
                 print "  %s (%d tickets)" % (name, unknown_users[name])
         print
 
-
         transaction.commit()
         transaction.leave_transaction_management()
-

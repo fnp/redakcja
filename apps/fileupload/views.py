@@ -38,9 +38,9 @@ class JSONResponse(HttpResponse):
 class UploadViewMixin(object):
     def get_safe_path(self, filename=""):
         """Finds absolute filesystem path of the browsed dir of file.
-        
+
         Makes sure it's inside MEDIA_ROOT.
-        
+
         """
         path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, self.get_directory(), filename))
         # WTF how would that be possible?
@@ -137,7 +137,7 @@ class UploadView(UploadViewMixin, FormView):
                 for chunk in f.chunks():
                     destination.write(chunk)
             data.append({
-                'name': f.name, 
+                'name': f.name,
                 'url': self.get_url(f.name),
                 'thumbnail_url': thumbnail(self.get_directory() + f.name),
                 'delete_url': "%s?file=%s" % (

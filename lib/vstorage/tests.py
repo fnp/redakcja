@@ -8,9 +8,9 @@
 import os
 import tempfile
 from nose.tools import *
-from nose.core import runmodule
 
 import vstorage
+
 
 def clear_directory(top):
     for root, dirs, files in os.walk(top, topdown=False):
@@ -56,10 +56,7 @@ class TestVersionedStorage(object):
         author = u"test author"
         comment = u"test comment"
 
-        self.repo.save_text(title=title,
-                    text=text, author=author,
-                    comment=comment, parent=None)
-
+        self.repo.save_text(title=title, text=text, author=author, comment=comment, parent=None)
 
         saved_text, rev = self.repo.page_text(title)
         assert_equal(saved_text, text)
@@ -70,12 +67,8 @@ class TestVersionedStorage(object):
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title=title,
-                    text=text, author=author,
-                    comment=comment, parent=None)
-        self.repo.save_text(title=title,
-                    text=text, author=author,
-                    comment=comment, parent=None)
+        self.repo.save_text(title=title, text=text, author=author, comment=comment, parent=None)
+        self.repo.save_text(title=title, text=text, author=author, comment=comment, parent=None)
 
         saved_text, rev = self.repo.page_text(title)
         assert_equal(saved_text, text)
@@ -89,25 +82,19 @@ class TestVersionedStorage(object):
         author = u"test author"
         comment = u"test comment"
 
-        self.repo.save_text(title=title,
-                    text=text, author=author,
-                    comment=comment, parent=None)
+        self.repo.save_text(title=title, text=text, author=author, comment=comment, parent=None)
 
         saved_text, rev = self.repo.page_text(title)
         assert_equal(saved_text, text)
         assert_equal(rev, 0)
 
-        self.repo.save_text(title=title,
-                    text=text1, author=author,
-                    comment=comment, parent=0)
+        self.repo.save_text(title=title, text=text1, author=author, comment=comment, parent=0)
 
         saved_text, rev = self.repo.page_text(title)
         assert_equal(saved_text, text1)
         assert_equal(rev, 1)
 
-        self.repo.save_text(title=title,
-                    text=text2, author=author,
-                    comment=comment, parent=0)
+        self.repo.save_text(title=title, text=text2, author=author, comment=comment, parent=0)
 
         saved_text, rev = self.repo.page_text(title)
         # Other conflict markers placement can also be correct
@@ -125,9 +112,7 @@ text
         title = u"test title"
         author = u"test author"
         comment = u"test comment"
-        self.repo.save_text(title=title,
-                    text=text, author=author,
-                    comment=comment, parent=None)
+        self.repo.save_text(title=title, text=text, author=author, comment=comment, parent=None)
 
         ok_(title in self.repo, "Document not in repository.")
 
@@ -147,10 +132,10 @@ text
 
     def test_history(self):
         COMMITS = [
-            {"author": "bunny", "text":"1", "comment": "Oh yeah!"},
-            {"author": "frank", "text":"2", "comment": "Second is the best!"},
-            {"text":"3", "comment": "Third"},
-            {"author": "welma", "text":"4", "comment": "Fourth"},
+            {"author": "bunny", "text": "1", "comment": "Oh yeah!"},
+            {"author": "frank", "text": "2", "comment": "Second is the best!"},
+            {"text": "3", "comment": "Third"},
+            {"author": "welma", "text": "4", "comment": "Fourth"},
         ]
 
         for commit in COMMITS:
@@ -164,10 +149,10 @@ text
 
     def test_data_revert(self):
         COMMITS = [
-            {u"title": u"one", "author": "bunny", "text":"1.1", "comment": "1"},
-            {u"title": u"one", "author": "frank", "text":"1.2", "comment": "2"},
-            {u"title": u"two", "author": "bunny", "text":"2.1", "comment": "3"},
-            {u"title": u"one", "author": "frank", "text":"1.3", "comment": "4"},
+            {u"title": u"one", "author": "bunny", "text": "1.1", "comment": "1"},
+            {u"title": u"one", "author": "frank", "text": "1.2", "comment": "2"},
+            {u"title": u"two", "author": "bunny", "text": "2.1", "comment": "3"},
+            {u"title": u"one", "author": "frank", "text": "1.3", "comment": "4"},
         ]
 
         for commit in COMMITS:
@@ -181,15 +166,16 @@ text
         self.repo.revert(u"one", 2)
         assert_equal(self.repo.page_text(u"one"), (u"1.3", 4))
 
+
 class TestVSTags(object):
 
     TITLE_1 = "Sample"
 
     COMMITS = [
-        {"author": "bunny", "text":"1", "comment": "Oh yeah!"},
-        {"author": "frank", "text":"2", "comment": "Second is the best!"},
-        {"text":"3", "comment": "Third"},
-        {"author": "welma", "text":"4", "comment": "Fourth"},
+        {"author": "bunny", "text": "1", "comment": "Oh yeah!"},
+        {"author": "frank", "text": "2", "comment": "Second is the best!"},
+        {"text": "3", "comment": "Third"},
+        {"author": "welma", "text": "4", "comment": "Fourth"},
     ]
 
     def setUp(self):
@@ -224,7 +210,6 @@ class TestVSTags(object):
                 assert_equal(entry["tag"], [])
 
     def test_add_many_tags(self):
-        TAG_USER = "mike_the_tagger"
         tags = [
             (2, "production", "mike"),
             (2, "finished", "jeremy"),

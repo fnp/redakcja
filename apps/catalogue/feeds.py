@@ -3,6 +3,7 @@ from django.contrib.syndication.views import Feed
 from django.shortcuts import get_object_or_404
 from catalogue.models import Book, Chunk
 
+
 class PublishTrackFeed(Feed):
     title = u"Planowane publikacje"
     link = "/"
@@ -22,8 +23,7 @@ class PublishTrackFeed(Feed):
 
     def items(self, obj):
         tag, published = obj
-        books = Book.objects.filter(public=True, _on_track__gte=tag.ordering
-                ).order_by('-_on_track', 'title')
+        books = Book.objects.filter(public=True, _on_track__gte=tag.ordering).order_by('-_on_track', 'title')
         if published is not None:
             books = books.filter(_published=published)
         return books

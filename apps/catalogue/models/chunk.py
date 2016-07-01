@@ -53,7 +53,7 @@ class Chunk(dvcs_models.Document):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("wiki_editor", [self.book.slug, self.slug])
+        return "wiki_editor", [self.book.slug, self.slug]
 
     def pretty_name(self, book_length=None):
         title = self.book.title
@@ -62,7 +62,6 @@ class Chunk(dvcs_models.Document):
         if book_length > 1:
             title += " (%d/%d)" % (self.number, book_length)
         return title
-
 
     # Creating and manipulation
     # =========================
@@ -75,8 +74,8 @@ class Chunk(dvcs_models.Document):
         while not new_chunk:
             new_slug = self.book.make_chunk_slug(slug)
             try:
-                new_chunk = self.book.chunk_set.create(number=self.number+1,
-                    slug=new_slug[:50], title=title[:255], **kwargs)
+                new_chunk = self.book.chunk_set.create(
+                    number=self.number+1, slug=new_slug[:50], title=title[:255], **kwargs)
             except IntegrityError:
                 pass
         return new_chunk
@@ -87,7 +86,6 @@ class Chunk(dvcs_models.Document):
             return cls.objects.get(book__slug=book_slug, number=1)
         else:
             return cls.objects.get(book__slug=book_slug, slug=chunk_slug)
-
 
     # State & cache
     # =============
@@ -124,6 +122,6 @@ class Chunk(dvcs_models.Document):
 
     def refresh(self):
         """This should be done offline."""
-        self.changed
-        self.hidden
-        self.short_html
+        self.changed()
+        self.hidden()
+        self.short_html()

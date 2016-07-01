@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
 from datetime import timedelta
@@ -44,15 +45,14 @@ def changes_wall(user=None, max_len=None, day=None):
     for item in qs:
         tag = 'stage' if item.tags.count() else 'change'
         chunk = item.tree
-        w  = WallItem(tag)
+        w = WallItem(tag)
         if user and item.author != user:
             w.header = _('Related edit')
         else:
             w.header = _('Edit')
         w.title = chunk.pretty_name()
         w.summary = item.description
-        w.url = reverse('wiki_editor', 
-                args=[chunk.book.slug, chunk.slug]) + '?diff=%d' % item.revision
+        w.url = reverse('wiki_editor', args=[chunk.book.slug, chunk.slug]) + '?diff=%d' % item.revision
         w.timestamp = item.created_at
         w.user = item.author
         w.user_name = item.author_name
@@ -95,7 +95,7 @@ def comments_wall(user=None, max_len=None, day=None):
         next_day = day + timedelta(1)
         qs = qs.filter(submit_date__gte=day, submit_date__lt=next_day)
     for item in qs:
-        w  = WallItem('comment')
+        w = WallItem('comment')
         w.header = _('Comment')
         w.title = item.content_object
         w.summary = item.comment
@@ -142,6 +142,7 @@ def wall(context, user=None, max_len=100):
             published_wall(user, max_len),
             comments_wall(user, max_len),
         ], max_len)}
+
 
 @register.inclusion_tag("catalogue/wall.html", takes_context=True)
 def day_wall(context, day):

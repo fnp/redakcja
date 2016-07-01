@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from catalogue.constants import MASTERS
 from catalogue.models import Book, Chunk, Template
 
+
 class DocumentCreateForm(forms.ModelForm):
     """
         Form used for creating new documents.
@@ -23,8 +24,8 @@ class DocumentCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DocumentCreateForm, self).__init__(*args, **kwargs)
-        self.fields['slug'].widget.attrs={'class': 'autoslug'}
-        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+        self.fields['slug'].widget.attrs = {'class': 'autoslug'}
+        self.fields['title'].widget.attrs = {'class': 'autoslug-source'}
         self.fields['template'].queryset = Template.objects.filter(is_main=True)
 
     def clean(self):
@@ -46,15 +47,16 @@ class DocumentsUploadForm(forms.Form):
         Form used for uploading new documents.
     """
     file = forms.FileField(required=True, label=_('ZIP file'))
-    dirs = forms.BooleanField(label=_('Directories are documents in chunks'),
-            widget = forms.CheckboxInput(attrs={'disabled':'disabled'}))
+    dirs = forms.BooleanField(
+        label=_('Directories are documents in chunks'),
+        widget=forms.CheckboxInput(attrs={'disabled': 'disabled'}))
 
     def clean(self):
-        file = self.cleaned_data['file']
+        zip_file = self.cleaned_data['zip_file']
 
         import zipfile
         try:
-            z = self.cleaned_data['zip'] = zipfile.ZipFile(file)
+            z = self.cleaned_data['zip'] = zipfile.ZipFile(zip_file)
         except zipfile.BadZipfile:
             raise forms.ValidationError("Should be a ZIP file.")
         if z.testzip():
@@ -67,10 +69,10 @@ class ChunkForm(forms.ModelForm):
     """
         Form used for editing a chunk.
     """
-    user = forms.ModelChoiceField(queryset=
-        User.objects.annotate(count=Count('chunk')).
-        order_by('last_name', 'first_name'), required=False,
-        label=_('Assigned to')) 
+    user = forms.ModelChoiceField(
+        queryset=User.objects.annotate(count=Count('chunk')).order_by('last_name', 'first_name'),
+        required=False,
+        label=_('Assigned to'))
 
     class Meta:
         model = Chunk
@@ -79,9 +81,9 @@ class ChunkForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ChunkForm, self).__init__(*args, **kwargs)
-        self.fields['gallery_start'].widget.attrs={'class': 'number-input'}
-        self.fields['slug'].widget.attrs={'class': 'autoslug'}
-        self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+        self.fields['gallery_start'].widget.attrs = {'class': 'number-input'}
+        self.fields['slug'].widget.attrs = {'class': 'autoslug'}
+        self.fields['title'].widget.attrs = {'class': 'autoslug-source'}
 
     def clean_slug(self):
         slug = self.cleaned_data['slug']
@@ -113,13 +115,11 @@ class BookAppendForm(forms.Form):
         Form for appending a book to another book.
         It means moving all chunks from book A to book B and deleting A.
     """
-    append_to = forms.ModelChoiceField(queryset=Book.objects.all(),
-            label=_("Append to"))
+    append_to = forms.ModelChoiceField(queryset=Book.objects.all(), label=_("Append to"))
 
     def __init__(self, book, *args, **kwargs):
-        ret =  super(BookAppendForm, self).__init__(*args, **kwargs)
+        super(BookAppendForm, self).__init__(*args, **kwargs)
         self.fields['append_to'].queryset = Book.objects.exclude(pk=book.pk)
-        return ret
 
 
 class BookForm(forms.ModelForm):
@@ -130,20 +130,18 @@ class BookForm(forms.ModelForm):
         exclude = ['project']
 
     def __init__(self, *args, **kwargs):
-        ret = super(BookForm, self).__init__(*args, **kwargs)
+        super(BookForm, self).__init__(*args, **kwargs)
         self.fields['slug'].widget.attrs.update({"class": "autoslug"})
         self.fields['title'].widget.attrs.update({"class": "autoslug-source"})
-        return ret
 
 
 class ReadonlyBookForm(BookForm):
     """Form used for not editing a Book."""
 
     def __init__(self, *args, **kwargs):
-        ret = super(ReadonlyBookForm, self).__init__(*args, **kwargs)
+        super(ReadonlyBookForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({"readonly": True})
-        return ret
 
 
 class ChooseMasterForm(forms.Form):

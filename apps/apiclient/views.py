@@ -22,7 +22,7 @@ def oauth(request):
         raise Exception("Invalid response %s." % resp['status'])
 
     request_token = dict(urlparse.parse_qsl(content))
-    
+
     conn = OAuthConnection.get(request.user)
     # this might reset existing auth!
     conn.access = False
@@ -31,7 +31,7 @@ def oauth(request):
     conn.save()
 
     url = "%s?oauth_token=%s&oauth_callback=%s" % (
-            WL_AUTHORIZE_URL, 
+            WL_AUTHORIZE_URL,
             request_token['oauth_token'],
             request.build_absolute_uri(reverse("apiclient_oauth_callback")),
             )

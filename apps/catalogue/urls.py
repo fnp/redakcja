@@ -6,7 +6,8 @@ from catalogue.feeds import PublishTrackFeed
 from catalogue.views import GalleryView, GalleryPackageView
 
 
-urlpatterns = patterns('catalogue.views',
+urlpatterns = patterns(
+    'catalogue.views',
     url(r'^$', RedirectView.as_view(url='catalogue/')),
 
     url(r'^catalogue/$', 'document_list', name='catalogue_document_list'),
@@ -14,7 +15,7 @@ urlpatterns = patterns('catalogue.views',
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='catalogue_user'),
     url(r'^users/$', 'users', name='catalogue_users'),
     url(r'^activity/$', 'activity', name='catalogue_activity'),
-    url(r'^activity/(?P<isodate>\d{4}-\d{2}-\d{2})/$', 
+    url(r'^activity/(?P<isodate>\d{4}-\d{2}-\d{2})/$',
         'activity', name='catalogue_activity'),
 
     url(r'^upload/$',
@@ -26,15 +27,13 @@ urlpatterns = patterns('catalogue.views',
         'create_missing', name='catalogue_create_missing'),
 
     url(r'^book/(?P<slug>[^/]+)/publish$', 'publish', name="catalogue_publish"),
-    #url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="catalogue_publish"),
+    # url(r'^(?P<name>[^/]+)/publish/(?P<version>\d+)$', 'publish', name="catalogue_publish"),
 
     url(r'^book/(?P<slug>[^/]+)/$', 'book', name="catalogue_book"),
-    url(r'^book/(?P<slug>[^/]+)/gallery/$',
-            login_required()(GalleryView.as_view()),
-            name="catalogue_book_gallery"),
+    url(r'^book/(?P<slug>[^/]+)/gallery/$', login_required()(GalleryView.as_view()), name="catalogue_book_gallery"),
     url(r'^book/(?P<slug>[^/]+)/gallery/package$',
-            permission_required('catalogue.change_book')(GalleryPackageView.as_view()),
-            name="catalogue_book_gallery_package"),
+        permission_required('catalogue.change_book')(GalleryPackageView.as_view()),
+        name="catalogue_book_gallery_package"),
     url(r'^book/(?P<slug>[^/]+)/xml$', 'book_xml', name="catalogue_book_xml"),
     url(r'^book/(?P<slug>[^/]+)/txt$', 'book_txt', name="catalogue_book_txt"),
     url(r'^book/(?P<slug>[^/]+)/html$', 'book_html', name="catalogue_book_html"),

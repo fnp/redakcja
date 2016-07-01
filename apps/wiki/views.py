@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 import os
 import logging
 import urllib
+import json
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -14,14 +16,11 @@ from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
-from django.utils import simplejson
-from django.contrib.auth.decorators import login_required
 
 from catalogue.models import Book, Chunk, Template
 import nice_diff
 from wiki import forms
-from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
-                ajax_require_permission)
+from wiki.helpers import JSONResponse, JSONFormInvalid, ajax_require_permission
 from wiki.models import Theme
 
 #
@@ -44,9 +43,10 @@ def get_history(chunk):
                 "date": localize(change.created_at),
                 "publishable": _("Publishable") + "\n" if change.publishable else "",
                 "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
-                "published": _("Published") + ": " + \
-                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
-                    if change.publish_log.exists() else "",
+                "published": (
+                    _("Published") + ": " +
+                    localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp)
+                    if change.publish_log.exists() else ""),
             })
     return changes
 
@@ -92,7 +92,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     else:
         text = chunk.materialize()
     return render(request, template_name, {
-        'serialized_document_data': simplejson.dumps({
+        'serialized_document_data': json.dumps({
             'document': text,
             'document_id': chunk.id,
             'title': chunk.book.title,
@@ -101,7 +101,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
             'stage': chunk.stage.name if chunk.stage else None,
             'assignment': chunk.user.username if chunk.user else None
         }),
-        'serialized_templates': simplejson.dumps([
+        'serialized_templates': json.dumps([
             {'id': t.id, 'name': t.name, 'content': t.content} for t in Template.objects.filter(is_partial=True)
         ]),
         'forms': {
@@ -166,8 +166,7 @@ def text(request, chunk_id):
                 parent = None
             stage = form.cleaned_data['stage_completed']
             tags = [stage] if stage else []
-            publishable = (form.cleaned_data['publishable'] and
-                    request.user.has_perm('catalogue.can_pubmark'))
+            publishable = form.cleaned_data['publishable'] and request.user.has_perm('catalogue.can_pubmark')
             doc.commit(author=author,
                        text=text,
                        parent=parent,
@@ -190,7 +189,7 @@ def text(request, chunk_id):
             return JSONFormInvalid(form)
     else:
         revision = request.GET.get("revision", None)
-        
+
         try:
             revision = int(revision)
         except (ValueError, TypeError):
@@ -292,8 +291,7 @@ def diff(request, chunk_id):
         docA = ""
     docB = doc.at_revision(revB).materialize()
 
-    return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(),
-                                         docB.splitlines(), context=3))
+    return http.HttpResponse(nice_diff.html_diff_table(docA.splitlines(), docB.splitlines(), context=3))
 
 
 @never_cache

@@ -26,8 +26,8 @@ TIME_ZONE = 'Europe/Warsaw'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'pl'
 
-#import locale
-#locale.setlocale(locale.LC_ALL, '')
+# import locale
+# locale.setlocale(locale.LC_ALL, '')
 
 SITE_ID = 1
 
@@ -64,7 +64,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "redakcja.context_processors.settings", # this is instead of media
+    "redakcja.context_processors.settings",  # this is instead of media
     'django.core.context_processors.csrf',
     "django.core.context_processors.request",
 )
@@ -136,9 +136,11 @@ CAS_USER_ATTRS_MAP = {
 
 IMAGE_DIR = 'images/'
 
-
-import djcelery
-djcelery.setup_loader()
+try:
+    import djcelery
+    djcelery.setup_loader()
+except ImportError:
+    pass
 
 BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
 BROKER_HOST = "localhost"
@@ -153,4 +155,3 @@ try:
     from redakcja.settings.compress import *
 except ImportError:
     pass
-

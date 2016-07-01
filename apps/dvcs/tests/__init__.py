@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from nose.tools import *
 from django.test import TestCase
 from dvcs.models import Document
@@ -11,30 +13,30 @@ class ADocument(Document):
 class DocumentModelTests(TestCase):
 
     def assertTextEqual(self, given, expected):
-        return self.assertEqual(given, expected,
-            "Expected '''%s'''\n differs from text: '''%s'''" % (expected, given)
-        )
+        return self.assertEqual(
+            given, expected,
+            "Expected '''%s'''\n differs from text: '''%s'''" % (expected, given))
 
     def test_empty_file(self):
         doc = ADocument.objects.create()
-        self.assertTextEqual(doc.materialize(), u"")
+        self.assertTextEqual(doc.materialize(), "")
 
     def test_single_commit(self):
         doc = ADocument.objects.create()
-        doc.commit(text=u"Ala ma kota", description="Commit #1")
-        self.assertTextEqual(doc.materialize(), u"Ala ma kota")
+        doc.commit(text="Ala ma kota", description="Commit #1")
+        self.assertTextEqual(doc.materialize(), "Ala ma kota")
 
     def test_chained_commits(self):
         doc = ADocument.objects.create()
-        text1 = u"""
+        text1 = """
             Line #1
             Line #2 is cool
         """
-        text2 = u"""
+        text2 = """
             Line #1
             Line #2 is hot
         """
-        text3 = u"""
+        text3 = """
             Line #1
             ... is hot
             Line #3 ate Line #2
@@ -51,20 +53,20 @@ class DocumentModelTests(TestCase):
 
     def test_parallel_commit_noconflict(self):
         doc = ADocument.objects.create()
-        text1 = u"""
+        text1 = """
             Line #1
             Line #2
         """
-        text2 = u"""
+        text2 = """
             Line #1 is hot
             Line #2
         """
-        text3 = u"""
+        text3 = """
             Line #1
             Line #2
             Line #3
         """
-        text_merged = u"""
+        text_merged = """
             Line #1 is hot
             Line #2
             Line #3
@@ -74,28 +76,29 @@ class DocumentModelTests(TestCase):
         c1 = doc.commit(description="Commit #2", text=text2)
         commits = doc.change_set.count()
         c2 = doc.commit(description="Commit #3", text=text3, parent=base)
-        self.assertEqual(doc.change_set.count(), commits + 2,
-            u"Parallel commits should create an additional merge commit")
+        self.assertEqual(
+            doc.change_set.count(), commits + 2,
+            "Parallel commits should create an additional merge commit")
         self.assertTextEqual(doc.materialize(), text_merged)
 
     def test_parallel_commit_conflict(self):
         doc = ADocument.objects.create()
-        text1 = u"""
+        text1 = """
             Line #1
             Line #2
             Line #3
         """
-        text2 = u"""
+        text2 = """
             Line #1
             Line #2 is hot
             Line #3
         """
-        text3 = u"""
+        text3 = """
             Line #1
             Line #2 is cool
             Line #3
         """
-        text_merged = u"""
+        text_merged = """
             Line #1
 <<<<<<<
             Line #2 is hot
@@ -108,48 +111,47 @@ class DocumentModelTests(TestCase):
         c1 = doc.commit(description="Commit #2", text=text2)
         commits = doc.change_set.count()
         c2 = doc.commit(description="Commit #3", text=text3, parent=base)
-        self.assertEqual(doc.change_set.count(), commits + 2,
-            u"Parallel commits should create an additional merge commit")
+        self.assertEqual(
+            doc.change_set.count(), commits + 2,
+            "Parallel commits should create an additional merge commit")
         self.assertTextEqual(doc.materialize(), text_merged)
 
-
     def test_multiple_parallel_commits(self):
-        text_a1 = u"""
+        text_a1 = """
             Line #1
 
             Line #2
 
             Line #3
             """
-        text_a2 = u"""
+        text_a2 = """
             Line #1 *
 
             Line #2
 
             Line #3
             """
-        text_b1 = u"""
+        text_b1 = """
             Line #1
 
             Line #2 **
 
             Line #3
             """
-        text_c1 = u"""
+        text_c1 = """
             Line #1
 
             Line #2
 
             Line #3 ***
             """
-        text_merged = u"""
+        text_merged = """
             Line #1 *
 
             Line #2 **
 
             Line #3 ***
             """
-
 
         doc = ADocument.objects.create()
         c1 = doc.commit(description="Commit A1", text=text_a1)
@@ -157,7 +159,6 @@ class DocumentModelTests(TestCase):
         c3 = doc.commit(description="Commit B1", text=text_b1, parent=c1)
         c4 = doc.commit(description="Commit C1", text=text_c1, parent=c1)
         self.assertTextEqual(doc.materialize(), text_merged)
-
 
     def test_prepend_history(self):
         doc1 = ADocument.objects.create()
@@ -175,4 +176,3 @@ class DocumentModelTests(TestCase):
         with self.assertRaises(AssertionError):
             doc.prepend_history(doc)
         self.assertTextEqual(doc.materialize(), 'Commit 1')
-

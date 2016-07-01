@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 from zlib import compress, decompress
 
-from django.core.files.base import ContentFile, File
+from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 
 

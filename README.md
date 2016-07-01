@@ -48,4 +48,3 @@ JavaScript (wymagany node.js i xsltproc):
 
     $ npm install
     $ ./node_modules/.bin/mocha -u tdd $(find -name *_test.js)
-    

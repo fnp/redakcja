@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.utils import simplejson as json
+import json
 
 from toolbar import models
 

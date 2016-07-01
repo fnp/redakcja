@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 """
     Mercurial ui module replacement.
 """
 
 import mercurial.ui
 import logging
+
 
 class SilentUI(mercurial.ui.ui):
 
@@ -51,7 +53,8 @@ class SilentUI(mercurial.ui.ui):
         return text
 
     def traceback(self, exc=None):
-        if exc is not None: self.__logger.exception()
+        if exc is not None:
+            self.__logger.exception()
 
     def progress(self, *args, **kwargs):
         pass

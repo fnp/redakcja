@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
 from django.core.urlresolvers import reverse
@@ -39,4 +40,3 @@ def main_tabs(context):
 @register.filter
 def nice_name(user):
     return user.get_full_name() or user.username
-

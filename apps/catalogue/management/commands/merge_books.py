@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from optparse import make_option
-import sys
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
 from django.db import transaction
 
-from slughifi import slughifi
 from catalogue.models import Book
 
 
@@ -26,34 +23,40 @@ def common_prefix(texts):
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-s', '--slug', dest='new_slug', metavar='SLUG',
+        make_option(
+            '-s', '--slug', dest='new_slug', metavar='SLUG',
             help='New slug of the merged book (defaults to common part of all slugs).'),
-        make_option('-t', '--title', dest='new_title', metavar='TITLE',
+        make_option(
+            '-t', '--title', dest='new_title', metavar='TITLE',
             help='New title of the merged book (defaults to common part of all titles).'),
-        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True,
+        make_option(
+            '-q', '--quiet', action='store_false', dest='verbose', default=True,
             help='Less output'),
-        make_option('-g', '--guess', action='store_true', dest='guess', default=False,
+        make_option(
+            '-g', '--guess', action='store_true', dest='guess', default=False,
             help='Try to guess what merges are needed (but do not apply them).'),
-        make_option('-d', '--dry-run', action='store_true', dest='dry_run', default=False,
+        make_option(
+            '-d', '--dry-run', action='store_true', dest='dry_run', default=False,
             help='Dry run: do not actually change anything.'),
-        make_option('-f', '--force', action='store_true', dest='force', default=False,
+        make_option(
+            '-f', '--force', action='store_true', dest='force', default=False,
             help='On slug conflict, hide the original book to archive.'),
     )
     help = 'Merges multiple books into one.'
     args = '[slug]...'
 
-
     def print_guess(self, dry_run=True, force=False):
         from collections import defaultdict
         from pipes import quote
         import re
-    
+
         def read_slug(slug):
-            res = []
-            res.append((re.compile(ur'__?(przedmowa)$'), -1))
-            res.append((re.compile(ur'__?(cz(esc)?|ksiega|rozdzial)__?(?P<n>\d*)$'), None))
-            res.append((re.compile(ur'__?(rozdzialy__?)?(?P<n>\d*)-'), None))
-        
+            res = [
+                (re.compile(ur'__?(przedmowa)$'), -1),
+                (re.compile(ur'__?(cz(esc)?|ksiega|rozdzial)__?(?P<n>\d*)$'), None),
+                (re.compile(ur'__?(rozdzialy__?)?(?P<n>\d*)-'), None),
+            ]
+
             for r, default in res:
                 m = r.search(slug)
                 if m:
@@ -63,12 +66,12 @@ class Command(BaseCommand):
                     except IndexError:
                         return default, slug[:start]
             return None, slug
-    
+
         def file_to_title(fname):
             """ Returns a title-like version of a filename. """
             parts = (p.replace('_', ' ').title() for p in fname.split('__'))
             return ' / '.join(parts)
-    
+
         merges = defaultdict(list)
         slugs = []
         for b in Book.objects.all():
@@ -76,17 +79,17 @@ class Command(BaseCommand):
             n, ns = read_slug(b.slug)
             if n is not None:
                 merges[ns].append((n, b))
-    
+
         conflicting_slugs = []
         for slug in sorted(merges.keys()):
             merge_list = sorted(merges[slug])
             if len(merge_list) < 2:
                 continue
-    
+
             merge_slugs = [b.slug for i, b in merge_list]
             if slug in slugs and slug not in merge_slugs:
                 conflicting_slugs.append(slug)
-    
+
             title = file_to_title(slug)
             print "./manage.py merge_books %s%s--title=%s --slug=%s \\\n    %s\n" % (
                 '--dry-run ' if dry_run else '',
@@ -94,7 +97,7 @@ class Command(BaseCommand):
                 quote(title), slug,
                 " \\\n    ".join(merge_slugs)
                 )
-    
+
         if conflicting_slugs:
             if force:
                 print self.style.NOTICE('# These books will be archived:')
@@ -103,9 +106,7 @@ class Command(BaseCommand):
             for slug in conflicting_slugs:
                 print '#', slug
 
-
     def handle(self, *slugs, **options):
-
         self.style = color_style()
 
         force = options.get('force')
@@ -147,7 +148,6 @@ class Command(BaseCommand):
 
         if slugs[0] != new_slug and Book.objects.filter(slug=new_slug).exists():
             self.style.ERROR('Book already exists, skipping!')
-
 
         if dry_run and verbose:
             print self.style.NOTICE('DRY RUN: nothing will be changed.')
@@ -212,7 +212,5 @@ class Command(BaseCommand):
                         chunk.slug = chunk_slugs[j]
                         chunk.save()
 
-
         transaction.commit()
         transaction.leave_transaction_management()
-

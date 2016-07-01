@@ -14,7 +14,7 @@ class ParseError(BaseException):
 
 
 def _trim(text, trim_begin=True, trim_end=True):
-    """ 
+    """
         Cut off everything before RE_TRIM_BEGIN and after RE_TRIM_END, so
         that eg. one big XML file can be compiled from many small XML files.
     """
@@ -26,7 +26,7 @@ def _trim(text, trim_begin=True, trim_end=True):
 
 
 def compile_text(parts):
-    """ 
+    """
         Compiles full text from an iterable of parts,
         trimming where applicable.
     """
@@ -103,7 +103,7 @@ def split_xml(text):
         name_elem = deepcopy(element)
         for tag in 'extra', 'motyw', 'pa', 'pe', 'pr', 'pt', 'uwaga':
             for a in name_elem.findall('.//' + tag):
-                a.text=''
+                a.text = ''
                 del a[:]
         name = etree.tostring(name_elem, method='text', encoding='utf-8').strip()
 
@@ -123,15 +123,11 @@ def split_xml(text):
             while parent[0] is not element:
                 del parent[0]
             element, parent = parent, parent.getparent()
-        chunks[:0] = [[name,
-            unicode(etree.tostring(copied, encoding='utf-8'), 'utf-8')
-            ]]
+        chunks[:0] = [[name, unicode(etree.tostring(copied, encoding='utf-8'), 'utf-8')]]
 
         parts = src.findall('.//naglowek_rozdzial')
 
-    chunks[:0] = [[u'początek',
-        unicode(etree.tostring(src, encoding='utf-8'), 'utf-8')
-        ]]
+    chunks[:0] = [[u'początek', unicode(etree.tostring(src, encoding='utf-8'), 'utf-8')]]
 
     for ch in chunks[1:]:
         ch[1] = add_trim_begin(ch[1])

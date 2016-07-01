@@ -101,7 +101,7 @@ def create_missing(request, slug=None):
     if request.method == "POST":
         form = forms.DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            
+
             if request.user.is_authenticated():
                 creator = request.user
             else:
@@ -395,14 +395,14 @@ def chunk_mass_edit(request):
     if request.method == 'POST':
         ids = map(int, filter(lambda i: i.strip() != '', request.POST.get('ids').split(',')))
         chunks = map(lambda i: Chunk.objects.get(id=i), ids)
-        
+
         stage = request.POST.get('stage')
         if stage:
             try:
                 stage = Chunk.tag_model.objects.get(slug=stage)
             except Chunk.DoesNotExist:
                 stage = None
-           
+
             for c in chunks:
                 c.stage = stage
 
@@ -414,7 +414,7 @@ def chunk_mass_edit(request):
                 user = User.objects.get(username=username)
             except User.DoesNotExist, e:
                 user = None
-                
+
             for c in chunks:
                 c.user = user
 

@@ -180,7 +180,8 @@ class VersionedStorage(object):
         self.repo.dirstate.setparents(parent_node)
         node = self._commit([repo_file], text, user)
 
-        partial = lambda filename: repo_file == filename
+        def partial(filename):
+            return repo_file == filename
 
         # If p1 is equal to p2, there is no work to do. Even the dirstate is correct.
         p1, p2 = self.repo[None].parents()[0], self.repo[tip_node]
@@ -233,9 +234,9 @@ class VersionedStorage(object):
 
     def save_data(self, title, data, **kwargs):
         """Save data as specified page."""
+        temp_path = tempfile.mkdtemp(dir=self.path)
+        file_path = os.path.join(temp_path, 'saved')
         try:
-            temp_path = tempfile.mkdtemp(dir=self.path)
-            file_path = os.path.join(temp_path, 'saved')
             f = open(file_path, "wb")
             f.write(data)
             f.close()
@@ -416,8 +417,7 @@ class VersionedStorage(object):
         tip = self.repo['tip']
         """Iterate over the titles of all pages in the wiki."""
         return [self._file_to_title(filename) for filename in tip
-                  if not filename.startswith('.')
-                    and filename.endswith(type) ]
+                if not filename.startswith('.') and filename.endswith(type)]
 
     def changed_since(self, rev):
         """Return all pages that changed since specified repository revision."""
@@ -428,6 +428,7 @@ class VersionedStorage(object):
             for page in self.all_pages():
                 yield page
                 return
+            return
         current = self.repo.lookup('tip')
         status = self.repo.status(current, last)
         modified, added, removed, deleted, unknown, ignored, clean = status

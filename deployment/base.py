@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 from fabric.api import env, require
@@ -16,7 +17,7 @@ class Environment(Task):
     def run(self, *args, **kwargs):
         env.project_name = 'redakcja'
         env.hosts = [self.host]
-        for k,v in self.env_vars.items():
+        for k, v in self.env_vars.items():
             env[k] = v
 
         require('app_path')

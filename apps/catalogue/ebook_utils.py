@@ -11,9 +11,8 @@ class RedakcjaDocProvider(DocProvider):
         self.publishable = publishable
 
     def by_slug(self, slug):
-        return IOFile.from_string(Book.objects.get(dc_slug=slug
-                    ).materialize(publishable=self.publishable
-                    ).encode('utf-8'))
+        return IOFile.from_string(
+            Book.objects.get(dc_slug=slug).materialize(publishable=self.publishable).encode('utf-8'))
 
 
 def serve_file(file_path, name, mime_type):

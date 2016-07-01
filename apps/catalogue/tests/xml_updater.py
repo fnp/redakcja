@@ -17,7 +17,7 @@ class XmlUpdaterTests(TestCase):
     class SimpleUpdater(XmlUpdater):
         @XmlUpdater.fixes_elements('.//' + DCNS('title'))
         def fix_title(element, **kwargs):
-            element.text = element.text + " fixed"
+            element.text += " fixed"
             return True
 
     def setUp(self):
@@ -31,5 +31,4 @@ class XmlUpdaterTests(TestCase):
         self.assertEqual(
             Book.objects.get(slug='test-book').wldocument(
                 publishable=False).book_info.title,
-            self.title + " fixed"
-            )
+            self.title + " fixed")

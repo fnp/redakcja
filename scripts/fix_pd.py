@@ -64,6 +64,3 @@ if dry_run:
     print "This is a dry run, to really change dates, run with --seriously"
 for b in Book.objects.all():
     fix(b, me, dry_run)
-
-    
-    

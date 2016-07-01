@@ -9,9 +9,6 @@ oauth2
 httplib2 # oauth2 dependency
 texml
 
-## Book conversion library
-# git+git://github.com/fnp/librarian.git@master#egg=librarian
-
 ## Django
 Django>=1.5,<1.6
 django-pipeline>=1.2,<1.3

@@ -11,7 +11,7 @@ from nose.core import runmodule
 import wlapi
 
 
-class FakeDocument():
+class FakeDocument:
 
     def __init__(self):
         self.text = "Some Text"

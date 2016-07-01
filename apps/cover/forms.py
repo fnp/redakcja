@@ -9,6 +9,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from cover.models import Image
 
+
 class ImageAddForm(forms.ModelForm):
     class Meta:
         model = Image
@@ -41,13 +42,12 @@ class ReadonlyImageEditForm(ImageEditForm):
     """Form used for not editing a Book."""
 
     def __init__(self, *args, **kwargs):
-        ret = super(ReadonlyImageEditForm, self).__init__(*args, **kwargs)
+        super(ReadonlyImageEditForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({"readonly": True})
-        return ret
 
     def save(self, *args, **kwargs):
-        raise AssertionError, "ReadonlyImageEditForm should not be saved."
+        raise AssertionError("ReadonlyImageEditForm should not be saved.")
 
 
 class FlickrForm(forms.Form):
@@ -56,7 +56,7 @@ class FlickrForm(forms.Form):
     def clean_source_url(self):
         def normalize_html(html):
             return re.sub('[\t\n]', '', html)
-    
+
         url = self.cleaned_data['source_url']
         m = re.match(r'(https?://)?(www\.|secure\.)?flickr\.com/photos/(?P<author>[^/]+)/(?P<img>\d+)/?', url)
         if not m:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from re import split
 
 from django import template
@@ -21,7 +22,7 @@ Using 'django.core.context_processors.request' is required.
 class SetGetParameter(template.Node):
     def __init__(self, values):
         self.values = values
-        
+
     def render(self, context):
         request = template.Variable('request').resolve(context)
         params = request.GET.copy()
@@ -31,7 +32,7 @@ class SetGetParameter(template.Node):
                     del(params[key])
             else:
                 params[key] = template.Variable(value).resolve(context)
-        return '?%s' %  params.urlencode()
+        return '?%s' % params.urlencode()
 
 
 @register.tag

@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from os import path
 from redakcja.settings.common import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': path.join(PROJECT_ROOT, 'dev.sqlite'), # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': path.join(PROJECT_ROOT, 'dev.sqlite'),
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -13,11 +14,7 @@ DATABASES = {
     }
 }
 
-try:
-    LOGGING_CONFIG_FILE
-except NameError:
-    LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 'config',
-                                ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
+LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 'config', ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
 try:
     import logging
 

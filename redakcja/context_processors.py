@@ -1,4 +1,5 @@
-# -*- coding: utf-8
+# -*- coding: utf-8 -*-
+
 
 def settings(request):
     from django.conf import settings
@@ -7,7 +8,7 @@ def settings(request):
         import subprocess
         process = subprocess.Popen(["git", "show", "--oneline"], stdout=subprocess.PIPE)
         data, _err = process.communicate()
-        # get app version 
+        # get app version
         VERSION = data.splitlines()[0].split()[0]
     else:
         VERSION = ''

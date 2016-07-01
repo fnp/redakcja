@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 
 from catalogue import models
+
 
 class BookAdmin(admin.ModelAdmin):
     list_display = ['title', 'public', '_published', '_new_publishable', 'project']

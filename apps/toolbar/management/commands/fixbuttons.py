@@ -7,7 +7,7 @@
 
 from django.core.management.base import NoArgsCommand
 from toolbar.models import Button, ButtonGroup
-from django.utils import simplejson as json
+import json
 import re
 
 
@@ -27,7 +27,7 @@ class Command(NoArgsCommand):
                 if params[-1] == u')':
                     params = params[:-1]
                 try:
-                    v = son.loads(re.sub(u'([\\w-]+)\\s*:', u'"\\1": ', params).encode('utf-8'))
+                    v = json.loads(re.sub(u'([\\w-]+)\\s*:', u'"\\1": ', params).encode('utf-8'))
                 except ValueError, e:
                     print "Unable to fix '%s' " % b.params
                     print "Try to fix this button manually and rerun the script."

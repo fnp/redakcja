@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from re import split
 from django.db.models import Q, Count
 from django import template
 from django.utils.translation import ugettext_lazy as _
@@ -12,10 +12,10 @@ register = template.Library()
 
 class ChunksList(object):
     def __init__(self, chunk_qs):
-        #self.chunk_qs = chunk_qs#.annotate(
-            #book_length=Count('book__chunk')).select_related(
-            #'book')#, 'stage__name',
-            #'user')
+        # self.chunk_qs = chunk_qs#.annotate(
+        #     book_length=Count('book__chunk')).select_related(
+        #     'book')#, 'stage__name',
+        #     'user')
         self.chunk_qs = chunk_qs.select_related('book__hidden')
 
         self.book_qs = chunk_qs.values('book_id')
@@ -111,7 +111,7 @@ def document_list_filter(request, **kwargs):
         chunks = chunks.filter(_states_dict[state])
 
     chunks = foreign_filter(chunks, arg_or_GET('user'), 'user', User, 'username')
-    chunks = foreign_filter(chunks, arg_or_GET('stage'), 'stage', Chunk.tag_model, 'slug')
+    chunks = foreign_filter(chunks, arg_or_GET('stage'), 'stage', Chunk.tag_model)
     chunks = search_filter(chunks, arg_or_GET('title'), ['book__title', 'title'])
     chunks = foreign_filter(chunks, arg_or_GET('project'), 'book__project', Project, 'pk')
     return chunks

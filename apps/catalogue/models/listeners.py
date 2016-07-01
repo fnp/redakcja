@@ -50,4 +50,3 @@ def listener_create(sender, instance, created, **kwargs):
     if created:
         instance.chunk_set.create(number=1, slug='1')
 models.signals.post_save.connect(listener_create, sender=Book)
-

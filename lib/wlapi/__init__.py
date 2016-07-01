@@ -8,7 +8,7 @@
 """
 import urllib2
 import functools
-import django.utils.simplejson as json
+import json
 import logging
 logger = logging.getLogger("fnp.lib.wlapi")
 
@@ -45,10 +45,11 @@ def api_call(path, format="json"):
 
             try:
                 anwser = json.load(self.opener.open(rq))
-                return generator.send(anwser)
-            except StopIteration:
-                # by default, just return the anwser as a shorthand
-                return anwser
+                try:
+                    return generator.send(anwser)
+                except StopIteration:
+                    # by default, just return the anwser as a shorthand
+                    return anwser
             except urllib2.HTTPError, error:
                 return self._http_error(error)
             except Exception, error:

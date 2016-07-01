@@ -6,13 +6,12 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('cover.views',
+urlpatterns = patterns(
+    'cover.views',
     url(r'^preview/$', 'preview_from_xml', name='cover_preview'),
     url(r'^preview/(?P<book>[^/]+)/$', 'preview', name='cover_preview'),
-    url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/$',
-            'preview', name='cover_preview'),
-    url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/(?P<rev>\d+)/$',
-            'preview', name='cover_preview'),
+    url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/$', 'preview', name='cover_preview'),
+    url(r'^preview/(?P<book>[^/]+)/(?P<chunk>[^/]+)/(?P<rev>\d+)/$', 'preview', name='cover_preview'),
 
     url(r'^image/$', 'image_list', name='cover_image_list'),
     url(r'^image/(?P<pk>\d+)/?$', 'image', name='cover_image'),

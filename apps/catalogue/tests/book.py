@@ -42,13 +42,11 @@ class ManipulationTests(TestCase):
         self.assertEqual(self.book2.materialize(), 'book 2')
 
     def test_split_book(self):
-        self.book1.chunk_set.create(number=2, title='Second chunk',
-                slug='book3')
+        self.book1.chunk_set.create(number=2, title='Second chunk', slug='book3')
         self.book1[1].commit('I survived!')
         self.assertEqual(len(self.book1), 2)
         self.book1.split()
-        self.assertEqual(set([b.slug for b in Book.objects.all()]),
-                set(['book2', '1', 'book3']))
+        self.assertEqual(set([b.slug for b in Book.objects.all()]), {'book2', '1', 'book3'})
         self.assertEqual(
                 Book.objects.get(slug='book3').materialize(),
                 'I survived!')

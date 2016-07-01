@@ -19,8 +19,7 @@ WL_API = 'http://www.wolnelektury.pl/api/books/'
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True,
-            help='Less output'),
+        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True, help='Less output'),
     )
     help = 'Imports XML files from WL.'
 
@@ -65,15 +64,15 @@ class Command(BaseCommand):
             previous_books = slugs.get(info.slug)
             if previous_books:
                 if len(previous_books) > 1:
-                    print self.style.ERROR("There is more than one book "
-                        "with slug %s:"), 
+                    print self.style.ERROR("There is more than one book with slug %s:"),
                 previous_book = previous_books[0]
                 comm = previous_book.slug
             else:
                 previous_book = None
                 comm = '*'
-            print book_count, info.slug , '-->', comm
-            Book.import_xml_text(xml_text, title=info.title[:255],
+            print book_count, info.slug, '-->', comm
+            Book.import_xml_text(
+                xml_text, title=info.title[:255],
                 slug=info.slug[:128], previous_book=previous_book,
                 commit_args=commit_args)
             book_count += 1
@@ -85,7 +84,5 @@ class Command(BaseCommand):
                 book_count, )
         print
 
-
         transaction.commit()
         transaction.leave_transaction_management()
-

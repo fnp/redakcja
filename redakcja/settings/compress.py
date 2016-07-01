@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 
@@ -14,7 +16,7 @@ PIPELINE_STORAGE = 'pipeline.storage.PipelineFinderStorage'
 # CSS and JS files to compress
 PIPELINE_CSS = {
     'detail': {
-         'source_filenames': (
+        'source_filenames': (
             'css/master.css',
             'css/toolbar.css',
             'css/gallery.css',
@@ -32,7 +34,7 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'compressed/catalogue_styles.css',
      },
-     'book': {
+    'book': {
         'source_filenames': (
             'css/book.css',
         ),
@@ -92,7 +94,7 @@ PIPELINE_JS = {
         ),
         'output_filename': 'compressed/catalogue_scripts.js',
      },
-     'book': {
+    'book': {
         'source_filenames': (
             'js/book_text/jquery.eventdelegation.js',
             'js/book_text/jquery.scrollto.js',

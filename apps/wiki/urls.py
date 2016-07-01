@@ -2,7 +2,8 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('wiki.views',
+urlpatterns = patterns(
+    'wiki.views',
     url(r'^edit/(?P<slug>[^/]+)/(?:(?P<chunk>[^/]+)/)?$',
         'editor', name="wiki_editor"),
 

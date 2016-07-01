@@ -23,4 +23,3 @@ class Theme(models.Model):
 
     def __repr__(self):
         return "Theme(name=%r)" % self.name
-

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from redakcja.settings.test import *
 
 NOSE_ARGS = ()
