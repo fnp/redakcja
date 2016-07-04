@@ -365,10 +365,10 @@ class Book(models.Model):
 
     def refresh(self):
         """This should be done offline."""
-        self.short_html()
-        self.single()
-        self.new_publishable()
-        self.published()
+        self.short_html
+        self.single
+        self.new_publishable
+        self.published
 
     # Materializing & publishing
     # ==========================

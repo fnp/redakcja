@@ -122,6 +122,6 @@ class Chunk(dvcs_models.Document):
 
     def refresh(self):
         """This should be done offline."""
-        self.changed()
-        self.hidden()
-        self.short_html()
+        self.changed
+        self.hidden
+        self.short_html
