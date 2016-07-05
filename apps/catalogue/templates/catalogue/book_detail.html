@@ -55,9 +55,11 @@
 {% if publishable %}
     <p>
     <a href="{% url 'catalogue_book_xml' book.slug %}" rel="nofollow">{% trans "Full XML" %}</a><br/>
+    {% comment %}
     <a target="_blank" href="{% url 'catalogue_book_html' book.slug %}" rel="nofollow">{% trans "HTML version" %}</a><br/>
     <a href="{% url 'catalogue_book_txt' book.slug %}" rel="nofollow">{% trans "TXT version" %}</a><br/>
     <a href="{% url 'catalogue_book_pdf' book.slug %}" rel="nofollow">{% trans "PDF version" %}</a><br/>
+    {% endcomment %}
     </p>
 
     {% if user.is_authenticated %}
