@@ -43,7 +43,6 @@ class UploadViewMixin(object):
 
         """
         path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, self.get_directory(), filename))
-        # WTF how would that be possible?
         if not path.startswith(os.path.abspath(settings.MEDIA_ROOT)):
             raise Http404
         if filename:

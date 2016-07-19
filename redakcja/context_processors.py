@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 
 def settings(request):
@@ -20,4 +21,5 @@ def settings(request):
         'DEBUG': settings.DEBUG,
         'RAVEN_CONFIG': getattr(settings, 'RAVEN_CONFIG'),
         'APP_VERSION': VERSION,
+        'FS_ENC': sys.getfilesystemencoding(),
     }
