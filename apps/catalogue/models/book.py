@@ -423,7 +423,10 @@ class Book(models.Model):
             gallery_dir = os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.slug)
             if os.path.isdir(gallery_dir):
                 data['gallery_url'] = gallery_url
-                data['attachments'] = json.dumps(os.listdir(gallery_dir))
+                attachments = os.listdir(gallery_dir)
+            else:
+                attachments = []
+            data['attachments'] = json.dumps(attachments)
         apiclient.api_call(user, "lessons/", data)
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
