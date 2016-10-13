@@ -1,31 +1,24 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 import logging
 import os
 import shutil
-from StringIO import StringIO
-from urllib import unquote
-from urlparse import urlsplit, urlunsplit
 
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Q
-from django.db import transaction
+from django.db.models import Count
 from django import http
-from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render, render_to_response, redirect
-from django.utils.encoding import iri_to_uri
+from django.http import Http404
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.http import urlquote_plus
-from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.template import RequestContext
 
 from catalogue import forms
 from catalogue import helpers
-from catalogue.helpers import active_tab, sstdocument
+from catalogue.helpers import active_tab
 from .constants import STAGES
 from .models import Document, Plan
 from dvcs.models import Revision
@@ -36,7 +29,7 @@ from fileupload.views import UploadView, PackageView
 # Quick hack around caching problems, TODO: use ETags
 #
 from django.views.decorators.cache import never_cache
-#from fnpdjango.utils.text.slughifi import slughifi
+# from fnpdjango.utils.text.slughifi import slughifi
 
 logger = logging.getLogger("fnp.catalogue")
 
@@ -58,8 +51,8 @@ def user(request, username):
 @never_cache
 def my(request):
     return render(request, 'catalogue/my_page.html', {
-        'last_books': sorted(request.session.get("wiki_last_books", {}).items(),
-                        key=lambda x: x[1]['time'], reverse=True),
+        'last_books': sorted(
+            request.session.get("wiki_last_books", {}).items(), key=lambda x: x[1]['time'], reverse=True),
 
         "logout_to": '/',
         })
@@ -96,7 +89,7 @@ def logout_then_redirect(request):
     return http.HttpResponseRedirect(urlquote_plus(request.GET.get('next', '/'), safe='/?='))
 
 
-#@permission_required('catalogue.add_book')
+# @permission_required('catalogue.add_book')
 @login_required
 @active_tab('create')
 def create_missing(request):
@@ -134,7 +127,7 @@ def create_missing(request):
                 cover_url = ''
 
             doc.commit(
-                text = '''<section xmlns="http://nowoczesnapolska.org.pl/sst#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+                text='''<section xmlns="http://nowoczesnapolska.org.pl/sst#" xmlns:dc="http://purl.org/dc/elements/1.1/">
                 <metadata>
                     <dc:publisher>''' + form.cleaned_data['publisher'] + '''</dc:publisher>
                     <dc:description>''' + form.cleaned_data['description'] + '''</dc:description>
@@ -176,94 +169,94 @@ def create_missing(request):
     })
 
 
-@permission_required('catalogue.add_book')
-@active_tab('upload')
-def upload(request):
-    if request.method == "POST":
-        form = forms.DocumentsUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            import slughifi
-
-            if request.user.is_authenticated():
-                creator = request.user
-            else:
-                creator = None
-
-            zip = form.cleaned_data['zip']
-            skipped_list = []
-            ok_list = []
-            error_list = []
-            slugs = {}
-            existing = [book.slug for book in Book.objects.all()]
-            for filename in zip.namelist():
-                if filename[-1] == '/':
-                    continue
-                title = os.path.basename(filename)[:-4]
-                slug = slughifi(title)
-                if not (slug and filename.endswith('.xml')):
-                    skipped_list.append(filename)
-                elif slug in slugs:
-                    error_list.append((filename, slug, _('Slug already used for %s' % slugs[slug])))
-                elif slug in existing:
-                    error_list.append((filename, slug, _('Slug already used in repository.')))
-                else:
-                    try:
-                        zip.read(filename).decode('utf-8') # test read
-                        ok_list.append((filename, slug, title))
-                    except UnicodeDecodeError:
-                        error_list.append((filename, title, _('File should be UTF-8 encoded.')))
-                    slugs[slug] = filename
-
-            if not error_list:
-                for filename, slug, title in ok_list:
-                    book = Book.create(
-                        text=zip.read(filename).decode('utf-8'),
-                        creator=creator,
-                        slug=slug,
-                        title=title,
-                    )
-
-            return render(request, "catalogue/document_upload.html", {
-                "form": form,
-                "ok_list": ok_list,
-                "skipped_list": skipped_list,
-                "error_list": error_list,
-
-                "logout_to": '/',
-            })
-    else:
-        form = forms.DocumentsUploadForm()
-
-    return render(request, "catalogue/document_upload.html", {
-        "form": form,
-
-        "logout_to": '/',
-    })
-
-
-@never_cache
-def book_xml(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-    xml = book.materialize()
-
-    response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
-    response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
-    return response
+# @permission_required('catalogue.add_book')
+# @active_tab('upload')
+# def upload(request):
+#     if request.method == "POST":
+#         form = forms.DocumentsUploadForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             import slughifi
+#
+#             if request.user.is_authenticated():
+#                 creator = request.user
+#             else:
+#                 creator = None
+#
+#             zip = form.cleaned_data['zip']
+#             skipped_list = []
+#             ok_list = []
+#             error_list = []
+#             slugs = {}
+#             existing = [book.slug for book in Book.objects.all()]
+#             for filename in zip.namelist():
+#                 if filename[-1] == '/':
+#                     continue
+#                 title = os.path.basename(filename)[:-4]
+#                 slug = slughifi(title)
+#                 if not (slug and filename.endswith('.xml')):
+#                     skipped_list.append(filename)
+#                 elif slug in slugs:
+#                     error_list.append((filename, slug, _('Slug already used for %s' % slugs[slug])))
+#                 elif slug in existing:
+#                     error_list.append((filename, slug, _('Slug already used in repository.')))
+#                 else:
+#                     try:
+#                         zip.read(filename).decode('utf-8') # test read
+#                         ok_list.append((filename, slug, title))
+#                     except UnicodeDecodeError:
+#                         error_list.append((filename, title, _('File should be UTF-8 encoded.')))
+#                     slugs[slug] = filename
+#
+#             if not error_list:
+#                 for filename, slug, title in ok_list:
+#                     book = Book.create(
+#                         text=zip.read(filename).decode('utf-8'),
+#                         creator=creator,
+#                         slug=slug,
+#                         title=title,
+#                     )
+#
+#             return render(request, "catalogue/document_upload.html", {
+#                 "form": form,
+#                 "ok_list": ok_list,
+#                 "skipped_list": skipped_list,
+#                 "error_list": error_list,
+#
+#                 "logout_to": '/',
+#             })
+#     else:
+#         form = forms.DocumentsUploadForm()
+#
+#     return render(request, "catalogue/document_upload.html", {
+#         "form": form,
+#
+#         "logout_to": '/',
+#     })
 
 
-@never_cache
-def book_txt(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+# @never_cache
+# def book_xml(request, slug):
+#     book = get_object_or_404(Book, slug=slug)
+#     if not book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#     xml = book.materialize()
+#
+#     response = http.HttpResponse(xml, content_type='application/xml', mimetype='application/wl+xml')
+#     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
+#     return response
 
-    doc = book.wldocument()
-    text = doc.as_text().get_string()
-    response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
-    return response
+
+# @never_cache
+# def book_txt(request, slug):
+#     book = get_object_or_404(Book, slug=slug)
+#     if not book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#
+#     doc = book.wldocument()
+#     text = doc.as_text().get_string()
+#     response = http.HttpResponse(text, content_type='text/plain', mimetype='text/plain')
+#     response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
+#     return response
 
 
 @never_cache
@@ -294,7 +287,8 @@ def book_html(request, pk, rev_pk=None, preview=False):
     was_published = revision == published_revision or doc.publish_log.filter(revision=revision).exists()
 
     sst = SST.from_string(revision.materialize())
-    html = HtmlFormat(sst).build(files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk)).get_string()
+    html = HtmlFormat(sst).build(
+        files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk)).get_string()
 
     # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     # return response
@@ -330,43 +324,50 @@ def book_pdf(request, pk, rev_pk):
     sst = SST.from_string(rev.materialize())
     
     ctx = Context(
-        files_path = 'http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
-        source_url = 'http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
-        )
+        files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
+        source_url='http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
+    )
     if doc.owner_organization is not None and doc.owner_organization.logo:
-        ctx.cover_logo = 'http://%s%s' %(request.get_host(), doc.owner_organization.logo.url)
+        ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
     pdf_file = PdfFormat(sst).build(ctx)
 
     from catalogue.ebook_utils import serve_file
-    return serve_file(pdf_file.get_filename(),
-                '%d.pdf' % doc.pk, 'application/pdf')
+    return serve_file(pdf_file.get_filename(), '%d.pdf' % doc.pk, 'application/pdf')
 
 
 @never_cache
-def book_epub(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+def book_epub(request, pk, rev_pk):
+    from librarian.utils import Context
+    from librarian.document import Document as SST
+    from librarian.formats.epub import EpubFormat
 
-    # TODO: move to celery
-    doc = book.wldocument()
-    # TODO: error handling
-    epub = doc.as_epub().get_string()
-    response = HttpResponse(mimetype='application/epub+zip')
-    response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
-    response.write(epub)
-    return response
+    doc = get_object_or_404(Document, pk=pk)
+    rev = get_object_or_404(Revision, pk=rev_pk)
+    # Test
+
+    sst = SST.from_string(rev.materialize())
+
+    ctx = Context(
+        files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
+        source_url='http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
+    )
+    if doc.owner_organization is not None and doc.owner_organization.logo:
+        ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
+    epub_file = EpubFormat(sst).build()
+
+    from catalogue.ebook_utils import serve_file
+    return serve_file(epub_file.get_filename(), '%d.epub' % doc.pk, 'application/epub+zip')
 
 
-@never_cache
-def revision(request, slug, chunk=None):
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-    return http.HttpResponse(str(doc.revision()))
+# @never_cache
+# def revision(request, slug, chunk=None):
+#     try:
+#         doc = Chunk.get(slug, chunk)
+#     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+#         raise Http404
+#     if not doc.book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#     return http.HttpResponse(str(doc.revision()))
 
 
 @login_required
@@ -402,7 +403,8 @@ def book_schedule(request, pk):
 @login_required
 def book_owner(request, pk):
     doc = get_object_or_404(Document, pk=pk, deleted=False)
-    if not (doc.owner_user == request.user or doc.owner_organization.is_member(request.user)):
+    user_is_owner = doc.owner_organization and doc.owner_organization.is_member(request.user)
+    if not (doc.owner_user == request.user or user_is_owner):
         raise Http404
 
     error = ''
@@ -447,191 +449,190 @@ def book_delete(request, pk):
     })
 
 
-
-def book(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-
-    if request.user.has_perm('catalogue.change_book'):
-        if request.method == "POST":
-            form = forms.BookForm(request.POST, instance=book)
-            if form.is_valid():
-                form.save()
-                return http.HttpResponseRedirect(book.get_absolute_url())
-        else:
-            form = forms.BookForm(instance=book)
-        editable = True
-    else:
-        form = forms.ReadonlyBookForm(instance=book)
-        editable = False
-
-    publish_error = book.publishable_error()
-    publishable = publish_error is None
-
-    return render(request, "catalogue/book_detail.html", {
-        "book": book,
-        "publishable": publishable,
-        "publishable_error": publish_error,
-        "form": form,
-        "editable": editable,
-    })
-
-
-@permission_required('catalogue.add_chunk')
-def chunk_add(request, slug, chunk):
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-
-    if request.method == "POST":
-        form = forms.ChunkAddForm(request.POST, instance=doc)
-        if form.is_valid():
-            if request.user.is_authenticated():
-                creator = request.user
-            else:
-                creator = None
-            doc.split(creator=creator,
-                slug=form.cleaned_data['slug'],
-                title=form.cleaned_data['title'],
-                gallery_start=form.cleaned_data['gallery_start'],
-                user=form.cleaned_data['user'],
-                stage=form.cleaned_data['stage']
-            )
-
-            return http.HttpResponseRedirect(doc.book.get_absolute_url())
-    else:
-        form = forms.ChunkAddForm(initial={
-                "slug": str(doc.number + 1),
-                "title": "cz. %d" % (doc.number + 1, ),
-        })
-
-    return render(request, "catalogue/chunk_add.html", {
-        "chunk": doc,
-        "form": form,
-    })
+# def book(request, slug):
+#     book = get_object_or_404(Book, slug=slug)
+#     if not book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#
+#     if request.user.has_perm('catalogue.change_book'):
+#         if request.method == "POST":
+#             form = forms.BookForm(request.POST, instance=book)
+#             if form.is_valid():
+#                 form.save()
+#                 return http.HttpResponseRedirect(book.get_absolute_url())
+#         else:
+#             form = forms.BookForm(instance=book)
+#         editable = True
+#     else:
+#         form = forms.ReadonlyBookForm(instance=book)
+#         editable = False
+#
+#     publish_error = book.publishable_error()
+#     publishable = publish_error is None
+#
+#     return render(request, "catalogue/book_detail.html", {
+#         "book": book,
+#         "publishable": publishable,
+#         "publishable_error": publish_error,
+#         "form": form,
+#         "editable": editable,
+#     })
 
 
-@login_required
-def chunk_edit(request, slug, chunk):
-    try:
-        doc = Chunk.get(slug, chunk)
-    except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
-        raise Http404
-    if not doc.book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-
-    if request.method == "POST":
-        form = forms.ChunkForm(request.POST, instance=doc)
-        if form.is_valid():
-            form.save()
-            go_next = request.GET.get('next', None)
-            if go_next:
-                go_next = urlquote_plus(unquote(iri_to_uri(go_next)), safe='/?=&')
-            else:
-                go_next = doc.book.get_absolute_url()
-            return http.HttpResponseRedirect(go_next)
-    else:
-        form = forms.ChunkForm(instance=doc)
-
-    referer = request.META.get('HTTP_REFERER')
-    if referer:
-        parts = urlsplit(referer)
-        parts = ['', ''] + list(parts[2:])
-        go_next = urlquote_plus(urlunsplit(parts))
-    else:
-        go_next = ''
-
-    return render(request, "catalogue/chunk_edit.html", {
-        "chunk": doc,
-        "form": form,
-        "go_next": go_next,
-    })
-
-
-@transaction.atomic
-@login_required
-def chunk_mass_edit(request):
-    if request.method == 'POST':
-        ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
-        chunks = map(lambda i: Chunk.objects.get(id=i), ids)
-        
-        stage = request.POST.get('stage')
-        if stage:
-            try:
-                stage = Chunk.tag_model.objects.get(slug=stage)
-            except Chunk.DoesNotExist, e:
-                stage = None
-           
-            for c in chunks: c.stage = stage
-
-        username = request.POST.get('user')
-        logger.info("username: %s" % username)
-        logger.info(request.POST)
-        if username:
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist, e:
-                user = None
-                
-            for c in chunks: c.user = user
-
-        status = request.POST.get('status')
-        if status:
-            books_affected = set()
-            for c in chunks:
-                if status == 'publish':
-                    c.head.publishable = True
-                    c.head.save()
-                elif status == 'unpublish':
-                    c.head.publishable = False
-                    c.head.save()
-                c.touch()  # cache
-                books_affected.add(c.book)
-            for b in books_affected:
-                b.touch()  # cache
-
-        project_id = request.POST.get('project')
-        if project_id:
-            try:
-                project = Project.objects.get(pk=int(project_id))
-            except (Project.DoesNotExist, ValueError), e:
-                project = None
-            for c in chunks:
-                book = c.book
-                book.project = project
-                book.save()
-
-        for c in chunks: c.save()
-
-        return HttpResponse("", content_type="text/plain")
-    else:
-        raise Http404
+# @permission_required('catalogue.add_chunk')
+# def chunk_add(request, slug, chunk):
+#     try:
+#         doc = Chunk.get(slug, chunk)
+#     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+#         raise Http404
+#     if not doc.book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#
+#     if request.method == "POST":
+#         form = forms.ChunkAddForm(request.POST, instance=doc)
+#         if form.is_valid():
+#             if request.user.is_authenticated():
+#                 creator = request.user
+#             else:
+#                 creator = None
+#             doc.split(creator=creator,
+#                 slug=form.cleaned_data['slug'],
+#                 title=form.cleaned_data['title'],
+#                 gallery_start=form.cleaned_data['gallery_start'],
+#                 user=form.cleaned_data['user'],
+#                 stage=form.cleaned_data['stage']
+#             )
+#
+#             return http.HttpResponseRedirect(doc.book.get_absolute_url())
+#     else:
+#         form = forms.ChunkAddForm(initial={
+#                 "slug": str(doc.number + 1),
+#                 "title": "cz. %d" % (doc.number + 1, ),
+#         })
+#
+#     return render(request, "catalogue/chunk_add.html", {
+#         "chunk": doc,
+#         "form": form,
+#     })
 
 
-@permission_required('catalogue.change_book')
-def book_append(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
+# @login_required
+# def chunk_edit(request, slug, chunk):
+#     try:
+#         doc = Chunk.get(slug, chunk)
+#     except (Chunk.MultipleObjectsReturned, Chunk.DoesNotExist):
+#         raise Http404
+#     if not doc.book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#
+#     if request.method == "POST":
+#         form = forms.ChunkForm(request.POST, instance=doc)
+#         if form.is_valid():
+#             form.save()
+#             go_next = request.GET.get('next', None)
+#             if go_next:
+#                 go_next = urlquote_plus(unquote(iri_to_uri(go_next)), safe='/?=&')
+#             else:
+#                 go_next = doc.book.get_absolute_url()
+#             return http.HttpResponseRedirect(go_next)
+#     else:
+#         form = forms.ChunkForm(instance=doc)
+#
+#     referer = request.META.get('HTTP_REFERER')
+#     if referer:
+#         parts = urlsplit(referer)
+#         parts = ['', ''] + list(parts[2:])
+#         go_next = urlquote_plus(urlunsplit(parts))
+#     else:
+#         go_next = ''
+#
+#     return render(request, "catalogue/chunk_edit.html", {
+#         "chunk": doc,
+#         "form": form,
+#         "go_next": go_next,
+#     })
 
-    if request.method == "POST":
-        form = forms.BookAppendForm(book, request.POST)
-        if form.is_valid():
-            append_to = form.cleaned_data['append_to']
-            append_to.append(book)
-            return http.HttpResponseRedirect(append_to.get_absolute_url())
-    else:
-        form = forms.BookAppendForm(book)
-    return render(request, "catalogue/book_append_to.html", {
-        "book": book,
-        "form": form,
 
-        "logout_to": '/',
-    })
+# @transaction.atomic
+# @login_required
+# def chunk_mass_edit(request):
+#     if request.method == 'POST':
+#         ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
+#         chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+#
+#         stage = request.POST.get('stage')
+#         if stage:
+#             try:
+#                 stage = Chunk.tag_model.objects.get(slug=stage)
+#             except Chunk.DoesNotExist, e:
+#                 stage = None
+#
+#             for c in chunks: c.stage = stage
+#
+#         username = request.POST.get('user')
+#         logger.info("username: %s" % username)
+#         logger.info(request.POST)
+#         if username:
+#             try:
+#                 user = User.objects.get(username=username)
+#             except User.DoesNotExist, e:
+#                 user = None
+#
+#             for c in chunks: c.user = user
+#
+#         status = request.POST.get('status')
+#         if status:
+#             books_affected = set()
+#             for c in chunks:
+#                 if status == 'publish':
+#                     c.head.publishable = True
+#                     c.head.save()
+#                 elif status == 'unpublish':
+#                     c.head.publishable = False
+#                     c.head.save()
+#                 c.touch()  # cache
+#                 books_affected.add(c.book)
+#             for b in books_affected:
+#                 b.touch()  # cache
+#
+#         project_id = request.POST.get('project')
+#         if project_id:
+#             try:
+#                 project = Project.objects.get(pk=int(project_id))
+#             except (Project.DoesNotExist, ValueError), e:
+#                 project = None
+#             for c in chunks:
+#                 book = c.book
+#                 book.project = project
+#                 book.save()
+#
+#         for c in chunks: c.save()
+#
+#         return HttpResponse("", content_type="text/plain")
+#     else:
+#         raise Http404
+
+
+# @permission_required('catalogue.change_book')
+# def book_append(request, slug):
+#     book = get_object_or_404(Book, slug=slug)
+#     if not book.accessible(request):
+#         return HttpResponseForbidden("Not authorized.")
+#
+#     if request.method == "POST":
+#         form = forms.BookAppendForm(book, request.POST)
+#         if form.is_valid():
+#             append_to = form.cleaned_data['append_to']
+#             append_to.append(book)
+#             return http.HttpResponseRedirect(append_to.get_absolute_url())
+#     else:
+#         form = forms.BookAppendForm(book)
+#     return render(request, "catalogue/book_append_to.html", {
+#         "book": book,
+#         "form": form,
+#
+#         "logout_to": '/',
+#     })
 
 
 @require_POST
@@ -648,9 +649,9 @@ def publish(request, pk):
     if form.is_valid():
         rev = Revision.objects.get(pk=form.cleaned_data['revision'])
         # FIXME: check if in tree
-        #if PublishRecord.objects.filter(revision=rev, document=doc).exists():
-        #    return http.HttpResponse('exists')
-        pr = PublishRecord.objects.create(revision=rev, document=doc, user=request.user)
+        # if PublishRecord.objects.filter(revision=rev, document=doc).exists():
+        #     return http.HttpResponse('exists')
+        PublishRecord.objects.create(revision=rev, document=doc, user=request.user)
         if request.is_ajax():
             return http.HttpResponse('ok')
         else:
@@ -668,10 +669,6 @@ def publish(request, pk):
 @require_POST
 @login_required
 def unpublish(request, pk):
-    from wiki import forms
-    from .models import PublishRecord
-    from dvcs.models import Revision
-
     # FIXME: check permissions
 
     doc = get_object_or_404(Document, pk=pk, deleted=False)
@@ -682,11 +679,10 @@ def unpublish(request, pk):
         return redirect('catalogue_html', doc.pk)
 
 
-
 class GalleryMixin(object):
     def get_directory(self):
-        #return "%s%s/" % (settings.IMAGE_DIR, 'org%d' % self.org.pk if self.org is not None else self.request.user.pk)
-        return "uploads/%d/" % (self.doc.pk)
+        # return "%s%s/" % (settings.IMAGE_DIR, 'org%d' % self.org.pk if self.org is not None else self.request.user.pk)
+        return "uploads/%d/" % self.doc.pk
 
 
 class GalleryView(GalleryMixin, UploadView):
@@ -703,7 +699,8 @@ class GalleryView(GalleryMixin, UploadView):
 class GalleryPackageView(GalleryMixin, PackageView):
 
     def get_redirect_url(self, slug):
-        return reverse('catalogue_book_gallery', kwargs = dict(slug=slug))
+        return reverse('catalogue_book_gallery', kwargs=dict(slug=slug))
+
 
 @login_required
 def fork(request, pk):
@@ -711,12 +708,6 @@ def fork(request, pk):
     if request.method == "POST":
         form = forms.DocumentForkForm(request.POST, request.FILES)
         if form.is_valid():
-            
-            if request.user.is_authenticated():
-                creator = request.user
-            else:
-                creator = None
-
             try:
                 org = request.user.membership_set.get(
                     organization=int(form.cleaned_data['owner_organization'])).organization
@@ -726,10 +717,10 @@ def fork(request, pk):
 
             new_doc = Document.objects.create(revision=doc.revision, **kwargs)
 
-            if os.path.isdir(settings.MEDIA_ROOT + "uploads/%d" % (doc.pk)):
+            if os.path.isdir(settings.MEDIA_ROOT + "uploads/%d" % doc.pk):
                 shutil.copytree(
-                    settings.MEDIA_ROOT + "uploads/%d" % (doc.pk),
-                    settings.MEDIA_ROOT + "uploads/%d" % (new_doc.pk)
+                    settings.MEDIA_ROOT + "uploads/%d" % doc.pk,
+                    settings.MEDIA_ROOT + "uploads/%d" % new_doc.pk
                 )
 
             new_doc.assigned_to = request.user
@@ -750,6 +741,7 @@ def upcoming(request):
     return render(request, "catalogue/upcoming.html", {
         'objects_list': Document.objects.filter(deleted=False).filter(publish_log=None),
     })
+
 
 def finished(request):
     return render(request, "catalogue/finished.html", {

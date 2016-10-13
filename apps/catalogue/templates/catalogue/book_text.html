@@ -157,6 +157,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
             data-content="{% trans "You can download and share a PDF version – and more formats in the future." %}"
 
 >{% trans "Download PDF" %}</a>
+<a class="btn btn-default" href="{% url 'catalogue_epub' doc.pk revision.pk %}"
+            data-toggle="tutorial" data-tutorial="2" data-placement="top"
+            data-content="{% trans "You can download and share a EPUB version – and more formats in the future." %}"
+
+>{% trans "Download EPUB" %}</a>
         </div>
     </div>
 </div>
