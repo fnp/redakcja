@@ -100,7 +100,14 @@
 	    <lista typ="num"><xsl:apply-templates /></lista>
 	</xsl:when>
         <xsl:when test="@class = 'list.definitions'">
-            <lista typ="slowniczek"><xsl:apply-templates /></lista>
+            <xsl:choose>
+                <xsl:when test="@src = ''">
+                    <lista typ="slowniczek"><xsl:apply-templates /></lista>
+                </xsl:when>
+                <xsl:otherwise>
+                    <lista typ="slowniczek" src="{@src}"><xsl:apply-templates /></lista>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:when>
         <xsl:when test="@class = 'list.bibliography'">
             <lista typ="czytelnia"><xsl:apply-templates /></lista>
