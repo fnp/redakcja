@@ -70,13 +70,39 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
-        chunk = kwargs.pop('chunk')
+        self.user = kwargs.pop('user')
+        self.chunk = kwargs.pop('chunk')
         super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
-        if user and user.is_authenticated():
+        if self.user and self.user.is_authenticated():
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
-        self.fields['for_cybernauts'].initial = chunk.book.for_cybernauts
+        self.fields['for_cybernauts'].initial = self.chunk.book.for_cybernauts
+
+    def save(self):
+        if self.user.is_authenticated():
+            author = self.user
+        else:
+            author = None
+        text = self.cleaned_data['text']
+        parent_revision = self.cleaned_data['parent_revision']
+        if parent_revision is not None:
+            parent = self.chunk.at_revision(parent_revision)
+        else:
+            parent = None
+        stage = self.cleaned_data['stage_completed']
+        tags = [stage] if stage else []
+        publishable = self.cleaned_data['publishable'] and self.user.has_perm('catalogue.can_pubmark')
+        self.chunk.commit(
+            author=author,
+            text=text,
+            parent=parent,
+            description=self.cleaned_data['comment'],
+            tags=tags,
+            author_name=self.cleaned_data['author_name'],
+            author_email=self.cleaned_data['author_email'],
+            publishable=publishable)
+        self.chunk.book.for_cybernauts = self.cleaned_data['for_cybernauts']
+        self.chunk.book.save()
 
 
 class DocumentTextRevertForm(forms.Form):

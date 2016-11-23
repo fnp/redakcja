@@ -154,30 +154,8 @@ def text(request, chunk_id):
     if request.method == 'POST':
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, chunk=doc, prefix="textsave")
         if form.is_valid():
-            if request.user.is_authenticated():
-                author = request.user
-            else:
-                author = None
-            text = form.cleaned_data['text']
+            form.save()
             parent_revision = form.cleaned_data['parent_revision']
-            if parent_revision is not None:
-                parent = doc.at_revision(parent_revision)
-            else:
-                parent = None
-            stage = form.cleaned_data['stage_completed']
-            tags = [stage] if stage else []
-            publishable = form.cleaned_data['publishable'] and request.user.has_perm('catalogue.can_pubmark')
-            doc.commit(author=author,
-                       text=text,
-                       parent=parent,
-                       description=form.cleaned_data['comment'],
-                       tags=tags,
-                       author_name=form.cleaned_data['author_name'],
-                       author_email=form.cleaned_data['author_email'],
-                       publishable=publishable,
-                       )
-            doc.book.for_cybernauts = form.cleaned_data['for_cybernauts']
-            doc.book.save()
             revision = doc.revision()
             return JSONResponse({
                 'text': doc.materialize() if parent_revision != revision else None,
