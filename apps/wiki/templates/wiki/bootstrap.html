@@ -383,7 +383,7 @@
                     name: '{{forms.text_save.publishable.html_name}}',
                     type: 'checkbox',
                     description: '{{forms.text_save.publishable.help_text}}',
-                    checked: false
+                    checked: {{ forms.text_save.publishable.field.initial|yesno:"true,false" }}
                 });
                 config.documentSaveForm.fields.push({
                     label: '{{forms.text_save.for_cybernauts.label}}',

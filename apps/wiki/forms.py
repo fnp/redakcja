@@ -77,6 +77,7 @@ class DocumentTextSaveForm(forms.Form):
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
         self.fields['for_cybernauts'].initial = self.chunk.book.for_cybernauts
+        self.fields['publishable'].initial = self.chunk.head.publishable
 
     def save(self):
         if self.user.is_authenticated():
