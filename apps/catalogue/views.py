@@ -587,8 +587,6 @@ def publish_image(request, slug):
 class GalleryView(UploadView):
     def get_object(self, request, slug):
         book = get_object_or_404(Book, slug=slug)
-        if not book.public and not request.user.has_perm('catalogue.change_book'):
-            return HttpResponseForbidden()
         if not book.gallery:
             raise Http404
         return book
