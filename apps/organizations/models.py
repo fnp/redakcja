@@ -103,16 +103,17 @@ class Organization(Card):
     preview_html_template = 'organizations/snippets/organization.html'
 
     name = models.CharField(max_length=1024)
-    #logo = models.ImageField(upload_to='people/logo', blank=True)
-    #country = models.CharField(max_length=64, blank=True, choices=countries)
-    #www = models.URLField(blank=True)
-    #description = models.TextField(blank=True, default="")
-    ##projects = JSONField(default=[])
-    #projects = models.TextField(blank=True, default="")
+    tags = models.ManyToManyField('catalogue.Tag')
+    # logo = models.ImageField(upload_to='people/logo', blank=True)
+    # country = models.CharField(max_length=64, blank=True, choices=countries)
+    # www = models.URLField(blank=True)
+    # description = models.TextField(blank=True, default="")
+    # #projects = JSONField(default=[])
+    # projects = models.TextField(blank=True, default="")
 
-    #preview_html = models.TextField(blank=True, default="")
+    # preview_html = models.TextField(blank=True, default="")
 
-    #created_at = models.DateTimeField(auto_now_add=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

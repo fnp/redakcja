@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from dvcs.models import Ref
 from organizations.models import Organization
 from catalogue.constants import STAGES
+from .tag import Tag
 
 
 class Document(Ref):
@@ -23,6 +24,7 @@ class Document(Ref):
     stage = models.CharField(_('stage'), max_length=128, blank=True, default=STAGES[0])
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='assignments')
     deleted = models.BooleanField(default=False)
+    tags = models.ManyToManyField(Tag)
 
     # Where to cache searchable stuff from metadata?
     # Probably in some kind of search index.
