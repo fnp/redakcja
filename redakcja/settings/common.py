@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     #'kombu.transport.django',
     'fileupload',
     'pipeline',
+    'modeltranslation',
 
     'catalogue',
     'cover',
