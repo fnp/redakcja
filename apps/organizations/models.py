@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.core.urlresolvers import reverse
@@ -5,8 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.template.loader import render_to_string
-from django.utils import translation 
-#from jsonfield import JSONField
+from django.utils import translation
 
 
 countries = [
@@ -83,8 +83,9 @@ class Card(models.Model):
             p = getattr(self, "preview_html_%s" % lang)
             assert p
             return p
-        except:
+        except AssertionError:
             return self.preview_html
+
 
 @python_2_unicode_compatible
 class UserCard(Card):

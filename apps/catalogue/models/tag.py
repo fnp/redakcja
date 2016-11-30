@@ -11,10 +11,17 @@ from django.utils.translation import ugettext_lazy as _
 
 class Category(models.Model):
     label = models.CharField(max_length=64, verbose_name=_('category'))
+    dc_tag = models.CharField(max_length=32)
     index = models.IntegerField()
+
+    class Meta:
+        ordering = ['index']
 
 
 class Tag(models.Model):
     label = models.CharField(max_length=64, verbose_name=_('tag'))
     category = models.ForeignKey(Category)
     index = models.IntegerField()
+
+    class Meta:
+        ordering = ['index']
