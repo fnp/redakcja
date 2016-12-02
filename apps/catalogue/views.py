@@ -353,7 +353,7 @@ def book_epub(request, pk, rev_pk):
     )
     if doc.owner_organization is not None and doc.owner_organization.logo:
         ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
-    epub_file = EpubFormat(sst).build()
+    epub_file = EpubFormat(sst).build(ctx)
 
     from catalogue.ebook_utils import serve_file
     return serve_file(epub_file.get_filename(), '%d.epub' % doc.pk, 'application/epub+zip')
