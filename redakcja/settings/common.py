@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     #'apiclient',
     'email_mangler',
     'build',
+    'attachments',
 
     'django_forms_bootstrap',
     'forms_builder.forms',
