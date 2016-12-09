@@ -38,8 +38,7 @@ class Document(Ref):
 
     def meta(self):
         from lxml import etree
-        # Wrong! should be metadata
-        d = {}
+        metadata = {}
 
         data = self.materialize()
         data = data.replace(u'\ufeff', '')
@@ -53,7 +52,7 @@ class Document(Ref):
         header = t.find('.//header')
         if header is None:
             header = etree.fromstring(data).find('.//{http://nowoczesnapolska.org.pl/sst#}header')
-        d['title'] = getattr(header, 'text', ' ') or ' '
+        metadata['title'] = getattr(header, 'text', ' ') or ' '
         #print 'meta', d['title']
 
         m = t.find('metadata')
@@ -62,12 +61,12 @@ class Document(Ref):
         if m is not None:
             c = m.find('{http://purl.org/dc/elements/1.1/}relation.coverimage.url')
             if c is not None:
-                d['cover_url'] = c.text
+                metadata['cover_url'] = c.text
             c = m.find('{http://purl.org/dc/elements/1.1/}audience')
             if c is not None:
-                d['audience'] = c.text
+                metadata['audience'] = c.text
 
-        return d
+        return metadata
 
     def can_edit(self, user):
         if self.owner_user:
