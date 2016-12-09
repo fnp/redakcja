@@ -13,12 +13,14 @@ from django.db.models import Count
 from django import http
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils.encoding import force_str
 from django.utils.http import urlquote_plus
 from django.views.decorators.http import require_POST
 
 from catalogue import forms
 from catalogue import helpers
 from catalogue.helpers import active_tab
+from librarian import BuildError
 from .constants import STAGES
 from .models import Document, Plan
 from dvcs.models import Revision
@@ -353,7 +355,11 @@ def book_epub(request, pk, rev_pk):
     )
     if doc.owner_organization is not None and doc.owner_organization.logo:
         ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
-    epub_file = EpubFormat(sst).build(ctx)
+    try:
+        epub_file = EpubFormat(sst).build(ctx)
+    except BuildError as e:
+        from django.http import HttpResponse
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     from catalogue.ebook_utils import serve_file
     return serve_file(epub_file.get_filename(), '%d.epub' % doc.pk, 'application/epub+zip')
