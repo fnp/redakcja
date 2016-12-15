@@ -6,6 +6,8 @@
 import logging
 import os
 import shutil
+import subprocess
+from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib import auth
@@ -248,6 +250,38 @@ def book_epub(request, pk, rev_pk):
 
     from catalogue.ebook_utils import serve_file
     return serve_file(epub_file.get_filename(), '%d.epub' % doc.pk, 'application/epub+zip')
+
+
+@never_cache
+def book_mobi(request, pk, rev_pk):
+    from librarian.utils import Context
+    from librarian.document import Document as SST
+    from librarian.formats.epub import EpubFormat
+
+    doc = get_object_or_404(Document, pk=pk)
+    rev = get_object_or_404(Revision, pk=rev_pk)
+
+    sst = SST.from_string(rev.materialize())
+
+    ctx = Context(
+        files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
+        source_url='http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
+    )
+    if doc.owner_organization is not None and doc.owner_organization.logo:
+        ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
+    try:
+        epub_file = EpubFormat(sst).build(ctx)
+    except BuildError as e:
+        from django.http import HttpResponse
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
+
+    output_file = NamedTemporaryFile(prefix='librarian', suffix='.mobi', delete=False)
+    output_file.close()
+    subprocess.check_call(
+        ['ebook-convert', epub_file.get_filename(), output_file.name, '--no-inline-toc'])
+
+    from catalogue.ebook_utils import serve_file
+    return serve_file(output_file.name, '%d.mobi' % doc.pk, 'application/epub+zip')
 
 
 # @never_cache

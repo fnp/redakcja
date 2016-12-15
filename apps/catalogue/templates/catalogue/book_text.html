@@ -154,14 +154,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
         <div class="col-md-4">
 <a class="btn btn-default" href="{% url 'catalogue_pdf' doc.pk revision.pk %}"
             data-toggle="tutorial" data-tutorial="2" data-placement="top"
-            data-content="{% trans "You can download and share a PDF version – and more formats in the future." %}"
-
+            data-content="{% trans "You can download and share a PDF version." %}"
 >{% trans "Download PDF" %}</a>
-<a class="btn btn-default" href="{% url 'catalogue_epub' doc.pk revision.pk %}"
-            data-toggle="tutorial" data-tutorial="2" data-placement="top"
-            data-content="{% trans "You can download and share a EPUB version – and more formats in the future." %}"
-
+          <a class="btn btn-default" href="{% url 'catalogue_epub' doc.pk revision.pk %}"
+            data-toggle="tutorial" data-tutorial="3" data-placement="top"
+            data-content="{% trans "You can also download an ebook version as EPUB…" %}"
 >{% trans "Download EPUB" %}</a>
+          <a class="btn btn-default" href="{% url 'catalogue_mobi' doc.pk revision.pk %}"
+            data-toggle="tutorial" data-tutorial="4" data-placement="top"
+            data-content="{% trans "…and MOBI." %}"
+>{% trans "Download MOBI" %}</a>
         </div>
     </div>
 </div>

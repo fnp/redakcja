@@ -36,4 +36,5 @@ urlpatterns = patterns(
     url(r'^(?P<pk>\d+)/rev(?P<rev_pk>\d+)/preview/$', 'book_html', {'preview': True}, name="catalogue_preview_rev"),
     url(r'^(?P<pk>\d+)/rev(?P<rev_pk>\d+)/pdf/$', 'book_pdf', name="catalogue_pdf"),
     url(r'^(?P<pk>\d+)/rev(?P<rev_pk>\d+)/epub/$', 'book_epub', name="catalogue_epub"),
+    url(r'^(?P<pk>\d+)/rev(?P<rev_pk>\d+)/mobi/$', 'book_mobi', name="catalogue_mobi"),
 )
