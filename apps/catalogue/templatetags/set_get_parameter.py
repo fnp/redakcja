@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from re import split
 
 from django import template
@@ -31,7 +36,7 @@ class SetGetParameter(template.Node):
                     del(params[key])
             else:
                 params[key] = template.Variable(value).resolve(context)
-        return '?%s' %  params.urlencode()
+        return '?%s' % params.urlencode()
 
 
 @register.tag

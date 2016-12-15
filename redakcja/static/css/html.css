@@ -198,8 +198,7 @@
 }
 
 /* błędne wersy */
-.htmlview *:
-not(.strofa) > *[x-verse]::after {
+.htmlview *:not(.strofa) > *[x-verse]::after {
     content: "Ten wers znajduje się poza strofą.";
     display: inline;
     background: red;
@@ -418,7 +417,7 @@ div[x-node] > .uwaga {
     background-color: #ffcccc;
 }
 .htmlview .pe .annotation:hover {
-    background-color: #96e0e4;*/
+    background-color: #96e0e4;
 }
 *.htmlview *.annotation-inline-box {
     position: static;

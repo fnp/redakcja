@@ -1,5 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from django import forms
 from .models import Organization, UserCard, countries
+
 
 class OrganizationForm(forms.ModelForm):
     cts = countries
@@ -7,6 +13,7 @@ class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         exclude = ['_html']
+
 
 class UserCardForm(forms.ModelForm):
     cts = countries
@@ -24,11 +31,10 @@ class UserCardForm(forms.ModelForm):
                 'first_name': kwargs['instance'].user.first_name,
                 'last_name': kwargs['instance'].user.last_name,
             }
-        return super(UserCardForm, self).__init__(*args, **kwargs)
+        super(UserCardForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         self.instance.user.first_name = self.cleaned_data.get('first_name', '')
         self.instance.user.last_name = self.cleaned_data.get('last_name', '')
         self.instance.user.save()
         return super(UserCardForm, self).save(*args, **kwargs)
-

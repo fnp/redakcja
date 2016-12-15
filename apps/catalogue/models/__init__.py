@@ -8,8 +8,6 @@ from catalogue.models.document import Document
 from catalogue.models.plan import Plan
 from catalogue.models.publish_log import PublishRecord
 from catalogue.models.tag import Category, Tag
-# from catalogue.models.book import Book
-# from catalogue.models.listeners import *
 
 from django.contrib.auth.models import User as AuthUser
 

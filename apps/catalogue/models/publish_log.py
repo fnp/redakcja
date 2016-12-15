@@ -12,7 +12,7 @@ from dvcs.models import Revision
 class PublishRecord(models.Model):
     """A record left after publishing a Document."""
 
-    document = models.ForeignKey('Document', verbose_name=_('document'), related_name='publish_log')
+    document = models.ForeignKey('catalogue.Document', verbose_name=_('document'), related_name='publish_log')
     revision = models.ForeignKey(Revision, verbose_name=_('revision'), related_name='publish_log')
     timestamp = models.DateTimeField(_('time'), auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'))
@@ -20,4 +20,4 @@ class PublishRecord(models.Model):
     class Meta:
         ordering = ['-timestamp']
         verbose_name = _('book publish record')
-        verbose_name = _('book publish records')
+        verbose_name_plural = _('book publish records')

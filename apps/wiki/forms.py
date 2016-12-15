@@ -6,7 +6,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from catalogue.models import Document
 from catalogue.constants import STAGES
 
 
@@ -43,7 +42,7 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     stage = forms.ChoiceField(
-        choices = [(s, s) for s in STAGES],
+        choices=[(s, s) for s in STAGES],
         required=False,
         label=_(u"Stage"),
         help_text=_(u"If completed a work stage, change to another one."),
@@ -51,11 +50,10 @@ class DocumentTextSaveForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        r = super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
+        super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
         if user and user.is_authenticated():
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
-        return r
 
 
 class DocumentTextRevertForm(forms.Form):

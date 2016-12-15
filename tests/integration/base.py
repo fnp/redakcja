@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import os
 import inspect
-from urlparse import urlparse
 
 from django.test import LiveServerTestCase
 from django.test.client import Client
 from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from selenium import webdriver, selenium
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium import webdriver
 
 
 class SeleniumTestCase(LiveServerTestCase):
@@ -28,7 +31,7 @@ class SeleniumTestCase(LiveServerTestCase):
     def setUp(self):
         self.browser.delete_all_cookies()
     
-    def create_user(self, username = 'testuser',  passwd = 'passwd', do_login = False):
+    def create_user(self, username='testuser',  passwd='passwd', do_login=False):
         user = User.objects.create_user(username, '', passwd)
         user._plain_passwd = passwd
         if do_login:
@@ -43,17 +46,16 @@ class SeleniumTestCase(LiveServerTestCase):
         
     def login_user(self, user):
         client = Client()
-        client.login(username = user.username, password = user._plain_passwd)
+        client.login(username=user.username, password=user._plain_passwd)
 
         if not self.browser.current_url.startswith(self.live_server_url):
             self.browser.get(self.live_server_url+'/not_existing_url')
             
-        self.browser.find_element_by_tag_name('body') # Make sure the page is actually loaded before setting the cookie
+        self.browser.find_element_by_tag_name('body')  # Make sure the page is actually loaded before setting the cookie
         self.browser.delete_cookie(settings.SESSION_COOKIE_NAME)
-        self.browser.add_cookie(dict(name = settings.SESSION_COOKIE_NAME, 
-                                     value = client.cookies[settings.SESSION_COOKIE_NAME].value,
-                                     path = '/')
-                               )
+        self.browser.add_cookie(dict(name=settings.SESSION_COOKIE_NAME,
+                                     value=client.cookies[settings.SESSION_COOKIE_NAME].value,
+                                     path='/'))
         
     def get_main_page(self):
         self.browser.get(self.live_server_url)
@@ -82,7 +84,7 @@ class MainPage(Page):
                 a.click()
                 self.tab = find_tab_class(tab_title)(self.browser)
                 return
-        raise Exception, 'Tab not found'
+        raise Exception('Tab not found')
         
                 
 def find_tab_class(tab_title):       
@@ -121,5 +123,3 @@ class BooksListPage(MainPageTabBase):
     @property
     def visible_books_count(self):
         return len(self.element.find_element_by_id('file-list').find_elements_by_tag_name('tr')) - 2
-        
-        

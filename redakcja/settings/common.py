@@ -26,8 +26,8 @@ TIME_ZONE = 'Europe/Warsaw'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en'
 
-#import locale
-#locale.setlocale(locale.LC_ALL, '')
+# import locale
+# locale.setlocale(locale.LC_ALL, '')
 
 SITE_ID = 1
 
@@ -71,7 +71,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "redakcja.context_processors.settings", # this is instead of media
+    "redakcja.context_processors.settings",  # this is instead of media
     'django.core.context_processors.csrf',
     "django.core.context_processors.request",
 )
@@ -85,18 +85,18 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'django_cas.middleware.CASMiddleware',
+    # 'django_cas.middleware.CASMiddleware',
 
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
-    #'maintenancemode.middleware.MaintenanceModeMiddleware',
+    # 'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
-#AUTHENTICATION_BACKENDS = (
-#    'django.contrib.auth.backends.ModelBackend',
-#    'fnpdjango.auth_backends.AttrCASBackend',
-#)
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'fnpdjango.auth_backends.AttrCASBackend',
+# )
 
 ROOT_URLCONF = 'redakcja.urls'
 
@@ -116,24 +116,24 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
-    #'django.contrib.comments',
+    # 'django.contrib.comments',
 
-    #'south',
+    # 'south',
     'sorl.thumbnail',
     'pagination',
-    #'gravatar',
-    #'kombu.transport.django',
+    # 'gravatar',
+    # 'kombu.transport.django',
     'fileupload',
     'pipeline',
     'modeltranslation',
 
     'catalogue',
-    'cover',
+    # 'cover',
     'dvcs',
     'organizations',
     'wiki',
-    #'toolbar',
-    #'apiclient',
+    # 'toolbar',
+    # 'apiclient',
     'email_mangler',
     'build',
     'attachments',
@@ -145,16 +145,16 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/'
 
-#CAS_USER_ATTRS_MAP = {
-#    'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
+# CAS_USER_ATTRS_MAP = {
+#     'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}
 
 # REPOSITORY_PATH = '/Users/zuber/Projekty/platforma/files/books'
 
 IMAGE_DIR = 'images/'
 
 
-#import djcelery
-#djcelery.setup_loader()
+# import djcelery
+# djcelery.setup_loader()
 
 BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
 BROKER_HOST = "localhost"
@@ -170,9 +170,7 @@ FORMS_BUILDER_EDITABLE_SLUGS = True
 FORMS_BUILDER_LABEL_MAX_LENGTH = 2048
 
 
-
 try:
     from redakcja.settings.compress import *
 except ImportError:
     pass
-

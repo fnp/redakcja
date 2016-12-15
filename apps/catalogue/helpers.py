@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from datetime import date
 from functools import wraps
 from os.path import join
-from os import listdir, stat
+from os import listdir
 from shutil import move, rmtree
 from django.conf import settings
 import re
 import filecmp
-
-from django.db.models import Count
 
 
 def active_tab(tab):
@@ -70,7 +73,7 @@ class GalleryMerger(object):
 
     @property
     def was_merged(self):
-        "Check if we have gallery size recorded"
+        """Check if we have gallery size recorded"""
         return self.dest_size is not None
 
     def merge(self):
@@ -105,7 +108,8 @@ class GalleryMerger(object):
         for f in files:
             p = self.get_prefix(f)
             if p:
-                if p > last_pfx: last_pfx = p
+                if p > last_pfx:
+                    last_pfx = p
             else:
                 files_prefixed = False
                 break
@@ -121,7 +125,7 @@ class GalleryMerger(object):
         for f in files_other:
             pfx = self.get_prefix(f)
             if pfx is not None:
-                if not pfx in prefixes:
+                if pfx not in prefixes:
                     last_pfx += 1
                     prefixes[pfx] = last_pfx
                 renamed_files_other[f] = self.set_prefix(f, prefixes[pfx])
@@ -138,10 +142,10 @@ class GalleryMerger(object):
         # finally, move / rename files.
         for frm, to in renamed_files.items():
             move(join(self.path(self.dest), frm),
-                        join(self.path(self.dest), to))
+                 join(self.path(self.dest), to))
         for frm, to in renamed_files_other.items():
             move(join(self.path(self.src), frm),
-                        join(self.path(self.dest), to))            
+                 join(self.path(self.dest), to))
 
         rmtree(join(self.path(self.src)))
         return self.dest
@@ -149,7 +153,6 @@ class GalleryMerger(object):
 
 # Maybe subclass?
 def sstdocument(text):
-    #from catalogue.ebook_utils import RedakcjaDocProvider
     from librarian.document import Document
 
     return Document.from_string(

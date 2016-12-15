@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from __future__ import unicode_literals, print_function
 
 from datetime import datetime
@@ -8,9 +13,7 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.files.storage import FileSystemStorage
-from django.db import models, transaction
-from django.db.models.base import ModelBase
+from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,32 +34,22 @@ class Revision(models.Model):
 
     Gzipped text of the document is stored in a file.
     """
-    author = models.ForeignKey(settings.AUTH_USER_MODEL,
-        null=True, blank=True, verbose_name=_('author'))
-    author_name = models.CharField(_('author name'), max_length=128,
-                        null=True, blank=True,
-                        help_text=_("Used if author is not set.")
-                        )
-    author_email = models.CharField(_('author email'), max_length=128,
-                        null=True, blank=True,
-                        help_text=_("Used if author is not set.")
-                        )
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name=_('author'))
+    author_name = models.CharField(
+        _('author name'), max_length=128, null=True, blank=True, help_text=_("Used if author is not set."))
+    author_email = models.CharField(
+        _('author email'), max_length=128, null=True, blank=True, help_text=_("Used if author is not set."))
     # Any other author data?
     # How do we identify an author?
 
-    parent = models.ForeignKey('self',
-                        null=True, blank=True, default=None,
-                        verbose_name=_('parent'),
-                        related_name="children")
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, default=None, verbose_name=_('parent'), related_name="children")
 
-    merge_parent = models.ForeignKey('self',
-                        null=True, blank=True, default=None,
-                        verbose_name=_('merge parent'),
-                        related_name="merge_children")
+    merge_parent = models.ForeignKey(
+        'self', null=True, blank=True, default=None, verbose_name=_('merge parent'), related_name="merge_children")
 
     description = models.TextField(_('description'), blank=True, default='')
-    created_at = models.DateTimeField(editable=False, db_index=True, 
-                        default=datetime.now)
+    created_at = models.DateTimeField(editable=False, db_index=True, default=datetime.now)
 
     class Meta:
         ordering = ('created_at',)
@@ -68,7 +61,7 @@ class Revision(models.Model):
 
     def get_text_path(self):
         if self.pk:
-            return re.sub(r'([0-9a-f]{2})([^\.])', r'\1/\2', '%x.gz' % self.pk)
+            return re.sub(r'([0-9a-f]{2})([^.])', r'\1/\2', '%x.gz' % self.pk)
         else:
             return None
 
@@ -88,9 +81,8 @@ class Revision(models.Model):
                 )
 
     @classmethod
-    def create(cls, text, parent=None, merge_parent=None,
-            author=None, author_name=None, author_email=None,
-            description=''):
+    def create(cls, text, parent=None, merge_parent=None, author=None, author_name=None, author_email=None,
+               description=''):
 
         if text:
             text = text.replace(
@@ -168,15 +160,14 @@ class Revision(models.Model):
             revs.update(self.merge_parent.get_ancestors())
         return revs
 
+
 @python_2_unicode_compatible
 class Ref(models.Model):
     """A reference pointing to a specific revision."""
 
-    revision = models.ForeignKey(Revision,
-            null=True, blank=True, default=None,
-            verbose_name=_('revision'), 
-            help_text=_("The document's revision."),
-            editable=False)
+    revision = models.ForeignKey(
+        Revision, null=True, blank=True, default=None, verbose_name=_('revision'),
+        help_text=_("The document's revision."), editable=False)
 
     def __str__(self):
         return "ref:{0}->rev:{1}".format(self.id, self.revision_id)
@@ -194,12 +185,9 @@ class Ref(models.Model):
 
         for f in files:
             os.unlink(f)
-        
         return result.decode('utf-8')
 
-    def merge_with(self, revision, 
-            author=None, author_name=None, author_email=None, 
-            description="Automatic merge."):
+    def merge_with(self, revision, author=None, author_name=None, author_email=None, description="Automatic merge."):
         """Merges a given revision into the ref."""
         if self.revision is None:
             fast_forward = True
@@ -238,17 +226,13 @@ class Ref(models.Model):
     def materialize(self):
         return self.revision.materialize() if self.revision is not None else ''
 
-    def commit(self, text, parent=False,
-            author=None, author_name=None, author_email=None,
-            description=''):
+    def commit(self, text, parent=False, author=None, author_name=None, author_email=None, description=''):
         """Creates a new revision and sets it as the ref.
 
         This will automatically merge the commit into the main branch,
         if parent is not document's head.
 
         :param unicode text: new version of the document
-        :param base: parent revision (head, if not specified)
-        :type base: Revision or None
         :param User author: the commiter
         :param unicode author_name: commiter name (if ``author`` not specified)
         :param unicode author_email: commiter e-mail (if ``author`` not specified)
@@ -267,8 +251,7 @@ class Ref(models.Model):
                 description=description,
                 parent=parent
             )
-        self.merge_with(rev, author=author, author_name=author_name,
-            author_email=author_email)
+        self.merge_with(rev, author=author, author_name=author_name, author_email=author_email)
 
         post_commit.send(sender=type(self), instance=self)
 

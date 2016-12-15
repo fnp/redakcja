@@ -1,10 +1,15 @@
-from tests.integration.base import SeleniumTestCase, MainPage, _
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
+from tests.integration.base import SeleniumTestCase
+from django.utils.translation import ugettext as _
+
 
 class SmokeTest(SeleniumTestCase):
 
     def test_add_book(self):
-        user = self.create_super_user(do_login = True)
-        
         page = self.get_main_page()
         page.select_tab(_('All'))
         assert page.tab.visible_books_count == 0
@@ -15,4 +20,3 @@ class SmokeTest(SeleniumTestCase):
         page.tab.submit()
         page.select_tab(_('All'))
         assert page.tab.visible_books_count == 1
-        

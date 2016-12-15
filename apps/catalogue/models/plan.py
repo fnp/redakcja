@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import models
 from catalogue.models import Document
 
+
 class Plan(models.Model):
     document = models.ForeignKey(Document)
     stage = models.CharField(max_length=128)

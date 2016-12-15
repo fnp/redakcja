@@ -1,12 +1,16 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import json
 import os
-from zipfile import ZipFile
 from urllib import quote
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
+from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import FormView, View, RedirectView
+from django.views.generic import FormView
 from .forms import UploadForm
 
 
@@ -31,6 +35,7 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
+
 class UploadViewMixin(object):
     def get_safe_path(self, filename=""):
         """Finds absolute filesystem path of the browsed dir of file.
@@ -48,6 +53,7 @@ class UploadViewMixin(object):
             if not path.startswith(self.get_safe_path()):
                 raise Http404
         return path
+
 
 class UploadView(UploadViewMixin, FormView):
     template_name = "fileupload/picture_form.html"
@@ -78,7 +84,7 @@ class UploadView(UploadViewMixin, FormView):
             directory = os.path.dirname(directory)
             now_path = (os.path.dirname(now_path))
             while directory:
-                crumbs.insert(0, (os.path.basename(directory), now_path+'/'))
+                crumbs.insert(0, (os.path.basename(directory), now_path + '/'))
                 directory = os.path.dirname(directory)
                 now_path = os.path.dirname(now_path)
             crumbs.insert(0, ('media', now_path))
@@ -117,7 +123,6 @@ class UploadView(UploadViewMixin, FormView):
                                 quote(f.encode('utf-8'))),
                             'delete_type': "DELETE"
                         })
-                        thumbnail_url = thumbnail(self.get_directory() + f),
                     files.append(file_info)
             return JSONResponse(files)
         else:
@@ -137,9 +142,9 @@ class UploadView(UploadViewMixin, FormView):
                 'name': f.name, 
                 'url': self.get_url(f.name),
                 'thumbnail_url': thumbnail(self.get_directory() + f.name),
-                        'delete_url': "%s?file=%s" % (
-                            self.request.get_full_path(),
-                            quote(f.name.encode('utf-8'))),
+                'delete_url': "%s?file=%s" % (
+                    self.request.get_full_path(),
+                    quote(f.name.encode('utf-8'))),
                 'delete_type': "DELETE"
             })
         response = JSONResponse(data)
@@ -151,15 +156,3 @@ class UploadView(UploadViewMixin, FormView):
         response = JSONResponse(True)
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
-
-
-class PackageView(UploadViewMixin, RedirectView):
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object(request, *args, **kwargs)
-        path = self.get_safe_path()
-        with ZipFile(os.path.join(path, 'package.zip'), 'w') as zip_file:
-            for f in os.listdir(path):
-                if f == 'package.zip':
-                    continue
-                zip_file.write(os.path.join(path, f), arcname = f)
-        return super(PackageView, self).dispatch(request, *args, **kwargs)

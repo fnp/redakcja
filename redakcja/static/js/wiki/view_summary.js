@@ -12,10 +12,10 @@
 			});
 
         	old_callback.call(this);
-		}
+		};
 
 		$.wiki.Perspective.call(this, options);
-    };
+    }
 
     SummaryPerspective.prototype = new $.wiki.Perspective();
 

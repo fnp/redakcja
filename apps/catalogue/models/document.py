@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from datetime import date
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -53,7 +54,7 @@ class Document(Ref):
         if header is None:
             header = etree.fromstring(data).find('.//{http://nowoczesnapolska.org.pl/sst#}header')
         metadata['title'] = getattr(header, 'text', ' ') or ' '
-        #print 'meta', d['title']
+        # print 'meta', d['title']
 
         m = t.find('metadata')
         if m is None:
@@ -86,7 +87,7 @@ class Document(Ref):
     def get_plan(self):
         try:
             plan = self.plan_set.get(stage=self.stage)
-        except:
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
             return None
         return plan
 

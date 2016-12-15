@@ -35,6 +35,7 @@ nbproject/*
 .idea
 
 node_modules
+static--wiki--editor--node_modules*
 
 /static_test
 chromedriver.log

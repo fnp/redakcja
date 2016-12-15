@@ -1,11 +1,15 @@
-# Create your views here.
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-#from django.views.decorators import require_post
+from django.http import Http404
 from .forms import OrganizationForm, UserCardForm
 from .models import Organization, Membership, UserCard
+
 
 @login_required
 def org_new(request):
@@ -37,6 +41,7 @@ def main(request, pk, tab='documents'):
             'am_owner': am_owner,
             'am_member': am_member,
         })
+
 
 def user_card(request, pk):
     try:
@@ -92,8 +97,8 @@ def join(request, pk):
 
     return render(request, 'organizations/join.html', {'org': org})
 
+
 @login_required
-#@POST_required
 def membership(request, pk):
     try:
         org = Organization.objects.get(pk=pk)

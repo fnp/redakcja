@@ -5,20 +5,20 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.generic import RedirectView
 import forms_builder.forms.urls
 
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Auth
-    #url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
-    #url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
-    #url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
-    #url(r'^accounts/logout/$', 'django.contrib.auth.views.login', name='logout'),
-    #url(r'^admin/login/$', 'django_cas.views.login', name='login'),
-    #url(r'^admin/logout/$', 'django_cas.views.logout', name='logout'),
+    # url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
+    # url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
+    # url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
+    # url(r'^accounts/logout/$', 'django.contrib.auth.views.login', name='logout'),
+    # url(r'^admin/login/$', 'django_cas.views.login', name='login'),
+    # url(r'^admin/logout/$', 'django_cas.views.logout', name='logout'),
     url('^accounts/', include('django.contrib.auth.urls')),
 
     # Admin panel
@@ -29,7 +29,6 @@ urlpatterns = patterns('',
     url(r'^register$', 'redakcja.views.register', name='register'),
     url(r'^documents/', include('catalogue.urls')),
     url(r'^editor/', include('wiki.urls')),
-    url(r'^cover/', include('cover.urls')),
     url(r'^organizations/', include('organizations.urls')),
     url(r'^forms/', include(forms_builder.forms.urls)),
 
@@ -43,7 +42,10 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if getattr(settings, 'SERVE_FILES_WITH_DEBUG_FALSE', False):
-    urlpatterns += patterns('',
-    (r'^%s(?P<path>.*)$' % settings.STATIC_URL[1:], 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    (r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-)
+    urlpatterns += patterns(
+        '',
+        (r'^%s(?P<path>.*)$' % settings.STATIC_URL[1:],
+         'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+        (r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
+         'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    )

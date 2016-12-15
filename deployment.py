@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of MIL/PEER, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from __future__ import with_statement
 
-import shutil
 import os
 import sys
 import logging
+from string import Template
 
 logging.basicConfig(stream=sys.stderr, format="%(levelname)s:: %(message)s", level=logging.INFO)
 
-from string import Template
 
 class DeploySite(object):
 
@@ -92,6 +96,7 @@ class DeploySite(object):
         site = cls(*args, **kwargs)
         return site.deploy()
 
+
 class WSGISite(DeploySite):
 
     def __init__(self, **env):
@@ -99,7 +104,7 @@ class WSGISite(DeploySite):
 
         if 'WSGI_FILE' not in self.env:
             self.env['WSGI_FILE'] = os.path.join(self.env['ROOT'], 'www',
-                                        'wsgi', self.env['PROJECT_NAME']) + '.wsgi'
+                                                 'wsgi', self.env['PROJECT_NAME']) + '.wsgi'
 
         self.env['WSGI_DIR'] = os.path.dirname(self.env['WSGI_FILE'])
 
@@ -119,6 +124,7 @@ class WSGISite(DeploySite):
         source = self.find_resource(self.env['WSGI_SOURCE_FILE'])
         self.render_template(source, self.env['WSGI_FILE'])
 
+
 class PIPSite(DeploySite):
 
     def install_dependencies(self):
@@ -131,11 +137,13 @@ class PIPSite(DeploySite):
         except ValueError:
             pass
 
+
 class GitSite(DeploySite):
 
     def update_app(self):
         self.info("Updating repository.")
         os.system("cd %s; git pull" % self.env['APP_DIR'])
+
 
 class ApacheSite(DeploySite):
 

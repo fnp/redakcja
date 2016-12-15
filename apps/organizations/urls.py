@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 from organizations import views
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', views.organizations, name="organizations"),
     url(r'^new/$', views.org_new, name="organizations_new"),
     url(r'^(?P<pk>\d+)/$', views.main, name="organizations_main"),

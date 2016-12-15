@@ -59,7 +59,6 @@
             {% endif %}
             <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
         </ul>
-      </div>
     </li>
 
 
@@ -74,8 +73,8 @@
         >
             {% trans "Log in / Register" %}
         </button>
-        <div class="dropdown-menu" style="padding:0;margin-top:-5px; border:none;box-shadow:none; min-width:240px">
-      <div class="panel panel-default" style="color: #333;">
+      <div class="dropdown-menu" style="padding:0;margin-top:-5px; border:none;box-shadow:none; min-width:240px">
+        <div class="panel panel-default" style="color: #333;">
           <div class="panel-heading">
             <h3 class="panel-title">{% trans "Log in / Register" %}</h3>
           </div>
@@ -104,6 +103,7 @@
             <p style="margin-bottom:1em">{% trans "<strong>Register now</strong> to start editing your own materials." %}</p>
             <a class="btn btn-default" href="{% url 'register' %}">{% trans "Register" %}</a>
           </div>
+        </div>
       </div>
     </li>
 {% endifnotequal %}

@@ -261,7 +261,7 @@ msgstr ""
 #: templates/catalogue/book_text.html:80
 #, python-format
 msgid "This resource has a <a href=\"%(url)s\">published version</a>."
-msgstr "Ten zasób posiada<a href=\"%(url)s\">opublikowaną wersję</a>."
+msgstr "Ten zasób posiada <a href=\"%(url)s\">opublikowaną wersję</a>."
 
 #: templates/catalogue/book_text.html:83
 msgid "This resource hasn't been published yet."
