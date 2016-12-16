@@ -31,8 +31,9 @@ class Book(models.Model):
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
     project = models.ForeignKey(Project, null=True)
 
-    #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
-    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
+    # wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
@@ -54,7 +55,6 @@ class Book(models.Model):
         ordering = ['title', 'slug']
         verbose_name = _('book')
         verbose_name_plural = _('books')
-
 
     # Representing
     # ============
@@ -79,7 +79,10 @@ class Book(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("catalogue_book", [self.slug])
+        return "catalogue_book", [self.slug]
+
+    def gallery_path(self):
+        return os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery)
 
     def correct_about(self):
         return "http://%s%s" % (
