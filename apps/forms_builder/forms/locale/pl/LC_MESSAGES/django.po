@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-18 21:02+0200\n"
+"POT-Creation-Date: 2016-12-15 16:24+0100\n"
 "PO-Revision-Date: 2014-07-18 23:05+0100\n"
 "Last-Translator: Kamil Dębowski <poczta@kdebowski.pl>\n"
 "Language-Team: Kamil Dębowski <poczta@kdebowski.pl>\n"
@@ -19,19 +19,19 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.6.6\n"
 
-#: .\admin.py:40 .\fields.py:33
+#: forms/admin.py:40 forms/fields.py:33
 msgid "Email"
 msgstr "Email"
 
-#: .\admin.py:45 .\models.py:60 .\models.py:151
+#: forms/admin.py:45 forms/models.py:59 forms/models.py:166
 msgid "Slug"
 msgstr "Slug"
 
-#: .\admin.py:48
+#: forms/admin.py:48
 msgid "Sites"
 msgstr "Strony"
 
-#: .\admin.py:177
+#: forms/admin.py:177
 #, python-format
 msgid "1 entry deleted"
 msgid_plural "%(count)s entries deleted"
@@ -39,364 +39,364 @@ msgstr[0] "1 wpis usunięty"
 msgstr[1] "%(count)s wpisy usunięte"
 msgstr[2] "%(count)s wpisów usuniętych"
 
-#: .\admin.py:181
+#: forms/admin.py:181
 msgid "View Entries"
 msgstr "Zobacz wpisy"
 
-#: .\fields.py:31
+#: forms/fields.py:31
 msgid "Single line text"
 msgstr "Pojedynczy wiersz tekstu"
 
-#: .\fields.py:32
+#: forms/fields.py:32
 msgid "Multi line text"
 msgstr "Wiele linii tekstu"
 
-#: .\fields.py:34
+#: forms/fields.py:34
 msgid "Number"
 msgstr "Liczba"
 
-#: .\fields.py:35
+#: forms/fields.py:35
 msgid "URL"
 msgstr "URL"
 
-#: .\fields.py:36
+#: forms/fields.py:36
 msgid "Check box"
 msgstr "Pole wyboru"
 
-#: .\fields.py:37
+#: forms/fields.py:37
 msgid "Check boxes"
 msgstr "Pola wyboru"
 
-#: .\fields.py:38
+#: forms/fields.py:38
 msgid "Drop down"
 msgstr "Lista rozwijana"
 
-#: .\fields.py:39
+#: forms/fields.py:39
 msgid "Multi select"
 msgstr "Wielokrotny wybór"
 
-#: .\fields.py:40
+#: forms/fields.py:40
 msgid "Radio buttons"
 msgstr "Jednokrotny wybór"
 
-#: .\fields.py:41
+#: forms/fields.py:41
 msgid "File upload"
 msgstr "Przesłanie pliku"
 
-#: .\fields.py:42
+#: forms/fields.py:42
 msgid "Date"
 msgstr "Data"
 
-#: .\fields.py:43 .\models.py:219
+#: forms/fields.py:43 forms/models.py:234
 msgid "Date/time"
 msgstr "Data/czas"
 
-#: .\fields.py:44
+#: forms/fields.py:44
 msgid "Date of birth"
 msgstr "Data urodzenia"
 
-#: .\fields.py:45
+#: forms/fields.py:45
 msgid "Hidden"
 msgstr "Ukryte"
 
-#: .\forms.py:52 .\forms.py:61 .\forms.py:68 .\forms.py:77
+#: forms/forms.py:52 forms/forms.py:61 forms/forms.py:68 forms/forms.py:77
 msgid "Nothing"
 msgstr "Nic"
 
-#: .\forms.py:53
+#: forms/forms.py:53
 msgid "Contains"
 msgstr "Zawiera"
 
-#: .\forms.py:54
+#: forms/forms.py:54
 msgid "Doesn't contain"
 msgstr "Nie zawiera"
 
-#: .\forms.py:55
+#: forms/forms.py:55
 msgid "Equals"
 msgstr "Równy"
 
-#: .\forms.py:56
+#: forms/forms.py:56
 msgid "Doesn't equal"
 msgstr "Nieówny"
 
-#: .\forms.py:62
+#: forms/forms.py:62
 msgid "Equals any"
 msgstr "Równy któremukolwiek"
 
-#: .\forms.py:63
+#: forms/forms.py:63
 msgid "Doesn't equal any"
 msgstr "Nierówny któremukolwiek"
 
-#: .\forms.py:69
+#: forms/forms.py:69
 msgid "Contains any"
 msgstr "Zawiera jakiekolwiek"
 
-#: .\forms.py:70
+#: forms/forms.py:70
 msgid "Contains all"
 msgstr "Zawiera wszystkie"
 
-#: .\forms.py:71
+#: forms/forms.py:71
 msgid "Doesn't contain any"
 msgstr "Niezawiera któregokolwiek"
 
-#: .\forms.py:72
+#: forms/forms.py:72
 msgid "Doesn't contain all"
 msgstr "Nie zawiera wszystkich"
 
-#: .\forms.py:78
+#: forms/forms.py:78
 msgid "Is between"
 msgstr "Jest pomiędzy"
 
-#: .\forms.py:272
+#: forms/forms.py:276
 msgid "Checked"
 msgstr "Zaznaczony"
 
-#: .\forms.py:272
+#: forms/forms.py:276
 msgid "Not checked"
 msgstr "Niezaznaczony"
 
-#: .\forms.py:295 .\forms.py:310
+#: forms/forms.py:299 forms/forms.py:314
 msgid "and"
 msgstr "i"
 
-#: .\models.py:21
+#: forms/models.py:20
 msgid "Draft"
 msgstr "Szkic"
 
-#: .\models.py:22
+#: forms/models.py:21
 msgid "Published"
 msgstr "Opublikowany"
 
-#: .\models.py:59
+#: forms/models.py:58
 msgid "Title"
 msgstr "Tytuł"
 
-#: .\models.py:62
+#: forms/models.py:61
 msgid "Intro"
 msgstr "Wstęp"
 
-#: .\models.py:63
+#: forms/models.py:62
 msgid "Button text"
 msgstr "Tekst przycisku"
 
-#: .\models.py:64
+#: forms/models.py:63
 msgid "Submit"
 msgstr "Wyślij"
 
-#: .\models.py:65
+#: forms/models.py:64
 msgid "Response"
 msgstr "Odpowiedź"
 
-#: .\models.py:66
+#: forms/models.py:65
 msgid "Redirect url"
 msgstr "Adres do przekierowania"
 
-#: .\models.py:68
+#: forms/models.py:67
 msgid "An alternate URL to redirect to after form submission"
 msgstr "Alternatywny adres do przekierowania po wysłaniu formularza"
 
-#: .\models.py:69
+#: forms/models.py:68
 msgid "Status"
 msgstr "Status"
 
-#: .\models.py:71
+#: forms/models.py:70
 msgid "Published from"
 msgstr "Opublikowany od"
 
-#: .\models.py:72
+#: forms/models.py:71
 msgid "With published selected, won't be shown until this time"
 msgstr "Jeśli opublikowany, nie będzie widoczny przed tym czasem"
 
-#: .\models.py:74
+#: forms/models.py:73
 msgid "Expires on"
 msgstr "Wygasa"
 
-#: .\models.py:75
+#: forms/models.py:74
 msgid "With published selected, won't be shown after this time"
 msgstr "Jeśli opublikowany, nie będzie widoczny po tym czasie"
 
-#: .\models.py:77
+#: forms/models.py:76
 msgid "Login required"
 msgstr "Wymaga logowania"
 
-#: .\models.py:78
+#: forms/models.py:77
 msgid "If checked, only logged in users can view the form"
 msgstr "Jeśli zaznaczone, tylko zalogowani użytkownicy zobaczą formularz"
 
-#: .\models.py:79
+#: forms/models.py:78
 msgid "Send email"
 msgstr "Wyślij email"
 
-#: .\models.py:80
+#: forms/models.py:79
 msgid "If checked, the person entering the form will be sent an email"
 msgstr "Jeśli zaznaczone, osoba wysyłająca formularz otrzyma email"
 
-#: .\models.py:81
+#: forms/models.py:80
 msgid "From address"
 msgstr "Z adresu"
 
-#: .\models.py:82
+#: forms/models.py:81
 msgid "The address the email will be sent from"
 msgstr "Adres, z którego będzie wysłany formularz"
 
-#: .\models.py:83
+#: forms/models.py:82
 msgid "Send copies to"
 msgstr "Wyślij kopie do"
 
-#: .\models.py:84
+#: forms/models.py:83
 msgid "One or more email addresses, separated by commas"
 msgstr "Jeden lub więcej adresów email, oddzielonych przecinkami"
 
-#: .\models.py:86
+#: forms/models.py:85
 msgid "Subject"
 msgstr "Temat"
 
-#: .\models.py:87
+#: forms/models.py:86
 msgid "Message"
 msgstr "Wiadomość"
 
-#: .\models.py:92
+#: forms/models.py:91
 msgid "Form"
 msgstr "Formularz"
 
-#: .\models.py:93
+#: forms/models.py:92
 msgid "Forms"
 msgstr "Formularze"
 
-#: .\models.py:124
+#: forms/models.py:139
 msgid "View form on site"
 msgstr "Zobacz formularz na stronie"
 
-#: .\models.py:125
+#: forms/models.py:140
 msgid "Filter entries"
 msgstr "Filtruj wpisy"
 
-#: .\models.py:126
+#: forms/models.py:141
 msgid "View all entries"
 msgstr "Zobacz wszystkie wpisy"
 
-#: .\models.py:127
+#: forms/models.py:142
 msgid "Export all entries"
 msgstr "Eksportuj wszystkie wpisy"
 
-#: .\models.py:150
+#: forms/models.py:165
 msgid "Label"
 msgstr "Etykieta"
 
-#: .\models.py:153
+#: forms/models.py:168
 msgid "Type"
 msgstr "Typ"
 
-#: .\models.py:154
+#: forms/models.py:169
 msgid "Required"
 msgstr "Wymagane"
 
-#: .\models.py:155
+#: forms/models.py:170
 msgid "Visible"
 msgstr "Widoczne"
 
-#: .\models.py:156
+#: forms/models.py:171
 msgid "Choices"
 msgstr "Opcje wyboru"
 
-#: .\models.py:161
+#: forms/models.py:176
 msgid "Default value"
 msgstr "Wartość domyślna"
 
-#: .\models.py:163
+#: forms/models.py:178
 msgid "Placeholder Text"
 msgstr "Placeholder"
 
-#: .\models.py:165
+#: forms/models.py:180
 msgid "Help text"
 msgstr "Tekst pomocniczy"
 
-#: .\models.py:170 .\templates\admin\forms\entries.html:88
+#: forms/models.py:185 forms/templates/admin/forms/entries.html:88
 msgid "Field"
 msgstr "Pole"
 
-#: .\models.py:171
+#: forms/models.py:186
 msgid "Fields"
 msgstr "Pola"
 
-#: .\models.py:222
+#: forms/models.py:237
 msgid "Form entry"
 msgstr "Wpis formularza"
 
-#: .\models.py:223
+#: forms/models.py:238
 msgid "Form entries"
 msgstr "Wpisy formularza"
 
-#: .\models.py:237
+#: forms/models.py:252
 msgid "Form field entry"
 msgstr "Wpis pola formularza"
 
-#: .\models.py:238
+#: forms/models.py:253
 msgid "Form field entries"
 msgstr "Wpisy pola formularza"
 
-#: .\models.py:266
+#: forms/models.py:281
 msgid "Order"
 msgstr "Porządek"
 
-#: .\templates\admin\forms\change_form.html:10
-#: .\templates\admin\forms\entries.html:117
+#: forms/templates/admin/forms/change_form.html:9
+#: forms/templates/admin/forms/entries.html:117
 msgid "View entries"
 msgstr "Zobacz wpisy"
 
-#: .\templates\admin\forms\change_form.html:13
+#: forms/templates/admin/forms/change_form.html:12
 msgid "History"
 msgstr "Historia"
 
-#: .\templates\admin\forms\change_form.html:17
+#: forms/templates/admin/forms/change_form.html:16
 msgid "View on site"
 msgstr "Zobacz na stronie"
 
-#: .\templates\admin\forms\entries.html:62
+#: forms/templates/admin/forms/entries.html:62
 msgid "No entries selected"
 msgstr "Brak zaznaczonych wpisów"
 
-#: .\templates\admin\forms\entries.html:65
+#: forms/templates/admin/forms/entries.html:65
 msgid "Delete selected entries?"
 msgstr "Usunąć zaznaczone wpisy?"
 
-#: .\templates\admin\forms\entries.html:74
+#: forms/templates/admin/forms/entries.html:74
 msgid "Home"
 msgstr "Strona główna"
 
-#: .\templates\admin\forms\entries.html:89
+#: forms/templates/admin/forms/entries.html:89
 msgid "Include"
 msgstr "Uwzględnij"
 
-#: .\templates\admin\forms\entries.html:90
+#: forms/templates/admin/forms/entries.html:90
 msgid "Filter by"
 msgstr "Filtruj używając"
 
-#: .\templates\admin\forms\entries.html:108
+#: forms/templates/admin/forms/entries.html:108
 msgid "All"
 msgstr "Wszystko"
 
-#: .\templates\admin\forms\entries.html:116
-#: .\templates\admin\forms\entries.html:157
+#: forms/templates/admin/forms/entries.html:116
+#: forms/templates/admin/forms/entries.html:157
 msgid "Back to form"
 msgstr "Wróć do formlarza"
 
-#: .\templates\admin\forms\entries.html:118
+#: forms/templates/admin/forms/entries.html:118
 msgid "Export CSV"
 msgstr "Eksportuj do CSV"
 
-#: .\templates\admin\forms\entries.html:120
+#: forms/templates/admin/forms/entries.html:120
 msgid "Export XLS"
 msgstr "Eksportuj do XLS"
 
-#: .\templates\admin\forms\entries.html:124
+#: forms/templates/admin/forms/entries.html:124
 msgid "Entries"
 msgstr "Wpisy"
 
-#: .\templates\admin\forms\entries.html:158
+#: forms/templates/admin/forms/entries.html:158
 msgid "Delete selected"
 msgstr "Usuń zaznaczone"
 
-#: .\templates\admin\forms\entries.html:162
+#: forms/templates/admin/forms/entries.html:162
 msgid "No entries to display"
 msgstr "Brak wpisów do wyświetlenia"

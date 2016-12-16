@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-03 15:35+0200\n"
+"POT-Creation-Date: 2016-12-15 16:24+0100\n"
 "PO-Revision-Date: 2011-10-03 15:35+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,98 +18,87 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2)\n"
 
-#: models.py:19
-msgid "name"
-msgstr "nazwa"
-
-#: models.py:20
-msgid "slug"
-msgstr "slug"
-
-#: models.py:22
-msgid "ordering"
-msgstr "kolejność"
-
-#: models.py:29
-msgid "tag"
-msgstr "tag"
-
-#: models.py:30 models.py:196
-msgid "tags"
-msgstr "tagi"
-
-#: models.py:72
+#: models.py:37
 msgid "author"
 msgstr "autor"
 
-#: models.py:73
+#: models.py:39
 msgid "author name"
 msgstr "imię i nazwisko autora"
 
-#: models.py:75 models.py:79
+#: models.py:39 models.py:41
 msgid "Used if author is not set."
 msgstr "Używane, gdy nie jest ustawiony autor."
 
-#: models.py:77
+#: models.py:41
 msgid "author email"
 msgstr "e-mail autora"
 
-#: models.py:81
-msgid "revision"
-msgstr "rewizja"
-
-#: models.py:85
+#: models.py:46
 msgid "parent"
 msgstr "rodzic"
 
-#: models.py:90
+#: models.py:49
 msgid "merge parent"
 msgstr "drugi rodzic"
 
-#: models.py:93
+#: models.py:51
 msgid "description"
 msgstr "opis"
 
-#: models.py:96
-msgid "publishable"
-msgstr "do publikacji"
+#: models.py:56 models.py:169
+msgid "revision"
+msgstr "rewizja"
 
-#: models.py:102
-msgid "change"
-msgstr "zmiana"
+#: models.py:57
+msgid "revisions"
+msgstr "rewizje"
 
-#: models.py:103
-msgid "changes"
-msgstr "zmiany"
+#: models.py:170
+msgid "The document's revision."
+msgstr "Rewizja dokumentu."
 
-#: models.py:195
-msgid "document"
-msgstr "dokument"
+#~ msgid "name"
+#~ msgstr "nazwa"
 
-#: models.py:197
-msgid "data"
-msgstr "dane"
+#~ msgid "slug"
+#~ msgstr "slug"
 
-#: models.py:211
-msgid "stage"
-msgstr "etap"
+#~ msgid "ordering"
+#~ msgstr "kolejność"
 
-#: models.py:219
-msgid "head"
-msgstr "głowica"
+#~ msgid "tag"
+#~ msgstr "tag"
 
-#: models.py:220
-msgid "This document's current head."
-msgstr "Aktualna wersja dokumentu."
+#~ msgid "tags"
+#~ msgstr "tagi"
 
-#: models.py:224
-msgid "creator"
-msgstr "utworzył"
+#~ msgid "publishable"
+#~ msgstr "do publikacji"
 
-#: models.py:239
-msgid "user"
-msgstr "użytkownik"
+#~ msgid "change"
+#~ msgstr "zmiana"
 
-#: models.py:239
-msgid "Work assignment."
-msgstr "Przypisanie pracy użytkownikowi."
+#~ msgid "changes"
+#~ msgstr "zmiany"
+
+#~ msgid "document"
+#~ msgstr "dokument"
+
+#~ msgid "data"
+#~ msgstr "dane"
+
+#~ msgid "stage"
+#~ msgstr "etap"
+
+#~ msgid "head"
+#~ msgstr "głowica"
+
+#~ msgid "creator"
+#~ msgstr "utworzył"
+
+#~ msgid "user"
+#~ msgstr "użytkownik"
+
+#~ msgid "Work assignment."
+#~ msgstr "Przypisanie pracy użytkownikowi."

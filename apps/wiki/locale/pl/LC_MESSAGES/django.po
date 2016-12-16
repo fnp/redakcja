@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-26 10:40+0100\n"
+"POT-Creation-Date: 2016-12-15 16:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,39 +18,39 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: forms.py:28 forms.py:74
+#: forms.py:27 forms.py:72
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:29 forms.py:75
+#: forms.py:28 forms.py:73
 msgid "Your name"
 msgstr "Twoje imię i nazwisko"
 
-#: forms.py:34 forms.py:80
+#: forms.py:33 forms.py:78
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:35 forms.py:81
+#: forms.py:34 forms.py:79
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Twój e-mail, do pokazania gravatara :)"
 
-#: forms.py:41 forms.py:87
+#: forms.py:40 forms.py:85
 msgid "Your comments"
 msgstr "Twoje komentarze"
 
-#: forms.py:42
+#: forms.py:41
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:48 templates/wiki/bootstrap.html:72
+#: forms.py:47 templates/wiki/bootstrap.html:72
 msgid "Stage"
 msgstr "Etap"
 
-#: forms.py:49
+#: forms.py:48
 msgid "If completed a work stage, change to another one."
 msgstr "Jeśli etap pracy został zakończony, zmień go na inny."
 
-#: forms.py:88
+#: forms.py:86
 msgid "Describe the reason for reverting."
 msgstr "Podaj powód wycofania zmian."
 
@@ -64,7 +63,6 @@ msgid "Informations about lesson"
 msgstr "Informacje o lekcji"
 
 #: templates/wiki/bootstrap.html:71
-#: templates/wiki/document_details_base.html:35
 msgid "Version"
 msgstr "Wersja"
 
@@ -80,30 +78,9 @@ msgstr "Stara wersja"
 msgid "New version"
 msgstr "Nowa wersja"
 
-#: templates/wiki/document_details.html:32
-msgid "Click to open/close gallery"
-msgstr "Kliknij, by otworzyć/zamknąć galerię"
-
-#: templates/wiki/document_details_base.html:33
-msgid "Help"
-msgstr "Pomoc"
-
-#: templates/wiki/document_details_base.html:35
-msgid "Unknown"
-msgstr "Nieznany"
-
-#: templates/wiki/document_details_base.html:37
 #: templates/wiki/pubmark_dialog.html:16
 msgid "Save"
 msgstr "Zapisz"
-
-#: templates/wiki/document_details_base.html:38
-msgid "Save attempt in progress"
-msgstr "Trwa próba zapisu"
-
-#: templates/wiki/document_details_base.html:39
-msgid "There is a newer version of this document!"
-msgstr "Istnieje nowsza wersja tego dokumentu"
 
 #: templates/wiki/pubmark_dialog.html:17 templates/wiki/revert_dialog.html:40
 msgid "Cancel"
@@ -145,26 +122,6 @@ msgstr "Pomniejsz"
 msgid "Gallery"
 msgstr "Galeria"
 
-#: templates/wiki/tabs/history_view.html:5
-msgid "Compare versions"
-msgstr "Porównaj wersje"
-
-#: templates/wiki/tabs/history_view.html:8
-msgid "Mark for publishing"
-msgstr "Oznacz do publikacji"
-
-#: templates/wiki/tabs/history_view.html:11
-msgid "Revert document"
-msgstr "Wycofaj zmiany w dokumencie"
-
-#: templates/wiki/tabs/history_view.html:14
-msgid "View version"
-msgstr "Pokaż wersję"
-
-#: templates/wiki/tabs/history_view_item.html:3
-msgid "History"
-msgstr "Historia"
-
 #: templates/wiki/tabs/search_view.html:3
 #: templates/wiki/tabs/search_view.html:5
 msgid "Search"
@@ -202,50 +159,6 @@ msgstr "Znajdź i zamień"
 msgid "Source code"
 msgstr "Kod źródłowy"
 
-#: templates/wiki/tabs/summary_view.html:13
-msgid "Refresh from working copy"
-msgstr "Odśwież z wersji roboczej"
-
-#: templates/wiki/tabs/summary_view.html:17
-msgid "Title"
-msgstr "Tytuł"
-
-#: templates/wiki/tabs/summary_view.html:21
-msgid "Go to the book's page"
-msgstr "Idź do strony książki"
-
-#: templates/wiki/tabs/summary_view.html:24
-msgid "Document ID"
-msgstr "ID dokumentu"
-
-#: templates/wiki/tabs/summary_view.html:28
-msgid "Current version"
-msgstr "Aktualna wersja"
-
-#: templates/wiki/tabs/summary_view.html:31
-msgid "Last edited by"
-msgstr "Ostatnio edytowane przez"
-
-#: templates/wiki/tabs/summary_view.html:35
-msgid "Link to gallery"
-msgstr "Link do galerii"
-
-#: templates/wiki/tabs/summary_view.html:40
-msgid "Characters in document"
-msgstr "Znaków w dokumencie"
-
-#: templates/wiki/tabs/summary_view.html:41
-msgid "pages"
-msgstr "stron"
-
-#: templates/wiki/tabs/summary_view.html:41
-msgid "untagged"
-msgstr "nie oznaczone"
-
-#: templates/wiki/tabs/summary_view_item.html:3
-msgid "Summary"
-msgstr "Podsumowanie"
-
 #: templates/wiki/tabs/wysiwyg_editor.html:9
 msgid "Insert theme"
 msgstr "Wstaw motyw"
@@ -261,3 +174,66 @@ msgstr "Edytor wizualny"
 #: views.py:47
 msgid "Published"
 msgstr "Opublikowane"
+
+#~ msgid "Click to open/close gallery"
+#~ msgstr "Kliknij, by otworzyć/zamknąć galerię"
+
+#~ msgid "Help"
+#~ msgstr "Pomoc"
+
+#~ msgid "Unknown"
+#~ msgstr "Nieznany"
+
+#~ msgid "Save attempt in progress"
+#~ msgstr "Trwa próba zapisu"
+
+#~ msgid "There is a newer version of this document!"
+#~ msgstr "Istnieje nowsza wersja tego dokumentu"
+
+#~ msgid "Compare versions"
+#~ msgstr "Porównaj wersje"
+
+#~ msgid "Mark for publishing"
+#~ msgstr "Oznacz do publikacji"
+
+#~ msgid "Revert document"
+#~ msgstr "Wycofaj zmiany w dokumencie"
+
+#~ msgid "View version"
+#~ msgstr "Pokaż wersję"
+
+#~ msgid "History"
+#~ msgstr "Historia"
+
+#~ msgid "Refresh from working copy"
+#~ msgstr "Odśwież z wersji roboczej"
+
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#~ msgid "Go to the book's page"
+#~ msgstr "Idź do strony książki"
+
+#~ msgid "Document ID"
+#~ msgstr "ID dokumentu"
+
+#~ msgid "Current version"
+#~ msgstr "Aktualna wersja"
+
+#~ msgid "Last edited by"
+#~ msgstr "Ostatnio edytowane przez"
+
+#~ msgid "Link to gallery"
+#~ msgstr "Link do galerii"
+
+#~ msgid "Characters in document"
+#~ msgstr "Znaków w dokumencie"
+
+#~ msgid "pages"
+#~ msgstr "stron"
+
+#~ msgid "untagged"
+#~ msgstr "nie oznaczone"
+
+#~ msgid "Summary"
+#~ msgstr "Podsumowanie"

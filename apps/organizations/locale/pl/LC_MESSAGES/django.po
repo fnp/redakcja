@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-26 11:37+0100\n"
+"POT-Creation-Date: 2016-12-15 16:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +29,7 @@ msgstr "Nazwa"
 
 #: templates/organizations/edit.html:15 templates/organizations/new.html:15
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #: templates/organizations/edit.html:20
 #: templates/organizations/edit_user.html:24
@@ -46,7 +45,7 @@ msgstr "Kraj"
 #: templates/organizations/snippets/organization.html:13
 #: templates/organizations/snippets/user.html:13
 msgid "WWW"
-msgstr ""
+msgstr "WWW"
 
 #: templates/organizations/edit.html:30
 #: templates/organizations/edit_user.html:35
@@ -103,7 +102,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Twoje członkostwo w organizacji <strong><a href=\"%(url)s\">%(org)s</a></strong> musi zostać potwierdzone przez jej właściciela.</p>\n"
+"<p>Twoje członkostwo w organizacji <strong><a href=\"%(url)s\">%(org)s</a></"
+"strong> musi zostać potwierdzone przez jej właściciela.</p>\n"
 "    "
 
 #: templates/organizations/join.html:15 templates/organizations/main.html:10
@@ -130,11 +130,11 @@ msgstr "Członkowie"
 
 #: templates/organizations/main.html:29
 msgid "E-mail"
-msgstr ""
+msgstr "E-mail"
 
 #: templates/organizations/main.html:30
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: templates/organizations/main.html:43
 msgid "owner"

@@ -54,8 +54,8 @@ msgstr ""
 "albo do <a href=\"%(m)s\">swojej strony</a>."
 
 #: templates/base.html:7
-msgid "Platforma Redakcyjna"
-msgstr ""
+msgid "Editorial Platform"
+msgstr "Platforma Redakcyjna"
 
 #: templates/base.html:16
 msgid "Loading"
@@ -69,6 +69,11 @@ msgid ""
 "    Educational Resources<br>\n"
 "    </p>\n"
 msgstr ""
+"\n"
+"    <p>Media &amp; Information Literacy<br>\n"
+"    Platform for Exchanging<br>\n"
+"    Educational Resources<br>\n"
+"    </p>\n"
 
 #: templates/main.html:26
 msgid "Create and share your resources<br>Start tutorial"

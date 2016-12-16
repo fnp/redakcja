@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-07 16:09+0100\n"
+"POT-Creation-Date: 2016-12-15 16:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,14 +22,14 @@ msgstr ""
 msgid "key"
 msgstr "klucz"
 
-#: models.py:7
+#: models.py:8
 msgid "A unique name for this attachment"
 msgstr "Unikalna nazwa dla tego załącznika"
 
-#: models.py:12
+#: models.py:13
 msgid "attachment"
 msgstr "załącznik"
 
-#: models.py:12
+#: models.py:13
 msgid "attachments"
 msgstr "załączniki"
