@@ -138,6 +138,18 @@ class BookForm(forms.ModelForm):
         self.fields['title'].widget.attrs.update({"class": "autoslug-source"})
         return ret
 
+    def save(self, **kwargs):
+        orig_instance = Book.objects.get(pk=self.instance.pk)
+        old_gallery = orig_instance.gallery
+        new_gallery = self.cleaned_data['gallery']
+        if new_gallery != old_gallery:
+            import shutil
+            import os.path
+            from django.conf import settings
+            shutil.move(orig_instance.gallery_path(),
+                        os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, new_gallery))
+        super(BookForm, self).save(**kwargs)
+
 
 class ReadonlyBookForm(BookForm):
     """Form used for not editing a Book."""
