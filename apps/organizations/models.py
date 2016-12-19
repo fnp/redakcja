@@ -83,7 +83,7 @@ class Card(models.Model):
             p = getattr(self, "preview_html_%s" % lang)
             assert p
             return p
-        except AssertionError:
+        except (AssertionError, AttributeError):
             return self.preview_html
 
 
