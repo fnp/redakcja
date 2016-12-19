@@ -44,7 +44,7 @@ def changes_wall(user=None, max_len=None, day=None):
     for item in qs:
         tag = 'stage' if item.tags.count() else 'change'
         chunk = item.tree
-        w  = WallItem(tag)
+        w = WallItem(tag)
         if user and item.author != user:
             w.header = _('Related edit')
         else:
