@@ -4,7 +4,7 @@
 lxml>=2.2.2
 Mercurial>=3.3,<3.4
 PyYAML>=3.0
-Pillow
+Pillow>=3.1.1
 oauth2
 httplib2 # oauth2 dependency
 
