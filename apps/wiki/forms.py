@@ -4,9 +4,11 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import STAGES
+from librarian.document import Document
 
 
 class DocumentTextSaveForm(forms.Form):
@@ -54,6 +56,14 @@ class DocumentTextSaveForm(forms.Form):
         if user and user.is_authenticated():
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
+
+    def clean_text(self):
+        text = self.cleaned_data['text']
+        try:
+            Document.from_string(text)
+        except ValueError as e:
+            raise ValidationError(e.message)
+        return text
 
 
 class DocumentTextRevertForm(forms.Form):
