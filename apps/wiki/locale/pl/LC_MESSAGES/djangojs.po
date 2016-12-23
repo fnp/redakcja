@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-23 15:51+0100\n"
+"POT-Creation-Date: 2016-12-23 16:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,11 +40,11 @@ msgstr ""
 
 #: static/wiki/editor/src/editor/modules/data/data.js:140
 msgid "Yes, restore local draft"
-msgstr "Tak, przywróć lokalną wersję"
+msgstr "Tak, użyj lokalnej wersji"
 
 #: static/wiki/editor/src/editor/modules/data/data.js:141
 msgid "No, use version loaded from the server"
-msgstr "Nie, użyj wersji z serwera"
+msgstr "Nie, przywróć wersję z serwera"
 
 #: static/wiki/editor/src/editor/modules/data/data.js:178
 msgid "Save Document"
@@ -90,6 +89,7 @@ msgstr "Przywróć"
 
 #: static/wiki/editor/src/editor/modules/data/data.js:305
 #: static/wiki/editor/src/editor/modules/data/data.js:306
+#: static/wiki/editor/src/editor/translation-fix.js:24
 msgid "Publish"
 msgstr "Opublikuj"
 
@@ -242,6 +242,12 @@ msgstr "Zastosuj"
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:53
 msgid "Link"
 msgstr "Link"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:545
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:66
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:57
+msgid "attachment library"
+msgstr "biblioteka załączników"
 
 #: static/wiki/editor/src/editor/plugins/core/core.js:580
 #: static/wiki/editor/src/editor/plugins/core/core.js:634
@@ -473,6 +479,10 @@ msgstr "Usuń wiersz metadanych"
 msgid "Metadata edit"
 msgstr "Edytuj metadane"
 
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:170
+msgid "attachments"
+msgstr "załączniki"
+
 #: static/wiki/editor/src/editor/plugins/core/switch.js:42
 msgid "Switch to"
 msgstr "Przełącz na"
@@ -518,6 +528,59 @@ msgstr "Edytuj adres wideo"
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:74
 msgid "YouTube link"
 msgstr "Link do YouTube"
+
+#: static/wiki/editor/src/editor/translation-fix.js:2
+msgid "edit"
+msgstr "zmień"
+
+#: static/wiki/editor/src/editor/translation-fix.js:3
+#: static/wiki/editor/src/editor/translation-fix.js:18
+msgid "remove"
+msgstr "usuń"
+
+#: static/wiki/editor/src/editor/translation-fix.js:4
+msgid "Delete this comment?"
+msgstr "Skasować ten komentarz?"
+
+#: static/wiki/editor/src/editor/translation-fix.js:5
+msgid "Delete"
+msgstr "Usuń"
+
+#: static/wiki/editor/src/editor/translation-fix.js:8
+msgid "Exit"
+msgstr "Wyjdź"
+
+#: static/wiki/editor/src/editor/translation-fix.js:9
+msgid "Preview saved version"
+msgstr "Podgląd zapisanej wersji"
+
+#: static/wiki/editor/src/editor/translation-fix.js:10
+msgid "Attachments"
+msgstr "Załączniki"
+
+#: static/wiki/editor/src/editor/translation-fix.js:11
+msgid "drop a working draft"
+msgstr "odrzuć kopię roboczą"
+
+#: static/wiki/editor/src/editor/translation-fix.js:14
+msgid "Draft Saved"
+msgstr "Ostatnia kopia"
+
+#: static/wiki/editor/src/editor/translation-fix.js:17
+msgid "change"
+msgstr "zmień"
+
+#: static/wiki/editor/src/editor/translation-fix.js:21
+msgid "Compare"
+msgstr "Porównaj"
+
+#: static/wiki/editor/src/editor/translation-fix.js:22
+msgid "Revert"
+msgstr "Przywróć"
+
+#: static/wiki/editor/src/editor/translation-fix.js:23
+msgid "Preview"
+msgstr "Podgląd"
 
 #: static/wiki/editor/src/editor/views/attachments/attachments.js:13
 msgid "Attachment library"
