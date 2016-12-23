@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-15 16:24+0100\n"
+"POT-Creation-Date: 2016-12-23 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,39 +18,39 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: forms.py:27 forms.py:72
+#: forms.py:29 forms.py:82
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:28 forms.py:73
+#: forms.py:30 forms.py:83
 msgid "Your name"
 msgstr "Twoje imię i nazwisko"
 
-#: forms.py:33 forms.py:78
+#: forms.py:35 forms.py:88
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:34 forms.py:79
+#: forms.py:36 forms.py:89
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Twój e-mail, do pokazania gravatara :)"
 
-#: forms.py:40 forms.py:85
+#: forms.py:42 forms.py:95
 msgid "Your comments"
 msgstr "Twoje komentarze"
 
-#: forms.py:41
+#: forms.py:43
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:47 templates/wiki/bootstrap.html:72
+#: forms.py:49 templates/wiki/bootstrap.html:72
 msgid "Stage"
 msgstr "Etap"
 
-#: forms.py:48
+#: forms.py:50
 msgid "If completed a work stage, change to another one."
 msgstr "Jeśli etap pracy został zakończony, zmień go na inny."
 
-#: forms.py:86
+#: forms.py:96
 msgid "Describe the reason for reverting."
 msgstr "Podaj powód wycofania zmian."
 
