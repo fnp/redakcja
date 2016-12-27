@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django import http
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlquote_plus
@@ -214,7 +214,10 @@ def book_pdf(request, pk, rev_pk):
     rev = get_object_or_404(Revision, pk=rev_pk)
     # Test
 
-    sst = SST.from_string(rev.materialize())
+    try:
+        sst = SST.from_string(rev.materialize())
+    except ValueError as e:
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
     
     ctx = Context(
         files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
@@ -225,7 +228,6 @@ def book_pdf(request, pk, rev_pk):
     try:
         pdf_file = PdfFormat(sst).build(ctx)
     except BuildError as e:
-        from django.http import HttpResponse
         return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     from catalogue.ebook_utils import serve_file
@@ -242,7 +244,10 @@ def book_epub(request, pk, rev_pk):
     rev = get_object_or_404(Revision, pk=rev_pk)
     # Test
 
-    sst = SST.from_string(rev.materialize())
+    try:
+        sst = SST.from_string(rev.materialize())
+    except ValueError as e:
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     ctx = Context(
         files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
@@ -253,7 +258,6 @@ def book_epub(request, pk, rev_pk):
     try:
         epub_file = EpubFormat(sst).build(ctx)
     except BuildError as e:
-        from django.http import HttpResponse
         return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     from catalogue.ebook_utils import serve_file
@@ -269,7 +273,10 @@ def book_mobi(request, pk, rev_pk):
     doc = get_object_or_404(Document, pk=pk)
     rev = get_object_or_404(Revision, pk=rev_pk)
 
-    sst = SST.from_string(rev.materialize())
+    try:
+        sst = SST.from_string(rev.materialize())
+    except ValueError as e:
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     ctx = Context(
         files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
@@ -280,7 +287,6 @@ def book_mobi(request, pk, rev_pk):
     try:
         epub_file = EpubFormat(sst).build(ctx)
     except BuildError as e:
-        from django.http import HttpResponse
         return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.mobi', delete=False)
