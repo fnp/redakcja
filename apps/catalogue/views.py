@@ -175,9 +175,13 @@ def book_html(request, pk, rev_pk=None, preview=False):
 
     was_published = revision == published_revision or doc.publish_log.filter(revision=revision).exists()
 
-    sst = SST.from_string(revision.materialize())
-    html = HtmlFormat(sst).build(
-        files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk)).get_string()
+    try:
+        sst = SST.from_string(revision.materialize())
+    except ValueError as e:
+        html = e
+    else:
+        html = HtmlFormat(sst).build(
+            files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk)).get_string()
 
     # response = http.HttpResponse(html, content_type='text/html', mimetype='text/html')
     # return response
@@ -218,7 +222,11 @@ def book_pdf(request, pk, rev_pk):
     )
     if doc.owner_organization is not None and doc.owner_organization.logo:
         ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
-    pdf_file = PdfFormat(sst).build(ctx)
+    try:
+        pdf_file = PdfFormat(sst).build(ctx)
+    except BuildError as e:
+        from django.http import HttpResponse
+        return HttpResponse(content=force_str(e.message), content_type='text/plain', status='400')
 
     from catalogue.ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(), '%d.pdf' % doc.pk, 'application/pdf')
