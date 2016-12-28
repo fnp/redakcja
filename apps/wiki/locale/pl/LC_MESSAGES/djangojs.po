@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-23 16:57+0100\n"
+"POT-Creation-Date: 2016-12-28 09:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,7 @@ msgstr "Zapisz"
 #: static/wiki/editor/src/editor/plugins/core/core.js:582
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:23
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:116
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:60
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:65
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:51
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:71
 #: static/wiki/editor/src/editor/views/attachments/attachments.js:15
@@ -231,7 +231,7 @@ msgstr "Utwórz link"
 #: static/wiki/editor/src/editor/plugins/core/core.js:581
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:22
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:115
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:59
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:64
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:50
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:70
 msgid "Apply"
@@ -244,7 +244,7 @@ msgid "Link"
 msgstr "Link"
 
 #: static/wiki/editor/src/editor/plugins/core/core.js:545
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:66
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:71
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:57
 msgid "attachment library"
 msgstr "biblioteka załączników"
@@ -422,16 +422,20 @@ msgstr "Nie można wstawić przypisu po głównym bloku"
 msgid "Insert footnote after node"
 msgstr "Wstaw przypis po bloku"
 
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:58
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:79
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:54
+msgid "No image. Click here to add image"
+msgstr "Brak obrazu. Kliknij, aby dodać obraz"
+
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:63
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:84
 msgid "Edit image"
 msgstr "Edytuj obraz"
 
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:62
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:67
 msgid "Image"
 msgstr "Obraz"
 
-#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:112
+#: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:117
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:102
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:117
 msgid "Remove link"
@@ -517,8 +521,8 @@ msgid "Insert template %s"
 msgstr "Wstaw szablon %s"
 
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:62
-msgid "No video"
-msgstr "Brak wideo"
+msgid "No video. Click here to add link to your video"
+msgstr "Brak wideo. Kliknij, aby dodać link"
 
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:69
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:95
