@@ -104,7 +104,7 @@ class Organization(Card):
     preview_html_template = 'organizations/snippets/organization.html'
 
     name = models.CharField(max_length=1024)
-    tags = models.ManyToManyField('catalogue.Tag')
+    tags = models.ManyToManyField('catalogue.Tag', blank=True)
     # logo = models.ImageField(upload_to='people/logo', blank=True)
     # country = models.CharField(max_length=64, blank=True, choices=countries)
     # www = models.URLField(blank=True)
