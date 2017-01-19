@@ -18,6 +18,14 @@ DATABASES = {
     }
 }
 
+CONSTANCE_CONFIG = {
+    'NOTIFY_EMAIL': ('zofia.radziwill@nowoczesnapolska.org.pl',
+                     'e-mail address for notifications about new organizations and published projects'),
+}
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+
 LOGGING_CONFIG_FILE = os.path.join(PROJECT_ROOT, 'config', ('logging.cfg' if not DEBUG else 'logging.cfg.dev'))
 try:
     import logging

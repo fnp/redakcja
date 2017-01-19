@@ -126,6 +126,8 @@ INSTALLED_APPS = (
     'fileupload',
     'pipeline',
     'modeltranslation',
+    'constance',
+    'constance.backends.database',
 
     'catalogue',
     # 'cover',
