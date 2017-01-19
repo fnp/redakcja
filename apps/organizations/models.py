@@ -90,7 +90,7 @@ class Card(models.Model):
 @python_2_unicode_compatible
 class UserCard(Card):
     preview_html_template = 'organizations/snippets/user.html'
-    user = models.ForeignKey(User, unique=True, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True)
 
     def __str__(self):
         return str(self.user)
