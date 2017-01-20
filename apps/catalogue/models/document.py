@@ -26,6 +26,8 @@ class Document(Ref):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='assignments')
     deleted = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag, blank=True)
+    # we need to know if it were ever published (for notifications)
+    published = models.BooleanField(default=False)
 
     # Where to cache searchable stuff from metadata?
     # Probably in some kind of search index.

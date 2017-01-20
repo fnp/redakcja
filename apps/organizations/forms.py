@@ -4,10 +4,9 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django import forms
-from constance import config
 from django.contrib.sites.models import Site
-from django.core.mail import send_mail
 
+from redakcja.utlis import send_notify_email
 from .models import Organization, UserCard, countries
 
 
@@ -21,13 +20,12 @@ class OrganizationForm(forms.ModelForm):
     def save(self, commit=True):
         organization = super(OrganizationForm, self).save(commit=commit)
         site = Site.objects.get_current()
-        send_mail(
+        send_notify_email(
             'New organization in MIL/PEER',
             '''New organization in MIL/PEER: %s. View their profile: https://%s%s.
 
 --
-MIL/PEER team.''' % (organization.name, site.domain, organization.get_absolute_url()),
-            'milpeer@mdrn.pl', [config.NOTIFY_EMAIL])
+MIL/PEER team.''' % (organization.name, site.domain, organization.get_absolute_url()))
         return organization
 
 

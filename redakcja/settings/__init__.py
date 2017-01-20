@@ -20,7 +20,8 @@ DATABASES = {
 
 CONSTANCE_CONFIG = {
     'NOTIFY_EMAIL': ('zofia.radziwill@nowoczesnapolska.org.pl',
-                     'e-mail address for notifications about new organizations and published projects'),
+                     'e-mail addresses (separated with semicolons) to be notified about new organizations '
+                     'and published documents'),
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'

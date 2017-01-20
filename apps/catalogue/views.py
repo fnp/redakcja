@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django import http
 from django.http import Http404, HttpResponse
@@ -24,6 +25,7 @@ from django.views.decorators.http import require_POST
 from catalogue import forms
 from catalogue.helpers import active_tab
 from librarian import BuildError
+from redakcja.utlis import send_notify_email
 from .constants import STAGES
 from .models import Document, Plan
 from dvcs.models import Revision
@@ -404,7 +406,17 @@ def publish(request, pk):
         # FIXME: check if in tree
         # if PublishRecord.objects.filter(revision=rev, document=doc).exists():
         #     return http.HttpResponse('exists')
+        if not doc.published:
+            site = Site.objects.get_current()
+            send_notify_email(
+                'New published document in MIL/PEER',
+                '''New published document in MIL/PEER: %s. View it in browser: https://%s%s.
+
+--
+MIL/PEER team.''' % (doc.meta()['title'], site.domain, reverse('catalogue_html', args=[doc.pk])))
         PublishRecord.objects.create(revision=rev, document=doc, user=request.user)
+        doc.published = True
+        doc.save()
         if request.is_ajax():
             return http.HttpResponse('ok')
         else:
