@@ -18,11 +18,13 @@ class OrganizationForm(forms.ModelForm):
         exclude = ['_html']
 
     def save(self, commit=True):
+        new = self.instance.id is None
         organization = super(OrganizationForm, self).save(commit=commit)
-        site = Site.objects.get_current()
-        send_notify_email(
-            'New organization in MIL/PEER',
-            '''New organization in MIL/PEER: %s. View their profile: https://%s%s.
+        if new:
+            site = Site.objects.get_current()
+            send_notify_email(
+                'New organization in MIL/PEER',
+                '''New organization in MIL/PEER: %s. View their profile: https://%s%s.
 
 --
 MIL/PEER team.''' % (organization.name, site.domain, organization.get_absolute_url()))
