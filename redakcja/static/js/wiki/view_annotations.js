@@ -19,11 +19,11 @@
             this.$refresh = $('.refresh', this.$element);
 
             this.$refresh.click(function() {
-                $this = $(this);
+                var $this = $(this);
 
                 self.$refresh.removeClass('active');
                 $this.addClass('active');
-                atype = $this.attr('data-tag');
+                var atype = $this.attr('data-tag');
 
                 self.$annos.hide();
                 self.$error.hide();
@@ -32,63 +32,63 @@
                 });
             });
 
-			old_callback.call(this);
+            old_callback.call(this);
         };
 
         $.wiki.Perspective.call(this, options);
-    };
+    }
 
     AnnotationsPerspective.prototype = new $.wiki.Perspective();
 
     AnnotationsPerspective.prototype.updateAnnotationIds = function(self){
-	self.annotationToAnchor = {};
-	$('#html-view .annotation-inline-box').each(
-	    function(i, annoBox) {
-		var $annoBox = $(annoBox);
-		var $anchor = $("a[name|=anchor]", $annoBox);
-		var htmlContent = $('span', $annoBox).html();
-		// TBD: perhaps use a hash of htmlContent as key
-		self.annotationToAnchor[htmlContent] = $anchor.attr('name');
-		});
-    }
+        self.annotationToAnchor = {};
+        $('#html-view').find('.annotation-inline-box').each(
+            function(i, annoBox) {
+                var $annoBox = $(annoBox);
+                var $anchor = $("a[name|=anchor]", $annoBox);
+                var htmlContent = $('span', $annoBox).html();
+                // TBD: perhaps use a hash of htmlContent as key
+                self.annotationToAnchor[htmlContent] = $anchor.attr('name');
+                });
+    };
 
     AnnotationsPerspective.prototype.goToAnnotation = function(self, srcNode){
-	var content = $(srcNode).html();
-	content = content.replace('&gt;', '>', 'g').replace('&lt;', '<', 'g').replace('&amp;', '&', 'g');
-	xml2html({
-	    xml: '<root>'+content+'</root>',
-	    success: function(txt) {
-		content = $(txt).html();
-		},
+        var content = $(srcNode).html();
+        content = content.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+        xml2html({
+            xml: '<root>'+content+'</root>',
+            success: function(txt) {
+                content = $(txt).html();
+                },
             error: function(text) {
                 $.unblockUI();
                 self.$error.html(text);
                 self.$spinner.hide();
                 self.$error.show();
             }
-	});
+        });
 
-	var anchor = self.annotationToAnchor[content];
-	if (anchor != undefined) {
-	    var $htmlView = $("#html-view");
-	    var top = $htmlView.offset().top + 
-		$("[name=" + anchor + "]", $htmlView).offset().top - 
-		$htmlView.children().eq(0).offset().top
+        var anchor = self.annotationToAnchor[content];
+        if (anchor != undefined) {
+            var $htmlView = $("#html-view");
+            var top = $htmlView.offset().top + 
+                $("[name=" + anchor + "]", $htmlView).offset().top - 
+                $htmlView.children().eq(0).offset().top;
 
-	    $htmlView.animate({scrollTop: top}, 250);
-	}
-    }
+            $htmlView.animate({scrollTop: top}, 250);
+        }
+    };
 
     AnnotationsPerspective.prototype.refresh = function(self, atype) {
         var xml;
 
-        persp = $.wiki.activePerspective();
+        var persp = $.wiki.activePerspective();
         if (persp == 'CodeMirrorPerspective') {
             xml = $.wiki.perspectives[persp].codemirror.getCode();
         }
         else if (persp == 'VisualPerspective') {
             html2text({
-                element: $('#html-view div').get(0),
+                element: $('#html-view').find('div').get(0),
                 success: function(text){
                     xml = text;
                 },
@@ -98,7 +98,7 @@
                     self.$error.show();
                 }
             });
-	    self.updateAnnotationIds(self);
+            self.updateAnnotationIds(self);
         }
         else {
             xml = this.doc.text;
@@ -116,11 +116,11 @@
         }
         else {
             self.$annos.html('');
-            var anno_list = new Array();
+            var anno_list = [];
             var annos = $(atype, doc);
             var counter = annos.length;
             var atype_rx = atype.replace(/,/g, '|');
-            var ann_expr = new RegExp("^<("+atype_rx+")[^>]*>|</("+atype_rx+")>$", "g")
+            var ann_expr = new RegExp("^<("+atype_rx+")[^>]*>|</("+atype_rx+")>$", "g");
 
             if (annos.length == 0)
             {
@@ -129,15 +129,15 @@
                 self.$annos.show();
             }
             annos.each(function (i, elem) {
-                xml_text = serializer.serializeToString(elem).replace(ann_expr, "");
+                var xml_text = serializer.serializeToString(elem).replace(ann_expr, "");
                 xml2html({
                     xml: "<akap>" + xml_text + "</akap>",
                     success: function(xml_text){
                         return function(elem){
                             elem.sortby = $(elem).text().trim();
-                            $(elem).append("<div class='src'>"+ xml_text.replace("&", "&amp;", "g").replace("<", "&lt;", "g") +"</div>")
+                            $(elem).append("<div class='src'>"+ xml_text.replace(/&/g, "&amp;").replace(/</g, "&lt;") +"</div>");
                             anno_list.push(elem);
-			    $(".src", elem).click(function() { self.goToAnnotation(self, this); });
+                            $(".src", elem).click(function() { self.goToAnnotation(self, this); });
                             counter--;
 
                             if (!counter) {
@@ -159,12 +159,10 @@
                 });
             });
         }
-    }
+    };
 
 
-    AnnotationsPerspective.prototype.onEnter = function(success, failure){
-        var self = this;
-
+    AnnotationsPerspective.prototype.onEnter = function(){
         $.wiki.Perspective.prototype.onEnter.call(this);
 
         $('.vsplitbar').not('.active').trigger('click');
@@ -173,9 +171,9 @@
 
     };
 
-	AnnotationsPerspective.prototype.onExit = function(success, failure) {
+        AnnotationsPerspective.prototype.onExit = function(success, failure) {
 
-	};
+        };
 
     $.wiki.AnnotationsPerspective = AnnotationsPerspective;
 
