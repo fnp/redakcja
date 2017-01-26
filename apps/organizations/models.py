@@ -71,7 +71,7 @@ class Card(models.Model):
 
     def get_projects(self):
         for project_line in self.projects.strip().split('\n'):
-            parts = project_line.strip().split(' ', 2)
+            parts = project_line.strip().split(None, 2)
             if not parts or not parts[0]:
                 continue
             url, lang, desc = (parts + [''] * 2)[:3]

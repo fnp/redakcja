@@ -5,6 +5,7 @@
 #
 from django import forms
 from django.contrib.sites.models import Site
+from django.utils.translation import ugettext as _
 
 from redakcja.utlis import send_notify_email
 from .models import Organization, UserCard, countries
@@ -29,6 +30,29 @@ class OrganizationForm(forms.ModelForm):
 --
 MIL/PEER team.''' % (organization.name, site.domain, organization.get_absolute_url()))
         return organization
+
+    def clean_projects(self):
+        projects = self.cleaned_data.get('projects', '')
+        lines = []
+        for line in projects.split('\n'):
+            line = line.strip()
+            if line:
+                try:
+                    url, lang, desc = line.split(None, 2)
+                except ValueError:
+                    raise forms.ValidationError(
+                        _('Each line has to consist of an Internet address, language and description, '
+                          'separated with spaces. Failed on: %s' % line))
+                # naive check
+                if '.' not in url or url.endswith('.'):
+                    raise forms.ValidationError(
+                        _('The first item in each line should be an Internet address. Failed on: %s') % url)
+                if not url.startswith('http'):
+                    url = 'http://' + url
+                lines.append(' '.join((url, lang, desc)))
+            else:
+                lines.append('')
+        return '\n'.join(lines)
 
 
 class UserCardForm(forms.ModelForm):
