@@ -17,7 +17,7 @@ def clean_projects(projects):
         line = line.strip()
         if line:
             try:
-                url, lang, desc = line.split(None, 2)
+                url, lang, desc = [part.strip(',') for part in line.split(None, 2)]
             except ValueError:
                 raise forms.ValidationError(
                     _('Each line has to consist of an Internet address, language and description, '
