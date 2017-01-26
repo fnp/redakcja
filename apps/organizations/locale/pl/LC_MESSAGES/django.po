@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-15 16:24+0100\n"
+"POT-Creation-Date: 2017-01-26 16:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,56 +18,27 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
+#: forms.py:44
+#, python-format
+msgid ""
+"Each line has to consist of an Internet address, language and description, "
+"separated with spaces. Failed on: %s"
+msgstr ""
+"Każda linia musi się składać z adresu internetowego, języka i opisu, "
+"oddzielonych spacjami. Błąd w: %s"
+
+#: forms.py:49
+#, python-format
+msgid ""
+"The first item in each line should be an Internet address. Failed on: %s"
+msgstr ""
+"Pierwszy element każdej linii powinien być adresem internetowym. Błąd w: %s"
+
 #: templates/organizations/edit.html:6
 msgid "Edit organization"
 msgstr "Edytuj organizację"
 
-#: templates/organizations/edit.html:12 templates/organizations/main.html:28
-#: templates/organizations/new.html:12
-msgid "Name"
-msgstr "Nazwa"
-
-#: templates/organizations/edit.html:15 templates/organizations/new.html:15
-msgid "Logo"
-msgstr "Logo"
-
-#: templates/organizations/edit.html:20
-#: templates/organizations/edit_user.html:24
-#: templates/organizations/new.html:20
-#: templates/organizations/snippets/organization.html:12
-#: templates/organizations/snippets/user.html:12
-msgid "Country"
-msgstr "Kraj"
-
-#: templates/organizations/edit.html:27
-#: templates/organizations/edit_user.html:32
-#: templates/organizations/new.html:27
-#: templates/organizations/snippets/organization.html:13
-#: templates/organizations/snippets/user.html:13
-msgid "WWW"
-msgstr "WWW"
-
-#: templates/organizations/edit.html:30
-#: templates/organizations/edit_user.html:35
-#: templates/organizations/new.html:30
-#: templates/organizations/snippets/organization.html:16
-#: templates/organizations/snippets/user.html:16
-msgid "Description"
-msgstr "Opis"
-
-#: templates/organizations/edit.html:33
-#: templates/organizations/edit_user.html:38
-#: templates/organizations/new.html:33
-msgid "Projects"
-msgstr "Projekty"
-
-#: templates/organizations/edit.html:36
-#: templates/organizations/edit_user.html:41
-#: templates/organizations/new.html:36
-msgid "Enter each line as: URL language description"
-msgstr "Wpisz każdą linię w postaci: URL język opis"
-
-#: templates/organizations/edit.html:38
+#: templates/organizations/edit.html:11
 #: templates/organizations/edit_user.html:43
 msgid "Change"
 msgstr "Zmień"
@@ -87,6 +58,36 @@ msgstr "Nazwisko"
 #: templates/organizations/edit_user.html:19
 msgid "Photo"
 msgstr "Zdjęcie"
+
+#: templates/organizations/edit_user.html:24
+#: templates/organizations/snippets/organization.html:12
+#: templates/organizations/snippets/organization_form.html:13
+#: templates/organizations/snippets/user.html:12
+msgid "Country"
+msgstr "Kraj"
+
+#: templates/organizations/edit_user.html:32
+#: templates/organizations/snippets/organization.html:13
+#: templates/organizations/snippets/organization_form.html:20
+#: templates/organizations/snippets/user.html:13
+msgid "WWW"
+msgstr "WWW"
+
+#: templates/organizations/edit_user.html:35
+#: templates/organizations/snippets/organization.html:16
+#: templates/organizations/snippets/organization_form.html:23
+#: templates/organizations/snippets/user.html:16
+msgid "Description"
+msgstr "Opis"
+
+#: templates/organizations/edit_user.html:38
+#: templates/organizations/snippets/organization_form.html:26
+msgid "Projects"
+msgstr "Projekty"
+
+#: templates/organizations/edit_user.html:41
+msgid "Enter each line as: URL language description"
+msgstr "Wpisz każdą linię w postaci: URL język opis"
 
 #: templates/organizations/join.html:6
 msgid "Join organization"
@@ -127,6 +128,11 @@ msgstr "Zasoby"
 #: templates/organizations/main.html:22 templates/organizations/main.html:97
 msgid "Members"
 msgstr "Członkowie"
+
+#: templates/organizations/main.html:28
+#: templates/organizations/snippets/organization_form.html:5
+msgid "Name"
+msgstr "Nazwa"
 
 #: templates/organizations/main.html:29
 msgid "E-mail"
@@ -172,7 +178,7 @@ msgstr "Ustaw jako właściciel"
 msgid "Create a new organization"
 msgstr "Utwórz nową organizację"
 
-#: templates/organizations/new.html:38
+#: templates/organizations/new.html:11
 msgid "Create organization"
 msgstr "Utwórz organizację"
 
@@ -184,3 +190,15 @@ msgstr "Organizacje"
 #: templates/organizations/snippets/user.html:21
 msgid "Main projects and publications"
 msgstr "Główne projekty i publikacje"
+
+#: templates/organizations/snippets/organization_form.html:8
+msgid "Logo"
+msgstr "Logo"
+
+#: templates/organizations/snippets/organization_form.html:29
+#, fuzzy
+#| msgid "Enter each line as: URL language description"
+msgid ""
+"Enter each line as: Internet address, language, description, separated with "
+"spaces"
+msgstr "Wpisz każdą linię w postaci: URL język opis"
