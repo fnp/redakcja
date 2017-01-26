@@ -38,7 +38,7 @@
         <label for="title">{% trans "Projects" %}</label>
             {{ form.projects.errors }}
             <textarea class="form-control" name="projects">{{ form.projects.value|default:"" }}</textarea>
-	    {% trans "Enter each line as: URL language description" %}<br/>
+	    {% trans "Enter each line as: Internet address, language, description, separated with spaces" %}<br/>
 
         <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Change" %}</button></td></tr>
     </form>

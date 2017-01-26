@@ -11,6 +11,29 @@ from redakcja.utlis import send_notify_email
 from .models import Organization, UserCard, countries
 
 
+def clean_projects(projects):
+    lines = []
+    for line in projects.split('\n'):
+        line = line.strip()
+        if line:
+            try:
+                url, lang, desc = line.split(None, 2)
+            except ValueError:
+                raise forms.ValidationError(
+                    _('Each line has to consist of an Internet address, language and description, '
+                      'separated with spaces. Failed on: %s' % line))
+            # naive check
+            if '.' not in url or url.endswith('.'):
+                raise forms.ValidationError(
+                    _('The first item in each line should be an Internet address. Failed on: %s') % url)
+            if not url.startswith('http'):
+                url = 'http://' + url
+            lines.append(' '.join((url, lang, desc)))
+        else:
+            lines.append('')
+    return '\n'.join(lines)
+
+
 class OrganizationForm(forms.ModelForm):
     cts = countries
 
@@ -32,27 +55,7 @@ MIL/PEER team.''' % (organization.name, site.domain, organization.get_absolute_u
         return organization
 
     def clean_projects(self):
-        projects = self.cleaned_data.get('projects', '')
-        lines = []
-        for line in projects.split('\n'):
-            line = line.strip()
-            if line:
-                try:
-                    url, lang, desc = line.split(None, 2)
-                except ValueError:
-                    raise forms.ValidationError(
-                        _('Each line has to consist of an Internet address, language and description, '
-                          'separated with spaces. Failed on: %s' % line))
-                # naive check
-                if '.' not in url or url.endswith('.'):
-                    raise forms.ValidationError(
-                        _('The first item in each line should be an Internet address. Failed on: %s') % url)
-                if not url.startswith('http'):
-                    url = 'http://' + url
-                lines.append(' '.join((url, lang, desc)))
-            else:
-                lines.append('')
-        return '\n'.join(lines)
+        return clean_projects(self.cleaned_data.get('projects', ''))
 
 
 class UserCardForm(forms.ModelForm):
@@ -78,3 +81,6 @@ class UserCardForm(forms.ModelForm):
         self.instance.user.last_name = self.cleaned_data.get('last_name', '')
         self.instance.user.save()
         return super(UserCardForm, self).save(*args, **kwargs)
+
+    def clean_projects(self):
+        return clean_projects(self.cleaned_data.get('projects', ''))
