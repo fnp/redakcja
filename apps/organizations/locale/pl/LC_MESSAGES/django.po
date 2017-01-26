@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-26 16:16+0100\n"
+"POT-Creation-Date: 2017-01-26 16:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: forms.py:44
+#: forms.py:23
 #, python-format
 msgid ""
 "Each line has to consist of an Internet address, language and description, "
@@ -27,7 +27,7 @@ msgstr ""
 "Każda linia musi się składać z adresu internetowego, języka i opisu, "
 "oddzielonych spacjami. Błąd w: %s"
 
-#: forms.py:49
+#: forms.py:28
 #, python-format
 msgid ""
 "The first item in each line should be an Internet address. Failed on: %s"
@@ -86,8 +86,11 @@ msgid "Projects"
 msgstr "Projekty"
 
 #: templates/organizations/edit_user.html:41
-msgid "Enter each line as: URL language description"
-msgstr "Wpisz każdą linię w postaci: URL język opis"
+#: templates/organizations/snippets/organization_form.html:29
+msgid ""
+"Enter each line as: Internet address, language, description, separated with "
+"spaces"
+msgstr "Wpisz każdą linię w postaci: adres internetowy, język, opis, oddzielone spacjami"
 
 #: templates/organizations/join.html:6
 msgid "Join organization"
@@ -195,10 +198,5 @@ msgstr "Główne projekty i publikacje"
 msgid "Logo"
 msgstr "Logo"
 
-#: templates/organizations/snippets/organization_form.html:29
-#, fuzzy
-#| msgid "Enter each line as: URL language description"
-msgid ""
-"Enter each line as: Internet address, language, description, separated with "
-"spaces"
-msgstr "Wpisz każdą linię w postaci: URL język opis"
+#~ msgid "Enter each line as: URL language description"
+#~ msgstr "Wpisz każdą linię w postaci: URL język opis"
