@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-28 09:39+0100\n"
+"POT-Creation-Date: 2017-01-30 14:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -471,6 +471,14 @@ msgstr "Metadane"
 msgid "Document Metadata"
 msgstr "Metadane dokumentu"
 
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:33
+msgid ""
+"The cover needs to be an image file: jpg, png, gif. Use another URL or clear "
+"the cover field."
+msgstr ""
+"Okładka musi być plikiem graficznym: jpg, png, gif. Użyj innego adresu lub "
+"wyczyść pole okładki."
+
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:28
 msgid "Add metadata row"
 msgstr "Dodaj wiersz metadanych"
@@ -483,7 +491,7 @@ msgstr "Usuń wiersz metadanych"
 msgid "Metadata edit"
 msgstr "Edytuj metadane"
 
-#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:170
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:180
 msgid "attachments"
 msgstr "załączniki"
 
