@@ -60,9 +60,25 @@ class DocumentTextSaveForm(forms.Form):
     def clean_text(self):
         text = self.cleaned_data['text']
         try:
-            Document.from_string(text)
+            doc = Document.from_string(text)
         except ValueError as e:
             raise ValidationError(e.message)
+
+        from librarian import SSTNS, DCNS
+        root_elem = doc.edoc.getroot()
+        if len(root_elem) < 1 or root_elem[0].tag != SSTNS('metadata'):
+            raise ValidationError("The first tag in section should be metadata")
+        if len(root_elem) < 2 or root_elem[1].tag != SSTNS('header'):
+            raise ValidationError("The first tag after metadata should be header")
+        header = root_elem[1]
+        if not getattr(header, 'text', None) or not header.text.strip():
+            raise ValidationError(
+                "The first header should contain the title in plain text (no links, emphasis etc.) and cannot be empty")
+
+        ext = doc.meta.get_one(DCNS('relation.coverimage.url')).rsplit('.', 1)[-1].lower()
+        if ext not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
+            raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif). '
+                                  'Change it in Metadata.')
         return text
 
 
