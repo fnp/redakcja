@@ -23,7 +23,11 @@ except ImportError:
 else:
     def thumbnail(relpath):
         try:
-            return default.backend.get_thumbnail(relpath, "x50").url
+            thumb = default.backend.get_thumbnail(relpath, "x50")
+            if not thumb.exists():
+                # That's not an image. No thumb.
+                return None
+            return thumb.url
         except IOError:
             # That's not an image. No thumb.
             return None
