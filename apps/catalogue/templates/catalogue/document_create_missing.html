@@ -10,7 +10,7 @@
         {{ form.non_field_errors }}
         <label for="owner">{% trans "Owner" %}</label>
             {{ form.owner_organization.errors }}
-            <select class="form-control" name="owner_organization"
+            <select class="form-control" name="owner_organization" id="owner"
                 data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
                 data-content="{% trans 'You can choose whether the resource should be owned by you or by your organization. This can be changed later.' %}"
             >
@@ -23,19 +23,19 @@
             </select>
         <label for="title">{% trans "Title" %}</label>
             {{ form.title.errors }}
-            <input class="form-control" name="title" type="text" value='{{ form.title.value|default:"" }}'>
+            <input class="form-control" name="title" id="title" type="text" value='{{ form.title.value|default:"" }}'>
         <label for="title">{% trans "Cover image" %}</label>
             {{ form.cover.errors }}
             {{ form.cover }}
         <label for="language">{% trans "Language" %}</label>
             {{ form.language.errors }}
-            <input class="form-control" name="language" type="text" value='{{ form.language.value|default:"" }}'>
+            <input class="form-control" name="language" id="language" type="text" value='{{ form.language.value|default:"" }}'>
         <label for="publisher">{% trans "Publisher" %}</label>
             {{ form.publisher.errors }}
-            <input class="form-control" name="publisher" type="text" value='{{ form.publisher.value|default:"" }}'>
-        <label for="publisher">{% trans "Rights" %}</label>
+            <input class="form-control" name="publisher" id="publisher" type="text" value='{{ form.publisher.value|default:"" }}'>
+        <label for="rights">{% trans "Rights" %}</label>
             {{ form.rights.errors }}
-            <select class="form-control" name="rights"
+            <select class="form-control" name="rights" id="rights"
                 data-toggle="tutorial" data-tutorial="2" data-placement="bottom"
                 data-content="{% trans 'You should choose a free license for your resource. We recommend using Creative Commons Attribution - Share Alike.' %}"
             >
@@ -56,7 +56,7 @@
             <div class="help-text" style="text-align: right;"></div>
         <label for="audience">{% trans "Audience" %}</label>
             {{ form.audience.errors }}
-            <select class="form-control" name="audience"
+            <select class="form-control" name="audience" id="audience"
                 data-toggle="tutorial" data-tutorial="3" data-placement="bottom"
                 data-content="{% trans 'Choose primary audience for your resource.' %}"
             >
@@ -70,13 +70,17 @@
 
         <label for="description">{% trans "Summary" %}</label>
             {{ form.description.errors }}
-            <textarea class="form-control" name="description"
+            <textarea class="form-control" name="description" id="description"
                 data-toggle="tutorial" data-tutorial="4" data-placement="bottom"
                 data-content="{% trans 'You can provide a short description of the document here.' %}"
             >{{ form.description.value|default:"" }}</textarea>
-        {#{ form.as_table}#}
+        {% comment %}
+        {% for tag_form in tag_forms %}
+            {{ tag_form.as_p }}
+        {% endfor %}
+        {% endcomment %}
 
-        <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Create resource" %}</button></td></tr>
+        <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Create resource" %}</button>
     </form>
 
 {% endblock %}

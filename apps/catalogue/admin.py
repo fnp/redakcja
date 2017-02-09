@@ -9,3 +9,6 @@ from catalogue import models
 
 admin.site.register(models.Document)
 admin.site.register(models.Template)
+
+admin.site.register(models.Category)
+admin.site.register(models.Tag)

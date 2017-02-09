@@ -12,16 +12,28 @@ from django.utils.translation import ugettext_lazy as _
 class Category(models.Model):
     label = models.CharField(max_length=64, verbose_name=_('category'))
     dc_tag = models.CharField(max_length=32)
+    multiple = models.BooleanField(default=False, verbose_name=_('multiple choice'))
     index = models.IntegerField()
 
     class Meta:
         ordering = ['index']
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+
+    def __unicode__(self):
+        return self.label
 
 
 class Tag(models.Model):
     label = models.CharField(max_length=64, verbose_name=_('tag'))
+    dc_value = models.CharField(max_length=32)
     category = models.ForeignKey(Category)
     index = models.IntegerField()
 
     class Meta:
-        ordering = ['index']
+        ordering = ['index', 'label']
+        verbose_name = _('tag')
+        verbose_name_plural = _('tags')
+
+    def __unicode__(self):
+        return self.label

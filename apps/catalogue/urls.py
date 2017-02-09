@@ -14,8 +14,6 @@ urlpatterns = patterns(
     url(r'^user/$', 'my', name='catalogue_user'),
     url(r'^user/(?P<username>[^/]+)/$', 'user', name='catalogue_user'),
 
-    url(r'^create/(?P<slug>[^/]*)/',
-        'create_missing', name='catalogue_create_missing'),
     url(r'^create/',
         'create_missing', name='catalogue_create_missing'),
     url(r'^fork/(?P<pk>\d+)/',

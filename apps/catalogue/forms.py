@@ -4,12 +4,11 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from catalogue.models import Category
-from catalogue.models import User
+from catalogue.models import Tag
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import MASTERS
-from catalogue.models import Document
 
 
 def tag_field(category_tag, required=True):
@@ -30,32 +29,63 @@ class DocumentCreateForm(forms.Form):
     audience = forms.CharField()
     
     cover = forms.FileField(required=False)
-    
-    # summary = forms.CharField(required=True)
-    # template = forms.ModelChoiceField(Template.objects, required=False)
-    #
-    # def __init__(self, *args, org=None, **kwargs):
-    #     super(DocumentCreateForm, self).__init__(*args, **kwargs)
-    #     self.fields['title'].widget.attrs={'class': 'autoslug-source'}
-    #     self.fields['template'].queryset = Template.objects.filter(is_main=True)
-    #
-    # def clean(self):
-    #     super(DocumentCreateForm, self).clean()
-    #     template = self.cleaned_data['template']
-    #
-    #     if template is not None:
-    #         self.cleaned_data['text'] = template.content
-    #
-    #     if not self.cleaned_data.get("text"):
-    #         self._errors["template"] = self.error_class([_("You must select a template")])
-    #
-    #     return self.cleaned_data
 
     def clean_cover(self):
         cover = self.cleaned_data['cover']
-        if cover.name.rsplit('.', 1)[-1].lower() not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
+        if cover and cover.name.rsplit('.', 1)[-1].lower() not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
             raise forms.ValidationError(_('The cover should be an image file (jpg/png/gif)'))
         return file
+
+
+class TagForm(forms.Form):
+    def __init__(self, category, instance=None, *args, **kwargs):
+        super(TagForm, self).__init__(*args, **kwargs)
+        self.category = category
+        self.instance = instance
+        self.field().queryset = Tag.objects.filter(category=self.category)
+        self.field().label = self.category.label
+        if self.instance:
+            self.field().initial = self.initial()
+
+    def save(self):
+        assert self.instance, 'No instance provided'
+        self.instance.tags.remove(*self.instance.tags.filter(category=self.category))
+        self.instance.tags.add(self.cleaned_tags())
+
+    def field(self):
+        raise NotImplementedError
+
+    def initial(self):
+        raise NotImplementedError
+
+    def cleaned_tags(self):
+        raise NotImplementedError
+
+
+class TagSingleForm(TagForm):
+    tag = forms.ModelChoiceField(Tag.objects.none())
+
+    def field(self):
+        return self.fields['tag']
+
+    def initial(self):
+        return self.instance.tags.get(category=self.category)
+
+    def cleaned_tags(self):
+        return [self.cleaned_data['tag']]
+
+
+class TagMultipleForm(TagForm):
+    tags = forms.ModelMultipleChoiceField(Tag.objects.none(), required=False)
+
+    def field(self):
+        return self.fields['tags']
+
+    def initial(self):
+        return self.instance.tags.filter(category=self.category)
+
+    def cleaned_tags(self):
+        return self.cleaned_data['tags']
 
 
 class DocumentsUploadForm(forms.Form):

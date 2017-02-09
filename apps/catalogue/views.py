@@ -23,7 +23,9 @@ from django.utils.http import urlquote_plus
 from django.views.decorators.http import require_POST
 
 from catalogue import forms
+from catalogue.forms import TagMultipleForm, TagSingleForm
 from catalogue.helpers import active_tab
+from catalogue.models import Category
 from librarian import BuildError
 from redakcja.utlis import send_notify_email
 from .constants import STAGES
@@ -76,7 +78,11 @@ def logout_then_redirect(request):
 def create_missing(request):
     if request.method == "POST":
         form = forms.DocumentCreateForm(request.POST, request.FILES)
-        if form.is_valid():
+        # tag_forms = [
+        #     (TagMultipleForm if category.multiple else TagSingleForm)(
+        #         category=category, data=request.POST, prefix=category.dc_tag)
+        #     for category in Category.objects.all()]
+        if form.is_valid():  # and all(tag_form.is_valid() for tag_form in tag_forms):
             
             if request.user.is_authenticated():
                 creator = request.user
@@ -143,8 +149,13 @@ def create_missing(request):
 
         form = forms.DocumentCreateForm(initial={'owner_organization': org})
 
+        # tag_forms = [
+        #     (TagMultipleForm if category.multiple else TagSingleForm)(category=category, prefix=category.dc_tag)
+        #     for category in Category.objects.all()]
+
     return render(request, "catalogue/document_create_missing.html", {
         "form": form,
+        # "tag_forms": tag_forms,
 
         "logout_to": '/',
     })
