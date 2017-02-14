@@ -43,12 +43,6 @@ from django.views.decorators.cache import never_cache
 logger = logging.getLogger("fnp.catalogue")
 
 
-@active_tab('all')
-@never_cache
-def document_list(request):
-    return render(request, 'catalogue/document_list.html')
-
-
 @never_cache
 def user(request, username):
     user = get_object_or_404(User, username=username)

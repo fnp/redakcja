@@ -5,7 +5,6 @@ import os.path
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 
 MAINTENANCE_MODE = False
 
@@ -61,21 +60,25 @@ STATIC_URL = '/media/static/'
 
 SESSION_COOKIE_NAME = "redakcja_sessionid"
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "redakcja.context_processors.settings",  # this is instead of media
-    'django.core.context_processors.csrf',
-    "django.core.context_processors.request",
-)
-
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(PROJECT_ROOT, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "redakcja.context_processors.settings",  # this is instead of media
+                'django.template.context_processors.csrf',
+                "django.template.context_processors.request",
+            ],
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -99,10 +102,6 @@ MIDDLEWARE_CLASSES = (
 # )
 
 ROOT_URLCONF = 'redakcja.urls'
-
-TEMPLATE_DIRS = (
-    PROJECT_ROOT + '/templates',
-)
 
 FIREPYTHON_LOGGER_NAME = "fnp"
 

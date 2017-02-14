@@ -12,9 +12,9 @@ httplib2 # oauth2 dependency
 # git+git://github.com/fnp/librarian.git@master#egg=librarian
 
 ## Django
-Django>=1.8,<1.9
+Django>=1.9,<1.10
 fnpdjango>=0.2,<0.3
-django-pipeline>=1.4.7,<1.5
+django-pipeline>=1.6,<1.7
 sorl-thumbnail>=12.2,<13
 #django-maintenancemode>=0.9
 django-pagination
@@ -28,8 +28,6 @@ django-constance[database]
 
 celery>=3.1.12,<3.2
 kombu>3.0,<3.1
-
-South>=1.0.2
 
 Embeder
 

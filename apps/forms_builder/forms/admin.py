@@ -84,20 +84,20 @@ class FormAdmin(admin.ModelAdmin):
         Add the entries view to urls.
         """
         urls = super(FormAdmin, self).get_urls()
-        extra_urls = patterns("",
-            url("^(?P<form_id>\d+)/entries/$",
+        extra_urls = [
+            url(r"^(?P<form_id>\d+)/entries/$",
                 self.admin_site.admin_view(self.entries_view),
                 name="form_entries"),
-            url("^(?P<form_id>\d+)/entries/show/$",
+            url(r"^(?P<form_id>\d+)/entries/show/$",
                 self.admin_site.admin_view(self.entries_view),
                 {"show": True}, name="form_entries_show"),
-            url("^(?P<form_id>\d+)/entries/export/$",
+            url(r"^(?P<form_id>\d+)/entries/export/$",
                 self.admin_site.admin_view(self.entries_view),
                 {"export": True}, name="form_entries_export"),
-            url("^file/(?P<field_entry_id>\d+)/$",
+            url(r"^file/(?P<field_entry_id>\d+)/$",
                 self.admin_site.admin_view(self.file_view),
                 name="form_file"),
-        )
+        ]
         return extra_urls + urls
 
     def entries_view(self, request, form_id, show=False, export=False,
