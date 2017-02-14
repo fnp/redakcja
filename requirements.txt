@@ -15,7 +15,7 @@ httplib2 # oauth2 dependency
 Django>=1.9,<1.10
 fnpdjango>=0.2,<0.3
 django-pipeline>=1.6,<1.7
-sorl-thumbnail>=12.2,<13
+sorl-thumbnail>=12.3,<13
 #django-maintenancemode>=0.9
 django-pagination
 django-gravatar2
