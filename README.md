@@ -22,7 +22,7 @@ Instalacja i użycie
 
 #. Wypełnij bazę danych (Django poprosi o utworzenie pierwszego użytkownika)::
 
-	./project/manage.py syncdb --migrate
+	./project/manage.py migrate
 
 #. Uruchom serwer deweloperski::
 
