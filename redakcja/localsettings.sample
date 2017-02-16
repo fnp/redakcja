@@ -1,4 +1,5 @@
-# 
+# -*- coding: utf-8 -*-
+#
 #  localsettings template for Platforma
 #
 #  Duplicate this file as localsettings.py and change it to your liking.
@@ -8,16 +9,23 @@
 #  or localsettings.sample instead.
 #
 
-# THIS IS REQUIRED
-from redakcja.settings import *
+import os.path
+
+from redakcja.settings.common import PROJECT_ROOT
+from redakcja.settings.compress import PIPELINE
 
 # Path to repository with managed documents
 CATALOGUE_REPO_PATH = '/srv/redakcja/books'
 
 LOGGING_CONFIG_FILE = "/srv/redakcja/logging.cfg.dev"
 
-STATIC_ROOT = '/srv/redakcja/static/'
-MEDIA_ROOT = '/srv/redakcja/media/'
+BASE_DIR = os.path.dirname(PROJECT_ROOT)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'var', 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'var', 'media')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
 
 # Subdirectory of MEDIA_ROOT containing images
 IMAGE_DIR = 'images/'
@@ -26,13 +34,19 @@ CAS_SERVER_URL = 'http://logowanie.nowoczesnapolska.org.pl/cas/'
 CAS_VERSION = '1'
 
 REDMINE_URL = 'http://redmine.nowoczesnapolska.org.pl/'
+
+
 DEBUG = True
 MAINTENANCE_MODE = False
-COMPRESS = False
+
+PIPELINE['PIPELINE_ENABLED'] = False
 
 APICLIENT_WL_CONSUMER_KEY = None
 APICLIENT_WL_CONSUMER_SECRET = None
 
-CELERY_ALWAYS_EAGER = False
+CELERY_ALWAYS_EAGER = True
 
-SECRET_KEY = ''
+SECRET_KEY = 'very secret'
+ALLOWED_HOSTS = ['*']
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

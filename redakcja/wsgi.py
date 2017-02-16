@@ -17,7 +17,7 @@ sys.path = [
 ] + sys.path
 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "redakcja.localsettings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "redakcja.settings")
 
 # This application object is used by the development server
 # as well as any WSGI server configured to use this file.

@@ -9,7 +9,7 @@ DEBUG = False
 MAINTENANCE_MODE = False
 
 ADMINS = (
-    (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
+    (u'Jan Szejko', 'jan.szejko@nowoczesnapolska.org.pl'),
 )
 
 MANAGERS = ADMINS
