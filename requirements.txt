@@ -17,7 +17,7 @@ fnpdjango>=0.2,<0.3
 django-pipeline>=1.6,<1.7
 sorl-thumbnail>=12.3,<13
 #django-maintenancemode>=0.9
-django-pagination
+fnp-django-pagination
 django-gravatar2
 python-slugify
 django-forms-bootstrap

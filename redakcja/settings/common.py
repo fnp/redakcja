@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     # 'django_cas.middleware.CASMiddleware',
 
     'django.contrib.admindocs.middleware.XViewMiddleware',
-    'pagination.middleware.PaginationMiddleware',
+    'fnp_django_pagination.middleware.PaginationMiddleware',
     # 'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
@@ -119,7 +119,7 @@ INSTALLED_APPS = (
 
     # 'south',
     'sorl.thumbnail',
-    'pagination',
+    'fnp_django_pagination',
     # 'gravatar',
     # 'kombu.transport.django',
     'fileupload',
