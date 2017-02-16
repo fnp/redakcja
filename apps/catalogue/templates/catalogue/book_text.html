@@ -27,7 +27,7 @@
 {% endif %}
 
 {% else %}
-<div class="navbar-text" href="">{% trans "Resource owner" %}: {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}</div>
+<div class="navbar-text" href="">{% trans "Resource owner" %}: {{ doc.owner_user.get_full_name }}</div>
 {% endif %}
 
 <div class="btn-group navbar-right">

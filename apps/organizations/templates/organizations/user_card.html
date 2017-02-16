@@ -1,6 +1,7 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
 {% load document_list from document_list %}
+{% load thumbnail %}
 
 {% block inner_content %}
 
@@ -8,7 +9,7 @@
     <a style="float:right" class="btn btn-default" href="{% url 'organizations_user_edit' %}">{% trans "Edit" %}</a>
     {% endif %}
 
-    {{ card.get_preview_html|safe }}
+    {% include "organizations/snippets/user.html" with org=card %}
 
     <h2>{% trans "Resources" %}</h2>
     {% document_list user=card.user.pk %}

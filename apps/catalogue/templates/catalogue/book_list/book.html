@@ -4,7 +4,7 @@
         <td><a href="{% url 'catalogue_html' book.pk %}">{{ book.meta.title }}</a></td>
         <td>
             {% if book.owner_user %}
-                {{ book.owner_user.first_name }} {{ book.owner_user.last_name }}
+                {{ book.owner_user.get_full_name }}
             {% else %}
                 <a href="{{ book.owner_organization.get_absolute_url }}">{{ book.owner_organization }}</a>
             {% endif %}
@@ -13,7 +13,7 @@
             {% endif %}
             </td>
         <td>{{ book.stage|default:"–" }}</td>
-        <td class="{% if book.is_overdue %}alert-danger{% endif %}">{% if book.assigned_to %}{{ book.assigned_to.first_name }} {{ book.assigned_to.last_name }}{% endif %}</td>
+        <td class="{% if book.is_overdue %}alert-danger{% endif %}">{% if book.assigned_to %}{{ book.assigned_to.get_full_name }}{% endif %}</td>
         <td class="{% if book.is_overdue %}alert-danger{% endif %}">{{ book.get_plan.deadline|default:"–" }}</td>
         <td>
             {% if am_owner %}
@@ -25,6 +25,3 @@
             {% endif %}
         </td>
     </tr>
-
-</div>
-</div>

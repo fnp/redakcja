@@ -5,8 +5,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
-from django.template.loader import render_to_string
-from django.utils import translation
 
 
 countries = [
@@ -49,25 +47,10 @@ class Card(models.Model):
     description = models.TextField(blank=True, default="")
     projects = models.TextField(blank=True, default="")
 
-    preview_html = models.TextField(blank=True, default="")
-    preview_html_pl = models.TextField(blank=True, default="")
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
-
-    def save(self, *args, **kwargs):
-        translation.activate('en')
-        self.preview_html = render_to_string(self.preview_html_template, {
-            'org': self
-        })
-        translation.activate('pl')
-        self.preview_html_pl = render_to_string(self.preview_html_template, {
-            'org': self
-        })
-        ret = super(Card, self).save(*args, **kwargs)
-        return ret
 
     def get_projects(self):
         for project_line in self.projects.strip().split('\n'):
@@ -77,23 +60,13 @@ class Card(models.Model):
             url, lang, desc = (parts + [''] * 2)[:3]
             yield url, lang, desc
 
-    def get_preview_html(self):
-        lang = translation.get_language()
-        try:
-            p = getattr(self, "preview_html_%s" % lang)
-            assert p
-            return p
-        except (AssertionError, AttributeError):
-            return self.preview_html
-
 
 @python_2_unicode_compatible
 class UserCard(Card):
-    preview_html_template = 'organizations/snippets/user.html'
     user = models.OneToOneField(User, primary_key=True)
 
     def __str__(self):
-        return str(self.user)
+        return self.user.get_full_name()
 
     def get_absolute_url(self):
         return reverse('organizations_user', args=[self.user.pk])
@@ -101,20 +74,8 @@ class UserCard(Card):
 
 @python_2_unicode_compatible
 class Organization(Card):
-    preview_html_template = 'organizations/snippets/organization.html'
-
     name = models.CharField(max_length=1024)
     tags = models.ManyToManyField('catalogue.Tag', blank=True)
-    # logo = models.ImageField(upload_to='people/logo', blank=True)
-    # country = models.CharField(max_length=64, blank=True, choices=countries)
-    # www = models.URLField(blank=True)
-    # description = models.TextField(blank=True, default="")
-    # #projects = JSONField(default=[])
-    # projects = models.TextField(blank=True, default="")
-
-    # preview_html = models.TextField(blank=True, default="")
-
-    # created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

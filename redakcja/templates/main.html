@@ -85,7 +85,7 @@
                 {% trans "Audience" %}: {{ doc.meta.audience }}<br>
             {% endif %}
             {% trans "Owner" %}: {{ doc.owner_organization|default:"" }}
-            {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}<br/>
+            {{ doc.owner_user.get_full_name }}<br/>
         </div>
         </a>
     </div>
@@ -115,7 +115,7 @@
                 {% trans "Audience" %}: {{ doc.meta.audience }}<br>
             {% endif %}
             {% trans "Owner" %}: {{ doc.owner_organization|default:"" }}
-            {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}<br/>
+            {{ doc.owner_user.get_full_name }}<br/>
         </div>
         </a>
     </div>

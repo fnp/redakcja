@@ -5,12 +5,12 @@
 <table class="table table-striped">
     {% autopaginate books 100 %}
     <thead>
-        <th>{% trans "Title" %}</th>
-        <th>{% trans "Owner" %}</th>
-        <th>{% trans "Stage" %}</th>
-        <th>{% trans "Assigned to" %}</th>
-        <th>{% trans "Deadline" %}</th>
-        <th></th>
+        <td>{% trans "Title" %}</td>
+        <td>{% trans "Owner" %}</td>
+        <td>{% trans "Stage" %}</td>
+        <td>{% trans "Assigned to" %}</td>
+        <td>{% trans "Deadline" %}</td>
+        <td></td>
     </thead>
     <tbody>
     {% for doc in books %}
@@ -28,6 +28,6 @@
 <select name="other-user" style="display:none;">
   {% for user in other_users %}
   <option {% if request.GET.user == user.username %}selected="selected"
-          {% endif %}value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }} ({{ user.count }})</option>
+          {% endif %}value="{{ user.username }}">{{ user.get_full_name }} ({{ user.count }})</option>
   {% endfor %}
 </select>

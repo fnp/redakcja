@@ -11,7 +11,7 @@
 {% if book.owner_organization %}
     <a href="{% url 'organizations_main' book.owner_organization.pk %}">{{ book.owner_organization }}</a>
 {% else %}
-    {{ book.owner_user.first_name }} {{ book.owner_user.last_name }}
+    {{ book.owner_user.get_full_name }}
 {% endif %} /
 <h1 style="margin-bottom: 1em">{{ book.meta.title }}</h1>
 
@@ -25,9 +25,9 @@
 <form method="POST">
 <table class="table table-striped">
     <thead>
-        <th>{% trans "Stage" %}</th>
-        <th>{% trans "Person" %}</th>
-        <th>{% trans "Deadline" %}</th>
+        <td>{% trans "Stage" %}</td>
+        <td>{% trans "Person" %}</td>
+        <td>{% trans "Deadline" %}</td>
     </thead>
     <tbody>
         {% for i, sch, data in schedule %}
@@ -42,11 +42,11 @@
                         {% if u.pk == data.0 %}
                             selected="selected"
                         {% endif %}
-                        >{{ u.first_name }} {{ u.last_name }}</option>
+                        >{{ u.get_full_name }}</option>
                     {% endfor %}
                 </select>
             {% else %}
-                {{ people.0.first_name }} {{ people.0.last_name }}
+                {{ people.0.get_full_name }}
             {% endif %}
             </td>
             <td><input placeholder="YYYY-MM-DD" name="s{{ i }}-deadline" value="{{ data.1|default:'' }}" class="form-control datepicker-field"></td>

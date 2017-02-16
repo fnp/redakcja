@@ -1,6 +1,7 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
 {% load document_list from document_list %}
+{% load thumbnail %}
 
 {% block inner_content %}
 
@@ -13,7 +14,7 @@
     <a style="float:right; margin-right: 5px" class="btn btn-default" href="{% url 'catalogue_create_missing' %}?organization={{ org.pk }}">{% trans "New resource +" %}</a>
     {% endif %}
 
-    {{ org.get_preview_html|safe }}
+    {% include "organizations/snippets/organization.html" %}
 
     {% if tab == 'members' %}
 
@@ -36,7 +37,7 @@
     {% for m in org.membership_set.all %}
         {% if am_owner or m.status != 'pending' or m.user == request.user %}
             <tr class="member-{{ m.status }}">
-                <td>{{ m.user.first_name }} {{ m.user.last_name }}</td>
+                <td>{{ m.user.get_full_name }}</td>
                 {% if am_owner %}<td>{{ m.user.email }}</td>{% endif %}
                 <td>
                     {% if m.status == 'owner' %}

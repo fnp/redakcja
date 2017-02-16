@@ -6,7 +6,7 @@
     {% if doc.owner_organization %}
         <a href="{% url 'organizations_main' doc.owner_organization.pk %}">{{ doc.owner_organization }}</a>
     {% else %}
-        {{ doc.owner_user.first_name }} {{ doc.owner_user.last_name }}
+        {{ doc.owner_user.get_full_name }}
     {% endif %} /
     <h1 style='margin-bottom: 1em'>{{ doc.meta.title }}</h1>
 
