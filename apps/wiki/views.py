@@ -15,6 +15,7 @@ from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
 from django.utils.encoding import smart_unicode
 from django.utils.formats import localize
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
@@ -41,7 +42,7 @@ def get_history(document):
         revisions.append({
             "version": i + 1,
             "description": revision.description,
-            "author": revision.author_str(),
+            "author": escape(revision.author_str()),
             "date": localize(revision.created_at),
             "revision": revision.pk,
             "published": _("Published") + ": " +
