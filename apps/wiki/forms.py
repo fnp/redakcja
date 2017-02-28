@@ -75,10 +75,12 @@ class DocumentTextSaveForm(forms.Form):
             raise ValidationError(
                 "The first header should contain the title in plain text (no links, emphasis etc.) and cannot be empty")
 
-        ext = doc.meta.get_one(DCNS('relation.coverimage.url')).rsplit('.', 1)[-1].lower()
-        if ext not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
-            raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif). '
-                                  'Change it in Metadata.')
+        cover_url = doc.meta.get_one(DCNS('relation.coverimage.url'))
+        if cover_url:
+            ext = cover_url.rsplit('.', 1)[-1].lower()
+            if ext not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
+                raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif). '
+                                      'Change it in Metadata.')
         return text
 
 
