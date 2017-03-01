@@ -78,8 +78,8 @@ class DocumentTextSaveForm(forms.Form):
         cover_url = doc.meta.get_one(DCNS('relation.coverimage.url'))
         if cover_url:
             ext = cover_url.rsplit('.', 1)[-1].lower()
-            if ext not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
-                raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif). '
+            if ext not in ('jpg', 'jpeg', 'png', 'gif', 'svg'):
+                raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif, svg). '
                                       'Change it in Metadata.')
         return text
 

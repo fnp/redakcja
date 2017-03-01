@@ -473,10 +473,10 @@ msgstr "Metadane dokumentu"
 
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:33
 msgid ""
-"The cover needs to be an image file: jpg, png, gif. Use another URL or clear "
+"The cover needs to be an image file: jpg, png, gif, svg. Use another URL or clear "
 "the cover field."
 msgstr ""
-"Okładka musi być plikiem graficznym: jpg, png, gif. Użyj innego adresu lub "
+"Okładka musi być plikiem graficznym: jpg, png, gif, svg. Użyj innego adresu lub "
 "wyczyść pole okładki."
 
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:28

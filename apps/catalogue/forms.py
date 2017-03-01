@@ -32,7 +32,7 @@ class DocumentCreateForm(forms.Form):
 
     def clean_cover(self):
         cover = self.cleaned_data['cover']
-        if cover and cover.name.rsplit('.', 1)[-1].lower() not in ('jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'):
+        if cover and cover.name.rsplit('.', 1)[-1].lower() not in ('jpg', 'jpeg', 'png', 'gif', 'svg'):
             raise forms.ValidationError(_('The cover should be an image file (jpg/png/gif)'))
         return file
 
