@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-02 11:46+0100\n"
+"POT-Creation-Date: 2017-03-10 15:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,10 +55,10 @@ msgid "Save"
 msgstr "Zapisz"
 
 #: static/wiki/editor/src/editor/modules/data/data.js:180
-#: static/wiki/editor/src/editor/modules/data/data.js:263
-#: static/wiki/editor/src/editor/modules/data/data.js:307
-#: static/wiki/editor/src/editor/plugins/core/core.js:539
-#: static/wiki/editor/src/editor/plugins/core/core.js:582
+#: static/wiki/editor/src/editor/modules/data/data.js:265
+#: static/wiki/editor/src/editor/modules/data/data.js:311
+#: static/wiki/editor/src/editor/plugins/core/core.js:559
+#: static/wiki/editor/src/editor/plugins/core/core.js:602
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:23
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:116
 #: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:65
@@ -68,28 +68,28 @@ msgstr "Zapisz"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:222
+#: static/wiki/editor/src/editor/modules/data/data.js:224
 #: static/wiki/editor/src/editor/modules/data/document.js:29
 msgid "Error"
 msgstr "Błąd"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:224
+#: static/wiki/editor/src/editor/modules/data/data.js:226
 #: static/wiki/editor/src/editor/modules/data/document.js:31
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:23
 msgid "Close"
 msgstr "Zamknij"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:261
+#: static/wiki/editor/src/editor/modules/data/data.js:263
 msgid "Restore Version"
 msgstr "Przywróć wersję"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:262
+#: static/wiki/editor/src/editor/modules/data/data.js:264
 msgid "Restore"
 msgstr "Przywróć"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:305
-#: static/wiki/editor/src/editor/modules/data/data.js:306
-#: static/wiki/editor/src/editor/translation-fix.js:24
+#: static/wiki/editor/src/editor/modules/data/data.js:309
+#: static/wiki/editor/src/editor/modules/data/data.js:310
+#: static/wiki/editor/src/editor/translation-fix.js:25
 msgid "Publish"
 msgstr "Opublikuj"
 
@@ -121,15 +121,15 @@ msgstr "Usuń komentarz"
 msgid "Edit comment"
 msgstr "Edytuj komentarz"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:281
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:274
 msgid "Remove text"
 msgstr "Usuń tekst"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:401
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:399
 msgid "Splitting text"
 msgstr "Rozdzielanie tekstu"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:431
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:429
 msgid "Inserting node"
 msgstr "Wstawianie bloku"
 
@@ -179,6 +179,10 @@ msgstr "Nie udało się zapisać"
 msgid "Restoring version "
 msgstr "Przywracanie wersji "
 
+#: static/wiki/editor/src/editor/modules/rng/rng.js:140
+msgid "Revision restored"
+msgstr "Przywrócono wersję"
+
 #: static/wiki/editor/src/editor/modules/rng/rng.js:143
 msgid "Publishing..."
 msgstr "Publikowanie..."
@@ -199,36 +203,36 @@ msgstr "Nieopisane działanie"
 msgid "Action not allowed"
 msgstr "Niedozwolone działanie"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:357
+#: static/wiki/editor/src/editor/plugins/core/core.js:373
 msgid "Undo"
 msgstr "Cofnij"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:357
+#: static/wiki/editor/src/editor/plugins/core/core.js:373
 msgid "Redo"
 msgstr "Ponów"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:358
+#: static/wiki/editor/src/editor/plugins/core/core.js:374
 msgid "There is nothing to undo"
 msgstr "Nie ma nic do cofnięcia"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:358
+#: static/wiki/editor/src/editor/plugins/core/core.js:374
 msgid "There is nothing to redo"
 msgstr "Nie ma nic do ponowienia"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:362
+#: static/wiki/editor/src/editor/plugins/core/core.js:378
 msgid "unknown operation"
 msgstr "nienana operacja"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:432
+#: static/wiki/editor/src/editor/plugins/core/core.js:448
 msgid "Insert comment"
 msgstr "Wstaw komentarz"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:537
+#: static/wiki/editor/src/editor/plugins/core/core.js:557
 msgid "Create link"
 msgstr "Utwórz link"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:538
-#: static/wiki/editor/src/editor/plugins/core/core.js:581
+#: static/wiki/editor/src/editor/plugins/core/core.js:558
+#: static/wiki/editor/src/editor/plugins/core/core.js:601
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:22
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:115
 #: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:64
@@ -237,46 +241,46 @@ msgstr "Utwórz link"
 msgid "Apply"
 msgstr "Zastosuj"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:541
-#: static/wiki/editor/src/editor/plugins/core/core.js:584
+#: static/wiki/editor/src/editor/plugins/core/core.js:561
+#: static/wiki/editor/src/editor/plugins/core/core.js:604
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:53
 msgid "Link"
 msgstr "Link"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:545
+#: static/wiki/editor/src/editor/plugins/core/core.js:565
 #: static/wiki/editor/src/editor/plugins/core/img/imgElement.js:71
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:57
 msgid "attachment library"
 msgstr "biblioteka załączników"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:580
-#: static/wiki/editor/src/editor/plugins/core/core.js:634
+#: static/wiki/editor/src/editor/plugins/core/core.js:600
+#: static/wiki/editor/src/editor/plugins/core/core.js:654
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:49
 #: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:70
 msgid "Edit link"
 msgstr "Edytuj link"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:611
+#: static/wiki/editor/src/editor/plugins/core/core.js:631
 msgid "link"
 msgstr "link"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:624
+#: static/wiki/editor/src/editor/plugins/core/core.js:644
 msgid "Create link from selection"
 msgstr "Utwórz link z zaznaczenia"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:650
+#: static/wiki/editor/src/editor/plugins/core/core.js:670
 msgid "Mark as emphasized"
 msgstr "Dodaj pogrubienie"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:650
+#: static/wiki/editor/src/editor/plugins/core/core.js:670
 msgid "Remove emphasis"
 msgstr "Usuń pogrubienie"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:651
+#: static/wiki/editor/src/editor/plugins/core/core.js:671
 msgid "Mark as citation"
 msgstr "Oznacz jako cytowanie"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:651
+#: static/wiki/editor/src/editor/plugins/core/core.js:671
 msgid "Remove citation"
 msgstr "Usuń cytowanie"
 
@@ -441,24 +445,28 @@ msgstr "Obraz"
 msgid "Remove link"
 msgstr "Usuń link"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:125
+#: static/wiki/editor/src/editor/plugins/core/lists.js:170
 msgid "bull. list"
 msgstr "wyp. lista"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:125
+#: static/wiki/editor/src/editor/plugins/core/lists.js:170
 msgid "num. list"
 msgstr "num. lista"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:146
+#: static/wiki/editor/src/editor/plugins/core/lists.js:191
 #, javascript-format
 msgid "Change list type to %s"
 msgstr "Zmień typ list na %s"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:153
+#: static/wiki/editor/src/editor/plugins/core/lists.js:198
 msgid "Remove list"
 msgstr "Usuń listę"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:162
+#: static/wiki/editor/src/editor/plugins/core/lists.js:210
+msgid "Invalid element for a list item"
+msgstr "Niewłaściwy element listy"
+
+#: static/wiki/editor/src/editor/plugins/core/lists.js:220
 #, javascript-format
 msgid "Make %s fragment(s) into list"
 msgstr "Przerób %s fragment(y) na listę"
@@ -473,11 +481,11 @@ msgstr "Metadane dokumentu"
 
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:33
 msgid ""
-"The cover needs to be an image file: jpg, png, gif, svg. Use another URL or clear "
-"the cover field."
+"The cover needs to be an image file: jpg, png, gif, svg. Use another URL or "
+"clear the cover field."
 msgstr ""
-"Okładka musi być plikiem graficznym: jpg, png, gif, svg. Użyj innego adresu lub "
-"wyczyść pole okładki."
+"Okładka musi być plikiem graficznym: jpg, png, gif, svg. Użyj innego adresu "
+"lub wyczyść pole okładki."
 
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:28
 msgid "Add metadata row"
@@ -494,6 +502,12 @@ msgstr "Edytuj metadane"
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:180
 msgid "attachments"
 msgstr "załączniki"
+
+#: static/wiki/editor/src/editor/plugins/core/switch.js:29
+#, fuzzy
+#| msgid "Wrong node selected"
+msgid "wrong or no selection"
+msgstr "Niewłaściwy zaznaczony blok"
 
 #: static/wiki/editor/src/editor/plugins/core/switch.js:42
 msgid "Switch to"
@@ -546,7 +560,7 @@ msgid "edit"
 msgstr "zmień"
 
 #: static/wiki/editor/src/editor/translation-fix.js:3
-#: static/wiki/editor/src/editor/translation-fix.js:18
+#: static/wiki/editor/src/editor/translation-fix.js:19
 msgid "remove"
 msgstr "usuń"
 
@@ -571,26 +585,30 @@ msgid "Attachments"
 msgstr "Załączniki"
 
 #: static/wiki/editor/src/editor/translation-fix.js:11
+msgid "no draft exists"
+msgstr "brak kopii roboczej"
+
+#: static/wiki/editor/src/editor/translation-fix.js:12
 msgid "drop a working draft"
 msgstr "odrzuć kopię roboczą"
 
-#: static/wiki/editor/src/editor/translation-fix.js:14
+#: static/wiki/editor/src/editor/translation-fix.js:15
 msgid "Draft Saved"
 msgstr "Ostatnia kopia"
 
-#: static/wiki/editor/src/editor/translation-fix.js:17
+#: static/wiki/editor/src/editor/translation-fix.js:18
 msgid "change"
 msgstr "zmień"
 
-#: static/wiki/editor/src/editor/translation-fix.js:21
+#: static/wiki/editor/src/editor/translation-fix.js:22
 msgid "Compare"
 msgstr "Porównaj"
 
-#: static/wiki/editor/src/editor/translation-fix.js:22
+#: static/wiki/editor/src/editor/translation-fix.js:23
 msgid "Revert"
 msgstr "Przywróć"
 
-#: static/wiki/editor/src/editor/translation-fix.js:23
+#: static/wiki/editor/src/editor/translation-fix.js:24
 msgid "Preview"
 msgstr "Podgląd"
 
@@ -602,6 +620,6 @@ msgstr "Biblioteka załączników"
 msgid "Select"
 msgstr "Wybierz"
 
-#: static/wiki/editor/src/editor/views/attachments/attachments.js:46
+#: static/wiki/editor/src/editor/views/attachments/attachments.js:50
 msgid "Manage attachments"
 msgstr "Zarządzaj załącznikami"
