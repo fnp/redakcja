@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from dvcs.models import Ref
 from organizations.models import Organization
@@ -85,6 +86,9 @@ class Document(Ref):
         else:
             self.assigned_to = None
         self.save()
+
+    def stage_name(self):
+        return force_unicode(dict(STAGES)[self.stage]) if self.stage else None
 
     def get_plan(self):
         try:

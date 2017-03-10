@@ -69,6 +69,7 @@ def editor(request, pk, template_name='wiki/bootstrap.html'):
             'version': len(history),
             'revision': revision.pk,
             'stage': doc.stage,
+            'stage_name': doc.stage_name(),
             'assignment': str(doc.assigned_to),
         }),
         'serialized_templates': json.dumps([
@@ -124,7 +125,8 @@ def text(request, doc_id):
             return JSONResponse({
                 'text': None,  # doc.materialize() if parent_revision != revision else None,
                 # 'version': revision,
-                # 'stage': doc.stage.name if doc.stage else None,
+                'stage': doc.stage,
+                'stage_name': doc.stage_name(),
                 'assignment': doc.assigned_to.username if doc.assigned_to else None
             })
         else:
