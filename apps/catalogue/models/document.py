@@ -22,7 +22,7 @@ class Document(Ref):
 
     owner_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     owner_organization = models.ForeignKey(Organization, null=True)
-    stage = models.CharField(_('stage'), max_length=128, blank=True, default=STAGES[0])
+    stage = models.CharField(_('stage'), max_length=128, blank=True, default=STAGES[0][0])
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='assignments')
     deleted = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag, blank=True)

@@ -321,7 +321,7 @@ def book_schedule(request, pk):
     book = get_object_or_404(Document, pk=pk, deleted=False)
     if request.method == 'POST':
         Plan.objects.filter(document=book).delete()
-        for i, s in enumerate(STAGES):
+        for i, (s, name) in enumerate(STAGES):
             user_id = request.POST.get('s%d-user' % i)
             deadline = request.POST.get('s%d-deadline' % i) or None
             Plan.objects.create(document=book, stage=s, user_id=user_id, deadline=deadline)
@@ -333,7 +333,7 @@ def book_schedule(request, pk):
     for p in Plan.objects.filter(document=book):
         current[p.stage] = (getattr(p.user, 'pk', None), (p.deadline.isoformat() if p.deadline else None))
 
-    schedule = [(i, s, current.get(s, ())) for (i, s) in enumerate(STAGES)]
+    schedule = [(i, s, current.get(s, ())) for i, (s, name) in enumerate(STAGES)]
     
     if book.owner_organization:
         people = [m.user for m in book.owner_organization.membership_set.exclude(status='pending')]

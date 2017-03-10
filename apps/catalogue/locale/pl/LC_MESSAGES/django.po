@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-01 17:12+0100\n"
+"POT-Creation-Date: 2017-03-09 17:34+0100\n"
 "PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -20,15 +20,35 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:57
+#: constants.py:21
+msgid "Draft"
+msgstr "Szkic"
+
+#: constants.py:22
+msgid "Comments"
+msgstr "Komentarze"
+
+#: constants.py:23
+msgid "Comments review"
+msgstr "Przegląd komentarzy"
+
+#: constants.py:24
+msgid "Proofreading"
+msgstr "Korekta"
+
+#: constants.py:25
+msgid "Publication"
+msgstr "Publikacja"
+
+#: forms.py:36
 msgid "The cover should be an image file (jpg/png/gif)"
 msgstr "Okładka powinna być plikiem graficznym (jpg/png/gif)"
 
-#: forms.py:65
+#: forms.py:95
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:67
+#: forms.py:97
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
@@ -64,13 +84,27 @@ msgstr "zapis publikacji książki"
 msgid "book publish records"
 msgstr "zapisy publikacji książek"
 
-#: models/tag.py:13
+#: models/tag.py:13 models/tag.py:20
 msgid "category"
 msgstr "kategoria"
 
-#: models/tag.py:22
+#: models/tag.py:15
+msgid "multiple choice"
+msgstr ""
+
+#: models/tag.py:21
+#, fuzzy
+#| msgid "category"
+msgid "categories"
+msgstr "kategoria"
+
+#: models/tag.py:28 models/tag.py:35
 msgid "tag"
 msgstr "tag"
+
+#: models/tag.py:36
+msgid "tags"
+msgstr ""
 
 #: templates/catalogue/book_delete.html:5
 #: templates/catalogue/book_owner.html:5
@@ -373,7 +407,7 @@ msgstr "Podsumowanie"
 msgid "You can provide a short description of the document here."
 msgstr "Możesz tu dodać krótki opis dokumentu."
 
-#: templates/catalogue/document_create_missing.html:79
+#: templates/catalogue/document_create_missing.html:84
 msgid "Create resource"
 msgstr "Utwórz zasób"
 
@@ -530,12 +564,6 @@ msgstr "puste"
 
 #~ msgid "Related edit"
 #~ msgstr "Powiązana zmiana"
-
-#~ msgid "Publication"
-#~ msgstr "Publikacja"
-
-#~ msgid "Comment"
-#~ msgstr "Komentarz"
 
 #~ msgid "Slug already used for %s"
 #~ msgstr "Slug taki sam jak dla pliku %s"
@@ -863,9 +891,6 @@ msgstr "puste"
 
 #~ msgid "Tagging"
 #~ msgstr "Tagowanie"
-
-#~ msgid "Initial Proofreading"
-#~ msgstr "Korekta"
 
 #~ msgid "Annotation Proofreading"
 #~ msgstr "Sprawdzenie przypisów źródła"

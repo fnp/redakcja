@@ -3,6 +3,8 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.utils.translation import ugettext_lazy as _
+
 TRIM_BEGIN = " TRIM_BEGIN "
 TRIM_END = " TRIM_END "
 
@@ -16,9 +18,9 @@ MASTERS = ['powiesc',
            ]
 
 STAGES = [
-    'Draft',
-    'Comments',
-    'Comments review',
-    'Proofreading',
-    'Publication',
-    ]
+    ('Draft', _('Draft')),
+    ('Comments', _('Comments')),
+    ('Comments review', _('Comments review')),
+    ('Proofreading', _('Proofreading')),
+    ('Publication', _('Publication')),
+]

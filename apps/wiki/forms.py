@@ -44,7 +44,7 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     stage = forms.ChoiceField(
-        choices=[(s, s) for s in STAGES],
+        choices=STAGES,
         required=False,
         label=_(u"Stage"),
         help_text=_(u"If completed a work stage, change to another one."),
