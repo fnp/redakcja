@@ -70,7 +70,7 @@ def editor(request, pk, template_name='wiki/bootstrap.html'):
             'revision': revision.pk,
             'stage': doc.stage,
             'stage_name': doc.stage_name(),
-            'assignment': str(doc.assigned_to),
+            'assignment': doc.assigned_to.username if doc.assigned_to else None,
         }),
         'serialized_templates': json.dumps([
             {'id': t.id, 'name': t.name, 'content': t.content} for t in Template.objects.filter(is_partial=True)
@@ -121,10 +121,9 @@ def text(request, doc_id):
                 from traceback import print_exc
                 print_exc()
                 raise
-            # revision = doc.revision()
             return JSONResponse({
                 'text': None,  # doc.materialize() if parent_revision != revision else None,
-                # 'version': revision,
+                'version': len(get_history(doc)),
                 'stage': doc.stage,
                 'stage_name': doc.stage_name(),
                 'assignment': doc.assigned_to.username if doc.assigned_to else None
@@ -179,8 +178,11 @@ def revert(request, doc_id):
         )
 
         return JSONResponse({
-            # 'document': None, #doc.materialize() if before != doc.revision else None,
-            # 'version': doc.revision(),
+            'document': doc.materialize(),
+            'version': len(get_history(doc)),
+            'stage': doc.stage,
+            'stage_name': doc.stage_name(),
+            'assignment': doc.assigned_to.username if doc.assigned_to else None,
         })
     else:
         return JSONFormInvalid(form)
