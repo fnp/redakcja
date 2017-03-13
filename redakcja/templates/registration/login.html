@@ -1,6 +1,7 @@
 {% extends "catalogue/base.html" %}
+{% load i18n %}
 
-{% block subtitle %} - Logowanie {% endblock subtitle %}
+{% block subtitle %} - {% trans "Log in" %} {% endblock subtitle %}
 
 {% block inner_content %}
 
@@ -24,15 +25,15 @@
                 
                 
                     <input type="checkbox" name="keep">
-                    <label for="keep">Keep me logged in</label>
+                    <label for="keep">{% trans "Keep me logged in" %}</label>
                 
                 <div><button class="btn btn-default">
-                    Log in
+                    {% trans "Log in" %}
                 </button>
                 </div>
             </form>
-            <p><a href="{% url 'password_reset' %}">I forgot my password</a></p>
+            <p><a href="{% url 'password_reset' %}">{% trans "I forgot my password" %}</a></p>
             <hr>
-            <a class="btn btn-default" href="{% url 'register' %}">Register</a>
+            <a class="btn btn-default" href="{% url 'register' %}">{% trans "Register" %}</a>
 
 {% endblock %}
