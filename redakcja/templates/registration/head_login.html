@@ -16,21 +16,38 @@
 <li><a href="/platform/" style="color: white">{% trans "About" %}</a></li>
 <li><a href="/appyourschool/" style="color: white">{% trans "App Your School" %}</a></li>
 {#<li><a href="/competition/" style="color: white">{% trans "Competition" %}</a></li>#}
-<li><a href="{% url 'organizations_new' %}" style="color: white"
-    {% if request.path == '/' %}
+<li class="dropdown" {% if request.path == '/' %}
     data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
-    data-content='{% trans "Create an organization here. Organizations help manage team's work." %}'
-    {% endif %}
->{% trans "New organization" %}</a></li>
-<li><a href="{% url 'catalogue_create_missing' %}" style="color: white"
-    {% if request.path == '/' %}
+    data-content='{% trans "Organizations help manage team’s work. You can create a new organization and view all organizations." %}'
+    {% endif %}>
+    <a href="#" class="dropdown-toggle" type="button" data-toggle="dropdown" style="color: white">
+        {% trans "Organizations" %}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="{% url 'organizations_new' %}">{% trans "New organization" %}</a></li>
+        <li><a href="{% url 'organizations' %}">{% trans "All organizations" %}</a></li>
+    </ul>
+</li>
+<li class="dropdown" {% if request.path == '/' %}
     data-toggle="tutorial" data-tutorial="2" data-placement="bottom"
-    data-content="{% trans 'Start editing a new resource.' %}"
-    {% endif %}
->{% trans "New resource" %}</a></li>
+    data-content='{% trans "Here you can start editing a new resource or view your resources and all published resources." %}'
+    {% endif %}>
+    <a href="#" class="dropdown-toggle" type="button" data-toggle="dropdown" style="color: white">
+        {% trans "Resources" %}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="{% url 'catalogue_create_missing' %}">{% trans "New resource" %}</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'catalogue_user' %}">{% trans "My resources" %}</a></li>
+        {% endif %}
+        <li><a href="{% url 'catalogue_finished' %}">{% trans "Finished resources" %}</a></li>
+    </ul>
+</li>
+
 
 {% if user.is_authenticated %}
-<li><a href="{% url 'catalogue_user' %}" style="color: white">{% trans "My resources" %}</a></li>
 
     <li class="dropdown">
         <style>
@@ -51,7 +68,6 @@
             {% else %}
             <li role="presentation" class="dropdown-header">{% trans "You are not a member of any organizations" %}</li>
             {% endif %}
-            <li><a href="{% url 'organizations_new' %}">{% trans "New organization" %}</a></li>
             <li role="presentation" class="divider"></li>
             <li><a href="{% url 'organizations_user_edit' %}">{% trans "Edit my data" %}</a></li>
             {% if user.is_staff %}

@@ -61,8 +61,9 @@
         function tutreset() {
             if (start) $(start).popover('hide');
             start = null;
+            var all_tutorial = $('[data-toggle="tutorial"]');
 
-            tutorial = $.makeArray($('[data-toggle="tutorial"]').sort(
+            tutorial = $.makeArray(all_tutorial.sort(
                 function(a, b) {return $(a).attr('data-tutorial') < $(b).attr('data-tutorial') ? -1 : 1}
             ));
 
@@ -70,19 +71,15 @@
                 $.each(tutorial, function(i, e) {
                     var but = (i < tutorial.length - 1) ? '>>' : 'OK';
                     $(e).popover({
-                        title: 'Tutorial',
+                        title: '<a class="btn btn-default tutorial-off" href="#-" id="tutoff'+i+'" style="float:right; padding:0 8px 4px 8px; position:relative; top:-6px; right:-10px;">&times;</a>Tutorial',
                         trigger: 'focus',
-                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div><div><a class="btn btn-default tutorial-off" href="#-" id="tutoff'+i+'">&times;</a><a style="float:right" class="btn btn-default tutorial-next" href="#-" id="nt'+i+'">' + but + '</a></div></div>'
-                    }).on('shown.bs.popover', function () {
-                        if (!$(e).data('tut-yet')) {
-                            $("#tutoff"+i).on('click', tutoff);
-                            $("#nt"+i).on('click', tut);
-                            $(e).data('tut-yet', 'yes');
-                        }
+                        html: 'true',
+                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div><div><a style="float:right" class="btn btn-default tutorial-next" href="#-" id="nt'+i+'">' + but + '</a></div></div>'
                     });
-                    //$(start).on('hide.bs.popover', tut);
                 });
                 first_reset = false;
+            } else {
+                all_tutorial.popover('enable');
             }
         }
         
@@ -93,21 +90,20 @@
             return false;
         }
         function tutoff() {
+            $(this).popover('hide');
             if (start) $(start).popover('hide');
             start = null;
             sessionStorage.removeItem("tutorial");
+            $('[data-toggle="tutorial"]').popover('disable');
             return false;
         }
         function tut() {
-            if (start) $(start).popover('hide');
+            if (start) {
+                $(start).popover('hide').popover('disable');
+            }
             if (tutorial.length) {
                 start = tutorial.shift();
                 $(start).popover('show');
-                //~ if (!$(start).data('tut-yet')) {
-                    //~ $(".popover .tutorial-off").on('click', tutoff);
-                    //~ $(".popover .tutorial-next").on('click', tut);
-                    //~ $(start).data('tut-yet', 'yes');
-                //~ }
             }
             else {
                 start = null;
@@ -115,14 +111,15 @@
             return false;
         }
         $('#tutModal').on('hidden.bs.modal', tut);
-        
-        if (sessionStorage.getItem("tutorial") == "on" && $("#tuton").length == 0) {
+
+        var $tuton = $("#tuton");
+        if (sessionStorage.getItem("tutorial") == "on" && $tuton.length == 0) {
             tutreset();
             tut();
         }
-        $("#tuton").on('click', tuton);
-
-
+        $tuton.on('click', tuton);
+        $(document).on('click', '.tutorial-off', tutoff);
+        $(document).on('click', '.tutorial-next', tut);
     });
 })(jQuery);
 
