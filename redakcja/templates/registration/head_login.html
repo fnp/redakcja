@@ -27,6 +27,15 @@
     <ul class="dropdown-menu">
         <li><a href="{% url 'organizations_new' %}">{% trans "New organization" %}</a></li>
         <li><a href="{% url 'organizations' %}">{% trans "All organizations" %}</a></li>
+        <li role="presentation" class="divider"></li>
+        {% if user.membership_set.all.exists %}
+            <li role="presentation" class="dropdown-header">{% trans "My organizations" %}:</li>
+            {% for membership in user.membership_set.all %}
+                <li><a href="{% url 'organizations_main' membership.organization.pk %}">{{ membership.organization }}</a></li>
+            {% endfor %}
+        {% else %}
+            <li role="presentation" class="dropdown-header">{% trans "You are not a member of any organizations" %}</li>
+        {% endif %}
     </ul>
 </li>
 <li class="dropdown" {% if request.path == '/' %}
@@ -43,6 +52,7 @@
             <li><a href="{% url 'catalogue_user' %}">{% trans "My resources" %}</a></li>
         {% endif %}
         <li><a href="{% url 'catalogue_finished' %}">{% trans "Finished resources" %}</a></li>
+        <li><a href="{% url 'catalogue_upcoming' %}">{% trans "Upcoming resources" %}</a></li>
     </ul>
 </li>
 
@@ -60,15 +70,6 @@
             <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" style="">
-            {% if user.membership_set.all.exists %}
-            <li role="presentation" class="dropdown-header">{% trans "My organizations" %}:</li>
-            {% for membership in user.membership_set.all %}
-                <li><a href="{% url 'organizations_main' membership.organization.pk %}">{{ membership.organization }}</a></li>
-            {% endfor %}
-            {% else %}
-            <li role="presentation" class="dropdown-header">{% trans "You are not a member of any organizations" %}</li>
-            {% endif %}
-            <li role="presentation" class="divider"></li>
             <li><a href="{% url 'organizations_user_edit' %}">{% trans "Edit my data" %}</a></li>
             {% if user.is_staff %}
                 <li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
