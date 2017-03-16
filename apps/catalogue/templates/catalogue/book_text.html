@@ -34,13 +34,13 @@
 
 {% if can_edit %}
 <a class="btn btn-default navbar-btn" href="{% url 'wiki_editor' doc.pk %}"
-            data-toggle="tutorial" data-tutorial="3" data-placement="bottom"
+            data-toggle="tutorial" data-tutorial="5" data-placement="bottom"
             data-content="{% trans "You can edit your resource here." %}">{% trans "Edit" %}</a>
 <a class="btn btn-default navbar-btn" href="{% url 'catalogue_book_schedule' doc.pk %}"
-            data-toggle="tutorial" data-tutorial="4" data-placement="bottom"
+            data-toggle="tutorial" data-tutorial="6" data-placement="bottom"
             data-content="{% trans "You can assign work stages and deadlines to people on your team." %}">{% trans "Schedule" %}</a>
 <a class="btn btn-default navbar-btn" href="{% url 'catalogue_fork' doc.pk %}"
-            data-toggle="tutorial" data-tutorial="5" data-placement="bottom"
+            data-toggle="tutorial" data-tutorial="7" data-placement="bottom"
             data-content="{% trans "You can also create another, independent version of this resource – e.g. for translation to other language or simply for adapting it to your needs." %}"
 >{% trans "Create another version" %}</a>
 <a class="btn btn-default navbar-btn" href="{% url 'catalogue_book_owner' doc.pk %}">{% trans "Change owner" %}</a>
@@ -48,7 +48,7 @@
 
 {% elif doc %}
 <a class="navbar-right btn btn-default navbar-btn" href="{% url 'catalogue_fork' doc.pk %}"
-            data-toggle="tutorial" data-tutorial="5" data-placement="bottom"
+            data-toggle="tutorial" data-tutorial="7" data-placement="bottom"
             data-content="{% trans "You can create and edit another, independent version of this resource – e.g. for translation to other language or simply for adapting it to your needs." %}"
 >{% trans "Create another version" %}</a>
 {% endif %}
