@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% load i18n %}
 
 <!DOCTYPE html>
@@ -70,7 +70,7 @@
                     properties: [
                         {name: 'version', label: '{% trans 'Version' %}'},
                         {name: 'stage_name', label: '{% trans 'Stage' %}'},
-                        {name: 'assignment', label: '{% trans 'Assignment' %}'},
+                        {name: 'assignment', label: '{% trans 'Assignment' %}'}
                     ]
                 },
 
@@ -110,7 +110,7 @@
                     
                     //['core.template'],
 
-                    ['core.showMetadataEditor'],
+                    ['core.showMetadataEditor']
                     /*[
                         'core.insertOrderExercise',
                         'core.insertChoiceSingleExercise',
@@ -135,14 +135,14 @@
                     return '{{MEDIA_URL}}uploads/{{ pk }}/' + attachmentName;
                 },
                 documentUrl: function(id, version) {
-                    var url = '{% url 'wiki_editor' pk %}'
+                    var url = '{% url 'wiki_editor' pk %}';
                     if(version) {
                         url = url + '?version=' + version;
                     }
                     return url;
                 },
                 documentPreviewUrl: function(id) { return '/documents/{{ pk }}/rev' + id + '/preview/' },
-                documentPreviewMainUrl: function(id) { return '/documents/{{ pk }}/preview/' },
+                documentPreviewMainUrl: function() { return '/documents/{{ pk }}/preview/' },
 
                 documentSaveForm: {
                     fields: [
@@ -151,7 +151,7 @@
                             {% for value, text in forms.text_save.stage.field.choices %}
                                 {value:'{{value|default:''}}', text:'{{text}}'} {% if not forloop.last %}, {% endif %}
                             {% endfor %}
-                        ], description: '{{forms.text_save.stage.help_text}}'},
+                        ], description: '{{forms.text_save.stage.help_text}}'}
                     ],
                     content_field_name: '{{forms.text_save.text.html_name}}',
                     version_field_name: '{{forms.text_save.parent_revision.html_name}}'
