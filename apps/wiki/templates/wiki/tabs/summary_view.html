@@ -3,16 +3,6 @@
     <!-- <div class="toolbar">
     </div> -->
     <div id="summary-view">
-    	<div class="summary-cover-area">
-		<p><img id="summary-cover" class="book-cover"
-			{% if revision %}
-			     src="{% url 'cover_preview' chunk.book.slug chunk.slug revision %}"
-			{% else %}
-			     src="{% url 'cover_preview' chunk.book.slug chunk.slug %}"
-			{% endif %}></p>
-		<p><button id="summary-cover-refresh">{% trans "Refresh from working copy" %}</button></p>
-		</div>
-
 		<h2>
 			<label for="title">{% trans "Title" %}:</label>
 			<span data-ui-editable="true" data-edit-target="meta.displayTitle"

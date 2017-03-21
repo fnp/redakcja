@@ -6,11 +6,6 @@
 		options.callback = function() {
 			var self = this;
 
-			// first time page is rendered
-        	$('#summary-cover-refresh').click(function() {
-				self.refreshCover();
-			});
-
         	old_callback.call(this);
 		}
 
@@ -18,16 +13,6 @@
     };
 
     SummaryPerspective.prototype = new $.wiki.Perspective();
-
-	SummaryPerspective.prototype.refreshCover = function() {
-		$('#summary-cover-refresh').attr('disabled', 'disabled');
-		this.doc.refreshCover({
-			success: function(text) {
-				$('#summary-cover').attr('src', text);
-			$('#summary-cover-refresh').removeAttr('disabled');
-			}
-		});
-	};
 
     SummaryPerspective.prototype.showCharCount = function() {
         var cc;

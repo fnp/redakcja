@@ -28,7 +28,6 @@ urlpatterns = patterns(
     url(r'^documents/', include('catalogue.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
-    url(r'^cover/', include('cover.urls')),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', dict(packages=['wiki'])),
 )
 
