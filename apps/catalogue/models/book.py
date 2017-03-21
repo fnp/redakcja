@@ -439,3 +439,7 @@ class Book(models.Model):
         for c in changes:
             ChunkPublishRecord.objects.create(book_record=br, change=c)
         post_publish.send(sender=br)
+
+    def latex_dir(self):
+        doc = self.wldocument()
+        return doc.latex_dir(cover=True, ilustr_path=self.gallery_path())
