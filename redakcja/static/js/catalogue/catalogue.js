@@ -63,10 +63,15 @@
             start = null;
             var all_tutorial = $('[data-toggle="tutorial"]');
 
+            function sortKey(a) {
+                return parseInt($(a).attr('data-tutorial'));
+            }
             tutorial = $.makeArray(all_tutorial.sort(
-                function(a, b) {return $(a).attr('data-tutorial') < $(b).attr('data-tutorial') ? -1 : 1}
+                function(a, b) {return sortKey(a) < sortKey(b) ? -1 : 1}
             ));
 
+            console.log($(tutorial[0]).data('popover'));
+            console.log($(tutorial[16]).data('popover'));
             if (first_reset) {
                 $.each(tutorial, function(i, e) {
                     var but = (i < tutorial.length - 1) ? '>>' : 'OK';
@@ -86,7 +91,12 @@
         function tuton() {
             sessionStorage.setItem("tutorial", "on");
             tutreset();
-            $('#tutModal').modal('show');
+            var $tutModal = $('#tutModal');
+            if($tutModal.length === 0) {
+                tut();
+            } else {
+                $tutModal.modal('show');
+            }
             return false;
         }
         function tutoff() {
