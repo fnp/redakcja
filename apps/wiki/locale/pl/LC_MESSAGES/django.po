@@ -72,15 +72,15 @@ msgstr "Przypisanie"
 
 #: templates/wiki/bootstrap.html:109
 msgid "emphasis"
-msgstr ""
+msgstr "wyróżnienie"
 
 #: templates/wiki/bootstrap.html:110
 msgid "cite"
-msgstr ""
+msgstr "cytowanie"
 
 #: templates/wiki/bootstrap.html:111
 msgid "link"
-msgstr ""
+msgstr "link"
 
 #: templates/wiki/bootstrap.html:177
 msgid "Edit your document text."

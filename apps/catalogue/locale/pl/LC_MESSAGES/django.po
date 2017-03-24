@@ -93,10 +93,8 @@ msgid "multiple choice"
 msgstr ""
 
 #: models/tag.py:21
-#, fuzzy
-#| msgid "category"
 msgid "categories"
-msgstr "kategoria"
+msgstr "kategorie"
 
 #: models/tag.py:28 models/tag.py:35
 msgid "tag"

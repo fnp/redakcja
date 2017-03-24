@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-26 11:21+0100\n"
+"POT-Creation-Date: 2017-03-24 15:28+0100\n"
 "PO-Revision-Date: 2011-10-18 11:19+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,6 +15,20 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: forms.py:24
+#, python-format
+msgid ""
+"User with this email address already exists. <a href=\"%(login_url)s\">Log "
+"in</a> or <a href=\"%(reset_url)s\">reset your password</a>."
+msgstr ""
+"Już jest użytkownik z tym adresem email. <a href=\"%(login_url)s\"Zaloguj "
+"się</a> lub <a href=\"%(reset_url)s\">zresetuj hasło</a>."
+
+#: forms.py:31
+#, python-format
+msgid "Username too long. Max length: %s"
+msgstr "Za długa nazwa użytkownika. Maksymakna długość: %s"
 
 #: templates/404.html:7
 msgid "Page not found"
@@ -79,10 +93,6 @@ msgstr ""
 msgid "Create and share your resources<br>Start tutorial"
 msgstr "Twórz zasoby i dziel się nimi<br>Zobacz przewodnik"
 
-#: templates/main.html:29 templates/registration/head_login.html:17
-msgid "Competition"
-msgstr "Konkurs"
-
 #: templates/main.html:30
 msgid "Joint project by:"
 msgstr "Wspólny projekt:"
@@ -95,15 +105,15 @@ msgstr "Zobacz aktywne organizacje i dołącz"
 msgid "More organizations"
 msgstr "Więcej organizacji"
 
-#: templates/main.html:69
+#: templates/main.html:69 templates/registration/head_login.html:54
 msgid "Finished resources"
 msgstr "Ukończone zasoby"
 
-#: templates/main.html:85 templates/main.html.py:115
+#: templates/main.html:85 templates/main.html:115
 msgid "Audience"
 msgstr "Przeznaczone dla"
 
-#: templates/main.html:87 templates/main.html.py:117
+#: templates/main.html:87 templates/main.html:117
 msgid "Owner"
 msgstr "Właściciel"
 
@@ -111,7 +121,7 @@ msgstr "Właściciel"
 msgid "More finished resources"
 msgstr "Więcej ukończonych zasobów"
 
-#: templates/main.html:99
+#: templates/main.html:99 templates/registration/head_login.html:55
 msgid "Upcoming resources"
 msgstr "Nadchodzące zasoby"
 
@@ -141,8 +151,9 @@ msgstr "poprzednie"
 msgid "next"
 msgstr "następne"
 
-#: templates/registration.html:8 templates/registration.html.py:27
-#: templates/registration/head_login.html:104
+#: templates/registration.html:8 templates/registration.html:27
+#: templates/registration/head_login.html:121
+#: templates/registration/login.html:37
 msgid "Register"
 msgstr "Załóż konto"
 
@@ -154,7 +165,7 @@ msgstr "Imię"
 msgid "Last name"
 msgstr "Nazwisko"
 
-#: templates/registration.html:20 templates/registration/head_login.html:85
+#: templates/registration.html:20 templates/registration/head_login.html:102
 msgid "E-mail"
 msgstr "E-mail"
 
@@ -166,74 +177,102 @@ msgstr "Nowe hasło"
 msgid "About"
 msgstr "O platformie"
 
-#: templates/registration/head_login.html:21
-msgid "Create an organization here. Organizations help manage team's work."
-msgstr ""
-"Tu możesz utworzyć organizację. Organizacje pomagają zarządzać pracą zespołu."
+#: templates/registration/head_login.html:17
+msgid "App Your School"
+msgstr "App Your School"
 
-#: templates/registration/head_login.html:23
-#: templates/registration/head_login.html:53
+#: templates/registration/head_login.html:21
+msgid ""
+"Organizations help manage team’s work. You can create a new organization and "
+"view all organizations."
+msgstr ""
+"Organizacje pomagają zarządzać pracą zespołu. Możesz stworzyć nową "
+"organizację i wyświetlić wszystkie organizacje"
+
+#: templates/registration/head_login.html:24
+msgid "Organizations"
+msgstr "Organizacje"
+
+#: templates/registration/head_login.html:28
 msgid "New organization"
 msgstr "Nowa organizacja"
 
-#: templates/registration/head_login.html:27
-msgid "Start editing a new resource."
-msgstr "Zacznij edytować nowy zasób."
-
 #: templates/registration/head_login.html:29
-msgid "New resource"
-msgstr "Nowy zasób"
+msgid "All organizations"
+msgstr "Wszystkie organizacje"
 
 #: templates/registration/head_login.html:32
-msgid "My resources"
-msgstr "Moje zasoby"
-
-#: templates/registration/head_login.html:46
 msgid "My organizations"
 msgstr "Moje organizacje"
 
-#: templates/registration/head_login.html:51
+#: templates/registration/head_login.html:37
 msgid "You are not a member of any organizations"
 msgstr "Nie należysz do żadnej organizacji"
 
-#: templates/registration/head_login.html:55
+#: templates/registration/head_login.html:43
+msgid ""
+"Here you can start editing a new resource or view your resources and all "
+"published resources."
+msgstr ""
+"Tutaj możesz zacząć edytować nowy zasób lub wyświetlić swoje zasoby i "
+"wszystkie istniejące zasoby."
+
+#: templates/registration/head_login.html:46
+msgid "Resources"
+msgstr "Zasoby"
+
+#: templates/registration/head_login.html:50
+msgid "New resource"
+msgstr "Nowy zasób"
+
+#: templates/registration/head_login.html:52
+msgid "My resources"
+msgstr "Moje zasoby"
+
+#: templates/registration/head_login.html:73
 msgid "Edit my data"
 msgstr "Moje dane"
 
-#: templates/registration/head_login.html:57
+#: templates/registration/head_login.html:75
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/registration/head_login.html:59
+#: templates/registration/head_login.html:77
 msgid "Logout"
 msgstr "Wyloguj"
 
-#: templates/registration/head_login.html:70
+#: templates/registration/head_login.html:87
 msgid "First, you will need an account."
 msgstr "Najpierw potrzebujesz konta."
 
-#: templates/registration/head_login.html:74
-#: templates/registration/head_login.html:79
+#: templates/registration/head_login.html:91
+#: templates/registration/head_login.html:96
 msgid "Log in / Register"
 msgstr "Zaloguj / Załóż konto"
 
-#: templates/registration/head_login.html:89
+#: templates/registration/head_login.html:106
 msgid "Password"
 msgstr "Hasło"
 
-#: templates/registration/head_login.html:97
+#: templates/registration/head_login.html:114
+#: templates/registration/login.html:4 templates/registration/login.html:31
 #: templates/registration/password_reset_complete.html:9
 msgid "Log in"
 msgstr "Logowanie"
 
-#: templates/registration/head_login.html:101
+#: templates/registration/head_login.html:118
+#: templates/registration/login.html:35
 msgid "I forgot my password"
 msgstr "Nie pamiętam hasła"
 
-#: templates/registration/head_login.html:103
+#: templates/registration/head_login.html:120
 msgid "<strong>Register now</strong> to start editing your own materials."
 msgstr ""
 "<strong>Załóż konto teraz</strong> by zacząć edytować własne materiały."
+
+#: templates/registration/login.html:28
+msgid "Keep me logged in"
+msgstr "Nie wylogowuj mnie"
 
 #: templates/registration/password_reset_complete.html:7
 msgid "Your password has been set.  You may go ahead and log in now."
@@ -273,6 +312,17 @@ msgid ""
 msgstr ""
 "Jeśli e-mail nie dotrze, prosimy o sprawdzenie, czy jest to adres użyty do "
 "założenia konta, oraz o sprawdzenie folderu spamu w skrzynce pocztowej."
+
+#~ msgid "Competition"
+#~ msgstr "Konkurs"
+
+#~ msgid "Create an organization here. Organizations help manage team's work."
+#~ msgstr ""
+#~ "Tu możesz utworzyć organizację. Organizacje pomagają zarządzać pracą "
+#~ "zespołu."
+
+#~ msgid "Start editing a new resource."
+#~ msgstr "Zacznij edytować nowy zasób."
 
 #~ msgid "Log Out"
 #~ msgstr "Wyloguj"

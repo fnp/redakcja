@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-10 15:47+0100\n"
+"POT-Creation-Date: 2017-03-24 14:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,11 +26,11 @@ msgstr ""
 "Zawartość tego dokumentu wydaje się błędna – będzie dostępna tylko edycja "
 "źródła XML. :("
 
-#: static/wiki/editor/src/editor/modules/data/data.js:138
+#: static/wiki/editor/src/editor/modules/data/data.js:139
 msgid "Local draft of a document exists"
 msgstr "Istnieje lokalna wersja dokumentu"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:139
+#: static/wiki/editor/src/editor/modules/data/data.js:140
 msgid ""
 "Unsaved local draft of this version of the document exists in your browser. "
 "Do you want to load it instead?"
@@ -38,25 +38,25 @@ msgstr ""
 "Niezapisana lokalna wersja dokumentu istnieje w przeglądarce. Czy chcesz ją "
 "załadować?"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:140
+#: static/wiki/editor/src/editor/modules/data/data.js:141
 msgid "Yes, restore local draft"
 msgstr "Tak, użyj lokalnej wersji"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:141
+#: static/wiki/editor/src/editor/modules/data/data.js:142
 msgid "No, use version loaded from the server"
 msgstr "Nie, przywróć wersję z serwera"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:178
+#: static/wiki/editor/src/editor/modules/data/data.js:179
 msgid "Save Document"
 msgstr "Zapisz dokument"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:179
+#: static/wiki/editor/src/editor/modules/data/data.js:180
 msgid "Save"
 msgstr "Zapisz"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:180
-#: static/wiki/editor/src/editor/modules/data/data.js:265
-#: static/wiki/editor/src/editor/modules/data/data.js:311
+#: static/wiki/editor/src/editor/modules/data/data.js:181
+#: static/wiki/editor/src/editor/modules/data/data.js:266
+#: static/wiki/editor/src/editor/modules/data/data.js:312
 #: static/wiki/editor/src/editor/plugins/core/core.js:559
 #: static/wiki/editor/src/editor/plugins/core/core.js:602
 #: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:23
@@ -68,27 +68,27 @@ msgstr "Zapisz"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:224
+#: static/wiki/editor/src/editor/modules/data/data.js:225
 #: static/wiki/editor/src/editor/modules/data/document.js:29
 msgid "Error"
 msgstr "Błąd"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:226
+#: static/wiki/editor/src/editor/modules/data/data.js:227
 #: static/wiki/editor/src/editor/modules/data/document.js:31
 #: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:23
 msgid "Close"
 msgstr "Zamknij"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:263
+#: static/wiki/editor/src/editor/modules/data/data.js:264
 msgid "Restore Version"
 msgstr "Przywróć wersję"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:264
+#: static/wiki/editor/src/editor/modules/data/data.js:265
 msgid "Restore"
 msgstr "Przywróć"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:309
 #: static/wiki/editor/src/editor/modules/data/data.js:310
+#: static/wiki/editor/src/editor/modules/data/data.js:311
 #: static/wiki/editor/src/editor/translation-fix.js:25
 msgid "Publish"
 msgstr "Opublikuj"
@@ -125,11 +125,11 @@ msgstr "Edytuj komentarz"
 msgid "Remove text"
 msgstr "Usuń tekst"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:399
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:403
 msgid "Splitting text"
 msgstr "Rozdzielanie tekstu"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:429
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:433
 msgid "Inserting node"
 msgstr "Wstawianie bloku"
 
@@ -504,10 +504,8 @@ msgid "attachments"
 msgstr "załączniki"
 
 #: static/wiki/editor/src/editor/plugins/core/switch.js:29
-#, fuzzy
-#| msgid "Wrong node selected"
 msgid "wrong or no selection"
-msgstr "Niewłaściwy zaznaczony blok"
+msgstr "niewłaściwe zaznaczenie lub brak zaznaczenia"
 
 #: static/wiki/editor/src/editor/plugins/core/switch.js:42
 msgid "Switch to"

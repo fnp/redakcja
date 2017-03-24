@@ -22,8 +22,10 @@ class RegistrationForm(forms.Form):
         if User.objects.filter(username=email).exists():
             msg = _(
                 'User with this email address already exists. '
-                '<a href="%s">Log in</a> or <a href="%s">reset your password</a>.') % (
-                reverse('login'), reverse('password_reset'))
+                '<a href="%(login_url)s">Log in</a> or <a href="%(reset_url)s">reset your password</a>.') % {
+                'login_url': reverse('login'),
+                'reset_url': reverse('password_reset'),
+            }
             raise forms.ValidationError(mark_safe(msg))
         if len(email) > max_length:
             raise forms.ValidationError(_('Username too long. Max length: %s') % max_length)
