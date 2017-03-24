@@ -122,12 +122,11 @@
         }
         $('#tutModal').on('hidden.bs.modal', tut);
 
-        var $tuton = $("#tuton");
-        if (sessionStorage.getItem("tutorial") == "on" && $tuton.length == 0) {
+        if (sessionStorage.getItem("tutorial") == "on" && $('#tuton').length == 0) {
             tutreset();
             tut();
         }
-        $tuton.on('click', tuton);
+        $(document).on('click', '#tuton', tuton);
         $(document).on('click', '.tutorial-off', tutoff);
         $(document).on('click', '.tutorial-next', tut);
     });
