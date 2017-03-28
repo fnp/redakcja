@@ -4,10 +4,10 @@
 
 
 <li><a style="color: white">
-  <form action="{% url 'django.views.i18n.set_language' %}" method="post" style="display: inline">
+  <form action="{% url 'set_language' %}" method="post" style="display: inline">
   {% csrf_token %}
   <input type="hidden" name="language" value="en" /><button type="submit" style="border: 0; background: none">en</button></form> |
-  <form action="{% url 'django.views.i18n.set_language' %}" method="post" style="display: inline">
+  <form action="{% url 'set_language' %}" method="post" style="display: inline">
   {% csrf_token %}
   <input type="hidden" name="language" value="pl" /><button type="submit" style="border: 0; background: none">pl</button></form> |
 </a>

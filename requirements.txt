@@ -12,7 +12,7 @@ httplib2 # oauth2 dependency
 # git+git://github.com/fnp/librarian.git@master#egg=librarian
 
 ## Django
-Django>=1.9,<1.10
+Django>=1.10,<1.11
 fnpdjango>=0.2,<0.3
 django-pipeline>=1.6,<1.7
 sorl-thumbnail>=12.3,<13
