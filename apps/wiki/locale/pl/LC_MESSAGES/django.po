@@ -96,11 +96,11 @@ msgstr "Tutaj możesz prześledzić historię zmian w dokumencie."
 
 #: templates/wiki/bootstrap.html:180
 msgid ""
-"Place the mouse cursor at the end of the line after which you want to add a "
+"Place the cursor at the end of the line after which you want to add a "
 "new header, and press Enter. Click “header” to switch the new paragraph into "
 "a header."
 msgstr ""
-"Ustaw kursor myszki na końcu wiersza, pod którym chcesz dodać nowy nagłówek "
+"Ustaw kursor na końcu wiersza, pod którym chcesz dodać nowy nagłówek "
 "i wciśnij Enter. Kliknij „nagłówek”, aby edytować wiersz i zamienić go w "
 "nagłówek."
 
