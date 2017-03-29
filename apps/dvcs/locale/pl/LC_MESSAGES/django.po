@@ -48,15 +48,15 @@ msgstr "opis"
 
 #: models.py:56 models.py:169
 msgid "revision"
-msgstr "rewizja"
+msgstr "wersja"
 
 #: models.py:57
 msgid "revisions"
-msgstr "rewizje"
+msgstr "wersje"
 
 #: models.py:170
 msgid "The document's revision."
-msgstr "Rewizja dokumentu."
+msgstr "Wersja dokumentu."
 
 #~ msgid "name"
 #~ msgstr "nazwa"

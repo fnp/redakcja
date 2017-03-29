@@ -296,7 +296,7 @@
         params = $.extend({}, noops, params);
 
         if (params.revision >= this.revision) {
-            params.failure(self, 'Proszę wybrać rewizję starszą niż aktualna.');
+            params.failure(self, 'Proszę wybrać wersję starszą niż aktualna.');
             return;
         }
 

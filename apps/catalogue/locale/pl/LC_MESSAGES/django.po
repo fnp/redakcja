@@ -66,7 +66,7 @@ msgstr "dokumenty"
 
 #: models/publish_log.py:16
 msgid "revision"
-msgstr "rewizja"
+msgstr "wersja"
 
 #: models/publish_log.py:17
 msgid "time"
@@ -227,7 +227,7 @@ msgid ""
 "This is a preview of a specific revision of <a href=\"%(url)s\">this "
 "resource</a>."
 msgstr ""
-"To jest podgląd konkretnej rewizji  <a href=\"%(url)s\">tego zasobu</a>."
+"To jest podgląd konkretnej wersji  <a href=\"%(url)s\">tego zasobu</a>."
 
 #: templates/catalogue/book_text.html:72
 #, python-format
@@ -235,8 +235,8 @@ msgid ""
 "There have been some changes since this revision. <a href=\"%(url)s\">See "
 "the current revision.</a>"
 msgstr ""
-"W dokumencie są zmiany nowsze od aktualnie oglądanej rewizji. <a href="
-"\"%(url)s\">Zobacz aktualną rewizję.</a>"
+"W dokumencie są zmiany nowsze od aktualnie oglądanej wersji. <a href="
+"\"%(url)s\">Zobacz aktualną wersję.</a>"
 
 #: templates/catalogue/book_text.html:78
 #, python-format
@@ -249,7 +249,7 @@ msgstr "Ten zasób nie został jeszcze opublikowany."
 
 #: templates/catalogue/book_text.html:87
 msgid "Do you really want to publish this revision?"
-msgstr "Na pewno chcesz opublikować tę rewizję?"
+msgstr "Na pewno chcesz opublikować tę wersję?"
 
 #: templates/catalogue/book_text.html:92
 msgid ""
@@ -260,7 +260,7 @@ msgstr ""
 
 #: templates/catalogue/book_text.html:93
 msgid "Publish this revision"
-msgstr "Opublikuj tę rewizję"
+msgstr "Opublikuj tę wersję"
 
 #: templates/catalogue/book_text.html:97
 msgid "Do you really want to undo publishing this resource?"
