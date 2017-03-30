@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django import http
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlquote_plus
@@ -319,6 +319,8 @@ def book_mobi(request, pk, rev_pk):
 @login_required
 def book_schedule(request, pk):
     book = get_object_or_404(Document, pk=pk, deleted=False)
+    if not book.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
     if request.method == 'POST':
         Plan.objects.filter(document=book).delete()
         for i, (s, name) in enumerate(STAGES):
@@ -349,6 +351,8 @@ def book_schedule(request, pk):
 @login_required
 def book_owner(request, pk):
     doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not doc.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
     user_is_owner = doc.owner_organization and doc.owner_organization.is_member(request.user)
     if not (doc.owner_user == request.user or user_is_owner):
         raise Http404
@@ -382,8 +386,8 @@ def book_owner(request, pk):
 @login_required
 def book_delete(request, pk):
     doc = get_object_or_404(Document, pk=pk, deleted=False)
-    if not (doc.owner_user == request.user or doc.owner_organization.is_member(request.user)):
-        raise Http404
+    if not doc.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
         doc.deleted = True
@@ -402,9 +406,9 @@ def publish(request, pk):
     from .models import PublishRecord
     from dvcs.models import Revision
 
-    # FIXME: check permissions
-
     doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not doc.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
     form = forms.DocumentTextPublishForm(request.POST, prefix="textpublish")
     if form.is_valid():
         rev = Revision.objects.get(pk=form.cleaned_data['revision'])
@@ -439,9 +443,10 @@ MIL/PEER team.''' % (doc.meta()['title'], site.domain, reverse('catalogue_html',
 @require_POST
 @login_required
 def unpublish(request, pk):
-    # FIXME: check permissions
-
     doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not doc.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
+
     doc.publish_log.all().delete()
     if request.is_ajax():
         return http.HttpResponse('ok')

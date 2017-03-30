@@ -55,6 +55,8 @@ def get_history(document):
 @never_cache
 def editor(request, pk, template_name='wiki/bootstrap.html'):
     doc = get_object_or_404(Document, pk=pk, deleted=False)
+    if not doc.can_edit(request.user):
+        return HttpResponseForbidden("Not authorized.")
 
     save_form = forms.DocumentTextSaveForm(user=request.user, prefix="textsave")
     text = doc.materialize()
@@ -88,10 +90,10 @@ def editor(request, pk, template_name='wiki/bootstrap.html'):
 @decorator_from_middleware(GZipMiddleware)
 def text(request, doc_id):
     doc = get_object_or_404(Document, pk=doc_id, deleted=False)
-    # if not doc.book.accessible(request):
-    #     return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
+        if not doc.can_edit(request.user):
+            return HttpResponseForbidden("Not authorized.")
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
         if form.is_valid():
             if request.user.is_authenticated():
@@ -156,6 +158,8 @@ def revert(request, doc_id):
     form = forms.DocumentTextRevertForm(request.POST, prefix="textrevert")
     if form.is_valid():
         doc = get_object_or_404(Document, pk=doc_id, deleted=False)
+        if not doc.can_edit(request.user):
+            return HttpResponseForbidden("Not authorized.")
         rev = get_object_or_404(Revision, pk=form.cleaned_data['revision'])
 
         comment = form.cleaned_data['comment']
