@@ -71,7 +71,7 @@
         <label for="description">{% trans "Summary" %}</label>
             {{ form.description.errors }}
             <textarea class="form-control" name="description" id="description"
-                data-toggle="tutorial" data-tutorial="4" data-placement="bottom"
+                data-toggle="tutorial" data-tutorial="4" data-placement="top"
                 data-content="{% trans 'You can provide a short description of the document here.' %}"
             >{{ form.description.value|default:"" }}</textarea>
         {% comment %}
