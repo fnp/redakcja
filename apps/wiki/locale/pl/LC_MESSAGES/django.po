@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-24 13:10+0100\n"
+"POT-Creation-Date: 2017-03-30 13:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,19 +96,35 @@ msgstr "Tutaj możesz prześledzić historię zmian w dokumencie."
 
 #: templates/wiki/bootstrap.html:180
 msgid ""
-"Place the cursor at the end of the line after which you want to add a "
-"new header, and press Enter. Click “header” to switch the new paragraph into "
-"a header."
+"The status bar shows helpful messages when you place the mouse cursor over "
+"toolbar buttons."
 msgstr ""
-"Ustaw kursor na końcu wiersza, pod którym chcesz dodać nowy nagłówek "
-"i wciśnij Enter. Kliknij „nagłówek”, aby edytować wiersz i zamienić go w "
-"nagłówek."
+"Dolny pasek pokazuje pomocne informacje, kiedy najedziesz kursorem myszy na "
+"przyciski na pasku edycji."
 
 #: templates/wiki/bootstrap.html:181
+msgid "Click Undo to revert recent changes."
+msgstr "Kliknij Cofnij, aby wycofać ostatnie zmiany."
+
+#: templates/wiki/bootstrap.html:182
+msgid "Redo will reapply undone changes."
+msgstr "Za pomocą „Ponów” możesz przywrócić cofnięte zmiany."
+
+#: templates/wiki/bootstrap.html:183
+msgid ""
+"Place the cursor at the end of the line after which you want to add a new "
+"header, and press Enter. Click “header” to switch the new paragraph into a "
+"header."
+msgstr ""
+"Ustaw kursor na końcu wiersza, pod którym chcesz dodać nowy nagłówek i "
+"wciśnij Enter. Kliknij „nagłówek”, aby edytować wiersz i zamienić go w "
+"nagłówek."
+
+#: templates/wiki/bootstrap.html:184
 msgid "Use this option to switch a header to a paragraph."
 msgstr "Użyj tej opcji, by rozpocząć nowy akapit tekstu."
 
-#: templates/wiki/bootstrap.html:182
+#: templates/wiki/bootstrap.html:185
 msgid ""
 "Add graphics to your document. Click “image” to make a frame, then click "
 "this frame to insert an image file (JPG, PNG, GIF, SVG)."
@@ -117,7 +133,7 @@ msgstr ""
 "ramka, następnie kliknij w ramkę by dodać nowy plik graficzny (JPG, PNG, "
 "GIF, SVG)."
 
-#: templates/wiki/bootstrap.html:183
+#: templates/wiki/bootstrap.html:186
 msgid ""
 "Add a video material to your document to make it more attractive. Paste the "
 "http link from a YouTube channel."
@@ -125,7 +141,7 @@ msgstr ""
 "Dodaj materiał video, by Twój dokument był jeszcze bardziej atrakcyjny. "
 "Wklej link http z kanału YouTube."
 
-#: templates/wiki/bootstrap.html:184
+#: templates/wiki/bootstrap.html:187
 msgid ""
 "Select this option to create a bullet list. Press Enter to add another item. "
 "To end the list, place the cursor at the end of the last item, and press "
@@ -135,7 +151,7 @@ msgstr ""
 "kolejny punkt listy. Aby zakończyć listę ustaw kursor na końcu ostatniego "
 "punktu i dwa razy wciśnij Enter."
 
-#: templates/wiki/bootstrap.html:185
+#: templates/wiki/bootstrap.html:188
 msgid ""
 "Create numbered lists. To end the list, set the cursor at the end of the "
 "last item, and press Enter twice."
@@ -143,7 +159,7 @@ msgstr ""
 "Twórz listy numerowane. Aby zakończyć listę ustaw kursor na końcu ostatniego "
 "punktu i dwa razy wciśnij Enter."
 
-#: templates/wiki/bootstrap.html:186
+#: templates/wiki/bootstrap.html:189
 msgid ""
 "Emphasize some text by using boldface. To turn it off, click the specific "
 "word and then click “emphasis”."
@@ -151,7 +167,7 @@ msgstr ""
 "Wyróżnij fragment tekstu używając pogrubienia. Aby je wyłączyć, kliknij w "
 "dane słowo po czym wciśnij „wyróżnienie”."
 
-#: templates/wiki/bootstrap.html:187
+#: templates/wiki/bootstrap.html:190
 msgid ""
 "Select some text and click “cite” to make it italic. To turn it off, set the "
 "cursor on the specific word then click “cite” again."
@@ -159,7 +175,7 @@ msgstr ""
 "Zaznacz fragment i kliknij „cytowanie”, by włączyć kursywę. Aby ją wyłączyć "
 "ustaw kursor na danym słowie po czym kliknij przycisk „cytowanie”."
 
-#: templates/wiki/bootstrap.html:188
+#: templates/wiki/bootstrap.html:191
 msgid ""
 "Paste the link and select it, or select text and click “link” to add a "
 "hyperlink or to link additional materials (ODT, DOC, PDF)."
@@ -168,7 +184,7 @@ msgstr ""
 "„link”, by dodać hiperłącze lub aby podlinkować materiały dodatkowe (ODT, "
 "DOC, PDF)."
 
-#: templates/wiki/bootstrap.html:189
+#: templates/wiki/bootstrap.html:192
 msgid ""
 "Here you can review and edit metadata. In “Attachments” you can add or "
 "change the cover of your document."
@@ -176,11 +192,11 @@ msgstr ""
 "Tutaj możesz przeglądać i edytować metadane. W części „załączniki” możesz "
 "dodać lub zmienić okładkę Twojego dokumentu."
 
-#: templates/wiki/bootstrap.html:190
+#: templates/wiki/bootstrap.html:193
 msgid "Review your document before publication."
 msgstr "Zobacz, jak wygląda Twój dokument zanim go opublikujesz."
 
-#: templates/wiki/bootstrap.html:191
+#: templates/wiki/bootstrap.html:194
 msgid ""
 "Here you can add other important materials to this document (audio files, "
 "JPG, PNG, ODT, PDF etc.)"
@@ -188,7 +204,7 @@ msgstr ""
 "Tu możesz dodać inne ważne materiały do tego projektu (plik dźwiękowe, JPG, "
 "PNG, ODT, PDF i inne)"
 
-#: templates/wiki/bootstrap.html:192
+#: templates/wiki/bootstrap.html:195
 msgid ""
 "Select this option if you do not like your unsaved changes. Warning! Dropped "
 "changes will be lost and they cannot be restored."
@@ -196,7 +212,7 @@ msgstr ""
 "Wybierz tę opcję, jeżeli nie podobają Ci się wprowadzone i niezapisane "
 "zmiany. Uwaga! Zmiany te zostaną utracone i nie będzie można ich przywrócić."
 
-#: templates/wiki/bootstrap.html:193
+#: templates/wiki/bootstrap.html:196
 msgid ""
 "If you work on a document with a group, you can leave comments on each line "
 "of the document. Your comment will appear as a “bubble” on the left."
@@ -205,7 +221,7 @@ msgstr ""
 "każdym wierszu dokumentu. Komentarz wyświetli się w postaci „dymku” po lewej "
 "stronie  wiersza."
 
-#: templates/wiki/bootstrap.html:194
+#: templates/wiki/bootstrap.html:197
 msgid ""
 "Click “Save” to save all the changes in your document. Remember to select "
 "the appropriate stage of the work on the document (Draft, Comments, Comments "
@@ -215,11 +231,11 @@ msgstr ""
 "wybrać odpowiedni etap pracy nad dokumentem (Wersja robocza, Komentarze, "
 "Przegląd komentarzy, Korekta, Publikacja)."
 
-#: templates/wiki/bootstrap.html:195
+#: templates/wiki/bootstrap.html:198
 msgid "Click on the MIL/PEER logo to open the home page in a new window."
 msgstr "Kliknij w logo MIL/PEER, by otworzyć stronę główną w nowym oknie."
 
-#: templates/wiki/bootstrap.html:196
+#: templates/wiki/bootstrap.html:199
 msgid "“Exit” will take you to the main page."
 msgstr "Przycisk „Wyjdź” przeniesie Cię na stronę główną MIL/PEER."
 

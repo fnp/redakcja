@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-09 17:34+0100\n"
+"POT-Creation-Date: 2017-03-30 16:23+0200\n"
 "PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -52,15 +52,15 @@ msgstr "Plik ZIP"
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: models/document.py:25
+#: models/document.py:26
 msgid "stage"
 msgstr "etap"
 
-#: models/document.py:36 models/publish_log.py:15
+#: models/document.py:37 models/publish_log.py:15
 msgid "document"
 msgstr "dokument"
 
-#: models/document.py:37
+#: models/document.py:38
 msgid "documents"
 msgstr "dokumenty"
 
@@ -90,7 +90,7 @@ msgstr "kategoria"
 
 #: models/tag.py:15
 msgid "multiple choice"
-msgstr ""
+msgstr "wielokrotny wybór"
 
 #: models/tag.py:21
 msgid "categories"
@@ -102,7 +102,7 @@ msgstr "tag"
 
 #: models/tag.py:36
 msgid "tags"
-msgstr ""
+msgstr "tagi"
 
 #: templates/catalogue/book_delete.html:5
 #: templates/catalogue/book_owner.html:5
