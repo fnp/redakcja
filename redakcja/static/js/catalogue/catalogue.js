@@ -36,8 +36,8 @@
                 weekStart: 1,
                 onRender: function(date) {
                     return date.valueOf() < now.valueOf() ? 'disabled' : '';
-                },
-            }).on('changeDate', function(ev) {
+                }
+            }).on('changeDate', function() {
                 checkout.hide();
             }).data('datepicker');
         });
@@ -47,20 +47,21 @@
             var helpdiv = $(this).next();
             if (helpdiv.hasClass('help-text')) {
                 var helptext = $("option:selected", this).attr('data-help');
-                helpdiv.html($("option:selected", this).attr('data-help') || '');
+                helpdiv.html(helptext || '');
             }
         });
 
 
 
         // tutorial mode
-        var tutorial;
+        var tutorial, tutorial_no;
         var start;
 
         var first_reset = true;
         function tutreset() {
             if (start) $(start).popover('hide');
             start = null;
+            tutorial_no = null;
             var all_tutorial = $('[data-toggle="tutorial"]');
 
             function sortKey(a) {
@@ -70,21 +71,19 @@
                 function(a, b) {return sortKey(a) < sortKey(b) ? -1 : 1}
             ));
 
-            console.log($(tutorial[0]).data('popover'));
-            console.log($(tutorial[16]).data('popover'));
             if (first_reset) {
                 $.each(tutorial, function(i, e) {
-                    var but = (i < tutorial.length - 1) ? '>>' : 'OK';
+                    var but = (i < tutorial.length - 1) ? '>>' : 'OK',
+                        but_prev_html = i === 0 ? '' : '<a class="btn btn-default tutorial-prev" href="#-" id="pv'+i+'">&lt;&lt;</a></div></div>';
                     $(e).popover({
                         title: '<a class="btn btn-default tutorial-off" href="#-" id="tutoff'+i+'" style="float:right; padding:0 8px 4px 8px; position:relative; top:-6px; right:-10px;">&times;</a>Tutorial',
                         trigger: 'focus',
                         html: 'true',
-                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div><div><a style="float:right" class="btn btn-default tutorial-next" href="#-" id="nt'+i+'">' + but + '</a></div></div>'
+                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div><div><a style="float:right" class="btn btn-default tutorial-next" href="#-" id="nt'+i+'">' + but + '</a>' + but_prev_html + '</div></div>'
                     });
+                    $(e).popover('disable');
                 });
                 first_reset = false;
-            } else {
-                all_tutorial.popover('enable');
             }
         }
         
@@ -93,7 +92,7 @@
             tutreset();
             var $tutModal = $('#tutModal');
             if($tutModal.length === 0) {
-                tut();
+                tutnext();
             } else {
                 $tutModal.modal('show');
             }
@@ -107,28 +106,42 @@
             $('[data-toggle="tutorial"]').popover('disable');
             return false;
         }
-        function tut() {
+        function tut(next) {
             if (start) {
                 $(start).popover('hide').popover('disable');
             }
-            if (tutorial.length) {
-                start = tutorial.shift();
-                $(start).popover('show');
+            if (tutorial_no === null)
+                tutorial_no = 0;
+            else if (next)
+                tutorial_no++;
+            else
+                tutorial_no--;
+            if (tutorial_no < tutorial.length && tutorial_no >= 0) {
+                start = tutorial[tutorial_no];
+                $(start).popover('enable').popover('show');
             }
             else {
+                tutorial_no = null;
                 start = null;
             }
             return false;
         }
-        $('#tutModal').on('hidden.bs.modal', tut);
+        function tutnext() {
+            tut(true);
+        }
+        function tutprev() {
+            tut(false);
+        }
+        $('#tutModal').on('hidden.bs.modal', tutnext);
 
-        if (sessionStorage.getItem("tutorial") == "on" && $('#tuton').length == 0) {
+        if (sessionStorage.getItem("tutorial") === "on" && $('#tuton').length === 0) {
             tutreset();
-            tut();
+            tutnext();
         }
         $(document).on('click', '#tuton', tuton);
         $(document).on('click', '.tutorial-off', tutoff);
-        $(document).on('click', '.tutorial-next', tut);
+        $(document).on('click', '.tutorial-next', tutnext);
+        $(document).on('click', '.tutorial-prev', tutprev);
     });
 })(jQuery);
 
