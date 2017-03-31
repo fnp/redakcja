@@ -12,37 +12,36 @@ from django.core.management import call_command
 
 
 class Command(BaseCommand):
-    
-    option_list = BaseCommand.option_list + (
-        make_option(
+
+    def add_arguments(self, parser):
+        parser.add_argument(
             '--node-bin-path',
             action='store',
             dest='node_bin_path',
             type='string',
             default=None,
-            help='Path to node binary'),
-        make_option(
+            help='Path to node binary')
+        parser.add_argument(
             '--npm-bin',
             action='store',
             dest='npm_bin',
             type='string',
             default='npm',
-            help='Path to npm binary'),
-        make_option(
+            help='Path to npm binary')
+        parser.add_argument(
             '--editor-npm-env',
             action='store',
             dest='editor_npm_env',
             type='string',
             default=None,
-            help='Destination path of npm environment, defaults to ./node_modules'),
-        make_option(
+            help='Destination path of npm environment, defaults to ./node_modules')
+        parser.add_argument(
             '--editor-optimize',
             action='store',
             dest='editor_optimize',
             type='string',
             default=None,
-            help='Optimization strategy for editor build'),
-        )
+            help='Optimization strategy for editor build')
 
     def handle(self, **options):
         wiki_base_dir = os.path.join(os.getcwd(), 'apps', 'wiki', 'static', 'wiki')
