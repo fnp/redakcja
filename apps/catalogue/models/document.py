@@ -73,6 +73,8 @@ class Document(Ref):
         return metadata
 
     def can_edit(self, user):
+        if user.is_superuser:
+            return True
         if self.owner_user:
             return self.owner_user == user
         else:
