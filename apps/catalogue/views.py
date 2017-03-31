@@ -353,9 +353,6 @@ def book_owner(request, pk):
     doc = get_object_or_404(Document, pk=pk, deleted=False)
     if not doc.can_edit(request.user):
         return HttpResponseForbidden("Not authorized.")
-    user_is_owner = doc.owner_organization and doc.owner_organization.is_member(request.user)
-    if not (doc.owner_user == request.user or user_is_owner):
-        raise Http404
 
     error = ''
 

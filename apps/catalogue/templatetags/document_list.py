@@ -64,11 +64,7 @@ def document_list(context, user=None, organization=None):
 @register.inclusion_tag('catalogue/book_list/book.html', takes_context=True)
 def document_short_html(context, doc):
     user = context['request'].user
-    if doc.owner_organization is not None:
-        am_owner = doc.owner_organization.is_member(user)
-    else:
-        am_owner = doc.owner_user == user
     return {
-        'am_owner': am_owner,
+        'am_owner':doc.can_edit(user),
         'book': doc,
     }
