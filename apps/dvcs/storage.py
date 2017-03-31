@@ -36,7 +36,7 @@ class GzipFileSystemStorage(FileSystemStorage):
         content = ContentFile(compress(content.read()))
         return super(GzipFileSystemStorage, self)._save(name, content)
 
-    def get_available_name(self, name):
+    def get_available_name(self, name, max_length=None):
         if self.exists(name):
             self.delete(name)
         return name
