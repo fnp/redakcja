@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlquote_plus
 from django.views.decorators.http import require_POST
+from unidecode import unidecode
 
 from catalogue import forms
 from catalogue.forms import TagMultipleForm, TagSingleForm
@@ -99,7 +100,10 @@ def create_missing(request):
                 path = settings.MEDIA_ROOT + uppath
                 if not os.path.isdir(path):
                     os.makedirs(path)
-                dest_path = path + cover.name   # UNSAFE
+                cover.name = unidecode(cover.name)
+                dest_path = path + cover.name
+                if not os.path.abspath(dest_path).startswith(os.path.abspath(path)):
+                    raise Http404
                 with open(dest_path, 'w') as destination:
                     for chunk in cover.chunks():
                         destination.write(chunk)
