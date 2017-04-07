@@ -7,6 +7,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from honeypot.decorators import check_honeypot
+
 from .forms import RegistrationForm
 from catalogue.models import Document
 from organizations.models import Organization
@@ -33,6 +35,7 @@ def main(request):
     })
 
 
+@check_honeypot
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)

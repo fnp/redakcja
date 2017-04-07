@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'modeltranslation',
     'constance',
     'constance.backends.database',
+    'honeypot',
 
     'catalogue',
     # 'cover',
@@ -170,6 +171,7 @@ SHOW_APP_VERSION = False
 FORMS_BUILDER_EDITABLE_SLUGS = True
 FORMS_BUILDER_LABEL_MAX_LENGTH = 2048
 
+HONEYPOT_FIELD_NAME = 'miut'
 
 try:
     from redakcja.settings.compress import *

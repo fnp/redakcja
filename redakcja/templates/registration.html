@@ -1,5 +1,6 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
+{% load honeypot %}
 
 {% block content %}
 <div class="row">
@@ -11,6 +12,7 @@
     <form enctype="multipart/form-data" method="POST">
     {% csrf_token %}
         {{ form.non_field_errors }}
+        {% render_honeypot_field %}
         <label for="title">{% trans "First name" %}</label>
             {{ form.first_name.errors }}
             <input class="form-control" name="first_name" type="text">
