@@ -148,8 +148,9 @@ def create_missing(request):
         form = forms.DocumentCreateForm(initial={'owner_organization': org})
 
         tag_forms = [
-            (TagMultipleForm if category.multiple else TagSingleForm)(category=category, prefix=category.dc_tag)
-            for category in Category.objects.all()]
+            (TagMultipleForm if category.multiple else TagSingleForm)(
+                category=category, tutorial_no=i, prefix=category.dc_tag)
+            for i, category in enumerate(Category.objects.all(), start=2)]
 
     return render(request, "catalogue/document_create_missing.html", {
         "form": form,

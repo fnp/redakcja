@@ -9,11 +9,11 @@ from catalogue.models import Tag, Category
 
 
 class TagTranslationOptions(TranslationOptions):
-    fields = ('label',)
+    fields = ('label', 'help_text')
 
 
 class CategoryTranslationOptions(TranslationOptions):
-    fields = ('label',)
+    fields = ('label', 'tutorial')
 
 
 translator.register(Tag, TagTranslationOptions)

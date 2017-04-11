@@ -27,60 +27,25 @@
         <label for="title">{% trans "Cover image" %}</label>
             {{ form.cover.errors }}
             {{ form.cover }}
-        <label for="language">{% trans "Language" %}</label>
-            {{ form.language.errors }}
-            <input class="form-control" name="language" id="language" type="text" value='{{ form.language.value|default:"" }}'>
         <label for="publisher">{% trans "Publisher" %}</label>
             {{ form.publisher.errors }}
             <input class="form-control" name="publisher" id="publisher" type="text" value='{{ form.publisher.value|default:"" }}'>
-        <label for="rights">{% trans "Rights" %}</label>
-            {{ form.rights.errors }}
-            <select class="form-control" name="rights" id="rights"
-                data-toggle="tutorial" data-tutorial="2" data-placement="bottom"
-                data-content="{% trans 'You should choose a free license for your resource. We recommend using Creative Commons Attribution - Share Alike.' %}"
-            >
-                <option value=''>–</option>
-                <option name='pd' 
-                    data-help="{% trans 'Only set for resources that are not restricted with copyright.' %}"
-                    >{% trans "public domain" %}</option>
-                <option name='cc-by'
-                    data-help="{% trans "Non-copyleft free culture license. See <a target='_blank' href='//creativecommons.org/choose/'>creativecommons.org</a>" %}"
-                    >{% trans "Creative Commons Attribution" %}</option>
-                <option name='cc-by-sa'
-                    data-help="{% trans "Copyleft free culture license. See <a target='_blank' href='//creativecommons.org/choose/'>creativecommons.org</a>" %}"
-                    >{% trans "Creative Commons Attribution – Share Alike" %}</option>
-                <option name='fal'
-                    data-help="{% trans "Copyleft free culture license. See <a target='_blank' href='http://artlibre.org/'>artlibre.org</a>" %}"
-                    >{% trans "Free Art License" %}</option>
-            </select>
-            <div class="help-text" style="text-align: right;"></div>
-        <label for="audience">{% trans "Audience" %}</label>
-            {{ form.audience.errors }}
-            <select class="form-control" name="audience" id="audience"
-                data-toggle="tutorial" data-tutorial="3" data-placement="bottom"
-                data-content="{% trans 'Choose primary audience for your resource.' %}"
-            >
-                <option>3-6</option>
-                <option>6-9</option>
-                <option>9-12</option>
-                <option>12-18</option>
-                <option>18+</option>
-                <option>Adults</option>
-            </select>
 
-        <label for="description">{% trans "Summary" %}</label>
-            {{ form.description.errors }}
-            <textarea class="form-control" name="description" id="description"
-                data-toggle="tutorial" data-tutorial="4" data-placement="top"
-                data-content="{% trans 'You can provide a short description of the document here.' %}"
-            >{{ form.description.value|default:"" }}</textarea>
         {% for tag_form in tag_forms %}
             {% for tag_field in tag_form %}
                 <label for="id_{{ tag_form.prefix }}-{{ tag_field.name }}">{{ tag_field.label }}</label>
                 {{ tag_field.errors }}
                 {{ tag_field }}
+                <div class="help-text" style="text-align: right;"></div>
             {% endfor %}
         {% endfor %}
+
+        <label for="description">{% trans "Summary" %}</label>
+            {{ form.description.errors }}
+            <textarea class="form-control" name="description" id="description"
+                data-toggle="tutorial" data-tutorial="100" data-placement="top"
+                data-content="{% trans 'You can provide a short description of the document here.' %}"
+            >{{ form.description.value|default:"" }}</textarea>
 
         <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Create resource" %}</button>
     </form>

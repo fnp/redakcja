@@ -3,6 +3,10 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.utils.encoding import force_text
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
 from catalogue.models import Category
 from catalogue.models import Tag
 from django import forms
@@ -38,12 +42,19 @@ class DocumentCreateForm(forms.Form):
 
 
 class TagForm(forms.Form):
-    def __init__(self, category, instance=None, *args, **kwargs):
+    def __init__(self, category, instance=None, tutorial_no=None, *args, **kwargs):
         super(TagForm, self).__init__(*args, **kwargs)
         self.category = category
         self.instance = instance
         self.field().queryset = Tag.objects.filter(category=self.category)
         self.field().label = self.category.label.capitalize()
+        if tutorial_no and category.tutorial:
+            self.field().widget.attrs.update({
+                'data-toggle': 'tutorial',
+                'data-tutorial': str(tutorial_no),
+                'data-placement': 'bottom',
+                'data-content': category.tutorial,
+            })
         if self.instance:
             self.field().initial = self.initial()
 
@@ -62,10 +73,32 @@ class TagForm(forms.Form):
         raise NotImplementedError
 
 
+class TagSelect(forms.Select):
+    def render_option(self, selected_choices, option_value, option_label):
+        if option_value is None:
+            option_value = ''
+        help_html = ''
+        if option_value:
+            tag = Tag.objects.get(id=int(option_value))
+            if tag.help_text:
+                help_html = mark_safe(' data-help="%s"' % tag.help_text)
+        option_value = force_text(option_value)
+        if option_value in selected_choices:
+            selected_html = mark_safe(' selected="selected"')
+            if not self.allow_multiple_selected:
+                # Only allow for a single selection.
+                selected_choices.remove(option_value)
+        else:
+            selected_html = ''
+        return format_html(
+            u'<option value="{}"{}{}>{}</option>',
+            option_value, selected_html, help_html, force_text(option_label))
+
+
 class TagSingleForm(TagForm):
     tag = forms.ModelChoiceField(
         Tag.objects.none(),
-        widget=forms.Select(attrs={
+        widget=TagSelect(attrs={
             'class': 'form-control',
         })
     )
