@@ -51,6 +51,8 @@
             }
         });
 
+        $('.chosen-select').chosen();
+
 
 
         // tutorial mode

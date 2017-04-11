@@ -74,11 +74,13 @@
                 data-toggle="tutorial" data-tutorial="4" data-placement="top"
                 data-content="{% trans 'You can provide a short description of the document here.' %}"
             >{{ form.description.value|default:"" }}</textarea>
-        {% comment %}
         {% for tag_form in tag_forms %}
-            {{ tag_form.as_p }}
+            {% for tag_field in tag_form %}
+                <label for="id_{{ tag_form.prefix }}-{{ tag_field.name }}">{{ tag_field.label }}</label>
+                {{ tag_field.errors }}
+                {{ tag_field }}
+            {% endfor %}
         {% endfor %}
-        {% endcomment %}
 
         <button style="margin-top:1em;" class="btn btn-default" type="submit">{% trans "Create resource" %}</button>
     </form>

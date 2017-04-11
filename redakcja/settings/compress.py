@@ -34,6 +34,7 @@ PIPELINE = {
                 # 'css/filelist.css',
                 'css/base.css',
                 'datepicker/css/datepicker.css',
+                'js/lib/chosen-1.6.2/bootstrap-chosen.css',
             ),
             'output_filename': 'compressed/catalogue_styles.css',
         },
@@ -55,45 +56,46 @@ PIPELINE = {
         # everything except codemirror
         'detail': {
             'source_filenames': (
-                    # libraries
-                    'js/lib/jquery/jquery.autocomplete.js',
-                    'js/lib/jquery/jquery.blockui.js',
-                    'js/lib/jquery/jquery.elastic.js',
-                    'js/lib/jquery/jquery.xmlns.js',
-                    'js/button_scripts.js',
-                    'js/slugify.js',
+                # libraries
+                'js/lib/jquery/jquery.autocomplete.js',
+                'js/lib/jquery/jquery.blockui.js',
+                'js/lib/jquery/jquery.elastic.js',
+                'js/lib/jquery/jquery.xmlns.js',
+                'js/button_scripts.js',
+                'js/slugify.js',
 
-                    # wiki scripts
-                    'js/wiki/wikiapi.js',
-                    'js/wiki/xslt.js',
+                # wiki scripts
+                'js/wiki/wikiapi.js',
+                'js/wiki/xslt.js',
 
-                    # base UI
-                    'js/wiki/base.js',
-                    'js/wiki/toolbar.js',
+                # base UI
+                'js/wiki/base.js',
+                'js/wiki/toolbar.js',
 
-                    # dialogs
-                    'js/wiki/dialog_save.js',
-                    'js/wiki/dialog_revert.js',
-                    'js/wiki/dialog_pubmark.js',
+                # dialogs
+                'js/wiki/dialog_save.js',
+                'js/wiki/dialog_revert.js',
+                'js/wiki/dialog_pubmark.js',
 
-                    # views
-                    'js/wiki/view_history.js',
-                    'js/wiki/view_summary.js',
-                    'js/wiki/view_editor_source.js',
-                    'js/wiki/view_editor_wysiwyg.js',
-                    'js/wiki/view_gallery.js',
-                    'js/wiki/view_annotations.js',
-                    'js/wiki/view_search.js',
-                    'js/wiki/view_column_diff.js',
+                # views
+                'js/wiki/view_history.js',
+                'js/wiki/view_summary.js',
+                'js/wiki/view_editor_source.js',
+                'js/wiki/view_editor_wysiwyg.js',
+                'js/wiki/view_gallery.js',
+                'js/wiki/view_annotations.js',
+                'js/wiki/view_search.js',
+                'js/wiki/view_column_diff.js',
             ),
             'output_filename': 'compressed/detail_scripts.js',
-         },
+        },
         'catalogue': {
             'source_filenames': (
-                    'js/catalogue/catalogue.js',
-                    'js/slugify.js',
-                    'email_mangler/email_mangler.js',
-                    'datepicker/js/bootstrap-datepicker.js',
+                'js/catalogue/catalogue.js',
+                'js/slugify.js',
+                'email_mangler/email_mangler.js',
+                'datepicker/js/bootstrap-datepicker.js',
+                'js/lib/chosen-1.6.2/chosen.jquery.min.js',
             ),
             'output_filename': 'compressed/catalogue_scripts.js',
         },
@@ -105,7 +107,7 @@ PIPELINE = {
                 'js/book_text/book.js',
             ),
             'output_filename': 'compressed/book.js',
-             },
+        },
         'book_list': {
             'source_filenames': (
                 'contextmenu/jquery.ui.position.js',

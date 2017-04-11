@@ -43,7 +43,7 @@ class TagForm(forms.Form):
         self.category = category
         self.instance = instance
         self.field().queryset = Tag.objects.filter(category=self.category)
-        self.field().label = self.category.label
+        self.field().label = self.category.label.capitalize()
         if self.instance:
             self.field().initial = self.initial()
 
@@ -63,7 +63,12 @@ class TagForm(forms.Form):
 
 
 class TagSingleForm(TagForm):
-    tag = forms.ModelChoiceField(Tag.objects.none())
+    tag = forms.ModelChoiceField(
+        Tag.objects.none(),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        })
+    )
 
     def field(self):
         return self.fields['tag']
@@ -76,7 +81,12 @@ class TagSingleForm(TagForm):
 
 
 class TagMultipleForm(TagForm):
-    tags = forms.ModelMultipleChoiceField(Tag.objects.none(), required=False)
+    tags = forms.ModelMultipleChoiceField(
+        Tag.objects.none(), required=False,
+        widget=forms.SelectMultiple(attrs={
+            'class': 'chosen-select',
+            'data-placeholder': _('Choose'),
+        }))
 
     def field(self):
         return self.fields['tags']
