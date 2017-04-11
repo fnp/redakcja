@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-30 11:45+0200\n"
+"POT-Creation-Date: 2017-04-11 16:41+0200\n"
 "PO-Revision-Date: 2011-10-18 11:19+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,25 +151,25 @@ msgstr "poprzednie"
 msgid "next"
 msgstr "następne"
 
-#: templates/registration.html:8 templates/registration.html:27
+#: templates/registration.html:9 templates/registration.html:29
 #: templates/registration/head_login.html:121
 #: templates/registration/login.html:37
 msgid "Register"
 msgstr "Załóż konto"
 
-#: templates/registration.html:14
+#: templates/registration.html:16
 msgid "First name"
 msgstr "Imię"
 
-#: templates/registration.html:17
+#: templates/registration.html:19
 msgid "Last name"
 msgstr "Nazwisko"
 
-#: templates/registration.html:20 templates/registration/head_login.html:102
+#: templates/registration.html:22 templates/registration/head_login.html:102
 msgid "E-mail"
 msgstr "E-mail"
 
-#: templates/registration.html:23
+#: templates/registration.html:25
 msgid "Your new password"
 msgstr "Nowe hasło"
 
@@ -210,10 +210,6 @@ msgid "You are not a member of any organizations"
 msgstr "Nie należysz do żadnej organizacji"
 
 #: templates/registration/head_login.html:43
-#, fuzzy
-#| msgid ""
-#| "Here you can start editing a new resource or view your resources and all "
-#| "published resources."
 msgid ""
 "Here you can start editing a new resource or view your resources and all "
 "published resources. To continue this tutorial, go to “New resource” or open "
