@@ -26,12 +26,8 @@ class DocumentCreateForm(forms.Form):
     """
     owner_organization = forms.CharField(required=False)
     title = forms.CharField()
-    language = forms.CharField()
     publisher = forms.CharField(required=False)
     description = forms.CharField(required=False)
-    rights = forms.CharField(required=False)
-    audience = forms.CharField()
-    
     cover = forms.FileField(required=False)
 
     def clean_cover(self):
@@ -58,10 +54,11 @@ class TagForm(forms.Form):
         if self.instance:
             self.field().initial = self.initial()
 
-    def save(self):
-        assert self.instance, 'No instance provided'
-        self.instance.tags.remove(*self.instance.tags.filter(category=self.category))
-        self.instance.tags.add(self.cleaned_tags())
+    def save(self, instance=None):
+        instance = instance or self.instance
+        assert instance, 'No instance provided'
+        instance.tags.remove(*instance.tags.filter(category=self.category))
+        instance.tags.add(*self.cleaned_tags())
 
     def field(self):
         raise NotImplementedError
@@ -71,6 +68,11 @@ class TagForm(forms.Form):
 
     def cleaned_tags(self):
         raise NotImplementedError
+
+    def metadata_rows(self):
+        return '\n'.join(
+            '<dc:%(name)s>%(value)s</dc:%(name)s>' % {'name': tag.category.dc_tag, 'value': tag.dc_value}
+            for tag in self.cleaned_tags())
 
 
 class TagSelect(forms.Select):

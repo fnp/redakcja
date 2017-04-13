@@ -94,6 +94,9 @@ def create_missing(request):
 
             doc = Document.objects.create(**kwargs)
 
+            for tag_form in tag_forms:
+                tag_form.save(instance=doc)
+
             cover = request.FILES.get('cover')
             if cover:
                 uppath = 'uploads/%d/' % doc.pk
@@ -116,9 +119,7 @@ def create_missing(request):
                 <metadata>
                     <dc:publisher>''' + form.cleaned_data['publisher'] + '''</dc:publisher>
                     <dc:description>''' + form.cleaned_data['description'] + '''</dc:description>
-                    <dc:language>''' + form.cleaned_data['language'] + '''</dc:language>
-                    <dc:rights>''' + form.cleaned_data['rights'] + '''</dc:rights>
-                    <dc:audience>''' + form.cleaned_data['audience'] + '''</dc:audience>
+                    ''' + '\n'.join(tag_form.metadata_rows() for tag_form in tag_forms) + '''
                     <dc:relation.coverImage.url>''' + cover_url + '''</dc:relation.coverImage.url>
                 </metadata>
                 <header>''' + title + '''</header>
