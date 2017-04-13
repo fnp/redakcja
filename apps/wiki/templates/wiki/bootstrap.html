@@ -81,14 +81,16 @@
                     core: {
                         templates: {{serialized_templates|safe}},
                         metadata: [
-                            {key: 'audience', values: [
-                                '3-6', '6-9', '9-12', '12-18', '18+', 'Adults'
-                            ]},
+                            {% for category in tag_categories %}
+                                {key: '{{ category.dc_tag }}', values: [
+                                    {% for tag in category.tag_set.all %}
+                                        '{{ tag.dc_value }}'{% if not forloop.last %},{% endif %}
+                                    {% endfor %}
+                                ]},
+                            {% endfor %}
                             {key: 'creator'},
                             {key: 'description'},
                             {key: 'publisher'},
-                            {key: 'language'},
-                            {key: 'rights'},
                             {key: 'relation.coverimage.url', isFile: true}
                         ]
                     }

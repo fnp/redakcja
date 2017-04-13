@@ -51,16 +51,17 @@
             }
         });
 
-        $('.chosen-select').chosen().each(function() {
-            var widget = $(this.nextSibling), $t = $(this);
-            $.each($.merge([], this.attributes), function() {
-                if (this.name.substr(0, 5) === 'data-') {
-                    $t.removeAttr(this.name);
-                    widget.attr(this.name, this.value);
-                }
+        if ($.isFunction($.fn.chosen)) {
+            $('.chosen-select').chosen().each(function () {
+                var widget = $(this.nextSibling), $t = $(this);
+                $.each($.merge([], this.attributes), function () {
+                    if (this.name.substr(0, 5) === 'data-') {
+                        $t.removeAttr(this.name);
+                        widget.attr(this.name, this.value);
+                    }
+                });
             });
-        });
-
+        }
 
 
         // tutorial mode

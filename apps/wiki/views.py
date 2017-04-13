@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 
-from catalogue.models import Document, Template
+from catalogue.models import Document, Template, Category
 from dvcs.models import Revision
 import nice_diff
 from wiki import forms
@@ -82,6 +82,7 @@ def editor(request, pk, template_name='wiki/bootstrap.html'):
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "text_publish": forms.DocumentTextPublishForm(prefix="textpublish"),
         },
+        'tag_categories': Category.objects.all(),
         'pk': doc.pk,
     })
 
