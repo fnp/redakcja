@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.constants import STAGES
+from catalogue.models import Category
+from catalogue.models.document import metadata_from_text
 from librarian.document import Document
 
 
@@ -81,6 +83,16 @@ class DocumentTextSaveForm(forms.Form):
             if ext not in ('jpg', 'jpeg', 'png', 'gif', 'svg'):
                 raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif, svg). '
                                       'Change it in Metadata.')
+        metadata = metadata_from_text(text)
+        for category in Category.objects.all():
+            values = metadata.get(category.dc_tag)
+            if not category.multiple:
+                values = [values]
+            if not values:
+                values = []
+            for value in values:
+                if not category.tag_set.filter(dc_value=value):
+                    raise ValidationError('Invalid value for dc:%s: %s' % (category.dc_tag, value))
         return text
 
 

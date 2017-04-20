@@ -21,6 +21,10 @@ class Category(models.Model):
         verbose_name = _('category')
         verbose_name_plural = _('categories')
 
+    def set_tags_for(self, obj, tags):
+        obj.tags.remove(*obj.tags.filter(category=self))
+        obj.tags.add(*tags)
+
     def __unicode__(self):
         return self.label
 

@@ -57,8 +57,7 @@ class TagForm(forms.Form):
     def save(self, instance=None):
         instance = instance or self.instance
         assert instance, 'No instance provided'
-        instance.tags.remove(*instance.tags.filter(category=self.category))
-        instance.tags.add(*self.cleaned_tags())
+        self.category.set_tags_for(instance, self.cleaned_tags())
 
     def field(self):
         raise NotImplementedError

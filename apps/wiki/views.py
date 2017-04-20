@@ -108,9 +108,6 @@ def text(request, doc_id):
             # else:
             #     parent = None
             stage = form.cleaned_data['stage']
-            # tags = [stage] if stage else []
-            # publishable = (form.cleaned_data['publishable'] and
-            #                request.user.has_perm('catalogue.can_pubmark'))
             try:
                 doc.commit(
                     author=author,

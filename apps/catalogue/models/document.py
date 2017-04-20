@@ -15,7 +15,43 @@ from django.utils.translation import ugettext_lazy as _
 from dvcs.models import Ref
 from organizations.models import Organization
 from catalogue.constants import STAGES
-from .tag import Tag
+from .tag import Tag, Category
+
+
+def metadata_from_text(text):
+    from lxml import etree
+    metadata = {}
+    text = text.replace(u'\ufeff', '')
+    # This is bad. The editor shouldn't spew unknown HTML entities.
+    text = text.replace(u'&nbsp;', u'\u00a0')
+
+    try:
+        t = etree.fromstring(text)
+    except:
+        return {'title': '<<Resource invalid>>'}
+    header = t.find('.//header')
+    if header is None:
+        header = etree.fromstring(text).find('.//{http://nowoczesnapolska.org.pl/sst#}header')
+    metadata['title'] = getattr(header, 'text', ' ') or ' '
+    # print 'meta', d['title']
+
+    m = t.find('metadata')
+    if m is None:
+        m = t.find('{http://nowoczesnapolska.org.pl/sst#}metadata')
+    if m is not None:
+        c = m.find('{http://purl.org/dc/elements/1.1/}relation.coverimage.url')
+        if c is not None:
+            metadata['cover_url'] = c.text
+        for category in Category.objects.all():
+            c = m.find('{http://purl.org/dc/elements/1.1/}' + category.dc_tag)
+            if c is not None:
+                if category.multiple:
+                    if category.dc_tag not in metadata:
+                        metadata[category.dc_tag] = []
+                    metadata[category.dc_tag].append(c.text)
+                else:
+                    metadata[category.dc_tag] = c.text
+    return metadata
 
 
 class Document(Ref):
@@ -41,36 +77,7 @@ class Document(Ref):
         return render_to_string('catalogue/book_list/book.html', {'book': self})
 
     def meta(self):
-        from lxml import etree
-        metadata = {}
-
-        data = self.materialize()
-        data = data.replace(u'\ufeff', '')
-        # This is bad. The editor shouldn't spew unknown HTML entities.
-        data = data.replace(u'&nbsp;', u'\u00a0')
-
-        try:
-            t = etree.fromstring(data)
-        except:
-            return {'title': '<<Resource invalid>>'}
-        header = t.find('.//header')
-        if header is None:
-            header = etree.fromstring(data).find('.//{http://nowoczesnapolska.org.pl/sst#}header')
-        metadata['title'] = getattr(header, 'text', ' ') or ' '
-        # print 'meta', d['title']
-
-        m = t.find('metadata')
-        if m is None:
-            m = t.find('{http://nowoczesnapolska.org.pl/sst#}metadata')
-        if m is not None:
-            c = m.find('{http://purl.org/dc/elements/1.1/}relation.coverimage.url')
-            if c is not None:
-                metadata['cover_url'] = c.text
-            c = m.find('{http://purl.org/dc/elements/1.1/}audience')
-            if c is not None:
-                metadata['audience'] = c.text
-
-        return metadata
+        return metadata_from_text(self.materialize())
 
     def can_edit(self, user):
         if user.is_superuser:
@@ -102,3 +109,15 @@ class Document(Ref):
     def is_overdue(self):
         plan = self.get_plan()
         return plan is not None and plan.deadline and plan.deadline < date.today()
+
+    def commit(self, *args, **kwargs):
+        super(Document, self).commit(*args, **kwargs)
+        m = self.meta()
+        for category in Category.objects.all():
+            values = m.get(category.dc_tag)
+            if not category.multiple:
+                values = [values]
+            if not values:
+                values = []
+            tags = category.tag_set.filter(dc_value__in=values)
+            category.set_tags_for(self, tags)
