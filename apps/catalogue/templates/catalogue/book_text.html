@@ -147,7 +147,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 <div id="cover">
     <div id="cover-info" class="row">
         <div class="col-md-4 col-md-offset-2">
-{% trans "Audience" %}: {{ doc.meta.audience|default:"–" }}
+{% trans "Audience" %}: {{ doc.meta.audience|join:", "|default:"–" }}
         </div>
         <div class="col-md-4">
 <a class="btn btn-default" href="{% url 'catalogue_pdf' doc.pk revision.pk %}"
