@@ -5,35 +5,30 @@
 
 {% block inner_content %}
 
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <label for="email">
+            E-mail</label>
+            {{ form.username.errors }}
+            <input name="username" class="form-control" type="email">
+
+        <label for="password">
+            Password</label>
+            {{ form.password.errors }}
+            <input name="password" class="form-control" type="password">
 
 
-<form method="POST" action="{% url 'login' %}">
-{% csrf_token %}
+            <input type="checkbox" name="keep">
+            <label for="keep">{% trans "Keep me logged in" %}</label>
 
-            <form method="POST" action="{% url 'login' %}">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                <label for="email">
-                    E-mail</label>
-                    {{ form.username.errors }}
-                    <input name="username" class="form-control" type="email">
-                
-                <label for="password">
-                    Password</label>
-                    {{ form.password.errors }}
-                    <input name="password" class="form-control" type="password">
-                
-                
-                    <input type="checkbox" name="keep">
-                    <label for="keep">{% trans "Keep me logged in" %}</label>
-                
-                <div><button class="btn btn-default">
-                    {% trans "Log in" %}
-                </button>
-                </div>
-            </form>
-            <p><a href="{% url 'password_reset' %}">{% trans "I forgot my password" %}</a></p>
-            <hr>
-            <a class="btn btn-default" href="{% url 'register' %}">{% trans "Register" %}</a>
+        <div><button class="btn btn-default">
+            {% trans "Log in" %}
+        </button>
+        </div>
+    </form>
+    <p><a href="{% url 'password_reset' %}">{% trans "I forgot my password" %}</a></p>
+    <hr>
+    <a class="btn btn-default" href="{% url 'register' %}">{% trans "Register" %}</a>
 
 {% endblock %}
