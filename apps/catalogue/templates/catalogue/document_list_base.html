@@ -1,0 +1,23 @@
+{% extends "catalogue/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <div class="row">
+        <h1 class="col-md-8 col-md-offset-3">{% block header %}{% endblock %}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-md-offset-1">
+            <h3>{% trans "Filters" %}</h3>
+            <form action="" method="get">
+                {{ filter_set.form.as_p }}
+                <input type="submit" value="{% trans "Apply" %}" />
+            </form>
+        </div>
+        <div class="col-md-8">
+            {% for doc in filter_set.qs %}
+                {% include "catalogue/resource_box.html" %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

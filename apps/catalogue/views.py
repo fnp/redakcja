@@ -514,6 +514,7 @@ def upcoming(request):
     f = DocumentFilterSet(request.GET, queryset=Document.objects.filter(deleted=False).filter(publish_log=None))
     return render(request, "catalogue/upcoming.html", {
         'filter_set': f,
+        'link_url': 'catalogue_preview',
     })
 
 
@@ -521,4 +522,5 @@ def finished(request):
     f = DocumentFilterSet(request.GET, queryset=Document.objects.filter(deleted=False).exclude(publish_log=None))
     return render(request, "catalogue/finished.html", {
         'filter_set': f,
+        'link_url': 'catalogue_html',
     })

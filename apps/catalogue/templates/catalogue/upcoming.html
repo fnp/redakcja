@@ -1,14 +1,5 @@
-{% extends "catalogue/base.html" %}
+{% extends "catalogue/document_list_base.html" %}
 {% load i18n %}
 
 
-{% block inner_content %}
-    <h1>{% trans "Upcoming resources" %}</h1>
-    <form action="" method="get">
-        {{ filter_set.form.as_p }}
-        <input type="submit" />
-    </form>
-    {% for doc in filter_set.qs %}
-        {% include "catalogue/resource_box.html" with link_url='catalogue_preview' %}
-    {% endfor %}
-{% endblock %}
+{% block header %}{% trans "Upcoming resources" %}{% endblock %}

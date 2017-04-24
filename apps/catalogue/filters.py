@@ -4,6 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import django_filters
+from django.forms.widgets import SelectMultiple
 from django.utils.functional import lazy
 from django_filters.filters import ModelMultipleChoiceFilter
 
@@ -13,7 +14,13 @@ from catalogue.models import Document, Category
 def tag_filter(dc_tag):
     category = Category.objects.get(dc_tag=dc_tag)
     return ModelMultipleChoiceFilter(
-        queryset=category.tag_set.all(), label=lazy(lambda: category.label, unicode)(), method='filter_by_tag')
+        queryset=category.tag_set.all(),
+        label='',
+        widget=SelectMultiple(attrs={
+            'class': 'chosen-select',
+            'data-placeholder': lazy(lambda: category.label, unicode)(),
+        }),
+        method='filter_by_tag')
 
 
 class DocumentFilterSet(django_filters.FilterSet):

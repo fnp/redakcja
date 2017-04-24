@@ -2,13 +2,4 @@
 {% load i18n %}
 
 
-{% block inner_content %}
-    <h1>{% trans "Finished resources" %}</h1>
-    <form action="" method="get">
-        {{ filter_set.form.as_p }}
-        <input type="submit" />
-    </form>
-    {% for doc in filter_set.qs %}
-        {% include "catalogue/resource_box.html" with link_url='catalogue_html' %}
-    {% endfor %}
-{% endblock %}
+{% block header %}{% trans "Finished resources" %}{% endblock %}
