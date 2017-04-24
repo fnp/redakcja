@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'constance',
     'constance.backends.database',
     'honeypot',
+    'django_filters',
 
     'catalogue',
     # 'cover',

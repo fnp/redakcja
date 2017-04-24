@@ -24,6 +24,7 @@ from django.views.decorators.http import require_POST
 from unidecode import unidecode
 
 from catalogue import forms
+from catalogue.filters import DocumentFilterSet
 from catalogue.forms import TagMultipleForm, TagSingleForm
 from catalogue.helpers import active_tab
 from catalogue.models import Category
@@ -510,12 +511,14 @@ def fork(request, pk):
 
 
 def upcoming(request):
+    f = DocumentFilterSet(request.GET, queryset=Document.objects.filter(deleted=False).filter(publish_log=None))
     return render(request, "catalogue/upcoming.html", {
-        'objects_list': Document.objects.filter(deleted=False).filter(publish_log=None),
+        'filter_set': f,
     })
 
 
 def finished(request):
+    f = DocumentFilterSet(request.GET, queryset=Document.objects.filter(deleted=False).exclude(publish_log=None))
     return render(request, "catalogue/finished.html", {
-        'objects_list': Document.objects.filter(deleted=False).exclude(publish_log=None),
+        'filter_set': f,
     })
