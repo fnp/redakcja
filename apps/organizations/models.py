@@ -75,7 +75,6 @@ class UserCard(Card):
 @python_2_unicode_compatible
 class Organization(Card):
     name = models.CharField(max_length=1024)
-    tags = models.ManyToManyField('catalogue.Tag', blank=True)
 
     def __str__(self):
         return self.name
