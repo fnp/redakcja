@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.http import Http404
+
+from organizations.filters import OrganizationFilterSet
 from .forms import OrganizationForm, UserCardForm
 from .models import Organization, Membership, UserCard
 
@@ -120,6 +122,7 @@ def membership(request, pk):
 
 
 def organizations(request):
+    f = OrganizationFilterSet(request.GET, queryset=Organization.objects.all())
     return render(request, "organizations/organizations.html", {
-        'organizations': Organization.objects.all(),
+        'filter_set': f,
     })

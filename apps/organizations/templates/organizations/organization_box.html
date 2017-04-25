@@ -1,0 +1,12 @@
+{% load thumbnail %}
+
+<div style="width: 182px; height: 180px; position: relative; border: 1px solid #aaa; margin: 10px; display: inline-block; padding: 0; vertical-align: bottom">
+    <a style='display:block' href="{% url 'organizations_main' org.pk %}">
+    {% if org.logo %}
+        {% thumbnail org.logo "160x100" format="PNG"  padding=True as th %}
+        <img src="{{ th.url }}" style="margin: 10px;">
+        {% endthumbnail %}
+    {% endif %}
+    <div style="position: absolute; bottom: 10px; left: 10px; width: 160px; height: 40px; overflow:hidden">{{ org.name }}</div>
+    </a>
+</div>
