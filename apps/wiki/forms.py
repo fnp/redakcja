@@ -84,8 +84,12 @@ class DocumentTextSaveForm(forms.Form):
                 raise ValidationError('Invalid cover image format, should be an image file (jpg, png, gif, svg). '
                                       'Change it in Metadata.')
         metadata = metadata_from_text(text)
+        if 'multiple_values' in metadata:
+            raise ValidationError('Category "%s" does not allow multiple values.' % metadata['multiple_values'])
         for category in Category.objects.all():
             values = metadata.get(category.dc_tag)
+            if values is None:
+                continue
             if not category.multiple:
                 values = [values]
             if not values:

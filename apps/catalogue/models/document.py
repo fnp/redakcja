@@ -43,14 +43,16 @@ def metadata_from_text(text):
         if c is not None:
             metadata['cover_url'] = c.text
         for category in Category.objects.all():
-            c = m.find('{http://purl.org/dc/elements/1.1/}' + category.dc_tag)
-            if c is not None:
-                if category.multiple:
-                    if category.dc_tag not in metadata:
-                        metadata[category.dc_tag] = []
-                    metadata[category.dc_tag].append(c.text)
-                else:
-                    metadata[category.dc_tag] = c.text
+            for elem in m.findall('{http://purl.org/dc/elements/1.1/}' + category.dc_tag):
+                if elem.text is not None:
+                    if category.multiple:
+                        if category.dc_tag not in metadata:
+                            metadata[category.dc_tag] = []
+                        metadata[category.dc_tag].append(elem.text)
+                    else:
+                        if category.dc_tag in metadata:
+                            metadata['multiple_values'] = category.dc_tag
+                        metadata[category.dc_tag] = elem.text
     return metadata
 
 
