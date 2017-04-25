@@ -27,6 +27,8 @@ class DocumentFilterSet(django_filters.FilterSet):
     language = tag_filter('language')
     license = tag_filter('rights')
     audience = tag_filter('audience')
+    resource_type = tag_filter('type')
+    subject = tag_filter('subject')
 
     class Meta:
         model = Document
