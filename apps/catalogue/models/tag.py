@@ -37,7 +37,7 @@ class Tag(models.Model):
     index = models.IntegerField()
 
     class Meta:
-        ordering = ['index', 'label']
+        ordering = ['category', 'index', 'label']
         verbose_name = _('tag')
         verbose_name_plural = _('tags')
 
