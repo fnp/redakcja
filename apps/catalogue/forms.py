@@ -52,7 +52,7 @@ class TagForm(forms.Form):
                 'data-content': category.tutorial,
             })
         if self.instance:
-            self.field().initial = self.initial()
+            self.field().initial = self.get_initial()
 
     def save(self, instance=None):
         instance = instance or self.instance
@@ -62,7 +62,7 @@ class TagForm(forms.Form):
     def field(self):
         raise NotImplementedError
 
-    def initial(self):
+    def get_initial(self):
         raise NotImplementedError
 
     def cleaned_tags(self):
@@ -107,7 +107,7 @@ class TagSingleForm(TagForm):
     def field(self):
         return self.fields['tag']
 
-    def initial(self):
+    def get_initial(self):
         return self.instance.tags.get(category=self.category)
 
     def cleaned_tags(self):
@@ -125,7 +125,7 @@ class TagMultipleForm(TagForm):
     def field(self):
         return self.fields['tags']
 
-    def initial(self):
+    def get_initial(self):
         return self.instance.tags.filter(category=self.category)
 
     def cleaned_tags(self):
