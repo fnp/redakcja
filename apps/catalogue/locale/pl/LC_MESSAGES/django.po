@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 15:07+0200\n"
+"POT-Creation-Date: 2017-04-25 14:36+0200\n"
 "PO-Revision-Date: 2014-04-01 11:29+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -44,27 +44,27 @@ msgstr "Publikacja"
 msgid "The cover should be an image file (jpg/png/gif)"
 msgstr "Okładka powinna być plikiem graficznym (jpg/png/gif)"
 
-#: forms.py:88
+#: forms.py:122
 msgid "Choose"
 msgstr "Wybierz"
 
-#: forms.py:105
+#: forms.py:139
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:107
+#: forms.py:141
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: models/document.py:26
+#: models/document.py:62
 msgid "stage"
 msgstr "etap"
 
-#: models/document.py:37 models/publish_log.py:15
+#: models/document.py:73 models/publish_log.py:15
 msgid "document"
 msgstr "dokument"
 
-#: models/document.py:38
+#: models/document.py:74
 msgid "documents"
 msgstr "dokumenty"
 
@@ -88,7 +88,7 @@ msgstr "zapis publikacji książki"
 msgid "book publish records"
 msgstr "zapisy publikacji książek"
 
-#: models/tag.py:13 models/tag.py:20
+#: models/tag.py:13 models/tag.py:21
 msgid "category"
 msgstr "kategoria"
 
@@ -96,15 +96,15 @@ msgstr "kategoria"
 msgid "multiple choice"
 msgstr "wielokrotny wybór"
 
-#: models/tag.py:21
+#: models/tag.py:22
 msgid "categories"
 msgstr "kategorie"
 
-#: models/tag.py:28 models/tag.py:35
+#: models/tag.py:33 models/tag.py:41
 msgid "tag"
 msgstr "tag"
 
-#: models/tag.py:36
+#: models/tag.py:42
 msgid "tags"
 msgstr "tagi"
 
@@ -151,7 +151,7 @@ msgstr "Tytuł"
 #: templates/catalogue/book_list/book_list.html:9
 #: templates/catalogue/book_owner.html:16
 #: templates/catalogue/document_create_missing.html:11
-#: templates/catalogue/finished.html:26 templates/catalogue/upcoming.html:26
+#: templates/catalogue/resource_box.html:20
 msgid "Owner"
 msgstr "Właściciel"
 
@@ -278,8 +278,7 @@ msgid "Undo publishing this resource"
 msgstr "Wycofaj publikację tego zasobu"
 
 #: templates/catalogue/book_text.html:150
-#: templates/catalogue/document_create_missing.html:57
-#: templates/catalogue/finished.html:24 templates/catalogue/upcoming.html:24
+#: templates/catalogue/resource_box.html:18
 msgid "Audience"
 msgstr "Odbiorcy"
 
@@ -332,82 +331,18 @@ msgid "Cover image"
 msgstr "Obraz na okładkę"
 
 #: templates/catalogue/document_create_missing.html:30
-msgid "Language"
-msgstr "Język"
-
-#: templates/catalogue/document_create_missing.html:33
 msgid "Publisher"
 msgstr "Wydawca"
 
-#: templates/catalogue/document_create_missing.html:36
-msgid "Rights"
-msgstr "Prawa autorskie"
-
-#: templates/catalogue/document_create_missing.html:40
-msgid ""
-"You should choose a free license for your resource. We recommend using "
-"Creative Commons Attribution - Share Alike."
-msgstr ""
-"Wybierz wolną licencję dla swojego zasobu. Rekomendujemy Creative Commons "
-"Uznanie autorstwa - Na tych samych warunkach."
-
-#: templates/catalogue/document_create_missing.html:44
-msgid "Only set for resources that are not restricted with copyright."
-msgstr "Tylko dla zasobów nie objętych majątkowym prawem autorskim"
-
-#: templates/catalogue/document_create_missing.html:45
-msgid "public domain"
-msgstr "domena publiczna"
-
-#: templates/catalogue/document_create_missing.html:47
-msgid ""
-"Non-copyleft free culture license. See <a target='_blank' href='//"
-"creativecommons.org/choose/'>creativecommons.org</a>"
-msgstr ""
-"Nie-copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
-"creativecommons.org/choose/'>creativecommons.org</a>"
-
-#: templates/catalogue/document_create_missing.html:48
-msgid "Creative Commons Attribution"
-msgstr "Creative Commons Uznanie autorstwa"
-
-#: templates/catalogue/document_create_missing.html:50
-msgid ""
-"Copyleft free culture license. See <a target='_blank' href='//"
-"creativecommons.org/choose/'>creativecommons.org</a>"
-msgstr ""
-"Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
-"creativecommons.org/choose/'>creativecommons.org</a>"
-
-#: templates/catalogue/document_create_missing.html:51
-msgid "Creative Commons Attribution – Share Alike"
-msgstr "Creative Commons Uznanie autorstwa – Na tych samych warunkach"
-
-#: templates/catalogue/document_create_missing.html:53
-msgid ""
-"Copyleft free culture license. See <a target='_blank' href='http://artlibre."
-"org/'>artlibre.org</a>"
-msgstr ""
-"Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='http://"
-"artlibre.org/'>artlibre.org</a>"
-
-#: templates/catalogue/document_create_missing.html:54
-msgid "Free Art License"
-msgstr "Licencja Wolnej Sztuki (FAL)"
-
-#: templates/catalogue/document_create_missing.html:61
-msgid "Choose primary audience for your resource."
-msgstr "Wybierz główną grupę odbiorców Twojego zasobu"
-
-#: templates/catalogue/document_create_missing.html:71
+#: templates/catalogue/document_create_missing.html:43
 msgid "Summary"
 msgstr "Podsumowanie"
 
-#: templates/catalogue/document_create_missing.html:75
+#: templates/catalogue/document_create_missing.html:47
 msgid "You can provide a short description of the document here."
 msgstr "Możesz tu dodać krótki opis dokumentu."
 
-#: templates/catalogue/document_create_missing.html:85
+#: templates/catalogue/document_create_missing.html:50
 msgid "Create resource"
 msgstr "Utwórz zasób"
 
@@ -419,7 +354,15 @@ msgstr "Utwórz odrębną wersję zasobu"
 msgid "Create as"
 msgstr "Utwórz jako"
 
-#: templates/catalogue/finished.html:8
+#: templates/catalogue/document_list_base.html:11
+msgid "Filters"
+msgstr "Filtry"
+
+#: templates/catalogue/document_list_base.html:14
+msgid "Apply"
+msgstr "Zastosuj"
+
+#: templates/catalogue/finished.html:5
 msgid "Finished resources"
 msgstr "Ukończone zasoby"
 
@@ -431,7 +374,7 @@ msgstr "Nowy zasób +"
 msgid "Projects"
 msgstr "Projekty"
 
-#: templates/catalogue/upcoming.html:8
+#: templates/catalogue/upcoming.html:5
 msgid "Upcoming resources"
 msgstr "Nadchodzące zasoby"
 
@@ -454,6 +397,58 @@ msgstr "nie opublikowane"
 #: templatetags/document_list.py:21
 msgid "empty"
 msgstr "puste"
+
+#~ msgid "Language"
+#~ msgstr "Język"
+
+#~ msgid "Rights"
+#~ msgstr "Prawa autorskie"
+
+#~ msgid ""
+#~ "You should choose a free license for your resource. We recommend using "
+#~ "Creative Commons Attribution - Share Alike."
+#~ msgstr ""
+#~ "Wybierz wolną licencję dla swojego zasobu. Rekomendujemy Creative Commons "
+#~ "Uznanie autorstwa - Na tych samych warunkach."
+
+#~ msgid "Only set for resources that are not restricted with copyright."
+#~ msgstr "Tylko dla zasobów nie objętych majątkowym prawem autorskim"
+
+#~ msgid "public domain"
+#~ msgstr "domena publiczna"
+
+#~ msgid ""
+#~ "Non-copyleft free culture license. See <a target='_blank' href='//"
+#~ "creativecommons.org/choose/'>creativecommons.org</a>"
+#~ msgstr ""
+#~ "Nie-copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
+#~ "creativecommons.org/choose/'>creativecommons.org</a>"
+
+#~ msgid "Creative Commons Attribution"
+#~ msgstr "Creative Commons Uznanie autorstwa"
+
+#~ msgid ""
+#~ "Copyleft free culture license. See <a target='_blank' href='//"
+#~ "creativecommons.org/choose/'>creativecommons.org</a>"
+#~ msgstr ""
+#~ "Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='//"
+#~ "creativecommons.org/choose/'>creativecommons.org</a>"
+
+#~ msgid "Creative Commons Attribution – Share Alike"
+#~ msgstr "Creative Commons Uznanie autorstwa – Na tych samych warunkach"
+
+#~ msgid ""
+#~ "Copyleft free culture license. See <a target='_blank' href='http://"
+#~ "artlibre.org/'>artlibre.org</a>"
+#~ msgstr ""
+#~ "Copyleftowa licencja wolnej kultury. Zob. <a target='_blank' href='http://"
+#~ "artlibre.org/'>artlibre.org</a>"
+
+#~ msgid "Free Art License"
+#~ msgstr "Licencja Wolnej Sztuki (FAL)"
+
+#~ msgid "Choose primary audience for your resource."
+#~ msgstr "Wybierz główną grupę odbiorców Twojego zasobu"
 
 #~ msgid "Chunk with this slug already exists"
 #~ msgstr "Część z tym slugiem już istnieje"
@@ -747,9 +742,6 @@ msgstr "puste"
 
 #~ msgid "broken document"
 #~ msgstr "uszkodzony dokument"
-
-#~ msgid "Apply fixes"
-#~ msgstr "Wykonaj zmiany"
 
 #~ msgid "Can mark for publishing"
 #~ msgstr "Oznacza do publikacji"

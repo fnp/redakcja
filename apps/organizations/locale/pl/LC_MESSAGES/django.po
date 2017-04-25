@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-26 16:44+0100\n"
+"POT-Creation-Date: 2017-04-25 14:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
+
+#: filters.py:17
+msgid "name"
+msgstr "nazwa"
 
 #: forms.py:23
 #, python-format
@@ -60,23 +64,20 @@ msgid "Photo"
 msgstr "Zdjęcie"
 
 #: templates/organizations/edit_user.html:24
-#: templates/organizations/snippets/organization.html:12
+#: templates/organizations/snippets/card.html:12
 #: templates/organizations/snippets/organization_form.html:13
-#: templates/organizations/snippets/user.html:12
 msgid "Country"
 msgstr "Kraj"
 
 #: templates/organizations/edit_user.html:32
-#: templates/organizations/snippets/organization.html:13
+#: templates/organizations/snippets/card.html:13
 #: templates/organizations/snippets/organization_form.html:20
-#: templates/organizations/snippets/user.html:13
 msgid "WWW"
 msgstr "WWW"
 
 #: templates/organizations/edit_user.html:35
-#: templates/organizations/snippets/organization.html:16
+#: templates/organizations/snippets/card.html:16
 #: templates/organizations/snippets/organization_form.html:23
-#: templates/organizations/snippets/user.html:16
 msgid "Description"
 msgstr "Opis"
 
@@ -90,7 +91,9 @@ msgstr "Projekty"
 msgid ""
 "Enter each line as: Internet address, language, description, separated with "
 "spaces"
-msgstr "Wpisz każdą linię w postaci: adres internetowy, język, opis, oddzielone spacjami"
+msgstr ""
+"Wpisz każdą linię w postaci: adres internetowy, język, opis, oddzielone "
+"spacjami"
 
 #: templates/organizations/join.html:6
 msgid "Join organization"
@@ -110,70 +113,69 @@ msgstr ""
 "strong> musi zostać potwierdzone przez jej właściciela.</p>\n"
 "    "
 
-#: templates/organizations/join.html:15 templates/organizations/main.html:10
+#: templates/organizations/join.html:15 templates/organizations/main.html:11
 msgid "Join"
 msgstr "Dołącz"
 
-#: templates/organizations/main.html:8
-#: templates/organizations/user_card.html:8
+#: templates/organizations/main.html:9 templates/organizations/user_card.html:9
 msgid "Edit"
 msgstr "Edytuj"
 
-#: templates/organizations/main.html:13
+#: templates/organizations/main.html:14
 msgid "New resource +"
 msgstr "Nowy zasób +"
 
-#: templates/organizations/main.html:21 templates/organizations/main.html:96
-#: templates/organizations/user_card.html:13
+#: templates/organizations/main.html:22 templates/organizations/main.html:97
+#: templates/organizations/user_card.html:14
 msgid "Resources"
 msgstr "Zasoby"
 
-#: templates/organizations/main.html:22 templates/organizations/main.html:97
+#: templates/organizations/main.html:23 templates/organizations/main.html:98
 msgid "Members"
 msgstr "Członkowie"
 
-#: templates/organizations/main.html:28
+#: templates/organizations/main.html:29
 #: templates/organizations/snippets/organization_form.html:5
 msgid "Name"
 msgstr "Nazwa"
 
-#: templates/organizations/main.html:29
+#: templates/organizations/main.html:30
 msgid "E-mail"
 msgstr "E-mail"
 
-#: templates/organizations/main.html:30
+#: templates/organizations/main.html:31
 msgid "Status"
 msgstr "Status"
 
-#: templates/organizations/main.html:43
+#: templates/organizations/main.html:44
 msgid "owner"
 msgstr "właściciel"
 
-#: templates/organizations/main.html:51
+#: templates/organizations/main.html:52
 msgid "Make regular"
 msgstr "Ustaw jako zwykły"
 
-#: templates/organizations/main.html:52 templates/organizations/main.html:81
+#: templates/organizations/main.html:53 templates/organizations/main.html:82
 msgid "Remove"
 msgstr "Usuń"
 
-#: templates/organizations/main.html:58
+#: templates/organizations/main.html:59
 msgid "pending"
 msgstr "czeka"
 
-#: templates/organizations/main.html:65
+#: templates/organizations/main.html:66
 msgid "Accept"
 msgstr "Zaakceptuj"
 
-#: templates/organizations/main.html:66
+#: templates/organizations/main.html:67
 msgid "Reject"
 msgstr "Odmów"
 
-#: templates/organizations/main.html:70
+#: templates/organizations/main.html:71
 msgid "Waiting for the owner of the organization to accept you as a member."
 msgstr "Czeka na akceptację właściciela organizacji."
 
-#: templates/organizations/main.html:80
+#: templates/organizations/main.html:81
 msgid "Make owner"
 msgstr "Ustaw jako właściciel"
 
@@ -189,8 +191,15 @@ msgstr "Utwórz organizację"
 msgid "Organizations"
 msgstr "Organizacje"
 
-#: templates/organizations/snippets/organization.html:19
-#: templates/organizations/snippets/user.html:21
+#: templates/organizations/organizations.html:11
+msgid "Filters"
+msgstr "Filtry"
+
+#: templates/organizations/organizations.html:14
+msgid "Apply"
+msgstr "Zastosuj"
+
+#: templates/organizations/snippets/card.html:21
 msgid "Main projects and publications"
 msgstr "Główne projekty i publikacje"
 
