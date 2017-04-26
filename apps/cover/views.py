@@ -15,7 +15,6 @@ from catalogue.models import Chunk
 from cover.models import Image
 from cover import forms
 
-
 PREVIEW_SIZE = (216, 300)
 
 
@@ -107,8 +106,6 @@ def image(request, pk):
 
 @active_tab('cover')
 def image_list(request):
-    objects = Image.objects.all()
-    enable_add = request.user.has_perm('cover.add_image')
     return render(request, "cover/image_list.html", {
         'object_list': Image.objects.all(),
         'can_add': request.user.has_perm('cover.add_image'),
