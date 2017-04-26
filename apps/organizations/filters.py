@@ -15,10 +15,6 @@ class OrganizationFilterSet(django_filters.FilterSet):
     name = django_filters.CharFilter(
         lookup_expr='icontains', label='',
         widget=TextInput(attrs={'placeholder': _('name')}))
-    language = tag_filter('language')
-    license = tag_filter('rights')
-    audience = tag_filter('audience')
-    resource_type = tag_filter('type')
     subject = tag_filter('subject')
 
     class Meta:
