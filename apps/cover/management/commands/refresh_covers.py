@@ -25,6 +25,7 @@ class Command(BaseCommand):
             if image.source_url and 'flickr.com' in image.source_url:
                 try:
                     flickr_data = get_flickr_data(image.source_url)
+                    print flickr_data
                 except FlickrError as e:
                     print 'Flickr analysis failed: %s' % e
                 else:
@@ -35,7 +36,7 @@ class Command(BaseCommand):
                             print 'Download url already present in image %s' % same_url.get().id
                             continue
                     try:
-                        t = URLOpener().open(image.download_url).read()
+                        t = URLOpener().open(flickr_data['download_url']).read()
                     except urllib.URLError:
                         print 'Broken download url'
                     except IOError:
