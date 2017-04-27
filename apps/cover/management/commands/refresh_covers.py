@@ -22,7 +22,7 @@ class Command(BaseCommand):
         from_id = options.get('from_id', 1)
         for image in Image.objects.filter(id__gte=from_id).exclude(book=None).order_by('id'):
             print image.id
-            if 'flickr.com' in image.source_url:
+            if image.source_url and 'flickr.com' in image.source_url:
                 try:
                     flickr_data = get_flickr_data(image.source_url)
                 except FlickrError as e:
