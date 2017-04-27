@@ -4,17 +4,23 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import urllib2 as urllib
+from optparse import make_option
 
 from django.core.files.base import ContentFile
-from django.core.management.base import NoArgsCommand
+from django.core.management import BaseCommand
 
 from cover.models import Image
 from cover.utils import get_flickr_data, URLOpener, FlickrError
 
 
-class Command(NoArgsCommand):
-    def handle_noargs(self, **options):
-        for image in Image.objects.exclude(book=None).order_by('id'):
+class Command(BaseCommand):
+    option_list = BaseCommand.option_list + (
+        make_option('--from', dest='from_id', type=int, default=1),
+    )
+
+    def handle(self, *args, **options):
+        from_id = options.get('from_id', 1)
+        for image in Image.objects.filter(id__gte=from_id).exclude(book=None).order_by('id'):
             print image.id
             if 'flickr.com' in image.source_url:
                 try:
@@ -22,6 +28,12 @@ class Command(NoArgsCommand):
                 except FlickrError as e:
                     print 'Flickr analysis failed: %s' % e
                 else:
+                    flickr_url = flickr_data['download_url']
+                    if flickr_url != image.download_url:
+                        same_url = Image.objects.filter(download_url=flickr_url)
+                        if same_url:
+                            print 'Download url already present in image %s' % same_url.get().id
+                            continue
                     try:
                         t = URLOpener().open(image.download_url).read()
                     except urllib.URLError:
