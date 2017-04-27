@@ -36,12 +36,12 @@ class Command(BaseCommand):
                             print 'Download url already present in image %s' % same_url.get().id
                             continue
                     try:
-                        t = URLOpener().open(flickr_data['download_url']).read()
+                        t = URLOpener().open(flickr_url).read()
                     except urllib.URLError:
                         print 'Broken download url'
                     except IOError:
                         print 'Connection failed'
                     else:
-                        image.download_url = flickr_data['download_url']
+                        image.download_url = flickr_url
                         image.file.save(image.file.name, ContentFile(t))
                         image.save()
