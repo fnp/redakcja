@@ -36,12 +36,21 @@ class ImageAddForm(forms.ModelForm):
                     % {'url': img.get_absolute_url()}))
         return cl
 
+    def clean_source_url(self):
+        source_url = self.cleaned_data['source_url'] or None
+        if source_url is not None:
+            same_source = Image.objects.filter(source_url=source_url)
+            if same_source:
+                raise forms.ValidationError(mark_safe(
+                    ugettext('Image <a href="%s">already in repository</a>'
+                             % same_source.first().get_absolute_url())))
+
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
         download_url = cleaned_data.get('download_url', None)
         uploaded_file = cleaned_data.get('file', None)
         if not download_url and not uploaded_file:
-            raise forms.ValidationError('No image specified')
+            raise forms.ValidationError(ugettext('No image specified'))
         if download_url:
             image_data = URLOpener().open(download_url).read()
             width, height = PILImage.open(StringIO(image_data)).size
@@ -49,7 +58,7 @@ class ImageAddForm(forms.ModelForm):
             width, height = PILImage.open(uploaded_file.file).size
         min_width, min_height = settings.MIN_COVER_SIZE
         if width < min_width or height < min_height:
-            raise forms.ValidationError('Image too small: %sx%s, minimal dimensions %sx%s' %
+            raise forms.ValidationError(ugettext('Image too small: %sx%s, minimal dimensions %sx%s') %
                                         (width, height, min_width, min_height))
         return cleaned_data
 
@@ -66,7 +75,7 @@ class ImageEditForm(forms.ModelForm):
         width, height = PILImage.open(uploaded_file.file).size
         min_width, min_height = settings.MIN_COVER_SIZE
         if width < min_width or height < min_height:
-            raise forms.ValidationError('Image too small: %sx%s, minimal dimensions %sx%s' %
+            raise forms.ValidationError(ugettext('Image too small: %sx%s, minimal dimensions %sx%s') %
                                         (width, height, min_width, min_height))
 
 
