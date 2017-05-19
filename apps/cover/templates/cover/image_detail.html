@@ -27,7 +27,6 @@
 {% if editable %}
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.non_field_errors }}
 {% endif %}
 <table class='editable'><tbody>
     {{ form.as_table }}

@@ -98,7 +98,7 @@ def image(request, pk):
         editable = False
 
     return render(request, "cover/image_detail.html", {
-        "object": image,
+        "object": Image.objects.get(id=image.id),
         "form": form,
         "editable": editable,
     })

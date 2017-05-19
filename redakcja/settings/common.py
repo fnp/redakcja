@@ -144,6 +144,8 @@ CELERY_ACCEPT_CONTENT = ['pickle']  # Remove when all tasks jsonable.
 
 SHOW_APP_VERSION = False
 
+MIN_COVER_SIZE = (915, 1270)
+
 try:
     from redakcja.settings.compress import *
 except ImportError:

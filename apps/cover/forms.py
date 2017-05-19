@@ -3,12 +3,16 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from StringIO import StringIO
+
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
 from cover.models import Image
 from django.utils.text import mark_safe
+from PIL import Image as PILImage
 
-from cover.utils import get_flickr_data, FlickrError
+from cover.utils import get_flickr_data, FlickrError, URLOpener
 
 
 class ImageAddForm(forms.ModelForm):
@@ -34,8 +38,19 @@ class ImageAddForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
-        if not cleaned_data.get('download_url', None) and not cleaned_data.get('file', None):
+        download_url = cleaned_data.get('download_url', None)
+        uploaded_file = cleaned_data.get('file', None)
+        if not download_url and not uploaded_file:
             raise forms.ValidationError('No image specified')
+        if download_url:
+            image_data = URLOpener().open(download_url).read()
+            width, height = PILImage.open(StringIO(image_data)).size
+        else:
+            width, height = PILImage.open(uploaded_file.file).size
+        min_width, min_height = settings.MIN_COVER_SIZE
+        if width < min_width or height < min_height:
+            raise forms.ValidationError('Image too small: %sx%s, minimal dimensions %sx%s' %
+                                        (width, height, min_width, min_height))
         return cleaned_data
 
 
@@ -44,6 +59,15 @@ class ImageEditForm(forms.ModelForm):
     class Meta:
         model = Image
         exclude = ['download_url']
+
+    def clean(self):
+        cleaned_data = super(ImageEditForm, self).clean()
+        uploaded_file = cleaned_data.get('file', None)
+        width, height = PILImage.open(uploaded_file.file).size
+        min_width, min_height = settings.MIN_COVER_SIZE
+        if width < min_width or height < min_height:
+            raise forms.ValidationError('Image too small: %sx%s, minimal dimensions %sx%s' %
+                                        (width, height, min_width, min_height))
 
 
 class ReadonlyImageEditForm(ImageEditForm):
