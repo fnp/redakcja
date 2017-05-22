@@ -69,6 +69,7 @@ class Command(BaseCommand):
         csvfile.close()
 
         for slug, isbn_list in isbn_lists.iteritems():
+            print 'processing %s' % slug
             book = Book.objects.get(dc_slug=slug)
             chunk = book.chunk_set.first()
             old_head = chunk.head
@@ -76,7 +77,8 @@ class Command(BaseCommand):
             tree = etree.fromstring(src)
             isbn_node = tree.find('.//' + DCNS("relation.hasFormat"))
             if isbn_node is not None:
-                raise Exception('%s already contains ISBN metadata!' % slug)
+                print '%s already contains ISBN metadata, skipping' % slug
+                continue
             desc = tree.find(".//" + RDFNS("Description"))
             for format, isbn in isbn_list:
                 for template in ISBN_TEMPLATES:
