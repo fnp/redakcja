@@ -204,16 +204,25 @@ def upload(request):
     })
 
 
-@never_cache
-def book_xml(request, slug):
-    book = get_object_or_404(Book, slug=slug)
+def serve_xml(request, book, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
     xml = book.materialize()
-
     response = http.HttpResponse(xml, content_type='application/xml')
     response['Content-Disposition'] = 'attachment; filename=%s.xml' % slug
     return response
+
+
+@never_cache
+def book_xml(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    return serve_xml(request, book, slug)
+
+
+@never_cache
+def book_xml_dc(request, slug):
+    book = get_object_or_404(Book, dc_slug=slug)
+    return serve_xml(request, book, slug)
 
 
 @never_cache
