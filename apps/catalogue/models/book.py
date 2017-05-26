@@ -428,8 +428,8 @@ class Book(models.Model):
         """
         self.assert_publishable()
         changes = self.get_current_changes(publishable=True)
-        book_xml = self.materialize(changes=changes)
         if not fake:
+            book_xml = self.materialize(changes=changes)
             data = {"book_xml": book_xml}
             if host:
                 data['gallery_url'] = host + self.gallery_url()
@@ -438,6 +438,9 @@ class Book(models.Model):
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
             ChunkPublishRecord.objects.create(book_record=br, change=c)
+        if not self.public:
+            self.public = True
+            self.save()
         post_publish.send(sender=br)
 
     def latex_dir(self):
