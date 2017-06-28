@@ -14,7 +14,16 @@
 </li>
 
 <li><a href="/platform/" style="color: white">{% trans "About" %}</a></li>
-<li><a href="/appyourschool/" style="color: white">{% trans "App Your School" %}</a></li>
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" type="button" data-toggle="dropdown" style="color: white">
+        {% trans "Projects" %}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="/appyourschool/">{% trans "App Your School" %}</a></li>
+        <li><a href="https://emels.eu">{% trans "Emels" %}</a></li>
+    </ul>
+</li>
 {#<li><a href="/competition/" style="color: white">{% trans "Competition" %}</a></li>#}
 <li class="dropdown" {% if request.path == '/' %}
     data-toggle="tutorial" data-tutorial="1" data-placement="bottom"
