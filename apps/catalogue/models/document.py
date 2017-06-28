@@ -74,6 +74,7 @@ class Document(Ref):
     class Meta:
         verbose_name = _('document')
         verbose_name_plural = _('documents')
+        ordering = ['-revision__created_at']
 
     def short_html(self):
         return render_to_string('catalogue/book_list/book.html', {'book': self})
