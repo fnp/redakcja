@@ -426,6 +426,17 @@
     pk: 48
 -   fields:
         accesskey: ''
+        group: [15]
+        label: indeks dolny
+        link: ''
+        params: '{"tag": "indeks_dolny"}'
+        scriptlet: insert_tag
+        slug: indeks-dolny
+        tooltip: ''
+    model: toolbar.button
+    pk: 49
+-   fields:
+        accesskey: ''
         group: [29]
         label: uwaga
         link: ''

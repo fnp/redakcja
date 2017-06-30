@@ -637,6 +637,16 @@
         </em>
     </xsl:template>
 
+    <xsl:template match="indeks_dolny">
+        <xsl:param name="mixed" />
+        <sub>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="true()" />
+            </xsl:apply-templates>
+        </sub>
+    </xsl:template>
+
     <!--
         **********
         SEPARATORY
