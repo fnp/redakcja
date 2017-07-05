@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 from tempfile import NamedTemporaryFile
+from xml.sax.saxutils import escape as escape_xml
 
 from django.conf import settings
 from django.contrib import auth
@@ -115,17 +116,24 @@ def create_missing(request):
             else:
                 cover_url = ''
 
-            doc.commit(
-                text='''<section xmlns="http://nowoczesnapolska.org.pl/sst#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            text = '''<section xmlns="http://nowoczesnapolska.org.pl/sst#" xmlns:dc="http://purl.org/dc/elements/1.1/">
                 <metadata>
-                    <dc:publisher>''' + form.cleaned_data['publisher'] + '''</dc:publisher>
-                    <dc:description>''' + form.cleaned_data['description'] + '''</dc:description>
-                    ''' + '\n'.join(tag_form.metadata_rows() for tag_form in tag_forms) + '''
-                    <dc:relation.coverImage.url>''' + cover_url + '''</dc:relation.coverImage.url>
+                    <dc:publisher>%s</dc:publisher>
+                    <dc:description>%s</dc:description>
+                    %s
+                    <dc:relation.coverImage.url>%s</dc:relation.coverImage.url>
                 </metadata>
-                <header>''' + title + '''</header>
+                <header>%s</header>
                 <div class="p"> </div>
-                </section>''',
+                </section>''' % (
+                    escape_xml(form.cleaned_data['publisher']),
+                    escape_xml(form.cleaned_data['description']),
+                    '\n'.join(tag_form.metadata_rows() for tag_form in tag_forms),
+                    escape_xml(cover_url),
+                    escape_xml(title))
+
+            doc.commit(
+                text=text,
                 author=creator
             )
             doc.assigned_to = request.user
