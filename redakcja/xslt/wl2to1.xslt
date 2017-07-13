@@ -15,46 +15,43 @@
                 <xsl:value-of select="@redslug" />
                 <xsl:text>/</xsl:text>
             </xsl:attribute>
-        <dc:title xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><xsl:apply-templates select="header/text()" /></dc:title>
-        <dc:identifier.url xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">
-            <xsl:text>http://edukacjamedialna.edu.pl/lekcje/</xsl:text>
-            <xsl:value-of select="@wlslug" />
-            <xsl:text>/</xsl:text>
-        </dc:identifier.url>
+            <dc:title xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><xsl:apply-templates select="header/text()" /></dc:title>
+            <dc:identifier.url xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">
+                <xsl:text>http://edukacjamedialna.edu.pl/lekcje/</xsl:text>
+                <xsl:value-of select="@wlslug" />
+                <xsl:text>/</xsl:text>
+            </dc:identifier.url>
 
-        <!--dc:creator.expert xml:lang="pl" ></dc:creator.expert>
-        <dc:creator.methodologist xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.methodologist>
-        <dc:creator.scenario xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.scenario>
-        <dc:creator.textbook xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.textbook-->
+            <!--dc:creator.expert xml:lang="pl" ></dc:creator.expert>
+            <dc:creator.methodologist xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.methodologist>
+            <dc:creator.scenario xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.scenario>
+            <dc:creator.textbook xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:creator.textbook-->
 
-        <xsl:apply-templates select="metadata" mode="meta" />
+            <xsl:apply-templates select="metadata" mode="meta" />
 
-        <dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
-        <dc:rights xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0</dc:rights>
-        <dc:rights.license xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
-        <dc:format xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">xml</dc:format>
-        <!--dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">added-var</dc:type-->
-        <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2015-01-12</dc:date>
-	<!--dc:audience xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><!- -liceum - -><xsl:value-of select="//dc:audience/text()" /></dc:audience-->
-        <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">pol</dc:language>
+            <dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
+            <dc:rights xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0</dc:rights>
+            <dc:rights.license xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
+            <dc:format xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">xml</dc:format>
+            <!--dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">added-var</dc:type-->
+            <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2015-01-12</dc:date>
+            <!--dc:audience xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><!- -liceum - -><xsl:value-of select="//dc:audience/text()" /></dc:audience-->
+            <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">pol</dc:language>
         </rdf:Description>
         </rdf:RDF>
         <powiesc>
             <xsl:apply-templates />
         </powiesc>
         </utwor>
-    </xsl:when>
-    <xsl:when test="count(ancestor::*) = 3">
-        <aktywnosc>
-            <opis><xsl:apply-templates select="header" /><xsl:apply-templates select="div" mode="opis" /></opis>
-            <xsl:apply-templates select="div" mode="aktywnosc" />
-            <xsl:apply-templates select="section" mode="error" />
-        </aktywnosc>
-</xsl:when>
-<xsl:when test='header/text() = "Zadanie dla ucznia..."'>
-
-</xsl:when>
-    <xsl:otherwise><xsl:apply-templates /></xsl:otherwise>
+        </xsl:when>
+        <xsl:when test="count(ancestor::*) = 3">
+            <aktywnosc>
+                <opis><xsl:apply-templates select="header" /><xsl:apply-templates select="div" mode="opis" /></opis>
+                <xsl:apply-templates select="div" mode="aktywnosc" />
+                <xsl:apply-templates select="section" mode="error" />
+            </aktywnosc>
+        </xsl:when>
+        <xsl:otherwise><xsl:apply-templates /></xsl:otherwise>
     </xsl:choose>
 </xsl:template>
 
@@ -96,9 +93,9 @@
         <xsl:when test="@class = 'list.itemized'">
             <lista typ="punkt"><xsl:apply-templates /></lista>
         </xsl:when>
-	<xsl:when test="@class = 'list.enum'">
-	    <lista typ="num"><xsl:apply-templates /></lista>
-	</xsl:when>
+        <xsl:when test="@class = 'list.enum'">
+            <lista typ="num"><xsl:apply-templates /></lista>
+        </xsl:when>
         <xsl:when test="@class = 'list.definitions'">
             <xsl:choose>
                 <xsl:when test="@src = ''">
@@ -123,6 +120,38 @@
                 <xsl:otherwise>
                 </xsl:otherwise>
             </xsl:choose>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.order'">
+            <cwiczenie typ="uporzadkuj">
+                <xsl:for-each select="div">
+                    <xsl:choose>
+                        <xsl:when test="@class = 'p'">
+                            <opis><akap><xsl:value-of select="."/></akap></opis>
+                        </xsl:when>
+                        <xsl:when test="@class = 'list.orderable'">
+                            <lista typ="punkt">
+                                <xsl:apply-templates select="div" mode="exercise.order.list"/>
+                            </lista>
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:for-each>
+            </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.choice.true-or-false'">
+            <cwiczenie typ="prawdafalsz">
+                <xsl:for-each select="div">
+                    <xsl:choose>
+                        <xsl:when test="@class = 'p'">
+                            <opis><akap><xsl:value-of select="."/></akap></opis>
+                        </xsl:when>
+                        <xsl:when test="@class = 'list'">
+                            <lista typ="punkt">
+                                <xsl:apply-templates select="div" mode="exercise.true-or-false"/>
+                            </lista>
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:for-each>
+            </cwiczenie>
         </xsl:when>
         <xsl:otherwise>
             <NIEZNANY_DIV><xsl:value-of select="@class" /></NIEZNANY_DIV>
@@ -173,33 +202,50 @@
                         <xsl:attribute name="material">
                             <xsl:value-of select="wl:rmext(substring(@href, 8))" />
                         </xsl:attribute>
-		    </xsl:when>
-		    <xsl:when test="starts-with(@href, 'http')">
-				    <xsl:attribute name="url">
-					    <xsl:value-of select="@href" />
-				    </xsl:attribute>
-		    </xsl:when>
-		    <xsl:otherwise>
-				    <xsl:attribute name="url">
-					    <xsl:value-of select="text()" />
-				    </xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="starts-with(@href, 'http')">
+                        <xsl:attribute name="url">
+                            <xsl:value-of select="@href" />
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="url">
+                            <xsl:value-of select="text()" />
+                        </xsl:attribute>
                     </xsl:otherwise>
-	    </xsl:choose>
-				<xsl:apply-templates />
+                </xsl:choose>
+                <xsl:apply-templates />
             </link>
         </xsl:when>
         <xsl:when test="@class = 'emp'">
             <wyroznienie><xsl:apply-templates /></wyroznienie>
-    </xsl:when>
-    <xsl:when test="@class='cite'">
-	    <dlugi_cytat><xsl:apply-templates /></dlugi_cytat>
-    </xsl:when>
+        </xsl:when>
+        <xsl:when test="@class = 'cite'">
+            <dlugi_cytat><xsl:apply-templates /></dlugi_cytat>
+        </xsl:when>
         <xsl:otherwise>
             <NIEZNANY_SPAN><xsl:value-of select="@class" /></NIEZNANY_SPAN>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
 
+<xsl:template match="div" mode="exercise.order.list">
+    <punkt rozw="{@answer}"><xsl:value-of select="."/></punkt>
+</xsl:template>
+
+<xsl:template match="div" mode="exercise.true-or-false">
+    <xsl:element name="punkt">
+        <xsl:choose>
+            <xsl:when test="@answer = 'true'">
+                <xsl:attribute name="rozw">prawda</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@answer = 'false'">
+                <xsl:attribute name="rozw">falsz</xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:value-of select="."/>
+    </xsl:element>
+</xsl:template>
 
 <xsl:template match="section" mode="error">
     NIEZNANA_SEKCJA
