@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-24 12:11+0100\n"
+"POT-Creation-Date: 2017-07-17 16:45+0200\n"
 "PO-Revision-Date: 2013-07-10 16:58+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -18,39 +18,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:19 forms.py:63 views.py:45
+#: forms.py:18 forms.py:63 views.py:44
 msgid "Publishable"
 msgstr "Do publikacji"
 
-#: forms.py:38 forms.py:96
+#: forms.py:37 forms.py:122
 msgid "Author"
 msgstr "Autor"
 
-#: forms.py:39 forms.py:97
+#: forms.py:38 forms.py:123
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
-#: forms.py:44 forms.py:102
+#: forms.py:43 forms.py:128
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: forms.py:45 forms.py:103
+#: forms.py:44 forms.py:129
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: forms.py:51 forms.py:109
+#: forms.py:50 forms.py:135
 msgid "Your comments"
 msgstr "Twój komentarz"
 
-#: forms.py:52
+#: forms.py:51
 msgid "Describe changes you made."
 msgstr "Opisz swoje zmiany"
 
-#: forms.py:58
+#: forms.py:57
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:59
+#: forms.py:58
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
@@ -58,15 +58,15 @@ msgstr "Jeśli został ukończony etap prac, wskaż go."
 msgid "Mark this revision as publishable."
 msgstr "Oznacz tę wersję jako gotową do publikacji."
 
-#: forms.py:69
+#: forms.py:68
 msgid "For Cybernauts"
 msgstr "Dla Cybernautów"
 
-#: forms.py:70
+#: forms.py:69
 msgid "Mark this document for Cybernauts."
 msgstr "Oznacz dokument do użytku w Cybernautach"
 
-#: forms.py:110
+#: forms.py:136
 msgid "Describe the reason for reverting."
 msgstr "Opisz powód przywrócenia."
 
@@ -86,11 +86,11 @@ msgstr "motywy"
 msgid "Published"
 msgstr "Opublikowano"
 
-#: views.py:329
+#: views.py:307
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: views.py:331
+#: views.py:309
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
@@ -122,10 +122,6 @@ msgstr "Stara wersja"
 #: templates/wiki/diff_table.html:6
 msgid "New version"
 msgstr "Nowa wersja"
-
-#: templates/wiki/document_details.html:32
-msgid "Click to open/close gallery"
-msgstr "Kliknij, aby (ro)zwinąć galerię"
 
 #: templates/wiki/document_details_base.html:33
 msgid "Help"
@@ -245,43 +241,39 @@ msgstr "Znajdź i zamień"
 msgid "Source code"
 msgstr "Kod źródłowy"
 
-#: templates/wiki/tabs/summary_view.html:13
-msgid "Refresh from working copy"
-msgstr "Odśwież z edytowanej wersji"
-
-#: templates/wiki/tabs/summary_view.html:17
+#: templates/wiki/tabs/summary_view.html:7
 msgid "Title"
 msgstr "Tytuł"
 
-#: templates/wiki/tabs/summary_view.html:21
+#: templates/wiki/tabs/summary_view.html:11
 msgid "Go to the book's page"
 msgstr "Przejdź do strony książki"
 
-#: templates/wiki/tabs/summary_view.html:24
+#: templates/wiki/tabs/summary_view.html:14
 msgid "Document ID"
 msgstr "ID dokumentu"
 
-#: templates/wiki/tabs/summary_view.html:28
+#: templates/wiki/tabs/summary_view.html:18
 msgid "Current version"
 msgstr "Aktualna wersja"
 
-#: templates/wiki/tabs/summary_view.html:31
+#: templates/wiki/tabs/summary_view.html:21
 msgid "Last edited by"
 msgstr "Ostatnio edytowane przez"
 
-#: templates/wiki/tabs/summary_view.html:35
+#: templates/wiki/tabs/summary_view.html:25
 msgid "Link to gallery"
 msgstr "Link do galerii"
 
-#: templates/wiki/tabs/summary_view.html:40
+#: templates/wiki/tabs/summary_view.html:30
 msgid "Characters in document"
 msgstr "Znaków w dokumencie"
 
-#: templates/wiki/tabs/summary_view.html:41
+#: templates/wiki/tabs/summary_view.html:31
 msgid "pages"
 msgstr "stron maszynopisu"
 
-#: templates/wiki/tabs/summary_view.html:41
+#: templates/wiki/tabs/summary_view.html:31
 msgid "untagged"
 msgstr "nieotagowane"
 
@@ -300,6 +292,12 @@ msgstr "Wstaw przypis"
 #: templates/wiki/tabs/wysiwyg_editor_item.html:3
 msgid "Visual editor"
 msgstr "Edytor wizualny"
+
+#~ msgid "Click to open/close gallery"
+#~ msgstr "Kliknij, aby (ro)zwinąć galerię"
+
+#~ msgid "Refresh from working copy"
+#~ msgstr "Odśwież z edytowanej wersji"
 
 #~ msgid "ZIP file"
 #~ msgstr "Plik ZIP"

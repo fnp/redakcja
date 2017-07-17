@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-21 14:43+0100\n"
+"POT-Creation-Date: 2017-07-17 16:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,126 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2759
-#: static/wiki/editor/src/editor/modules/data/data.js:13
-msgid "This is an empty document."
-msgstr "To jest pusty dokument."
+#: static/wiki/editor/src/editor/modules/data/data.js:32
+msgid ""
+"The content of this document seems to be invalid - only XML source editing "
+"will be possible. :("
+msgstr ""
+"Wygląda na to, że dokument zawiera błędy - możliwa będzie jedynie edycja "
+"źródła. :("
 
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2773
-#: static/wiki/editor/src/editor/modules/data/data.js:27
-msgid "The content of this document seems to be invalid - only XML source editing will be possible. :("
-msgstr "Wygląda na to, że dokument zawiera błędy - możliwa będzie jedynie edycja źródła. :("
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2838
-#: static/wiki/editor/src/editor/modules/data/data.js:92
-msgid "Save Document"
-msgstr "Zapisz dokument"
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2839
-#: static/wiki/editor/src/editor/modules/data/data.js:93
-msgid "Save"
-msgstr "Zapisz"
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2894
-#: static/wiki/editor/src/editor/modules/data/data.js:148
-msgid "Restore Version"
-msgstr "Przywracanie wersji"
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:2895
-#: static/wiki/editor/src/editor/modules/data/data.js:149
-msgid "Restore"
-msgstr "Przywróć"
-
-#: static/wiki/editor/src/editor/modules/data/document.js:28
-msgid "Error"
-msgstr "Błąd"
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:141
-msgid "Create link"
-msgstr "Utwórz link"
-
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:142
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:224
-msgid "Apply"
-msgstr "Zatwierdź"
-
-#: static/wiki/editor/src/editor/modules/data/document.js:29
-msgid "Something wrong happend when applying this change so it was undone."
-msgstr "Coś poszło nie tak podczas wprowadzania tej zmiany, więc została ona cofnięta."
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:145
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:227
-msgid "Link"
-msgstr "Link"
-
-#: static/wiki/editor/src/editor/modules/documentCanvas/commands.js:223
-msgid "Edit link"
-msgstr "Edytuj link"
-
-#: static/wiki/editor/src/editor/modules/mainBar/template.html:5
-msgid "Exit"
-msgstr "Wyjdź"
-
-#: static/wiki/editor/src/editor/modules/nodePane/template.html:3
-msgid "Current node"
-msgstr "Bieżący węzeł"
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3172
-#: static/wiki/editor/src/editor/modules/rng/rng.js:73
-msgid "Editor"
-msgstr "Edytor"
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3173
-#: static/wiki/editor/build/rng.js:3188
-#: static/wiki/editor/src/editor/modules/rng/rng.js:74
-#: static/wiki/editor/src/editor/modules/rng/rng.js:89
-msgid "Source"
-msgstr "Źródło"
-
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3174
-#: static/wiki/editor/src/editor/modules/rng/rng.js:75
-msgid "History"
-msgstr "Historia"
-
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:61
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:86
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:124
-msgid "Splitting text"
-msgstr "Rozbicie tekstu"
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3212
-#: static/wiki/editor/src/editor/modules/rng/rng.js:113
-msgid "Saving..."
-msgstr "Zapisywanie..."
-
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:309
-msgid "Remove text"
-msgstr "Usuń tekst"
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3223
-#: static/wiki/editor/src/editor/modules/rng/rng.js:124
-msgid "Restoring version "
-msgstr "Przywracanie wersji"
-
-#: static/wiki/editor/src/editor/modules/documentToolbar/actionView.js:49
-#: static/wiki/editor/src/editor/modules/statusBar/statusBar.js:28
-msgid "error :("
-msgstr "błąd :("
-#: static/wiki/build/rng.js:6 static/wiki/editor/build/rng.js:3353
-#: static/wiki/editor/src/editor/modules/rng/rng.js:247
-msgid "editor"
-msgstr "edytor"
-
-#: static/wiki/editor/build/rng.js:3364
-#: static/wiki/editor/src/editor/modules/rng/rng.js:273
-msgid "Do you really want to exit?"
-msgstr "Czy na pewno chcesz zakończyć pracę?"
-
-#: static/wiki/editor/build/rng.js:3366
-#: static/wiki/editor/src/editor/modules/rng/rng.js:275
-msgid "Document contains unsaved changes!"
-msgstr "Dokument zawiera niezapisane zmiany"
-
-#: static/wiki/editor/src/editor/modules/data/data.js:137
+#: static/wiki/editor/src/editor/modules/data/data.js:138
 msgid "Local draft of a document exists"
 msgstr "Istnieje kopia lokalna dokumentu"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:138
+#: static/wiki/editor/src/editor/modules/data/data.js:139
 msgid ""
 "Unsaved local draft of this version of the document exists in your browser. "
 "Do you want to load it instead?"
@@ -146,226 +38,292 @@ msgstr ""
 "Twoja przeglądarka posiada niezapisaną jeszcze na serwerze lokalną kopię tej "
 "wersji dokumentu. Czy chcesz jej teraz użyć?"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:139
+#: static/wiki/editor/src/editor/modules/data/data.js:140
 msgid "Yes, restore local draft"
 msgstr "Tak, chcę użyć lokalnej kopii"
 
-#: static/wiki/editor/src/editor/modules/data/data.js:140
+#: static/wiki/editor/src/editor/modules/data/data.js:141
 msgid "No, use version loaded from the server"
 msgstr "Nie, chcę załadować wersję z serwera"
 
-#: static/wiki/editor/src/editor/modules/data/dialog.js:30
-msgid "Submit"
-msgstr "Zatwierdź"
+#: static/wiki/editor/src/editor/modules/data/data.js:178
+msgid "Save Document"
+msgstr "Zapisz dokument"
 
-#: static/wiki/editor/src/editor/modules/data/dialog.js:31
+#: static/wiki/editor/src/editor/modules/data/data.js:179
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comment.html:10
+msgid "Save"
+msgstr "Zapisz"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:180
+#: static/wiki/editor/src/editor/modules/data/data.js:254
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comment.html:16
+#: static/wiki/editor/src/editor/plugins/core/core.js:528
+#: static/wiki/editor/src/editor/plugins/core/core.js:567
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:23
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:116
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:50
 msgid "Cancel"
 msgstr "Anuluj"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:252
+msgid "Restore Version"
+msgstr "Przywracanie wersji"
+
+#: static/wiki/editor/src/editor/modules/data/data.js:253
+msgid "Restore"
+msgstr "Przywróć"
+
+#: static/wiki/editor/src/editor/modules/data/document.js:29
+msgid "Error"
+msgstr "Błąd"
+
+#: static/wiki/editor/src/editor/modules/data/document.js:30
+msgid "Something wrong happend when applying this change so it was undone."
+msgstr ""
+"Coś poszło nie tak podczas wprowadzania tej zmiany, więc została ona "
+"cofnięta."
+
+#: static/wiki/editor/src/editor/modules/data/document.js:31
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:23
+msgid "Close"
+msgstr "Zamknij"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/canvas.js:57
+msgid "Changing text"
+msgstr "Edycja tekstu"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:281
+msgid "Remove text"
+msgstr "Usuń tekst"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/keyboard.js:401
+msgid "Splitting text"
+msgstr "Rozbicie tekstu"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comment.html:13
+msgid "remove"
+msgstr "usuń"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comment.html:15
+msgid "Delete this comment?"
+msgstr "Usunąć ten komentarz?"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.html:3
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.js:97
+msgid "Comment"
+msgstr "Skomentuj"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.js:74
+msgid "Add comment"
+msgstr "Skomentuj"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.js:106
+msgid "Respond"
+msgstr "Odpowiedz"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.js:163
+msgid "Remove comment"
+msgstr "Usuń komentarz"
+
+#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/comments/comments.js:205
+msgid "Edit comment"
+msgstr "Zmień komentarz"
+
+#: static/wiki/editor/src/editor/modules/documentToolbar/actionView.js:49
+#: static/wiki/editor/src/editor/modules/statusBar/statusBar.js:28
+msgid "error :("
+msgstr "błąd :("
 
 #: static/wiki/editor/src/editor/modules/mainBar/mainBar.js:15
 msgid "anonymous"
 msgstr "anonim"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:119
-msgid "Saving document"
-msgstr "Zapisywanie dokumentu"
+#: static/wiki/editor/src/editor/modules/mainBar/template.html:3
+msgid "Exit"
+msgstr "Wyjdź"
 
-#: static/wiki/editor/src/editor/modules/rng/rng.js:120
-msgid "Saving local copy"
-msgstr "Zapisywanie kopii lokalnej"
-
-#: static/wiki/editor/src/editor/modules/rng/rng.js:128
-msgid "Document saved"
-msgstr "Dokument zapisany"
-
-#: static/wiki/editor/src/editor/modules/rng/rng.js:129
-msgid "Local copy saved"
-msgstr "Wersja robocza zapisana"
-
+#: static/wiki/editor/src/editor/modules/rng/documentSummary.html:1
 msgid "Draft Saved"
 msgstr "Zapisana wersja robocza"
 
-msgid "no draft exists"
-msgstr "brak wersji roboczej"
+#: static/wiki/editor/src/editor/modules/rng/rng.js:39
+msgid "Editor"
+msgstr "Edytor"
 
-msgid "drop a working draft"
-msgstr "porzuć wersję roboczą"
+#: static/wiki/editor/src/editor/modules/rng/rng.js:40
+#: static/wiki/editor/src/editor/modules/rng/rng.js:53
+msgid "Source"
+msgstr "Źródło"
 
-#: static/wiki/editor/src/editor/modules/documentCanvas/canvas/canvas.js:45
-msgid "Changing text"
-msgstr "Edycja tekstu"
+#: static/wiki/editor/src/editor/modules/rng/rng.js:41
+msgid "History"
+msgstr "Historia"
 
-#: static/wiki/editor/src/editor/modules/metadataEditor/metadataEditor.js:26
-msgid "Add metadata row"
-msgstr "Dodaj wiersz metadanych"
+#: static/wiki/editor/src/editor/modules/rng/rng.js:97
+msgid "Saving document"
+msgstr "Zapisywanie dokumentu"
 
-#: static/wiki/editor/src/editor/modules/metadataEditor/metadataEditor.js:32
-msgid "Remove metadata row"
-msgstr "Usuń wiersz metadanych"
+#: static/wiki/editor/src/editor/modules/rng/rng.js:98
+msgid "Saving local copy"
+msgstr "Zapisywanie kopii lokalnej"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:106
+msgid "Document saved"
+msgstr "Dokument zapisany"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:107
+msgid "Local copy saved"
+msgstr "Wersja robocza zapisana"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:125
+msgid "Restoring version "
+msgstr "Przywracanie wersji"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:231
+msgid "Do you really want to exit?"
+msgstr "Czy na pewno chcesz zakończyć pracę?"
+
+#: static/wiki/editor/src/editor/modules/rng/rng.js:233
+msgid "Document contains unsaved changes!"
+msgstr "Dokument zawiera niezapisane zmiany"
 
 #: static/wiki/editor/src/editor/modules/statusBar/statusBar.js:33
 msgid "Undescribed action"
 msgstr "Działanie nieopisane"
-#: static/wiki/editor/src/editor/modules/metadataEditor/metadataEditor.js:59
-msgid "Metadata edit"
-msgstr "Edycja metadanych"
 
-#: static/wiki/editor/src/editor/modules/statusBar/statusBar.js:22
+#: static/wiki/editor/src/editor/modules/statusBar/statusBar.js:33
 msgid "Action not allowed"
 msgstr "Działanie niedozwolone"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:63
+#: static/wiki/editor/src/editor/plugins/core/core.js:347
 msgid "Undo"
 msgstr "Cofnij"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:63
+#: static/wiki/editor/src/editor/plugins/core/core.js:347
 msgid "Redo"
 msgstr "Powtórz"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:64
+#: static/wiki/editor/src/editor/plugins/core/core.js:348
 msgid "There is nothing to undo"
 msgstr "Nie ma nic więcej do cofnięcia"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:64
+#: static/wiki/editor/src/editor/plugins/core/core.js:348
 msgid "There is nothing to redo"
 msgstr "Nie ma nic więcej do powtórzenia"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:66
+#: static/wiki/editor/src/editor/plugins/core/core.js:352
 msgid "unknown operation"
 msgstr "Nieznana operacja"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:126
+#: static/wiki/editor/src/editor/plugins/core/core.js:422
 msgid "Insert comment"
 msgstr "Wstaw komentarz"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:148
-msgid "Hide grid"
-msgstr "Schowaj siatkę"
+#: static/wiki/editor/src/editor/plugins/core/core.js:526
+msgid "Create link"
+msgstr "Utwórz link"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:148
-msgid "Show grid"
-msgstr "Pokaż siatkę"
-#: static/wiki/editor/src/editor/plugins/core/core.js:293
+#: static/wiki/editor/src/editor/plugins/core/core.js:527
+#: static/wiki/editor/src/editor/plugins/core/core.js:566
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:22
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:115
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:49
+msgid "Apply"
+msgstr "Zatwierdź"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:530
+#: static/wiki/editor/src/editor/plugins/core/core.js:569
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:52
+msgid "Link"
+msgstr "Link"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:565
+#: static/wiki/editor/src/editor/plugins/core/core.js:619
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:48
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:68
+msgid "Edit link"
+msgstr "Edytuj link"
+
+#: static/wiki/editor/src/editor/plugins/core/core.js:596
 msgid "link"
 msgstr "link"
 
-#: static/wiki/editor/src/editor/plugins/core/footnote.js:47
-#: static/wiki/editor/src/editor/plugins/core/core.js:306
+#: static/wiki/editor/src/editor/plugins/core/core.js:609
 msgid "Create link from selection"
 msgstr "Utwórz link z zaznaczonego tekstu"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:325
+#: static/wiki/editor/src/editor/plugins/core/core.js:634
 msgid "Mark as emphasized"
 msgstr "Oznacz jako wyróżnione"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:365
+#: static/wiki/editor/src/editor/plugins/core/core.js:634
 msgid "Remove emphasis"
 msgstr "Usuń wyróżnienie"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:366
-#: static/wiki/editor/src/editor/plugins/core/core.js:326
+#: static/wiki/editor/src/editor/plugins/core/core.js:635
 msgid "Mark as citation"
 msgstr "Oznacz jako cytat"
 
-#: static/wiki/editor/src/editor/plugins/core/core.js:366
+#: static/wiki/editor/src/editor/plugins/core/core.js:635
 msgid "Remove citation"
 msgstr "Usuń cytat"
 
+#: static/wiki/editor/src/editor/plugins/core/footnote.js:51
 msgid "Create footnote from selection"
 msgstr "Utwórz przypis z zaznaczonego tekstu"
 
-#: static/wiki/editor/src/editor/plugins/core/footnote.js:54
+#: static/wiki/editor/src/editor/plugins/core/footnote.js:58
 msgid "Insert footnote after cursor"
 msgstr "Wstaw przypis za kursorem"
 
-#: static/wiki/editor/src/editor/plugins/core/footnote.js:62
+#: static/wiki/editor/src/editor/plugins/core/footnote.js:66
 msgid "Cannot insert footnote after root node"
 msgstr "Nie można wstawić przypisu za węzłem głównym"
 
-#: static/wiki/editor/src/editor/plugins/core/footnote.js:67
+#: static/wiki/editor/src/editor/plugins/core/footnote.js:71
 msgid "Insert footnote after node"
 msgstr "Wstaw przypis za węzłem"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:112
+#: static/wiki/editor/src/editor/plugins/core/lists.js:125
 msgid "bull. list"
 msgstr "lista pkt."
-#: static/wiki/editor/src/editor/plugins/core/insert.js:60
-msgid "Missing tag name"
-msgstr "Nie wybrano tagu"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:112
+#: static/wiki/editor/src/editor/plugins/core/lists.js:125
 msgid "num. list"
 msgstr "lista num."
-#: static/wiki/editor/src/editor/plugins/core/insert.js:65
-#, c-format
-msgid "Wrap text with %s"
-msgstr "Obejmij tekst przez %s"
 
-#: static/wiki/editor/src/editor/plugins/core/insert.js:71
-#, c-format
-msgid "Wrap nodes with %s"
-msgstr "Obejmij węzły przez %s"
-
-#: static/wiki/editor/src/editor/plugins/core/insert.js:78
-#, c-format
-msgid "Wrap current node with %s"
-msgstr "Obejmij bieżący węzeł przez %s"
-
-#: static/wiki/editor/src/editor/plugins/core/insert.js:85
-msgid "Cannot insert after root node"
-msgstr "Nie można wstawić węzła za węzłem głównym"
-
-#: static/wiki/editor/src/editor/plugins/core/insert.js:90
-#, c-format
-msgid "Insert %s after current"
-msgstr "Wstaw %s za bieżący węzeł"
-
-#: static/wiki/editor/src/editor/plugins/core/lists.js:91
+#: static/wiki/editor/src/editor/plugins/core/lists.js:146
 #, c-format
 msgid "Change list type to %s"
 msgstr "Zmień typ listy na %s"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:98
+#: static/wiki/editor/src/editor/plugins/core/lists.js:153
 msgid "Remove list"
 msgstr "Usuń listę"
 
-#: static/wiki/editor/src/editor/plugins/core/lists.js:107
+#: static/wiki/editor/src/editor/plugins/core/lists.js:162
 #, c-format
 msgid "Make %s fragment(s) into list"
 msgstr "Stwórz listę z %s fragmentów"
 
-#: static/wiki/editor/src/editor/plugins/core/switch.js:68
-msgid "header"
-msgstr "nagłówek"
-#: static/wiki/editor/src/editor/plugins/core/lists.js:122
-#: static/wiki/editor/src/editor/plugins/core/lists.js:123
-msgid "list item up"
-msgstr "Element listy do góry"
-
-#: static/wiki/editor/src/editor/plugins/core/remove.js:21
-msgid "Unwrap with siblings"
-msgstr "Odpakuj wraz sąsiadami"
-
-#: static/wiki/editor/src/editor/plugins/core/remove.js:21
-msgid "Cannot unwrap children of a root node"
-msgstr "Nie można odpakować dzieci głównego węzła"
-
-#: static/wiki/editor/src/editor/plugins/core/remove.js:49
-msgid "Cannot remove root node"
-msgstr "Nie można usunąć głównego węzła"
+#: static/wiki/editor/src/editor/plugins/core/switch.js:42
+msgid "Switch to"
+msgstr "Zamień na"
 
 #: static/wiki/editor/src/editor/plugins/core/switch.js:69
+msgid "header"
+msgstr "nagłówek"
+
+#: static/wiki/editor/src/editor/plugins/core/switch.js:70
 msgid "paragraf"
 msgstr "akapit"
-#: static/wiki/editor/src/editor/plugins/core/remove.js:54
-msgid "Remove node"
-msgstr "Usuń węzeł"
 
-#: static/wiki/editor/src/editor/plugins/core/templates.js:27
+#: static/wiki/editor/src/editor/plugins/core/templates.js:24
 msgid "No template selected"
 msgstr "Nie wybrano template'u"
 
-#: static/wiki/editor/src/editor/plugins/core/templates.js:32
+#: static/wiki/editor/src/editor/plugins/core/templates.js:33
 msgid "Wrong node selected"
 msgstr "Wybrany niepoprawny węzeł"
 
@@ -374,17 +332,248 @@ msgstr "Wybrany niepoprawny węzeł"
 msgid "Insert template %s"
 msgstr "Wstaw template %s"
 
-msgid "Switch to"
-msgstr "Zamień na"
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:9
+msgid "Description goes here"
+msgstr "Tu wpisz polecenie"
 
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:10
+msgid "First item"
+msgstr "Pierwszy element"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:64
+msgid "Insert exercise"
+msgstr "Wstaw zadanie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:72
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/view.html:2
+msgid "Order"
+msgstr "Uporządkuj"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:73
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceSingle.js:16
+msgid "Single Choice"
+msgstr "Wybór jednokrotny"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:74
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceMulti.js:16
+msgid "Multiple Choice"
+msgstr "Wybór wielokrotny"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:75
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceTrueOrFalse.js:17
+msgid "True or False"
+msgstr "Prawda lub fałsz"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:76
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/view.html:2
+msgid "Gaps"
+msgstr "Luki"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/actions.js:77
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/view.html:2
+msgid "Replace"
+msgstr "Zastąp"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/elementBase.js:21
+#: static/wiki/editor/src/editor/plugins/core/edumed/elementBase.js:31
+msgid "Removing exercise"
+msgstr "Usuwanie zadania"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/elementBase.js:22
+msgid "Do you really want to remove this exercise?"
+msgstr "Czy na pewno chcesz usunąć to zadanie?"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/elementBase.js:23
+msgid "Yes"
+msgstr "Tak"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/elementBase.js:24
+msgid "No, don't do anything!"
+msgstr "Nie, nic nie rób!"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceMulti.js:25
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceSingle.js:30
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/choiceTrueOrFalse.js:26
+msgid "Change answer"
+msgstr "Zmień odpowiedź"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/element.html:2
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/view.html:2
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/view.html:2
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/view.html:2
+msgid "Exercise"
+msgstr "Zadanie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/choice/trueOrFalseSwitch.html:2
+msgid "true"
+msgstr "prawda"
+
+msgid "false"
+msgstr "fałsz"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:17
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:33
+msgid "Create a gap"
+msgstr "Stwórz lukę"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:48
+msgid "Turn selection into a gap"
+msgstr "Zamień zaznaczenie w lukę"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:60
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:70
+#: static/wiki/editor/src/editor/plugins/core/edumed/gaps/actions.js:84
+msgid "Remove a gap"
+msgstr "Usuń lukę"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/element.js:27
+msgid "Add item to exercise"
+msgstr "Dodaj punkt do zadania"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/element.js:40
+msgid "Change solution"
+msgstr "Zmień rozwiązanie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/element.js:50
+msgid "Change order"
+msgstr "Zmień kolejność"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/element.js:61
+msgid "Set random order"
+msgstr "Ustaw losową kolejność"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/view.html:4
+msgid "Initial"
+msgstr "Zadanie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/order/view.html:5
+msgid "Solution"
+msgstr "Rozwiązanie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:17
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:43
+msgid "Mark to replace"
+msgstr "Oznacz do zastąpienia"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:21
+msgid "Enter text to replace with"
+msgstr "Wprowadź tekst zastępujący"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:25
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:118
+msgid "Text"
+msgstr "Tekst"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:61
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:147
+msgid "Mark selection to replacement"
+msgstr "Oznacz zaznaczenie do zastąpienia"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:73
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:83
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:97
+msgid "Remove replace mark"
+msgstr "Usuń zastąpienie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:109
+msgid "Edit replace mark"
+msgstr "Edytuj zastąpienie"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:114
+msgid "Edit text to replace with"
+msgstr "Edytuj tekst zastępujący"
+
+#: static/wiki/editor/src/editor/plugins/core/edumed/replace/actions.js:130
+msgid "Edit answer"
+msgstr "Edytuj odpowiedź"
+
+#: static/wiki/editor/src/editor/plugins/core/links/box.html:4
 msgid "change"
 msgstr "zmień"
 
-msgid "remove"
-msgstr "usuń"
-
+#: static/wiki/editor/src/editor/plugins/core/links/linkElement.js:96
 msgid "Remove link"
 msgstr "Usuń link"
+
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:18
+msgid "Metadata"
+msgstr "Metadane"
+
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/action.js:22
+msgid "Document Metadata"
+msgstr "Metadane dokumentu"
+
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:27
+msgid "Add metadata row"
+msgstr "Dodaj wiersz metadanych"
+
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:37
+msgid "Remove metadata row"
+msgstr "Usuń wiersz metadanych"
+
+#: static/wiki/editor/src/editor/plugins/core/metadataEditor/view.js:68
+msgid "Metadata edit"
+msgstr "Edycja metadanych"
+
+#~ msgid "This is an empty document."
+#~ msgstr "To jest pusty dokument."
+
+#~ msgid "Current node"
+#~ msgstr "Bieżący węzeł"
+
+#~ msgid "Saving..."
+#~ msgstr "Zapisywanie..."
+
+#~ msgid "editor"
+#~ msgstr "edytor"
+
+#~ msgid "Submit"
+#~ msgstr "Zatwierdź"
+
+msgid "no draft exists"
+msgstr "brak wersji roboczej"
+
+msgid "drop a working draft"
+msgstr "porzuć wersję roboczą"
+
+#~ msgid "Hide grid"
+#~ msgstr "Schowaj siatkę"
+
+#~ msgid "Show grid"
+#~ msgstr "Pokaż siatkę"
+
+#~ msgid "Missing tag name"
+#~ msgstr "Nie wybrano tagu"
+
+#~ msgid "Wrap text with %s"
+#~ msgstr "Obejmij tekst przez %s"
+
+#~ msgid "Wrap nodes with %s"
+#~ msgstr "Obejmij węzły przez %s"
+
+#~ msgid "Wrap current node with %s"
+#~ msgstr "Obejmij bieżący węzeł przez %s"
+
+#~ msgid "Cannot insert after root node"
+#~ msgstr "Nie można wstawić węzła za węzłem głównym"
+
+#~ msgid "Insert %s after current"
+#~ msgstr "Wstaw %s za bieżący węzeł"
+
+#~ msgid "list item up"
+#~ msgstr "Element listy do góry"
+
+#~ msgid "Unwrap with siblings"
+#~ msgstr "Odpakuj wraz sąsiadami"
+
+#~ msgid "Cannot unwrap children of a root node"
+#~ msgstr "Nie można odpakować dzieci głównego węzła"
+
+#~ msgid "Cannot remove root node"
+#~ msgstr "Nie można usunąć głównego węzła"
+
+#~ msgid "Remove node"
+#~ msgstr "Usuń węzeł"
 
 msgid "edit"
 msgstr "edytuj"
@@ -392,95 +581,5 @@ msgstr "edytuj"
 msgid "Delete"
 msgstr "Usuń"
 
-msgid "Respond"
-msgstr "Odpowiedz"
-
-msgid "Comment"
-msgstr "Skomentuj"
-
-msgid "Delete this comment?"
-msgstr "Usunąć ten komentarz?"
-
-msgid "Metadata"
-msgstr "Metadane"
-
-msgid "Document Metadata"
-msgstr "Metadane dokumentu"
-
-msgid "Close"
-msgstr "Zamknij"
-
-msgid "Exercise"
-msgstr "Zadanie"
-
-msgid "Insert exercise"
-msgstr "Wstaw zadanie"
-
-msgid "Single Choice"
-msgstr "Wybór jednokrotny"
-
-msgid "Multiple Choice"
-msgstr "Wybór wielokrotny"
-
-msgid "Gaps"
-msgstr "Luki"
-
-msgid "Replace"
-msgstr "Zastąp"
-
-msgid "Order"
-msgstr "Uporządkuj"
-
-msgid "True or False"
-msgstr "Prawda lub fałsz"
-
-msgid "True"
-msgstr "Prawda"
-
-msgid "False"
-msgstr "Fałsz"
-
-msgid "Mark to replace"
-msgstr "Oznacz do zastąpienia"
-
-msgid "Edit replace mark"
-msgstr "Edytuj zastąpienie"
-
-msgid "Remove replace mark"
-msgstr "Usuń zastąpienie"
-
-msgid "Create a gap"
-msgstr "Stwórz lukę"
-
-msgid "Remove a gap"
-msgstr "Usuń lukę"
-
-msgid "Description goes here"
-msgstr "Tu wpisz polecenie"
-
-msgid "Removing exercise"
-msgstr "Usuwanie zadania"
-
-msgid "Do you really want to remove this exercise?"
-msgstr "Czy na pewno chcesz usunąć to zadanie?"
-
-msgid "Yes"
-msgstr "Tak"
-
-msgid "No, don't do anything!"
-msgstr "Nie, nic nie rób!"
-
-msgid "Edit text to replace with"
-msgstr "Edytuj tekst zastępujący"
-
-msgid "Initial"
-msgstr "Inicjalnie"
-
-msgid "Solution"
-msgstr "Rozwiązanie"
-
-msgid "Change solution"
-msgstr "Zmień rozwiązanie"
-
-msgid "First item"
-msgstr "Pierwszy element"
+msgid "Shuffle"
+msgstr "Pomieszaj"
