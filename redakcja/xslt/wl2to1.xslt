@@ -60,8 +60,12 @@
     <xsl:copy><xsl:apply-templates /></xsl:copy>
 </xsl:template>
 
-<xsl:template match="metadata"></xsl:template>
-<xsl:template match="aside"></xsl:template>
+<xsl:template match="metadata"/>
+<xsl:template match="aside">
+    <xsl:if test="@class = 'gap'">
+        <luka><xsl:apply-templates/></luka>
+    </xsl:if>
+</xsl:template>
 
 
 <xsl:template match="header">
@@ -126,7 +130,7 @@
                 <xsl:for-each select="div">
                     <xsl:choose>
                         <xsl:when test="@class = 'p'">
-                            <opis><akap><xsl:value-of select="."/></akap></opis>
+                            <opis><akap><xsl:apply-templates/></akap></opis>
                         </xsl:when>
                         <xsl:when test="@class = 'list.orderable'">
                             <lista typ="punkt">
@@ -142,7 +146,7 @@
                 <xsl:for-each select="div">
                     <xsl:choose>
                         <xsl:when test="@class = 'p'">
-                            <opis><akap><xsl:value-of select="."/></akap></opis>
+                            <opis><akap><xsl:apply-templates/></akap></opis>
                         </xsl:when>
                         <xsl:when test="@class = 'list'">
                             <lista typ="punkt">
@@ -151,6 +155,18 @@
                         </xsl:when>
                     </xsl:choose>
                 </xsl:for-each>
+            </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.gap'">
+            <cwiczenie typ="luki">
+                <opis><akap>Uzupełnij luki:</akap></opis>
+                <xsl:apply-templates/>
+            </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.replace'">
+            <cwiczenie typ="zastap">
+                <opis><akap>Znajdź i zamień niepasujące słowa w zdaniach na następujące:</akap></opis>
+                <xsl:apply-templates/>
             </cwiczenie>
         </xsl:when>
         <xsl:otherwise>
@@ -223,6 +239,9 @@
         <xsl:when test="@class = 'cite'">
             <dlugi_cytat><xsl:apply-templates /></dlugi_cytat>
         </xsl:when>
+        <xsl:when test="@class = 'answer'">
+            <zastap rozw="{@answer}"><xsl:apply-templates/></zastap>
+        </xsl:when>
         <xsl:otherwise>
             <NIEZNANY_SPAN><xsl:value-of select="@class" /></NIEZNANY_SPAN>
         </xsl:otherwise>
@@ -230,7 +249,7 @@
 </xsl:template>
 
 <xsl:template match="div" mode="exercise.order.list">
-    <punkt rozw="{@answer}"><xsl:value-of select="."/></punkt>
+    <punkt rozw="{@answer}"><xsl:apply-templates/></punkt>
 </xsl:template>
 
 <xsl:template match="div" mode="exercise.true-or-false">
@@ -243,7 +262,7 @@
                 <xsl:attribute name="rozw">falsz</xsl:attribute>
             </xsl:when>
         </xsl:choose>
-        <xsl:value-of select="."/>
+        <xsl:apply-templates/>
     </xsl:element>
 </xsl:template>
 
