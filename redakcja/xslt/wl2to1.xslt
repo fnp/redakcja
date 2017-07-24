@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions"
-    xmlns:dc="http://purl.org/dc/elements/1.1/" >
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
 
 <xsl:template match="section">
@@ -97,6 +97,9 @@
         <xsl:when test="@class = 'list.itemized'">
             <lista typ="punkt"><xsl:apply-templates /></lista>
         </xsl:when>
+        <xsl:when test="@class = 'list.orderable'">
+            <lista typ="punkt"><xsl:apply-templates /></lista>
+        </xsl:when>
         <xsl:when test="@class = 'list.enum'">
             <lista typ="num"><xsl:apply-templates /></lista>
         </xsl:when>
@@ -116,6 +119,18 @@
         <xsl:when test="@class = 'item'">
             <punkt><xsl:apply-templates /></punkt>
         </xsl:when>
+        <xsl:when test="@class = 'item.answer'">
+            <xsl:element name="punkt">
+                <xsl:attribute name="rozw">
+                    <xsl:choose>
+                        <xsl:when test="@answer = 'true'">prawda</xsl:when>
+                        <xsl:when test="@answer = 'false'">falsz</xsl:when>
+                        <xsl:otherwise><xsl:value-of select="@answer" /></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:apply-templates />
+            </xsl:element>
+        </xsl:when>
         <xsl:when test="@class = 'defined'">
             <xsl:choose>
                 <xsl:when test="count(ancestor::*) = 4 ">
@@ -127,34 +142,33 @@
         </xsl:when>
         <xsl:when test="@class = 'exercise.order'">
             <cwiczenie typ="uporzadkuj">
-                <xsl:for-each select="div">
-                    <xsl:choose>
-                        <xsl:when test="@class = 'p'">
-                            <opis><akap><xsl:apply-templates/></akap></opis>
-                        </xsl:when>
-                        <xsl:when test="@class = 'list.orderable'">
-                            <lista typ="punkt">
-                                <xsl:apply-templates select="div" mode="exercise.order.list"/>
-                            </lista>
-                        </xsl:when>
-                    </xsl:choose>
-                </xsl:for-each>
+                <xsl:call-template name="cwiczenie"/>
             </cwiczenie>
         </xsl:when>
         <xsl:when test="@class = 'exercise.choice.true-or-false'">
             <cwiczenie typ="prawdafalsz">
-                <xsl:for-each select="div">
-                    <xsl:choose>
-                        <xsl:when test="@class = 'p'">
-                            <opis><akap><xsl:apply-templates/></akap></opis>
-                        </xsl:when>
-                        <xsl:when test="@class = 'list'">
-                            <lista typ="punkt">
-                                <xsl:apply-templates select="div" mode="exercise.true-or-false"/>
-                            </lista>
-                        </xsl:when>
-                    </xsl:choose>
-                </xsl:for-each>
+                <xsl:call-template name="cwiczenie"/>
+            </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.choice' or @class = 'exercise.choice.single'">
+            <cwiczenie typ="wybor">
+                <opis><akap>[opis]</akap></opis>
+                <lista typ="num">
+                    <punkt>
+                        <pytanie>
+                            <xsl:for-each select="div">
+                                <xsl:choose>
+                                    <xsl:when test="@class = 'p'">
+                                        <xsl:apply-templates />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:apply-templates select="."/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </pytanie>
+                    </punkt>
+                </lista>
             </cwiczenie>
         </xsl:when>
         <xsl:when test="@class = 'exercise.gap'">
@@ -226,7 +240,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:attribute name="url">
-                            <xsl:value-of select="text()" />
+                            <xsl:value-of select="." />
                         </xsl:attribute>
                     </xsl:otherwise>
                 </xsl:choose>
@@ -248,26 +262,21 @@
     </xsl:choose>
 </xsl:template>
 
-<xsl:template match="div" mode="exercise.order.list">
-    <punkt rozw="{@answer}"><xsl:apply-templates/></punkt>
-</xsl:template>
-
-<xsl:template match="div" mode="exercise.true-or-false">
-    <xsl:element name="punkt">
-        <xsl:choose>
-            <xsl:when test="@answer = 'true'">
-                <xsl:attribute name="rozw">prawda</xsl:attribute>
-            </xsl:when>
-            <xsl:when test="@answer = 'false'">
-                <xsl:attribute name="rozw">falsz</xsl:attribute>
-            </xsl:when>
-        </xsl:choose>
-        <xsl:apply-templates/>
-    </xsl:element>
-</xsl:template>
-
 <xsl:template match="section" mode="error">
     NIEZNANA_SEKCJA
+</xsl:template>
+
+<xsl:template name="cwiczenie">
+    <xsl:for-each select="div">
+        <xsl:choose>
+            <xsl:when test="@class = 'p'">
+                <opis><xsl:apply-templates select="."/></opis>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each>
 </xsl:template>
 
 </xsl:stylesheet>
