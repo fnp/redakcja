@@ -588,7 +588,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="wers_cd|wers_akap|wers_wciety">
+    <xsl:template match="wers_cd|wers_akap|wers_wciety|wers_do_prawej">
         <xsl:param name="mixed" />
 		<!-- <xsl:choose>
 		<xsl:when test="ancestor::*[0]/self::strofa"> -->

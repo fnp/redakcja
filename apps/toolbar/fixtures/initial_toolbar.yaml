@@ -715,6 +715,17 @@
     pk: 85
 -   fields:
         accesskey: ''
+        group: [12, 17]
+        label: wers do prawej
+        link: ''
+        params: '{"tag": "wers_do_prawej"}'
+        scriptlet: insert_tag
+        slug: wers-do-prawej
+        tooltip: "wers wyrównany do prawej"
+    model: toolbar.button
+    pk: 109
+-   fields:
+        accesskey: ''
         group: []
         label: Wydrukuj
         link: print/xml

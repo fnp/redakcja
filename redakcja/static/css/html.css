@@ -4,8 +4,7 @@
     font-size: 16px;
     font-family: "Georgia", "Times New Roman", serif;
     line-height: 1.5em;
-    padding: 3em;
-    padding-left: 45px;
+    padding: 3em 3em 3em 45px;
     overflow-y: scroll;
     overflow-x: auto;
 }
@@ -122,7 +121,7 @@
 /* ============= */
 .htmlview .anchor {
     position: relative;
-    margin: 0em;
+    margin: 0;
     left: -2.2em;
     color: #777;
     font-size: 12px;
@@ -197,9 +196,12 @@
     margin-left: 6em;
 }
 
+.htmlview .strofa .wers_do_prawej {
+    text-align: right;
+}
+
 /* błędne wersy */
-.htmlview *:
-not(.strofa) > *[x-verse]::after {
+.htmlview *:not(.strofa) > *[x-verse]::after {
     content: "Ten wers znajduje się poza strofą.";
     display: inline;
     background: red;
@@ -418,7 +420,7 @@ div[x-node] > .uwaga {
     background-color: #ffcccc;
 }
 .htmlview .pe .annotation:hover {
-    background-color: #96e0e4;*/
+    background-color: #96e0e4;
 }
 *.htmlview *.annotation-inline-box {
     position: static;
@@ -440,9 +442,7 @@ div[x-node] > .uwaga {
     font-weight: normal;
     font-style: normal;
     background: #fffe93;
-    border-color: black;
-    border-width: 1px;
-    border-style: solid;
+    border: 1px solid black;
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
@@ -505,7 +505,6 @@ div[x-node] > .uwaga {
     display: block;
     /*    margin: 4px 0 2px 0;*/
     padding: 5px 5px 2px 5px;
-    border: none;
     background-color: #FAFAFA;
     /*    z-index: 3000;*/
     /*    color: #FFF;
@@ -591,7 +590,7 @@ div[x-node] > .uwaga {
 }
 
 .html-editarea {
-    border: 0px;
+    border: 0;
     background-color: gray;
     padding: 1px;
     z-index: 2000;
@@ -601,8 +600,8 @@ div[x-node] > .uwaga {
 .html-editarea textarea {
     position: absolute;
     top: 0;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
@@ -612,7 +611,7 @@ div[x-node] > .uwaga {
 
 .htmlview .out-of-flow-text {
     display: block;
-    font-face: monospace;
+    font-family: monospace;
     border: 2px solid red !important;
     white-space: pre-line;
 }
@@ -627,8 +626,7 @@ div[x-node] > .uwaga {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     padding: 5px 1em;
-    margin: 0em;
-    margin-left: 1em;
+    margin: 0 0 0 1em;
     text-align: justify;
     display: inline;
     float: right;
