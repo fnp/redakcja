@@ -627,7 +627,7 @@
         </em>
     </xsl:template>
 
-    <xsl:template match="wyroznienie|slowo_obce|mat|didask_tekst|osoba|wyp_osoba|www">
+    <xsl:template match="wyroznienie|slowo_obce|mat|didask_tekst|osoba|wyp_osoba|www|wieksze_odstepy">
         <xsl:param name="mixed" />
         <em>
             <xsl:call-template name="standard-attributes" />

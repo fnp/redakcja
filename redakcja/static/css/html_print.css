@@ -234,3 +234,9 @@
     font-style: normal;
     font-variant: small-caps;
 }
+
+.htmlview em.wieksze-odstepy
+{
+    font-style: normal;
+    word-spacing: 1em;
+}

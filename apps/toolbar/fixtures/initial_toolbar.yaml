@@ -437,6 +437,17 @@
     pk: 49
 -   fields:
         accesskey: ''
+        group: [15]
+        label: "wi\u0119ksze odst\u0119py"
+        link: ''
+        params: '{"tag": "wieksze_odstepy"}'
+        scriptlet: insert_tag
+        slug: wieksze-odstepy
+        tooltip: "wi\u0119ksze odst\u0119py mi\u0119dzy s\u0142owami"
+    model: toolbar.button
+    pk: 50
+-   fields:
+        accesskey: ''
         group: [29]
         label: uwaga
         link: ''
@@ -721,7 +732,7 @@
         params: '{"tag": "wers_do_prawej"}'
         scriptlet: insert_tag
         slug: wers-do-prawej
-        tooltip: "wers wyrównany do prawej"
+        tooltip: "wers wyr\xf3wnany do prawej"
     model: toolbar.button
     pk: 109
 -   fields:
