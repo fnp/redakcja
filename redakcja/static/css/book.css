@@ -15,6 +15,15 @@ a {
     max-width: 36em;
 }
 
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.border, table.border td, table.border th {
+    border: 1px solid black;
+}
+
 /* ================================== */
 /* = Header with logo and menu      = */
 /* ================================== */

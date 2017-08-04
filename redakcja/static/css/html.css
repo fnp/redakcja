@@ -302,7 +302,7 @@
     font-variant: small-caps;
 }
 
-em.wieksze_odstepy {
+.htmlview em.wieksze_odstepy {
     font-style: normal;
     word-spacing: 1em;
 }
