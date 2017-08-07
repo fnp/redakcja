@@ -24,6 +24,10 @@ table.border, table.border td, table.border th {
     border: 1px solid black;
 }
 
+td, th {
+    vertical-align: top;
+}
+
 /* ================================== */
 /* = Header with logo and menu      = */
 /* ================================== */
