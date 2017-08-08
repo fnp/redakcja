@@ -12,7 +12,7 @@ a {
 
 #book-text {
     margin: 3em;
-    max-width: 36em;
+    max-width: 48em;
 }
 
 table {
@@ -37,7 +37,7 @@ td, th {
 
 img {
     border: none;
-    max-width: 36em;
+    max-width: 48em;
     margin-top: 1em;
 }
 
