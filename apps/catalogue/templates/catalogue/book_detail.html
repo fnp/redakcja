@@ -1,5 +1,5 @@
 {% extends "catalogue/base.html" %}
-{% load book_list comments i18n %}
+{% load book_list i18n %}
 
 
 {% block titleextra %}{{ book.title }}{% endblock %}
@@ -97,15 +97,5 @@
 <div style="clear: both;"></div>
 </div>
 
-
-
-<div class='section'>
-    <h2>{% trans "Comments" %}</h2>
-
-    {% render_comment_list for book %}
-    {% with book.get_absolute_url as next %}
-        {% render_comment_form for book %}
-    {% endwith %}
-</div>
 
 {% endblock content %}
