@@ -220,9 +220,9 @@ def gallery(request, directory):
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
 
-        book = Book.objects.get(gallery=directory)
+        books = Book.objects.filter(gallery=directory)
 
-        if not book.public and not request.user.is_authenticated():
+        if not all(book.public for book in books) and not request.user.is_authenticated():
             return HttpResponseForbidden("Not authorized.")
 
         return JSONResponse(images)
