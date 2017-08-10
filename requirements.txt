@@ -28,3 +28,5 @@ kombu>=3.0,<3.1
 
 # migrations
 South>=1.0.2
+
+raven

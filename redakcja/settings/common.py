@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.comments',
+    'raven.contrib.django.raven_compat',
 
     'south',
     'sorl.thumbnail',
