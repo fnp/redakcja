@@ -30,3 +30,4 @@ kombu>=3.0,<3.1
 South>=1.0.2
 
 raven
+argparse
