@@ -131,6 +131,20 @@
                 <xsl:apply-templates />
             </xsl:element>
         </xsl:when>
+        <xsl:when test="@class = 'question'">
+            <pytanie>
+                <xsl:for-each select="div">
+                    <xsl:choose>
+                        <xsl:when test="@class = 'p'">
+                            <xsl:apply-templates />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates select="."/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </pytanie>
+        </xsl:when>
         <xsl:when test="@class = 'defined'">
             <xsl:choose>
                 <xsl:when test="count(ancestor::*) = 4 ">
@@ -152,23 +166,7 @@
         </xsl:when>
         <xsl:when test="@class = 'exercise.choice' or @class = 'exercise.choice.single'">
             <cwiczenie typ="wybor">
-                <opis><akap>[opis]</akap></opis>
-                <lista typ="num">
-                    <punkt>
-                        <pytanie>
-                            <xsl:for-each select="div">
-                                <xsl:choose>
-                                    <xsl:when test="@class = 'p'">
-                                        <xsl:apply-templates />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:apply-templates select="."/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:for-each>
-                        </pytanie>
-                    </punkt>
-                </lista>
+                <xsl:call-template name="cwiczenie"/>
             </cwiczenie>
         </xsl:when>
         <xsl:when test="@class = 'exercise.gap'">
