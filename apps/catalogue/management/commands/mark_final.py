@@ -41,7 +41,7 @@ class Command(BaseCommand):
             print 'processing %s' % book.slug
             chunk = book.chunk_set.first()
             src = chunk.head.materialize()
-            new_head = chunk.commit(
+            chunk.commit(
                 text=src,
                 author=user,
                 description=u'Ostateczna akceptacja merytoryczna przez kierownika literackiego.',
@@ -49,4 +49,3 @@ class Command(BaseCommand):
                 publishable=True
             )
             print 'committed %s' % book.slug
-            new_head.set_publishable(True)
