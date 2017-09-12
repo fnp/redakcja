@@ -56,7 +56,7 @@
 </xsl:template>
 
 <!-- TODO language-dependent: description, audience, requires (subject.competence?) -->
-<xsl:template match="dc:creator.expert|dc:creator.scenario|dc:creator.textbook|dc:description|dc:subject.curriculum|dc:creator.methodologist|dc:subject.competence|dc:audience|dc:type|dc:requires" mode="meta">
+<xsl:template match="dc:creator.expert|dc:creator.scenario|dc:creator.textbook|dc:description|dc:subject.curriculum|dc:subject.curriculum.new|dc:creator.methodologist|dc:subject.competence|dc:audience|dc:type|dc:requires" mode="meta">
     <xsl:copy><xsl:apply-templates /></xsl:copy>
 </xsl:template>
 
@@ -92,7 +92,15 @@
             <akap><xsl:apply-templates /></akap>
         </xsl:when>
         <xsl:when test="@class = 'list'">
-            <lista typ="punkt"><xsl:apply-templates /></lista>
+            <lista typ="punkt">
+                <xsl:if test="@name">
+                    <xsl:attribute name="nazwa"><xsl:value-of select="@name"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@dest">
+                    <xsl:attribute name="cel"><xsl:value-of select="@dest"/></xsl:attribute>
+                </xsl:if>
+                <xsl:apply-templates />
+            </lista>
         </xsl:when>
         <xsl:when test="@class = 'list.itemized'">
             <lista typ="punkt"><xsl:apply-templates /></lista>
@@ -119,8 +127,11 @@
         <xsl:when test="@class = 'item'">
             <punkt><xsl:apply-templates /></punkt>
         </xsl:when>
+        <xsl:when test="@class = 'item.category'">
+            <punkt nazwa="{@name}"><xsl:apply-templates /></punkt>
+        </xsl:when>
         <xsl:when test="@class = 'item.answer'">
-            <xsl:element name="punkt">
+            <punkt>
                 <xsl:attribute name="rozw">
                     <xsl:choose>
                         <xsl:when test="@answer = 'true'">prawda</xsl:when>
@@ -129,7 +140,7 @@
                     </xsl:choose>
                 </xsl:attribute>
                 <xsl:apply-templates />
-            </xsl:element>
+            </punkt>
         </xsl:when>
         <xsl:when test="@class = 'question'">
             <pytanie>
@@ -166,6 +177,11 @@
         </xsl:when>
         <xsl:when test="@class = 'exercise.choice' or @class = 'exercise.choice.single'">
             <cwiczenie typ="wybor">
+                <xsl:call-template name="cwiczenie"/>
+            </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'exercise.match'">
+            <cwiczenie typ="przyporzadkuj">
                 <xsl:call-template name="cwiczenie"/>
             </cwiczenie>
         </xsl:when>
@@ -269,6 +285,7 @@
         <xsl:choose>
             <xsl:when test="@class = 'p'">
                 <opis><xsl:apply-templates select="."/></opis>
+                <!-- https://stackoverflow.com/questions/27374493/grouping-the-consecutive-elements-in-xslt -->
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates select="."/>
