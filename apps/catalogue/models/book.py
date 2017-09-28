@@ -14,7 +14,7 @@ from catalogue.helpers import cached_in_field, GalleryMerger
 from catalogue.models import BookPublishRecord, ChunkPublishRecord, Project
 from catalogue.signals import post_publish
 from catalogue.tasks import refresh_instance, book_content_updated
-from catalogue.xml_tools import compile_text, split_xml
+from catalogue.xml_tools import compile_text, split_xml, wl2_to_wl1
 from cover.models import Image
 
 
@@ -435,68 +435,4 @@ class Book(models.Model):
         post_publish.send(sender=br)
 
     def wl1_xml(self, publishable=True, changes=None):
-        from lxml import etree
-        import re
-        from StringIO import StringIO
-        from urllib import unquote
-        import os.path
-        from django.conf import settings
-        from fnpdjango.utils.text.slughifi import slughifi
-        from librarian import ParseError, DCNS
-
-        def _register_function(f):
-            """ Register extension function with lxml """
-            ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
-            ns[f.__name__] = f
-            return f
-
-        @_register_function
-        def slugify(context, text):
-            """Remove unneeded whitespace from beginning and end"""
-            if isinstance(text, list):
-                text = ''.join(text)
-            return slughifi(text)
-
-        @_register_function
-        def rmext(context, text):
-            if isinstance(text, list):
-                text = ''.join(text)
-            text = unquote(text)
-            if '.' in text:
-                name, ext = text.rsplit('.', 1)
-                if ext.lower() in ('doc', 'docx', 'odt', 'pdf', 'jpg', 'jpeg'):
-                    text = name
-            return text
-
-        t = etree.parse(os.path.join(settings.PROJECT_ROOT, 'xslt/wl2to1.xslt'))
-        ft = self.materialize(publishable=publishable, changes=changes)
-        ft = ft.replace('&nbsp;', ' ')
-        f2 = StringIO(ft)
-        i1 = etree.parse(f2)
-
-        for sect in i1.findall('//section'):
-            if sect[0].text and sect[0].text.strip() == u'Przebieg zajęć':
-                # Prostujemy.
-                first = sect.find('section')
-                subs = first.findall('.//section')
-                for sub in subs:
-                    sect.append(sub)
-                break
-        else:
-            # print 'BRAK PRZEBIEGU'
-            dc_type = i1.findall('//dc:type', namespaces={'dc': DCNS.uri})
-            if dc_type and dc_type[0] in ('course', 'synthetic'):
-                raise ParseError('Brak przebiegu')
-
-        i1.getroot().attrib['redslug'] = self.slug
-        i1.getroot().attrib['wlslug'] = self.slug  # THIS!
-        # print '.',
-        w1t = i1.xslt(t)
-        for h in w1t.findall('//aktywnosc/opis'):
-            if len(h) == 0:
-                raise ParseError('Pusty element aktywnosc/opis')
-            # FIXME assumption that every lesson has at most 9 parts
-            if not h[0].text or not re.match(r'\d\.\s', h[0].text):
-                raise ParseError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
-            h[0].text = h[0].text[3:]
-        return etree.tostring(w1t, encoding='utf-8')
+        return wl2_to_wl1(self.materialize(publishable=publishable, changes=changes), self.slug)
