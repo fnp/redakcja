@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions"
-    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    exclude-result-prefixes="wl dc"><!-- nie jestem pewien czy tak ma być -->
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
 
 <xsl:template match="section">
@@ -29,12 +30,16 @@
 
             <xsl:apply-templates select="metadata" mode="meta" />
 
-            <dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
+            <xsl:if test="not(//dc:publisher)">
+                <dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
+            </xsl:if>
             <dc:rights xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0</dc:rights>
             <dc:rights.license xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
             <dc:format xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">xml</dc:format>
             <!--dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">added-var</dc:type-->
-            <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2015-01-12</dc:date>
+            <xsl:if test="not(//dc:date)">
+                <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2015-01-12</dc:date>
+            </xsl:if>
             <!--dc:audience xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><!- -liceum - -><xsl:value-of select="//dc:audience/text()" /></dc:audience-->
             <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">pol</dc:language>
         </rdf:Description>
@@ -56,7 +61,7 @@
 </xsl:template>
 
 <!-- TODO language-dependent: description, audience, requires (subject.competence?) -->
-<xsl:template match="dc:creator.expert|dc:creator.scenario|dc:creator.textbook|dc:description|dc:subject.curriculum|dc:subject.curriculum.new|dc:creator.methodologist|dc:subject.competence|dc:audience|dc:type|dc:requires" mode="meta">
+<xsl:template match="dc:creator.expert|dc:creator.scenario|dc:creator.textbook|dc:description|dc:subject.curriculum|dc:subject.curriculum.new|dc:creator.methodologist|dc:subject.competence|dc:audience|dc:type|dc:requires|dc:relation|dc:subject|dc:date|dc:publisher" mode="meta">
     <xsl:copy><xsl:apply-templates /></xsl:copy>
 </xsl:template>
 
@@ -99,6 +104,12 @@
                 <xsl:if test="@dest">
                     <xsl:attribute name="cel"><xsl:value-of select="@dest"/></xsl:attribute>
                 </xsl:if>
+                <xsl:if test="@handles">
+                    <xsl:attribute name="uchwyty"><xsl:value-of select="@handles"/></xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@short">
+                    <xsl:attribute name="krotkie"><xsl:value-of select="@short"/></xsl:attribute>
+                </xsl:if>
                 <xsl:apply-templates />
             </lista>
         </xsl:when>
@@ -112,14 +123,12 @@
             <lista typ="num"><xsl:apply-templates /></lista>
         </xsl:when>
         <xsl:when test="@class = 'list.definitions'">
-            <xsl:choose>
-                <xsl:when test="@src = ''">
-                    <lista typ="slowniczek"><xsl:apply-templates /></lista>
-                </xsl:when>
-                <xsl:otherwise>
-                    <lista typ="slowniczek" src="{@src}"><xsl:apply-templates /></lista>
-                </xsl:otherwise>
-            </xsl:choose>
+            <lista typ="slowniczek">
+                <xsl:if test="@src">
+                    <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute>
+                </xsl:if>
+                <xsl:apply-templates />
+            </lista>
         </xsl:when>
         <xsl:when test="@class = 'list.bibliography'">
             <lista typ="czytelnia"><xsl:apply-templates /></lista>
@@ -165,6 +174,27 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:when>
+        <xsl:when test="@class = 'img'">
+            <obraz nazwa="{@name}" alt="{@alt}"/>
+        </xsl:when>
+        <xsl:when test="@class = 'video'">
+            <video url="{@src}"/>
+        </xsl:when>
+        <xsl:when test="@class = 'label'">
+            <podpis>
+                <xsl:apply-templates/>
+            </podpis>
+        </xsl:when>
+        <xsl:when test="@class = 'solution.comment'">
+            <rozw_kom>
+                <xsl:apply-templates/>
+            </rozw_kom>
+        </xsl:when>
+        <xsl:when test="@class = 'important'">
+            <dlugi_cytat>
+                <xsl:apply-templates/>
+            </dlugi_cytat>
+        </xsl:when>
         <xsl:when test="@class = 'exercise.order'">
             <cwiczenie typ="uporzadkuj">
                 <xsl:call-template name="cwiczenie"/>
@@ -187,15 +217,45 @@
         </xsl:when>
         <xsl:when test="@class = 'exercise.gap'">
             <cwiczenie typ="luki">
-                <opis><akap>Uzupełnij luki:</akap></opis>
-                <xsl:apply-templates/>
+                <xsl:choose>
+                    <xsl:when test="div[1]/aside[@class = 'gap']">
+                        <opis><akap>Uzupełnij luki:</akap></opis>
+                        <xsl:apply-templates/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <opis><xsl:apply-templates select="*[1]"/></opis>
+                        <xsl:apply-templates select="*[position() > 1]"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </cwiczenie>
         </xsl:when>
         <xsl:when test="@class = 'exercise.replace'">
             <cwiczenie typ="zastap">
-                <opis><akap>Znajdź i zamień niepasujące słowa w zdaniach na następujące:</akap></opis>
-                <xsl:apply-templates/>
+                <xsl:choose>
+                    <xsl:when test="div[1]/aside[@class = 'gap']">
+                        <opis><akap>Znajdź i zamień niepasujące słowa w zdaniach na następujące:</akap></opis>
+                        <xsl:apply-templates/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <opis><xsl:apply-templates select="*[1]"/></opis>
+                        <xsl:apply-templates select="*[position() > 1]"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </cwiczenie>
+        </xsl:when>
+        <xsl:when test="@class = 'table'">
+            <tabela ramki="0">
+                <xsl:apply-templates/>
+            </tabela>
+        </xsl:when>
+        <xsl:when test="@class = 'table.row'">
+            <wiersz><xsl:apply-templates/></wiersz>
+        </xsl:when>
+        <xsl:when test="@class = 'table.cell'">
+            <kol><xsl:apply-templates/></kol>
+        </xsl:when>
+        <xsl:when test="@class = 'verse'">
+            <strofa><xsl:apply-templates/></strofa>
         </xsl:when>
         <xsl:otherwise>
             <NIEZNANY_DIV><xsl:value-of select="@class" /></NIEZNANY_DIV>
@@ -205,17 +265,8 @@
 
 <xsl:template match="div" mode="opis">
     <xsl:choose>
-        <xsl:when test="@class = 'p'">
-            <akap><xsl:apply-templates /></akap>
-        </xsl:when>
-        <xsl:when test="@class = 'list'">
-            <lista typ="punkt"><xsl:apply-templates /></lista>
-        </xsl:when>
-        <xsl:when test="@class = 'list.itemized'">
-            <lista typ="punkt"><xsl:apply-templates /></lista>
-        </xsl:when>
-        <xsl:when test="@class = 'item'">
-            <punkt><xsl:apply-templates /></punkt>
+        <xsl:when test="@class != 'list.definitions'">
+            <xsl:apply-templates select="." />
         </xsl:when>
     </xsl:choose>
 </xsl:template>
@@ -247,7 +298,7 @@
                             <xsl:value-of select="wl:rmext(substring(@href, 8))" />
                         </xsl:attribute>
                     </xsl:when>
-                    <xsl:when test="starts-with(@href, 'http')">
+                    <xsl:when test="starts-with(@href, 'http') or starts-with(@href, '#')">
                         <xsl:attribute name="url">
                             <xsl:value-of select="@href" />
                         </xsl:attribute>
@@ -265,7 +316,7 @@
             <wyroznienie><xsl:apply-templates /></wyroznienie>
         </xsl:when>
         <xsl:when test="@class = 'cite'">
-            <dlugi_cytat><xsl:apply-templates /></dlugi_cytat>
+            <tytul_dziela><xsl:apply-templates /></tytul_dziela>
         </xsl:when>
         <xsl:when test="@class = 'answer'">
             <zastap rozw="{@answer}"><xsl:apply-templates/></zastap>
