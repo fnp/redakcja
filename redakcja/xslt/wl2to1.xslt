@@ -30,14 +30,14 @@
 
             <xsl:apply-templates select="metadata" mode="meta" />
 
-            <xsl:if test="not(//dc:publisher)">
+            <xsl:if test="not(/section/metadata/dc:publisher)">
                 <dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
             </xsl:if>
             <dc:rights xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0</dc:rights>
             <dc:rights.license xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
             <dc:format xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">xml</dc:format>
             <!--dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">added-var</dc:type-->
-            <xsl:if test="not(//dc:date)">
+            <xsl:if test="not(/section/metadata/dc:date)">
                 <dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2015-01-12</dc:date>
             </xsl:if>
             <!--dc:audience xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"><!- -liceum - -><xsl:value-of select="//dc:audience/text()" /></dc:audience-->
