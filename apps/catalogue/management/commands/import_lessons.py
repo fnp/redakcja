@@ -7,7 +7,6 @@ import os
 from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
 from django.db import transaction
-from librarian import ParseError, ValidationError
 
 from catalogue.models import Book
 
