@@ -92,10 +92,10 @@ class Book(models.Model):
 
     @classmethod
     @transaction.commit_on_success
-    def create(cls, creator, text, **kwargs):
+    def create(cls, creator, text, commit_args=None, **kwargs):
         b = cls.objects.create(**kwargs)
         b.chunk_set.all().update(creator=creator)
-        b[0].commit(text, author=creator)
+        b[0].commit(text, author=creator, **(commit_args or {}))
         return b
 
     def add(self, *args, **kwargs):
