@@ -7,7 +7,6 @@ import sys
 from django.contrib.auth.models import User
 from optparse import make_option
 
-from collections import defaultdict
 from django.core.management import BaseCommand
 
 from catalogue.models import Book, Chunk
@@ -39,13 +38,13 @@ class Command(BaseCommand):
 
         for book in books:
             print 'processing %s' % book.slug
-            chunk = book.chunk_set.first()
-            src = chunk.head.materialize()
-            chunk.commit(
-                text=src,
-                author=user,
-                description=u'Ostateczna akceptacja merytoryczna przez kierownika literackiego.',
-                tags=[Chunk.tag_model.objects.get(slug='editor-proofreading')],
-                publishable=True
-            )
+            for chunk in book.chunk_set.all():
+                src = chunk.head.materialize()
+                chunk.commit(
+                    text=src,
+                    author=user,
+                    description=u'Ostateczna akceptacja merytoryczna przez kierownika literackiego.',
+                    tags=[Chunk.tag_model.objects.get(slug='editor-proofreading')],
+                    publishable=True
+                )
             print 'committed %s' % book.slug
