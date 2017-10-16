@@ -49,7 +49,7 @@ class Chunk(dvcs_models.Document):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("wiki_editor", [self.book.slug, self.slug])
+        return "wiki_editor", [self.book.slug, self.slug]
 
     def pretty_name(self, book_length=None):
         title = self.book.title
@@ -58,7 +58,6 @@ class Chunk(dvcs_models.Document):
         if book_length > 1:
             title += " (%d/%d)" % (self.number, book_length)
         return title
-
 
     # Creating and manipulation
     # =========================
@@ -71,7 +70,8 @@ class Chunk(dvcs_models.Document):
         while not new_chunk:
             new_slug = self.book.make_chunk_slug(slug)
             try:
-                new_chunk = self.book.chunk_set.create(number=self.number+1,
+                new_chunk = self.book.chunk_set.create(
+                    number=self.number+1,
                     slug=new_slug[:50], title=title[:255], **kwargs)
             except IntegrityError:
                 pass
@@ -84,7 +84,6 @@ class Chunk(dvcs_models.Document):
         else:
             return cls.objects.get(book__slug=book_slug, slug=chunk_slug)
 
-
     # State & cache
     # =============
 
@@ -92,7 +91,7 @@ class Chunk(dvcs_models.Document):
         change = self.publishable()
         if not change:
             return False
-        return change.publish_log.exists()
+        return not change.publish_log.exists()
 
     def is_changed(self):
         if self.head is None:
