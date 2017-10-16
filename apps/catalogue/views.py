@@ -571,7 +571,7 @@ def publish(request, slug):
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth'))
     except BaseException, e:
-        return http.HttpResponse(e)
+        return http.HttpResponse(repr(e))
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
 
