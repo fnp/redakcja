@@ -370,6 +370,17 @@
     model: toolbar.button
     pk: 42
 -   fields:
+        accesskey: ''
+        group: [21]
+        label: "ramka"
+        link: ''
+        params: '{"tag": "ramka"}'
+        scriptlet: insert_tag
+        slug: ramka
+        tooltip: "tekst otoczony ramką"
+    model: toolbar.button
+    pk: 43
+-   fields:
         accesskey: f
         group: [12, 15]
         label: "wyr\xF3\u017Cnienie"

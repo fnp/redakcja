@@ -214,6 +214,20 @@
     </xsl:template>
 
     <!--
+        Tagi obejmujące tekst w ramce (styl wieloakapitowy bądź wielostrofowy):
+        <ramka> tekst-w-ramce </ramka>
+    -->
+    <xsl:template match="ramka">
+        <xsl:param name="mixed" />
+        <div>
+            <xsl:call-template name="standard-attributes" />
+            <xsl:apply-templates select="child::node()">
+                <xsl:with-param name="mixed" select="false()" />
+            </xsl:apply-templates>
+        </div>
+    </xsl:template>
+
+    <!--
         Tagi obejmujące tekst motta (styl wieloakapitowy bądź wielostrofowy):
         <motto> tekst-motta </motto>
     -->
