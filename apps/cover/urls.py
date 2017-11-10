@@ -16,5 +16,6 @@ urlpatterns = patterns('cover.views',
 
     url(r'^image/$', 'image_list', name='cover_image_list'),
     url(r'^image/(?P<pk>\d+)/?$', 'image', name='cover_image'),
+    url(r'^image/(?P<pk>\d+)/file/', 'image_file', name='cover_file'),
     url(r'^add_image/$', 'add_image', name='cover_add_image'),
 )

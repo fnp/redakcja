@@ -46,8 +46,8 @@ def preview(request, book, chunk=None, rev=None):
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     cover = make_cover(info)
     response = HttpResponse(content_type=cover.mime_type())
-    image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
-    image.save(response, cover.format)
+    img = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
+    img.save(response, cover.format)
     return response
 
 
@@ -75,33 +75,38 @@ def preview_from_xml(request):
     except OSError:
         pass
     fname = os.path.join(cover_dir, "%s.%s" % (coverid, cover.ext()))
-    image = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
-    image.save(os.path.join(settings.MEDIA_ROOT, fname))
+    img = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
+    img.save(os.path.join(settings.MEDIA_ROOT, fname))
     return HttpResponse(os.path.join(settings.MEDIA_URL, fname))
 
 
 @active_tab('cover')
 def image(request, pk):
-    image = get_object_or_404(Image, pk=pk)
+    img = get_object_or_404(Image, pk=pk)
 
     if request.user.has_perm('cover.change_image'):
         if request.method == "POST":
-            form = forms.ImageEditForm(request.POST, request.FILES, instance=image)
+            form = forms.ImageEditForm(request.POST, request.FILES, instance=img)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect(image.get_absolute_url())
+                return HttpResponseRedirect(img.get_absolute_url())
         else:
-            form = forms.ImageEditForm(instance=image)
+            form = forms.ImageEditForm(instance=img)
         editable = True
     else:
-        form = forms.ReadonlyImageEditForm(instance=image)
+        form = forms.ReadonlyImageEditForm(instance=img)
         editable = False
 
     return render(request, "cover/image_detail.html", {
-        "object": Image.objects.get(id=image.id),
+        "object": Image.objects.get(id=img.id),
         "form": form,
         "editable": editable,
     })
+
+
+def image_file(request, pk):
+    img = get_object_or_404(Image, pk=pk)
+    return HttpResponseRedirect(img.file.url)
 
 
 @active_tab('cover')
