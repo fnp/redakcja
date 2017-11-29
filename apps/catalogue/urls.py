@@ -57,4 +57,7 @@ urlpatterns = patterns('catalogue.views',
 
     url(r'^track/(?P<slug>[^/]*)/$', PublishTrackFeed()),
     url(r'^active/$', 'active_users_list', name='active_users_list'),
+
+    url(r'^mark-final/$', 'mark_final', name='mark_final'),
+    url(r'^mark-final-completed/$', 'mark_final_completed', name='mark_final_completed'),
 )

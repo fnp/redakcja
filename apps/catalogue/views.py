@@ -15,15 +15,18 @@ from django.db.models import Count, Q
 from django.db import transaction
 from django import http
 from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
+from django_cas.decorators import user_passes_test
 
 from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
+from catalogue.forms import MarkFinalForm
 from catalogue.helpers import active_tab
 from catalogue.models import (Book, Chunk, Image, BookPublishRecord, 
         ChunkPublishRecord, ImagePublishRecord, Project)
@@ -642,3 +645,17 @@ def active_users_list(request):
     })
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def mark_final(request):
+    if request.method == 'POST':
+        form = MarkFinalForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('mark_final_completed'))
+    else:
+        form = MarkFinalForm()
+    return render(request, 'catalogue/mark_final.html', {'form': form})
+
+
+def mark_final_completed(request):
+    return render(request, 'catalogue/mark_final_completed.html')

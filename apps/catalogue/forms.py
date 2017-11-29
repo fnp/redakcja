@@ -190,7 +190,39 @@ class ReadonlyImageForm(ImageForm):
     """Form used for not editing an Image."""
 
     def __init__(self, *args, **kwargs):
-        ret = super(ReadonlyImageForm, self).__init__(*args, **kwargs)
+        super(ReadonlyImageForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({"disabled": "disabled"})
-        return ret
+
+
+class MarkFinalForm(forms.Form):
+    username = forms.CharField(initial='lipszyc')
+    comment = forms.CharField(initial=u'Ostateczna akceptacja merytoryczna przez kierownika literackiego.')
+    books = forms.CharField(widget=forms.Textarea, help_text=u'linki do książek w redakcji, po jednym na wiersz')
+
+    def clean_books(self):
+        books_value = self.cleaned_data['books']
+        slugs = [line.split('/')[-2] for line in books_value.split('\n') if line.strip()]
+        books = Book.objects.filter(slug__in=slugs)
+        if len(books) != len(slugs):
+            raise forms.ValidationError(
+                'Incorrect slug(s): %s' % ' '.join(slug for slug in slugs if not Book.objects.filter(slug=slug)))
+        return books
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if not User.objects.filter(username=username):
+            raise forms.ValidationError('Invalid username')
+        return username
+
+    def save(self):
+        for book in self.cleaned_data['books']:
+            for chunk in book.chunk_set.all():
+                src = chunk.head.materialize()
+                chunk.commit(
+                    text=src,
+                    author=User.objects.get(username=self.cleaned_data['username']),
+                    description=self.cleaned_data['comment'],
+                    tags=[Chunk.tag_model.objects.get(slug='editor-proofreading')],
+                    publishable=True
+                )
