@@ -52,7 +52,7 @@ def get_flickr_data(url):
     m = re.search(r'modelExport: (\{.*\})', html)
     try:
         assert m
-        download_url = 'https:' + json.loads(m.group(1))['photo-models'][0]['sizes']['o']['url']
+        download_url = 'https:' + json.loads(m.group(1))['main']['photo-models'][0]['sizes']['o']['url']
     except (AssertionError, ValueError, IndexError, KeyError):
         raise FlickrError('Error reading image URL.')
     return {
