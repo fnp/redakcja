@@ -2,6 +2,7 @@
 from copy import deepcopy
 import re
 
+from django.utils.encoding import force_str
 from lxml import etree
 from catalogue.constants import TRIM_BEGIN, TRIM_END, MASTERS
 
@@ -200,3 +201,41 @@ def wl2_to_wl1(wl2_xml, slug):
             raise ParseError('Niepoprawny nagłówek (aktywnosc/opis): %s' % repr(h[0].text))
         h[0].text = h[0].text[3:]
     return etree.tostring(w1t, encoding='utf-8')
+
+
+EXCEPTIONS = [
+    ('div', 'img'),
+    ('div', 'video'),
+    ('div', 'table.cell'),
+    ('span', 'link'),
+]
+
+
+def remove_element(element):
+    parent = element.getparent()
+    tail = element.tail
+    if tail:
+        prev = element.getprevious()
+        if prev is not None:
+            prev.tail = (prev.tail or '') + tail
+        else:
+            parent.text = (parent.text or '') + tail
+    parent.remove(element)
+
+
+def remove_empty_elements(xml):
+    try:
+        tree = etree.fromstring(force_str(xml.replace('&nbsp;', u'\xa0')))
+    except SyntaxError:
+        return None
+    changed = False
+    another_loop = True
+    while another_loop:
+        another_loop = False
+        for element in tree.findall('.//*'):
+            if (not element.text or not element.text.strip()) and len(element) == 0:
+                if (element.tag, element.attrib.get('class')) not in EXCEPTIONS:
+                    remove_element(element)
+                    changed = True
+                    another_loop = True
+    return etree.tostring(tree, encoding=unicode) if changed else None

@@ -7,6 +7,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from catalogue.models import Chunk
+from catalogue.xml_tools import remove_empty_elements
 
 
 class DocumentPubmarkForm(forms.Form):
@@ -78,6 +79,10 @@ class DocumentTextSaveForm(forms.Form):
             self.fields['author_email'].required = False
         self.fields['for_cybernauts'].initial = self.chunk.book.for_cybernauts
         self.fields['publishable'].initial = self.chunk.head.publishable
+
+    def clean_text(self):
+        text = self.cleaned_data.get('text', '')
+        return remove_empty_elements(text)
 
     def save(self):
         if self.user.is_authenticated():
