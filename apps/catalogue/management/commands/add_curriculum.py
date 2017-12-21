@@ -29,7 +29,7 @@ class Command(BaseCommand):
             '-u', '--username', dest='username', metavar='USER',
             help='Assign commits to this user (required, preferably yourself).'),
     )
-    args = 'csv_file'
+    args = 'json_file'
 
     def handle(self, json_file, **options):
         username = options.get('username')
