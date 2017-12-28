@@ -82,7 +82,8 @@ class DocumentTextSaveForm(forms.Form):
 
     def clean_text(self):
         text = self.cleaned_data.get('text', '')
-        return remove_empty_elements(text)
+        # remove_empty_elements returns None on SyntaxError or when there's no change
+        return remove_empty_elements(text) or text
 
     def save(self):
         if self.user.is_authenticated():
