@@ -419,8 +419,8 @@ class Book(models.Model):
         changes = self.get_current_changes()
         data = {"lesson_xml": self.wl1_xml(changes=changes)}
         if host:
-            gallery_url = u'%s%s%s%s/' % (host, settings.MEDIA_URL, settings.IMAGE_DIR, self.slug)
-            gallery_dir = os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.slug)
+            gallery_url = u'%s%s%s%s/' % (host, settings.MEDIA_URL, settings.IMAGE_DIR, self.gallery)
+            gallery_dir = os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, self.gallery)
             if os.path.isdir(gallery_dir):
                 data['gallery_url'] = gallery_url
                 attachments = os.listdir(gallery_dir)
