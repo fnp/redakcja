@@ -347,7 +347,7 @@
                 documentDiffUrl: function(id) { return '/editor/diff/' + id + '/'; },
                 documentRestoreUrl: function(id) { return '/editor/revert/' + id + '/'},
                 documentAttachmentUrl: function(attachmentName) {
-                    return '{{MEDIA_URL}}{{IMAGE_DIR}}{{slug}}/' + attachmentName;
+                    return '{{MEDIA_URL}}{{IMAGE_DIR}}{{gallery}}/' + attachmentName;
                 },
                 documentUrl: function(id, version) {
                     var url = '{% url 'wiki_editor' slug %}';
