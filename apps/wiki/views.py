@@ -233,7 +233,7 @@ def gallery(request, directory):
             return urllib.quote("%s/%s" % (base_url, smart_unicode(filename)))
 
         def is_image(filename):
-            return os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
+            return os.path.splitext(filename)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
 
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
