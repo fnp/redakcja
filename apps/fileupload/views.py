@@ -9,6 +9,8 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import FormView, RedirectView
+from unidecode import unidecode
+
 from .forms import UploadForm
 
 
@@ -132,6 +134,7 @@ class UploadView(UploadViewMixin, FormView):
             os.makedirs(path)
         data = []
         for f in flist:
+            f.name = unidecode(f.name)
             with open(self.get_safe_path(f.name), 'w') as destination:
                 for chunk in f.chunks():
                     destination.write(chunk)

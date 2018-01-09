@@ -8,6 +8,7 @@ Pillow
 oauth2
 httplib2 # oauth2 dependency
 texml
+unidecode
 
 ## Django
 Django>=1.5,<1.6
