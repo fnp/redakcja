@@ -207,7 +207,6 @@ EXCEPTIONS = [
     ('div', 'img'),
     ('div', 'video'),
     ('div', 'table.cell'),
-    ('span', 'link'),
 ]
 
 
