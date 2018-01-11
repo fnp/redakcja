@@ -52,19 +52,19 @@ def get_history(chunk):
 
 
 @never_cache
-# @login_required
 def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     try:
         chunk = Chunk.get(slug, chunk)
     except Chunk.MultipleObjectsReturned:
-        # TODO: choice page
         raise Http404
     except Chunk.DoesNotExist:
         if chunk is None:
             try:
-                book = Book.objects.get(slug=slug)
+                Book.objects.get(slug=slug)
             except Book.DoesNotExist:
                 return http.HttpResponseRedirect(reverse("catalogue_create_missing", args=[slug]))
+            else:
+                raise Http404
         else:
             raise Http404
     if not chunk.book.accessible(request):
@@ -75,7 +75,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     last_books[slug, chunk.slug] = {
         'time': access_time,
         'title': chunk.pretty_name(),
-        }
+    }
 
     if len(last_books) > MAX_LAST_DOCS:
         oldest_key = min(last_books, key=lambda x: last_books[x]['time'])
@@ -84,13 +84,15 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
 
     save_form = forms.DocumentTextSaveForm(user=request.user, chunk=chunk, prefix="textsave")
     try:
-        version = int(request.GET.get('version', None))
-    except:
+        version = int(request.GET.get('version', ''))
+    except ValueError:
         version = None
     if version:
         text = chunk.at_revision(version).materialize()
     else:
         text = chunk.materialize()
+    materials = set(os.listdir(os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, chunk.book.gallery)))
+    materials.update([n.rsplit('.', 1)[0] for n in materials])
     return render(request, template_name, {
         'serialized_document_data': json.dumps({
             'document': text,
@@ -112,6 +114,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
         'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
         'slug': chunk.book.slug,
         'gallery': chunk.book.gallery,
+        'materials': json.dumps(list(materials)),
     })
 
 
