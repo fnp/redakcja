@@ -92,7 +92,7 @@ def editor(request, slug, chunk=None, template_name='wiki/bootstrap.html'):
     else:
         text = chunk.materialize()
     gallery_dir = os.path.join(settings.MEDIA_ROOT, settings.IMAGE_DIR, chunk.book.gallery)
-    materials = set(os.listdir(gallery_dir)) if os.path.isdir(gallery_dir) else []
+    materials = set(os.listdir(gallery_dir)) if os.path.isdir(gallery_dir) else set()
     materials.update([n.rsplit('.', 1)[0] for n in materials])
     return render(request, template_name, {
         'serialized_document_data': json.dumps({
