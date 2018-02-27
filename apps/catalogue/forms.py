@@ -7,6 +7,7 @@ from catalogue.models import User
 from django.db.models import Count
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from catalogue.constants import MASTERS
 from catalogue.models import Book, Chunk, Image
@@ -196,7 +197,7 @@ class ReadonlyImageForm(ImageForm):
 
 
 class MarkFinalForm(forms.Form):
-    username = forms.CharField(initial='lipszyc')
+    username = forms.CharField(initial=settings.LITERARY_DIRECTOR_USERNAME)
     comment = forms.CharField(initial=u'Ostateczna akceptacja merytoryczna przez kierownika literackiego.')
     books = forms.CharField(widget=forms.Textarea, help_text=u'linki do książek w redakcji, po jednym na wiersz')
 
