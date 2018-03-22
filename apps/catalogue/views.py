@@ -30,6 +30,11 @@ from catalogue.forms import TagMultipleForm, TagSingleForm
 from catalogue.helpers import active_tab
 from catalogue.models import Category
 from librarian import BuildError
+from librarian.utils import Context
+from librarian.document import Document as SST
+from librarian.formats.html import HtmlFormat
+from librarian.formats.pdf import PdfFormat
+from librarian.formats.epub import EpubFormat
 from redakcja.utlis import send_notify_email
 from .constants import STAGES
 from .models import Document, Plan
@@ -172,9 +177,6 @@ def create_missing(request):
 
 @never_cache
 def book_html(request, pk, rev_pk=None, preview=False):
-    from librarian.document import Document as SST
-    from librarian.formats.html import HtmlFormat
-
     doc = get_object_or_404(Document, pk=pk, deleted=False)
 
     try:
@@ -228,10 +230,6 @@ def book_html(request, pk, rev_pk=None, preview=False):
 
 @never_cache
 def book_pdf(request, pk, rev_pk):
-    from librarian.utils import Context
-    from librarian.document import Document as SST
-    from librarian.formats.pdf import PdfFormat
-
     doc = get_object_or_404(Document, pk=pk)
     rev = get_object_or_404(Revision, pk=rev_pk)
     # Test
@@ -258,10 +256,6 @@ def book_pdf(request, pk, rev_pk):
 
 @never_cache
 def book_epub(request, pk, rev_pk):
-    from librarian.utils import Context
-    from librarian.document import Document as SST
-    from librarian.formats.epub import EpubFormat
-
     doc = get_object_or_404(Document, pk=pk)
     rev = get_object_or_404(Revision, pk=rev_pk)
     # Test
@@ -288,10 +282,6 @@ def book_epub(request, pk, rev_pk):
 
 @never_cache
 def book_mobi(request, pk, rev_pk):
-    from librarian.utils import Context
-    from librarian.document import Document as SST
-    from librarian.formats.epub import EpubFormat
-
     doc = get_object_or_404(Document, pk=pk)
     rev = get_object_or_404(Revision, pk=rev_pk)
 
