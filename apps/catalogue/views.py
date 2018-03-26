@@ -242,7 +242,7 @@ def book_pdf(request, pk, rev_pk):
     ctx = Context(
         files_path='http://%s/media/dynamic/uploads/%s/' % (request.get_host(), pk),
         source_url='http://%s%s' % (request.get_host(), reverse('catalogue_html', args=[doc.pk])),
-        organization=doc.owner_organization.name,
+        organization=doc.owner_organization.name if doc.owner_organization else doc.owner_user.get_full_name(),
     )
     if doc.owner_organization is not None and doc.owner_organization.logo:
         ctx.cover_logo = 'http://%s%s' % (request.get_host(), doc.owner_organization.logo.url)
