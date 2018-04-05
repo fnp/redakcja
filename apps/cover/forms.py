@@ -44,6 +44,7 @@ class ImageAddForm(forms.ModelForm):
                 raise forms.ValidationError(mark_safe(
                     ugettext('Image <a href="%s">already in repository</a>'
                              % same_source.first().get_absolute_url())))
+        return source_url
 
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
