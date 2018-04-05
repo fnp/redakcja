@@ -38,8 +38,16 @@ def get_flickr_data(url):
         re_license = re.compile(r'https?://creativecommons.org/licenses/([^/]*)/([^/]*)/.*')
         m = re_license.match(license_url)
         if not m:
-            raise FlickrError('License does not look like CC: %s' % license_url)
-        license_name = 'CC %s %s' % (m.group(1).upper(), m.group(2))
+            re_pd = re.compile(r'https?://creativecommons.org/publicdomain/([^/]*)/([^/]*)/.*')
+            m = re_pd.match(license_url)
+            if not m:
+                raise FlickrError('License does not look like CC: %s' % license_url)
+            if m.group(1).lower() == 'zero':
+                license_name = 'Public domain (CC0 %s)' % m.group(2)
+            else:
+                license_name = 'Public domain'
+        else:
+            license_name = 'CC %s %s' % (m.group(1).upper(), m.group(2))
     m = re.search(r'<a[^>]* class="owner-name [^>]*>([^<]*)<', html)
     if m:
         author = "%s@Flickr" % m.group(1)
