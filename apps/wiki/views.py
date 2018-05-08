@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 import os
 import logging
@@ -212,10 +213,10 @@ def gallery(request, directory):
                     smart_unicode(directory))
 
         def map_to_url(filename):
-            return urllib.quote("%s/%s" % (base_url, smart_unicode(filename)))
+            return urllib.quote(("%s/%s" % (base_url, smart_unicode(filename))).encode('utf-8'))
 
         def is_image(filename):
-            return os.path.splitext(f)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
+            return os.path.splitext(filename)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
 
         images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
         images.sort()
