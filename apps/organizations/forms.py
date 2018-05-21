@@ -7,7 +7,7 @@ from django import forms
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext as _
 
-from redakcja.utlis import send_notify_email
+from redakcja.utils import send_notify_email
 from .models import Organization, UserCard, countries
 
 

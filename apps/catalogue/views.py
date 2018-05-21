@@ -35,7 +35,7 @@ from librarian.document import Document as SST
 from librarian.formats.html import HtmlFormat
 from librarian.formats.pdf import PdfFormat
 from librarian.formats.epub import EpubFormat
-from redakcja.utlis import send_notify_email
+from redakcja.utils import send_notify_email
 from .constants import STAGES
 from .models import Document, Plan
 from dvcs.models import Revision
