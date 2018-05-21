@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'forms_builder.forms',
     'fnpdjango',
+    'raven.contrib.django.raven_compat',
 )
 
 LOGIN_REDIRECT_URL = '/'
