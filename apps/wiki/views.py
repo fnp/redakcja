@@ -136,7 +136,7 @@ def text(request, doc_id):
         try:
             revision = int(revision)
         except (ValueError, TypeError):
-            revision = doc.revision()
+            revision = doc.revision
 
         if revision is not None:
             text = doc.at_revision(revision).materialize()
