@@ -7,13 +7,14 @@ class OAuthConnection(models.Model):
     access = models.BooleanField(default=False)
     token = models.CharField(max_length=64, null=True, blank=True)
     token_secret = models.CharField(max_length=64, null=True, blank=True)
+    beta = models.BooleanField(default=False)
 
     @classmethod
-    def get(cls, user):
+    def get(cls, user, beta=False):
         try:
-            return cls.objects.get(user=user)
+            return cls.objects.get(user=user, beta=beta)
         except cls.DoesNotExist:
-            o = cls(user=user)
+            o = cls(user=user, beta=beta)
             o.save()
             return o
 

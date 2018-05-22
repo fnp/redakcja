@@ -23,7 +23,7 @@ class NotAuthorizedError(BaseException):
 def api_call(user, path, data=None, beta=False):
     from .models import OAuthConnection
     api_url = BETA_API_URL if beta else WL_API_URL
-    conn = OAuthConnection.get(user)
+    conn = OAuthConnection.get(user=user, beta=beta)
     if not conn.access:
         raise NotAuthorizedError("No WL authorization for user %s." % user)
     token = oauth2.Token(conn.token, conn.token_secret)

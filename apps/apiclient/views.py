@@ -23,7 +23,7 @@ def oauth(request, beta=False):
 
     request_token = dict(cgi.parse_qsl(content))
     
-    conn = OAuthConnection.get(request.user)
+    conn = OAuthConnection.get(request.user, beta)
     # this might reset existing auth!
     conn.access = False
     conn.token = request_token['oauth_token']
@@ -45,7 +45,7 @@ def oauth_callback(request, beta=False):
         return HttpResponse("OAuth consumer not configured.")
 
     oauth_verifier = request.GET.get('oauth_verifier')
-    conn = OAuthConnection.get(request.user)
+    conn = OAuthConnection.get(request.user, beta)
     token = oauth2.Token(conn.token, conn.token_secret)
     token.set_verifier(oauth_verifier)
     client = oauth2.Client(wl_consumer, token)
