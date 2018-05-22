@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging
@@ -26,7 +27,6 @@ from django_cas.decorators import user_passes_test
 from apiclient import NotAuthorizedError
 from catalogue import forms
 from catalogue import helpers
-from catalogue.forms import MarkFinalForm
 from catalogue.helpers import active_tab
 from catalogue.models import (Book, Chunk, Image, BookPublishRecord, 
         ChunkPublishRecord, ImagePublishRecord, Project)
@@ -334,9 +334,11 @@ def book(request, slug):
                 return http.HttpResponseRedirect(book.get_absolute_url())
         else:
             form = forms.BookForm(instance=book)
+        publish_options_form = forms.PublishOptionsForm()
         editable = True
     else:
         form = forms.ReadonlyBookForm(instance=book)
+        publish_options_form = forms.PublishOptionsForm()
         editable = False
 
     publish_error = book.publishable_error()
@@ -347,6 +349,7 @@ def book(request, slug):
         "publishable": publishable,
         "publishable_error": publish_error,
         "form": form,
+        "publish_options_form": publish_options_form,
         "editable": editable,
     })
 
@@ -564,15 +567,22 @@ def book_append(request, slug):
 @require_POST
 @login_required
 def publish(request, slug):
+    form = forms.PublishOptionsForm(request.POST)
+    if form.is_valid():
+        days = form.cleaned_data['days']
+        beta = form.cleaned_data['beta']
+    else:
+        days = 0
+        beta = False
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
     try:
         protocol = 'https://' if request.is_secure() else 'http://'
-        book.publish(request.user, host=protocol + request.get_host())
+        book.publish(request.user, host=protocol + request.get_host(), days=days, beta=beta)
     except NotAuthorizedError:
-        return http.HttpResponseRedirect(reverse('apiclient_oauth'))
+        return http.HttpResponseRedirect(reverse('apiclient_oauth' if not beta else 'apiclient_beta_oauth'))
     except BaseException, e:
         return http.HttpResponse(repr(e))
     else:
@@ -648,12 +658,12 @@ def active_users_list(request):
 @user_passes_test(lambda u: u.is_superuser)
 def mark_final(request):
     if request.method == 'POST':
-        form = MarkFinalForm(data=request.POST)
+        form = forms.MarkFinalForm(data=request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('mark_final_completed'))
     else:
-        form = MarkFinalForm()
+        form = forms.MarkFinalForm()
     return render(request, 'catalogue/mark_final.html', {'form': form})
 
 

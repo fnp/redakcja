@@ -3,7 +3,7 @@ import urllib
 import json
 import oauth2
 
-from apiclient.settings import WL_CONSUMER_KEY, WL_CONSUMER_SECRET, WL_API_URL
+from apiclient.settings import WL_CONSUMER_KEY, WL_CONSUMER_SECRET, WL_API_URL, BETA_API_URL
 
 
 if WL_CONSUMER_KEY and WL_CONSUMER_SECRET:
@@ -20,8 +20,9 @@ class NotAuthorizedError(BaseException):
     pass
 
 
-def api_call(user, path, data=None):
+def api_call(user, path, data=None, beta=False):
     from .models import OAuthConnection
+    api_url = BETA_API_URL if beta else WL_API_URL
     conn = OAuthConnection.get(user)
     if not conn.access:
         raise NotAuthorizedError("No WL authorization for user %s." % user)
@@ -31,12 +32,12 @@ def api_call(user, path, data=None):
         data = json.dumps(data)
         data = urllib.urlencode({"data": data})
         resp, content = client.request(
-                "%s%s" % (WL_API_URL, path),
+                "%s%s" % (api_url, path),
                 method="POST",
                 body=data)
     else:
         resp, content = client.request(
-                "%s%s" % (WL_API_URL, path))
+                "%s%s" % (api_url, path))
     status = resp['status']
 
     if status == '200':

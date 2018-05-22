@@ -227,3 +227,8 @@ class MarkFinalForm(forms.Form):
                     tags=[Chunk.tag_model.objects.get(slug='editor-proofreading')],
                     publishable=True
                 )
+
+
+class PublishOptionsForm(forms.Form):
+    days = forms.IntegerField(label=u'po ilu dniach udostępnienić (0 = od razu)', min_value=0, initial=0)
+    beta = forms.BooleanField(label=u'Opublikuj na wersji testowej', required=False)

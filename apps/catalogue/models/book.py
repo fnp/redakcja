@@ -422,7 +422,7 @@ class Book(models.Model):
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 
-    def publish(self, user, fake=False, host=None):
+    def publish(self, user, fake=False, host=None, days=0, beta=False):
         """
             Publishes a book on behalf of a (local) user.
         """
@@ -430,16 +430,19 @@ class Book(models.Model):
         changes = self.get_current_changes(publishable=True)
         if not fake:
             book_xml = self.materialize(changes=changes)
-            data = {"book_xml": book_xml}
+            data = {"book_xml": book_xml, "days": days}
             if host:
                 data['gallery_url'] = host + self.gallery_url()
-            apiclient.api_call(user, "books/", data)
+            apiclient.api_call(user, "books/", data, beta=beta)
         # record the publish
         br = BookPublishRecord.objects.create(book=self, user=user)
         for c in changes:
             ChunkPublishRecord.objects.create(book_record=br, change=c)
-        if not self.public:
+        if not self.public and days == 0:
             self.public = True
+            self.save()
+        if self.public and days > 0:
+            self.public = False
             self.save()
         post_publish.send(sender=br)
 
