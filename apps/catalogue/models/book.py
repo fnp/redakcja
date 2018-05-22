@@ -434,17 +434,18 @@ class Book(models.Model):
             if host:
                 data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data, beta=beta)
-        # record the publish
-        br = BookPublishRecord.objects.create(book=self, user=user)
-        for c in changes:
-            ChunkPublishRecord.objects.create(book_record=br, change=c)
-        if not self.public and days == 0:
-            self.public = True
-            self.save()
-        if self.public and days > 0:
-            self.public = False
-            self.save()
-        post_publish.send(sender=br)
+        if not beta:
+            # record the publish
+            br = BookPublishRecord.objects.create(book=self, user=user)
+            for c in changes:
+                ChunkPublishRecord.objects.create(book_record=br, change=c)
+            if not self.public and days == 0:
+                self.public = True
+                self.save()
+            if self.public and days > 0:
+                self.public = False
+                self.save()
+            post_publish.send(sender=br)
 
     def latex_dir(self):
         doc = self.wldocument()
