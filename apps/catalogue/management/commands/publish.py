@@ -9,7 +9,7 @@ from catalogue.models import Book
 
 
 class Command(BaseCommand):
-    help = 'Exports a lesson in WL1 XML'
+    help = 'Publish lessons based on slugs in stdin'
     option_list = BaseCommand.option_list + (
         # make_option('-q', '--quiet', action='store_false', dest='verbose',
         #     default=True, help='Less output'),
