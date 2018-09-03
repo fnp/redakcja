@@ -203,7 +203,7 @@ class MarkFinalForm(forms.Form):
 
     def clean_books(self):
         books_value = self.cleaned_data['books']
-        slugs = [line.split('/')[-2] for line in books_value.split('\n') if line.strip()]
+        slugs = [line.strip().strip('/').split('/')[-1] for line in books_value.split('\n') if line.strip()]
         books = Book.objects.filter(slug__in=slugs)
         if len(books) != len(slugs):
             raise forms.ValidationError(
