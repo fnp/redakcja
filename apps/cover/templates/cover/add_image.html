@@ -1,6 +1,8 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
 
+{% block titleextra %}{% trans "Add image" %}{% endblock %}
+
 {% block add_js %}
     {{block.super}}
     <script>

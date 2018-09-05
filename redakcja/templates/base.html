@@ -3,8 +3,9 @@
 <html>
     <head lang="{{ LANGUAGE_CODE }}">
         <meta charset="utf-8" />
-        <title>{% block title %}{% trans "Platforma Redakcyjna" %} ::
-            {% block titleextra %}{% endblock titleextra %}{% endblock title%}</title>
+        <link rel="icon" href="{{ STATIC_URL }}img/pr-icon.png" type="image/png" />
+        <title>{% block title %}{% block titleextra %}{% endblock titleextra %} ::
+            {% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
         {% block extrahead %}
         {% endblock %}
     </head>

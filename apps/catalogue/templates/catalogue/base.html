@@ -4,9 +4,10 @@
 <html>
 <head lang="{{ LANGUAGE_CODE }}">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="{{ STATIC_URL }}img/pr-icon.png" type="image/png" />
     {% stylesheet 'catalogue' %}
-    <title>{% block title %}{% trans "Platforma Redakcyjna" %} ::
-        {% block titleextra %}{% endblock %}{% endblock title %}</title>
+    <title>{% block title %}{% block titleextra %}{% endblock %} ::
+        {% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
     {% block add_css %}{% endblock %}
 </head>
 <body>

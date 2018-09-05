@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load toolbar_tags i18n %}
 
-{% block titleextra %}{{ chunk.pretty_title }}{% endblock %}
+{% block titleextra %}{% if chunk.pretty_title %}{{ chunk.pretty_title }}{% else %}{{ chunk.book.title }}{% endif %}{% endblock %}
 {% block extrahead %}
 {% load pipeline %}
 {% stylesheet 'detail' %}
