@@ -1,4 +1,4 @@
--i http://pypi.nowoczesnapolska.org.pl/simple
+-i https://py.mdrn.pl/simple
 
 ## Python libraries
 lxml>=2.2.2
@@ -20,7 +20,7 @@ sorl-thumbnail>=11.09,<12
 django-maintenancemode>=0.9
 django-pagination
 django-gravatar
-django-celery
+django-celery<3.2
 django-kombu
 
 # migrations
