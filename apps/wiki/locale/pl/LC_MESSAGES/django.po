@@ -136,10 +136,10 @@ msgstr ""
 #: templates/wiki/bootstrap.html:186
 msgid ""
 "Add a video material to your document to make it more attractive. Paste the "
-"http link from a YouTube channel."
+"http link from a YouTube or Vimeo channel."
 msgstr ""
 "Dodaj materiał video, by Twój dokument był jeszcze bardziej atrakcyjny. "
-"Wklej link http z kanału YouTube."
+"Wklej link http z kanału YouTube lub Vimeo."
 
 #: templates/wiki/bootstrap.html:187
 msgid ""

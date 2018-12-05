@@ -550,8 +550,8 @@ msgid "Edit video url"
 msgstr "Edytuj adres wideo"
 
 #: static/wiki/editor/src/editor/plugins/core/video/videoElement.js:74
-msgid "YouTube link"
-msgstr "Link do YouTube"
+msgid "YouTube or Vimeo link"
+msgstr "Link do YouTube lub Vimeo"
 
 #: static/wiki/editor/src/editor/translation-fix.js:2
 msgid "edit"
