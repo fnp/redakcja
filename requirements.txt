@@ -26,7 +26,8 @@ django-email-extras
 django-modeltranslation>=0.12,<0.13
 django-constance[database]
 django-honeypot
-django-filter
+django-filter==1.1.0
+texml==2.0.2
 
 celery>=3.1.12,<3.2
 kombu>3.0,<3.1
@@ -36,3 +37,4 @@ unidecode
 Embeder
 
 future
+raven
