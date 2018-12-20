@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-15 18:38+0100\n"
+"POT-Creation-Date: 2018-12-20 12:30+0100\n"
 "PO-Revision-Date: 2014-03-27 13:17+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -20,52 +20,52 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:39
+#: forms.py:40
 msgid "Text file must be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: forms.py:42
+#: forms.py:43
 msgid "You must either enter text or upload a file"
 msgstr "Proszę wpisać tekst albo wybrać plik do załadowania"
 
-#: forms.py:51
+#: forms.py:52
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:52
+#: forms.py:53
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:76 forms.py:165
+#: forms.py:77 forms.py:178
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:97 forms.py:111
+#: forms.py:98 forms.py:112
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:120
+#: forms.py:121
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: views.py:168
+#: views.py:172
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:170
+#: views.py:174
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:176
+#: views.py:180
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: views.py:595 models/book.py:56
+#: views.py:619 models/book.py:56
 msgid "books"
 msgstr "książki"
 
-#: views.py:597
+#: views.py:621
 msgid "scan gallery"
 msgstr "galeria skanów"
 
@@ -105,19 +105,19 @@ msgstr "Książka nie ma części."
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:272 models/image.py:82
+#: models/book.py:272 models/image.py:86
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:274 models/image.py:84
+#: models/book.py:274 models/image.py:88
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:276 models/image.py:86
+#: models/book.py:276 models/image.py:90
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:279 models/image.py:90
+#: models/book.py:279 models/image.py:94
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -216,7 +216,7 @@ msgstr "Użytkownicy aktywni od"
 msgid "Activity"
 msgstr "Aktywność"
 
-#: templates/catalogue/base.html:8
+#: templates/catalogue/base.html:10
 msgid "Platforma Redakcyjna"
 msgstr "Platforma Redakcyjna"
 
@@ -226,8 +226,7 @@ msgid "Append book"
 msgstr "Dołącz książkę"
 
 #: templates/catalogue/book_detail.html:18
-#: templates/catalogue/book_edit.html:13
-#: templates/catalogue/chunk_edit.html:16
+#: templates/catalogue/book_edit.html:13 templates/catalogue/chunk_edit.html:16
 #: templates/catalogue/image_detail.html:18
 msgid "Save"
 msgstr "Zapisz"
@@ -272,32 +271,31 @@ msgid "PDF version"
 msgstr "Wersja PDF"
 
 #: templates/catalogue/book_detail.html:72
+msgid "PDF version for mobiles"
+msgstr "Wersja PDF na telefony"
+
+#: templates/catalogue/book_detail.html:73
 msgid "EPUB version"
 msgstr "Wersja EPUB"
 
-#: templates/catalogue/book_detail.html:73
+#: templates/catalogue/book_detail.html:74
 msgid "MOBI version"
 msgstr "Wersja MOBI"
 
-#: templates/catalogue/book_detail.html:86
+#: templates/catalogue/book_detail.html:88
 #: templates/catalogue/image_detail.html:57
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: templates/catalogue/book_detail.html:90
+#: templates/catalogue/book_detail.html:92
 #: templates/catalogue/image_detail.html:61
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
-#: templates/catalogue/book_detail.html:93
+#: templates/catalogue/book_detail.html:95
 #: templates/catalogue/image_detail.html:64
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
-
-#: templates/catalogue/book_detail.html:103
-#: templates/catalogue/image_detail.html:72
-msgid "Comments"
-msgstr "Komentarze"
 
 #: templates/catalogue/book_edit.html:5
 msgid "Edit book"
@@ -494,8 +492,7 @@ msgstr "Twoje ostatnie edycje"
 msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
 
-#: templates/catalogue/upload_pdf.html:5
-#: templates/catalogue/upload_pdf.html:11
+#: templates/catalogue/upload_pdf.html:5 templates/catalogue/upload_pdf.html:11
 msgid "PDF file upload"
 msgstr "Ładowanie pliku PDF"
 
@@ -580,6 +577,9 @@ msgstr "Zmiana"
 #: templatetags/wall.py:150
 msgid "Comment"
 msgstr "Komentarz"
+
+#~ msgid "Comments"
+#~ msgstr "Komentarze"
 
 #~ msgid "Mark publishable"
 #~ msgstr "Oznacz do publikacji"

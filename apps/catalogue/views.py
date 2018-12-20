@@ -264,7 +264,7 @@ def book_html(request, slug):
 
 
 @never_cache
-def book_pdf(request, slug):
+def book_pdf(request, slug, mobile=False):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
@@ -272,7 +272,8 @@ def book_pdf(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    pdf_file = doc.as_pdf(cover=True, ilustr_path=book.gallery_path())
+    customizations = ['26pt', 'nothemes', 'nomargins', 'notoc'] if mobile else None
+    pdf_file = doc.as_pdf(cover=True, ilustr_path=book.gallery_path(), customizations=customizations)
     from catalogue.ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
                 book.slug + '.pdf', 'application/pdf')
