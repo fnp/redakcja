@@ -339,7 +339,7 @@ class Book(models.Model):
             from librarian.dcparser import BookInfo
             from librarian import NoDublinCore, ParseError, ValidationError
             try:
-                return BookInfo.from_string(book_xml.encode('utf-8'))
+                return BookInfo.from_bytes(book_xml.encode('utf-8'))
             except (self.NoTextError, ParseError, NoDublinCore, ValidationError):
                 return None
 
@@ -416,8 +416,8 @@ class Book(models.Model):
         from catalogue.ebook_utils import RedakcjaDocProvider
         from librarian.parser import WLDocument
 
-        return WLDocument.from_string(
-                self.materialize(publishable=publishable, changes=changes),
+        return WLDocument.from_bytes(
+                self.materialize(publishable=publishable, changes=changes).encode('utf-8'),
                 provider=RedakcjaDocProvider(publishable=publishable),
                 parse_dublincore=parse_dublincore,
                 strict=strict)

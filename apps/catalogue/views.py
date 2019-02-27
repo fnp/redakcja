@@ -235,7 +235,7 @@ def book_txt(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     doc = book.wldocument()
-    text = doc.as_text().get_string()
+    text = doc.as_text().get_bytes()
     response = http.HttpResponse(text, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename=%s.txt' % slug
     return response
@@ -250,7 +250,7 @@ def book_html(request, slug):
     doc = book.wldocument(parse_dublincore=False)
     html = doc.as_html(options={'gallery': "'%s'" % book.gallery_url()})
 
-    html = html.get_string() if html is not None else ''
+    html = html.get_bytes() if html is not None else ''
     # response = http.HttpResponse(html, content_type='text/html')
     # return response
     # book_themes = {}
@@ -288,7 +288,7 @@ def book_epub(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    epub = doc.as_epub(ilustr_path=book.gallery_path()).get_string()
+    epub = doc.as_epub(ilustr_path=book.gallery_path()).get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
@@ -304,7 +304,7 @@ def book_mobi(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    mobi = doc.as_mobi(ilustr_path=book.gallery_path()).get_string()
+    mobi = doc.as_mobi(ilustr_path=book.gallery_path()).get_bytes()
     response = HttpResponse(content_type='application/x-mobipocket-ebook')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
     response.write(mobi)

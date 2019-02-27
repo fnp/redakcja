@@ -41,7 +41,7 @@ def preview(request, book, chunk=None, rev=None):
     xml = revision.materialize().encode('utf-8')
 
     try:
-        info = BookInfo.from_string(xml)
+        info = BookInfo.from_bytes(xml)
     except:
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     cover = make_cover(info)
@@ -63,7 +63,7 @@ def preview_from_xml(request):
 
     xml = request.POST['xml']
     try:
-        info = BookInfo.from_string(xml.encode('utf-8'))
+        info = BookInfo.from_bytes(xml.encode('utf-8'))
     except:
         return HttpResponse(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     coverid = sha1(etree.tostring(info.to_etree())).hexdigest()

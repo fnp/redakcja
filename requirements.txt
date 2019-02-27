@@ -1,16 +1,13 @@
--i https://py.mdrn.pl:8443/simple
+-i https://py.mdrn.pl/simple
 
 ## Python libraries
-lxml>=2.2.2
 Mercurial>=3.3,<3.4
 PyYAML>=3.0
 Pillow
 oauth2
 httplib2 # oauth2 dependency
-texml==2.0.2
 
-## Book conversion library
-# git+git://github.com/fnp/librarian.git@master#egg=librarian
+librarian
 
 ## Django
 Django>=1.6,<1.7
@@ -31,4 +28,3 @@ kombu>=3.0,<3.1
 South>=1.0.2
 
 raven
-argparse

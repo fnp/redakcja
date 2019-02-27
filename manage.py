@@ -5,8 +5,6 @@ import sys
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path = [
     os.path.join(ROOT, 'apps'),
-    os.path.join(ROOT, 'lib'),
-    os.path.join(ROOT, 'lib/librarian'),
 ] + sys.path
 
 if __name__ == "__main__":

@@ -80,7 +80,8 @@ class Image(dvcs_models.Document):
         picture_xml = publishable.materialize()
 
         try:
-            picture = WLPicture.from_string(picture_xml.encode('utf-8'),
+            picture = WLPicture.from_bytes(
+                    picture_xml.encode('utf-8'),
                     image_store=SelfImageStore)
         except ParseError, e:
             raise AssertionError(_('Invalid XML') + ': ' + str(e))

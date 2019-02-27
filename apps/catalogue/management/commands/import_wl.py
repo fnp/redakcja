@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 print b.slug
             text = b.materialize().encode('utf-8')
             try:
-                info = BookInfo.from_string(text)
+                info = BookInfo.from_bytes(text)
             except (ParseError, ValidationError):
                 pass
             else:
@@ -59,7 +59,7 @@ class Command(BaseCommand):
         for book in json.load(urllib2.urlopen(WL_API)):
             book_detail = json.load(urllib2.urlopen(book['href']))
             xml_text = urllib2.urlopen(book_detail['xml']).read()
-            info = BookInfo.from_string(xml_text)
+            info = BookInfo.from_bytes(xml_text)
             previous_books = slugs.get(info.slug)
             if previous_books:
                 if len(previous_books) > 1:
