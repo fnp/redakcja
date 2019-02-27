@@ -42,10 +42,9 @@ Testy
 ====
 
     $ pip install -r requirements-test.txt
-    $ python redakcja/manage.py test --settings=settings.test
+    $ python src/manage.py test --settings=redakcja.settings.test
 
 JavaScript (wymagany node.js i xsltproc):
 
     $ npm install
-    $ ./node_modules/.bin/mocha -u tdd $(find -name *_test.js)
-    
+    $ ./node_modules/.bin/mocha -u tdd $(find src -name *_test.js)

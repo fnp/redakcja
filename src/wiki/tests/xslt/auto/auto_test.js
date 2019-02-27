@@ -6,7 +6,7 @@ var pd = require('pretty-data').pd;
 var ansidiff = require('ansidiff');
 
 
-eval(fs.readFileSync(__dirname + '/../../../../../redakcja/static/js/wiki/xslt.js') + '');
+eval(fs.readFileSync(__dirname + '/../../../../redakcja/static/js/wiki/xslt.js') + '');
 
 
 function assertNodesEqual(lhs, rhs, areHTMLNodes) {
@@ -85,7 +85,7 @@ function assertNodesEqual(lhs, rhs, areHTMLNodes) {
 suite('wiki.tests.xslt.auto', function() {
         
         var tempFileName = '.temp.xml';
-        var xsltStyleSheetPath = __dirname + '/../../../../../redakcja/static/xsl/wl2html_client.xsl';
+        var xsltStyleSheetPath = __dirname + '/../../../../redakcja/static/xsl/wl2html_client.xsl';
         
         fs.readdirSync(__dirname + '/data/').forEach(function(fileName) {
             
