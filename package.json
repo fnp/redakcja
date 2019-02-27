@@ -1,6 +1,9 @@
 {
-"engines": {
-  "node": "0.8.x",
-  "npm": ">=1.1.2"
-}
+  "dependencies": {
+    "ansidiff": "^1.0.0",
+    "jquery": "^3.3.1",
+    "jsdom": "^13.2.0",
+    "mocha": "^6.0.2",
+    "pretty-data": "^0.40.0"
+  }
 }

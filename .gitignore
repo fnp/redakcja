@@ -15,6 +15,7 @@ var
 coverage.xml
 nosetests.xml
 pip-log.txt
+/htmlcov
 
 # Mac OS X garbage
 .DS_Store

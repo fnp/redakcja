@@ -39,3 +39,6 @@ NOSE_ARGS = (
 )
 
 SECRET_KEY = "not-so-secret"
+
+
+LITERARY_DIRECTOR_USERNAME = 'Kaowiec'

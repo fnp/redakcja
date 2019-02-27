@@ -1,4 +1,5 @@
-var $ = require('jquery');
+var jsdom = require("jsdom");
+var $ = require('jquery')(new jsdom.JSDOM().window);
 var fs = require('fs');
 var exec = require('child_process').exec;
 var pd = require('pretty-data').pd;
