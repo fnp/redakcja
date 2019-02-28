@@ -100,19 +100,15 @@ class XmlUpdater(object):
             books = Book.objects.all()
 
         # Start transaction management.
-        transaction.enter_transaction_management()
-
-        for book in books:
-            self.counters['All books'] += 1
-            chunks = book.chunk_set.all()
-            if self.only_first_chunk:
-                chunks = chunks[:1]
-            for chunk in chunks:
-                self.counters['All chunks'] += 1
-                self.fix_chunk(chunk, user, verbose, dry_run)
-
-        transaction.commit()
-        transaction.leave_transaction_management()
+        with transaction.atomic():
+            for book in books:
+                self.counters['All books'] += 1
+                chunks = book.chunk_set.all()
+                if self.only_first_chunk:
+                    chunks = chunks[:1]
+                for chunk in chunks:
+                    self.counters['All chunks'] += 1
+                    self.fix_chunk(chunk, user, verbose, dry_run)
 
     def print_results(self):
         """Prints the counters."""

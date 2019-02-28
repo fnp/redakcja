@@ -1,240 +1,329 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
-
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        
-        # Adding model 'Book'
-        db.create_table('catalogue_book', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255, db_index=True)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=128, db_index=True)),
-            ('gallery', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='children', null=True, to=orm['catalogue.Book'])),
-            ('parent_number', self.gf('django.db.models.fields.IntegerField')(db_index=True, null=True, blank=True)),
-            ('_short_html', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('_single', self.gf('django.db.models.fields.NullBooleanField')(db_index=True, null=True, blank=True)),
-            ('_new_publishable', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('_published', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('catalogue', ['Book'])
-
-        # Adding model 'Chunk'
-        db.create_table('catalogue_chunk', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='created_documents', null=True, to=orm['auth.User'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
-            ('book', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Book'])),
-            ('number', self.gf('django.db.models.fields.IntegerField')()),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('_short_html', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('_hidden', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('_changed', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('stage', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.ChunkTag'], null=True, blank=True)),
-            ('head', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['catalogue.ChunkChange'], null=True, blank=True)),
-        ))
-        db.send_create_signal('catalogue', ['Chunk'])
-
-        # Adding unique constraint on 'Chunk', fields ['book', 'number']
-        db.create_unique('catalogue_chunk', ['book_id', 'number'])
-
-        # Adding unique constraint on 'Chunk', fields ['book', 'slug']
-        db.create_unique('catalogue_chunk', ['book_id', 'slug'])
-
-        # Adding model 'ChunkTag'
-        db.create_table('catalogue_chunktag', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=64)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(db_index=True, max_length=64, unique=True, null=True, blank=True)),
-            ('ordering', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('catalogue', ['ChunkTag'])
-
-        # Adding model 'ChunkChange'
-        db.create_table('catalogue_chunkchange', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
-            ('author_name', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('author_email', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('revision', self.gf('django.db.models.fields.IntegerField')(db_index=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='children', null=True, blank=True, to=orm['catalogue.ChunkChange'])),
-            ('merge_parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='merge_children', null=True, blank=True, to=orm['catalogue.ChunkChange'])),
-            ('description', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, db_index=True)),
-            ('publishable', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('tree', self.gf('django.db.models.fields.related.ForeignKey')(related_name='change_set', to=orm['catalogue.Chunk'])),
-            ('data', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-        ))
-        db.send_create_signal('catalogue', ['ChunkChange'])
-
-        # Adding unique constraint on 'ChunkChange', fields ['tree', 'revision']
-        db.create_unique('catalogue_chunkchange', ['tree_id', 'revision'])
-
-        # Adding M2M table for field tags on 'ChunkChange'
-        db.create_table('catalogue_chunkchange_tags', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('chunkchange', models.ForeignKey(orm['catalogue.chunkchange'], null=False)),
-            ('chunktag', models.ForeignKey(orm['catalogue.chunktag'], null=False))
-        ))
-        db.create_unique('catalogue_chunkchange_tags', ['chunkchange_id', 'chunktag_id'])
-
-        # Adding model 'BookPublishRecord'
-        db.create_table('catalogue_bookpublishrecord', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('book', self.gf('django.db.models.fields.related.ForeignKey')(related_name='publish_log', to=orm['catalogue.Book'])),
-            ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-        ))
-        db.send_create_signal('catalogue', ['BookPublishRecord'])
-
-        # Adding model 'ChunkPublishRecord'
-        db.create_table('catalogue_chunkpublishrecord', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('book_record', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.BookPublishRecord'])),
-            ('change', self.gf('django.db.models.fields.related.ForeignKey')(related_name='publish_log', to=orm['catalogue.ChunkChange'])),
-        ))
-        db.send_create_signal('catalogue', ['ChunkPublishRecord'])
+import django.db.models.deletion
+from django.conf import settings
+import dvcs.models
+import dvcs.storage
 
 
-    def backwards(self, orm):
-        
-        # Removing unique constraint on 'ChunkChange', fields ['tree', 'revision']
-        db.delete_unique('catalogue_chunkchange', ['tree_id', 'revision'])
+class Migration(migrations.Migration):
 
-        # Removing unique constraint on 'Chunk', fields ['book', 'slug']
-        db.delete_unique('catalogue_chunk', ['book_id', 'slug'])
+    dependencies = [
+        ('auth', '0001_initial'),
+        ('cover', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Removing unique constraint on 'Chunk', fields ['book', 'number']
-        db.delete_unique('catalogue_chunk', ['book_id', 'number'])
-
-        # Deleting model 'Book'
-        db.delete_table('catalogue_book')
-
-        # Deleting model 'Chunk'
-        db.delete_table('catalogue_chunk')
-
-        # Deleting model 'ChunkTag'
-        db.delete_table('catalogue_chunktag')
-
-        # Deleting model 'ChunkChange'
-        db.delete_table('catalogue_chunkchange')
-
-        # Removing M2M table for field tags on 'ChunkChange'
-        db.delete_table('catalogue_chunkchange_tags')
-
-        # Deleting model 'BookPublishRecord'
-        db.delete_table('catalogue_bookpublishrecord')
-
-        # Deleting model 'ChunkPublishRecord'
-        db.delete_table('catalogue_chunkpublishrecord')
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'catalogue.book': {
-            'Meta': {'ordering': "['parent_number', 'title']", 'object_name': 'Book'},
-            '_new_publishable': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            '_published': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            '_short_html': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            '_single': ('django.db.models.fields.NullBooleanField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
-            'gallery': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['catalogue.Book']"}),
-            'parent_number': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '128', 'db_index': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'db_index': 'True'})
-        },
-        'catalogue.bookpublishrecord': {
-            'Meta': {'ordering': "['-timestamp']", 'object_name': 'BookPublishRecord'},
-            'book': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'publish_log'", 'to': "orm['catalogue.Book']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'catalogue.chunk': {
-            'Meta': {'ordering': "['number']", 'unique_together': "[['book', 'number'], ['book', 'slug']]", 'object_name': 'Chunk'},
-            '_changed': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            '_hidden': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            '_short_html': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'book': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Book']"}),
-            'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_documents'", 'null': 'True', 'to': "orm['auth.User']"}),
-            'head': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['catalogue.ChunkChange']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'number': ('django.db.models.fields.IntegerField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'stage': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.ChunkTag']", 'null': 'True', 'blank': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
-        },
-        'catalogue.chunkchange': {
-            'Meta': {'ordering': "('created_at',)", 'unique_together': "(['tree', 'revision'],)", 'object_name': 'ChunkChange'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'author_email': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'author_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'db_index': 'True'}),
-            'data': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            'description': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'merge_parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'merge_children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['catalogue.ChunkChange']"}),
-            'publishable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'revision': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'change_set'", 'symmetrical': 'False', 'to': "orm['catalogue.ChunkTag']"}),
-            'tree': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'change_set'", 'to': "orm['catalogue.Chunk']"})
-        },
-        'catalogue.chunkpublishrecord': {
-            'Meta': {'object_name': 'ChunkPublishRecord'},
-            'book_record': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.BookPublishRecord']"}),
-            'change': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'publish_log'", 'to': "orm['catalogue.ChunkChange']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        'catalogue.chunktag': {
-            'Meta': {'ordering': "['ordering']", 'object_name': 'ChunkTag'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'ordering': ('django.db.models.fields.IntegerField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '64', 'unique': 'True', 'null': 'True', 'blank': 'True'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        }
-    }
-
-    complete_apps = ['catalogue']
+    operations = [
+        migrations.CreateModel(
+            name='Book',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=255, verbose_name='title', db_index=True)),
+                ('slug', models.SlugField(unique=True, max_length=128, verbose_name='slug')),
+                ('public', models.BooleanField(default=True, db_index=True, verbose_name='public')),
+                ('gallery', models.CharField(max_length=255, verbose_name='scan gallery name', blank=True)),
+                ('parent_number', models.IntegerField(db_index=True, verbose_name='parent number', null=True, editable=False, blank=True)),
+                ('_short_html', models.TextField(null=True, editable=False, blank=True)),
+                ('_single', models.NullBooleanField(db_index=True, editable=False)),
+                ('_new_publishable', models.NullBooleanField(editable=False)),
+                ('_published', models.NullBooleanField(editable=False)),
+                ('_on_track', models.IntegerField(db_index=True, null=True, editable=False, blank=True)),
+                ('dc_slug', models.CharField(db_index=True, max_length=128, null=True, editable=False, blank=True)),
+            ],
+            options={
+                'ordering': ['title', 'slug'],
+                'verbose_name': 'book',
+                'verbose_name_plural': 'books',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='BookPublishRecord',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timestamp', models.DateTimeField(auto_now_add=True, verbose_name='time')),
+                ('book', models.ForeignKey(related_name='publish_log', verbose_name='book', to='catalogue.Book')),
+                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-timestamp'],
+                'verbose_name': 'book publish record',
+                'verbose_name_plural': 'book publish records',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Chunk',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('number', models.IntegerField(verbose_name='number')),
+                ('title', models.CharField(max_length=255, verbose_name='title', blank=True)),
+                ('slug', models.SlugField(verbose_name='slug')),
+                ('gallery_start', models.IntegerField(default=1, null=True, verbose_name='gallery start', blank=True)),
+                ('_short_html', models.TextField(null=True, editable=False, blank=True)),
+                ('_hidden', models.NullBooleanField(editable=False)),
+                ('_changed', models.NullBooleanField(editable=False)),
+                ('book', models.ForeignKey(editable=False, to='catalogue.Book', verbose_name='book')),
+                ('creator', models.ForeignKey(related_name='created_chunk', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator')),
+            ],
+            options={
+                'ordering': ['number'],
+                'verbose_name': 'chunk',
+                'verbose_name_plural': 'chunks',
+                'permissions': [('can_pubmark', 'Can mark for publishing')],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ChunkChange',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('author_name', models.CharField(help_text='Used if author is not set.', max_length=128, null=True, verbose_name='author name', blank=True)),
+                ('author_email', models.CharField(help_text='Used if author is not set.', max_length=128, null=True, verbose_name='author email', blank=True)),
+                ('revision', models.IntegerField(verbose_name='revision', db_index=True)),
+                ('description', models.TextField(default=b'', verbose_name='description', blank=True)),
+                ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
+                ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
+                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_REPO_PATH), verbose_name='data')),
+                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='merge parent')),
+                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='parent')),
+            ],
+            options={
+                'ordering': ('created_at',),
+                'abstract': False,
+                'verbose_name': 'change for: chunk',
+                'verbose_name_plural': 'changes for: chunk',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ChunkPublishRecord',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('book_record', models.ForeignKey(verbose_name='book publish record', to='catalogue.BookPublishRecord')),
+                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ChunkChange')),
+            ],
+            options={
+                'verbose_name': 'chunk publish record',
+                'verbose_name_plural': 'chunk publish records',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ChunkTag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=64, verbose_name='name')),
+                ('slug', models.SlugField(null=True, max_length=64, blank=True, unique=True, verbose_name='slug')),
+                ('ordering', models.IntegerField(verbose_name='ordering')),
+            ],
+            options={
+                'ordering': ['ordering'],
+                'abstract': False,
+                'verbose_name': 'tag for: chunk',
+                'verbose_name_plural': 'tags for: chunk',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Image',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('image', models.FileField(upload_to=b'catalogue/images', verbose_name='image')),
+                ('title', models.CharField(max_length=255, verbose_name='title', blank=True)),
+                ('slug', models.SlugField(unique=True, verbose_name='slug')),
+                ('public', models.BooleanField(default=True, db_index=True, verbose_name='public')),
+                ('_short_html', models.TextField(null=True, editable=False, blank=True)),
+                ('_new_publishable', models.NullBooleanField(editable=False)),
+                ('_published', models.NullBooleanField(editable=False)),
+                ('_changed', models.NullBooleanField(editable=False)),
+                ('creator', models.ForeignKey(related_name='created_image', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator')),
+            ],
+            options={
+                'ordering': ['title'],
+                'verbose_name': 'image',
+                'verbose_name_plural': 'images',
+                'permissions': [('can_pubmark_image', 'Can mark images for publishing')],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ImageChange',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('author_name', models.CharField(help_text='Used if author is not set.', max_length=128, null=True, verbose_name='author name', blank=True)),
+                ('author_email', models.CharField(help_text='Used if author is not set.', max_length=128, null=True, verbose_name='author email', blank=True)),
+                ('revision', models.IntegerField(verbose_name='revision', db_index=True)),
+                ('description', models.TextField(default=b'', verbose_name='description', blank=True)),
+                ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
+                ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
+                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_IMAGE_REPO_PATH), verbose_name='data')),
+                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='merge parent')),
+                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='parent')),
+            ],
+            options={
+                'ordering': ('created_at',),
+                'abstract': False,
+                'verbose_name': 'change for: image',
+                'verbose_name_plural': 'changes for: image',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ImagePublishRecord',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timestamp', models.DateTimeField(auto_now_add=True, verbose_name='time')),
+                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ImageChange')),
+                ('image', models.ForeignKey(related_name='publish_log', verbose_name='image', to='catalogue.Image')),
+                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-timestamp'],
+                'verbose_name': 'image publish record',
+                'verbose_name_plural': 'image publish records',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ImageTag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=64, verbose_name='name')),
+                ('slug', models.SlugField(null=True, max_length=64, blank=True, unique=True, verbose_name='slug')),
+                ('ordering', models.IntegerField(verbose_name='ordering')),
+            ],
+            options={
+                'ordering': ['ordering'],
+                'abstract': False,
+                'verbose_name': 'tag for: image',
+                'verbose_name_plural': 'tags for: image',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Project',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255, verbose_name='name')),
+                ('notes', models.TextField(null=True, verbose_name='notes', blank=True)),
+            ],
+            options={
+                'ordering': ['name'],
+                'verbose_name': 'project',
+                'verbose_name_plural': 'projects',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='imagechange',
+            name='tags',
+            field=models.ManyToManyField(related_name='change_set', verbose_name='tags', to='catalogue.ImageTag'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='imagechange',
+            name='tree',
+            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Image'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='imagechange',
+            unique_together=set([('tree', 'revision')]),
+        ),
+        migrations.AddField(
+            model_name='image',
+            name='head',
+            field=models.ForeignKey(default=None, editable=False, to='catalogue.ImageChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='image',
+            name='project',
+            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='image',
+            name='stage',
+            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ImageTag', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='image',
+            name='user',
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='chunkchange',
+            name='tags',
+            field=models.ManyToManyField(related_name='change_set', verbose_name='tags', to='catalogue.ChunkTag'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='chunkchange',
+            name='tree',
+            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Chunk'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='chunkchange',
+            unique_together=set([('tree', 'revision')]),
+        ),
+        migrations.AddField(
+            model_name='chunk',
+            name='head',
+            field=models.ForeignKey(default=None, editable=False, to='catalogue.ChunkChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='chunk',
+            name='stage',
+            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ChunkTag', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='chunk',
+            name='user',
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='chunk',
+            unique_together=set([('book', 'number'), ('book', 'slug')]),
+        ),
+        migrations.AddField(
+            model_name='book',
+            name='dc_cover_image',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False, to='cover.Image', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='book',
+            name='parent',
+            field=models.ForeignKey(related_name='children', blank=True, editable=False, to='catalogue.Book', null=True, verbose_name='parent'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='book',
+            name='project',
+            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True),
+            preserve_default=True,
+        ),
+        migrations.CreateModel(
+            name='User',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('auth.user',),
+        ),
+    ]

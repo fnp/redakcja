@@ -24,19 +24,7 @@ CATALOGUE_IMAGE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo-img')
 MEDIA_ROOT = tempfile.mkdtemp(prefix='media-root')
 CELERY_ALWAYS_EAGER = True
 
-INSTALLED_APPS += ('django_nose', 'dvcs.tests')
-
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-TEST_MODULES = ('catalogue', 'cover', 'dvcs.tests', 'wiki', 'toolbar')
-COVER_APPS = ('catalogue', 'cover', 'dvcs', 'wiki', 'toolbar')
-NOSE_ARGS = (
-    '--tests=' + ','.join(TEST_MODULES),
-    '--cover-package=' + ','.join(COVER_APPS),
-    '-d',
-    '--with-doctest',
-    '--with-xunit',
-    '--with-xcoverage',
-)
+INSTALLED_APPS += ('dvcs.tests',)
 
 SECRET_KEY = "not-so-secret"
 

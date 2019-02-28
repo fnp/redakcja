@@ -10,21 +10,18 @@ httplib2 # oauth2 dependency
 librarian
 
 ## Django
-Django>=1.6,<1.7
-fnpdjango>=0.2,<0.3
-django-pipeline>=1.4.7,<1.5
+Django==1.11.20
+fnpdjango==0.3
+django-pipeline==1.6.14
 django_cas>=2.1,<2.2
 sorl-thumbnail>=12.2,<12.4  # ??
 django-maintenancemode>=0.9
-django-pagination
+fnp-django-pagination==2.2.2
 django-gravatar2
 python-slugify
 django-extensions==1.5.7
 
 celery>=3.1.12,<3.2
 kombu>=3.0,<3.1
-
-# migrations
-South>=1.0.2
 
 raven

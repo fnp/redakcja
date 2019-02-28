@@ -12,12 +12,7 @@ register = template.Library()
 
 class ChunksList(object):
     def __init__(self, chunk_qs):
-        #self.chunk_qs = chunk_qs#.annotate(
-            #book_length=Count('book__chunk')).select_related(
-            #'book')#, 'stage__name',
-            #'user')
-        self.chunk_qs = chunk_qs.select_related('book__hidden')
-
+        self.chunk_qs = chunk_qs.select_related('book')
         self.book_qs = chunk_qs.values('book_id')
 
     def __getitem__(self, key):

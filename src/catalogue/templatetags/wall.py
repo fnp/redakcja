@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from datetime import timedelta
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.contrib.comments.models import Comment
 from django import template
 from django.utils.translation import ugettext as _
 
@@ -33,7 +32,7 @@ class WallItem(object):
 
 def changes_wall(user=None, max_len=None, day=None):
     qs = Chunk.change_model.objects.order_by('-created_at')
-    qs = qs.select_related('author', 'tree', 'tree__book__title')
+    qs = qs.select_related('author', 'tree', 'tree__book')
     if user is not None:
         qs = qs.filter(Q(author=user) | Q(tree__user=user))
     if max_len is not None:
@@ -62,7 +61,7 @@ def changes_wall(user=None, max_len=None, day=None):
 
 def image_changes_wall(user=None, max_len=None, day=None):
     qs = Image.change_model.objects.order_by('-created_at')
-    qs = qs.select_related('author', 'tree', 'tree__title')
+    qs = qs.select_related('author', 'tree')
     if user is not None:
         qs = qs.filter(Q(author=user) | Q(tree__user=user))
     if max_len is not None:
@@ -94,7 +93,7 @@ def image_changes_wall(user=None, max_len=None, day=None):
 
 
 def published_wall(user=None, max_len=None, day=None):
-    qs = BookPublishRecord.objects.select_related('book__title')
+    qs = BookPublishRecord.objects.select_related('book')
     if user:
         # TODO: published my book
         qs = qs.filter(Q(user=user))
@@ -115,7 +114,7 @@ def published_wall(user=None, max_len=None, day=None):
 
 
 def image_published_wall(user=None, max_len=None, day=None):
-    qs = ImagePublishRecord.objects.select_related('image__title')
+    qs = ImagePublishRecord.objects.select_related('image')
     if user:
         # TODO: published my book
         qs = qs.filter(Q(user=user))
@@ -132,30 +131,6 @@ def image_published_wall(user=None, max_len=None, day=None):
         w.url = item.image.get_absolute_url()
         w.user = item.user
         w.email = item.user.email
-        yield w
-
-
-def comments_wall(user=None, max_len=None, day=None):
-    qs = Comment.objects.filter(is_public=True).select_related().order_by('-submit_date')
-    if user:
-        # TODO: comments concerning my books
-        qs = qs.filter(Q(user=user))
-    if max_len is not None:
-        qs = qs[:max_len]
-    if day is not None:
-        next_day = day + timedelta(1)
-        qs = qs.filter(submit_date__gte=day, submit_date__lt=next_day)
-    for item in qs:
-        w  = WallItem('comment')
-        w.header = _('Comment')
-        w.title = item.content_object
-        w.summary = item.comment
-        w.url = item.content_object.get_absolute_url()
-        w.timestamp = item.submit_date
-        w.user = item.user
-        ui = item.userinfo
-        w.email = item.email
-        w.user_name = item.name
         yield w
 
 
@@ -193,7 +168,6 @@ def wall(context, user=None, max_len=100):
             published_wall(user, max_len),
             image_changes_wall(user, max_len),
             image_published_wall(user, max_len),
-            comments_wall(user, max_len),
         ], max_len)}
 
 @register.inclusion_tag("catalogue/wall.html", takes_context=True)
@@ -206,5 +180,4 @@ def day_wall(context, day):
             published_wall(day=day),
             image_changes_wall(day=day),
             image_published_wall(day=day),
-            comments_wall(day=day),
         ])}

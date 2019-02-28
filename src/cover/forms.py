@@ -18,6 +18,7 @@ from cover.utils import get_flickr_data, FlickrError, URLOpener
 class ImageAddForm(forms.ModelForm):
     class Meta:
         model = Image
+        exclude = [] 
 
     def __init__(self, *args, **kwargs):
         super(ImageAddForm, self).__init__(*args, **kwargs)
