@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os.path
-from redakcja.settings.defaults import *
-from redakcja.localsettings import *
-
+from .defaults import *
+from ..localsettings import *
+import os
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 

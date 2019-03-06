@@ -3,7 +3,6 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from nose.tools import *
 from django.test import TestCase
 from cover.forms import FlickrForm
 

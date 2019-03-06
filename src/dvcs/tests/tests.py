@@ -1,4 +1,3 @@
-from nose.tools import *
 from django.test import TestCase
 from .models import ADocument
 
@@ -10,7 +9,6 @@ class DocumentModelTests(TestCase):
         )
 
     def test_empty_file(self):
-        assert False
         doc = ADocument.objects.create()
         self.assertTextEqual(doc.materialize(), u"")
 

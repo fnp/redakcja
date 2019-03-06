@@ -114,7 +114,6 @@ class GalleryAppendTests(TestCase):
 
 
     def test_none_indexed(self):
-        import nose.tools
         self.book2 = Book.create(self.user, 'book 2', slug='book2')
         self.make_gallery(self.book1, {
             '1-0001_1l' : 'aa',

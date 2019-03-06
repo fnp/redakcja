@@ -23,6 +23,8 @@ ADMINS = (
     (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
 )
 
+INTERNAL_IPS = ['127.0.0.1']
+
 MANAGERS = ADMINS
 
 # Local time zone for this installation. Choices can be found here:

@@ -1,7 +1,3 @@
-#
-# Nose tests
-#
-
 from redakcja.settings import *
 
 DATABASES = {

@@ -1,5 +1,0 @@
-django-nose==1.2
-nose
-nosexcover
-mock
-selenium

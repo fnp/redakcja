@@ -13,7 +13,6 @@ var
 .coverage
 .coveragerc
 coverage.xml
-nosetests.xml
 pip-log.txt
 /htmlcov
 
