@@ -2,9 +2,7 @@
 # Nose tests
 #
 
-from redakcja.settings.common import *
-
-# ROOT_URLCONF = 'yourapp.settings.test.urls'
+from redakcja.settings import *
 
 DATABASES = {
     'default': {
@@ -16,7 +14,6 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-
 import tempfile
 
 CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo')
