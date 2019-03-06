@@ -39,7 +39,13 @@
 		</p>
 		<p>
 		    <label>{% trans "Characters in document" %}:</label>
-		    <span id="charcount"></span> (<span id="charcount_pages"></span> {% trans "pages" %}<span id="charcount_untagged">, {% trans "untagged" %}</span>)
+		    <span id="charcounts_text">
+			    <br><span id="charcount"></span> (<span id="charcount_pages"></span> {% trans "pages" %}, {% trans "without footnotes and themes" %})
+			    <br><span id="charcount_full"></span> (<span id="charcount_full_pages"></span> {% trans "pages" %}, {% trans "with footnotes and themes" %})
+		    </span>
+		    <span id="charcounts_raw">
+			    <br><span id="charcount_raw"></span> (<span id="charcount_raw_pages"></span> {% trans "pages" %}, {% trans "untagged" %})
+		    </span>
 		</p>
 	</div>
 </div>

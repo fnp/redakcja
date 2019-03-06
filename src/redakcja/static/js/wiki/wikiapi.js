@@ -414,6 +414,7 @@
 
 
     WikiDocument.prototype.getLength = function(params) {
+        params = $.extend({}, noops, params);
         var xml = this.text.replace(/\/(\s+)/g, '<br />$1');
         var parser = new DOMParser();
         var doc = parser.parseFromString(xml, 'text/xml');
@@ -423,7 +424,13 @@
             throw "Not an XML document.";
         }
         $.xmlns["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"; 
-        $('rdf|RDF, motyw, pa, pe, pr, pt', doc).remove();
+        $('rdf|RDF', doc).remove();
+        if (params.noFootnotes) {
+            $('pa, pe, pr, pt', doc).remove();
+        }
+	if (params.noThemes) {
+	    $('motyw', doc).remove();
+        }
         var text = $(doc).text();
         text = $.trim(text.replace(/\s{2,}/g, ' '));
         return text.length;

@@ -32,15 +32,23 @@
     SummaryPerspective.prototype.showCharCount = function() {
         var cc;
         try {
+            $('#charcounts_text').show();
+            $('#charcounts_raw').hide();
+            cc = this.doc.getLength({noFootnotes: true, noThemes: true});
+            $('#charcount').html(cc);
+            $('#charcount_pages').html((Math.round(cc/18)/100).toLocaleString());
+
             cc = this.doc.getLength();
-            $('#charcount_untagged').hide();
+            $('#charcount_full').html(cc);
+            $('#charcount_full_pages').html((Math.round(cc/18)/100).toLocaleString());
         }
         catch (e) {
-            $('#charcount_untagged').show();
+            $('#charcounts_text').hide();
+            $('#charcounts_raw').show();
             cc = this.doc.text.replace(/\s{2,}/g, ' ').length;
+            $('#charcount_raw').html(cc);
+            $('#charcount_raw_pages').html((Math.round(cc/18)/100).toLocaleString());
         }
-        $('#charcount').html(cc);
-        $('#charcount_pages').html((Math.round(cc/18)/100).toLocaleString());
     }
 
     SummaryPerspective.prototype.freezeState = function(){
