@@ -10,7 +10,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from catalogue.helpers import cached_in_field
 from catalogue.managers import VisibleManager
-from catalogue.tasks import refresh_instance
 from dvcs import models as dvcs_models
 
 
@@ -25,9 +24,9 @@ class Chunk(dvcs_models.Document):
     gallery_start = models.IntegerField(_('gallery start'), null=True, blank=True, default=1)
 
     # cache
-    _short_html = models.TextField(null=True, blank=True, editable=False)
     _hidden = models.NullBooleanField(editable=False)
     _changed = models.NullBooleanField(editable=False)
+    _new_publishable = models.NullBooleanField(editable=False)
 
     # managers
     objects = models.Manager()
@@ -87,11 +86,12 @@ class Chunk(dvcs_models.Document):
     # State & cache
     # =============
 
-    def new_publishable(self):
+    def is_new_publishable(self):
         change = self.publishable()
         if not change:
             return False
         return not change.publish_log.exists()
+    new_publishable = cached_in_field('_new_publishable')(is_new_publishable)
 
     def is_changed(self):
         if self.head is None:
@@ -103,22 +103,10 @@ class Chunk(dvcs_models.Document):
         return self.book.hidden()
     hidden = cached_in_field('_hidden')(is_hidden)
 
-    @cached_in_field('_short_html')
-    def short_html(self):
-        return render_to_string(
-                    'catalogue/book_list/chunk.html', {'chunk': self})
-
     def touch(self):
         update = {
             "_changed": self.is_changed(),
+            "_new_publishable": self.is_new_publishable(),
             "_hidden": self.is_hidden(),
-            "_short_html": None,
         }
         Chunk.objects.filter(pk=self.pk).update(**update)
-        refresh_instance(self)
-
-    def refresh(self):
-        """This should be done offline."""
-        self.changed
-        self.hidden
-        self.short_html

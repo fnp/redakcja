@@ -1,5 +1,10 @@
 Authors
 -------
 
-* Łukasz Rekucki <lrekucki@gmail.com>
-* Marek Stępniowski <marek@stepniowski>
+* Łukasz Rekucki
+* Marek Stępniowski
+* Radek Czajka
+* Łukasz Anwajler
+* Marcin Koziej
+* Aleksander Łukasz
+* Jan Szejko

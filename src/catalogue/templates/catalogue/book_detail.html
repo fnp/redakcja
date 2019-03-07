@@ -35,7 +35,7 @@
 
     <table class='single-book-list'><tbody>
     {% for chunk in book %}
-        {{ chunk.short_html|safe }}
+        {% include 'catalogue/book_list/chunk.html' %}
     {% endfor %}
     </tbody></table>
 

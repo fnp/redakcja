@@ -19,10 +19,7 @@
     <thead><tr>
 	<th></th>
         <th></th>
-        <th>
-            <input class='check-filter' type='checkbox' name='all' title='{% trans "Show hidden books" %}'
-                {% if request.GET.all %}checked='checked'{% endif %} />
-            </th>
+        <th></th>
         <th class='book-search-column'>
             <form>
             <input title='{% trans "Search in book titles" %}' name="title"
@@ -77,11 +74,11 @@
     {% autopaginate books 100 %}
     <tbody>
     {% for item in books %}
-        {% with item.book as book %}
-            {{ book.short_html|safe }}
+        {% with book=item.book chunk=item.chunks.0  %}
+	    {% include 'catalogue/book_list/book.html' %}
             {% if not book.single %}
                 {% for chunk in item.chunks %}
-                    {{ chunk.short_html|safe }}
+                    {% include 'catalogue/book_list/chunk.html' %}
                 {% endfor %}
             {% endif %}
         {% endwith %}

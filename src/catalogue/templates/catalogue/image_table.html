@@ -69,8 +69,8 @@
     {% with cnt=objects|length %}
     {% autopaginate objects 100 %}
     <tbody>
-    {% for item in objects %}
-        {{ item.short_html|safe }}
+    {% for image in objects %}
+        {% include 'catalogue/image_short.html' %}
     {% endfor %}
     <tr><th class='paginator' colspan="6">
         {% paginate %}

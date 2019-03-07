@@ -12,7 +12,7 @@ register = template.Library()
 
 class ChunksList(object):
     def __init__(self, chunk_qs):
-        self.chunk_qs = chunk_qs.select_related('book')
+        self.chunk_qs = chunk_qs.select_related('book', 'book__project', 'stage', 'user')
         self.book_qs = chunk_qs.values('book_id')
 
     def __getitem__(self, key):
@@ -158,7 +158,7 @@ def image_list_filter(request, **kwargs):
     def arg_or_GET(field):
         return kwargs.get(field, request.GET.get(field))
 
-    images = Image.objects.all()
+    images = Image.objects.all().select_related('user', 'stage', 'project')
 
     if not request.user.is_authenticated():
         images = images.filter(public=True)

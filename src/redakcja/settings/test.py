@@ -15,7 +15,6 @@ import tempfile
 CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo')
 CATALOGUE_IMAGE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo-img')
 MEDIA_ROOT = tempfile.mkdtemp(prefix='media-root')
-CELERY_ALWAYS_EAGER = True
 
 INSTALLED_APPS += ('dvcs.tests',)
 

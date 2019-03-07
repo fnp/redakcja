@@ -29,19 +29,6 @@ def image_changed(sender, instance, created, **kwargs):
 models.signals.post_save.connect(image_changed, sender=Image)
 
 
-def user_changed(sender, instance, *args, **kwargs):
-    if 'last_login' in (kwargs.get('update_fields') or {}):
-        # Quick hack - this change seems to result from logging user in so just ignore it.
-        return
-    books = set()
-    for c in instance.chunk_set.all():
-        books.add(c.book)
-        c.touch()
-    for b in books:
-        b.touch()
-models.signals.post_save.connect(user_changed, sender=User)
-
-
 def publish_listener(sender, *args, **kwargs):
     if isinstance(sender, BookPublishRecord):
         sender.book.touch()

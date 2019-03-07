@@ -45,8 +45,6 @@ class GalleryAppendTests(TestCase):
         c.gallery_start = 3
         c.save()
         
-        print "gallery starts:",self.book2[0].gallery_start, self.book2[1].gallery_start
-
         self.make_gallery(self.book1, {
             '1-0001_1l' : 'aa',
             '1-0001_2r' : 'bb',
@@ -65,7 +63,6 @@ class GalleryAppendTests(TestCase):
 
         files = listdir(join(self.scandir, self.book1.gallery))
         files.sort()
-        print files
         self.assertEqual(files, [
             '1-0001_1l',
             '1-0001_2r',
@@ -100,7 +97,6 @@ class GalleryAppendTests(TestCase):
 
         files = listdir(join(self.scandir, self.book1.gallery))
         files.sort()
-        print files
         self.assertEqual(files, [
             '0-0001_1l',
             '0-0001_2r',
@@ -133,7 +129,6 @@ class GalleryAppendTests(TestCase):
 
         files = listdir(join(self.scandir, self.book1.gallery))
         files.sort()
-        print files
         self.assertEqual(files, [
             '0-1-0001_1l',
             '0-1-0001_2r',

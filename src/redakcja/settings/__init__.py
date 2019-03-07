@@ -72,7 +72,6 @@ INSTALLED_APPS = (
     'fnp_django_pagination',
     'django_gravatar',
     'fileupload',
-    'kombu.transport.django',
     'pipeline',
     'fnpdjango',
 
@@ -90,10 +89,6 @@ if DEBUG:
     INSTALLED_APPS += ('debug_toolbar',)
 
 LOGIN_REDIRECT_URL = '/documents/user'
-
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
-CELERY_SEND_TASK_ERROR_EMAILS = True
-CELERY_ACCEPT_CONTENT = ['pickle']  # Remove when all tasks jsonable.
 
 MIN_COVER_SIZE = (915, 1270)
 

@@ -15,7 +15,6 @@ import apiclient
 from catalogue.helpers import cached_in_field, GalleryMerger
 from catalogue.models import BookPublishRecord, ChunkPublishRecord, Project
 from catalogue.signals import post_publish
-from catalogue.tasks import refresh_instance, book_content_updated
 from catalogue.xml_tools import compile_text, split_xml
 from cover.models import Image
 import os
@@ -36,7 +35,6 @@ class Book(models.Model):
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
-    _short_html = models.TextField(null=True, blank=True, editable=False)
     _single = models.NullBooleanField(editable=False, db_index=True)
     _new_publishable = models.NullBooleanField(editable=False)
     _published = models.NullBooleanField(editable=False)
@@ -326,10 +324,6 @@ class Book(models.Model):
         return len(self) == 1
     single = cached_in_field('_single')(is_single)
 
-    @cached_in_field('_short_html')
-    def short_html(self):
-        return render_to_string('catalogue/book_list/book.html', {'book': self})
-
     def book_info(self, publishable=True):
         try:
             book_xml = self.materialize(publishable=publishable)
@@ -363,25 +357,14 @@ class Book(models.Model):
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):
-        # this should only really be done when text or publishable status changes
-        book_content_updated.delay(self)
-
         update = {
             "_new_publishable": self.is_new_publishable(),
             "_published": self.is_published(),
             "_single": self.is_single(),
             "_on_track": self.get_on_track(),
-            "_short_html": None,
         }
         Book.objects.filter(pk=self.pk).update(**update)
-        refresh_instance(self)
-
-    def refresh(self):
-        """This should be done offline."""
-        self.short_html
-        self.single
-        self.new_publishable
-        self.published
+        self.refresh_dc_cache()
 
     # Materializing & publishing
     # ==========================

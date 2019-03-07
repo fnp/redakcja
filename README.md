@@ -12,37 +12,26 @@ Instalacja i użycie
 #. Przejdź do katalogu serwisu w konsoli
 #. Zainstaluj wymagane biblioteki komendą::
 
-	pip install -r requirements.txt
+	pip install -r requirements/requirements.txt
 
-#. Wypełnij bazę danych (Django poprosi o utworzenie pierwszego użytkownika)::
+#. Wypełnij bazę danych::
 
-	./project/manage.py syncdb
+	src/manage.py migrate
 
-#. Skopiuj zawartość pliku `project/localsettings.sample` do `project/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
+#. Skopiuj zawartość pliku `src/redakcja/localsettings.sample` do `src/redakcja/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
 
 #. Uruchom serwer deweloperski::
 
-	./project/manage.py runserver
+	src/manage.py runserver
 
-#. Zalecane jest serwowanie aplikacji przez `modwsgi <http://code.google.com/p/modwsgi/>`_ na serwerze `Apache2 <http://httpd.apache.org/>`_ przy pomocy załączonego skryptu `dispatch.fcgi`. Inne strategie wdrożeniowe opisane są w `Dokumentacji Django <http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index>`_.
+#. Strategie wdrożeniowe opisane są w `Dokumentacji Django <http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index>`_.
 
-Wdrożenie
-=========
-#. Ściągnij i zainstaluj `fabric <http://docs.fabfile.org/>`_
-#. Przejdź do katalogu serwisu w konsoli
-#. Aby wdrożyć serwis na serwer deweloperski wpisz komendę::
-
-	fab staging deploy
-	
- Aby wdrożyć serwis na serwer produkcyjny wpisz::
-
-	fab production deploy
 
 Testy
 ====
 
     $ pip install -r requirements-test.txt
-    $ python src/manage.py test --settings=redakcja.settings.test
+    $ make test
 
 JavaScript (wymagany node.js i xsltproc):
 
