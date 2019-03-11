@@ -6,17 +6,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import RedirectView
-import django_cas.views
+import django_cas_ng.views
 
 
 admin.autodiscover()
 
 urlpatterns = [
     # Auth
-    url(r'^accounts/login/$', django_cas.views.login, name='login'),
-    url(r'^accounts/logout/$', django_cas.views.logout, name='logout'),
-    url(r'^admin/login/$', django_cas.views.login, name='login'),
-    url(r'^admin/logout/$', django_cas.views.logout, name='logout'),
+    url(r'^accounts/login/$', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
+    url(r'^accounts/logout/$', django_cas_ng.views.LogoutView.as_view(), name='logout'),
+    #url(r'^admin/login/$', django_cas_ng.views.login, name='login'),
+    #url(r'^admin/logout/$', django_cas_ng.views.logout, name='logout'),
 
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

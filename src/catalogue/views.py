@@ -22,7 +22,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django_cas.decorators import user_passes_test
+from django_cas_ng.decorators import user_passes_test
 
 from apiclient import NotAuthorizedError
 from catalogue import forms

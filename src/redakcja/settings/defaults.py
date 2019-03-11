@@ -65,5 +65,6 @@ BROKER_URL = 'django://'
 
 SHOW_APP_VERSION = False
 
-CAS_USER_ATTRS_MAP = {
+CAS_APPLY_ATTRIBUTES_TO_USER = True
+CAS_RENAME_ATTRIBUTES = {
     'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}

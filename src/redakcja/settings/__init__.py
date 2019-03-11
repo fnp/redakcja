@@ -38,7 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas.middleware.CASMiddleware',
+    'django_cas_ng.middleware.CASMiddleware',
 
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'fnp_django_pagination.middleware.PaginationMiddleware',
@@ -52,7 +52,7 @@ if DEBUG:
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'fnpdjango.auth_backends.AttrCASBackend',
+    'django_cas_ng.backends.CASBackend',
 )
 
 ROOT_URLCONF = 'redakcja.urls'
@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'fileupload',
     'pipeline',
     'fnpdjango',
+    'django_cas_ng',
 
     'catalogue',
     'cover',

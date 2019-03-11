@@ -89,7 +89,7 @@
             <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
             </form>
     {% else %}
-        <a href="{% url 'login' %}">{% trans "Log in to publish." %}</a>
+        <a href="{% url 'cas_ng_login' %}">{% trans "Log in to publish." %}</a>
     {% endif %}
 {% else %}
     <p>{% trans "This book can't be published yet, because:" %}</p>

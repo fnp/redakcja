@@ -1,24 +1,24 @@
 -i https://py.mdrn.pl/simple
 
 ## Python libraries
-Mercurial>=3.3,<3.4
+merge3==0.0.2
 PyYAML>=3.0
 Pillow
 oauth2
 httplib2 # oauth2 dependency
+python-slugify
 
-librarian
+librarian==1.7.1
 
 ## Django
 Django==1.11.20
 fnpdjango==0.3
 django-pipeline==1.6.14
-django_cas>=2.1,<2.2
+django-cas-ng==3.6.0
 sorl-thumbnail>=12.2,<12.4  # ??
 django-maintenancemode>=0.9
 fnp-django-pagination==2.2.2
-django-gravatar2
-python-slugify
-django-extensions==1.5.7
+django-gravatar2==1.4.2
+django-extensions==2.1.6
 
 raven

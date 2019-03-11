@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="isection">
-<form method="POST" action="{% url 'login' %}">
+<form method="POST" action="{% url 'cas_ng_login' %}">
 {% csrf_token %}
 {{ form.as_p }}
 <p><input type="submit" value="Login" /></p>

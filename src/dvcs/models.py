@@ -11,7 +11,7 @@ from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models.base import ModelBase
 from django.utils.translation import string_concat, ugettext_lazy as _
-from mercurial import simplemerge
+import merge3
 
 from django.conf import settings
 from dvcs.signals import post_commit, post_publishable
@@ -135,11 +135,11 @@ class Change(models.Model):
             # immediate child - fast forward
             return other
 
-        local = self.materialize().encode('utf-8')
-        base = other.parent.materialize().encode('utf-8')
-        remote = other.materialize().encode('utf-8')
+        local = self.materialize().splitlines(True)
+        base = other.parent.materialize().splitlines(True)
+        remote = other.materialize().splitlines(True)
 
-        merge = simplemerge.Merge3Text(base, local, remote)
+        merge = merge3.Merge3(base, local, remote)
         result = ''.join(merge.merge_lines())
         merge_node = self.children.create(
                     merge_parent=other, tree=self.tree,
