@@ -1,6 +1,6 @@
 import json
 import os
-from urllib import quote
+from urllib.parse import quote
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.utils.decorators import method_decorator

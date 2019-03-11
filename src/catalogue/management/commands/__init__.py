@@ -4,7 +4,6 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import sys
-from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from catalogue.models import Book
@@ -15,15 +14,18 @@ class XmlUpdaterCommand(BaseCommand):
 
     In a subclass, provide an XmlUpdater class in the `updater' attribute.
     """
-    option_list = BaseCommand.option_list + (
-        make_option('-q', '--quiet', action='store_false', dest='verbose',
-            default=True, help='Less output'),
-        make_option('-d', '--dry-run', action='store_true', dest='dry_run',
-            default=False, help="Don't actually touch anything"),
-        make_option('-u', '--username', dest='username', metavar='USER',
-            help='Assign commits to this user (required, preferably yourself).'),
-    )
     args = "[slug]..."
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-q', '--quiet', action='store_false', dest='verbose',
+            default=True, help='Less output')
+        parser.add_argument(
+            '-d', '--dry-run', action='store_true', dest='dry_run',
+            default=False, help="Don't actually touch anything")
+        parser.add_argument(
+            '-u', '--username', dest='username', metavar='USER',
+            help='Assign commits to this user (required, preferably yourself).')
 
     def handle(self, *args, **options):
         verbose = options.get('verbose')
@@ -33,7 +35,7 @@ class XmlUpdaterCommand(BaseCommand):
         if username:
             user = User.objects.get(username=username)
         else:
-            print 'Please provide a username.'
+            print('Please provide a username.')
             sys.exit(1)
 
         books = Book.objects.filter(slug__in=args) if args else None

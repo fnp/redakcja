@@ -18,7 +18,7 @@ class FixDC(XmlUpdater):
         try:
             WLURI.strict(elem.text)
         except ValidationError:
-            correct_field = unicode(WLURI.from_slug(
+            correct_field = str(WLURI.from_slug(
                                 WLURI(elem.text.strip()).slug))
             try:
                 WLURI.strict(correct_field)
@@ -26,9 +26,9 @@ class FixDC(XmlUpdater):
                 # Can't make a valid WLURI out of it, leave as is.
                 return False
             if verbose:
-                print "Changing %s from %s to %s" % (
+                print("Changing %s from %s to %s" % (
                         elem.tag, elem.text, correct_field
-                    )
+                    ))
             elem.text = correct_field
             return True
     for field in BookInfo.FIELDS:
@@ -42,9 +42,9 @@ class FixDC(XmlUpdater):
         current_about = elem.get(attr_name)
         if current_about != correct_about:
             if verbose:
-                print "Changing rdf:about from %s to %s" % (
+                print("Changing rdf:about from %s to %s" % (
                         current_about, correct_about
-                    )
+                    ))
             elem.set(attr_name, correct_about)
             return True
 

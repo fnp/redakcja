@@ -7,7 +7,6 @@
 import sys
 from django.contrib.auth.models import User
 from lxml import etree
-from optparse import make_option
 
 from django.core.management import BaseCommand
 
@@ -16,16 +15,12 @@ from librarian import DCNS
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        # make_option('-q', '--quiet', action='store_false', dest='verbose',
-        #     default=True, help='Less output'),
-        # make_option('-d', '--dry-run', action='store_true', dest='dry_run',
-        #     default=False, help="Don't actually touch anything"),
-        make_option(
-            '-u', '--username', dest='username', metavar='USER',
-            help='Assign commits to this user (required, preferably yourself).'),
-    )
     args = 'exclude_file'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-u', '--username', dest='username', metavar='USER',
+            help='Assign commits to this user (required, preferably yourself).')
 
     def handle(self, exclude_file, **options):
         username = options.get('username')
@@ -33,7 +28,7 @@ class Command(BaseCommand):
         if username:
             user = User.objects.get(username=username)
         else:
-            print 'Please provide a username.'
+            print('Please provide a username.')
             sys.exit(1)
 
         excluded_slugs = [line.strip() for line in open(exclude_file, 'rb') if line.strip()]
@@ -42,26 +37,26 @@ class Command(BaseCommand):
         for book in books:
             if not book.is_published():
                 continue
-            print 'processing %s' % book.slug
+            print('processing %s' % book.slug)
             chunk = book.chunk_set.first()
             old_head = chunk.head
             src = old_head.materialize()
             tree = etree.fromstring(src)
             audience_nodes = tree.findall('.//' + DCNS("audience"))
             if not audience_nodes:
-                print '%s has no audience, skipping' % book.slug
+                print('%s has no audience, skipping' % book.slug)
                 continue
 
             for node in audience_nodes:
                 node.getparent().remove(node)
 
             chunk.commit(
-                etree.tostring(tree, encoding=unicode),
+                etree.tostring(tree, encoding='unicode'),
                 author=user,
                 description='automatyczne skasowanie audience',
                 publishable=old_head.publishable
             )
-            print 'committed %s' % book.slug
+            print('committed %s' % book.slug)
             if not old_head.publishable:
-                print 'Warning: %s not publishable, last head: %s, %s' % (
-                    book.slug, old_head.author.username, old_head.description[:40].replace('\n', ' '))
+                print('Warning: %s not publishable, last head: %s, %s' % (
+                    book.slug, old_head.author.username, old_head.description[:40].replace('\n', ' ')))

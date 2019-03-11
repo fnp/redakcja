@@ -54,14 +54,14 @@ class XmlUpdater(object):
     def fix_chunk(self, chunk, user, verbose=0, dry_run=False):
         """Runs the update for a single chunk."""
         if verbose >= 2:
-            print chunk.get_absolute_url()
+            print(chunk.get_absolute_url())
         old_head = chunk.head
         src = old_head.materialize()
         try:
             tree = etree.fromstring(src)
         except:
             if verbose:
-                print "%s: invalid XML" % chunk.get_absolute_url()
+                print("%s: invalid XML" % chunk.get_absolute_url())
             self.counters['Bad XML'] += 1
             return
 
@@ -82,7 +82,7 @@ class XmlUpdater(object):
 
         if not dry_run:
             new_head = chunk.commit(
-                etree.tostring(tree, encoding=unicode),
+                etree.tostring(tree, encoding='unicode'),
                 author=user,
                 description=self.commit_desc
             )
@@ -90,7 +90,7 @@ class XmlUpdater(object):
                 if old_head.publishable:
                     new_head.set_publishable(True)
         if verbose >= 2:
-            print "done"
+            print("done")
         self.counters['Updated chunks'] += 1
 
     def run(self, user, verbose=0, dry_run=False, books=None):
@@ -113,4 +113,4 @@ class XmlUpdater(object):
     def print_results(self):
         """Prints the counters."""
         for item in sorted(self.counters.items()):
-            print "%s: %d" % item
+            print("%s: %d" % item)

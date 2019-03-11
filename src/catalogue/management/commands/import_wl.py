@@ -2,8 +2,7 @@
 
 from collections import defaultdict
 import json
-from optparse import make_option
-import urllib2
+from urllib.request import urlopen
 
 from django.core.management.base import BaseCommand
 from django.core.management.color import color_style
@@ -18,11 +17,11 @@ WL_API = 'http://www.wolnelektury.pl/api/books/'
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True,
-            help='Less output'),
-    )
     help = 'Imports XML files from WL.'
+
+    def add_arguments(self, parser):
+        parser.add_argument('-q', '--quiet', action='store_false', dest='verbose', default=True,
+            help='Less output')
 
     def handle(self, *args, **options):
 
@@ -34,11 +33,11 @@ class Command(BaseCommand):
         transaction.enter_transaction_management()
 
         if verbose:
-            print 'Reading currently managed files (skipping hidden ones).'
+            print('Reading currently managed files (skipping hidden ones).')
         slugs = defaultdict(list)
         for b in Book.objects.exclude(slug__startswith='.').all():
             if verbose:
-                print b.slug
+                print(b.slug)
             text = b.materialize().encode('utf-8')
             try:
                 info = BookInfo.from_bytes(text)
@@ -55,33 +54,33 @@ class Command(BaseCommand):
         }
 
         if verbose:
-            print 'Opening books list'
-        for book in json.load(urllib2.urlopen(WL_API)):
-            book_detail = json.load(urllib2.urlopen(book['href']))
-            xml_text = urllib2.urlopen(book_detail['xml']).read()
+            print('Opening books list')
+        for book in json.load(urlopen(WL_API)):
+            book_detail = json.load(urlopen(book['href']))
+            xml_text = urlopen(book_detail['xml']).read()
             info = BookInfo.from_bytes(xml_text)
             previous_books = slugs.get(info.slug)
             if previous_books:
                 if len(previous_books) > 1:
-                    print self.style.ERROR("There is more than one book "
-                        "with slug %s:"), 
+                    print(self.style.ERROR("There is more than one book "
+                        "with slug %s:") % info.slug)
                 previous_book = previous_books[0]
                 comm = previous_book.slug
             else:
                 previous_book = None
                 comm = '*'
-            print book_count, info.slug , '-->', comm
+            print(book_count, info.slug , '-->', comm)
             Book.import_xml_text(xml_text, title=info.title[:255],
                 slug=info.slug[:128], previous_book=previous_book,
                 commit_args=commit_args)
             book_count += 1
 
         # Print results
-        print
-        print "Results:"
-        print "Imported %d books from WL:" % (
-                book_count, )
-        print
+        print()
+        print("Results:")
+        print("Imported %d books from WL:" % (
+                book_count, ))
+        print()
 
 
         transaction.commit()

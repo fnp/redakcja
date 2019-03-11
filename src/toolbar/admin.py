@@ -15,7 +15,7 @@ class ButtonAdminForm(forms.ModelForm):
         value = self.cleaned_data['params']
         try:
             return json.dumps(json.loads(value))
-        except ValueError, e:
+        except ValueError as e:
             raise forms.ValidationError(e)
 
 

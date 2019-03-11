@@ -3,6 +3,7 @@ from zlib import compress, decompress
 from django.core.files.base import ContentFile, File
 from django.core.files.storage import FileSystemStorage
 from django.utils.deconstruct import deconstructible
+from django.utils.encoding import force_bytes
 
 
 @deconstructible
@@ -15,6 +16,7 @@ class GzipFileSystemStorage(FileSystemStorage):
         return ContentFile(decompress(text))
 
     def _save(self, name, content):
-        content = ContentFile(compress(content.read()))
+        data = force_bytes(content.read())
+        content = ContentFile(compress(data))
 
         return super(GzipFileSystemStorage, self)._save(name, content)

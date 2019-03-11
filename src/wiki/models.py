@@ -18,7 +18,7 @@ class Theme(models.Model):
         verbose_name = _('theme')
         verbose_name_plural = _('themes')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):

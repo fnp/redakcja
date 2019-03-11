@@ -34,7 +34,7 @@ class Image(models.Model):
         verbose_name = _('cover image')
         verbose_name_plural = _('cover images')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s - %s" % (self.author, self.title)
 
     @models.permalink

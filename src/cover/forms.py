@@ -3,7 +3,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from StringIO import StringIO
+from io import BytesIO
 
 from django import forms
 from django.conf import settings
@@ -55,7 +55,7 @@ class ImageAddForm(forms.ModelForm):
             raise forms.ValidationError(ugettext('No image specified'))
         if download_url:
             image_data = URLOpener().open(download_url).read()
-            width, height = PILImage.open(StringIO(image_data)).size
+            width, height = PILImage.open(BytesIO(image_data)).size
         else:
             width, height = PILImage.open(uploaded_file.file).size
         min_width, min_height = settings.MIN_COVER_SIZE

@@ -129,7 +129,7 @@ def history(request, object_id):
                 "author": change.author_str(),
                 "date": localize(change.created_at),
                 "publishable": _("Publishable") + "\n" if change.publishable else "",
-                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
+                "tag": ',\n'.join(str(tag) for tag in change.tags.all()),
             })
     return JSONResponse(changes)
 

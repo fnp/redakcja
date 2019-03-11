@@ -5,7 +5,7 @@
 #
 import json
 import re
-from urllib import FancyURLopener
+from urllib.request import FancyURLopener
 
 from django.contrib.sites.models import Site
 

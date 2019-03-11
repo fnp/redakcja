@@ -43,7 +43,7 @@ class Chunk(dvcs_models.Document):
     # Representing
     # ============
 
-    def __unicode__(self):
+    def __str__(self):
         return "%d:%d: %s" % (self.book_id, self.number, self.title)
 
     @models.permalink
@@ -54,7 +54,7 @@ class Chunk(dvcs_models.Document):
         title = self.book.title
         if self.title:
             title += ", %s" % self.title
-        if book_length > 1:
+        if book_length and book_length > 1:
             title += " (%d/%d)" % (self.number, book_length)
         return title
 

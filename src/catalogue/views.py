@@ -3,9 +3,7 @@ from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging
 import os
-from StringIO import StringIO
-from urllib import unquote
-from urlparse import urlsplit, urlunsplit
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 from django.conf import settings
 from django.contrib import auth
@@ -470,7 +468,7 @@ def chunk_mass_edit(request):
     if stage:
         try:
             stage = Chunk.tag_model.objects.get(slug=stage)
-        except Chunk.DoesNotExist, e:
+        except Chunk.DoesNotExist as e:
             stage = None
        
         for c in chunks: c.stage = stage
@@ -481,7 +479,7 @@ def chunk_mass_edit(request):
     if username:
         try:
             user = User.objects.get(username=username)
-        except User.DoesNotExist, e:
+        except User.DoesNotExist as e:
             user = None
             
         for c in chunks: c.user = user
@@ -490,7 +488,7 @@ def chunk_mass_edit(request):
     if project_id:
         try:
             project = Project.objects.get(pk=int(project_id))
-        except (Project.DoesNotExist, ValueError), e:
+        except (Project.DoesNotExist, ValueError) as e:
             project = None
         for c in chunks:
             book = c.book
@@ -513,7 +511,7 @@ def image_mass_edit(request):
     if stage:
         try:
             stage = Image.tag_model.objects.get(slug=stage)
-        except Image.DoesNotExist, e:
+        except Image.DoesNotExist as e:
             stage = None
        
         for c in images: c.stage = stage
@@ -524,7 +522,7 @@ def image_mass_edit(request):
     if username:
         try:
             user = User.objects.get(username=username)
-        except User.DoesNotExist, e:
+        except User.DoesNotExist as e:
             user = None
             
         for c in images: c.user = user
@@ -533,7 +531,7 @@ def image_mass_edit(request):
     if project_id:
         try:
             project = Project.objects.get(pk=int(project_id))
-        except (Project.DoesNotExist, ValueError), e:
+        except (Project.DoesNotExist, ValueError) as e:
             project = None
         for c in images:
             c.project = project
@@ -584,7 +582,7 @@ def publish(request, slug):
         book.publish(request.user, host=protocol + request.get_host(), days=days, beta=beta)
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth' if not beta else 'apiclient_beta_oauth'))
-    except BaseException, e:
+    except BaseException as e:
         return http.HttpResponse(repr(e))
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
@@ -601,7 +599,7 @@ def publish_image(request, slug):
         image.publish(request.user)
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth'))
-    except BaseException, e:
+    except BaseException as e:
         return http.HttpResponse(e)
     else:
         return http.HttpResponseRedirect(image.get_absolute_url())

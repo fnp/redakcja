@@ -8,8 +8,6 @@ import csv
 import sys
 from django.contrib.auth.models import User
 from lxml import etree
-from optparse import make_option
-
 from collections import defaultdict
 from django.core.management import BaseCommand
 
@@ -42,16 +40,12 @@ def url_for_format(slug, format):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        # make_option('-q', '--quiet', action='store_false', dest='verbose',
-        #     default=True, help='Less output'),
-        # make_option('-d', '--dry-run', action='store_true', dest='dry_run',
-        #     default=False, help="Don't actually touch anything"),
-        make_option(
-            '-u', '--username', dest='username', metavar='USER',
-            help='Assign commits to this user (required, preferably yourself).'),
-    )
     args = 'csv_file'
+
+    def add_arguments(self, parser):
+        self.add_argument(
+            '-u', '--username', dest='username', metavar='USER',
+            help='Assign commits to this user (required, preferably yourself).')
 
     def handle(self, csv_file, **options):
         username = options.get('username')
@@ -59,7 +53,7 @@ class Command(BaseCommand):
         if username:
             user = User.objects.get(username=username)
         else:
-            print 'Please provide a username.'
+            print('Please provide a username.')
             sys.exit(1)
 
         csvfile = open(csv_file, 'rb')
@@ -69,7 +63,7 @@ class Command(BaseCommand):
         csvfile.close()
 
         for slug, isbn_list in isbn_lists.iteritems():
-            print 'processing %s' % slug
+            print('processing %s' % slug)
             book = Book.objects.get(dc_slug=slug)
             chunk = book.chunk_set.first()
             old_head = chunk.head
@@ -77,7 +71,7 @@ class Command(BaseCommand):
             tree = etree.fromstring(src)
             isbn_node = tree.find('.//' + DCNS("relation.hasFormat"))
             if isbn_node is not None:
-                print '%s already contains ISBN metadata, skipping' % slug
+                print('%s already contains ISBN metadata, skipping' % slug)
                 continue
             desc = tree.find(".//" + RDFNS("Description"))
             for format, isbn in isbn_list:
@@ -92,12 +86,12 @@ class Command(BaseCommand):
                     element.tail = '\n'
                     desc.append(element)
             new_head = chunk.commit(
-                etree.tostring(tree, encoding=unicode),
+                etree.tostring(tree, encoding='unicode'),
                 author=user,
                 description='automatyczne dodanie isbn'
             )
-            print 'committed %s' % slug
+            print('committed %s' % slug)
             if old_head.publishable:
                 new_head.set_publishable(True)
             else:
-                print 'Warning: %s not publishable' % slug
+                print('Warning: %s not publishable' % slug)

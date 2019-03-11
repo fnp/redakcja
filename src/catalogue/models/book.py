@@ -66,13 +66,13 @@ class Book(models.Model):
     def __len__(self):
         return self.chunk_set.count()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
             Necessary so that __len__ isn't used for bool evaluation.
         """
         return True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @models.permalink
@@ -266,12 +266,12 @@ class Book(models.Model):
 
         try:
             bi = self.wldocument(changes=changes, strict=True).book_info
-        except ParseError, e:
-            raise AssertionError(_('Invalid XML') + ': ' + unicode(e))
+        except ParseError as e:
+            raise AssertionError(_('Invalid XML') + ': ' + str(e))
         except NoDublinCore:
             raise AssertionError(_('No Dublin Core found.'))
-        except ValidationError, e:
-            raise AssertionError(_('Invalid Dublin Core') + ': ' + unicode(e))
+        except ValidationError as e:
+            raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
 
         valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
@@ -279,7 +279,7 @@ class Book(models.Model):
     def publishable_error(self):
         try:
             return self.assert_publishable()
-        except AssertionError, e:
+        except AssertionError as e:
             return e
         else:
             return None

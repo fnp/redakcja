@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import logging
 from time import mktime
-import urllib
+from urllib.parse import quote
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -11,14 +11,13 @@ from django import http
 from django.http import Http404, HttpResponseForbidden
 from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
-from django.utils.encoding import smart_unicode
 from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
 
 from catalogue.models import Book, Chunk
-import nice_diff
+from . import nice_diff
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
@@ -203,22 +202,22 @@ def revert(request, chunk_id):
 def gallery(request, directory):
     try:
         base_url = ''.join((
-                        smart_unicode(settings.MEDIA_URL),
-                        smart_unicode(settings.IMAGE_DIR),
-                        smart_unicode(directory)))
+                        settings.MEDIA_URL,
+                        settings.IMAGE_DIR,
+                        directory))
 
-        base_dir = os.path.join(
-                    smart_unicode(settings.MEDIA_ROOT),
-                    smart_unicode(settings.IMAGE_DIR),
-                    smart_unicode(directory))
+        base_dir = os.path.join((
+                    settings.MEDIA_ROOT,
+                    settings.IMAGE_DIR,
+                    directory))
 
         def map_to_url(filename):
-            return urllib.quote(("%s/%s" % (base_url, smart_unicode(filename))).encode('utf-8'))
+            return quote(("%s/%s" % (base_url, filename)))
 
         def is_image(filename):
             return os.path.splitext(filename)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
 
-        images = [map_to_url(f) for f in map(smart_unicode, os.listdir(base_dir)) if is_image(f)]
+        images = [map_to_url(f) for f in os.listdir(base_dir) if is_image(f)]
         images.sort()
 
         books = Book.objects.filter(gallery=directory)
@@ -281,7 +280,7 @@ def history(request, chunk_id):
                 "author": change.author_str(),
                 "date": localize(change.created_at),
                 "publishable": _("Publishable") + "\n" if change.publishable else "",
-                "tag": ',\n'.join(unicode(tag) for tag in change.tags.all()),
+                "tag": ',\n'.join(str(tag) for tag in change.tags.all()),
                 "published": _("Published") + ": " + \
                     localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \
                     if change.publish_log.exists() else "",

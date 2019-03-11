@@ -10,7 +10,7 @@ class ExtendedEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, Promise):
-            return unicode(obj)
+            return str(obj)
 
         if isinstance(obj, datetime):
             return datetime.ctime(obj) + " " + (datetime.tzname(obj) or 'GMT')

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from optparse import make_option
 import sys
 
 from django.contrib.auth.models import User
@@ -24,23 +21,28 @@ def common_prefix(texts):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('-s', '--slug', dest='new_slug', metavar='SLUG',
-            help='New slug of the merged book (defaults to common part of all slugs).'),
-        make_option('-t', '--title', dest='new_title', metavar='TITLE',
-            help='New title of the merged book (defaults to common part of all titles).'),
-        make_option('-q', '--quiet', action='store_false', dest='verbose', default=True,
-            help='Less output'),
-        make_option('-g', '--guess', action='store_true', dest='guess', default=False,
-            help='Try to guess what merges are needed (but do not apply them).'),
-        make_option('-d', '--dry-run', action='store_true', dest='dry_run', default=False,
-            help='Dry run: do not actually change anything.'),
-        make_option('-f', '--force', action='store_true', dest='force', default=False,
-            help='On slug conflict, hide the original book to archive.'),
-    )
     help = 'Merges multiple books into one.'
     args = '[slug]...'
 
+    def add_arguments(self, parser):
+        self.add_argument(
+            '-s', '--slug', dest='new_slug', metavar='SLUG',
+            help='New slug of the merged book (defaults to common part of all slugs).')
+        self.add_argument(
+            '-t', '--title', dest='new_title', metavar='TITLE',
+            help='New title of the merged book (defaults to common part of all titles).')
+        self.add_argument(
+            '-q', '--quiet', action='store_false', dest='verbose', default=True,
+            help='Less output')
+        self.add_argument(
+            '-g', '--guess', action='store_true', dest='guess', default=False,
+            help='Try to guess what merges are needed (but do not apply them).')
+        self.add_argument(
+            '-d', '--dry-run', action='store_true', dest='dry_run', default=False,
+            help='Dry run: do not actually change anything.')
+        self.add_argument(
+            '-f', '--force', action='store_true', dest='force', default=False,
+            help='On slug conflict, hide the original book to archive.')
 
     def print_guess(self, dry_run=True, force=False):
         from collections import defaultdict
@@ -49,9 +51,9 @@ class Command(BaseCommand):
     
         def read_slug(slug):
             res = []
-            res.append((re.compile(ur'__?(przedmowa)$'), -1))
-            res.append((re.compile(ur'__?(cz(esc)?|ksiega|rozdzial)__?(?P<n>\d*)$'), None))
-            res.append((re.compile(ur'__?(rozdzialy__?)?(?P<n>\d*)-'), None))
+            res.append((re.compile(r'__?(przedmowa)$'), -1))
+            res.append((re.compile(r'__?(cz(esc)?|ksiega|rozdzial)__?(?P<n>\d*)$'), None))
+            res.append((re.compile(r'__?(rozdzialy__?)?(?P<n>\d*)-'), None))
         
             for r, default in res:
                 m = r.search(slug)
@@ -87,20 +89,20 @@ class Command(BaseCommand):
                 conflicting_slugs.append(slug)
     
             title = file_to_title(slug)
-            print "./manage.py merge_books %s%s--title=%s --slug=%s \\\n    %s\n" % (
+            print("./manage.py merge_books %s%s--title=%s --slug=%s \\\n    %s\n" % (
                 '--dry-run ' if dry_run else '',
                 '--force ' if force else '',
                 quote(title), slug,
                 " \\\n    ".join(merge_slugs)
-                )
+                ))
     
         if conflicting_slugs:
             if force:
-                print self.style.NOTICE('# These books will be archived:')
+                print(self.style.NOTICE('# These books will be archived:'))
             else:
-                print self.style.ERROR('# ERROR: Conflicting slugs:')
+                print(self.style.ERROR('# ERROR: Conflicting slugs:'))
             for slug in conflicting_slugs:
-                print '#', slug
+                print('#', slug)
 
 
     def handle(self, *slugs, **options):
@@ -116,13 +118,13 @@ class Command(BaseCommand):
 
         if guess:
             if slugs:
-                print "Please specify either slugs, or --guess."
+                print("Please specify either slugs, or --guess.")
                 return
             else:
                 self.print_guess(dry_run, force)
                 return
         if not slugs:
-            print "Please specify some book slugs"
+            print("Please specify some book slugs")
             return
 
         # Start transaction management.
@@ -147,13 +149,13 @@ class Command(BaseCommand):
 
 
         if dry_run and verbose:
-            print self.style.NOTICE('DRY RUN: nothing will be changed.')
-            print
+            print(self.style.NOTICE('DRY RUN: nothing will be changed.'))
+            print()
 
         if verbose:
-            print "New title:", self.style.NOTICE(new_title)
-            print "New slug:", self.style.NOTICE(new_slug)
-            print
+            print("New title:", self.style.NOTICE(new_title))
+            print("New slug:", self.style.NOTICE(new_slug))
+            print()
 
         for i, book in enumerate(books):
             chunk_titles = []
@@ -172,12 +174,12 @@ class Command(BaseCommand):
                 chunk_slugs.append(new_chunk_slug)
 
                 if verbose:
-                    print "title: %s // %s  -->\n       %s // %s\nslug: %s / %s  -->\n      %s / %s" % (
+                    print("title: %s // %s  -->\n       %s // %s\nslug: %s / %s  -->\n      %s / %s" % (
                         book.title, chunk.title,
                         new_title, new_chunk_title,
                         book.slug, chunk.slug,
-                        new_slug, new_chunk_slug)
-                    print
+                        new_slug, new_chunk_slug))
+                    print()
 
             if not dry_run:
                 try:
@@ -193,9 +195,9 @@ class Command(BaseCommand):
                         # FIXME: there still may be a conflict
                         conflict.slug = '.' + conflict.slug
                         conflict.save()
-                        print self.style.NOTICE('Book with slug "%s" moved to "%s".' % (new_slug, conflict.slug))
+                        print(self.style.NOTICE('Book with slug "%s" moved to "%s".' % (new_slug, conflict.slug)))
                     else:
-                        print self.style.ERROR('ERROR: Book with slug "%s" exists.' % new_slug)
+                        print(self.style.ERROR('ERROR: Book with slug "%s" exists.' % new_slug))
                         return
 
                 if i:

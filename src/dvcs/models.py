@@ -30,7 +30,7 @@ class Tag(models.Model):
         abstract = True
         ordering = ['ordering']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @classmethod
@@ -93,7 +93,7 @@ class Change(models.Model):
         ordering = ('created_at',)
         unique_together = ['tree', 'revision']
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Id: %r, Tree %r, Parent %r, Data: %s" % (self.id, self.tree_id, self.parent_id, self.data)
 
     def author_str(self):
@@ -124,7 +124,7 @@ class Change(models.Model):
         f = self.data.storage.open(self.data)
         text = f.read()
         f.close()
-        return unicode(text, 'utf-8')
+        return str(text, 'utf-8')
 
     def merge_with(self, other, author=None, 
             author_name=None, author_email=None, 
@@ -225,10 +225,8 @@ class DocumentMeta(ModelBase):
         return model
 
 
-class Document(models.Model):
+class Document(models.Model, metaclass=DocumentMeta):
     """File in repository. Subclass it to use version control in your app."""
-
-    __metaclass__ = DocumentMeta
 
     # default repository path
     REPO_PATH = os.path.join(settings.MEDIA_ROOT, 'dvcs')
@@ -238,7 +236,7 @@ class Document(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0}, HEAD: {1}".format(self.id, self.head_id)
 
     def materialize(self, change=None):
@@ -256,12 +254,12 @@ class Document(models.Model):
         This will automatically merge the commit into the main branch,
         if parent is not document's head.
 
-        :param unicode text: new version of the document
+        :param str text: new version of the document
         :param parent: parent revision (head, if not specified)
         :type parent: Change or None
         :param User author: the commiter
-        :param unicode author_name: commiter name (if ``author`` not specified)
-        :param unicode author_email: commiter e-mail (if ``author`` not specified)
+        :param str author_name: commiter name (if ``author`` not specified)
+        :param str author_email: commiter e-mail (if ``author`` not specified)
         :param Tag[] tags: list of tags to apply to the new commit
         :param bool publishable: set new commit as ready to publish
         :returns: new head

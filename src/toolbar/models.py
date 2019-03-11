@@ -16,7 +16,7 @@ class ButtonGroup(models.Model):
         ordering = ('position', 'name',)
         verbose_name, verbose_name_plural = _('button group'), _('button groups')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def to_dict(self, with_buttons=False):
@@ -63,7 +63,7 @@ class Button(models.Model):
             'scriptlet_id': self.scriptlet_id,
         }
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -71,5 +71,5 @@ class Scriptlet(models.Model):
     name = models.CharField(max_length=64, primary_key=True)
     code = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u'javascript') + u':' + self.name

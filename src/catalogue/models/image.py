@@ -38,7 +38,7 @@ class Image(dvcs_models.Document):
     # Representing
     # ============
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @models.permalink
@@ -81,11 +81,11 @@ class Image(dvcs_models.Document):
             picture = WLPicture.from_bytes(
                     picture_xml.encode('utf-8'),
                     image_store=SelfImageStore)
-        except ParseError, e:
+        except ParseError as e:
             raise AssertionError(_('Invalid XML') + ': ' + str(e))
         except NoDublinCore:
             raise AssertionError(_('No Dublin Core found.'))
-        except ValidationError, e:
+        except ValidationError as e:
             raise AssertionError(_('Invalid Dublin Core') + ': ' + str(e))
 
         valid_about = self.correct_about()
@@ -95,7 +95,7 @@ class Image(dvcs_models.Document):
     def publishable_error(self):
         try:
             return self.assert_publishable()
-        except AssertionError, e:
+        except AssertionError as e:
             return e
         else:
             return None
