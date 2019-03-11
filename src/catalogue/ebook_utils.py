@@ -26,7 +26,7 @@ def serve_file(file_path, name, mime_type):
 
     response = HttpResponse(content_type=mime_type)
     response['Content-Disposition'] = 'attachment; filename=%s' % name
-    with open(file_path) as f:
+    with open(file_path, 'rb') as f:
         for chunk in read_chunks(f):
             response.write(chunk)
     return response

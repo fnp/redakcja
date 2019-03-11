@@ -206,10 +206,10 @@ def gallery(request, directory):
                         settings.IMAGE_DIR,
                         directory))
 
-        base_dir = os.path.join((
+        base_dir = os.path.join(
                     settings.MEDIA_ROOT,
                     settings.IMAGE_DIR,
-                    directory))
+                    directory)
 
         def map_to_url(filename):
             return quote(("%s/%s" % (base_url, filename)))

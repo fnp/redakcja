@@ -4,7 +4,6 @@ from urllib.parse import quote
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.utils.decorators import method_decorator
-from django.utils.encoding import smart_bytes
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import FormView, View
 from .forms import UploadForm
@@ -75,10 +74,9 @@ class UploadView(FormView):
         Makes sure it's inside MEDIA_ROOT.
         
         """
-        filename = smart_bytes(filename)
         path = os.path.abspath(os.path.join(
                 settings.MEDIA_ROOT,
-                smart_bytes(self.get_directory()),
+                self.get_directory(),
                 filename))
         if not path.startswith(settings.MEDIA_ROOT):
             raise Http404
