@@ -8,7 +8,7 @@ oauth2
 httplib2 # oauth2 dependency
 python-slugify
 
-librarian==1.7.1
+librarian==1.7.6
 
 ## Django
 Django==1.11.20

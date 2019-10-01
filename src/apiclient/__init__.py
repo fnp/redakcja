@@ -1,7 +1,6 @@
-import urllib
-
 import json
 import oauth2
+from urllib.parse import urlencode
 
 from apiclient.settings import WL_CONSUMER_KEY, WL_CONSUMER_SECRET, WL_API_URL, BETA_API_URL
 
@@ -30,7 +29,7 @@ def api_call(user, path, data=None, beta=False):
     client = oauth2.Client(wl_consumer, token)
     if data is not None:
         data = json.dumps(data)
-        data = urllib.urlencode({"data": data})
+        data = urlencode({"data": data})
         resp, content = client.request(
                 "%s%s" % (api_url, path),
                 method="POST",

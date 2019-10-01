@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -95,7 +93,7 @@ class Book(models.Model):
     # =======================
 
     def accessible(self, request):
-        return self.public or request.user.is_authenticated()
+        return self.public or request.user.is_authenticated
 
     @classmethod
     @transaction.atomic

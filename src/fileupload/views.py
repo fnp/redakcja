@@ -129,7 +129,7 @@ class UploadView(FormView):
             os.makedirs(path)
         data = []
         for f in flist:
-            with open(self.get_safe_path(f.name), 'w') as destination:
+            with open(self.get_safe_path(f.name), 'wb') as destination:
                 for chunk in f.chunks():
                     destination.write(chunk)
             data.append({

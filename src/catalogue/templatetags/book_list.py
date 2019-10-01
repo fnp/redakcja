@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from re import split
 from django.db.models import Q, Count
 from django import template
@@ -98,7 +96,7 @@ def document_list_filter(request, **kwargs):
 
     chunks = chunks.order_by('book__title', 'book', 'number')
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         chunks = chunks.filter(book__public=True)
 
     state = arg_or_GET('status')
@@ -160,7 +158,7 @@ def image_list_filter(request, **kwargs):
 
     images = Image.objects.all().select_related('user', 'stage', 'project')
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         images = images.filter(public=True)
 
     state = arg_or_GET('status')

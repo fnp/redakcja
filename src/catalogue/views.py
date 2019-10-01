@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging
@@ -112,7 +111,7 @@ def create_missing(request, slug=None):
         form = forms.DocumentCreateForm(request.POST, request.FILES)
         if form.is_valid():
             
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 creator = request.user
             else:
                 creator = None
@@ -148,7 +147,7 @@ def upload(request):
         if form.is_valid():
             from slugify import slugify
 
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 creator = request.user
             else:
                 creator = None
@@ -395,7 +394,7 @@ def chunk_add(request, slug, chunk):
     if request.method == "POST":
         form = forms.ChunkAddForm(request.POST, instance=doc)
         if form.is_valid():
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 creator = request.user
             else:
                 creator = None
@@ -461,8 +460,8 @@ def chunk_edit(request, slug, chunk):
 @login_required
 @require_POST
 def chunk_mass_edit(request):
-    ids = map(int, filter(lambda i: i.strip()!='', request.POST.get('ids').split(',')))
-    chunks = map(lambda i: Chunk.objects.get(id=i), ids)
+    ids = [int(i) for i in request.POST.get('ids').split(',') if i.strip()]
+    chunks = list(Chunk.objects.filter(id__in=ids))
     
     stage = request.POST.get('stage')
     if stage:
@@ -624,13 +623,13 @@ class GalleryView(UploadView):
 
 
 def active_users_list(request):
-    since = date(date.today().year, 1, 1)
+    year = int(request.GET.get('y', date.today().year))
     by_user = defaultdict(lambda: 0)
     by_email = defaultdict(lambda: 0)
     names_by_email = defaultdict(set)
     for change_model in (Chunk.change_model, Image.change_model):
         for c in change_model.objects.filter(
-                created_at__gte=since).order_by(
+                created_at__year=year).order_by(
                 'author', 'author_email', 'author_name').values(
                 'author', 'author_name', 'author_email').annotate(
                 c=Count('author'), ce=Count('author_email')).distinct():
@@ -638,7 +637,7 @@ def active_users_list(request):
                 by_user[c['author']] += c['c']
             else:
                 by_email[c['author_email']] += c['ce']
-                if c['author_name'].strip():
+                if (c['author_name'] or '').strip():
                     names_by_email[c['author_email']].add(c['author_name'])
     for user in User.objects.filter(pk__in=by_user):
         by_email[user.email] += by_user[user.pk]
@@ -650,7 +649,7 @@ def active_users_list(request):
     active_users.sort(key=lambda x: -x[2])
     return render(request, 'catalogue/active_users_list.html', {
         'users': active_users,
-        'since': since,
+        'year': year,
     })
 
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -101,7 +99,7 @@ class Image(dvcs_models.Document):
             return None
 
     def accessible(self, request):
-        return self.public or request.user.is_authenticated()
+        return self.public or request.user.is_authenticated
 
     def is_new_publishable(self):
         change = self.publishable()
