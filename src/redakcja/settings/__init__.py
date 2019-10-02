@@ -31,7 +31,7 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -43,12 +43,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'fnp_django_pagination.middleware.PaginationMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
-)
+]
 
 if DEBUG:
-    MIDDLEWARE_CLASSES = (
+    MIDDLEWARE = [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ) + MIDDLEWARE_CLASSES
+    ] + MIDDLEWARE
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

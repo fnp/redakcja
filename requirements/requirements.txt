@@ -12,12 +12,12 @@ librarian==1.7.6
 
 ## Django
 Django==1.11.25
-fnpdjango==0.3
+fnpdjango==0.4.3
 django-pipeline==1.6.14
 django-cas-ng==3.6.0
-sorl-thumbnail>=12.2,<12.4  # ??
+sorl-thumbnail==12.5.0
 django-maintenancemode>=0.9
-fnp-django-pagination==2.2.2
+fnp-django-pagination==2.2.4
 django-gravatar2==1.4.2
 django-extensions==2.1.6
 
