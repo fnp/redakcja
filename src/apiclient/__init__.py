@@ -1,7 +1,9 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import json
-import oauth2
 from urllib.parse import urlencode
-
+import oauth2
 from apiclient.settings import WL_CONSUMER_KEY, WL_CONSUMER_SECRET, WL_API_URL, BETA_API_URL
 
 
@@ -31,12 +33,12 @@ def api_call(user, path, data=None, beta=False):
         data = json.dumps(data)
         data = urlencode({"data": data})
         resp, content = client.request(
-                "%s%s" % (api_url, path),
-                method="POST",
-                body=data)
+            "%s%s" % (api_url, path),
+            method="POST",
+            body=data)
     else:
         resp, content = client.request(
-                "%s%s" % (api_url, path))
+            "%s%s" % (api_url, path))
     status = resp['status']
 
     if status == '200':
@@ -47,4 +49,3 @@ def api_call(user, path, data=None, beta=False):
         raise ApiError('User not authorized for publishing.')
     else:
         raise ApiError("WL API call error %s, path: %s" % (status, path))
-

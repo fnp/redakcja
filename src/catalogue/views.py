@@ -1,3 +1,6 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging

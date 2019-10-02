@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
@@ -20,7 +21,7 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
 
-    url(r'^$', RedirectView.as_view(url= '/documents/', permanent=False)),
+    url(r'^$', RedirectView.as_view(url='/documents/', permanent=False)),
     url(r'^documents/', include('catalogue.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
@@ -33,4 +34,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     import debug_toolbar
-    urlpatterns += (url(r'^__debug__/', include(debug_toolbar.urls))),
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]

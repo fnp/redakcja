@@ -1,3 +1,6 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import codecs
 from django.utils.html import escape
 from django.utils.safestring import mark_safe

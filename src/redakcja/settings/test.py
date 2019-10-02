@@ -1,4 +1,9 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
+import tempfile
 from redakcja.settings import *
+
 
 DATABASES = {
     'default': {
@@ -10,7 +15,6 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-import tempfile
 
 CATALOGUE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo')
 CATALOGUE_IMAGE_REPO_PATH = tempfile.mkdtemp(prefix='redakcja-repo-img')

@@ -1,3 +1,6 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 import os.path
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -125,8 +128,8 @@ PIPELINE = {
                 'css/filelist.css',
             ),
             'output_filename': 'compressed/catalogue_styles.css',
-         },
-         'book': {
+        },
+        'book': {
             'source_filenames': (
                 'css/book.css',
             ),
@@ -176,7 +179,7 @@ PIPELINE = {
                 'js/wiki/view_column_diff.js',
             ),
             'output_filename': 'compressed/detail_scripts.js',
-         },
+        },
         'wiki_img': {
             'source_filenames': (
                 # libraries
@@ -208,7 +211,7 @@ PIPELINE = {
                 'js/wiki/view_column_diff.js',
             ),
             'output_filename': 'compressed/detail_img_scripts.js',
-         },
+        },
         'catalogue': {
             'source_filenames': (
                 'js/catalogue/catalogue.js',
@@ -216,8 +219,8 @@ PIPELINE = {
                 'email_mangler/email_mangler.js',
             ),
             'output_filename': 'compressed/catalogue_scripts.js',
-         },
-         'book': {
+        },
+        'book': {
             'source_filenames': (
                 'js/book_text/jquery.eventdelegation.js',
                 'js/book_text/jquery.scrollto.js',
@@ -247,4 +250,3 @@ else:
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()]
     )
-
