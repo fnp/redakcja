@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -9,7 +7,7 @@ from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
 from cover.models import Image
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from PIL import Image as PILImage
 
 from cover.utils import get_flickr_data, FlickrError, URLOpener

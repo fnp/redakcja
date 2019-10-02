@@ -120,7 +120,7 @@ class Change(models.Model):
         return super(Change, self).save(*args, **kwargs)
 
     def materialize(self):
-        f = self.data.storage.open(self.data)
+        f = self.data.storage.open(self.data.name)
         text = f.read()
         f.close()
         return str(text, 'utf-8')

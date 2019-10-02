@@ -25,6 +25,7 @@ TEMPLATES = [
                 "redakcja.context_processors.settings", # this is instead of media
                 'django.template.context_processors.csrf',
                 "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
