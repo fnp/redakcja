@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from catalogue.helpers import cached_in_field
 from catalogue.models import Project
@@ -19,7 +20,7 @@ class Image(dvcs_models.Document):
     title = models.CharField(_('title'), max_length=255, blank=True)
     slug = models.SlugField(_('slug'), unique=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
-    project = models.ForeignKey(Project, null=True, blank=True)
+    project = models.ForeignKey(Project, models.SET_NULL, null=True, blank=True)
 
     # cache
     _new_publishable = models.NullBooleanField(editable=False)
@@ -39,9 +40,8 @@ class Image(dvcs_models.Document):
     def __str__(self):
         return self.title
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("catalogue_image", [self.slug])
+        return reverse("catalogue_image", args=[self.slug])
 
     def correct_about(self):
         return ["http://%s%s" % (

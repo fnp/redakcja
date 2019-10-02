@@ -9,8 +9,6 @@ from django.views.generic import RedirectView
 import django_cas_ng.views
 
 
-admin.autodiscover()
-
 urlpatterns = [
     # Auth
     url(r'^accounts/login/$', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
@@ -20,7 +18,7 @@ urlpatterns = [
 
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^$', RedirectView.as_view(url= '/documents/', permanent=False)),
     url(r'^documents/', include('catalogue.urls')),

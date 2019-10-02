@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 import os.path
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from .defaults import *
 from ..localsettings import *
-import os
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -66,7 +65,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'raven.contrib.django.raven_compat',
 
     'sorl.thumbnail',
     'fnp_django_pagination',
@@ -237,3 +235,15 @@ PIPELINE = {
         }
     }
 }
+
+
+try:
+    SENTRY_DSN
+except NameError:
+    pass
+else:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()]
+    )
+

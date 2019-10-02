@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -7,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from catalogue.helpers import cached_in_field
 from catalogue.managers import VisibleManager
@@ -17,7 +16,7 @@ class Chunk(dvcs_models.Document):
     """ An editable chunk of text. Every Book text is divided into chunks. """
     REPO_PATH = settings.CATALOGUE_REPO_PATH
 
-    book = models.ForeignKey('Book', editable=False, verbose_name=_('book'))
+    book = models.ForeignKey('Book', models.CASCADE, editable=False, verbose_name=_('book'))
     number = models.IntegerField(_('number'))
     title = models.CharField(_('title'), max_length=255, blank=True)
     slug = models.SlugField(_('slug'))
@@ -46,9 +45,8 @@ class Chunk(dvcs_models.Document):
     def __str__(self):
         return "%d:%d: %s" % (self.book_id, self.number, self.title)
 
-    @models.permalink
     def get_absolute_url(self):
-        return "wiki_editor", [self.book.slug, self.slug]
+        return reverse("wiki_editor", args=[self.book.slug, self.slug])
 
     def pretty_name(self, book_length=None):
         title = self.book.title

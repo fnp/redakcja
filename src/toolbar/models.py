@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -34,7 +32,7 @@ class Button(models.Model):
 
     # behaviour
     params = models.TextField(default='[]')  # TODO: should be a JSON field
-    scriptlet = models.ForeignKey('Scriptlet', null=True, blank=True)
+    scriptlet = models.ForeignKey('Scriptlet', models.SET_NULL, null=True, blank=True)
     link = models.CharField(max_length=256, blank=True, default='')
 
     # ui related stuff

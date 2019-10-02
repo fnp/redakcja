@@ -11,7 +11,7 @@ python-slugify
 librarian==1.7.6
 
 ## Django
-Django==1.11.25
+Django==2.0.13
 fnpdjango==0.4.3
 django-pipeline==1.6.14
 django-cas-ng==3.6.0
@@ -21,4 +21,4 @@ fnp-django-pagination==2.2.4
 django-gravatar2==1.4.2
 django-extensions==2.1.6
 
-raven
+sentry-sdk==0.12.2

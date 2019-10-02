@@ -3,7 +3,7 @@ import functools
 import logging
 logger = logging.getLogger("fnp.wiki_img")
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
 
@@ -63,7 +63,7 @@ def text(request, image_id):
     if request.method == 'POST':
         form = ImageSaveForm(request.POST, user=request.user, prefix="textsave")
         if form.is_valid():
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 author = request.user
             else:
                 author = None
@@ -148,7 +148,7 @@ def revert(request, object_id):
         comment = form.cleaned_data['comment']
         comment += "\n#revert to %s" % revision
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             author = request.user
         else:
             author = None

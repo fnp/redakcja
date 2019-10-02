@@ -44,7 +44,7 @@ class JSONServerError(JSONResponse):
 def ajax_login_required(view):
     @wraps(view)
     def authenticated_view(request, *args, **kwargs):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return http.HttpResponse("Login required.", status=401, content_type="text/plain")
         return view(request, *args, **kwargs)
     return authenticated_view

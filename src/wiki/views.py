@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 import os
 import logging
@@ -6,7 +5,7 @@ from time import mktime
 from urllib.parse import quote
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django import http
 from django.http import Http404, HttpResponseForbidden
 from django.middleware.gzip import GZipMiddleware
@@ -115,7 +114,7 @@ def text(request, chunk_id):
     if request.method == 'POST':
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
         if form.is_valid():
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 author = request.user
             else:
                 author = None
@@ -180,7 +179,7 @@ def revert(request, chunk_id):
         comment = form.cleaned_data['comment']
         comment += "\n#revert to %s" % revision
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             author = request.user
         else:
             author = None
@@ -222,7 +221,7 @@ def gallery(request, directory):
 
         books = Book.objects.filter(gallery=directory)
 
-        if not all(book.public for book in books) and not request.user.is_authenticated():
+        if not all(book.public for book in books) and not request.user.is_authenticated:
             return HttpResponseForbidden("Not authorized.")
 
         return JSONResponse(images)

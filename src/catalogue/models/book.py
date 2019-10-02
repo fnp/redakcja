@@ -4,6 +4,7 @@
 from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from slugify import slugify
@@ -26,10 +27,10 @@ class Book(models.Model):
     slug = models.SlugField(_('slug'), max_length=128, unique=True, db_index=True)
     public = models.BooleanField(_('public'), default=True, db_index=True)
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
-    project = models.ForeignKey(Project, null=True, blank=True)
+    project = models.ForeignKey(Project, models.SET_NULL, null=True, blank=True)
 
     #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
-    parent = models.ForeignKey('self', null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
+    parent = models.ForeignKey('self', models.SET_NULL, null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
@@ -73,9 +74,8 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("catalogue_book", [self.slug])
+        return reverse("catalogue_book", args=[self.slug])
 
     def correct_about(self):
         return "http://%s%s" % (

@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
 from datetime import timedelta
 from django.db.models import Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django import template
 from django.utils.translation import ugettext as _
 

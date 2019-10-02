@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='button',
             name='scriptlet',
-            field=models.ForeignKey(blank=True, to='toolbar.Scriptlet', null=True),
+            field=models.ForeignKey(blank=True, to='toolbar.Scriptlet', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

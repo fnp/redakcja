@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -67,7 +65,7 @@ class DocumentTextSaveForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         r = super(DocumentTextSaveForm, self).__init__(*args, **kwargs)
-        if user and user.is_authenticated():
+        if user and user.is_authenticated:
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
         return r

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -14,9 +12,9 @@ class BookPublishRecord(models.Model):
         A record left after publishing a Book.
     """
 
-    book = models.ForeignKey('Book', verbose_name=_('book'), related_name='publish_log')
+    book = models.ForeignKey('Book', models.CASCADE, verbose_name=_('book'), related_name='publish_log')
     timestamp = models.DateTimeField(_('time'), auto_now_add=True)
-    user = models.ForeignKey(User, verbose_name=_('user'))
+    user = models.ForeignKey(User, models.CASCADE, verbose_name=_('user'))
 
     class Meta:
         app_label = 'catalogue'
@@ -30,8 +28,8 @@ class ChunkPublishRecord(models.Model):
         BookPublishRecord details for each Chunk.
     """
 
-    book_record = models.ForeignKey(BookPublishRecord, verbose_name=_('book publish record'))
-    change = models.ForeignKey(Chunk.change_model, related_name='publish_log', verbose_name=_('change'))
+    book_record = models.ForeignKey(BookPublishRecord, models.CASCADE, verbose_name=_('book publish record'))
+    change = models.ForeignKey(Chunk.change_model, models.CASCADE, related_name='publish_log', verbose_name=_('change'))
 
     class Meta:
         app_label = 'catalogue'
@@ -42,10 +40,10 @@ class ChunkPublishRecord(models.Model):
 class ImagePublishRecord(models.Model):
     """A record left after publishing an Image."""
 
-    image = models.ForeignKey(Image, verbose_name=_('image'), related_name='publish_log')
+    image = models.ForeignKey(Image, models.CASCADE, verbose_name=_('image'), related_name='publish_log')
     timestamp = models.DateTimeField(_('time'), auto_now_add=True)
-    user = models.ForeignKey(User, verbose_name=_('user'))
-    change = models.ForeignKey(Image.change_model, related_name='publish_log', verbose_name=_('change'))
+    user = models.ForeignKey(User, models.CASCADE, verbose_name=_('user'))
+    change = models.ForeignKey(Image.change_model, models.CASCADE, related_name='publish_log', verbose_name=_('change'))
 
     class Meta:
         app_label = 'catalogue'

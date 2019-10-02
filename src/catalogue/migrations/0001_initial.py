@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models, migrations
 import datetime
 import django.db.models.deletion
@@ -46,8 +43,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True, verbose_name='time')),
-                ('book', models.ForeignKey(related_name='publish_log', verbose_name='book', to='catalogue.Book')),
-                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL)),
+                ('book', models.ForeignKey(related_name='publish_log', verbose_name='book', to='catalogue.Book', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-timestamp'],
@@ -67,8 +64,8 @@ class Migration(migrations.Migration):
                 ('_short_html', models.TextField(null=True, editable=False, blank=True)),
                 ('_hidden', models.NullBooleanField(editable=False)),
                 ('_changed', models.NullBooleanField(editable=False)),
-                ('book', models.ForeignKey(editable=False, to='catalogue.Book', verbose_name='book')),
-                ('creator', models.ForeignKey(related_name='created_chunk', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator')),
+                ('book', models.ForeignKey(editable=False, to='catalogue.Book', verbose_name='book', on_delete=models.CASCADE)),
+                ('creator', models.ForeignKey(related_name='created_chunk', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['number'],
@@ -89,9 +86,9 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
                 ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
                 ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_REPO_PATH), verbose_name='data')),
-                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='merge parent')),
-                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='parent')),
+                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
+                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='merge parent', on_delete=models.CASCADE)),
+                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='parent', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('created_at',),
@@ -105,8 +102,8 @@ class Migration(migrations.Migration):
             name='ChunkPublishRecord',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('book_record', models.ForeignKey(verbose_name='book publish record', to='catalogue.BookPublishRecord')),
-                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ChunkChange')),
+                ('book_record', models.ForeignKey(verbose_name='book publish record', to='catalogue.BookPublishRecord', on_delete=models.CASCADE)),
+                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ChunkChange', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'chunk publish record',
@@ -142,7 +139,7 @@ class Migration(migrations.Migration):
                 ('_new_publishable', models.NullBooleanField(editable=False)),
                 ('_published', models.NullBooleanField(editable=False)),
                 ('_changed', models.NullBooleanField(editable=False)),
-                ('creator', models.ForeignKey(related_name='created_image', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator')),
+                ('creator', models.ForeignKey(related_name='created_image', blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='creator', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['title'],
@@ -163,9 +160,9 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
                 ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
                 ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_IMAGE_REPO_PATH), verbose_name='data')),
-                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='merge parent')),
-                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='parent')),
+                ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
+                ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='merge parent', on_delete=models.CASCADE)),
+                ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='parent', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('created_at',),
@@ -180,9 +177,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True, verbose_name='time')),
-                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ImageChange')),
-                ('image', models.ForeignKey(related_name='publish_log', verbose_name='image', to='catalogue.Image')),
-                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL)),
+                ('change', models.ForeignKey(related_name='publish_log', verbose_name='change', to='catalogue.ImageChange', on_delete=models.CASCADE)),
+                ('image', models.ForeignKey(related_name='publish_log', verbose_name='image', to='catalogue.Image', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-timestamp'],
@@ -230,7 +227,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='imagechange',
             name='tree',
-            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Image'),
+            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Image', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -240,25 +237,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='image',
             name='head',
-            field=models.ForeignKey(default=None, editable=False, to='catalogue.ImageChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head'),
+            field=models.ForeignKey(default=None, editable=False, to='catalogue.ImageChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='image',
             name='project',
-            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True),
+            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='image',
             name='stage',
-            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ImageTag', null=True),
+            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ImageTag', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='image',
             name='user',
-            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user'),
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -270,7 +267,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chunkchange',
             name='tree',
-            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Chunk'),
+            field=models.ForeignKey(related_name='change_set', verbose_name='document', to='catalogue.Chunk', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -280,19 +277,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chunk',
             name='head',
-            field=models.ForeignKey(default=None, editable=False, to='catalogue.ChunkChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head'),
+            field=models.ForeignKey(default=None, editable=False, to='catalogue.ChunkChange', blank=True, help_text="This document's current head.", null=True, verbose_name='head', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='chunk',
             name='stage',
-            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ChunkTag', null=True),
+            field=models.ForeignKey(verbose_name='stage', blank=True, to='catalogue.ChunkTag', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='chunk',
             name='user',
-            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user'),
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, help_text='Work assignment.', null=True, verbose_name='user', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -308,13 +305,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='book',
             name='parent',
-            field=models.ForeignKey(related_name='children', blank=True, editable=False, to='catalogue.Book', null=True, verbose_name='parent'),
+            field=models.ForeignKey(related_name='children', blank=True, editable=False, to='catalogue.Book', null=True, verbose_name='parent', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='book',
             name='project',
-            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True),
+            field=models.ForeignKey(blank=True, to='catalogue.Project', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.CreateModel(

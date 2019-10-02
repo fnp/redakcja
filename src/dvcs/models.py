@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
@@ -10,7 +8,8 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.db.models.base import ModelBase
-from django.utils.translation import string_concat, ugettext_lazy as _
+from django.utils.text import format_lazy
+from django.utils.translation import ugettext_lazy as _
 import merge3
 
 from django.conf import settings
@@ -71,7 +70,7 @@ class Change(models.Model):
         
         Data file contains a gzipped text of the document.
     """
-    author = models.ForeignKey(User, null=True, blank=True, verbose_name=_('author'))
+    author = models.ForeignKey(User, models.SET_NULL, null=True, blank=True, verbose_name=_('author'))
     author_name = models.CharField(
         _('author name'), max_length=128, null=True, blank=True, help_text=_("Used if author is not set."))
     author_email = models.CharField(
@@ -79,10 +78,10 @@ class Change(models.Model):
     revision = models.IntegerField(_('revision'), db_index=True)
 
     parent = models.ForeignKey(
-        'self', null=True, blank=True, default=None, verbose_name=_('parent'), related_name="children")
+        'self', models.SET_NULL, null=True, blank=True, default=None, verbose_name=_('parent'), related_name="children")
 
     merge_parent = models.ForeignKey(
-        'self', null=True, blank=True, default=None, verbose_name=_('merge parent'), related_name="merge_children")
+        'self', models.SET_NULL, null=True, blank=True, default=None, verbose_name=_('merge parent'), related_name="merge_children")
 
     description = models.TextField(_('description'), blank=True, default='')
     created_at = models.DateTimeField(editable=False, db_index=True, default=datetime.now)
@@ -165,10 +164,10 @@ def create_tag_model(model):
 
     class Meta(Tag.Meta):
         app_label = model._meta.app_label
-        verbose_name = string_concat(
-            _("tag"), " ", _("for:"), " ", model._meta.verbose_name)
-        verbose_name_plural = string_concat(
-            _("tags"), " ", _("for:"), " ", model._meta.verbose_name)
+        verbose_name = format_lazy(
+            '{} {} {}', _('tag'), _('for:'), model._meta.verbose_name)
+        verbose_name_plural = format_lazy(
+            '{} {} {}', _("tags"), _("for:"), model._meta.verbose_name)
 
     attrs = {
         '__module__': model.__module__,
@@ -183,14 +182,14 @@ def create_change_model(model):
 
     class Meta(Change.Meta):
         app_label = model._meta.app_label
-        verbose_name = string_concat(
-            _("change"), " ", _("for:"), " ", model._meta.verbose_name)
-        verbose_name_plural = string_concat(
-            _("changes"), " ", _("for:"), " ", model._meta.verbose_name)
+        verbose_name = format_lazy(
+            '{} {} {}', _("change"), _("for:"), model._meta.verbose_name)
+        verbose_name_plural = format_lazy(
+            '{} {} {}', _("changes"), _("for:"), model._meta.verbose_name)
 
     attrs = {
         '__module__': model.__module__,
-        'tree': models.ForeignKey(model, related_name='change_set', verbose_name=_('document')),
+        'tree': models.ForeignKey(model, models.CASCADE, related_name='change_set', verbose_name=_('document')),
         'tags': models.ManyToManyField(model.tag_model, verbose_name=_('tags'), related_name='change_set'),
         'data': models.FileField(_('data'), upload_to=data_upload_to, storage=repo),
         'Meta': Meta,
@@ -206,19 +205,19 @@ class DocumentMeta(ModelBase):
         if not model._meta.abstract:
             # create a real Tag object and `stage' fk
             model.tag_model = create_tag_model(model)
-            models.ForeignKey(model.tag_model, verbose_name=_('stage'),
+            models.ForeignKey(model.tag_model, models.CASCADE, verbose_name=_('stage'),
                 null=True, blank=True).contribute_to_class(model, 'stage')
 
             # create real Change model and `head' fk
             model.change_model = create_change_model(model)
 
             models.ForeignKey(
-                model.change_model, null=True, blank=True, default=None,
+                model.change_model, models.SET_NULL, null=True, blank=True, default=None,
                 verbose_name=_('head'), help_text=_("This document's current head."),
                 editable=False).contribute_to_class(model, 'head')
 
             models.ForeignKey(
-                User, null=True, blank=True, editable=False,
+                User, models.SET_NULL, null=True, blank=True, editable=False,
                 verbose_name=_('creator'), related_name="created_%s" % name.lower()
                 ).contribute_to_class(model, 'creator')
 
@@ -231,7 +230,7 @@ class Document(models.Model, metaclass=DocumentMeta):
     # default repository path
     REPO_PATH = os.path.join(settings.MEDIA_ROOT, 'dvcs')
 
-    user = models.ForeignKey(User, null=True, blank=True, verbose_name=_('user'), help_text=_('Work assignment.'))
+    user = models.ForeignKey(User, models.SET_NULL, null=True, blank=True, verbose_name=_('user'), help_text=_('Work assignment.'))
 
     class Meta:
         abstract = True
@@ -280,7 +279,7 @@ class Document(models.Model, metaclass=DocumentMeta):
             author=author, author_name=author_name, author_email=author_email,
             description=kwargs.get('description', ''), publishable=publishable, parent=parent)
 
-        change.tags = tags
+        change.tags.set(tags)
         change.data.save('', ContentFile(text.encode('utf-8')))
         change.save()
 
