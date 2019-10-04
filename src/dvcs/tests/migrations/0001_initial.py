@@ -4,10 +4,10 @@
 import datetime
 import os.path
 from django.conf import settings
+import django.core.files.storage
 from django.db import migrations, models
 import django.db.models.deletion
 import dvcs.models
-import dvcs.storage
 
 
 class Migration(migrations.Migration):
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True, default=b'', verbose_name='description')),
                 ('created_at', models.DateTimeField(db_index=True, default=datetime.datetime.now, editable=False)),
                 ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
-                ('data', models.FileField(storage=dvcs.storage.GzipFileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'dvcs')), upload_to=dvcs.models.data_upload_to, verbose_name='data')),
+                ('data', models.FileField(storage=django.core.files.storage.FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'dvcs')), upload_to=dvcs.models.data_upload_to, verbose_name='data')),
                 ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='author')),
                 ('merge_parent', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='merge_children', to='tests.ADocumentChange', verbose_name='merge parent')),
                 ('parent', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='tests.ADocumentChange', verbose_name='parent')),

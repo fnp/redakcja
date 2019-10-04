@@ -5,8 +5,8 @@ from django.db import models, migrations
 import datetime
 import django.db.models.deletion
 from django.conf import settings
+import django.core.files.storage
 import dvcs.models
-import dvcs.storage
 
 
 class Migration(migrations.Migration):
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(default=b'', verbose_name='description', blank=True)),
                 ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
                 ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
-                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_REPO_PATH), verbose_name='data')),
+                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=django.core.files.storage.FileSystemStorage(location=settings.CATALOGUE_REPO_PATH), verbose_name='data')),
                 ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
                 ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='merge parent', on_delete=models.CASCADE)),
                 ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ChunkChange', null=True, verbose_name='parent', on_delete=models.CASCADE)),
@@ -162,7 +162,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(default=b'', verbose_name='description', blank=True)),
                 ('created_at', models.DateTimeField(default=datetime.datetime.now, editable=False, db_index=True)),
                 ('publishable', models.BooleanField(default=False, verbose_name='publishable')),
-                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=dvcs.storage.GzipFileSystemStorage(location=settings.CATALOGUE_IMAGE_REPO_PATH), verbose_name='data')),
+                ('data', models.FileField(upload_to=dvcs.models.data_upload_to, storage=django.core.files.storage.FileSystemStorage(location=settings.CATALOGUE_IMAGE_REPO_PATH), verbose_name='data')),
                 ('author', models.ForeignKey(verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
                 ('merge_parent', models.ForeignKey(related_name='merge_children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='merge parent', on_delete=models.CASCADE)),
                 ('parent', models.ForeignKey(related_name='children', default=None, blank=True, to='catalogue.ImageChange', null=True, verbose_name='parent', on_delete=models.CASCADE)),

@@ -3,9 +3,11 @@
 #
 from datetime import datetime
 import os.path
+from zlib import compress, decompress
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
 from django.db import models, transaction
 from django.db.models.base import ModelBase
 from django.utils.text import format_lazy
@@ -14,7 +16,6 @@ import merge3
 
 from django.conf import settings
 from dvcs.signals import post_commit, post_publishable
-from dvcs.storage import GzipFileSystemStorage
 
 
 class Tag(models.Model):
@@ -119,11 +120,17 @@ class Change(models.Model):
                 self.revision = tree_rev + 1
         return super(Change, self).save(*args, **kwargs)
 
+    def save_text(self, text, **kwargs):
+        self.data.save(
+            '',
+            ContentFile(compress(text.encode('utf-8'))),
+            **kwargs
+        )
+
     def materialize(self):
-        f = self.data.storage.open(self.data.name)
-        text = f.read()
-        f.close()
-        return str(text, 'utf-8')
+        with self.data.open('rb') as f:
+            content = f.read()
+        return decompress(content).decode('utf-8')
 
     def merge_with(self, other, author=None, 
             author_name=None, author_email=None, 
@@ -146,7 +153,7 @@ class Change(models.Model):
                     author_name=author_name,
                     author_email=author_email,
                     description=description)
-        merge_node.data.save('', ContentFile(result))
+        merge_node.save_text(result)
         return merge_node
 
     def revert(self, **kwargs):
@@ -178,7 +185,7 @@ def create_tag_model(model):
 
 def create_change_model(model):
     name = model.__name__ + 'Change'
-    repo = GzipFileSystemStorage(location=model.REPO_PATH)
+    repo = FileSystemStorage(location=model.REPO_PATH)
 
     class Meta(Change.Meta):
         app_label = model._meta.app_label
@@ -280,7 +287,7 @@ class Document(models.Model, metaclass=DocumentMeta):
             description=kwargs.get('description', ''), publishable=publishable, parent=parent)
 
         change.tags.set(tags)
-        change.data.save('', ContentFile(text.encode('utf-8')))
+        change.save_text(text)
         change.save()
 
         if self.head:
