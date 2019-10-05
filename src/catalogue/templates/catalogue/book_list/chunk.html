@@ -1,12 +1,13 @@
 {% load i18n %}
 {% load username from common_tags %}
 
-<tr>
+<tr class="table-secondary table-sm">
     <td><input type="checkbox" name="select_chunk" value="{{chunk.id}}" data-book-id="{{chunk.book.id}}" /></td>
     <td class='book-settings-column'></td>
-    <td><a href="{% url 'catalogue_chunk_edit' chunk.book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
-    <td><a target="_blank" href="{{ chunk.get_absolute_url }}">
-            <span class='chunkno'>{{ chunk.number }}.</span>
+    <td><a class="btn btn-secondary btn-sm" href="{% url 'catalogue_chunk_edit' chunk.book.slug chunk.slug %}"><small>{% trans "Chunk settings" %}</small></a></td>
+    <td><a class="btn btn-primary" target="_blank" href="{{ chunk.get_absolute_url }}">
+		    {% trans "Edit:" %}
+            {{ chunk.number }}.
             {{ chunk.title }}</a></td>
     <td>{% if chunk.stage %}
             {{ chunk.stage }}
@@ -19,9 +20,19 @@
             </a>{% else %}
             
             {% endif %}</td>
+
 </td>
 <td>
-    {% if chunk.new_publishable %}p{% endif %}
-    {% if chunk.changed %}+{% endif %}
+    {% if chunk.new_publishable %}
+    <small>
+      {% trans "publishable" %}
+      </small>
+    {% endif %}
+    {% if chunk.changed %}
+    <small>
+      {% trans "changed" %}
+    </small>
+    {% endif %}
 </td>
+<td></td>
 </tr>

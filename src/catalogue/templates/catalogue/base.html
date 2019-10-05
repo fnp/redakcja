@@ -1,10 +1,13 @@
+<!DOCTYPE html>
 {% load pipeline i18n %}
+{% load static %}
 {% load catalogue %}
 <!DOCTYPE html>
 <html>
 <head lang="{{ LANGUAGE_CODE }}">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <link rel="icon" href="{{ STATIC_URL }}img/pr-icon.png" type="image/png" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     {% stylesheet 'catalogue' %}
     <title>{% block title %}{% block titleextra %}{% endblock %} ::
         {% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
@@ -12,37 +15,37 @@
 </head>
 <body>
 <!--#include file='/pozor.html'-->
-<div id="tabs-nav">
 
-    <a href="{% url 'catalogue_document_list' %}">
-        <img id="logo" src="{{ STATIC_URL }}img/wl-orange.png" alt="Platforma" />
-    </a>
 
-    <div id="tabs-nav-left">
+<nav class="navbar navbar-expand-lg bg-light ">
+  <a class="navbar-brand" href="{% url 'catalogue_document_list' %}">
+	  <img src="{% static "img/wl-orange.png" %}" alt="Platforma">
+  </a>
+  <ul class="nav nav-pills mr-auto">
         {% main_tabs %}
-    </div>
+    </ul>
 
-    <span id="login-box">
-        {% include "registration/head_login.html" %}
-    </span>
+    <ul class="nav nav-pills">
+        {% include "catalogue/head_login.html" %}
+    </ul>
 
-    <div class='clr' ></div>
-</div>
+</nav>
 
-<div id="content">
+<div class="container">
 
 {% block content %}
-<div id="catalogue_layout_left_column">
+<div class="row">
+<div class="col-lg-8">
 	{% block leftcolumn %}
 	{% endblock leftcolumn %}
 </div>
-<div id="catalogue_layout_right_column">
+<div class="col-lg-4">
 	{% block rightcolumn %}
 	{% endblock rightcolumn %}
 </div>
+</div>
 {% endblock content %}
 
-</div>
 
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>

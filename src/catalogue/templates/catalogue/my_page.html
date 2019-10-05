@@ -20,8 +20,11 @@
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
-    <div id="last-edited-list">
+<div class="card mt-4">
+	<div class="card-header">
         <h2>{% trans "Your last edited documents" %}</h2>
+	</div>
+	<div class="card-body">
         <ol>
             {% for edit_url, item in last_books %}
                 <li><a
@@ -35,7 +38,13 @@
             {% endfor %}
         </ol>
     </div>
+</div>
 
+<div class="card mt-4">
+	<div class="card-header">
     <h2>{% trans "Recent activity for" %} {{ request.user|nice_name }}</h2>
+	</div>
+	<div class="card-body">
     {% wall request.user 10 %}
+	</div></div>
 {% endblock rightcolumn %}

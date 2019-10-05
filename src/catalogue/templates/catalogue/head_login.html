@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<li class="nav-item navbar-text">
+{% if user.is_authenticated %}
+{{ user.username }}
+</li>
+
+{% if user.is_staff %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+</li>
+{% endif %}
+
+<li class="nav-item">
+    <a class="nav-link" href='{% url "logout" %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
+</li>
+{% else %}
+{% url "cas_ng_login" as login_url %}
+{% ifnotequal login_url request.path %}
+<li class="nav-item">
+<a class="nav-link" href='{{ login_url }}'>{% trans "Log In" %}</a>
+</li>
+{% endifnotequal %}
+{% endif %}

@@ -5,10 +5,11 @@
     {% with chunk as chunk %}
     <tr>
         <td><input type="checkbox" name="select_book" value="{{book.id}}" data-chunk-id="{{chunk.id}}"/></td>
-        <td><a href="{% url 'catalogue_book' book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
-        <td><a href="{% url 'catalogue_chunk_edit' book.slug chunk.slug %}" title='{% trans "Chunk settings" %}'>[c]</a></td>
-        <td><a target="_blank"
+	<td><a class="btn btn-sm btn-secondary" href="{% url 'catalogue_book' book.slug %}"><small>{% trans "Book settings" %}</small></a></td>
+	<td><a class="btn btn-sm btn-secondary" href="{% url 'catalogue_chunk_edit' book.slug chunk.slug %}"><small>{% trans "Chunk settings" %}</small></a></td>
+        <td><a class="btn btn-primary" target="_blank"
                     href="{% url 'wiki_editor' book.slug %}">
+			{% trans "Edit:" %}
                     {{ book.title }}</a></td>
         <td>{% if chunk.stage %}
             {{ chunk.stage }}
@@ -16,9 +17,15 @@
         {% endif %}</td>
         <td class='user-column'>{% if chunk.user %}<a href="{% url 'catalogue_user' chunk.user.username %}">{{ chunk.user|username }}</a>{% endif %}</td>
         <td>
-            {% if chunk.published %}P{% endif %}
-            {% if book.new_publishable %}p{% endif %}
-            {% if chunk.changed %}+{% endif %}
+            {% if chunk.published %}
+	    <div><small>{% trans "published" %}</small></div>
+	    {% endif %}
+            {% if book.new_publishable %}
+	    <div><small>{% trans "publishable" %}</small></div>
+	    {% endif %}
+            {% if chunk.changed %}
+	    <div><small>{% trans "changed" %}</small></div>
+	    {% endif %}
         </td>
         <td>{{ book.project.name }}</td>
     </tr>
@@ -26,14 +33,18 @@
 {% else %}
     <tr>
         <td><input type="checkbox" name="select_book" value="{{book.id}}"/></td>
-        <td class='book-settings-link'><a href="{% url 'catalogue_book' book.slug %}" title='{% trans "Book settings" %}'>[B]</a></td>
+	<td><a class='btn btn-sm btn-secondary' href="{% url 'catalogue_book' book.slug %}"><small>{% trans "Book settings" %}</small></a></td>
         <td></td>
         <td>{{ book.title }}</td>
         <td></td>
         <td class='user-column'></td>
         <td>
-            {% if book.published %}P{% endif %}
-            {% if book.new_publishable %}p{% endif %}
+            {% if book.published %}
+	    <div><small>{% trans "published" %}</small></div>
+	    {% endif %}
+            {% if book.new_publishable %}
+	    <div><small>{% trans "publishable" %}</small></div>
+	    {% endif %}
         </td>
         <td>{{ book.project.name }}</td>
     </tr>

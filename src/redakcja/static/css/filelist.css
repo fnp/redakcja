@@ -7,57 +7,11 @@
 */
 
 body {
-    margin: 0;
-    font-family: verdana, sans-serif;
-    font-size: 10px;
+	background: #eee;
 }
 
 img {
     border: 0;
-}
-
-th {
-    text-align: left;
-}
-
-td {
-    vertical-align: top;
-    padding: 0 3px;
-}
-.clr {
-    clear: both;
-}
-
-#tabs-nav {
-    padding: 5px 5px 0 10px;
-    background: #ffdfbf;
-    border-bottom: 1px solid #ff8000;
-    position: relative;
-}
-
-#tabs-nav-left {
-    margin-left: 60px;
-}
-
-#tabs-nav-left a {
-    display: block;
-    float: left;
-    padding: 5px 20px 5px 20px;
-    margin-bottom: -1px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: transparent;
-}
-
-#tabs-nav-left .active {
-    background: white;
-    border-color: #ff8000 #ff8000 white #ff8000;
-}
-
-.section {
-    border-top: 1px solid #ffdfbf;
-    margin-top: 2em;
-    padding-top: 1em;
 }
 
 .editable td {
@@ -71,36 +25,6 @@ td {
 }
 
 
-#login-box {
-    float: right;
-}
-
-#logo {
-    position: absolute;
-    bottom: 0;
-}
-
-#content {
-    padding: 10px;
-}
-
-
-
-#catalogue_layout_left_column {
-	overflow: visible;
-	float: left;
-	max-width: 60%;
-	padding-right: 2%;
-	border-right: 1px dashed black;
-
-}
-
-#catalogue_layout_right_column {
-	float: left;
-	max-width: 30%;
-	margin-left: 5%;
-}
-
 #last-edited-list ul {
 	margin: 0px;
 }
@@ -112,15 +36,6 @@ td {
 #last-edited-list .date {
 	font-size: 70%;
 	color: #808080;
-}
-
-a, a:visited, a:active {
-	color: #a05000;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
 }
 
 
@@ -141,12 +56,6 @@ a:hover {
 #skipped-list {
     color: #666;
 }
-
-.chunkno {
-    font-size: .7em;
-    padding-left: 2em;
-}
-
 
 /* Big cheesy publish button */
 #publish-button {

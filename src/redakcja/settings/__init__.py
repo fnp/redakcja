@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'pipeline',
     'fnpdjango',
     'django_cas_ng',
+    'bootstrap4',
 
     'catalogue',
     'cover',

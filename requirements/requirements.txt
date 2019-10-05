@@ -20,5 +20,6 @@ django-maintenancemode>=0.9
 fnp-django-pagination==2.2.4
 django-gravatar2==1.4.2
 django-extensions==2.1.6
+django-bootstrap4==1.0.1
 
 sentry-sdk==0.12.2

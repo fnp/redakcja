@@ -1,5 +1,6 @@
 {% extends "catalogue/base.html" %}
 {% load book_list i18n %}
+{% load bootstrap4 %}
 
 
 {% block titleextra %}{{ book.title }}{% endblock %}
@@ -7,17 +8,21 @@
 
 {% block content %}
 
-
-<h1>{{ book.title }}</h1>
+  <div class="card mt-4">
+    <div class="card-header">
+      <h1>{{ book.title }}</h1>
+    </div>
+    <div class="card-body">
+    
 
 
 {% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
-<table class='editable'><tbody>
-    {{ form.as_table }}
-    {% if editable %}
-        <tr><td></td><td><button type="submit">{% trans "Save" %}</button></td></tr>
+    {% bootstrap_form form %}
+        {% if editable %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+        {% endbuttons %}
     {% endif %}
-</tbody></table>
 {% if editable %}</form>{% endif %}
 
 {% if editable %}
@@ -25,36 +30,42 @@
     <p><a href="{% url 'catalogue_book_gallery' book.slug %}">{% trans "Edit gallery" %}</a></p>
     {% endif %}
 
-    <p><a href="{% url 'catalogue_book_append' book.slug %}">{% trans "Append to other book" %}</a></p>
+    <p style="text-align:right"><a class="btn btn-sm btn-danger" href="{% url 'catalogue_book_append' book.slug %}">{% trans "Append to other book" %}</a></p>
 {% endif %}
+    </div>
+    </div>
 
+  <div class="card mt-4">
+    <div class="card-header">
+      <h2>{% trans "Chunks" %}</h2>
+    </div>
+    <div class="card-body">
 
-<div class='section'>
-
-    <h2>{% trans "Chunks" %}</h2>
-
-    <table class='single-book-list'><tbody>
+    <table class='single-book-list table'><tbody>
     {% for chunk in book %}
         {% include 'catalogue/book_list/chunk.html' %}
     {% endfor %}
     </tbody></table>
-
-</div>
-
-
-
-<div class='section'>
+    </div>
+  </div>
 
 
-<h2>{% trans "Publication" %}</h2>
 
-<div class="cover-preview">
+
+<div class='card mt-4'>
+
+<div class="card-header">
+  <h2>{% trans "Publication" %}</h2>
+  </div>
+<div class="card-body">
+  <div class="row">
+<div class="col-lg-3">
 <img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
 {% if book.dc_cover_image %}
     <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
 {% endif %}
 </div>
-
+<div class="col-lg-9">
 <p>{% trans "Last published" %}: 
     {% if book.last_published %}
         {{ book.last_published }}
@@ -96,8 +107,6 @@
     <ul><li>{{ publishable_error }}</li></ul>
 {% endif %}
 
-<div style="clear: both;"></div>
 </div>
-
-
+  </div>
 {% endblock content %}
