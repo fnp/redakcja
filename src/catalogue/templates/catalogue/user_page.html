@@ -8,12 +8,12 @@
 
 
 {% block leftcolumn %}
-    <h1 class="mt-4">{{ viewed_user|nice_name }}</h1>
+    <h1 class="mb-4">{{ viewed_user|nice_name }}</h1>
     {% book_list viewed_user %}
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
-<div class="card mt-4">
+<div class="card">
 	<div class="card-header">
     <h2>{% trans "Recent activity for" %} {{ viewed_user|nice_name }}</h2>
 	</div>

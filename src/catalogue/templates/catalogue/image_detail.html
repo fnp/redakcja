@@ -1,39 +1,52 @@
 {% extends "catalogue/base.html" %}
 {% load book_list i18n %}
+{% load bootstrap4 %}
 
 
 {% block titleextra %}{{ object.title }}{% endblock %}
 
 
 {% block content %}
+<div class="card mt-4">
 
-
+	<div class="card-header">
 <h1>{{ object.title }}</h1>
+	</div>
+	<div class="card-body">
 
 
 {% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
-<table class='editable'><tbody>
-    {{ form.as_table }}
+    {% bootstrap_form form %}
     {% if editable %}
-        <tr><td></td><td><button type="submit">{% trans "Save" %}</button></td></tr>
+    {% buttons %}
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+    {% endbuttons %}
     {% endif %}
 </tbody></table>
 {% if editable %}</form>{% endif %}
 
+	</div>
+</div>
 
 
-<div class='section'>
+<div class='card mt-4'>
+	<div class="card-header">
     <h2>{% trans "Editor" %}</h2>
+	</div>
+	<div class="card-body">
 
-    <p><a href="{% url 'wiki_img_editor' object.slug %}">{% trans "Proceed to the editor." %}</a></p>
+    <p><a class="btn btn-primary" href="{% url 'wiki_img_editor' object.slug %}">{% trans "Proceed to the editor." %}</a></p>
+</div>
 </div>
 
 
 
-<div class='section'>
-
+<div class='card mt-4'>
+	<div class="card-header">
 
 <h2>{% trans "Publication" %}</h2>
+	</div>
+	<div class="card-body">
 
 <p>{% trans "Last published" %}: 
     {% if object.last_published %}
@@ -65,6 +78,7 @@
     <ul><li>{{ publishable_error }}</li></ul>
 {% endif %}
 
+</div>
 </div>
 
 

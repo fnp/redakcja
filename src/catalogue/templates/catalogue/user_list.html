@@ -7,9 +7,13 @@
 {% block titleextra %}{% trans "Users" %}{% endblock %}
 
 
-{% block leftcolumn %}
+{% block content %}
+<div class="card">
+	<div class="card-header">
 
 <h1>{% trans "Users" %}</h1>
+	</div>
+<div class="card-body">
 
 <ul>
 {% for user in users %}
@@ -20,4 +24,7 @@
 {% endfor %}
 </ul>
 
-{% endblock leftcolumn %}
+</div>
+</div>
+
+{% endblock content %}

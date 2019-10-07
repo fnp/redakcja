@@ -3,9 +3,10 @@
 
 <tr>
     <td><input type="checkbox" name="select_chunk" value="{{image.id}}"/></td>
-    <td><a href="{% url 'catalogue_image' image.slug %}" title='{% trans "Image settings" %}'>[B]</a></td>
-    <td><a target="_blank"
+    <td><a href="{% url 'catalogue_image' image.slug %}" class="btn btn-sm btn-secondary"><small>{% trans "Image settings" %}</small></a></td>
+    <td><a class="btn btn-primary" target="_blank"
                 href="{% url 'wiki_img_editor' image.slug %}">
+		    {% trans "Edit:" %}
                 {{ image.title }}</a></td>
     <td>{% if image.stage %}
         {{ image.stage }}
@@ -13,9 +14,15 @@
     {% endif %}</td>
     <td class='user-column'>{% if image.user %}<a href="{% url 'catalogue_user' image.user.username %}">{{ image.user|username }}</a>{% endif %}</td>
     <td>
-        {% if image.published %}P{% endif %}
-        {% if image.new_publishable %}p{% endif %}
-        {% if image.changed %}+{% endif %}
+        {% if image.published %}
+	<div><small>{% trans "published" %}</small></div>
+	{% endif %}
+	{% if image.new_publishable %}
+	<div><small>{% trans "publishable" %}</small></div>
+	{% endif %}
+        {% if image.changed %}
+	<div><small>{% trans "changed" %}</small></div>
+	{% endif %}
     </td>
     <td>{{ image.project.name }}</td>
 </tr>

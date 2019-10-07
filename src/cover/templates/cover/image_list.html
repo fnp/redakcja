@@ -5,27 +5,39 @@
 {% block titleextra %}{% trans "Cover images" %}{% endblock %}
 
 {% block content %}
+<div class="card mt-4 mb-4">
+	<div class="card-header">
 <h1>{% trans "Cover images" %}</h1>
+	</div>
+	<div class="card-body">
 
 {% if can_add %}
-    <a href="{% url 'cover_add_image' %}">{% trans "Add new" %}</a>
+    <a class="btn btn-primary" href="{% url 'cover_add_image' %}">{% trans "Add new" %}</a>
 {% endif %}
 
-<ul>
+<div class="row">
 {% autopaginate object_list 100 %}
 {% for image in object_list %}
-    <a href="{{ image.get_absolute_url }}" style="display:inline-block; width:200px;">
-    
-    <img style="height: 100px"
-        src="{% thumbnail image.file "x100" as thumb %}
+<div class="col-md-3">
+<div class="card">
+        <a href="{{ image.get_absolute_url }}">
+	<img style="height: 100px; width: auto;" class="card-img-top" src="{% thumbnail image.file "x100" as thumb %}
                 {{ thumb.url }}
              {% empty %}
                 {{ image.file.url }}
              {% endthumbnail %}" />
-        <br/>
-        {{ image }}</a>
+	<div class="card-body">
+    
+        {{ image }}
+	</div>
+</a>
+</div>
+</div>
 {% endfor %}
+</div>
+
 {% paginate %}
-</ul>
+	</div>
+</div>
 
 {% endblock %}

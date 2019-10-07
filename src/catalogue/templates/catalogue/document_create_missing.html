@@ -1,18 +1,26 @@
 {% extends "catalogue/base.html" %}
 {% load i18n %}
+{% load bootstrap4 %}
 
 
 {% block titleextra %}{% trans "Create a new book" %}{% endblock %}
 
 
 {% block content %}
+<div class="card">
+	<div class="card-header">
     <h1>{% trans "Create a new book" %}</h1>
+	</div>
+	<div class="card-body">
+
 
     <form enctype="multipart/form-data" method="POST">
     {% csrf_token %}
-    <table class='editable'>
-        {{ form.as_table}}
-        <tr><td></td><td><button type="submit">{% trans "Create book" %}</button></td></tr>
-    </table>
+        {% bootstrap_form form %}
+	{% buttons %}
+        <button class="btn btn-primary" type="submit">{% trans "Create book" %}</button>
+	{% endbuttons %}
     </form>
+</div>
+</div>
 {% endblock content %}

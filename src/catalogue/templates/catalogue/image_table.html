@@ -2,6 +2,8 @@
 {% load pagination_tags %}
 {% load username from common_tags %}
 
+<div class="card">
+	<div class="card-body">
 
 
 <form name='filter' action='{{ request.path }}'>
@@ -14,17 +16,17 @@
 <input type='hidden' name="project" value="{{ request.GET.project }}" />
 </form>
 
-<table id="file-list"{% if viewed_user %} class="book-list-user"{% endif %}>
+<table id="file-list" class="table {% if viewed_user %}book-list-user{% endif %}">
     <thead><tr>
         <th></th>
         <th></th>
         <th class='book-search-column'>
             <form>
             <input title='{% trans "Search in book titles" %}' name="title"
-                class='text-filter' value="{{ request.GET.title }}" />
+                class='form-control text-filter' value="{{ request.GET.title }}" />
             </form>
         </th>
-        <th><select name="stage" class="filter">
+        <th><select name="stage" class="form-control filter">
             <option value=''>- {% trans "stage" %} -</option>
             <option {% if request.GET.stage == '-' %}selected="selected"
                     {% endif %}value="-">- {% trans "none" %} -</option>
@@ -35,7 +37,7 @@
         </select></th>
 
         {% if not viewed_user %}
-            <th><select name="user" class="filter">
+            <th><select name="user" class="form-control filter">
                 <option value=''>- {% trans "editor" %} -</option>
                 <option {% if request.GET.user == '-' %}selected="selected"
                         {% endif %}value="-">- {% trans "none" %} -</option>
@@ -46,7 +48,7 @@
             </select></th>
         {% endif %}
 
-        <th><select name="status" class="filter">
+        <th><select name="status" class="form-control filter">
             <option value=''>- {% trans "status" %} -</option>
             {% for state, label in states %}
                 <option {% if request.GET.status == state %}selected="selected"
@@ -54,7 +56,7 @@
             {% endfor %}
         </select></th>
 
-        <th><select name="project" class="filter">
+        <th><select name="project" class="form-control filter">
             <option value=''>- {% trans "project" %} -</option>
                 <option {% if request.GET.project == '-' %}selected="selected"
                         {% endif %}value="-">- {% trans "none" %} -</option>
@@ -66,18 +68,15 @@
 
     </tr></thead>
 
-    {% with cnt=objects|length %}
-    {% autopaginate objects 100 %}
+    {% autopaginate objects 100 as objects_page %}
     <tbody>
-    {% for image in objects %}
+    {% for image in objects_page %}
         {% include 'catalogue/image_short.html' %}
     {% endfor %}
-    <tr><th class='paginator' colspan="6">
-        {% paginate %}
-        {% blocktrans count c=cnt %}{{c}} image{% plural %}{{c}} images{% endblocktrans %}</th></tr>
     </tbody>
-    {% endwith %}
 </table>
+    {% paginate %}
+    {% blocktrans count c=objects|length %}{{c}} image{% plural %}{{c}} images{% endblocktrans %}</th></tr>
 {% if not objects %}
     <p>{% trans "No images found." %}</p>
 {% endif %}
@@ -98,3 +97,6 @@
           {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
   {% endfor %}
 </select>
+
+	</div>
+</div>

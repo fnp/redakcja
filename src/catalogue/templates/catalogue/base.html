@@ -17,21 +17,21 @@
 <!--#include file='/pozor.html'-->
 
 
-<nav class="navbar navbar-expand-lg bg-light ">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="{% url 'catalogue_document_list' %}">
 	  <img src="{% static "img/wl-orange.png" %}" alt="Platforma">
   </a>
-  <ul class="nav nav-pills mr-auto">
+  <ul class="navbar-nav mr-auto">
         {% main_tabs %}
     </ul>
 
-    <ul class="nav nav-pills">
+    <ul class="navbar-nav">
         {% include "catalogue/head_login.html" %}
     </ul>
 
 </nav>
 
-<div class="container">
+<div class="container mt-4 mb-4">
 
 {% block content %}
 <div class="row">
