@@ -20,8 +20,8 @@
 
         &.active {
             p {
-                &::before {content: "▼";}
-                &::after {content: "▼";}
+                &::before {content: "\25bc";}
+                &::after {content: "\25bc";}
             }
         }
         
@@ -38,11 +38,11 @@
             white-space: nowrap;
 
             &::before {
-                content: "▲";
+                content: "\25b2";
                 margin-right: 1em;
             }
             &::after {
-                content: "▲";
+                content: "\25b2";
                 margin-left: 1em;
             }
         }
