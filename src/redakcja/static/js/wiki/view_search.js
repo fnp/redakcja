@@ -6,8 +6,7 @@
     function SearchPerspective(options){
         var old_callback = options.callback || function() { };
 
-        this.noupdate_hash_onenter = true;
-        this.vsplitbar = 'ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ';
+        this.vsplitbar = 'ZNAJDŹ I ZAMIEŃ';
 
         options.callback = function(){
             var self = this;
@@ -49,10 +48,10 @@
             old_callback.call(this);
         };
 
-        $.wiki.Perspective.call(this, options);
+        $.wiki.SidebarPerspective.call(this, options);
     };
 
-    SearchPerspective.prototype = new $.wiki.Perspective();
+    SearchPerspective.prototype = new $.wiki.SidebarPerspective();
 
     SearchPerspective.prototype.search = function(){
         var self = this;
@@ -62,14 +61,21 @@
             self.editor = $.wiki.perspectiveForTab('#CodeMirrorPerspective').codemirror
 
         if (!self.searchCursor) {
+            var options = {};
+            options.caseFold = !self.options['search-case-sensitive'];
+            var start = 0;
+            if (self.options['search-from-cursor']) {
+                start = self.editor.getCursor();
+            }
             self.searchCursor = self.editor.getSearchCursor(
                 self.$searchInput.val(), 
-                self.options['search-from-cursor'], 
-                !self.options['search-case-sensitive']
+                start,
+                options
             );
         }
         if (self.searchCursor.findNext()) {
-            self.searchCursor.select();
+            self.editor.setSelection(self.searchCursor.from(), self.searchCursor.to());
+            self.editor.scrollIntoView({from: self.searchCursor.from(), to: self.searchCursor.to()}, 20);
             self.$replaceButton.removeAttr("disabled");
             return true;
         }
@@ -88,7 +94,10 @@
             self.search();
         }
         else {}
-        self.searchCursor.select();
+
+        self.editor.setSelection(self.searchCursor.from(), self.searchCursor.to());
+        self.editor.scrollIntoView({from: self.searchCursor.from(), to: self.searchCursor.to()}, 20);
+
         self.searchCursor.replace(query);
         if(self.search() && self.options['replace-all']) {
             self.replace();
@@ -98,12 +107,9 @@
     SearchPerspective.prototype.onEnter = function(success, failure){
         var self = this;
 
-        $.wiki.Perspective.prototype.onEnter.call(this);
+        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
         self.$searchCursor = null;
 
-        $('.vsplitbar').not('.active').trigger('click');
-        $(".vsplitbar-title").html("&darr;&nbsp;ZNAJDŹ&nbsp;I&nbsp;ZAMIEŃ&nbsp;&darr;");        
-        
         if ($.wiki.activePerspective() != 'CodeMirrorPerspective')
             $.wiki.switchToTab('#CodeMirrorPerspective');
     };

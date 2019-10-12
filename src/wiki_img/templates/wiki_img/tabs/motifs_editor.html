@@ -1,17 +1,18 @@
 {% load i18n %}
 <div id="motifs-editor" class="editor" style="display: none">
-    <div class="toolbar">
-        <input class='tag-name' title='{% trans "Motifs" %}' />
-        <button class='add'>{% trans "Add" %}</button>
+  <div class="toolbar navbar navbar-dark bg-secondary">
+    <form class="form-inline">
+      <input class='form-control mr-2 tag-name' title='{% trans "Motifs" %}' />
+      <button class='add btn btn-info mr-2'>{% trans "Add" %}</button>
+    </form>
 
-        <span class="objects-list">
-        </span>
-
-        <div class="toolbar-end">
-        </div>
+    <div class="mr-auto">
+      <span class="objects-list">
+      </span>
     </div>
+  </div>
 
-    <div class='scrolled'>
-        <img src="{{ document.image.url }}" class='area-selectable' alt="Tagged image" />
-    </div>
+  <div class='scrolled'>
+    <img src="{{ document.image.url }}" class='area-selectable' alt="Tagged image" />
+  </div>
 </div>

@@ -32,15 +32,15 @@ $(function()
 		/*
 		 * TABS
 		 */
-        $('.tabs li').live('click', function(event, callback) {
+            $(document).on('click', '.tabs li', function(event, callback) {
             event.preventDefault();
 			$.wiki.switchToTab(this);
         });
 
-		$('#tabs li > .tabclose').live('click', function(event, callback) {
-			var $tab = $(this).parent();
+	    $(document).on('click', '#tabs li .tabclose', function(event, callback) {
+		var $tab = $(this).parent().parent();
 
-			if($tab.is('.active'))
+		if($('a', $tab).is('.active'))
 				$.wiki.switchToTab(DEFAULT_PERSPECTIVE);
 
 			var p = $.wiki.perspectiveForTab($tab);
@@ -49,33 +49,6 @@ $(function()
 			return false;
         });
 
-
-        /*$(window).resize(function(){
-            $('iframe').height($(window).height() - $('#tabs').outerHeight() - $('#source-editor .toolbar').outerHeight());
-        });
-
-        $(window).resize();*/
-
-        /*$('.vsplitbar').toggle(
-			function() {
-				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
-				$('#sidebar').show();
-				$('.vsplitbar').css('right', 480).addClass('active');
-				$('#editor .editor').css('right', 510);
-				$(window).resize();
-				$.wiki.perspectiveForTab('#tabs-right .active').onEnter();
-			},
-			function() {
-			    var active_right = $.wiki.perspectiveForTab('#tabs-right .active');
-				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
-				$('#sidebar').hide();
-				$('.vsplitbar').css('right', 0).removeClass('active');
-				$(".vsplitbar-title").html("&uarr;&nbsp;" + active_right.vsplitbar + "&nbsp;&uarr;");
-				$('#editor .editor').css('right', 30);
-				$(window).resize();
-				active_right.onExit();
-			}
-		);*/
 
         window.onbeforeunload = function(e) {
             if($.wiki.isDirty()) {

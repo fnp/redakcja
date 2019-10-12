@@ -4,35 +4,27 @@
 <tr class="table-secondary table-sm">
     <td><input type="checkbox" name="select_chunk" value="{{chunk.id}}" data-book-id="{{chunk.book.id}}" /></td>
     <td class='book-settings-column'></td>
-    <td><a class="btn btn-secondary btn-sm" href="{% url 'catalogue_chunk_edit' chunk.book.slug chunk.slug %}"><small>{% trans "Chunk settings" %}</small></a></td>
+    <td><a class="btn btn-outline-secondary btn-sm" href="{% url 'catalogue_chunk_edit' chunk.book.slug chunk.slug %}" title="{% trans "Chunk settings" %}">&#x1f4dc;</a></td>
     <td><a class="btn btn-primary" target="_blank" href="{{ chunk.get_absolute_url }}">
-		    {% trans "Edit:" %}
-            {{ chunk.number }}.
-            {{ chunk.title }}</a></td>
+      {{ chunk.number }}.
+      {{ chunk.title }}</a></td>
     <td>{% if chunk.stage %}
-            {{ chunk.stage }}
-        {% else %}
-            –
-        {% endif %}</td>
-        <td class='user-column'>{% if chunk.user %}
-            <a href="{% url 'catalogue_user' chunk.user.username %}">
-                {{ chunk.user|username }}
-            </a>{% else %}
-            
-            {% endif %}</td>
+      {{ chunk.stage }}
+    {% else %}
+      –
+    {% endif %}</td>
+    <td class='user-column'>{% if chunk.user %}
+      <a href="{% url 'catalogue_user' chunk.user.username %}">
+        {{ chunk.user|username }}
+      </a>{% else %}
 
-</td>
-<td>
-    {% if chunk.new_publishable %}
-    <small>
-      {% trans "publishable" %}
-      </small>
-    {% endif %}
-    {% if chunk.changed %}
-    <small>
-      {% trans "changed" %}
-    </small>
-    {% endif %}
+    {% endif %}</td>
+
+    </td>
+    <td>
+      {% if chunk.changed %}
+        <span class="badge badge-warning title="{% trans "changed" %}">zmiany</span>
+      {% endif %}
 </td>
 <td></td>
 </tr>

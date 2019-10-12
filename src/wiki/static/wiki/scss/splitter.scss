@@ -1,0 +1,50 @@
+#splitter {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+
+    #vsplitbar {
+        width: 30px;
+        border-left: 2px solid #999;
+        border-right: 2px solid #999;
+        cursor: pointer;  
+        background: #C1C1C1; 
+        cursor: col-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background-color: #E6E6E6;
+        }
+
+        &.active {
+            p {
+                &::before {content: "▼";}
+                &::after {content: "▼";}
+            }
+        }
+        
+        p {
+            font-size: 12px;
+            -moz-transform: rotate(270deg);
+            -moz-transform-origin: 50% 50%;
+            -webkit-transform: rotate(270deg);
+            -webkit-transform-origin: 50% 50%; 
+            -o-transform: rotate(-270deg);
+            -o-transform-origin:  bottom left;
+            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+            margin: 0;
+            white-space: nowrap;
+
+            &::before {
+                content: "▲";
+                margin-right: 1em;
+            }
+            &::after {
+                content: "▲";
+                margin-left: 1em;
+            }
+        }
+    }
+}

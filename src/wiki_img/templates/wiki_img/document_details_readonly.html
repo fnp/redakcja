@@ -1,10 +1,14 @@
 {% extends "wiki_img/document_details_base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block extrabody %}
 {{ block.super }}
-<script src="{{ STATIC_URL }}js/lib/codemirror-0.8/codemirror.js" type="text/javascript" charset="utf-8">
-</script>
+<script src="{% static "js/lib/codemirror-5.49.0/codemirror.js" %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/lib/codemirror-5.49.0/xml.js" %}" type="text/javascript" charset="utf-8"></script>
+
+<link rel="stylesheet" href="{% static "js/lib/codemirror-5.49.0/codemirror.css" %}">
+
 <script src="{{ STATIC_URL }}js/wiki_img/loader_readonly.js" type="text/javascript" charset="utf-8"> </script>
 {% endblock %}
 
@@ -19,8 +23,3 @@
     {% include "wiki_img/tabs/objects_editor.html" %}
     {% include "wiki_img/tabs/source_editor.html" %}
 {% endblock %}
-
-{% block editor-class %}
-    sideless
-{% endblock %}
-

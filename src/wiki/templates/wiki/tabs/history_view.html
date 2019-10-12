@@ -1,19 +1,21 @@
 {% load i18n %}
 <div id="history-view-editor" class="editor" style="display: none">
-    <div class="toolbar">
-    	<button type="button" id="make-diff-button"
-			data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
-        {% if can_pubmark %}
-		<button type="button" id="pubmark-changeset-button"
-			data-enabled-when="1" disabled="disabled">{% trans "Mark for publishing" %}</button>
-        {% endif %}
-		<button type="button" id="doc-revert-button"
-			data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
-		<button id="open-preview-button" disabled="disabled"
-			data-enabled-when="1"
-			data-basehref="{% url 'wiki_editor_readonly' chunk.book.slug chunk.slug %}">{% trans "View version" %}</button>
+  <div class="toolbar navbar navbar-dark bg-secondary">
+    <div class="nav">
+      <button type="button" id="make-diff-button" class="btn btn-info mr-2"
+              data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
+      {% if can_pubmark %}
+        <button type="button" id="pubmark-changeset-button" class="btn btn-info mr-2"
+                data-enabled-when="1" disabled="disabled">{% trans "Mark for publishing" %}</button>
+      {% endif %}
+      <button type="button" id="doc-revert-button" class="btn btn-info mr-2"
+              data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
+      <button id="open-preview-button" disabled="disabled" class="btn btn-info mr-2"
+              data-enabled-when="1"
+              data-basehref="{% url 'wiki_editor_readonly' chunk.book.slug chunk.slug %}">{% trans "View version" %}</button>
 
-	</div>
+    </div>
+  </div>
     <div id="history-view">
         <p class="message-box" style="display:none;"></p>
 

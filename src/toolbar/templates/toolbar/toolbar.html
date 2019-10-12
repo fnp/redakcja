@@ -1,21 +1,21 @@
 {% load toolbar_tags %}
-<div class="toolbar">
+<div class="navbar navbar-dark bg-secondary toolbar">
+  <div class="mr-auto">
     <select class="group_selector">
         {% for group in toolbar_groups %}
         <option value="{{ group.slug }}" {% if forloop.first %}selected="selected"{% endif %}>{{ group.name }}</option>
         {% endfor %}
     </select>
 
-	<button type="button" class="prev">&lt;</button>
-    <div class="button_group_container">
+    <span class="button_group_container">
         {% for group in toolbar_groups %}
-        <ul data-group="{{ group.slug }}" class="button_group">
+        <span data-group="{{ group.slug }}" class="button_group">
             {# buttons for this group #}
             {% for button in group.button_set.all %}
-            	<li class="toolbar-button">{% toolbar_button button %}</li>
+            	{% toolbar_button button %}
             {% endfor %}
-        </ul>
+        </span>
         {% endfor %}
-    </div>
-    <button type="button" class="next">&gt;</button>
+    </span>
+  </div>
 </div>

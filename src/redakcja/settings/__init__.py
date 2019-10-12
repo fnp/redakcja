@@ -7,6 +7,8 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from .defaults import *
 from ..localsettings import *
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 20000000
+
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 STATICFILES_DIRS = [
@@ -107,6 +109,9 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 PIPELINE = {
     'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
+    'COMPILERS': (
+        'libsasscompiler.LibSassCompiler',
+    ),
 
     # CSS and JS files to compress
     'STYLESHEETS': {
@@ -118,9 +123,11 @@ PIPELINE = {
                 'css/history.css',
                 'css/summary.css',
                 'css/html.css',
-                'css/jquery.autocomplete.css',
                 'css/imgareaselect-default.css',
                 'css/dialogs.css',
+
+                'wiki/scss/splitter.scss',
+                'wiki/scss/visual.scss'
             ),
             'output_filename': 'compressed/detail_styles.css',
         },
@@ -138,7 +145,6 @@ PIPELINE = {
         },
         'book_list': {
             'source_filenames': (
-                'contextmenu/jquery.contextMenu.css',
                 'css/book_list.css',
             ),
             'output_filename': 'compressed/book_list.css',
@@ -149,7 +155,6 @@ PIPELINE = {
         'detail': {
             'source_filenames': (
                 # libraries
-                'js/lib/jquery/jquery.autocomplete.js',
                 'js/lib/jquery/jquery.blockui.js',
                 'js/lib/jquery/jquery.elastic.js',
                 'js/lib/jquery/jquery.xmlns.js',
@@ -158,10 +163,12 @@ PIPELINE = {
 
                 # wiki scripts
                 'js/wiki/wikiapi.js',
+                'wiki/js/themes.js',
                 'js/wiki/xslt.js',
 
                 # base UI
                 'js/wiki/base.js',
+                'wiki/js/sidebar-perspective.js',
                 'js/wiki/toolbar.js',
 
                 # dialogs
@@ -184,8 +191,6 @@ PIPELINE = {
         'wiki_img': {
             'source_filenames': (
                 # libraries
-                'js/lib/jquery-1.4.2.min.js',
-                'js/lib/jquery/jquery.autocomplete.js',
                 'js/lib/jquery/jquery.blockui.js',
                 'js/lib/jquery/jquery.elastic.js',
                 'js/lib/jquery/jquery.imgareaselect.js',
@@ -194,6 +199,7 @@ PIPELINE = {
 
                 # wiki scripts
                 'js/wiki_img/wikiapi.js',
+                'wiki/js/themes.js',
 
                 # base UI
                 'js/wiki_img/base.js',
@@ -232,14 +238,15 @@ PIPELINE = {
         },
         'book_list': {
             'source_filenames': (
-                'contextmenu/jquery.ui.position.js',
-                'contextmenu/jquery.contextMenu.js',
                 'js/catalogue/book_list.js',
             ),
             'output_filename': 'compressed/book_list.js',
         }
     }
 }
+
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 
 try:

@@ -331,7 +331,7 @@ ScriptletCenter.prototype.callInteractive = function(opts) {
 
 ScriptletCenter.prototype.XMLEditorSelectedText = function(editor) {
 
-    return editor.selection();
+    return editor.getSelection();
 };
 
 ScriptletCenter.prototype.XMLEditorReplaceSelectedText = function(editor, replacement)

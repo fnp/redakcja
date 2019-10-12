@@ -17,7 +17,7 @@
 <!--#include file='/pozor.html'-->
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
   <a class="navbar-brand" href="{% url 'catalogue_document_list' %}">
 	  <img src="{% static "img/wl-orange.png" %}" alt="Platforma">
   </a>
@@ -26,29 +26,32 @@
     </ul>
 
     <ul class="navbar-nav">
-        {% include "catalogue/head_login.html" %}
+        {% include "registration/head_login.html" %}
     </ul>
-
 </nav>
 
 <div class="container mt-4 mb-4">
-
-{% block content %}
-<div class="row">
-<div class="col-lg-8">
-	{% block leftcolumn %}
-	{% endblock leftcolumn %}
+  {% block content %}
+    <div class="row">
+      <div class="col-lg-8">
+        {% block leftcolumn %}
+        {% endblock leftcolumn %}
+      </div>
+      <div class="col-lg-4">
+        {% block rightcolumn %}
+        {% endblock rightcolumn %}
+      </div>
+    </div>
+  {% endblock content %}
 </div>
-<div class="col-lg-4">
-	{% block rightcolumn %}
-	{% endblock rightcolumn %}
-</div>
-</div>
-{% endblock content %}
 
 
+<script
+    src="https://code.jquery.com/jquery-1.9.1.min.js"
+    integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ="
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 {% javascript 'catalogue' %}
 {% block add_js %}{% endblock %}
 {% block extrabody %}

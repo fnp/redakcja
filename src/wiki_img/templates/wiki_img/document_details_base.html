@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% load toolbar_tags i18n %}
+{% load static %}
 
 {% block title %}{{ document.title }} - {{ block.super }}{% endblock %}
 {% block extrahead %}
 {% load pipeline %}
 {% stylesheet 'detail' %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 {% endblock %}
 
 {% block extrabody %}
@@ -12,41 +14,53 @@
     var STATIC_URL = '{{STATIC_URL}}';
 </script>
 {% javascript 'wiki_img' %}
+<script
+			  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+			  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+			  crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block maincontent %}
-<div id="document-meta"
+  <div id="document-meta"
 	data-object-id="{{ document.pk }}" style="display:none">
 
 	<span data-key="revision">{{ revision }}</span>
     <span data-key="diff">{{ request.GET.diff }}</span>
 
 	{% block meta-extra %} {% endblock %}
-</div>
+  </div>
 
-<div id="header">
-    <h1><a href="{% url 'catalogue_document_list' %}"><img alt="Home" src="{{STATIC_URL}}icons/go-home.png"/></a><a href="{% url 'catalogue_document_list' %}">Strona<br/>główna</a></h1>
-    <div id="tools">
-        <a href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark" id="header">
+    <a class="navbar-brand" href="{% url 'catalogue_document_list' %}">
+      <img src="{% static 'img/wl-orange.png' %}"  alt="Home" />
+    </a>
+
+    <ul class="tabs nav nav-tabs mr-auto" id="tabs">
+      {% block tabs-menu %}{% endblock %}
+    </ul>
+
+    <ul class="tabs nav nav-tabs" id="tabs-right">
+      {% block tabs-right %}{% endblock %}
+    </ul>
+
+    <div class='navbar-nav'>
+      <a class='nav-item nav-link' href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">
         {% trans "Help" %}</a>
-        | {% include "registration/head_login.html" %}
-        | {% trans "Version" %}: <span id="document-revision">{% trans "Unknown" %}</span>
-		{% if not readonly %}
-            | <button style="margin-left: 6px" id="save-button">{% trans "Save" %}</button>
-			<span id='save-attempt-info'>{% trans "Save attempt in progress" %}</span>
-            <span id='out-of-date-info'>{% trans "There is a newer version of this document!" %}</span>
-		{% endif %}
+      {% include "registration/head_login.html" %}
+      <span class="navbar-text">{% trans "Version" %}: <span id="document-revision">{% trans "Unknown" %}</span></span>
+      {% if not readonly %}
+        <button class='ml-2 nav-item btn btn-primary' id="save-button">{% trans "Save" %}</button>
+        <span id='save-attempt-info' class="navbar-text ml-2"><span class="alert alert-info">{% trans "Save attempt in progress" %}</span></span>
+        <span id='out-of-date-info' class="navbar-text ml-2"><span class="alert alert-danger">{% trans "There is a newer version of this document!" %}</span></span>
+      {% endif %}
     </div>
-    <ol id="tabs" class="tabs">
-    	{% block tabs-menu %} {% endblock %}
-    </ol>
-</div>
-<div id="splitter">
+  </nav>
+  <div id="splitter">
     <div id="editor" class="{% block editor-class %} {% endblock %}">
-    	{% block tabs-content %} {% endblock %}
+      {% block tabs-content %} {% endblock %}
     </div>
-</div>
+  </div>
 
-{% block dialogs %} {% endblock %}
+  {% block dialogs %} {% endblock %}
 
 {% endblock %}

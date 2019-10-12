@@ -1,7 +1,7 @@
 {% if button.link %}
-<a href="{{button.link}}" target="_blank">
+<a class="btn btn-outline-secondary" href="{{button.link}}" target="_blank">
 {% endif %}
-<button type="button"
+<button type="button" class="btn btn-info btn-sm"
        data-ui-action="{{ button.scriptlet_id }}"
        data-ui-action-params="{{ button.params|escape }}"
        data-ui-accesskey="{{ button.accesskey }}"

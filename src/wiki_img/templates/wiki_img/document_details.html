@@ -1,15 +1,18 @@
 {% extends "wiki_img/document_details_base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block extrabody %}
-{{ block.super }}
-<script src="{{ STATIC_URL }}js/lib/codemirror-0.8/codemirror.js" type="text/javascript" charset="utf-8">
-</script>
-<script src="{{ STATIC_URL }}js/wiki_img/loader.js" type="text/javascript" charset="utf-8"> </script>
+  {{ block.super }}
+  <script src="{% static "js/lib/codemirror-5.49.0/codemirror.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script src="{% static "js/lib/codemirror-5.49.0/xml.js" %}" type="text/javascript" charset="utf-8"></script>
+
+  <link rel="stylesheet" href="{% static "js/lib/codemirror-5.49.0/codemirror.css" %}">
+
+  <script src="{% static "js/wiki_img/loader.js" %}" type="text/javascript" charset="utf-8"> </script>
 {% endblock %}
 
 {% block tabs-menu %}
-    {#% include "wiki_img/tabs/summary_view_item.html" %#}
     {% include "wiki_img/tabs/motifs_editor_item.html" %}
     {% include "wiki_img/tabs/objects_editor_item.html" %}
     {% include "wiki_img/tabs/source_editor_item.html" %}
@@ -17,7 +20,6 @@
 {% endblock %}
 
 {% block tabs-content %}
-    {#% include "wiki_img/tabs/summary_view.html" %#}
     {% include "wiki_img/tabs/motifs_editor.html" %}
     {% include "wiki_img/tabs/objects_editor.html" %}
     {% include "wiki_img/tabs/source_editor.html" %}
@@ -31,8 +33,3 @@
         {% include "wiki/pubmark_dialog.html" %}
     {% endif %}
 {% endblock %}
-
-{% block editor-class %}
-    sideless
-{% endblock %}
-

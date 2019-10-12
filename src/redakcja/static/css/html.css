@@ -506,8 +506,11 @@ div[x-node] > .uwaga {
 }
 
 .edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 16px;
+    line-height: 1.5;
     position: absolute;
-    top: -21px;
+    top: -28px;
     left: -1px;
     width: 72px;
     height: 28px;
@@ -615,6 +618,8 @@ div[x-node] > .uwaga {
     height: 100%;
     z-index: 0;
     font-size: 10pt;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    line-height: 1.25;
     /*    background-color: ivory;*/
 }
 
@@ -656,14 +661,14 @@ div[x-node] > .uwaga {
 /* specialChars */
 #specialCharsContainer {
     text-align: center; 
-    width: 600px; 
+    width: 640px; 
     height: 400px;
     padding:20px; 
     background-color: gray; 
     position: absolute; 
     top: 20px; 
-    left: 20px; 
-    z-index:1000;
+    right: 20px; 
+    z-index:10000;
     overflow:auto;
 }
 #specialCharsContainer a {

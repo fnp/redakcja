@@ -1,20 +1,32 @@
 {% load i18n %}
-<div id="side-annotations">
+<div id="side-annotations" style="display: none">
     <!-- annotations toolbar -->
-    <div class="toolbar">
-        <button class="refresh" title="Przypisy autorskie" data-tag="pa">pa</button>
-        <button class="refresh active" title="Przypisy edytorskie" data-tag="pe">pe</button>
-        <button class="refresh" title="Przypisy redakcyjne" data-tag="pr">pr</button>
-        <button class="refresh" title="Przypisy tłumacza" data-tag="pt">pt</button>
-        <button class="refresh" title="Wszystkie przypisy" data-tag="pa,pe,pr,pt">{% trans "all" %}</button>
-        <div class="toolbar-end">
+    <ul class="nav nav-tabs mt-1">
+      <li class="nav-item">
+        <a href='#' class="nav-link refresh" title="Przypisy autorskie" data-tag="pa">pa</a>
+      </li>
+      <li class="nav-item">
+        <a href='#' class="nav-link refresh active" title="Przypisy edytorskie" data-tag="pe">pe</a>
+      </li>
+      <li class="nav-item">
+        <a href='#' class="nav-link refresh" title="Przypisy redakcyjne" data-tag="pr">pr</a>
+      </li>
+      <li class="nav-item">
+        <a href='#' class="nav-link refresh" title="Przypisy tłumacza" data-tag="pt">pt</a>
+      </li>
+      <li class="nav-item">
+        <a href='#' class="nav-link refresh" title="Wszystkie przypisy" data-tag="pa,pe,pr,pt">{% trans "all" %}</a>
+      </li>
+    </ul>
+    <div id="annotations-container">
+      <div class="error-message">
+      </div>
+      <div class="annotations-list">
+      </div>
+      <div class="spinner">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
         </div>
-    </div>
-    <div class="error-message">
-    </div>
-    <div class="annotations-list">
-    </div>
-    <div class="spinner">
-        <img src='/media/static/img/spinner.gif' alt="Loading" />
+      </div>
     </div>
 </div>

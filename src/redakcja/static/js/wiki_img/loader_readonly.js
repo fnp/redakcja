@@ -24,12 +24,12 @@ $(function()
 		/*
 		 * TABS
 		 */
-        $('#tabs li').live('click', function(event, callback) {
+            $(document).on('click', '#tabs li', function(event, callback) {
             event.preventDefault();
 			$.wiki.switchToTab(this);
         });
 
-		$('#tabs li > .tabclose').live('click', function(event, callback) {
+	    $(document).on('click', '#tabs li > .tabclose', function(event, callback) {
 			var $tab = $(this).parent();
 
 			if($tab.is('.active'))
@@ -88,6 +88,6 @@ $(function()
 	/*
 	 * Initialize all perspectives
 	 */
-	initAll( $.makeArray($('ol#tabs li')), initialize);
+	initAll( $.makeArray($('#tabs li')), initialize);
 	console.log(location.hash);
 });

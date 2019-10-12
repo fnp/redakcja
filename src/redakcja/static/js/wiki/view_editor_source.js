@@ -1,90 +1,60 @@
-/* COMMENT */
 (function($) {
 
-	function CodeMirrorPerspective(options)
-	{
-		var old_callback = options.callback;
+    function CodeMirrorPerspective(options) {
+	var old_callback = options.callback;
         options.callback = function(){
-			var self = this;
+	    var self = this;
 
-			this.codemirror = CodeMirror.fromTextArea('codemirror_placeholder', {
-				parserfile: 'parsexml.js',
-				path: STATIC_URL + "js/lib/codemirror-0.8/",
-				stylesheet: STATIC_URL + "css/xmlcolors_20100906.css",
-				parserConfig: {
-					useHTMLKludges: false
-				},
-				iframeClass: 'xml-iframe',
-				textWrapping: true,
-				lineNumbers: true,
-				width: "100%",
-				height: "100%",
-				tabMode: 'default',
-				indentUnit: 0,
-				readOnly: CurrentDocument.readonly || false,
-				initCallback: function(){
-
-					self.codemirror.grabKeys(function(event) {
-						if (event.button) {
-							$(event.button).trigger('click');
-							event.button = null;
-						}
-					}, function(keycode, event) {
-						if(!event.altKey)
-							return false;
-
-						var c = String.fromCharCode(keycode).toLowerCase();
-						var button = $("#source-editor button[data-ui-accesskey='"+c+"']");
-						if(button.length == 0)
-							return false;
-
-						/* it doesn't matter which button we pick - all do the same */
-						event.button = button[0];
-						return true;
-					});
-
-					$('#source-editor .toolbar').toolbarize({
-					    actionContext: self.codemirror
-					});
-
-					console.log("Initialized CodeMirror");
-
-					// textarea is no longer needed
-					$('codemirror_placeholder').remove();
-
-					old_callback.call(self);
-				}
-			});
-		};
-
-		$.wiki.Perspective.call(this, options);
-	};
+	    this.codemirror = CodeMirror.fromTextArea($(
+                '#codemirror_placeholder').get(0), {
+                    mode: 'xml',
+                    lineWrapping: true,
+		    lineNumbers: true,
+		    readOnly: CurrentDocument.readonly || false,
+                    identUnit: 0,
+                });
 
 
-	CodeMirrorPerspective.prototype = new $.wiki.Perspective();
+	    $('#source-editor').keydown(function(event) {
+		if(!event.altKey)
+		    return;
 
-	CodeMirrorPerspective.prototype.freezeState = function() {
-		this.config().position = this.codemirror.win.scrollY || 0;
-	};
+		var c = event.key;
+		var button = $("#source-editor button[data-ui-accesskey='"+c+"']");
+		if(button.length == 0)
+		    return;
+                button.get(0).click();
+                event.preventDefault();
+	    });
 
-	CodeMirrorPerspective.prototype.unfreezeState = function () {
-		this.codemirror.win.scroll(0, this.config().position || 0);
-	};
+	    $('#source-editor .toolbar').toolbarize({
+		actionContext: self.codemirror
+	    });
+
+	    // textarea is no longer needed
+	    $('#codemirror_placeholder').remove();
+	    old_callback.call(self);
+	}
+
+        $.wiki.Perspective.call(this, options);
+    };
+
+
+    CodeMirrorPerspective.prototype = new $.wiki.Perspective();
+
+    CodeMirrorPerspective.prototype.freezeState = function() {
+        this.config().position =  this.codemirror.getScrollInfo().top;
+    };
+
+    CodeMirrorPerspective.prototype.unfreezeState = function () {
+        this.codemirror.scrollTo(0, this.config().position || 0);
+    };
 
 	CodeMirrorPerspective.prototype.onEnter = function(success, failure) {
 		$.wiki.Perspective.prototype.onEnter.call(this);
 
-		console.log('Entering', this.doc);
-		this.codemirror.setCode(this.doc.text);
+		this.codemirror.setValue(this.doc.text);
 
-		/* fix line numbers bar */
-		var $nums = $('.CodeMirror-line-numbers');
-	    var barWidth = $nums.width();
-
-		$(this.codemirror.frame.contentDocument.body).css('padding-left', barWidth);
-		// $nums.css('left', -barWidth);
-
-		$(window).resize();
 		this.unfreezeState(this._uistate);
 
 		if(success) success();
@@ -94,14 +64,13 @@
 		this.freezeState();
 
 		$.wiki.Perspective.prototype.onExit.call(this);
-		console.log('Exiting', this.doc);
-		this.doc.setText(this.codemirror.getCode());
+	    this.doc.setText(this.codemirror.getValue());
 
-        if ($('.vsplitbar').hasClass('active') && $('#SearchPerspective').hasClass('active')) {
-            $.wiki.switchToTab('#ScanGalleryPerspective');
-        }
+            if ($('.vsplitbar').hasClass('active') && $('#SearchPerspective').hasClass('active')) {
+                $.wiki.switchToTab('#ScanGalleryPerspective');
+            }
 
-		if(success) success();
+	    if(success) success();
 	}
 
 	$.wiki.CodeMirrorPerspective = CodeMirrorPerspective;

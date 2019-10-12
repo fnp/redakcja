@@ -19,10 +19,10 @@
             });
         });
 
-        $toolbar.children().filter('select').change(function(event){
+        $('select', $toolbar).change(function(event){
             var slug = $(this).val();
             $container.scrollLeft(0);
-            $('*[data-group]').hide().filter('[data-group=' + slug + ']').show();
+            $('*[data-group]').hide().filter('[data-group="' + slug + '"]').show();
         }).change();
 
         $('button.next', $toolbar).click(function() {

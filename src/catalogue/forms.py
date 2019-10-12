@@ -141,7 +141,7 @@ class BookForm(forms.ModelForm):
         orig_instance = Book.objects.get(pk=self.instance.pk)
         old_gallery = orig_instance.gallery
         new_gallery = self.cleaned_data['gallery']
-        if new_gallery != old_gallery:
+        if new_gallery and old_gallery and new_gallery != old_gallery:
             import shutil
             import os.path
             from django.conf import settings

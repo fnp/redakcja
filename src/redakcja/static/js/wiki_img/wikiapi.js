@@ -391,28 +391,3 @@
 
 	$.wikiapi.WikiDocument = WikiDocument;
 })(jQuery);
-
-
-
-// Wykonuje block z załadowanymi kanonicznymi motywami
-function withThemes(code_block, onError)
-{
-    if (typeof withThemes.canon == 'undefined') {
-        $.ajax({
-            url: '/editor/themes',
-            dataType: 'text',
-            success: function(data) {
-                withThemes.canon = data.split('\n');
-                code_block(withThemes.canon);
-            },
-            error: function() {
-                withThemes.canon = null;
-                code_block(withThemes.canon);
-            }
-        })
-    }
-    else {
-        code_block(withThemes.canon);
-    }
-}
-

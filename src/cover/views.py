@@ -35,7 +35,7 @@ def preview(request, book, chunk=None, rev=None):
     else:
         revision = chunk.publishable()
         if revision is None:
-            raise Http404
+            revision = chunk.head
     xml = revision.materialize().encode('utf-8')
 
     try:

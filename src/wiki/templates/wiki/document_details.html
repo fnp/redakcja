@@ -1,11 +1,16 @@
 {% extends "wiki/document_details_base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block extrabody %}
-{{ block.super }}
-<script src="{{ STATIC_URL }}js/lib/codemirror-0.8/codemirror.js" type="text/javascript" charset="utf-8">
-</script>
-<script src="{{ STATIC_URL }}js/wiki/loader.js" type="text/javascript" charset="utf-8"> </script>
+  {{ block.super }}
+  <script src="{% static "js/lib/codemirror-5.49.0/codemirror.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script src="{% static "js/lib/codemirror-5.49.0/xml.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script src="{% static 'js/lib/codemirror-5.49.0/searchcursor.js' %}" type="text/javascript" charset="utf-8"></script>
+
+  <link rel="stylesheet" href="{% static "js/lib/codemirror-5.49.0/codemirror.css" %}">
+
+  <script src="{% static "js/wiki/loader.js" %}" type="text/javascript" charset="utf-8"> </script>
 {% endblock %}
 
 {% block tabs-menu %}
@@ -29,7 +34,7 @@
 {% endblock %}
 
 {% block splitter-extra %}
-<div class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
+<div id="vsplitbar" class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
     <p class="vsplitbar-title"></p>
     </div>
     <div id="sidebar">

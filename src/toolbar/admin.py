@@ -24,7 +24,7 @@ class ButtonAdminForm(forms.ModelForm):
 
 class ButtonAdmin(admin.ModelAdmin):
     form = ButtonAdminForm
-    list_display = ('slug', 'label', 'tooltip', 'accesskey')
+    list_display = ('slug', 'label', 'tooltip', 'accesskey', 'scriptlet')
     list_display_links = ('slug',)
     list_editable = ('label', 'tooltip', 'accesskey')
     prepopulated_fields = {'slug': ('label',)}

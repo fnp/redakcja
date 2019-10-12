@@ -6,7 +6,6 @@
     function AnnotationsPerspective(options){
         var old_callback = options.callback || function() { };
 
-        this.noupdate_hash_onenter = true;
         this.vsplitbar = 'PRZYPISY';
 
         options.callback = function(){
@@ -27,7 +26,7 @@
 
                 self.$annos.hide();
                 self.$error.hide();
-                self.$spinner.show(100, function(){
+                self.$spinner.fadeIn(100, function() {
                     self.refresh(self, atype);
                 });
             });
@@ -35,10 +34,10 @@
             old_callback.call(this);
         };
 
-        $.wiki.Perspective.call(this, options);
+        $.wiki.SidebarPerspective.call(this, options);
     }
 
-    AnnotationsPerspective.prototype = new $.wiki.Perspective();
+    AnnotationsPerspective.prototype = new $.wiki.SidebarPerspective();
 
     AnnotationsPerspective.prototype.updateAnnotationIds = function(self){
         self.annotationToAnchor = {};
@@ -62,7 +61,7 @@
                 },
             error: function(text) {
                 $.unblockUI();
-                self.$error.html(text);
+                self.$error.html('<div class="alert alert-danger">' + text + '</div>');
                 self.$spinner.hide();
                 self.$error.show();
             }
@@ -84,7 +83,7 @@
 
         var persp = $.wiki.activePerspective();
         if (persp == 'CodeMirrorPerspective') {
-            xml = $.wiki.perspectives[persp].codemirror.getCode();
+            xml = $.wiki.perspectives[persp].codemirror.getValue();
         }
         else if (persp == 'VisualPerspective') {
             html2text({
@@ -93,7 +92,7 @@
                     xml = text;
                 },
                 error: function(text){
-                    self.$error.html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                    self.$error.html('<div class="alert alert-danger"><p>Wystąpił błąd:</p><pre>' + text + '</pre></div>');
                     self.$spinner.hide();
                     self.$error.show();
                 }
@@ -110,7 +109,7 @@
         var error = $('parsererror', doc);
 
         if (error.length > 0) {
-            self.$error.html('Błąd parsowania XML.');
+            self.$error.html('<div class="alert alert-danger">Błąd parsowania XML.</a>');
             self.$spinner.hide();
             self.$error.show();
         }
@@ -124,7 +123,7 @@
 
             if (annos.length == 0)
             {
-                self.$annos.html('Nie ma żadnych przypisów');
+                self.$annos.html('<div class="alert alert-info">Nie ma żadnych przypisów</div>');
                 self.$spinner.hide();
                 self.$annos.show();
             }
@@ -152,7 +151,7 @@
                     }(xml_text),
                     error: function(text) {
                         $.unblockUI();
-                        self.$error.html(text);
+                        self.$error.html('<div class="alert alert-danger">' + text + '</div>');
                         self.$spinner.hide();
                         self.$error.show();
                     }
@@ -163,10 +162,8 @@
 
 
     AnnotationsPerspective.prototype.onEnter = function(){
-        $.wiki.Perspective.prototype.onEnter.call(this);
+        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
 
-        $('.vsplitbar').not('.active').trigger('click');
-        $(".vsplitbar-title").html("&darr;&nbsp;PRZYPISY&nbsp;&darr;");
         this.$refresh.filter('.active').trigger('click');
 
     };

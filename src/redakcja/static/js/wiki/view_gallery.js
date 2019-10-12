@@ -47,7 +47,6 @@
     function ScanGalleryPerspective(options){
         var old_callback = options.callback || function() { };
 
-		this.noupdate_hash_onenter = true;
         this.vsplitbar = 'GALERIA';
 
         options.callback = function(){
@@ -109,10 +108,10 @@
 			old_callback.call(this);
         };
 
-        $.wiki.Perspective.call(this, options);
+        $.wiki.SidebarPerspective.call(this, options);
     };
 
-    ScanGalleryPerspective.prototype = new $.wiki.Perspective();
+    ScanGalleryPerspective.prototype = new $.wiki.SidebarPerspective();
 
     ScanGalleryPerspective.prototype._resizeImage = function(){
         var $img = this.$image;
@@ -224,13 +223,10 @@
      * Loading gallery
      */
     ScanGalleryPerspective.prototype.onEnter = function(success, failure){
+        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
+
         var self = this;
 
-        $.wiki.Perspective.prototype.onEnter.call(this);
-
-        $('.vsplitbar').not('.active').trigger('click');
-        $(".vsplitbar-title").html("&darr;&nbsp;GALERIA&nbsp;&darr;");        
-        
         this.doc.refreshGallery({
             success: function(doc, data){
                 self.$image.show();

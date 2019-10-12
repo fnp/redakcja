@@ -35,29 +35,6 @@ function withStylesheets(code_block, onError)
 }
 
 
-// Wykonuje block z załadowanymi kanonicznymi motywami
-function withThemes(code_block, onError)
-{
-    if (typeof withThemes.canon == 'undefined') {
-        $.ajax({
-            url: '/editor/themes',
-            dataType: 'text',
-            success: function(data) {
-                withThemes.canon = data.split('\n');
-                code_block(withThemes.canon);
-            },
-            error: function() {
-                withThemes.canon = null;
-                code_block(withThemes.canon);
-            }
-        })
-    }
-    else {
-        code_block(withThemes.canon);
-    }
-}
-
-
 function xml2html(options) {
     withStylesheets(function() {
         var xml = options.xml.replace(/\/(\s+)/g, '<br />$1');
@@ -69,7 +46,6 @@ function xml2html(options) {
 
         if (error.length == 0) {
             doc = xml2htmlStylesheet.transformToFragment(doc, document);
-            console.log(doc.firstChild);
 
         if(doc.firstChild === null) {
             options.error("Błąd w przetwarzaniu XML.");
@@ -87,7 +63,7 @@ function xml2html(options) {
         } else {
             options.success(doc.childNodes);
 
-            withThemes(function(canonThemes) {
+            $.themes.withCanon(function(canonThemes) {
                 if (canonThemes != null) {
                     $('.theme-text-list').addClass('canon').each(function(){
                         var themes = $(this).html().split(',');

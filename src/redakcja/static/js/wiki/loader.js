@@ -9,8 +9,11 @@ var DEFAULT_PERSPECTIVE = "#VisualPerspective";
 
 $(function()
 {
-	var tabs = $('ol#tabs li');
-	var gallery = null;
+    var tabs = $('ol#tabs li');
+    var gallery = null;
+    var MIN_SIDEBAR_WIDTH = 50,
+        DEFAULT_SIDEBAR_WIDTH = 480;
+
 	CurrentDocument = new $.wikiapi.WikiDocument("document-meta");
 
 	$.blockUI.defaults.baseZ = 10000;
@@ -18,25 +21,23 @@ $(function()
     function initialize()
 	{
         var splitter = $('#splitter'),
-            editors = $('#editor .editor'),
-            vsplitbar = $('.vsplitbar'),
+            vsplitbar = $('#vsplitbar'),
             sidebar = $('#sidebar'),
             dragLayer = $('#drag-layer'),
             vsplitbarWidth = vsplitbar.outerWidth(),
             isHolding = false;
 
-        // Moves panes so that left border of the vsplitbar lands x pixels from the left border of the splitter
-        function setSplitbarAt(x) {
-            var right = splitterWidth - x;
-            editors.each(function() {
-                this.style.right = right + 'px';
-            });
-            vsplitbar[0].style.right = sidebar[0].style.width = (right - vsplitbarWidth) + 'px';
-        };
+            function setSidebarWidth(x) {
+                if (x < MIN_SIDEBAR_WIDTH) {
+                    x = 0;
+                    vsplitbar.removeClass('active');
+                } else {
+                    vsplitbar.addClass('active');
+                }
+                $.wiki.state.perspectives.ScanGalleryPerspective.width = x;
+                sidebar[0].style.width = x + 'px';
+            };
 
-		$(document).keydown(function(event) {
-			console.log("Received key:", event);
-		});
 
 		/* The save button */
         $('#save-button').click(function(event){
@@ -49,15 +50,15 @@ $(function()
 		/*
 		 * TABS
 		 */
-        $('.tabs li').live('click', function(event, callback) {
+            $(document).on('click', '.tabs li', function(event, callback) {
             event.preventDefault();
 			$.wiki.switchToTab(this);
         });
 
-		$('#tabs li > .tabclose').live('click', function(event, callback) {
-			var $tab = $(this).parent();
+	    $(document).on('click', '#tabs li .tabclose', function(event, callback) {
+		var $tab = $(this).parent().parent();
 
-			if($tab.is('.active'))
+			if($('a', $tab).is('.active'))
 				$.wiki.switchToTab(DEFAULT_PERSPECTIVE);
 
 			var p = $.wiki.perspectiveForTab($tab);
@@ -68,30 +69,21 @@ $(function()
 
 
         $(window).resize(function(){
-            $('iframe').height($(window).height() - $('#tabs').outerHeight() - $('#source-editor .toolbar').outerHeight());
             splitterWidth = splitter.width();
         });
 
         $(window).resize();
+            $.wiki.perspectiveForTab($('#tabs-right .active').parent()).onEnter();
 
-        vsplitbar.toggle(
-			function() {
-				$.wiki.state.perspectives.ScanGalleryPerspective.show = true;
-				setSplitbarAt(splitterWidth - (480 + vsplitbarWidth));
-				$('.vsplitbar').addClass('active');
-				$(window).resize();
-				$.wiki.perspectiveForTab('#tabs-right .active').onEnter();
-			},
-			function() {
-			    var active_right = $.wiki.perspectiveForTab('#tabs-right .active');
-				$.wiki.state.perspectives.ScanGalleryPerspective.show = false;
-				$(".vsplitbar-title").html("&uarr;&nbsp;" + active_right.vsplitbar + "&nbsp;&uarr;");
-				setSplitbarAt(splitterWidth - vsplitbarWidth);
-				$('.vsplitbar').removeClass('active');
-				$(window).resize();
-				active_right.onExit();
-			}
-		);
+            vsplitbar.on('click', function() {
+                var $this = $(this);
+                if ($this.hasClass('active')) {
+                    $.wiki.state.perspectives.ScanGalleryPerspective.lastWidth = sidebar.width();
+                    setSidebarWidth(0);
+		} else {
+                    setSidebarWidth($.wiki.state.perspectives.ScanGalleryPerspective.lastWidth);
+		}
+            });
 
 
         /* Splitbar dragging support */
@@ -99,28 +91,26 @@ $(function()
             .mousedown(function(e) {
                 e.preventDefault();
                 isHolding = true;
+                if (sidebar.width() > MIN_SIDEBAR_WIDTH) {
+                    $.wiki.state.perspectives.ScanGalleryPerspective.lastWidth = sidebar.width();
+                }
             })
             .mousemove(function(e) {
                 if(isHolding) {
                     dragLayer.show(); // We don't show it up until now so that we don't lose single click events on vsplitbar
                 }
             });
-        dragLayer.mousemove(function(e) {
-            setSplitbarAt(e.clientX - vsplitbarWidth/2);
-        });
-        $('body').mouseup(function(e) {
-            dragLayer.hide();
-            isHolding = false;
-        });
+            dragLayer.mousemove(function(e) {
+                setSidebarWidth(splitterWidth - e.clientX - vsplitbarWidth / 2);
+            });
+            $('body').mouseup(function(e) {
+                dragLayer.hide();
+                isHolding = false;
+            });
 
+            setSidebarWidth($.wiki.state.perspectives.ScanGalleryPerspective.width);
 
-		if($.wiki.state.perspectives.ScanGalleryPerspective.show){
-            $('.vsplitbar').trigger('click');
-            $(".vsplitbar-title").html("&darr;&nbsp;GALERIA&nbsp;&darr;");
-        } else {
-            $(".vsplitbar-title").html("&uarr;&nbsp;GALERIA&nbsp;&uarr;");
-        }
-        window.onbeforeunload = function(e) {
+            window.onbeforeunload = function(e) {
             if($.wiki.isDirty()) {
 				e.returnValue = "Na stronie mogą być nie zapisane zmiany.";
 				return "Na stronie mogą być nie zapisane zmiany.";

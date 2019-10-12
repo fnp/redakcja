@@ -2,7 +2,8 @@ localsettings.py
 dev.sqlite
 requirements.pybundle
 *~
-*.orig
+*.swp
+.*.orig
 /redakcja/media
 /static
 .sass-cache

@@ -1,7 +1,5 @@
 {% load i18n %}
 <div id="summary-view-editor" class="editor" style="display: none">
-    <!-- <div class="toolbar">
-    </div> -->
     <div id="summary-view">
     	<div class="summary-cover-area">
 		<p><img id="summary-cover" class="book-cover"
@@ -10,7 +8,7 @@
 			{% else %}
 			     src="{% url 'cover_preview' chunk.book.slug chunk.slug %}"
 			{% endif %}></p>
-		<p><button id="summary-cover-refresh">{% trans "Refresh from working copy" %}</button></p>
+		<p><button class="btn btn-info" id="summary-cover-refresh">{% trans "Refresh from working copy" %}</button></p>
 		</div>
 
 		<h2>

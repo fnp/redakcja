@@ -47,7 +47,7 @@
 
 
 	$.wiki.activePerspective = function() {
-		return this.perspectives[$("#tabs li.active").attr('id')];
+	    return this.perspectives[$("#tabs li a.active").parent().attr('id')];
 	};
 
 	$.wiki.exitContext = function() {
@@ -68,8 +68,8 @@
 	$.wiki.newTab = function(doc, title, klass) {
 		var base_id = 'id' + Math.floor(Math.random()* 5000000000);
 		var id = (''+klass)+'_' + base_id;
-		var $tab = $('<li id="'+id+'" data-ui-related="'+base_id+'" data-ui-jsclass="'+klass+'" >'
-				+ title + '<img src="'+STATIC_URL+'icons/close.png" class="tabclose"></li>');
+		var $tab = $('<li class="nav-item" id="'+id+'" data-ui-related="'+base_id+'" data-ui-jsclass="'+klass+'" ><a href="#" class="nav-link">'
+				+ title + ' <span class="badge badge-danger tabclose">x</span></a></li>');
 		var $view = $('<div class="editor '+klass+'" id="'+base_id+'"> </div>');
 
 		this.perspectives[id] = new $.wiki[klass]({
@@ -104,30 +104,31 @@
 		return this.perspectives[ $(tab).attr('id')];
 	}
 
-	$.wiki.switchToTab = function(tab){
-		var self = this;
-		var $tab = $(tab);
+    $.wiki.switchToTab = function(tab){
+	var self = this;
+	var $tab = $(tab);
 
-		if($tab.length != 1)
-			$tab = $(DEFAULT_PERSPECTIVE);
+	if($tab.length != 1)
+	    $tab = $(DEFAULT_PERSPECTIVE);
 
-		var $old = $tab.closest('.tabs').find('.active');
+	var $old_a = $tab.closest('.tabs').find('.active');
 
-		$old.each(function(){
-			$(this).removeClass('active');
-			self.perspectives[$(this).attr('id')].onExit();
-			$('#' + $(this).attr('data-ui-related')).hide();
-		});
+	$old_a.each(function(){
+            var tab = $(this).parent()
+	    $(this).removeClass('active');
+	    self.perspectives[tab.attr('id')].onExit();
+	    $('#' + tab.attr('data-ui-related')).hide();
+	});
 
-		/* show new */
-		$tab.addClass('active');
-		$('#' + $tab.attr('data-ui-related')).show();
+	/* show new */
+	$('a', tab).addClass('active');
+	$('#' + $tab.attr('data-ui-related')).show();
 
-		console.log($tab);
-		console.log($.wiki.perspectives);
+	console.log($tab);
+	console.log($.wiki.perspectives);
 
-		$.wiki.perspectives[$tab.attr('id')].onEnter();
-	};
+	$.wiki.perspectives[$tab.attr('id')].onEnter();
+    };
 
 	/*
 	 * Basic perspective.

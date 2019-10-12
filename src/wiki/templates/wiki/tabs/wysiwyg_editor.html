@@ -1,18 +1,17 @@
 {% load i18n %}
 <div id="simple-editor" class="editor" style="display: none">
-    <div id="html-view" class="htmlview">
-    </div>
-
-	<div class="toolbar">
-    	{% if not readonly %}
-        <button id="insert-theme-button">
-            {% trans "Insert theme" %}
+  <div class="navbar navbar-dark bg-secondary">
+    <div class="nav">
+      {% if not readonly %}
+        <button class="btn btn-info mr-2" id="insert-theme-button">
+          {% trans "Insert theme" %}
         </button>
-        <button id="insert-annotation-button">
-            {% trans "Insert annotation" %}
+        <button class="btn btn-info" id="insert-annotation-button">
+          {% trans "Insert annotation" %}
         </button>
-		{% endif %}
-        <div class="toolbar-end">
-        </div>
+	{% endif %}
     </div>
+  </div>
+  <div id="html-view" class="htmlview">
+  </div>
 </div>

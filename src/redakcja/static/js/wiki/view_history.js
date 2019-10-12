@@ -47,7 +47,7 @@
 				event.preventDefault();
 			});
 
-        	$('#changes-list .entry').live('click', function(){
+                    $(document).on('click', '#changes-list .entry', function(){
             	var $this = $(this);
 
             	var selected_count = $("#changes-list .entry.selected").length;
@@ -64,11 +64,11 @@
             	};
 
             	$('#history-view-editor .toolbar button').attr('disabled', 'disabled').
-            	    filter('*[data-enabled-when~=' + selected_count + '], *[data-enabled-when~=*]').
+                            filter('*[data-enabled-when~="' + selected_count + '"]').
             	    attr('disabled', null);
         	});
 
-    	    $('#changes-list span.tag').live('click', function(event){
+                    $(document).on('click', '#changes-list span.tag', function(event){
         	    return false;
         	});
 

@@ -1,9 +1,4 @@
 #sidebar {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    width: 0px;
     background-color: #FFF;
 }
 
@@ -13,41 +8,41 @@
     background-color: #C1C1C1;
 }
 
-#side-search p {
-    padding: .5em;
-}
 
 #side-annotations {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+#side-annotations #annotations-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
 }
 
 .annotations-list {
-    position: absolute;
-    left: 0;
-    top: 28px;
-    right: 0;
-    bottom: 0;
+    flex: 1;
+    height: 100%;
     overflow: auto;
     padding: 1em 1em 0 1em;
 }
 
-#side-annotations .active {
-    font-weight: bold;
+#side-annotations .error-message {
+    padding: 1em;
 }
 
 #side-annotations .spinner {
     position: absolute;
     left: 0;
-    top: 28px;
+    top: 0;
     right: 0;
     bottom: 0;
-    text-align:center;
-    padding-top: 50%;
     background: white;
-}
-
-#side-annotations .spinner img {
-    margin-top: -15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #side-annotations .akap {
@@ -80,12 +75,12 @@
 /* = Gallery = */
 /* =========== */
 
-#side-gallery .error_message
-{
-	background-color: white;
-	color: black;
-	padding: 0.5em 1em;
+#side-gallery {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
+
 
 .change-gallery-panel {
     width: 100%;
@@ -97,15 +92,9 @@
 }
 
 .gallery-image {
-    position: absolute;
-    top: 30px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    border: none;
-    background-color: transparent;
+    flex: 1;
     overflow: hidden;
+    position: relative;
 }
 
 .gallery-image img {

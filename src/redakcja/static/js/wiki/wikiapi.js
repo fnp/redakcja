@@ -198,6 +198,10 @@
 	WikiDocument.prototype.refreshGallery = function(params) {
 		params = $.extend({}, noops, params);
 		var self = this;
+		if (!self.galleryLink) {
+			params['failure'](self, 'Brak galerii.');
+			return;
+		}
 		$.ajax({
 			method: "GET",
 			url: reverse("ajax_document_gallery", self.galleryLink),
@@ -218,7 +222,7 @@
                         var msg = "Nie udało się wczytać galerii o nazwie: '" + self.galleryLink + "'.";
                 }
 				self.galleryImages = [];
-				params['failure'](self, "<p>" + msg + "</p>");
+				params['failure'](self, msg);
 			}
 		});
 	};

@@ -1,16 +1,20 @@
 {% load i18n %}
 
 {% if user.is_authenticated %}
-<span class="user_name">{{ user.username }}</span> |
-
-{% if user.is_staff %}
-    <a href="{% url 'admin:index' %}">{% trans "Admin" %}</a> |
-{% endif %}
-
-<a href='{% url "logout" %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
+  <div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{ user.username }}
+    </a>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+      {% if user.is_staff %}
+        <a target="_blank" class="dropdown-item" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+      {% endif %}
+      <a class="dropdown-item" href='{% url "logout" %}{% if logout_to %}?next={{ logout_to }}{% endif %}'>{% trans "Log Out" %}</a>
+    </div>
+  </div>
 {% else %}
-{% url "cas_ng_login" as login_url %}
-{% ifnotequal login_url request.path %}
-    <a href='{{ login_url }}'>{% trans "Log In" %}</a>
-{% endifnotequal %}
+  {% url "cas_ng_login" as login_url %}
+  {% if login_url != request.path %}
+    <a class="nav-item nav-link" href='{{ login_url }}'>{% trans "Log In" %}</a>
+  {% endif %}
 {% endif %}

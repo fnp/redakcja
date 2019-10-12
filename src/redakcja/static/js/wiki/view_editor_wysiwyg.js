@@ -193,7 +193,7 @@
                                 spoint.insertNode(btag[0])
                                 btag.replaceWith(text);
                                 selection.removeAllRanges();
-                                openForEdit($('.motyw[theme-class=' + id + ']'));
+                                openForEdit($('.motyw[theme-class="' + id + '"]'));
                             }
                         });
                     }
@@ -239,7 +239,7 @@
             }
             
             tableContent += "</tr>";                                   
-            $("#content").append(specialCharsContainer);
+            $("body").append(specialCharsContainer);
             
             
              // localStorage for recently used characters - reading
@@ -399,20 +399,13 @@
 
         if ($origin.is('.motyw')) {
 	    $('.akap-edit-button').remove();
-            withThemes(function(canonThemes){
-                $('textarea', $overlay).autocomplete(canonThemes, {
-                    autoFill: true,
-                    multiple: true,
-                    selectFirst: true,
-                    highlight: false
-                });
-            })
+            $.themes.autocomplete($('textarea', $overlay));
         }
 
         if ($origin.is('.motyw')){
             $('.delete-button', $overlay).click(function(){
-                if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw ?")) {
-                    $('[theme-class=' + $origin.attr('theme-class') + ']').remove();
+                if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw?")) {
+                    $('[theme-class="' + $origin.attr('theme-class') + '"]').remove();
                     $overlay.remove();
                     $(document).unbind('click.blur-overlay');
                     return false;
@@ -580,14 +573,14 @@
                     return false;
                 });            
 
-                $('.edit-button').live('click', function(event){
+                $(document).on('click', '.edit-button', function(event){
                     event.preventDefault();
                     openForEdit($(this).parent());
                 });
 
             }
 
-            $('.motyw').live('click', function(){
+            $(document).on('click', '.motyw', function(){
                 selectTheme($(this).attr('theme-class'));
             });
 
