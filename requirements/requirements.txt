@@ -11,7 +11,7 @@ python-slugify
 librarian==1.7.6
 
 ## Django
-Django==2.2.6
+Django==2.2.8
 fnpdjango==0.4.3
 django-pipeline==1.6.14
 django-cas-ng==3.6.0
