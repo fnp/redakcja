@@ -8,17 +8,22 @@ Platforma to serwis służący do grupowej edycji książek na potrzeby serwisu 
 
 Instalacja i użycie
 ===================
-#. Ściągnij i zainstaluj `pip <http://pypi.python.org/pypi/pip>`_
+#. Upewnij się, że masz Pythona w wersji co najmniej 3.5.
+#. Stwórz i uruchom wirtualne środowisko:
+
+        python3 -m venv ve
+        . ve/bin/activate
+
 #. Przejdź do katalogu serwisu w konsoli
 #. Zainstaluj wymagane biblioteki komendą::
 
 	pip install -r requirements/requirements.txt
 
+#. Skopiuj zawartość pliku `src/redakcja/localsettings.sample` do `src/redakcja/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
+
 #. Wypełnij bazę danych::
 
 	src/manage.py migrate
-
-#. Skopiuj zawartość pliku `src/redakcja/localsettings.sample` do `src/redakcja/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
 
 #. Uruchom serwer deweloperski::
 

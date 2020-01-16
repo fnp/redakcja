@@ -11,16 +11,18 @@
 # THIS IS REQUIRED
 from redakcja.settings import *
 
+# Filling this out is required.
+SECRET_KEY = ''
+
 # Path to repository with managed documents
 CATALOGUE_REPO_PATH = '/srv/redakcja/books'
+CATALOGUE_IMAGE_REPO_PATH = '/srv/redakcja/images'
 
-LOGGING_CONFIG_FILE = "/srv/redakcja/logging.cfg.dev"
-
-STATIC_ROOT = '/srv/redakcja/static/'
-MEDIA_ROOT = '/srv/redakcja/media/'
+#STATIC_ROOT = '/srv/redakcja/static/'
+#MEDIA_ROOT = '/srv/redakcja/media/'
 
 # Subdirectory of MEDIA_ROOT containing images
-IMAGE_DIR = 'images/'
+#IMAGE_DIR = 'images/'
 
 CAS_SERVER_URL = 'https://logowanie.nowoczesnapolska.org.pl/cas/'
 CAS_VERSION = '2'
@@ -32,5 +34,3 @@ COMPRESS = False
 
 APICLIENT_WL_CONSUMER_KEY = None
 APICLIENT_WL_CONSUMER_SECRET = None
-
-SECRET_KEY = ''
