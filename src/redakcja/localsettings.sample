@@ -13,6 +13,7 @@ from redakcja.settings import *
 
 # Filling this out is required.
 SECRET_KEY = ''
+ALLOWED_HOSTS = []
 
 # Path to repository with managed documents
 CATALOGUE_REPO_PATH = '/srv/redakcja/books'

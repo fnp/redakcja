@@ -30,6 +30,7 @@ Instalacja i użycie
 	src/manage.py runserver
 
 #. Strategie wdrożeniowe opisane są w `Dokumentacji Django <http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index>`_.
+   Do przygotowania wersji do wdrożenia możesz użyć komendy `make deploy`.
 
 
 Testy
