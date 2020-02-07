@@ -43,8 +43,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas_ng.middleware.CASMiddleware',
+    ]
 
+if CAS_SERVER_URL:
+    MIDDLEWARE.append(
+        'django_cas_ng.middleware.CASMiddleware',
+    )
+
+MIDDLEWARE += [
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'fnp_django_pagination.middleware.PaginationMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
@@ -55,10 +61,11 @@ if DEBUG:
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     ] + MIDDLEWARE
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas_ng.backends.CASBackend',
-)
+if CAS_SERVER_URL:
+    AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        'django_cas_ng.backends.CASBackend',
+    )
 
 ROOT_URLCONF = 'redakcja.urls'
 

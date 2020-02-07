@@ -10,10 +10,8 @@ from django.views.generic import RedirectView
 import django_cas_ng.views
 
 
+
 urlpatterns = [
-    # Auth
-    url(r'^accounts/login/$', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
-    url(r'^accounts/logout/$', django_cas_ng.views.LogoutView.as_view(), name='logout'),
     #url(r'^admin/login/$', django_cas_ng.views.login, name='login'),
     #url(r'^admin/logout/$', django_cas_ng.views.logout, name='logout'),
 
@@ -28,6 +26,20 @@ urlpatterns = [
     url(r'^images/', include('wiki_img.urls')),
     url(r'^cover/', include('cover.urls')),
 ]
+
+
+if settings.CAS_SERVER_URL:
+    urlpatterns += [
+        url(r'^accounts/login/$', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
+        url(r'^accounts/logout/$', django_cas_ng.views.LogoutView.as_view(), name='logout'),
+    ]
+else:
+    import django.contrib.auth.views
+    urlpatterns += [
+        url(r'^accounts/login/$', django.contrib.auth.views.LoginView.as_view(), name='cas_ng_login'),
+        url(r'^accounts/', include('django.contrib.auth.urls')),
+    ]
+
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
