@@ -11,17 +11,17 @@ python-slugify
 librarian==1.8.1
 
 ## Django
-Django==2.2.11
+Django==3.0.4
 fnpdjango==0.4.3
-django-pipeline==1.6.14
-django-cas-ng==3.6.0
-sorl-thumbnail==12.5.0
+django-pipeline==1.7.0      # +
+django-cas-ng==4.1.1        # +
+sorl-thumbnail==12.6.3      # +
 django-maintenancemode>=0.9
 fnp-django-pagination==2.2.4
 django-gravatar2==1.4.2
 django-extensions==2.1.6
-django-bootstrap4==1.0.1
+django-bootstrap4==1.1.1    # +
 libsasscompiler==0.1.5
-django-debug-toolbar
+django-debug-toolbar==2.2   # +
 
 sentry-sdk==0.12.2
