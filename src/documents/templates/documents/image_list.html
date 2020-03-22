@@ -1,0 +1,24 @@
+{% extends "documents/base.html" %}
+
+{% load i18n %}
+{% load documents book_list %}
+{% load pipeline %}
+
+
+{% block titleextra %}{% trans "Image list" %}{% endblock %}
+
+
+{% block add_js %}
+  {% javascript 'book_list' %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+{% endblock %}
+
+{% block add_css %}
+  {% stylesheet 'book_list' %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+{% endblock %}
+
+
+{% block content %}
+    {% image_list %}
+{% endblock content %}

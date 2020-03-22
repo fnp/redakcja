@@ -1,0 +1,78 @@
+{% extends "documents/base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+
+{% block titleextra %}{% trans "Bulk document upload" %}{% endblock %}
+
+
+{% block content %}
+
+
+<div class="card">
+	<div class="card-header">
+<h2>{% trans "Bulk documents upload" %}</h2>
+	</div>
+	<div class="card-body">
+
+<p>
+{% trans "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with <code>.xml</code> will be ignored." %}
+</p>
+
+<form enctype="multipart/form-data" method="POST" action="{{ request.path }}">
+{% csrf_token %}
+{% bootstrap_form form %}
+{% buttons %}
+<button class="btn btn-primary" type="submit">{% trans "Upload" %}</button>
+{% endbuttons %}
+</form>
+
+
+{% if error_list %}
+    <hr>
+
+    <p class='error'>{% trans "There have been some errors. No files have been added to the repository." %}
+    <h3>{% trans "Offending files" %}</h3>
+    <ul id='error-list'>
+        {% for filename, title, error in error_list %}
+            <li>{{ title }} (<code>{{ filename }}</code>): {{ error }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if ok_list %}
+    <h3>{% trans "Correct files" %}</h3>
+        <ul>
+            {% for filename, slug, title in ok_list %}
+                <li>{{ title }} (<code>{{ filename }}</code>)</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% else %}
+
+    {% if ok_list %}
+        <p class='success'>{% trans "Files have been successfully uploaded to the repository." %}</p>
+        <h3>{% trans "Uploaded files" %}</h3>
+        <ul id='ok-list'>
+        {% for filename, slug, title in ok_list %}
+            <li><a href='{% url "wiki_editor" slug %}'>{{ title }}</a> (<code>{{ filename }})</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}
+
+{% if skipped_list %}
+    <h3>{% trans "Skipped files" %}</h3>
+    <p>{% trans "Files skipped due to no <code>.xml</code> extension" %}</p>
+    <ul id='skipped-list'>
+        {% for filename in skipped_list %}
+            <li>{{ filename }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+	</div>
+</div>
+
+{% endblock content %}
+

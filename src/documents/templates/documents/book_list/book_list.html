@@ -1,0 +1,117 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load username from common_tags %}
+
+
+<form name='filter' action='{{ request.path }}'>
+<input type='hidden' name="title" value="{{ request.GET.title }}" />
+<input type='hidden' name="stage" value="{{ request.GET.stage }}" />
+{% if not viewed_user %}
+    <input type='hidden' name="user" value="{{ request.GET.user }}" />
+{% endif %}
+<input type='hidden' name="all" value="{{ request.GET.all }}" />
+<input type='hidden' name="status" value="{{ request.GET.status }}" />
+<input type='hidden' name="project" value="{{ request.GET.project }}" />
+</form>
+
+
+<div class="card">
+	<div class="card-body">
+
+
+<table id="file-list" class="table{% if viewed_user %} book-list-user{% endif %}">
+    <thead><tr>
+	<th></th>
+        <th></th>
+        <th></th>
+        <th class='book-search-column'>
+            <form>
+            <input title='{% trans "Search in book titles" %}' name="title"
+                class='form-control text-filter' value="{{ request.GET.title }}" />
+            </form>
+        </th>
+        <th><select name="stage" class="form-control filter">
+            <option value=''>- {% trans "stage" %} -</option>
+            <option {% if request.GET.stage == '-' %}selected="selected"
+                    {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for stage in stages %}
+                <option {% if request.GET.stage == stage.slug %}selected="selected"
+                    {% endif %}value="{{ stage.slug }}">{{ stage.name }}</option>
+            {% endfor %}
+        </select></th>
+
+        {% if not viewed_user %}
+            <th><select name="user" class="form-control filter">
+                <option value=''>- {% trans "editor" %} -</option>
+                <option {% if request.GET.user == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+                {% for user in users %}
+                    <option {% if request.GET.user == user.username %}selected="selected"
+                        {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
+                {% endfor %}
+            </select></th>
+        {% else %}
+            <th style='display: none'></th>
+        {% endif %}
+
+        <th><select name="status" class="form-control filter">
+            <option value=''>- {% trans "status" %} -</option>
+            {% for state, label in states %}
+                <option {% if request.GET.status == state %}selected="selected"
+                        {% endif %}value='{{ state }}'>{{ label }}</option>
+            {% endfor %}
+        </select></th>
+
+        <th><select name="project" class="form-control filter">
+            <option value=''>- {% trans "project" %} -</option>
+                <option {% if request.GET.project == '-' %}selected="selected"
+                        {% endif %}value="-">- {% trans "none" %} -</option>
+            {% for project in projects %}
+                <option {% if request.GET.project == project.pk|slugify %}selected="selected"
+                        {% endif %}value='{{ project.pk }}'>{{ project.name }}</option>
+            {% endfor %}
+        </select></th>
+
+    </tr></thead>
+
+    {% autopaginate books 100 as books_page %}
+    <tbody>
+    {% for item in books_page %}
+        {% with book=item.book chunk=item.chunks.0  %}
+	    {% include 'documents/book_list/book.html' %}
+            {% if not book.single %}
+                {% for chunk in item.chunks %}
+                    {% include 'documents/book_list/chunk.html' %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+    </tbody>
+</table>
+{% paginate %}
+        {% blocktrans count c=books|length %}{{c}} book{% plural %}{{c}} books{% endblocktrans %}
+
+
+{% if not books %}
+    <p>{% trans "No books found." %}</p>
+{% endif %}
+
+	</div>
+</div>
+
+<form id='chunk_mass_edit' action='{% url "documents_chunk_mass_edit" %}' style="display:none;">
+{% csrf_token %}
+<input type="hidden" name="ids" />
+<label for="mass_edit_stage">{% trans "Set stage" %}</label><input type="hidden" name="stage" id="mass_edit_stage"/>
+<label for="mass_edit_user">{% trans "Set user" %}</label><input type="hidden" name="user" id="mass_edit_user" />
+<input type="hidden" name="status" />
+<label for="mass_edit_project">{% trans "Project" %}</label><input type="hidden" name="project" id="mass_edit_project" />
+<label for="mass_edit_more_users">{% trans "More users" %}</label>
+</form>
+
+<select name="other-user" style="display:none;">
+  {% for user in other_users %}
+  <option {% if request.GET.user == user.username %}selected="selected"
+          {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
+  {% endfor %}
+</select>

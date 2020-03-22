@@ -1,4 +1,4 @@
-{% extends "catalogue/base.html" %}
+{% extends "documents/base.html" %}
 {% load i18n %}
 
 {% block titleextra %}{% trans "Page not found" %}{% endblock %}
@@ -17,7 +17,7 @@ still can't find what you're looking for, please
 <a href="{{m}}">contact the administrator</a>.{% endblocktrans %}
 </p>
 
-{% url "catalogue_user" as m %}
+{% url "documents_user" as m %}
 <p>
 {% blocktrans %}If you're coming from Redmine, please note that
 work is no longer managed there. 

@@ -1,0 +1,119 @@
+{% extends "documents/base.html" %}
+{% load book_list i18n %}
+{% load bootstrap4 %}
+
+
+{% block titleextra %}{{ book.title }}{% endblock %}
+
+
+{% block content %}
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h1>{{ book.title }}</h1>
+    </div>
+    <div class="card-body">
+    
+
+
+{% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
+    {% bootstrap_form form %}
+        {% if editable %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+        {% endbuttons %}
+    {% endif %}
+{% if editable %}</form>{% endif %}
+
+{% if editable %}
+    {% if book.gallery %}
+    <p><a href="{% url 'documents_book_gallery' book.slug %}">{% trans "Edit gallery" %}</a></p>
+    {% endif %}
+
+    <p style="text-align:right"><a class="btn btn-sm btn-danger" href="{% url 'documents_book_append' book.slug %}">{% trans "Append to other book" %}</a></p>
+{% endif %}
+    </div>
+    </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h2>{% trans "Chunks" %}</h2>
+    </div>
+    <div class="card-body">
+
+    <table class='single-book-list table'><tbody>
+    {% for chunk in book %}
+        {% include 'documents/book_list/chunk.html' %}
+    {% endfor %}
+    </tbody></table>
+    </div>
+  </div>
+
+
+
+
+<div class='card mt-4'>
+
+<div class="card-header">
+  <h2>{% trans "Publication" %}</h2>
+  </div>
+<div class="card-body">
+  <div class="row">
+<div class="col-lg-3">
+<img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
+{% if book.dc_cover_image %}
+    <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
+{% endif %}
+<br><br>
+<form action="{% url 'cover_preview' book.slug %}">
+<input type="hidden" name="download" value="1">
+Okładka w rozmiarze
+<input name="width" type="number" required value="600"> x <input name="height" type="number" required value="833">
+<button type="submit" class="btn btn-sm btn-primary">Pobierz</button>
+</form>
+</div>
+<div class="col-lg-9">
+<p>{% trans "Last published" %}: 
+    {% if book.last_published %}
+        {{ book.last_published }}
+    {% else %}
+        &mdash;
+    {% endif %}
+</p>
+
+{% if publishable %}
+    <p>
+    <a href="{% url 'documents_book_xml' book.slug %}" rel="nofollow">{% trans "Full XML" %}</a><br/>
+    <a target="_blank" href="{% url 'documents_book_html' book.slug %}" rel="nofollow">{% trans "HTML version" %}</a><br/>
+    <a href="{% url 'documents_book_txt' book.slug %}" rel="nofollow">{% trans "TXT version" %}</a><br/>
+    <a href="{% url 'documents_book_pdf' book.slug %}" rel="nofollow">{% trans "PDF version" %}</a><br/>
+    <a href="{% url 'documents_book_pdf_mobile' book.slug %}" rel="nofollow">{% trans "PDF version for mobiles" %}</a><br/>
+    <a href="{% url 'documents_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a><br/>
+    <a href="{% url 'documents_book_mobi' book.slug %}" rel="nofollow">{% trans "MOBI version" %}</a><br/>
+    </p>
+
+    {% if user.is_authenticated %}
+        <!--
+        Angel photos:
+        Angels in Ely Cathedral (http://www.flickr.com/photos/21804434@N02/4483220595/) /
+        mira66 (http://www.flickr.com/photos/21804434@N02/) /
+        CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
+        -->
+        <form method="POST" action="{% url 'documents_publish' book.slug %}">{% csrf_token %}
+            {{ publish_options_form.as_p }}
+            <img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" />
+            <button id="publish-button" type="submit">
+                <span>{% trans "Publish" %}</span></button>
+            <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
+            </form>
+    {% else %}
+        <a href="{% url 'cas_ng_login' %}">{% trans "Log in to publish." %}</a>
+    {% endif %}
+{% else %}
+    <p>{% trans "This book can't be published yet, because:" %}</p>
+    <ul><li>{{ publishable_error }}</li></ul>
+{% endif %}
+
+</div>
+  </div>
+{% endblock content %}

@@ -1,0 +1,29 @@
+{% extends "documents/base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+
+{% block titleextra %}{% trans "Split chunk" %}{% endblock %}
+
+
+{% block content %}
+<div class="card">
+	<div class="card-header">
+    <h1>{% trans "Split chunk" %}</h1>
+	</div>
+	<div class="card-body">
+
+	<form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+    <div class='editable'>
+	    <p>{% trans "Insert empty chunk after" %}:
+	    <a href="{{ chunk.get_absolute_url }}">{{ chunk.pretty_name }}</a></p>
+        {% bootstrap_form form %}
+	{% buttons %}
+        <button class="btn btn-primary" type="submit">{% trans "Add chunk" %}</button>
+	{% endbuttons %}
+    </div>
+	</form>
+	</div>
+</div>
+{% endblock content %}

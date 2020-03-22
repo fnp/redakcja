@@ -1,0 +1,33 @@
+{% extends "documents/base.html" %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+
+{% block titleextra %}{% trans "Chunk settings" %}{% endblock %}
+
+
+{% block content %}
+<div class="card">
+	<div class="card-header">
+    <h1>{% trans "Chunk settings" %}</h1>
+	</div>
+	<div class="card-body">
+
+	<form enctype="multipart/form-data" method="POST" action="{% if go_next %}?next={{ go_next }}{% endif %}">
+    {% csrf_token %}
+    <div class='editable'>
+	    <p>{% trans "Book" %}: {{ chunk.book }} ({{ chunk.number }}/{{ chunk.book|length }})</p>
+        {% bootstrap_form form %}
+	{% buttons %}
+        	<button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+		{% endbuttons %}
+    </div>
+
+	</form>
+
+
+    <p style="text-align: right"><a class="btn btn-danger" href="{% url "documents_chunk_add" chunk.book.slug chunk.slug %}">{% trans "Split chunk" %}</a></p>
+   </div>
+</div>
+
+{% endblock content %}

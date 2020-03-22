@@ -1,0 +1,25 @@
+{% extends "documents/base.html" %}
+
+{% load i18n %}
+{% load documents book_list wall %}
+
+
+{% block titleextra %}{{ viewed_user|nice_name }}{% endblock %}
+
+
+{% block leftcolumn %}
+    <h1 class="mb-4">{{ viewed_user|nice_name }}</h1>
+    {% book_list viewed_user %}
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+<div class="card">
+	<div class="card-header">
+    <h2>{% trans "Recent activity for" %} {{ viewed_user|nice_name }}</h2>
+	</div>
+	<div class="card-body">
+		
+    {% wall viewed_user 10 %}
+	</div>
+</div>
+{% endblock rightcolumn %}

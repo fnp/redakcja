@@ -17,7 +17,7 @@ from django.conf import settings
 from django.utils.formats import localize
 from django.utils.translation import ugettext as _
 
-from catalogue.models import Image
+from documents.models import Image
 from wiki import forms
 from wiki import nice_diff
 from wiki_img.forms import ImageSaveForm
@@ -39,7 +39,7 @@ def editor(request, slug, template_name='wiki_img/document_details.html'):
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
         },
-        'can_pubmark': request.user.has_perm('catalogue.can_pubmark_image'),
+        'can_pubmark': request.user.has_perm('documents.can_pubmark_image'),
         'REDMINE_URL': settings.REDMINE_URL,
     })
 
@@ -79,7 +79,7 @@ def text(request, image_id):
             stage = form.cleaned_data['stage_completed']
             tags = [stage] if stage else []
             publishable = (form.cleaned_data['publishable'] and
-                    request.user.has_perm('catalogue.can_pubmark_image'))
+                    request.user.has_perm('documents.can_pubmark_image'))
             doc.commit(author=author,
                    text=text,
                    parent=parent,
@@ -196,7 +196,7 @@ def diff(request, object_id):
 
 
 @require_POST
-@ajax_require_permission('catalogue.can_pubmark_image')
+@ajax_require_permission('documents.can_pubmark_image')
 def pubmark(request, object_id):
     form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
     if form.is_valid():

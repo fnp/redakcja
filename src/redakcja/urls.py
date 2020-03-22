@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', RedirectView.as_view(url='/documents/', permanent=False)),
-    url(r'^documents/', include('catalogue.urls')),
+    url(r'^documents/', include('documents.urls')),
     url(r'^apiclient/', include('apiclient.urls')),
     url(r'^editor/', include('wiki.urls')),
     url(r'^images/', include('wiki_img.urls')),

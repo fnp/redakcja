@@ -18,7 +18,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
 
-from catalogue.models import Book, Chunk
+from documents.models import Book, Chunk
 from . import nice_diff
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
@@ -47,7 +47,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
             try:
                 book = Book.objects.get(slug=slug)
             except Book.DoesNotExist:
-                return http.HttpResponseRedirect(reverse("catalogue_create_missing", args=[slug]))
+                return http.HttpResponseRedirect(reverse("documents_create_missing", args=[slug]))
         else:
             raise Http404
     if not chunk.book.accessible(request):
@@ -72,7 +72,7 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
             "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
             "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
         },
-        'can_pubmark': request.user.has_perm('catalogue.can_pubmark'),
+        'can_pubmark': request.user.has_perm('documents.can_pubmark'),
         'REDMINE_URL': settings.REDMINE_URL,
     })
 
@@ -130,7 +130,7 @@ def text(request, chunk_id):
             stage = form.cleaned_data['stage_completed']
             tags = [stage] if stage else []
             publishable = (form.cleaned_data['publishable'] and
-                    request.user.has_perm('catalogue.can_pubmark'))
+                    request.user.has_perm('documents.can_pubmark'))
             doc.commit(author=author,
                        text=text,
                        parent=parent,
@@ -291,7 +291,7 @@ def history(request, chunk_id):
 
 
 @require_POST
-@ajax_require_permission('catalogue.can_pubmark')
+@ajax_require_permission('documents.can_pubmark')
 def pubmark(request, chunk_id):
     form = forms.DocumentPubmarkForm(request.POST, prefix="pubmark")
     if form.is_valid():

@@ -8,8 +8,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from catalogue.helpers import active_tab
-from catalogue.models import Chunk
+from documents.helpers import active_tab
+from documents.models import Chunk
 from cover.models import Image
 from cover import forms
 

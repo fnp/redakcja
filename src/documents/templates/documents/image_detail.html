@@ -1,0 +1,85 @@
+{% extends "documents/base.html" %}
+{% load book_list i18n %}
+{% load bootstrap4 %}
+
+
+{% block titleextra %}{{ object.title }}{% endblock %}
+
+
+{% block content %}
+<div class="card mt-4">
+
+	<div class="card-header">
+<h1>{{ object.title }}</h1>
+	</div>
+	<div class="card-body">
+
+
+{% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
+    {% bootstrap_form form %}
+    {% if editable %}
+    {% buttons %}
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+    {% endbuttons %}
+    {% endif %}
+</tbody></table>
+{% if editable %}</form>{% endif %}
+
+	</div>
+</div>
+
+
+<div class='card mt-4'>
+	<div class="card-header">
+    <h2>{% trans "Editor" %}</h2>
+	</div>
+	<div class="card-body">
+
+    <p><a class="btn btn-primary" href="{% url 'wiki_img_editor' object.slug %}">{% trans "Proceed to the editor." %}</a></p>
+</div>
+</div>
+
+
+
+<div class='card mt-4'>
+	<div class="card-header">
+
+<h2>{% trans "Publication" %}</h2>
+	</div>
+	<div class="card-body">
+
+<p>{% trans "Last published" %}: 
+    {% if object.last_published %}
+        {{ object.last_published }}
+    {% else %}
+        &mdash;
+    {% endif %}
+</p>
+
+{% if publishable %}
+    {% if user.is_authenticated %}
+        <!--
+        Angel photos:
+        Angels in Ely Cathedral (http://www.flickr.com/photos/21804434@N02/4483220595/) /
+        mira66 (http://www.flickr.com/photos/21804434@N02/) /
+        CC BY 2.0 (http://creativecommons.org/licenses/by/2.0/)
+        -->
+        <form method="POST" action="{% url 'documents_publish_image' object.slug %}">{% csrf_token %}
+            <!--img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" /-->
+            <button id="publish-button" type="submit">
+                <span>{% trans "Publish" %}</span></button>
+            <!--img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" /-->
+            </form>
+    {% else %}
+        <a href="{% url 'cas_ng_login' %}">{% trans "Log in to publish." %}</a>
+    {% endif %}
+{% else %}
+    <p>{% trans "This book can't be published yet, because:" %}</p>
+    <ul><li>{{ publishable_error }}</li></ul>
+{% endif %}
+
+</div>
+</div>
+
+
+{% endblock content %}

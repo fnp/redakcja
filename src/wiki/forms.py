@@ -4,7 +4,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from catalogue.models import Chunk
+from documents.models import Chunk
 
 
 class DocumentPubmarkForm(forms.Form):

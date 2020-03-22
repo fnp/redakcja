@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load pipeline i18n %}
+{% load static %}
+{% load documents %}
+<!DOCTYPE html>
+<html>
+<head lang="{{ LANGUAGE_CODE }}">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="{{ STATIC_URL }}img/pr-icon.png" type="image/png" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% stylesheet 'documents' %}
+    <title>{% block title %}{% block titleextra %}{% endblock %} ::
+        {% trans "Platforma Redakcyjna" %}{% endblock title %}</title>
+    {% block add_css %}{% endblock %}
+</head>
+<body>
+<!--#include file='/pozor.html'-->
+
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand" href="{% url 'documents_document_list' %}">
+	  <img src="{% static "img/wl-orange.png" %}" alt="Platforma">
+  </a>
+  <ul class="navbar-nav mr-auto">
+        {% main_tabs %}
+    </ul>
+
+    <ul class="navbar-nav">
+        {% include "registration/head_login.html" %}
+    </ul>
+</nav>
+
+<div class="container mt-4 mb-4">
+  {% block content %}
+    <div class="row">
+      <div class="col-lg-8">
+        {% block leftcolumn %}
+        {% endblock leftcolumn %}
+      </div>
+      <div class="col-lg-4">
+        {% block rightcolumn %}
+        {% endblock rightcolumn %}
+      </div>
+    </div>
+  {% endblock content %}
+</div>
+
+
+<script
+    src="https://code.jquery.com/jquery-1.9.1.min.js"
+    integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ="
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+{% javascript 'documents' %}
+{% block add_js %}{% endblock %}
+{% block extrabody %}
+{% endblock %}
+</body>
+</html>

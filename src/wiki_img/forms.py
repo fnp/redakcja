@@ -4,7 +4,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from wiki.forms import DocumentTextSaveForm
-from catalogue.models import Image
+from documents.models import Image
 
 
 class ImageSaveForm(DocumentTextSaveForm):

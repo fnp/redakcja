@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'bootstrap4',
 
     'catalogue',
+    'documents',
     'cover',
     'dvcs',
     'wiki',
@@ -138,11 +139,11 @@ PIPELINE = {
             ),
             'output_filename': 'compressed/detail_styles.css',
         },
-        'catalogue': {
+        'documents': {
             'source_filenames': (
                 'css/filelist.css',
             ),
-            'output_filename': 'compressed/catalogue_styles.css',
+            'output_filename': 'compressed/documents_styles.css',
         },
         'book': {
             'source_filenames': (
@@ -226,13 +227,13 @@ PIPELINE = {
             ),
             'output_filename': 'compressed/detail_img_scripts.js',
         },
-        'catalogue': {
+        'documents': {
             'source_filenames': (
-                'js/catalogue/catalogue.js',
+                'js/documents/documents.js',
                 'js/slugify.js',
                 'email_mangler/email_mangler.js',
             ),
-            'output_filename': 'compressed/catalogue_scripts.js',
+            'output_filename': 'compressed/documents_scripts.js',
         },
         'book': {
             'source_filenames': (
@@ -246,7 +247,7 @@ PIPELINE = {
         },
         'book_list': {
             'source_filenames': (
-                'js/catalogue/book_list.js',
+                'js/documents/book_list.js',
             ),
             'output_filename': 'compressed/book_list.js',
         }
