@@ -422,6 +422,10 @@ em.wieksze-odstepy
     content: "\feff";
 }
 
+.animacja {
+    cursor: pointer;
+}
+
 
 /* =================================== */
 /* = Hide some elements for printing = */

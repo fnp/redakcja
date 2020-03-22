@@ -250,7 +250,7 @@ def book_html(request, slug):
     doc = book.wldocument(parse_dublincore=False)
     html = doc.as_html(options={'gallery': "'%s'" % book.gallery_url()})
 
-    html = html.get_bytes() if html is not None else ''
+    html = html.get_bytes().decode('utf-8') if html is not None else ''
     # response = http.HttpResponse(html, content_type='text/html')
     # return response
     # book_themes = {}
