@@ -586,8 +586,8 @@
         <!-- Possible variants: -->
         <xsl:choose>
             <!-- Simple verse == not wers_ tags anywhere until the ending br -->
-            <xsl:when test="not($verse-content[starts-with(name(), 'wers_')])">
-                <p class="wers" x-node="wers" x-verse="true">
+            <xsl:when test="not($verse-content[starts-with(name(), 'wers')])">
+                <p class="wers" x-node="wers" x-verse="true" x-auto-node="true">
                 <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
                     <xsl:with-param name="mixed" select="true()" />
                 </xsl:apply-templates>
@@ -602,7 +602,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="wers_cd|wers_akap|wers_wciety|wers_do_prawej">
+    <xsl:template match="wers_cd|wers_akap|wers_wciety|wers_do_prawej|wers">
         <xsl:param name="mixed" />
 		<!-- <xsl:choose>
 		<xsl:when test="ancestor::*[0]/self::strofa"> -->
