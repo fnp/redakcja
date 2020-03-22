@@ -1,45 +1,56 @@
-====================
-Platforma Redakcyjna
-====================
+# Platforma Redakcyjna
 
-Opis projektu
-=============
+
+## Opis projektu
+
 Platforma to serwis służący do grupowej edycji książek na potrzeby serwisu WolneLektury.pl.
 
-Instalacja i użycie
-===================
-#. Upewnij się, że masz Pythona w wersji co najmniej 3.5.
-#. Stwórz i uruchom wirtualne środowisko:
 
-        python3 -m venv ve
-        . ve/bin/activate
+## Instalacja i użycie
 
-#. Przejdź do katalogu serwisu w konsoli
-#. Zainstaluj wymagane biblioteki komendą::
+1. Upewnij się, że masz Pythona w wersji co najmniej 3.5.
+2. Stwórz i uruchom wirtualne środowisko:
 
-	pip install -r requirements/requirements.txt
+```bash
+python3 -m venv ve
+. ve/bin/activate
+```
 
-#. Skopiuj zawartość pliku `src/redakcja/localsettings.sample` do `src/redakcja/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
+3. Przejdź do katalogu serwisu w konsoli
+4. Zainstaluj wymagane biblioteki komendą::
 
-#. Wypełnij bazę danych::
+```bash
+pip install -r requirements/requirements.txt
+```
 
-	src/manage.py migrate
+5. Skopiuj zawartość pliku `src/redakcja/localsettings.sample` do `src/redakcja/localsettings.py` i zmień go zgodnie ze swoimi potrzebami.
 
-#. Uruchom serwer deweloperski::
+6. Wypełnij bazę danych::
 
-	src/manage.py runserver
+```bash
+src/manage.py migrate
+```
 
-#. Strategie wdrożeniowe opisane są w `Dokumentacji Django <http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index>`_.
+7. Uruchom serwer deweloperski::
+
+```bash
+src/manage.py runserver
+```
+
+8. Strategie wdrożeniowe opisane są w [Dokumentacji Django](http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index>).
    Do przygotowania wersji do wdrożenia możesz użyć komendy `make deploy`.
 
 
-Testy
-====
+## Testy
 
-    $ pip install -r requirements-test.txt
-    $ make test
+```bash
+pip install -r requirements-test.txt
+make test
+```
 
 JavaScript (wymagany node.js i xsltproc):
 
-    $ npm install
-    $ ./node_modules/.bin/mocha -u tdd $(find src -name *_test.js)
+```bash
+npm install
+./node_modules/.bin/mocha -u tdd $(find src -name *_test.js)
+```
