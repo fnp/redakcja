@@ -1,0 +1,195 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
+"""
+Removes all of the models from state, because they are moved to `documents` app.
+These migrations should be kept for use by deployments still stuck with the
+previous layout.
+"""
+
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('catalogue', '0004_auto_20191002_1224'),
+    ]
+
+    _state_operations = [
+        migrations.RemoveField(
+            model_name='book',
+            name='dc_cover_image',
+        ),
+        migrations.RemoveField(
+            model_name='book',
+            name='parent',
+        ),
+        migrations.RemoveField(
+            model_name='book',
+            name='project',
+        ),
+        migrations.RemoveField(
+            model_name='bookpublishrecord',
+            name='book',
+        ),
+        migrations.RemoveField(
+            model_name='bookpublishrecord',
+            name='user',
+        ),
+        migrations.AlterUniqueTogether(
+            name='chunk',
+            unique_together=None,
+        ),
+        migrations.RemoveField(
+            model_name='chunk',
+            name='book',
+        ),
+        migrations.RemoveField(
+            model_name='chunk',
+            name='creator',
+        ),
+        migrations.RemoveField(
+            model_name='chunk',
+            name='head',
+        ),
+        migrations.RemoveField(
+            model_name='chunk',
+            name='stage',
+        ),
+        migrations.RemoveField(
+            model_name='chunk',
+            name='user',
+        ),
+        migrations.AlterUniqueTogether(
+            name='chunkchange',
+            unique_together=None,
+        ),
+        migrations.RemoveField(
+            model_name='chunkchange',
+            name='author',
+        ),
+        migrations.RemoveField(
+            model_name='chunkchange',
+            name='merge_parent',
+        ),
+        migrations.RemoveField(
+            model_name='chunkchange',
+            name='parent',
+        ),
+        migrations.RemoveField(
+            model_name='chunkchange',
+            name='tags',
+        ),
+        migrations.RemoveField(
+            model_name='chunkchange',
+            name='tree',
+        ),
+        migrations.RemoveField(
+            model_name='chunkpublishrecord',
+            name='book_record',
+        ),
+        migrations.RemoveField(
+            model_name='chunkpublishrecord',
+            name='change',
+        ),
+        migrations.RemoveField(
+            model_name='image',
+            name='creator',
+        ),
+        migrations.RemoveField(
+            model_name='image',
+            name='head',
+        ),
+        migrations.RemoveField(
+            model_name='image',
+            name='project',
+        ),
+        migrations.RemoveField(
+            model_name='image',
+            name='stage',
+        ),
+        migrations.RemoveField(
+            model_name='image',
+            name='user',
+        ),
+        migrations.AlterUniqueTogether(
+            name='imagechange',
+            unique_together=None,
+        ),
+        migrations.RemoveField(
+            model_name='imagechange',
+            name='author',
+        ),
+        migrations.RemoveField(
+            model_name='imagechange',
+            name='merge_parent',
+        ),
+        migrations.RemoveField(
+            model_name='imagechange',
+            name='parent',
+        ),
+        migrations.RemoveField(
+            model_name='imagechange',
+            name='tags',
+        ),
+        migrations.RemoveField(
+            model_name='imagechange',
+            name='tree',
+        ),
+        migrations.RemoveField(
+            model_name='imagepublishrecord',
+            name='change',
+        ),
+        migrations.RemoveField(
+            model_name='imagepublishrecord',
+            name='image',
+        ),
+        migrations.RemoveField(
+            model_name='imagepublishrecord',
+            name='user',
+        ),
+        migrations.DeleteModel(
+            name='User',
+        ),
+        migrations.DeleteModel(
+            name='Book',
+        ),
+        migrations.DeleteModel(
+            name='BookPublishRecord',
+        ),
+        migrations.DeleteModel(
+            name='Chunk',
+        ),
+        migrations.DeleteModel(
+            name='ChunkChange',
+        ),
+        migrations.DeleteModel(
+            name='ChunkPublishRecord',
+        ),
+        migrations.DeleteModel(
+            name='ChunkTag',
+        ),
+        migrations.DeleteModel(
+            name='Image',
+        ),
+        migrations.DeleteModel(
+            name='ImageChange',
+        ),
+        migrations.DeleteModel(
+            name='ImagePublishRecord',
+        ),
+        migrations.DeleteModel(
+            name='ImageTag',
+        ),
+        migrations.DeleteModel(
+            name='Project',
+        ),
+    ]
+
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            database_operations=[],
+            state_operations=_state_operations,
+        )
+    ]
