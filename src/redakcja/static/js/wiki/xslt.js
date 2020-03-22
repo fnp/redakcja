@@ -17,7 +17,7 @@ function withStylesheets(code_block, onError)
     if (!xml2htmlStylesheet) {
     	$.blockUI({message: 'Ładowanie arkuszy stylów...'});
     	$.ajax({
-        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20171106',
+        	url: STATIC_URL + 'xsl/wl2html_client.xsl?2019121801',
         	dataType: 'xml',
         	timeout: 10000,
         	success: function(data) {
@@ -157,7 +157,7 @@ HTMLSerializer.prototype._verseBefore = function(node) {
 }
 
 HTMLSerializer.prototype._nodeIgnored = function(node) {
-    return node.getAttribute('x-node') == 'wers';
+    return node.getAttribute('x-auto-node') == 'true';
 }
 
 HTMLSerializer.prototype._ignoredWithWhitespace = function(node) {

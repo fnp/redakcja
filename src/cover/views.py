@@ -42,10 +42,23 @@ def preview(request, book, chunk=None, rev=None):
         info = BookInfo.from_bytes(xml)
     except:
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
-    cover = make_cover(info)
+    width = request.GET.get('width')
+    width = int(width) if width else None
+    height=request.GET.get('height')
+    height = int(height) if height else None
+    cover = make_cover(info, width=width, height=height)
+    #cover = make_cover(info)
     response = HttpResponse(content_type=cover.mime_type())
-    img = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
+    if height or width:
+        size = (width, height)
+    else:
+        size = PREVIEW_SIZE
+    img = cover.image().resize(size, Image.ANTIALIAS)
     img.save(response, cover.format)
+
+    if 'download' in request.GET:
+        response['Content-Disposition'] = 'attachment; filename=%s.jpg' % chunk.book.slug
+
     return response
 
 

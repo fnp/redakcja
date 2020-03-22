@@ -64,6 +64,13 @@
 {% if book.dc_cover_image %}
     <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
 {% endif %}
+<br><br>
+<form action="{% url 'cover_preview' book.slug %}">
+<input type="hidden" name="download" value="1">
+Okładka w rozmiarze
+<input name="width" type="number" required value="600"> x <input name="height" type="number" required value="833">
+<button type="submit" class="btn btn-sm btn-primary">Pobierz</button>
+</form>
 </div>
 <div class="col-lg-9">
 <p>{% trans "Last published" %}: 

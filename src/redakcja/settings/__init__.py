@@ -236,6 +236,7 @@ PIPELINE = {
         },
         'book': {
             'source_filenames': (
+                'js/lib/jquery/jquery.cycle2.min.js',
                 'js/book_text/jquery.eventdelegation.js',
                 'js/book_text/jquery.scrollto.js',
                 'js/book_text/jquery.highlightfade.js',
