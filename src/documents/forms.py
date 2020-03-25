@@ -5,9 +5,10 @@ from django.db.models import Count
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-
+from slugify import slugify
 from .constants import MASTERS
 from .models import Book, Chunk, Image, User
+from .docx import xml_from_docx
 
 class DocumentCreateForm(forms.ModelForm):
     """
@@ -15,6 +16,7 @@ class DocumentCreateForm(forms.ModelForm):
     """
     file = forms.FileField(required=False)
     text = forms.CharField(required=False, widget=forms.Textarea)
+    docx = forms.FileField(required=False)
 
     class Meta:
         model = Book
@@ -23,8 +25,10 @@ class DocumentCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DocumentCreateForm, self).__init__(*args, **kwargs)
         self.fields['slug'].widget.attrs={'class': 'autoslug'}
+        self.fields['slug'].required = False
         self.fields['gallery'].widget.attrs={'class': 'autoslug'}
         self.fields['title'].widget.attrs={'class': 'autoslug-source'}
+        self.fields['title'].required = False
 
     def clean(self):
         super(DocumentCreateForm, self).clean()
@@ -36,8 +40,27 @@ class DocumentCreateForm(forms.ModelForm):
             except UnicodeDecodeError:
                 raise forms.ValidationError(_("Text file must be UTF-8 encoded."))
 
+        docx = self.cleaned_data['docx']
+        if docx is not None:
+            try:
+                text, meta = xml_from_docx(docx)
+            except Exception as e:
+                raise forms.ValidationError(e)
+            else:
+                self.cleaned_data['text'] = text
+                if not self.cleaned_data['title']:
+                    self.cleaned_data['title'] = meta.get('title', '')
+                if not self.cleaned_data['slug']:
+                    self.cleaned_data['slug'] = slugify(meta.get('title', ''))
+
+        if not self.cleaned_data["title"]:
+            self._errors["title"] = self.error_class([_("Title not set")])
+
+        if not self.cleaned_data["slug"]:
+            self._errors["slug"] = self.error_class([_("Slug not set")])
+
         if not self.cleaned_data["text"]:
-            self._errors["file"] = self.error_class([_("You must either enter text or upload a file")])
+            self._errors["text"] = self.error_class([_("You must either enter text or upload a file")])
 
         return self.cleaned_data
 
