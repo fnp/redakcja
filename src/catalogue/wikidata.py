@@ -1,6 +1,7 @@
 from datetime import date
 from django.db import models
 from django.db.models.signals import m2m_changed
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from wikidata.client import Client
@@ -85,3 +86,10 @@ class WikidataAdminMixin:
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         form.instance.save()
+
+    def wikidata_link(self, obj):
+        if obj.wikidata:
+            return format_html('<a href="https://www.wikidata.org/wiki/{wd}" target="_blank">{wd}</a>', wd=obj.wikidata)
+        else:
+            return ''
+    wikidata_link.admin_order_field = 'wikidata'

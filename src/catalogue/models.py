@@ -26,6 +26,10 @@ class Author(WikidataMixin, models.Model):
     priority = models.PositiveSmallIntegerField(
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
+    collections = models.ManyToManyField('Collection', blank=True)
+
+    class Meta:
+        ordering = ('last_name', 'first_name', 'year_of_death')
 
     class Wikidata:
         first_name = WIKIDATA.GIVEN_NAME
@@ -58,6 +62,10 @@ class Book(WikidataMixin, models.Model):
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
     pd_year = models.IntegerField(null=True, blank=True)
+    collections = models.ManyToManyField('Collection', blank=True)
+
+    class Meta:
+        ordering = ('title',)
 
     class Wikidata:
         authors = WIKIDATA.AUTHOR
@@ -68,4 +76,25 @@ class Book(WikidataMixin, models.Model):
         notes = "description"
 
     def __str__(self):
-        return self.title
+        txt = self.title
+        astr = self.authors_str()
+        if astr:
+            txt = f'{astr} – {txt}'
+        tstr = self.translators_str()
+        if tstr:
+            txt = f'{txt} (tłum. {tstr})'
+        return txt
+
+    def authors_str(self):
+        return ', '.join(str(author) for author in self.authors.all())
+
+    def translators_str(self):
+        return ', '.join(str(author) for author in self.translators.all())
+
+
+class Collection(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name

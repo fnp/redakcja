@@ -6,6 +6,15 @@ import wikidata
 from catalogue.models import Book, Author
 
 
+def parse_name(name):
+    name_pieces = name.rsplit(' ', 1)
+    if len(name_pieces) == 1:
+        return name_pieces[0], ''
+    else:
+        return name_pieces
+
+
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
@@ -28,16 +37,9 @@ class Command(BaseCommand):
                 book.save()
 
                 if not book.authors.exists():
-                    author_name = item['fields']['author']
-                    name_pieces = author_name.rsplit(' ', 1)
-                    if len(name_pieces) == 1:
-                        first_name, last_name = name_pieces, ''
-                    else:
-                        first_name, last_name = name_pieces
-
+                    first_name, last_name = parse_name(item['fields']['author'])
                     author, created = Author.objects.get_or_create(first_name=first_name, last_name=last_name)
                     if not author.slug:
-                        print(author.slug, author_name)
                         author.slug = slugify(author_name)
                         author.save()
                     book.authors.set([author])
@@ -45,12 +47,7 @@ class Command(BaseCommand):
                 slug = item['fields']['slug']
                 author, created = Author.objects.get_or_create(slug=slug)
                 if not author.first_name and not author.last_name:
-                    author_name = item['fields']['name']
-                    name_pieces = author_name.rsplit(' ', 1)
-                    if len(name_pieces) == 1:
-                        author.first_name, author.last_name = name_pieces, ''
-                    else:
-                        author.first_name, author.last_name = name_pieces
+                    author.first_name, author.last_name = parse_name(item['fields']['name'])
                     author.year_of_death = author.year_of_death or item['fields']['death']
                     author.notes = author.notes or item['fields']['description']
                     author.gazeta_link = author.gazeta_link or item['fields']['gazeta_link']
