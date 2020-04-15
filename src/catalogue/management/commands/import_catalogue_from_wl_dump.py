@@ -15,7 +15,6 @@ class Command(BaseCommand):
             data = json.load(f)
         for item in data:
             if item['model'] == 'pdcounter.bookstub':
-                continue
                 notes = []
                 slug = item['fields']['slug']
                 book, created = Book.objects.get_or_create(slug=slug)
@@ -55,6 +54,7 @@ class Command(BaseCommand):
                     author.year_of_death = author.year_of_death or item['fields']['death']
                     author.notes = author.notes or item['fields']['description']
                     author.gazeta_link = author.gazeta_link or item['fields']['gazeta_link']
+                    author.save()
                     wiki_link = item['fields']['wiki_link']
                     assert not wiki_link # Welp
             else:

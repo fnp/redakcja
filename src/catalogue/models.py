@@ -47,7 +47,7 @@ class Book(WikidataMixin, models.Model):
         blank=True,
     )
     title = models.CharField(max_length=255, blank=True)
-    language = models.CharField(max_length=3, blank=True)
+    language = models.CharField(max_length=255, blank=True)
     based_on = models.ForeignKey(
         "self", models.PROTECT, related_name="translation", null=True, blank=True
     )
