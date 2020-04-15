@@ -20,6 +20,9 @@ class Author(WikidataMixin, models.Model):
         ],
     )
     notes = models.TextField(blank=True)
+    gazeta_link = models.CharField(max_length=255, blank=True)
+    culturepl_link = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
     priority = models.PositiveSmallIntegerField(
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
@@ -54,6 +57,7 @@ class Book(WikidataMixin, models.Model):
     priority = models.PositiveSmallIntegerField(
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
+    pd_year = models.IntegerField(null=True, blank=True)
 
     class Wikidata:
         authors = WIKIDATA.AUTHOR
