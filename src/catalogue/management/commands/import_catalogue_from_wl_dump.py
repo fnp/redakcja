@@ -18,7 +18,7 @@ def parse_name(name):
 def find_wikidata(link, lang):
     link = link.rstrip()
     title = link.rsplit("/", 1)[-1]
-    title = link.split("#", 1)[0]
+    title = title.split("#", 1)[0]
     title = title.replace(" ", "_")
     data = json.load(
         urlopen(
