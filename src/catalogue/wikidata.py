@@ -11,9 +11,7 @@ from wikidata.datavalue import DatavalueError
 class WikidataMixin(models.Model):
     wikidata = models.CharField(
         max_length=255,
-        null=True,
         blank=True,
-        unique=True,
         help_text=_('If you have a Wikidata ID, like "Q1337", enter it and save.'),
     )
 
@@ -89,7 +87,11 @@ class WikidataAdminMixin:
 
     def wikidata_link(self, obj):
         if obj.wikidata:
-            return format_html('<a href="https://www.wikidata.org/wiki/{wd}" target="_blank">{wd}</a>', wd=obj.wikidata)
+            return format_html(
+                '<a href="https://www.wikidata.org/wiki/{wd}" target="_blank">{wd}</a>',
+                wd=obj.wikidata,
+            )
         else:
-            return ''
-    wikidata_link.admin_order_field = 'wikidata'
+            return ""
+
+    wikidata_link.admin_order_field = "wikidata"

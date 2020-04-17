@@ -8,6 +8,10 @@ class Author(WikidataMixin, models.Model):
     slug = models.SlugField(null=True, blank=True, unique=True)
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+
+    name_de = models.CharField(max_length=255, blank=True)
+    name_lt = models.CharField(max_length=255, blank=True)
+
     year_of_death = models.SmallIntegerField(null=True, blank=True)
     status = models.PositiveSmallIntegerField(
         null=True,
@@ -22,14 +26,18 @@ class Author(WikidataMixin, models.Model):
     notes = models.TextField(blank=True)
     gazeta_link = models.CharField(max_length=255, blank=True)
     culturepl_link = models.CharField(max_length=255, blank=True)
+
     description = models.TextField(blank=True)
+    description_de = models.TextField(blank=True)
+    description_lt = models.TextField(blank=True)
+
     priority = models.PositiveSmallIntegerField(
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
-    collections = models.ManyToManyField('Collection', blank=True)
+    collections = models.ManyToManyField("Collection", blank=True)
 
     class Meta:
-        ordering = ('last_name', 'first_name', 'year_of_death')
+        ordering = ("last_name", "first_name", "year_of_death")
 
     class Wikidata:
         first_name = WIKIDATA.GIVEN_NAME
@@ -62,10 +70,11 @@ class Book(WikidataMixin, models.Model):
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
     pd_year = models.IntegerField(null=True, blank=True)
-    collections = models.ManyToManyField('Collection', blank=True)
+    gazeta_link = models.CharField(max_length=255, blank=True)
+    collections = models.ManyToManyField("Collection", blank=True)
 
     class Meta:
-        ordering = ('title',)
+        ordering = ("title",)
 
     class Wikidata:
         authors = WIKIDATA.AUTHOR
@@ -79,17 +88,17 @@ class Book(WikidataMixin, models.Model):
         txt = self.title
         astr = self.authors_str()
         if astr:
-            txt = f'{astr} – {txt}'
+            txt = f"{astr} – {txt}"
         tstr = self.translators_str()
         if tstr:
-            txt = f'{txt} (tłum. {tstr})'
+            txt = f"{txt} (tłum. {tstr})"
         return txt
 
     def authors_str(self):
-        return ', '.join(str(author) for author in self.authors.all())
+        return ", ".join(str(author) for author in self.authors.all())
 
     def translators_str(self):
-        return ', '.join(str(author) for author in self.translators.all())
+        return ", ".join(str(author) for author in self.translators.all())
 
 
 class Collection(models.Model):
