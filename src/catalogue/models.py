@@ -5,7 +5,7 @@ from .wikidata import WikidataMixin
 
 
 class Author(WikidataMixin, models.Model):
-    slug = models.SlugField(null=True, blank=True, unique=True)
+    slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
 
