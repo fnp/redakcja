@@ -37,8 +37,12 @@
 
 	</div>
 	<div class="col-md-4">
-	  W katalogu:
-	  {{ book.catalogue_book }}
+          {% with cbook=book.catalogue_book %}
+            {% if cbook %}
+	      W katalogu:
+	      <a href="{% url 'catalogue_book' cbook.slug %}">{{ cbook }}</a>
+            {% endif %}
+          {% endwith %}
 	</div>
       </div>
     </div>
