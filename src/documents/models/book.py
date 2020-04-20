@@ -1,6 +1,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.apps import apps
 from django.contrib.sites.models import Site
 from django.db import models, transaction
 from django.template.loader import render_to_string
@@ -88,6 +89,11 @@ class Book(models.Model):
 
     def gallery_url(self):
         return '%s%s%s/' % (settings.MEDIA_URL, settings.IMAGE_DIR, self.gallery)
+
+    @property
+    def catalogue_book(self):
+        CBook = apps.get_model('catalogue', 'Book')
+        return CBook.objects.filter(slug=self.dc_slug).first()
 
     # Creating & manipulating
     # =======================

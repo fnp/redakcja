@@ -1,6 +1,9 @@
+from django.apps import apps
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from .constants import WIKIDATA
+from .utils import UnrelatedManager
 from .wikidata import WikidataMixin
 
 
@@ -48,6 +51,17 @@ class Author(WikidataMixin, models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    def get_absolute_url(self):
+        return reverse("catalogue_author", args=[self.slug])
+
+    @property
+    def pd_year(self):
+        if self.year_of_death:
+            return self.year_of_death + 71
+        elif self.year_of_death == 0:
+            return 0
+        else:
+            return None
 
 class Book(WikidataMixin, models.Model):
     slug = models.SlugField(max_length=255, blank=True, null=True, unique=True)
@@ -73,6 +87,8 @@ class Book(WikidataMixin, models.Model):
     gazeta_link = models.CharField(max_length=255, blank=True)
     collections = models.ManyToManyField("Collection", blank=True)
 
+    objects = UnrelatedManager()
+
     class Meta:
         ordering = ("title",)
 
@@ -94,11 +110,18 @@ class Book(WikidataMixin, models.Model):
             txt = f"{txt} (tłum. {tstr})"
         return txt
 
+    def get_absolute_url(self):
+        return reverse("catalogue_book", args=[self.slug])
+    
     def authors_str(self):
         return ", ".join(str(author) for author in self.authors.all())
 
     def translators_str(self):
         return ", ".join(str(author) for author in self.translators.all())
+
+    def get_document_books(self):
+        DBook = apps.get_model("documents", "Book")
+        return DBook.objects.filter(dc_slug=self.slug)
 
 
 class Collection(models.Model):

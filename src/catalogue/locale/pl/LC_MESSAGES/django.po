@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-20 16:44+0200\n"
+"PO-Revision-Date: 2020-04-20 16:52+0200\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.2.4\n"
+
+#: models.py:22
+msgid "Alive"
+msgstr "Żyje"
+
+#: models.py:23
+msgid "Dead"
+msgstr "Zmarły"
+
+#: models.py:24
+msgid "Long dead"
+msgstr "Dawno zmarły"
+
+#: models.py:25
+msgid "Unknown"
+msgstr "Nieznany"
+
+#: models.py:37 models.py:83
+msgid "Low"
+msgstr "Niski"
+
+#: models.py:37 models.py:83
+msgid "Medium"
+msgstr "Średni"
+
+#: models.py:37 models.py:83
+msgid "High"
+msgstr "Wysoki"
+
+#: templates/catalogue/catalogue.html:7 templates/catalogue/catalogue.html:13
+msgid "Catalogue"
+msgstr "Katalog"
+
+#: templates/catalogue/catalogue.html:67
+msgid "trans."
+msgstr "tłum."
+
+#: templates/catalogue/catalogue.html:90
+#, python-format
+msgid "%(c)s author"
+msgid_plural "%(c)s authors"
+msgstr[0] "%(c)s autor"
+msgstr[1] "%(c)s autorów"
+msgstr[2] "%(c)s autorów"
+msgstr[3] ""
+
+#: wikidata.py:18
+msgid "If you have a Wikidata ID, like \"Q1337\", enter it and save."
+msgstr ""
+"Jeśli masz identyfikator Wikidanych , jak „Q1337”, wklej go i zapisz."

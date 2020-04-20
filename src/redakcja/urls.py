@@ -1,7 +1,8 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from django.conf.urls import include, url
+from django.conf.urls import url
+from django.urls import include, path
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -18,7 +19,7 @@ urlpatterns = [
     # Admin panel
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
-
+    path('catalogue/', include('catalogue.urls')),
     url(r'^$', RedirectView.as_view(url='/documents/', permanent=False)),
     url(r'^documents/', include('documents.urls')),
     url(r'^apiclient/', include('apiclient.urls')),

@@ -1,0 +1,89 @@
+{% extends "documents/base.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+
+
+{% block titleextra %}{% trans "Catalogue" %}{% endblock %}
+
+
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <h1>{% trans "Catalogue" %}</h1>
+    </div>
+    <div class="card-body">
+
+      <table class="table">
+          <tr>
+            <th>
+              <a href="{{ author.get_absolute_url }}">
+                {{ author }}
+              </a>
+            </th>
+            <td>
+              {{ author.pd_year|default_if_none:"-" }}
+            </td>
+            <td>
+              {{ author.wikidata_link }}
+            </td>
+            <td>
+              {{ author.get_priority_display }}
+            </td>
+          </tr>
+          {% for book in author.book_set.all %}
+            <tr>
+              <td>
+                &nbsp;
+                <a href="{{ book.get_absolute_url }}">
+                  {{ book.title }}
+                </a>
+              </td>
+              <td>
+                {{ book.pd_year|default_if_none:"-" }}
+              </td>
+              <td>
+                {{ book.wikidata_link }}
+              </td>
+              <td>
+                {{ book.get_priorty_display }}
+              </td>
+              <td>
+                {% for b in book.document_books %}
+                  <a href="{{ b.get_absolute_url }}">
+                    {{ b }}
+                  </a>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+          {% for book in author.translated_book_set.all %}
+            <tr>
+              <td>
+                &nbsp;
+                <a href="{{ book.get_absolute_url }}">
+                  {{ book.title }}
+                </a> ({% trans "trans." %})
+              </td>
+              <td>
+                {{ book.pd_year|default_if_none:"-" }}
+              </td>
+              <td>
+                {{ book.wikidata_link }}
+              </td>
+              <td>
+                {{ book.get_priorty_display }}
+              </td>
+              <td>
+                {% for b in book.document_books %}
+                  <a href="{{ b.get_absolute_url }}">
+                    {{ b }}
+                  </a>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock content %}

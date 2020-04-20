@@ -1,3 +1,6 @@
+# This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
 from datetime import date
 from django.db import models
 from django.db.models.signals import m2m_changed
