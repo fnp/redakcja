@@ -82,19 +82,19 @@ class WikidataMixin(models.Model):
                 wdvalue = wdvalue.label.get("pl", str(wdvalue.label))
             setattr(self, attname, wdvalue)
 
-
-class WikidataAdminMixin:
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        form.instance.save()
-
-    def wikidata_link(self, obj):
-        if obj.wikidata:
+    def wikidata_link(self):
+        if self.wikidata:
             return format_html(
                 '<a href="https://www.wikidata.org/wiki/{wd}" target="_blank">{wd}</a>',
-                wd=obj.wikidata,
+                wd=self.wikidata,
             )
         else:
             return ""
 
     wikidata_link.admin_order_field = "wikidata"
+
+
+class WikidataAdminMixin:
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        form.instance.save()
