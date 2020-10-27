@@ -1,3 +1,4 @@
+import decimal
 from django.apps import apps
 from django.db import models
 from django.urls import reverse
@@ -77,6 +78,8 @@ class Category(WikidataMixin, models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.name
 
 class Epoch(Category):
     class Meta:
@@ -123,6 +126,10 @@ class Book(WikidataMixin, models.Model):
     gazeta_link = models.CharField(max_length=255, blank=True)
     collections = models.ManyToManyField("Collection", blank=True)
 
+    estimated_chars = models.IntegerField(null=True, blank=True)
+    estimated_verses = models.IntegerField(null=True, blank=True)
+    estimate_source = models.CharField(max_length=2048, blank=True)
+
     objects = UnrelatedManager()
 
     class Meta:
@@ -161,6 +168,15 @@ class Book(WikidataMixin, models.Model):
         DBook = apps.get_model("documents", "Book")
         return DBook.objects.filter(dc_slug=self.slug)
 
+    def estimated_costs(self):
+        return "\n".join(
+            "{}: {} zł".format(
+                work_type.name,
+                work_type.calculate(self) or '—'
+            )
+            for work_type in WorkType.objects.all()
+        )
+
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
@@ -172,4 +188,50 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class WorkType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def get_rate_for(self, book):
+        for workrate in self.workrate_set.all():
+            if workrate.matches(book):
+                return workrate
+
+    def calculate(self, book):
+        workrate = self.get_rate_for(book)
+        if workrate is not None:
+            return workrate.calculate(book)
+        
+
+
+class WorkRate(models.Model):
+    priority = models.IntegerField(default=1)
+    per_normpage = models.DecimalField(decimal_places=2, max_digits=6, null=True, blank=True)
+    per_verse = models.DecimalField(decimal_places=2, max_digits=6, null=True, blank=True)
+    work_type = models.ForeignKey(WorkType, models.CASCADE)
+    epochs = models.ManyToManyField(Epoch, blank=True)
+    kinds = models.ManyToManyField(Kind, blank=True)
+    genres = models.ManyToManyField(Genre, blank=True)
+    collections = models.ManyToManyField(Collection, blank=True)
+
+    class Meta:
+        ordering = ('priority',)
+
+    def matches(self, book):
+        for category in 'epochs', 'kinds', 'genres', 'collections':
+            oneof = getattr(self, category).all()
+            if oneof:
+                if not set(oneof).intersection(
+                        getattr(book, category).all()):
+                    return False
+        return True
+
+    def calculate(self, book):
+        if self.per_verse:
+            if book.estimated_verses:
+                return book.estimated_verses * self.per_verse
+        elif self.per_normpage:
+            if book.estimated_chars:
+                return (decimal.Decimal(book.estimated_chars) / 1800 * self.per_normpage).quantize(decimal.Decimal('1.00'), rounding=decimal.ROUND_HALF_UP)
 

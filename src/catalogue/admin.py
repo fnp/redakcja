@@ -43,7 +43,7 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
     autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
     prepopulated_fields = {"slug": ("title",)}
     list_filter = ["language", "pd_year", "collections"]
-    readonly_fields = ["wikidata_link"]
+    readonly_fields = ["wikidata_link", "estimated_costs"]
     actions = [export_as_csv_action()]
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
@@ -80,6 +80,8 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
                     "priority",
                     "collections",
                     "notes",
+                    ("estimated_chars", "estimated_verses", "estimate_source"),
+                    "estimated_costs",
                 ]
             },
         ),
@@ -122,3 +124,16 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(models.Epoch, CategoryAdmin)
 admin.site.register(models.Genre, CategoryAdmin)
 admin.site.register(models.Kind, CategoryAdmin)
+
+
+
+class WorkRateInline(admin.TabularInline):
+    model = models.WorkRate
+    autocomplete_fields = ['kinds', 'genres', 'epochs', 'collections']
+
+
+class WorkTypeAdmin(admin.ModelAdmin):
+    inlines = [WorkRateInline]
+
+admin.site.register(models.WorkType, WorkTypeAdmin)
+
