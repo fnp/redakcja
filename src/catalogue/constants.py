@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 class WIKIDATA:
+    GENDER = "P21"
     AUTHOR = "P50"
     LANGUAGE = "P407"
     DATE_OF_DEATH = "P570"

@@ -2,6 +2,7 @@ from django.apps import apps
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from wikidata.client import Client
 from .constants import WIKIDATA
 from .utils import UnrelatedManager
 from .wikidata import WikidataMixin
@@ -15,6 +16,8 @@ class Author(WikidataMixin, models.Model):
     name_de = models.CharField(max_length=255, blank=True)
     name_lt = models.CharField(max_length=255, blank=True)
 
+    gender = models.CharField(max_length=255, blank=True)
+    nationality = models.CharField(max_length=255, blank=True)
     year_of_death = models.SmallIntegerField(null=True, blank=True)
     status = models.PositiveSmallIntegerField(
         null=True,
@@ -40,12 +43,15 @@ class Author(WikidataMixin, models.Model):
     collections = models.ManyToManyField("Collection", blank=True)
 
     class Meta:
+        verbose_name = _('author')
+        verbose_name_plural = _('authors')
         ordering = ("last_name", "first_name", "year_of_death")
 
     class Wikidata:
         first_name = WIKIDATA.GIVEN_NAME
         last_name = WIKIDATA.LAST_NAME
         year_of_death = WIKIDATA.DATE_OF_DEATH
+        gender = WIKIDATA.GENDER
         notes = "description"
 
     def __str__(self):
@@ -63,6 +69,33 @@ class Author(WikidataMixin, models.Model):
         else:
             return None
 
+
+class Category(WikidataMixin, models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    class Meta:
+        abstract = True
+
+
+class Epoch(Category):
+    class Meta:
+        verbose_name = _('epoch')
+        verbose_name_plural = _('epochs')
+
+
+class Genre(Category):
+    class Meta:
+        verbose_name = _('genre')
+        verbose_name_plural = _('genres')
+
+
+class Kind(Category):
+    class Meta:
+        verbose_name = _('kind')
+        verbose_name_plural = _('kinds')
+
+
 class Book(WikidataMixin, models.Model):
     slug = models.SlugField(max_length=255, blank=True, null=True, unique=True)
     authors = models.ManyToManyField(Author, blank=True)
@@ -72,6 +105,9 @@ class Book(WikidataMixin, models.Model):
         related_query_name="translated_book",
         blank=True,
     )
+    epochs = models.ManyToManyField(Epoch, blank=True)
+    kinds = models.ManyToManyField(Kind, blank=True)
+    genres = models.ManyToManyField(Genre, blank=True)
     title = models.CharField(max_length=255, blank=True)
     language = models.CharField(max_length=255, blank=True)
     based_on = models.ForeignKey(
@@ -91,6 +127,8 @@ class Book(WikidataMixin, models.Model):
 
     class Meta:
         ordering = ("title",)
+        verbose_name = _('book')
+        verbose_name_plural = _('books')
 
     class Wikidata:
         authors = WIKIDATA.AUTHOR
@@ -128,5 +166,10 @@ class Collection(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
 
+    class Meta:
+        verbose_name = _('collection')
+        verbose_name_plural = _('collections')
+
     def __str__(self):
         return self.name
+

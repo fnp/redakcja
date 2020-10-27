@@ -7,8 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 16:44+0200\n"
-"PO-Revision-Date: 2020-04-20 16:52+0200\n"
+"POT-Creation-Date: 2020-10-27 14:25+0100\n"
+"PO-Revision-Date: 2020-10-27 14:25+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,47 +18,111 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
 "%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
 "%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 
-#: models.py:22
+#: catalogue/admin.py:49
+msgid "Identification"
+msgstr "Identyfikacja"
+
+#: catalogue/admin.py:63
+msgid "Features"
+msgstr "Cechy"
+
+#: catalogue/admin.py:73
+msgid "Plan"
+msgstr "Plan"
+
+#: catalogue/models.py:26
 msgid "Alive"
 msgstr "Żyje"
 
-#: models.py:23
+#: catalogue/models.py:27
 msgid "Dead"
 msgstr "Zmarły"
 
-#: models.py:24
+#: catalogue/models.py:28
 msgid "Long dead"
 msgstr "Dawno zmarły"
 
-#: models.py:25
+#: catalogue/models.py:29
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: models.py:37 models.py:83
+#: catalogue/models.py:41 catalogue/models.py:120
 msgid "Low"
 msgstr "Niski"
 
-#: models.py:37 models.py:83
+#: catalogue/models.py:41 catalogue/models.py:120
 msgid "Medium"
 msgstr "Średni"
 
-#: models.py:37 models.py:83
+#: catalogue/models.py:41 catalogue/models.py:120
 msgid "High"
 msgstr "Wysoki"
 
-#: templates/catalogue/catalogue.html:7 templates/catalogue/catalogue.html:13
+#: catalogue/models.py:46
+msgid "author"
+msgstr "autor"
+
+#: catalogue/models.py:47
+msgid "authors"
+msgstr "autorzy"
+
+#: catalogue/models.py:83
+msgid "epoch"
+msgstr "epoka"
+
+#: catalogue/models.py:84
+msgid "epochs"
+msgstr "epoki"
+
+#: catalogue/models.py:89
+msgid "genre"
+msgstr "gatunek"
+
+#: catalogue/models.py:90
+msgid "genres"
+msgstr "gatunki"
+
+#: catalogue/models.py:95
+msgid "kind"
+msgstr "rodzaj"
+
+#: catalogue/models.py:96
+msgid "kinds"
+msgstr "rodzaje"
+
+#: catalogue/models.py:130
+msgid "book"
+msgstr "książka"
+
+#: catalogue/models.py:131
+msgid "books"
+msgstr "książki"
+
+#: catalogue/models.py:170
+msgid "collection"
+msgstr "kolekcja"
+
+#: catalogue/models.py:171
+msgid "collections"
+msgstr "kolekcje"
+
+#: catalogue/templates/catalogue/author_detail.html:7
+#: catalogue/templates/catalogue/author_detail.html:13
+#: catalogue/templates/catalogue/book_detail.html:7
+#: catalogue/templates/catalogue/book_detail.html:13
+#: catalogue/templates/catalogue/catalogue.html:7
+#: catalogue/templates/catalogue/catalogue.html:13
 msgid "Catalogue"
 msgstr "Katalog"
 
-#: templates/catalogue/catalogue.html:67
+#: catalogue/templates/catalogue/author_detail.html:66
+#: catalogue/templates/catalogue/catalogue.html:67
 msgid "trans."
 msgstr "tłum."
 
-#: templates/catalogue/catalogue.html:90
+#: catalogue/templates/catalogue/catalogue.html:90
 #, python-format
 msgid "%(c)s author"
 msgid_plural "%(c)s authors"
@@ -65,7 +131,6 @@ msgstr[1] "%(c)s autorów"
 msgstr[2] "%(c)s autorów"
 msgstr[3] ""
 
-#: wikidata.py:18
+#: catalogue/wikidata.py:18
 msgid "If you have a Wikidata ID, like \"Q1337\", enter it and save."
-msgstr ""
-"Jeśli masz identyfikator Wikidanych , jak „Q1337”, wklej go i zapisz."
+msgstr "Jeśli masz identyfikator Wikidanych , jak „Q1337”, wklej go i zapisz."

@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from . import models
 from .wikidata import WikidataAdminMixin
 
@@ -12,11 +13,13 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
         "last_name",
         "status",
         "year_of_death",
+        "gender",
+        "nationality",
         "priority",
         "wikidata_link",
         "slug",
     ]
-    list_filter = ["year_of_death", "priority", "collections", "status"]
+    list_filter = ["year_of_death", "priority", "collections", "status", "gender", "nationality"]
     search_fields = ["first_name", "last_name", "wikidata"]
     prepopulated_fields = {"slug": ("first_name", "last_name")}
     autocomplete_fields = ["collections"]
@@ -36,14 +39,14 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
         "wikidata_link",
     ]
     search_fields = ["title", "wikidata"]
-    autocomplete_fields = ["authors", "translators", "based_on", "collections"]
+    autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
     prepopulated_fields = {"slug": ("title",)}
     list_filter = ["language", "pd_year", "collections"]
     readonly_fields = ["wikidata_link"]
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
         (
-            "Identification",
+            _("Identification"),
             {
                 "fields": [
                     "title",
@@ -57,7 +60,17 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
             },
         ),
         (
-            "Plan",
+            _("Features"),
+            {
+                "fields": [
+                    "epochs",
+                    "genres",
+                    "kinds",
+                ]
+            },
+        ),
+        (
+            _("Plan"),
             {
                 "fields": [
                     "scans_source",
@@ -99,3 +112,11 @@ class CollectionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Collection, CollectionAdmin)
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
+
+admin.site.register(models.Epoch, CategoryAdmin)
+admin.site.register(models.Genre, CategoryAdmin)
+admin.site.register(models.Kind, CategoryAdmin)
