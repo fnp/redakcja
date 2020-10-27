@@ -3,6 +3,7 @@
 #
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from fnpdjango.actions import export_as_csv_action
 from . import models
 from .wikidata import WikidataAdminMixin
 
@@ -43,6 +44,7 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     list_filter = ["language", "pd_year", "collections"]
     readonly_fields = ["wikidata_link"]
+    actions = [export_as_csv_action()]
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
         (
