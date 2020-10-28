@@ -1,6 +1,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from collections import Counter
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from fnpdjango.actions import export_as_csv_action
@@ -93,6 +94,15 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
             qs = qs.prefetch_related("authors", "translators")
         return qs
 
+    def estimated_costs(self, obj):
+        return "\n".join(
+            "{}: {} zł".format(
+                work_type.name,
+                cost or '—'
+            )
+            for work_type, cost in obj.get_estimated_costs().items()
+        )
+
 
 admin.site.register(models.Book, BookAdmin)
 
@@ -112,7 +122,31 @@ class CollectionAdmin(admin.ModelAdmin):
     autocomplete_fields = []
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ["name"]
+    fields = ['name', 'slug', 'estimated_costs']
+    readonly_fields = ['estimated_costs']
     inlines = [AuthorInline, BookInline]
+
+    def estimated_costs(self, obj):
+        costs = Counter()
+        for book in obj.book_set.all():
+            for k, v in book.get_estimated_costs().items():
+                costs[k] += v or 0
+
+        for author in obj.author_set.all():
+            for book in author.book_set.all():
+                for k, v in book.get_estimated_costs().items():
+                    costs[k] += v or 0
+            for book in author.translated_book_set.all():
+                for k, v in book.get_estimated_costs().items():
+                    costs[k] += v or 0
+
+        return "\n".join(
+            "{}: {} zł".format(
+                work_type.name,
+                cost or '—'
+            )
+            for work_type, cost in costs.items()
+        )
 
 
 admin.site.register(models.Collection, CollectionAdmin)

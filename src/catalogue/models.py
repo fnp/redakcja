@@ -168,14 +168,11 @@ class Book(WikidataMixin, models.Model):
         DBook = apps.get_model("documents", "Book")
         return DBook.objects.filter(dc_slug=self.slug)
 
-    def estimated_costs(self):
-        return "\n".join(
-            "{}: {} zł".format(
-                work_type.name,
-                work_type.calculate(self) or '—'
-            )
+    def get_estimated_costs(self):
+        return {
+            work_type: work_type.calculate(self)
             for work_type in WorkType.objects.all()
-        )
+        }
 
 
 class Collection(models.Model):
