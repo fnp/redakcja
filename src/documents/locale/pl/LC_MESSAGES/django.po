@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 16:53+0200\n"
 "PO-Revision-Date: 2020-04-20 16:54+0200\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
@@ -20,352 +19,365 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 2.2.4\n"
 
-#: forms.py:41
+#: documents/forms.py:41
 msgid "Text file must be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: forms.py:57
+#: documents/forms.py:57
 msgid "Title not set"
 msgstr "Brak tytułu"
 
-#: forms.py:60
+#: documents/forms.py:60
 msgid "Slug not set"
 msgstr "Brak slugu"
 
-#: forms.py:63
+#: documents/forms.py:63
 msgid "You must either enter text or upload a file"
 msgstr "Proszę wpisać tekst albo wybrać plik do załadowania"
 
-#: forms.py:72
+#: documents/forms.py:72
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: forms.py:73
+#: documents/forms.py:73
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: forms.py:97 forms.py:198
+#: documents/forms.py:97 documents/forms.py:198
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: forms.py:118 forms.py:132
+#: documents/forms.py:118 documents/forms.py:132
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: forms.py:141
+#: documents/forms.py:141
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: models/book.py:27 models/chunk.py:21 models/image.py:20
+#: documents/models/book.py:27 documents/models/chunk.py:21
+#: documents/models/image.py:20
 msgid "title"
 msgstr "tytuł"
 
-#: models/book.py:28 models/chunk.py:22 models/image.py:21
+#: documents/models/book.py:28 documents/models/chunk.py:22
+#: documents/models/image.py:21
 msgid "slug"
 msgstr "slug"
 
-#: models/book.py:29 models/image.py:22
+#: documents/models/book.py:29 documents/models/image.py:22
 msgid "public"
 msgstr "publiczna"
 
-#: models/book.py:30
+#: documents/models/book.py:30
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: models/book.py:34
+#: documents/models/book.py:34
 msgid "parent"
 msgstr "rodzic"
 
-#: models/book.py:35
+#: documents/models/book.py:35
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: models/book.py:53 models/chunk.py:19 models/publish_log.py:15
+#: documents/models/book.py:53 documents/models/chunk.py:19
+#: documents/models/publish_log.py:15
 msgid "book"
 msgstr "książka"
 
-#: models/book.py:54 views.py:619
+#: documents/models/book.py:54 documents/views.py:619
 msgid "books"
 msgstr "książki"
 
-#: models/book.py:263
+#: documents/models/book.py:263
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: models/book.py:267
+#: documents/models/book.py:267
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: models/book.py:274 models/image.py:83
+#: documents/models/book.py:274 documents/models/image.py:83
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: models/book.py:276 models/image.py:85
+#: documents/models/book.py:276 documents/models/image.py:85
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: models/book.py:278 models/image.py:87
+#: documents/models/book.py:278 documents/models/image.py:87
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: models/book.py:281 models/image.py:91
+#: documents/models/book.py:281 documents/models/image.py:91
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
-#: models/chunk.py:20
+#: documents/models/chunk.py:20
 msgid "number"
 msgstr "numer"
 
-#: models/chunk.py:23
+#: documents/models/chunk.py:23
 msgid "gallery start"
 msgstr "początek galerii"
 
-#: models/chunk.py:38
+#: documents/models/chunk.py:38
 msgid "chunk"
 msgstr "część"
 
-#: models/chunk.py:39
+#: documents/models/chunk.py:39
 msgid "chunks"
 msgstr "części"
 
-#: models/image.py:19 models/image.py:33 models/publish_log.py:43
+#: documents/models/image.py:19 documents/models/image.py:33
+#: documents/models/publish_log.py:43
 msgid "image"
 msgstr "obraz"
 
-#: models/image.py:34
+#: documents/models/image.py:34
 msgid "images"
 msgstr "obrazy"
 
-#: models/image.py:75
+#: documents/models/image.py:75
 msgid "There is no publishable revision"
 msgstr "Żadna wersja nie została oznaczona do publikacji."
 
-#: models/project.py:11
+#: documents/models/project.py:11
 msgid "name"
 msgstr "nazwa"
 
-#: models/project.py:12
+#: documents/models/project.py:12
 msgid "notes"
 msgstr "notatki"
 
-#: models/project.py:17 templates/documents/book_list/book_list.html:66
-#: templates/documents/image_table.html:60
+#: documents/models/project.py:17
+#: documents/templates/documents/book_list/book_list.html:66
+#: documents/templates/documents/image_table.html:60
 msgid "project"
 msgstr "projekt"
 
-#: models/project.py:18
+#: documents/models/project.py:18
 msgid "projects"
 msgstr "projekty"
 
-#: models/publish_log.py:16 models/publish_log.py:44
+#: documents/models/publish_log.py:16 documents/models/publish_log.py:44
 msgid "time"
 msgstr "czas"
 
-#: models/publish_log.py:17 models/publish_log.py:45
-#: templates/documents/wall.html:20
+#: documents/models/publish_log.py:17 documents/models/publish_log.py:45
+#: documents/templates/documents/wall.html:20
 msgid "user"
 msgstr "użytkownik"
 
-#: models/publish_log.py:22 models/publish_log.py:31
+#: documents/models/publish_log.py:22 documents/models/publish_log.py:31
 msgid "book publish record"
 msgstr "zapis publikacji książki"
 
-#: models/publish_log.py:23
+#: documents/models/publish_log.py:23
 msgid "book publish records"
 msgstr "zapisy publikacji książek"
 
-#: models/publish_log.py:32 models/publish_log.py:46
+#: documents/models/publish_log.py:32 documents/models/publish_log.py:46
 msgid "change"
 msgstr "zmiana"
 
-#: models/publish_log.py:36
+#: documents/models/publish_log.py:36
 msgid "chunk publish record"
 msgstr "zapis publikacji części"
 
-#: models/publish_log.py:37
+#: documents/models/publish_log.py:37
 msgid "chunk publish records"
 msgstr "zapisy publikacji części"
 
-#: models/publish_log.py:51
+#: documents/models/publish_log.py:51
 msgid "image publish record"
 msgstr "zapis publikacji obrazu"
 
-#: models/publish_log.py:52
+#: documents/models/publish_log.py:52
 msgid "image publish records"
 msgstr "zapisy publikacji obrazów"
 
-#: templates/documents/active_users_list.html:5
+#: documents/templates/documents/active_users_list.html:5
 msgid "Active users"
 msgstr "Aktywni użytkownicy"
 
-#: templates/documents/active_users_list.html:11
+#: documents/templates/documents/active_users_list.html:11
 msgid "Users active in the year"
 msgstr "Użytkownicy aktywni w roku"
 
-#: templates/documents/activity.html:6 templates/documents/activity.html:15
-#: templatetags/documents.py:30
+#: documents/templates/documents/activity.html:6
+#: documents/templates/documents/activity.html:15
+#: documents/templatetags/documents.py:30
 msgid "Activity"
 msgstr "Aktywność"
 
-#: templates/documents/base.html:13
+#: documents/templates/documents/base.html:13
 msgid "Platforma Redakcyjna"
 msgstr "Platforma Redakcyjna"
 
-#: templates/documents/book_append_to.html:5
-#: templates/documents/book_append_to.html:14
+#: documents/templates/documents/book_append_to.html:5
+#: documents/templates/documents/book_append_to.html:14
 msgid "Append book"
 msgstr "Dołącz książkę"
 
-#: templates/documents/book_detail.html:24
-#: templates/documents/book_edit.html:13 templates/documents/chunk_edit.html:22
-#: templates/documents/image_detail.html:22
+#: documents/templates/documents/book_detail.html:24
+#: documents/templates/documents/book_edit.html:13
+#: documents/templates/documents/chunk_edit.html:22
+#: documents/templates/documents/image_detail.html:22
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/documents/book_detail.html:31
+#: documents/templates/documents/book_detail.html:31
 msgid "Edit gallery"
 msgstr "Edytuj galerię"
 
-#: templates/documents/book_detail.html:34
+#: documents/templates/documents/book_detail.html:34
 msgid "Append to other book"
 msgstr "Dołącz do innej książki"
 
-#: templates/documents/book_detail.html:49
+#: documents/templates/documents/book_detail.html:53
 msgid "Chunks"
 msgstr "Części"
 
-#: templates/documents/book_detail.html:67
-#: templates/documents/image_detail.html:47 templatetags/wall.py:108
-#: templatetags/wall.py:129
+#: documents/templates/documents/book_detail.html:71
+#: documents/templates/documents/image_detail.html:47
+#: documents/templatetags/wall.py:108 documents/templatetags/wall.py:129
 msgid "Publication"
 msgstr "Publikacja"
 
-#: templates/documents/book_detail.html:85
-#: templates/documents/image_detail.html:51
+#: documents/templates/documents/book_detail.html:89
+#: documents/templates/documents/image_detail.html:51
 msgid "Last published"
 msgstr "Ostatnio opublikowano"
 
-#: templates/documents/book_detail.html:95
+#: documents/templates/documents/book_detail.html:99
 msgid "Full XML"
 msgstr "Pełny XML"
 
-#: templates/documents/book_detail.html:96
+#: documents/templates/documents/book_detail.html:100
 msgid "HTML version"
 msgstr "Wersja HTML"
 
-#: templates/documents/book_detail.html:97
+#: documents/templates/documents/book_detail.html:101
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: templates/documents/book_detail.html:98
+#: documents/templates/documents/book_detail.html:102
 msgid "PDF version"
 msgstr "Wersja PDF"
 
-#: templates/documents/book_detail.html:99
+#: documents/templates/documents/book_detail.html:103
 msgid "PDF version for mobiles"
 msgstr "Wersja PDF na telefony"
 
-#: templates/documents/book_detail.html:100
+#: documents/templates/documents/book_detail.html:104
 msgid "EPUB version"
 msgstr "Wersja EPUB"
 
-#: templates/documents/book_detail.html:101
+#: documents/templates/documents/book_detail.html:105
 msgid "MOBI version"
 msgstr "Wersja MOBI"
 
-#: templates/documents/book_detail.html:115
-#: templates/documents/image_detail.html:70
+#: documents/templates/documents/book_detail.html:119
+#: documents/templates/documents/image_detail.html:70
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: templates/documents/book_detail.html:119
-#: templates/documents/image_detail.html:74
+#: documents/templates/documents/book_detail.html:123
+#: documents/templates/documents/image_detail.html:74
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
-#: templates/documents/book_detail.html:122
-#: templates/documents/image_detail.html:77
+#: documents/templates/documents/book_detail.html:126
+#: documents/templates/documents/image_detail.html:77
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
-#: templates/documents/book_edit.html:5
+#: documents/templates/documents/book_edit.html:5
 msgid "Edit book"
 msgstr "Edytuj książkę"
 
-#: templates/documents/book_html.html:12 templates/documents/book_text.html:15
+#: documents/templates/documents/book_html.html:12
+#: documents/templates/documents/book_text.html:15
 msgid "Table of contents"
 msgstr "Spis treści"
 
-#: templates/documents/book_html.html:13 templates/documents/book_text.html:17
+#: documents/templates/documents/book_html.html:13
+#: documents/templates/documents/book_text.html:17
 msgid "Edit. note"
 msgstr "Nota red."
 
-#: templates/documents/book_html.html:14
+#: documents/templates/documents/book_html.html:14
 msgid "Infobox"
 msgstr "Informacje"
 
-#: templates/documents/book_list/book.html:8
-#: templates/documents/book_list/book.html:35
+#: documents/templates/documents/book_list/book.html:8
+#: documents/templates/documents/book_list/book.html:35
 msgid "Book settings"
 msgstr "Ustawienia książki"
 
-#: templates/documents/book_list/book.html:9
-#: templates/documents/book_list/chunk.html:7
-#: templates/documents/chunk_edit.html:6 templates/documents/chunk_edit.html:12
+#: documents/templates/documents/book_list/book.html:9
+#: documents/templates/documents/book_list/chunk.html:7
+#: documents/templates/documents/chunk_edit.html:6
+#: documents/templates/documents/chunk_edit.html:12
 msgid "Chunk settings"
 msgstr "Ustawienia części"
 
-#: templates/documents/book_list/book.html:20
-#: templates/documents/book_list/book.html:42
-#: templates/documents/image_short.html:17 templatetags/book_list.py:82
-#: templatetags/book_list.py:150
+#: documents/templates/documents/book_list/book.html:20
+#: documents/templates/documents/book_list/book.html:42
+#: documents/templates/documents/image_short.html:17
+#: documents/templatetags/book_list.py:82
+#: documents/templatetags/book_list.py:150
 msgid "published"
 msgstr "opublikowane"
 
-#: templates/documents/book_list/book.html:23
-#: templates/documents/book_list/book.html:45
-#: templates/documents/image_short.html:20 templatetags/book_list.py:80
-#: templatetags/book_list.py:148
+#: documents/templates/documents/book_list/book.html:23
+#: documents/templates/documents/book_list/book.html:45
+#: documents/templates/documents/image_short.html:20
+#: documents/templatetags/book_list.py:80
+#: documents/templatetags/book_list.py:148
 msgid "publishable"
 msgstr "do publikacji"
 
-#: templates/documents/book_list/book.html:26
-#: templates/documents/book_list/chunk.html:26
-#: templates/documents/image_short.html:23 templatetags/book_list.py:81
-#: templatetags/book_list.py:149
+#: documents/templates/documents/book_list/book.html:26
+#: documents/templates/documents/book_list/chunk.html:26
+#: documents/templates/documents/image_short.html:23
+#: documents/templatetags/book_list.py:81
+#: documents/templatetags/book_list.py:149
 msgid "changed"
 msgstr "zmienione"
 
-#: templates/documents/book_list/book_list.html:29
-#: templates/documents/image_table.html:25
+#: documents/templates/documents/book_list/book_list.html:29
+#: documents/templates/documents/image_table.html:25
 msgid "Search in book titles"
 msgstr "Szukaj w tytułach książek"
 
-#: templates/documents/book_list/book_list.html:34
-#: templates/documents/image_table.html:30
+#: documents/templates/documents/book_list/book_list.html:34
+#: documents/templates/documents/image_table.html:30
 msgid "stage"
 msgstr "etap"
 
-#: templates/documents/book_list/book_list.html:36
-#: templates/documents/book_list/book_list.html:47
-#: templates/documents/book_list/book_list.html:68
-#: templates/documents/image_table.html:32
-#: templates/documents/image_table.html:43
-#: templates/documents/image_table.html:62
+#: documents/templates/documents/book_list/book_list.html:36
+#: documents/templates/documents/book_list/book_list.html:47
+#: documents/templates/documents/book_list/book_list.html:68
+#: documents/templates/documents/image_table.html:32
+#: documents/templates/documents/image_table.html:43
+#: documents/templates/documents/image_table.html:62
 msgid "none"
 msgstr "brak"
 
-#: templates/documents/book_list/book_list.html:45
-#: templates/documents/image_table.html:41
+#: documents/templates/documents/book_list/book_list.html:45
+#: documents/templates/documents/image_table.html:41
 msgid "editor"
 msgstr "redaktor"
 
-#: templates/documents/book_list/book_list.html:58
-#: templates/documents/image_table.html:52
+#: documents/templates/documents/book_list/book_list.html:58
+#: documents/templates/documents/image_table.html:52
 msgid "status"
 msgstr "status"
 
-#: templates/documents/book_list/book_list.html:92
+#: documents/templates/documents/book_list/book_list.html:92
 #, python-format
 msgid "%(c)s book"
 msgid_plural "%(c)s books"
@@ -373,73 +385,74 @@ msgstr[0] "%(c)s książka"
 msgstr[1] "%(c)s książki"
 msgstr[2] "%(c)s książek"
 
-#: templates/documents/book_list/book_list.html:96
+#: documents/templates/documents/book_list/book_list.html:96
 msgid "No books found."
 msgstr "Nie znaleziono książek."
 
-#: templates/documents/book_list/book_list.html:105
-#: templates/documents/image_table.html:87
+#: documents/templates/documents/book_list/book_list.html:105
+#: documents/templates/documents/image_table.html:87
 msgid "Set stage"
 msgstr "Ustaw etap"
 
-#: templates/documents/book_list/book_list.html:106
-#: templates/documents/image_table.html:88
+#: documents/templates/documents/book_list/book_list.html:106
+#: documents/templates/documents/image_table.html:88
 msgid "Set user"
 msgstr "Przypisz redaktora"
 
-#: templates/documents/book_list/book_list.html:108
-#: templates/documents/image_table.html:90
+#: documents/templates/documents/book_list/book_list.html:108
+#: documents/templates/documents/image_table.html:90
 msgid "Project"
 msgstr "Projekt"
 
-#: templates/documents/book_list/book_list.html:109
-#: templates/documents/image_table.html:91
+#: documents/templates/documents/book_list/book_list.html:109
+#: documents/templates/documents/image_table.html:91
 msgid "More users"
 msgstr "Więcej użytkowników"
 
-#: templates/documents/book_text.html:7
+#: documents/templates/documents/book_text.html:7
 msgid "Redakcja"
 msgstr ""
 
-#: templates/documents/chunk_add.html:6 templates/documents/chunk_add.html:12
-#: templates/documents/chunk_edit.html:29
+#: documents/templates/documents/chunk_add.html:6
+#: documents/templates/documents/chunk_add.html:12
+#: documents/templates/documents/chunk_edit.html:29
 msgid "Split chunk"
 msgstr "Podziel część"
 
-#: templates/documents/chunk_add.html:19
+#: documents/templates/documents/chunk_add.html:19
 msgid "Insert empty chunk after"
 msgstr "Wstaw pustą część po"
 
-#: templates/documents/chunk_add.html:23
+#: documents/templates/documents/chunk_add.html:23
 msgid "Add chunk"
 msgstr "Dodaj część"
 
-#: templates/documents/chunk_edit.html:19
+#: documents/templates/documents/chunk_edit.html:19
 msgid "Book"
 msgstr "Książka"
 
-#: templates/documents/document_create_missing.html:6
-#: templates/documents/document_create_missing.html:12
+#: documents/templates/documents/document_create_missing.html:6
+#: documents/templates/documents/document_create_missing.html:12
 msgid "Create a new book"
 msgstr "Utwórz nową książkę"
 
-#: templates/documents/document_create_missing.html:21
+#: documents/templates/documents/document_create_missing.html:21
 msgid "Create book"
 msgstr "Utwórz książkę"
 
-#: templates/documents/document_list.html:7
+#: documents/templates/documents/document_list.html:7
 msgid "Book list"
 msgstr "Lista książek"
 
-#: templates/documents/document_upload.html:6
+#: documents/templates/documents/document_upload.html:6
 msgid "Bulk document upload"
 msgstr "Hurtowe dodawanie dokumentów"
 
-#: templates/documents/document_upload.html:14
+#: documents/templates/documents/document_upload.html:14
 msgid "Bulk documents upload"
 msgstr "Hurtowe dodawanie dokumentów"
 
-#: templates/documents/document_upload.html:19
+#: documents/templates/documents/document_upload.html:19
 msgid ""
 "Please submit a ZIP with UTF-8 encoded XML files. Files not ending with "
 "<code>.xml</code> will be ignored."
@@ -447,57 +460,58 @@ msgstr ""
 "Proszę wskazać archiwum ZIP z plikami XML w kodowaniu UTF-8. Pliki nie "
 "kończące się na <code>.xml</code> zostaną zignorowane."
 
-#: templates/documents/document_upload.html:26
-#: templates/documents/upload_pdf.html:16 templatetags/documents.py:37
+#: documents/templates/documents/document_upload.html:26
+#: documents/templates/documents/upload_pdf.html:16
+#: documents/templatetags/documents.py:37
 msgid "Upload"
 msgstr "Załaduj"
 
-#: templates/documents/document_upload.html:34
+#: documents/templates/documents/document_upload.html:34
 msgid ""
 "There have been some errors. No files have been added to the repository."
 msgstr "Wystąpiły błędy. Żadne pliki nie zostały dodane do repozytorium."
 
-#: templates/documents/document_upload.html:35
+#: documents/templates/documents/document_upload.html:35
 msgid "Offending files"
 msgstr "Błędne pliki"
 
-#: templates/documents/document_upload.html:43
+#: documents/templates/documents/document_upload.html:43
 msgid "Correct files"
 msgstr "Poprawne pliki"
 
-#: templates/documents/document_upload.html:54
+#: documents/templates/documents/document_upload.html:54
 msgid "Files have been successfully uploaded to the repository."
 msgstr "Pliki zostały dodane do repozytorium."
 
-#: templates/documents/document_upload.html:55
+#: documents/templates/documents/document_upload.html:55
 msgid "Uploaded files"
 msgstr "Dodane pliki"
 
-#: templates/documents/document_upload.html:65
+#: documents/templates/documents/document_upload.html:65
 msgid "Skipped files"
 msgstr "Pominięte pliki"
 
-#: templates/documents/document_upload.html:66
+#: documents/templates/documents/document_upload.html:66
 msgid "Files skipped due to no <code>.xml</code> extension"
 msgstr "Pliki pominięte z powodu braku rozszerzenia <code>.xml</code>."
 
-#: templates/documents/image_detail.html:34
+#: documents/templates/documents/image_detail.html:34
 msgid "Editor"
 msgstr "Edytor"
 
-#: templates/documents/image_detail.html:38
+#: documents/templates/documents/image_detail.html:38
 msgid "Proceed to the editor."
 msgstr "Przejdź do edytora."
 
-#: templates/documents/image_list.html:8
+#: documents/templates/documents/image_list.html:8
 msgid "Image list"
 msgstr "Lista obrazów"
 
-#: templates/documents/image_short.html:6
+#: documents/templates/documents/image_short.html:6
 msgid "Image settings"
 msgstr "Ustawienia obrazu"
 
-#: templates/documents/image_table.html:79
+#: documents/templates/documents/image_table.html:79
 #, python-format
 msgid "%(c)s image"
 msgid_plural "%(c)s images"
@@ -505,85 +519,91 @@ msgstr[0] "%(c)s obraz"
 msgstr[1] "%(c)s obrazy"
 msgstr[2] "%(c)s obrazów"
 
-#: templates/documents/image_table.html:81
+#: documents/templates/documents/image_table.html:81
 msgid "No images found."
 msgstr "Nie znaleziono obrazów."
 
-#: templates/documents/my_page.html:17 templatetags/documents.py:28
+#: documents/templates/documents/my_page.html:17
+#: documents/templatetags/documents.py:28
 msgid "My page"
 msgstr "Moja strona"
 
-#: templates/documents/my_page.html:27
+#: documents/templates/documents/my_page.html:27
 msgid "Your last edited documents"
 msgstr "Twoje ostatnie edycje"
 
-#: templates/documents/my_page.html:47 templates/documents/user_page.html:18
+#: documents/templates/documents/my_page.html:47
+#: documents/templates/documents/user_page.html:18
 msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
 
-#: templates/documents/upload_pdf.html:5 templates/documents/upload_pdf.html:11
+#: documents/templates/documents/upload_pdf.html:5
+#: documents/templates/documents/upload_pdf.html:11
 msgid "PDF file upload"
 msgstr "Ładowanie pliku PDF"
 
-#: templates/documents/user_list.html:7 templates/documents/user_list.html:14
-#: templatetags/documents.py:33
+#: documents/templates/documents/user_list.html:7
+#: documents/templates/documents/user_list.html:14
+#: documents/templatetags/documents.py:33
 msgid "Users"
 msgstr "Użytkownicy"
 
-#: templates/documents/wall.html:30
+#: documents/templates/documents/wall.html:30
 msgid "not logged in"
 msgstr "nie zalogowany"
 
-#: templates/documents/wall.html:35
+#: documents/templates/documents/wall.html:35
 msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
-#: templatetags/book_list.py:83 templatetags/book_list.py:151
+#: documents/templatetags/book_list.py:83
+#: documents/templatetags/book_list.py:151
 msgid "unpublished"
 msgstr "nie opublikowane"
 
-#: templatetags/book_list.py:84 templatetags/book_list.py:152
+#: documents/templatetags/book_list.py:84
+#: documents/templatetags/book_list.py:152
 msgid "empty"
 msgstr "puste"
 
-#: templatetags/documents.py:31
+#: documents/templatetags/documents.py:31
 msgid "All"
 msgstr "Wszystkie"
 
-#: templatetags/documents.py:32
+#: documents/templatetags/documents.py:32
 msgid "Images"
 msgstr "Obrazy"
 
-#: templatetags/documents.py:36
+#: documents/templatetags/documents.py:36
 msgid "Add"
 msgstr "Dodaj"
 
-#: templatetags/documents.py:39
+#: documents/templatetags/documents.py:39
 msgid "Covers"
 msgstr "Okładki"
 
-#: templatetags/wall.py:49 templatetags/wall.py:78
+#: documents/templatetags/wall.py:49 documents/templatetags/wall.py:78
 msgid "Related edit"
 msgstr "Powiązana zmiana"
 
-#: templatetags/wall.py:51 templatetags/wall.py:80
+#: documents/templatetags/wall.py:51 documents/templatetags/wall.py:80
 msgid "Edit"
 msgstr "Zmiana"
 
-#: views.py:172
+#: documents/views.py:172
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: views.py:174
+#: documents/views.py:174
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: views.py:180
+#: documents/views.py:180
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: views.py:621
+#: documents/views.py:621
 msgid "scan gallery"
 msgstr "galeria skanów"
 

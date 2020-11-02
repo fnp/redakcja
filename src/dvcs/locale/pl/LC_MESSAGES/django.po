@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-14 15:25+0100\n"
 "PO-Revision-Date: 2011-12-14 15:27+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,110 +14,105 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2)\n"
 
-#: models.py:19
+#: dvcs/models.py:23
 msgid "name"
 msgstr "nazwa"
 
-#: models.py:20
+#: dvcs/models.py:24
 msgid "slug"
 msgstr "slug"
 
-#: models.py:22
+#: dvcs/models.py:25
 msgid "ordering"
 msgstr "kolejność"
 
-#: models.py:70
+#: dvcs/models.py:74
 msgid "author"
 msgstr "autor"
 
-#: models.py:71
+#: dvcs/models.py:76
 msgid "author name"
 msgstr "imię i nazwisko autora"
 
-#: models.py:73
-#: models.py:77
+#: dvcs/models.py:76 dvcs/models.py:78
 msgid "Used if author is not set."
 msgstr "Używane, gdy nie jest ustawiony autor."
 
-#: models.py:75
+#: dvcs/models.py:78
 msgid "author email"
 msgstr "e-mail autora"
 
-#: models.py:79
+#: dvcs/models.py:79
 msgid "revision"
 msgstr "rewizja"
 
-#: models.py:83
+#: dvcs/models.py:82
 msgid "parent"
 msgstr "rodzic"
 
-#: models.py:88
+#: dvcs/models.py:85
 msgid "merge parent"
 msgstr "drugi rodzic"
 
-#: models.py:91
+#: dvcs/models.py:87
 msgid "description"
 msgstr "opis"
 
-#: models.py:94
+#: dvcs/models.py:89
 msgid "publishable"
 msgstr "do publikacji"
 
-#: models.py:176
+#: dvcs/models.py:175
 msgid "tag"
 msgstr "tag"
 
-#: models.py:176
-#: models.py:178
-#: models.py:194
-#: models.py:196
+#: dvcs/models.py:175 dvcs/models.py:177 dvcs/models.py:193 dvcs/models.py:195
 msgid "for:"
 msgstr "dla:"
 
-#: models.py:178
-#: models.py:202
+#: dvcs/models.py:177 dvcs/models.py:200
 msgid "tags"
 msgstr "tagi"
 
-#: models.py:194
+#: dvcs/models.py:193
 msgid "change"
 msgstr "zmiana"
 
-#: models.py:196
+#: dvcs/models.py:195
 msgid "changes"
 msgstr "zmiany"
 
-#: models.py:201
+#: dvcs/models.py:199
 msgid "document"
 msgstr "dokument"
 
-#: models.py:203
+#: dvcs/models.py:201
 msgid "data"
 msgstr "dane"
 
-#: models.py:217
+#: dvcs/models.py:215
 msgid "stage"
 msgstr "etap"
 
-#: models.py:225
+#: dvcs/models.py:223
 msgid "head"
 msgstr "głowica"
 
-#: models.py:226
+#: dvcs/models.py:223
 msgid "This document's current head."
 msgstr "Aktualna wersja dokumentu."
 
-#: models.py:230
+#: dvcs/models.py:228
 msgid "creator"
 msgstr "utworzył"
 
-#: models.py:245
+#: dvcs/models.py:240
 msgid "user"
 msgstr "użytkownik"
 
-#: models.py:245
+#: dvcs/models.py:240
 msgid "Work assignment."
 msgstr "Przypisanie pracy użytkownikowi."
-

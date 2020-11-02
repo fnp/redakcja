@@ -76,6 +76,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'admin_numeric_filter',
     'django.contrib.admin',
     'django.contrib.admindocs',
 
@@ -101,6 +102,10 @@ INSTALLED_APPS = (
 
 if DEBUG:
     INSTALLED_APPS += ('debug_toolbar',)
+
+LOCALE_PATHS = [
+    PROJECT_ROOT + "/locale-contrib",
+]
 
 LOGIN_REDIRECT_URL = '/documents/user'
 

@@ -7,10 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-25 13:29+0100\n"
 "PO-Revision-Date: 2014-02-25 13:30+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,83 +18,102 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:29
+#: cover/forms.py:34
 #, python-format
 msgid "Image <a href=\"%(url)s\">already in repository</a>."
 msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
 
-#: forms.py:60
+#: cover/forms.py:44
+#, fuzzy, python-format
+#| msgid "Image <a href=\"%(url)s\">already in repository</a>."
+msgid "Image <a href=\"%s\">already in repository</a>"
+msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
+
+#: cover/forms.py:53
+msgid "No image specified"
+msgstr ""
+
+#: cover/forms.py:61 cover/forms.py:78
+#, python-format
+msgid "Image too small: %sx%s, minimal dimensions %sx%s"
+msgstr ""
+
+#: cover/forms.py:95
 msgid "Flickr URL"
 msgstr "URL z Flickra"
 
-#: models.py:19
+#: cover/models.py:23
 msgid "title"
 msgstr "tytuł"
 
-#: models.py:20
+#: cover/models.py:24
 msgid "author"
 msgstr "autor"
 
-#: models.py:21
+#: cover/models.py:25
 msgid "license name"
 msgstr "nazwa licencji"
 
-#: models.py:22
+#: cover/models.py:26
 msgid "license URL"
 msgstr "URL licencji"
 
-#: models.py:23
+#: cover/models.py:27
 msgid "source URL"
 msgstr "URL źródła"
 
-#: models.py:24
+#: cover/models.py:28
 msgid "image download URL"
 msgstr "URL pliku do pobrania"
 
-#: models.py:25
+#: cover/models.py:30
 msgid "file"
 msgstr "plik"
 
-#: models.py:28
+#: cover/models.py:33
 msgid "cover image"
 msgstr "obrazek na okładkę"
 
-#: models.py:29
+#: cover/models.py:34
 msgid "cover images"
 msgstr "obrazki na okładki"
 
-#: templates/cover/add_image.html:33 templates/cover/add_image.html.py:62
+#: cover/templates/cover/add_image.html:5
+#: cover/templates/cover/add_image.html:10
+#: cover/templates/cover/add_image.html:27
 msgid "Add image"
 msgstr "Dodaj obrazek"
 
-#: templates/cover/add_image.html:40
+#: cover/templates/cover/add_image.html:19
 msgid "Load from Flickr"
 msgstr "Pobierz z Flickra"
 
-#: templates/cover/image_detail.html:7
+#: cover/templates/cover/image_detail.html:6
+#: cover/templates/cover/image_detail.html:9
 msgid "Cover image"
 msgstr "Obrazek na okładkę"
 
-#: templates/cover/image_detail.html:23
+#: cover/templates/cover/image_detail.html:25
 msgid "source"
 msgstr "źródło"
 
-#: templates/cover/image_detail.html:35
+#: cover/templates/cover/image_detail.html:36
 msgid "Change"
 msgstr "Zmień"
 
-#: templates/cover/image_detail.html:41
+#: cover/templates/cover/image_detail.html:42
 msgid "Used in:"
 msgstr "Użyte w:"
 
-#: templates/cover/image_detail.html:49
+#: cover/templates/cover/image_detail.html:50
 msgid "None"
 msgstr "Brak"
 
-#: templates/cover/image_list.html:7
+#: cover/templates/cover/image_list.html:5
+#: cover/templates/cover/image_list.html:10
 msgid "Cover images"
 msgstr "Obrazki na okładki"
 
-#: templates/cover/image_list.html:10
+#: cover/templates/cover/image_list.html:15
 msgid "Add new"
 msgstr "Dodaj nowy"

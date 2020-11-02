@@ -7,125 +7,122 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-14 15:25+0100\n"
 "PO-Revision-Date: 2011-12-14 15:26+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>\n"
+"Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
+"pl>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: forms.py:18
+#: wiki_img/forms.py:16
 msgid "Completed"
 msgstr "Ukończono"
 
-#: forms.py:19
+#: wiki_img/forms.py:17
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: views.py:126
-msgid "Publishable"
-msgstr "Gotowe do publikacji"
-
-#: templates/wiki_img/base.html:15
-msgid "Platforma Redakcyjna"
-msgstr ""
-
-#: templates/wiki_img/diff_table.html:5
+#: wiki_img/templates/wiki_img/diff_table.html:5
 msgid "Old version"
 msgstr "Stara wersja"
 
-#: templates/wiki_img/diff_table.html:6
+#: wiki_img/templates/wiki_img/diff_table.html:6
 msgid "New version"
 msgstr "Nowa wersja"
 
-#: templates/wiki_img/document_details_base.html:31
+#: wiki_img/templates/wiki_img/document_details_base.html:48
 msgid "Help"
 msgstr "Pomoc"
 
-#: templates/wiki_img/document_details_base.html:33
+#: wiki_img/templates/wiki_img/document_details_base.html:50
 msgid "Version"
 msgstr "Wersja"
 
-#: templates/wiki_img/document_details_base.html:33
+#: wiki_img/templates/wiki_img/document_details_base.html:50
 msgid "Unknown"
 msgstr "nieznana"
 
-#: templates/wiki_img/document_details_base.html:35
-#: templates/wiki_img/tag_dialog.html:15
+#: wiki_img/templates/wiki_img/document_details_base.html:52
 msgid "Save"
 msgstr "Zapisz"
 
-#: templates/wiki_img/document_details_base.html:36
+#: wiki_img/templates/wiki_img/document_details_base.html:53
 msgid "Save attempt in progress"
 msgstr "Trwa zapisywanie"
 
-#: templates/wiki_img/document_details_base.html:37
+#: wiki_img/templates/wiki_img/document_details_base.html:54
 msgid "There is a newer version of this document!"
 msgstr "Istnieje nowsza wersja tego dokumentu!"
 
-#: templates/wiki_img/tag_dialog.html:16
-msgid "Cancel"
-msgstr "Anuluj"
-
-#: templates/wiki_img/tabs/history_view.html:5
+#: wiki_img/templates/wiki_img/tabs/history_view.html:6
 msgid "Compare versions"
 msgstr "Porównaj wersje"
 
-#: templates/wiki_img/tabs/history_view.html:8
+#: wiki_img/templates/wiki_img/tabs/history_view.html:9
 msgid "Mark for publishing"
 msgstr "Oznacz do publikacji"
 
-#: templates/wiki_img/tabs/history_view.html:11
+#: wiki_img/templates/wiki_img/tabs/history_view.html:12
 msgid "Revert document"
 msgstr "Przywróć wersję"
 
-#: templates/wiki_img/tabs/history_view.html:14
+#: wiki_img/templates/wiki_img/tabs/history_view.html:15
 msgid "View version"
 msgstr "Zobacz wersję"
 
-#: templates/wiki_img/tabs/motifs_editor.html:4
-#: templates/wiki_img/tabs/motifs_editor_item.html:3
+#: wiki_img/templates/wiki_img/tabs/motifs_editor.html:5
+#: wiki_img/templates/wiki_img/tabs/motifs_editor_item.html:3
 msgid "Motifs"
 msgstr "Motywy"
 
-#: templates/wiki_img/tabs/motifs_editor.html:5
-#: templates/wiki_img/tabs/objects_editor.html:5
+#: wiki_img/templates/wiki_img/tabs/motifs_editor.html:6
+#: wiki_img/templates/wiki_img/tabs/objects_editor.html:6
 msgid "Add"
 msgstr "Dodaj"
 
-#: templates/wiki_img/tabs/objects_editor.html:4
+#: wiki_img/templates/wiki_img/tabs/objects_editor.html:5
 msgid "Object name"
 msgstr "Nazwa obiektu"
 
-#: templates/wiki_img/tabs/objects_editor_item.html:3
+#: wiki_img/templates/wiki_img/tabs/objects_editor_item.html:3
 msgid "Objects"
 msgstr "Obiekty"
 
-#: templates/wiki_img/tabs/source_editor_item.html:5
+#: wiki_img/templates/wiki_img/tabs/source_editor_item.html:5
 msgid "Source code"
 msgstr "Kod źródłowy"
 
-#: templates/wiki_img/tabs/summary_view.html:8
-msgid "Title"
-msgstr "Tytuł"
+#: wiki_img/views.py:134
+msgid "Publishable"
+msgstr "Gotowe do publikacji"
 
-#: templates/wiki_img/tabs/summary_view.html:13
-msgid "Document ID"
-msgstr "ID dokumentu"
+#: wiki_img/views.py:212
+msgid "Revision marked"
+msgstr ""
 
-#: templates/wiki_img/tabs/summary_view.html:17
-msgid "Current version"
-msgstr "Aktualna wersja"
+#: wiki_img/views.py:214
+msgid "Nothing changed"
+msgstr ""
 
-#: templates/wiki_img/tabs/summary_view.html:20
-msgid "Last edited by"
-msgstr "Ostatnio edytowane przez"
+#~ msgid "Cancel"
+#~ msgstr "Anuluj"
 
-#: templates/wiki_img/tabs/summary_view_item.html:4
-msgid "Summary"
-msgstr "Podsumowanie"
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#~ msgid "Document ID"
+#~ msgstr "ID dokumentu"
+
+#~ msgid "Current version"
+#~ msgstr "Aktualna wersja"
+
+#~ msgid "Last edited by"
+#~ msgstr "Ostatnio edytowane przez"
+
+#~ msgid "Summary"
+#~ msgstr "Podsumowanie"
 
 #~ msgid "First correction"
 #~ msgstr "Autokorekta"

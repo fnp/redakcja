@@ -1,0 +1,48 @@
+# This file is distributed under the same license as the django-admin-numeric-filter package.
+#
+# Translators: 
+# Radek Czajka <radekczajka@mdrn.pl>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: django-admin-numeric-filter\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-11-02 12:08+0100\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Last-Translator: Radek Czajka <radekczajka@mdrn.pl>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.3\n"
+
+#: forms.py:11
+msgid "Value"
+msgstr "Wartość"
+
+#: forms.py:29
+msgid "From"
+msgstr "Od"
+
+#: forms.py:31
+msgid "To"
+msgstr "Do"
+
+#: templates/admin/filter_numeric_range.html:11
+#: templates/admin/filter_numeric_single.html:11
+#: templates/admin/filter_numeric_slider.html:11
+#, python-format
+msgid "By %(filter_title)s"
+msgstr "Według pola %(filter_title)s"
+
+#: templates/admin/filter_numeric_range.html:17
+#: templates/admin/filter_numeric_single.html:15
+#: templates/admin/filter_numeric_slider.html:26
+msgid "Apply"
+msgstr "Zastosuj"
+
+#: templates/admin/filter_numeric_slider.html:30
+msgid "No enough data."
+msgstr "Brak danych."

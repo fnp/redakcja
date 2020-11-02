@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-18 11:18+0200\n"
 "PO-Revision-Date: 2011-10-18 11:19+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,27 +15,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: templates/404.html:8
+#: redakcja/templates/404.html:4 redakcja/templates/404.html:8
 msgid "Page not found"
 msgstr "Strona nie została znaleziona"
 
-#: templates/404.html:10
+#: redakcja/templates/404.html:10
 #, python-format
 msgid ""
 "The page you're trying\n"
 "to reach (<tt>%(p)s</tt>) could not be found. If it's a document, try\n"
 "looking for it on the <a href=\"/\">document list</a>."
-msgstr "Strona, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj poszukać jej na <a href=\"/\">liście dokumentów</a>."
+msgstr ""
+"Strona, do której próbujesz dotrzeć (<tt>%(p)s</tt>), nie istnieje. Spróbuj "
+"poszukać jej na <a href=\"/\">liście dokumentów</a>."
 
-#: templates/404.html:15
+#: redakcja/templates/404.html:15
 #, python-format
 msgid ""
 "If you\n"
 "still can't find what you're looking for, please\n"
 "<a href=\"%(m)s\">contact the administrator</a>."
-msgstr "Jeśli nadal nie możesz znaleźć tego, czego szukasz, <a href=\"%(m)s\">skontaktuj się z administratorem</a>."
+msgstr ""
+"Jeśli nadal nie możesz znaleźć tego, czego szukasz, <a href=\"%(m)s"
+"\">skontaktuj się z administratorem</a>."
 
-#: templates/404.html:22
+#: redakcja/templates/404.html:22
 #, python-format
 msgid ""
 "If you're coming from Redmine, please note that\n"
@@ -44,70 +47,42 @@ msgid ""
 "Go to the <a href=\"/\">document list</a>\n"
 "or to <a href=\"%(m)s\">your page</a> instead."
 msgstr ""
-"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on już do koordynowania prac redakcyjnych. Możesz za to przejść do <a href=\"/\">listy dokumentów</a>\n"
+"Jeśli skierował Cię tu Redmine, zwróć uwagę, że nie służy on już do "
+"koordynowania prac redakcyjnych. Możesz za to przejść do <a href=\"/\">listy "
+"dokumentów</a>\n"
 "albo do <a href=\"%(m)s\">swojej strony</a>."
 
-#: templates/base.html:7
+#: redakcja/templates/base.html:8
 msgid "Platforma Redakcyjna"
 msgstr ""
 
-#: templates/base.html:16
+#: redakcja/templates/base.html:18
 msgid "Loading"
 msgstr "Ładowanie"
 
-#: templates/admin/index.html:21
-#, python-format
-msgid "Models available in the %(name)s application."
+#: redakcja/templates/pagination/pagination.html:3
+msgid "Pagination"
 msgstr ""
 
-#: templates/admin/index.html:22
-#, python-format
-msgid "%(name)s"
-msgstr ""
-
-#: templates/admin/index.html:32
-msgid "Add"
-msgstr ""
-
-#: templates/admin/index.html:38
-msgid "Change"
-msgstr ""
-
-#: templates/admin/index.html:48
-msgid "You don't have permission to edit anything."
-msgstr ""
-
-#: templates/admin/index.html:56
-msgid "Recent Actions"
-msgstr ""
-
-#: templates/admin/index.html:57
-msgid "My Actions"
-msgstr ""
-
-#: templates/admin/index.html:61
-msgid "None available"
-msgstr ""
-
-#: templates/admin/index.html:75
-msgid "Unknown content"
-msgstr ""
-
-#: templates/pagination/pagination.html:5
-#: templates/pagination/pagination.html:7
+#: redakcja/templates/pagination/pagination.html:8
+#: redakcja/templates/pagination/pagination.html:14
 msgid "previous"
 msgstr "poprzednie"
 
-#: templates/pagination/pagination.html:21
-#: templates/pagination/pagination.html:23
+#: redakcja/templates/pagination/pagination.html:40
+#: redakcja/templates/pagination/pagination.html:46
 msgid "next"
 msgstr "następne"
 
-#: templates/registration/head_login.html:5
+#: redakcja/templates/registration/head_login.html:10
+msgid "Admin"
+msgstr ""
+
+#: redakcja/templates/registration/head_login.html:12
 msgid "Log Out"
 msgstr "Wyloguj"
 
-#: templates/registration/head_login.html:9
+#: redakcja/templates/registration/head_login.html:18
 msgid "Log In"
 msgstr "Logowanie"
 

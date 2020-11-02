@@ -1,3 +1,4 @@
+from collections import Counter
 import decimal
 from django.apps import apps
 from django.db import models
@@ -11,16 +12,17 @@ from .wikidata import WikidataMixin
 
 class Author(WikidataMixin, models.Model):
     slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
-    first_name = models.CharField(max_length=255, blank=True)
-    last_name = models.CharField(max_length=255, blank=True)
+    first_name = models.CharField(_("first name"), max_length=255, blank=True)
+    last_name = models.CharField(_("last name"), max_length=255, blank=True)
 
-    name_de = models.CharField(max_length=255, blank=True)
-    name_lt = models.CharField(max_length=255, blank=True)
+    name_de = models.CharField(_("name (de)"), max_length=255, blank=True)
+    name_lt = models.CharField(_("name (lt)"), max_length=255, blank=True)
 
-    gender = models.CharField(max_length=255, blank=True)
-    nationality = models.CharField(max_length=255, blank=True)
-    year_of_death = models.SmallIntegerField(null=True, blank=True)
+    gender = models.CharField(_("gender"), max_length=255, blank=True)
+    nationality = models.CharField(_("nationality"), max_length=255, blank=True)
+    year_of_death = models.SmallIntegerField(_("year of death"), null=True, blank=True)
     status = models.PositiveSmallIntegerField(
+        _("status"), 
         null=True,
         blank=True,
         choices=[
@@ -30,18 +32,19 @@ class Author(WikidataMixin, models.Model):
             (4, _("Unknown")),
         ],
     )
-    notes = models.TextField(blank=True)
-    gazeta_link = models.CharField(max_length=255, blank=True)
-    culturepl_link = models.CharField(max_length=255, blank=True)
+    notes = models.TextField(_("notes"), blank=True)
+    gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
+    culturepl_link = models.CharField(_("culture.pl link"), max_length=255, blank=True)
 
-    description = models.TextField(blank=True)
-    description_de = models.TextField(blank=True)
-    description_lt = models.TextField(blank=True)
+    description = models.TextField(_("description"), blank=True)
+    description_de = models.TextField(_("description (de)"), blank=True)
+    description_lt = models.TextField(_("description (lt)"), blank=True)
 
     priority = models.PositiveSmallIntegerField(
+        _("priority"), 
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
-    collections = models.ManyToManyField("Collection", blank=True)
+    collections = models.ManyToManyField("Collection", blank=True, verbose_name=_("collections"))
 
     class Meta:
         verbose_name = _('author')
@@ -72,7 +75,7 @@ class Author(WikidataMixin, models.Model):
 
 
 class Category(WikidataMixin, models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
 
     class Meta:
@@ -101,34 +104,37 @@ class Kind(Category):
 
 class Book(WikidataMixin, models.Model):
     slug = models.SlugField(max_length=255, blank=True, null=True, unique=True)
-    authors = models.ManyToManyField(Author, blank=True)
+    authors = models.ManyToManyField(Author, blank=True, verbose_name=_("authors"))
     translators = models.ManyToManyField(
         Author,
         related_name="translated_book_set",
         related_query_name="translated_book",
         blank=True,
+        verbose_name=_("translators")
     )
-    epochs = models.ManyToManyField(Epoch, blank=True)
-    kinds = models.ManyToManyField(Kind, blank=True)
-    genres = models.ManyToManyField(Genre, blank=True)
-    title = models.CharField(max_length=255, blank=True)
-    language = models.CharField(max_length=255, blank=True)
+    epochs = models.ManyToManyField(Epoch, blank=True, verbose_name=_("epochs"))
+    kinds = models.ManyToManyField(Kind, blank=True, verbose_name=_("kinds"))
+    genres = models.ManyToManyField(Genre, blank=True, verbose_name=_("genres"))
+    title = models.CharField(_("title"), max_length=255, blank=True)
+    language = models.CharField(_("language"), max_length=255, blank=True)
     based_on = models.ForeignKey(
-        "self", models.PROTECT, related_name="translation", null=True, blank=True
+        "self", models.PROTECT, related_name="translation", null=True, blank=True,
+        verbose_name=_("based on")
     )
-    scans_source = models.CharField(max_length=255, blank=True)
-    text_source = models.CharField(max_length=255, blank=True)
-    notes = models.TextField(blank=True)
+    scans_source = models.CharField(_("scans source"), max_length=255, blank=True)
+    text_source = models.CharField(_("text source"), max_length=255, blank=True)
+    notes = models.TextField(_("notes"), blank=True)
     priority = models.PositiveSmallIntegerField(
+        _("priority"),
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
-    pd_year = models.IntegerField(null=True, blank=True)
-    gazeta_link = models.CharField(max_length=255, blank=True)
-    collections = models.ManyToManyField("Collection", blank=True)
+    pd_year = models.IntegerField(_('year of entry into PD'), null=True, blank=True)
+    gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
+    collections = models.ManyToManyField("Collection", blank=True, verbose_name=_("collections"))
 
-    estimated_chars = models.IntegerField(null=True, blank=True)
-    estimated_verses = models.IntegerField(null=True, blank=True)
-    estimate_source = models.CharField(max_length=2048, blank=True)
+    estimated_chars = models.IntegerField(_("estimated number of characters"), null=True, blank=True)
+    estimated_verses = models.IntegerField(_("estimated number of verses"), null=True, blank=True)
+    estimate_source = models.CharField(_("source of estimates"), max_length=2048, blank=True)
 
     objects = UnrelatedManager()
 
@@ -175,21 +181,62 @@ class Book(WikidataMixin, models.Model):
         }
 
 
-class Collection(models.Model):
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
+class CollectionCategory(models.Model):
+    name = models.CharField(_("name"), max_length=255)
+    parent = models.ForeignKey('self', models.SET_NULL, related_name='children', null=True, blank=True, verbose_name=_("parent"))
 
     class Meta:
+        ordering = ('parent__name', 'name')
+        verbose_name = _('collection category')
+        verbose_name_plural = _('collection categories')
+
+    def __str__(self):
+        if self.parent:
+            return f"{self.parent} / {self.name}"
+        else:
+            return self.name
+
+
+class Collection(models.Model):
+    name = models.CharField(_("name"), max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(CollectionCategory, models.SET_NULL, null=True, blank=True, verbose_name=_("category"))
+
+    class Meta:
+        ordering = ('category', 'name')
         verbose_name = _('collection')
         verbose_name_plural = _('collections')
 
     def __str__(self):
-        return self.name
+        if self.category:
+            return f"{self.category} / {self.name}"
+        else:
+            return self.name
+
+    def get_estimated_costs(self):
+        costs = Counter()
+        for book in self.book_set.all():
+            for k, v in book.get_estimated_costs().items():
+                costs[k] += v or 0
+
+        for author in self.author_set.all():
+            for book in author.book_set.all():
+                for k, v in book.get_estimated_costs().items():
+                    costs[k] += v or 0
+            for book in author.translated_book_set.all():
+                for k, v in book.get_estimated_costs().items():
+                    costs[k] += v or 0
+        return costs
 
 
 class WorkType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(_("name"), max_length=255)
 
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('work type')
+        verbose_name_plural = _('work types')
+    
     def get_rate_for(self, book):
         for workrate in self.workrate_set.all():
             if workrate.matches(book):
@@ -203,17 +250,19 @@ class WorkType(models.Model):
 
 
 class WorkRate(models.Model):
-    priority = models.IntegerField(default=1)
-    per_normpage = models.DecimalField(decimal_places=2, max_digits=6, null=True, blank=True)
-    per_verse = models.DecimalField(decimal_places=2, max_digits=6, null=True, blank=True)
-    work_type = models.ForeignKey(WorkType, models.CASCADE)
-    epochs = models.ManyToManyField(Epoch, blank=True)
-    kinds = models.ManyToManyField(Kind, blank=True)
-    genres = models.ManyToManyField(Genre, blank=True)
-    collections = models.ManyToManyField(Collection, blank=True)
+    priority = models.IntegerField(_("priority"), default=1)
+    per_normpage = models.DecimalField(_("per normalized page"), decimal_places=2, max_digits=6, null=True, blank=True)
+    per_verse = models.DecimalField(_("per verse"), decimal_places=2, max_digits=6, null=True, blank=True)
+    work_type = models.ForeignKey(WorkType, models.CASCADE, verbose_name=_("work type"))
+    epochs = models.ManyToManyField(Epoch, blank=True, verbose_name=_("epochs"))
+    kinds = models.ManyToManyField(Kind, blank=True, verbose_name=_("kinds"))
+    genres = models.ManyToManyField(Genre, blank=True, verbose_name=_("genres"))
+    collections = models.ManyToManyField(Collection, blank=True, verbose_name=_("collections"))
 
     class Meta:
         ordering = ('priority',)
+        verbose_name = _('work rate')
+        verbose_name_plural = _('work rates')
 
     def matches(self, book):
         for category in 'epochs', 'kinds', 'genres', 'collections':

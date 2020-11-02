@@ -1,9 +1,9 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from collections import Counter
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
 from fnpdjango.actions import export_as_csv_action
 from . import models
 from .wikidata import WikidataAdminMixin
@@ -30,7 +30,7 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
 admin.site.register(models.Author, AuthorAdmin)
 
 
-class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
+class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
     list_display = [
         "title",
         "authors_str",
@@ -40,10 +40,20 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
         "priority",
         "wikidata_link",
     ]
-    search_fields = ["title", "wikidata"]
+    search_fields = ["title", "wikidata", "authors__first_name", "authors__last_name", "translators__first_name", "translators__last_name"]
     autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
     prepopulated_fields = {"slug": ("title",)}
-    list_filter = ["language", "pd_year", "collections"]
+    list_filter = [
+            "language",
+            "based_on__language",
+            ("pd_year", RangeNumericFilter),
+            "collections",
+            "collections__category",
+            "epochs", "kinds", "genres",
+            "priority",
+            "authors__gender", "authors__nationality",
+            "translators__gender", "translators__nationality",
+        ]
     readonly_fields = ["wikidata_link", "estimated_costs"]
     actions = [export_as_csv_action()]
     fieldsets = [
@@ -107,6 +117,9 @@ class BookAdmin(WikidataAdminMixin, admin.ModelAdmin):
 admin.site.register(models.Book, BookAdmin)
 
 
+admin.site.register(models.CollectionCategory)
+
+
 class AuthorInline(admin.TabularInline):
     model = models.Author.collections.through
     autocomplete_fields = ["author"]
@@ -122,34 +135,22 @@ class CollectionAdmin(admin.ModelAdmin):
     autocomplete_fields = []
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ["name"]
-    fields = ['name', 'slug', 'estimated_costs']
+    fields = ['name', 'slug', 'category', 'estimated_costs']
     readonly_fields = ['estimated_costs']
     inlines = [AuthorInline, BookInline]
 
     def estimated_costs(self, obj):
-        costs = Counter()
-        for book in obj.book_set.all():
-            for k, v in book.get_estimated_costs().items():
-                costs[k] += v or 0
-
-        for author in obj.author_set.all():
-            for book in author.book_set.all():
-                for k, v in book.get_estimated_costs().items():
-                    costs[k] += v or 0
-            for book in author.translated_book_set.all():
-                for k, v in book.get_estimated_costs().items():
-                    costs[k] += v or 0
-
         return "\n".join(
             "{}: {} zł".format(
                 work_type.name,
                 cost or '—'
             )
-            for work_type, cost in costs.items()
+            for work_type, cost in obj.get_estimated_costs().items()
         )
 
 
 admin.site.register(models.Collection, CollectionAdmin)
+
 
 
 class CategoryAdmin(admin.ModelAdmin):
