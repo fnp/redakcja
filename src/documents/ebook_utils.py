@@ -14,7 +14,7 @@ class RedakcjaDocProvider(DocProvider):
         self.publishable = publishable
 
     def by_slug(self, slug):
-        return BytesIO(Book.objects.get(dc_slug=slug
+        return BytesIO(Book.objects.get(catalogue_book_id=slug
                     ).materialize(publishable=self.publishable
                     ).encode('utf-8'))
 

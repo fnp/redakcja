@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wikidata.client import Client
 from .constants import WIKIDATA
-from .utils import UnrelatedManager
 from .wikidata import WikidataMixin
 
 
@@ -136,8 +135,6 @@ class Book(WikidataMixin, models.Model):
     estimated_verses = models.IntegerField(_("estimated number of verses"), null=True, blank=True)
     estimate_source = models.CharField(_("source of estimates"), max_length=2048, blank=True)
 
-    objects = UnrelatedManager()
-
     class Meta:
         ordering = ("title",)
         verbose_name = _('book')
@@ -169,10 +166,6 @@ class Book(WikidataMixin, models.Model):
 
     def translators_str(self):
         return ", ".join(str(author) for author in self.translators.all())
-
-    def get_document_books(self):
-        DBook = apps.get_model("documents", "Book")
-        return DBook.objects.filter(dc_slug=self.slug)
 
     def get_estimated_costs(self):
         return {

@@ -50,7 +50,7 @@
                 {{ book.get_priorty_display }}
               </td>
               <td>
-                {% for b in book.document_books %}
+                {% for b in book.document_books.all %}
                   <a href="{{ b.get_absolute_url }}">
                     {{ b }}
                   </a>
@@ -76,7 +76,7 @@
                 {{ book.get_priorty_display }}
               </td>
               <td>
-                {% for b in book.document_books %}
+                {% for b in book.document_books.all %}
                   <a href="{{ b.get_absolute_url }}">
                     {{ b }}
                   </a>

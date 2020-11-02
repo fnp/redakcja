@@ -224,7 +224,7 @@ def book_xml(request, slug):
 
 @never_cache
 def book_xml_dc(request, slug):
-    book = get_object_or_404(Book, dc_slug=slug)
+    book = get_object_or_404(Book, catalogue_book_id=slug)
     return serve_xml(request, book, slug)
 
 

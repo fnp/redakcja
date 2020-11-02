@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
     def handle(self, slug, **options):
         children_slugs = [line.strip() for line in sys.stdin]
-        children = Book.objects.filter(dc_slug__in=children_slugs)
+        children = Book.objects.filter(catalogue_book_id__in=children_slugs)
         desc_elements = [dc_desc_element(child) for child in children]
         title = u'Utwory wybrane'
         own_attributes = {

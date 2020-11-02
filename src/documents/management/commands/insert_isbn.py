@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
         for slug, isbn_list in isbn_lists.iteritems():
             print('processing %s' % slug)
-            book = Book.objects.get(dc_slug=slug)
+            book = Book.objects.get(catalogue_book_id=slug)
             chunk = book.chunk_set.first()
             old_head = chunk.head
             src = old_head.materialize()

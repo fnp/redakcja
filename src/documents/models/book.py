@@ -30,7 +30,6 @@ class Book(models.Model):
     gallery = models.CharField(_('scan gallery name'), max_length=255, blank=True)
     project = models.ForeignKey(Project, models.SET_NULL, null=True, blank=True)
 
-    #wl_slug = models.CharField(_('title'), max_length=255, null=True, db_index=True, editable=False)
     parent = models.ForeignKey('self', models.SET_NULL, null=True, blank=True, verbose_name=_('parent'), related_name="children", editable=False)
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
@@ -41,8 +40,15 @@ class Book(models.Model):
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
     dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
         db_index=True, on_delete=models.SET_NULL, editable=False)
-    dc_slug = models.CharField(max_length=128, null=True, blank=True,
-            editable=False, db_index=True)
+    catalogue_book = models.ForeignKey(
+        'catalogue.Book',
+        models.DO_NOTHING,
+        to_field='slug',
+        null=True, blank=True,
+        editable=False, db_index=True,
+        related_name='document_books',
+        related_query_name='document_book',
+    )
 
     class NoTextError(BaseException):
         pass
@@ -89,11 +95,6 @@ class Book(models.Model):
 
     def gallery_url(self):
         return '%s%s%s/' % (settings.MEDIA_URL, settings.IMAGE_DIR, self.gallery)
-
-    @property
-    def catalogue_book(self):
-        CBook = apps.get_model('catalogue', 'Book')
-        return CBook.objects.filter(slug=self.dc_slug).first()
 
     # Creating & manipulating
     # =======================
@@ -343,13 +344,15 @@ class Book(models.Model):
 
     def refresh_dc_cache(self):
         update = {
-            'dc_slug': None,
+            'catalogue_book_id': None,
             'dc_cover_image': None,
         }
 
         info = self.book_info()
+        print(info)
         if info is not None:
-            update['dc_slug'] = info.url.slug
+            update['catalogue_book_id'] = info.url.slug
+            print(info.url.slug)
             if info.cover_source:
                 try:
                     image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))
@@ -358,6 +361,7 @@ class Book(models.Model):
                 else:
                     if info.cover_source == image.get_full_url():
                         update['dc_cover_image'] = image
+        print(update)
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):

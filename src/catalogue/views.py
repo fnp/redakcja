@@ -12,13 +12,8 @@ class CatalogueView(TemplateView):
 
     def get_context_data(self):
         ctx = super().get_context_data()
-        documents_books_queryset = models.Book.objects.prefetch_unrelated(
-            "document_books", "slug", documents.models.Book, "dc_slug"
-        )
-        ctx["authors"] = models.Author.objects.all().prefetch_related(
-            Prefetch("book_set", queryset=documents_books_queryset),
-            Prefetch("translated_book_set", queryset=documents_books_queryset),
-        )
+        ctx["authors"] = models.Author.objects.all().prefetch_related('book_set__book_set', 'translated_book_set__book_set')
+
         return ctx
 
 
@@ -28,12 +23,9 @@ class AuthorView(TemplateView):
 
     def get_context_data(self, slug):
         ctx = super().get_context_data()
-        documents_books_queryset = models.Book.objects.prefetch_unrelated(
-            "document_books", "slug", documents.models.Book, "dc_slug"
-        )
         authors = models.Author.objects.filter(slug=slug).prefetch_related(
-            Prefetch("book_set", queryset=documents_books_queryset),
-            Prefetch("translated_book_set", queryset=documents_books_queryset),
+            Prefetch("book_set"),
+            Prefetch("translated_book_set"),
         )
         ctx["author"] = authors.first()
         return ctx
