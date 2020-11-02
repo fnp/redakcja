@@ -44,16 +44,18 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
     autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
     prepopulated_fields = {"slug": ("title",)}
     list_filter = [
-            "language",
-            "based_on__language",
-            ("pd_year", RangeNumericFilter),
-            "collections",
-            "collections__category",
-            "epochs", "kinds", "genres",
-            "priority",
-            "authors__gender", "authors__nationality",
-            "translators__gender", "translators__nationality",
-        ]
+        "language",
+        "based_on__language",
+        ("pd_year", RangeNumericFilter),
+        "collections",
+        "collections__category",
+        "epochs", "kinds", "genres",
+        "priority",
+        "authors__gender", "authors__nationality",
+        "translators__gender", "translators__nationality",
+        "document_book__chunk__stage",
+        "document_book__chunk__user",
+    ]
     readonly_fields = ["wikidata_link", "estimated_costs"]
     actions = [export_as_csv_action()]
     fieldsets = [
