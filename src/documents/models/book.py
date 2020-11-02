@@ -45,6 +45,7 @@ class Book(models.Model):
         models.DO_NOTHING,
         to_field='slug',
         null=True, blank=True,
+        db_constraint=False,
         editable=False, db_index=True,
         related_name='document_books',
         related_query_name='document_book',

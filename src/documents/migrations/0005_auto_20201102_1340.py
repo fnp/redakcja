@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='book',
             name='catalogue_book',
-            field=models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='document_books', related_query_name='document_book', to='catalogue.Book', to_field='slug'),
+            field=models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='document_books', related_query_name='document_book', to='catalogue.Book', to_field='slug', db_constraint=False),
         ),
     ]
