@@ -718,6 +718,13 @@
         </span>
     </xsl:template>
 
+    <xsl:template match="ref">
+        <span x-editable="true" x-common="common" x-edit-no-format="true" x-edit-attribute="href">
+            <xsl:call-template name="standard-attributes"/>
+            <a class="reference">📌</a>
+        </span>
+    </xsl:template>
+    
     <xsl:template match="begin">        
         <span>
             <xsl:call-template name="standard-attributes" />
@@ -737,7 +744,7 @@
     </xsl:template>
 
     <xsl:template match="motyw">
-        <span x-editable="true" x-common="common">
+        <span x-editable="true" x-edit-no-format="true" x-common="common">
             <xsl:call-template name="standard-attributes" />
             <xsl:attribute name="theme-class">
                 <xsl:value-of select="substring-after(@id, 'm')" />

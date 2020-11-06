@@ -110,6 +110,50 @@
     }
 
 
+    function addReference(){
+        var selection = window.getSelection();
+        var n = selection.rangeCount;
+
+        if (n == 0) {
+            window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
+
+        // for now allow only 1 range
+        if (n > 1) {
+            window.alert("Zaznacz jeden obszar");
+            return false;
+        }
+
+        // remember the selected range
+        var range = selection.getRangeAt(0);
+
+        if (!verifyTagInsertPoint(range.endContainer)) {
+            window.alert("Nie można wstawić w to miejsce przypisu.");
+            return false;
+        }
+
+        var tag = $('<span></span>');
+        range.collapse(false);
+        range.insertNode(tag[0]);
+
+        xml2html({
+            xml: '<ref href=""/>',
+            success: function(text){
+                var t = $(text);
+                tag.replaceWith(t);
+                openForEdit(t);
+            },
+            error: function(){
+                tag.remove();
+                alert('Błąd przy dodawaniu referncji:' + errors);
+            }
+        })
+    }
+
+
+
+    
     /* Insert theme using current selection */
 
     function addTheme(){
@@ -377,7 +421,7 @@
         var w = $box.outerWidth();
         var h = $box.innerHeight();
 
-        if ($origin.is(".annotation-inline-box")) {
+        if ($origin.is(".annotation-inline-box") | $origin.is('*[x-edit-no-format]')) {
             w = Math.max(w, 400);
             h = Math.max(h, 60);
             if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 480)){
@@ -397,8 +441,11 @@
         }).appendTo($box[0].offsetParent || $box.parent()).show();
         
 
-        if ($origin.is('.motyw')) {
+        if ($origin.is('*[x-edit-no-format]')) {
 	    $('.akap-edit-button').remove();
+        }
+        
+        if ($origin.is('.motyw')) {
             $.themes.autocomplete($('textarea', $overlay));
         }
 
@@ -412,7 +459,7 @@
                 };
             });
         }
-        else if($box.is('*[x-annotation-box]')) {
+        else if($box.is('*[x-annotation-box]') || $origin.is('*[x-edit-attribute]')) {
             $('.delete-button', $overlay).click(function(){
                 if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten przypis?")) {
                     $origin.remove();
@@ -436,8 +483,16 @@
 
         var serializer = new XMLSerializer();
 
+        if($box.attr("x-edit-attribute")) {
+            source = $('<span x-pass-thru="true"/>');
+            source.text($box.attr("data-wlf-" + $box.attr("x-edit-attribute")));
+            source = source[0];
+        } else {
+            source = $box[0];
+        }
+        
         html2text({
-            element: $box[0],
+            element: source,
             stripOuter: true,
             success: function(text){
                 $('textarea', $overlay).val($.trim(text));
@@ -454,12 +509,23 @@
                         insertedText = insertedText.replace(/,\s*$/, '');
                     }
 
+                    if($box.attr("x-edit-attribute")) {
+                        xml = '<' + nodeName + ' ' + $box.attr("x-edit-attribute") + '="' + insertedText + '"/>';
+                    } else {
+                        xml = '<' + nodeName + '>' + insertedText + '</' + nodeName + '>';
+                    }
+
+                    
                     xml2html({
-                        xml: '<' + nodeName + '>' + insertedText + '</' + nodeName + '>',
+                        xml: xml,
                         success: function(element){
                             if (nodeName == 'out-of-flow-text') {
                                 $(element).children().insertAfter($origin);
                                 $origin.remove()
+                            }
+                            else if ($box.attr('x-edit-attribute')) {
+                                $(element).insertAfter($origin);
+                                $origin.remove();
                             }
                             else {
                                 $origin.html($(element).html());
@@ -535,6 +601,7 @@
         });
     }
 
+
     function VisualPerspective(options){
 
         var old_callback = options.callback;
@@ -561,6 +628,11 @@
                     else {
                         $('*[x-annotation-box]').hide();
                     }
+                });
+
+                $('#insert-reference-button').click(function(){
+                    addReference();
+                    return false;
                 });
 
                 $('#insert-annotation-button').click(function(){
