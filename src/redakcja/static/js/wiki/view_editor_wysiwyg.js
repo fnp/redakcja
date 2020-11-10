@@ -421,7 +421,7 @@
         var w = $box.outerWidth();
         var h = $box.innerHeight();
 
-        if ($origin.is(".annotation-inline-box") | $origin.is('*[x-edit-no-format]')) {
+        if ($origin.is(".annotation-inline-box") | $origin.is('.reference-inline-box')) {
             w = Math.max(w, 400);
             h = Math.max(h, 60);
             if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 480)){

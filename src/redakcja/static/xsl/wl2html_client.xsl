@@ -719,10 +719,12 @@
     </xsl:template>
 
     <xsl:template match="ref">
-        <span x-editable="true" x-common="common" x-edit-no-format="true" x-edit-attribute="href">
-            <xsl:call-template name="standard-attributes"/>
-            <a class="reference">📌</a>
-        </span>
+      <span x-editable="true" x-common="common" x-edit-no-format="true" x-edit-attribute="href">
+        <xsl:call-template name="standard-attributes">
+          <xsl:with-param name="extra-class" select="'reference-inline-box'" />
+        </xsl:call-template>
+        <a class="reference">📌</a>
+      </span>
     </xsl:template>
     
     <xsl:template match="begin">        
