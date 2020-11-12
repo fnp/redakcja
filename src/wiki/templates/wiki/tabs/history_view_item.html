@@ -1,4 +1,7 @@
 {% load i18n %}
 <li id="HistoryPerspective" data-ui-related="history-view-editor" data-ui-jsclass="HistoryPerspective" class="nav-item">
-    <a href="#" class="nav-link">{% trans "History" %}</a>
+  <a class="nav-link" href="#" title="{% trans "History" %}">
+    <span class="d-xl-none">&#x23F0;</span>
+    <span class="d-none d-xl-inline">{% trans "History" %}</span>
+  </a>
 </li>

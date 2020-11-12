@@ -608,6 +608,7 @@ div[x-node] > .uwaga {
     padding: 1px;
     z-index: 2000;
     position: absolute;
+    text-align: left;
 }
 
 .html-editarea textarea {

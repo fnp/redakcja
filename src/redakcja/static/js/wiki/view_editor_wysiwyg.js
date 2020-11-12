@@ -421,7 +421,7 @@
         var w = $box.outerWidth();
         var h = $box.innerHeight();
 
-        if ($origin.is(".annotation-inline-box") | $origin.is('.reference-inline-box')) {
+        if ($origin.is(".annotation-inline-box")) {
             w = Math.max(w, 400);
             h = Math.max(h, 60);
             if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 480)){
@@ -429,6 +429,15 @@
             } else {
                 x = 100;
             }
+        }
+        if ($origin.is('.reference-inline-box')) {
+            w = 400;
+            h = 32;
+            y -= 32;
+            x = Math.min(
+                x,
+                $('.htmlview div').offset().left + $('.htmlview div').width() - 400
+            );
         }
 
         // start edition on this node
