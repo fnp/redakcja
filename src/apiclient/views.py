@@ -1,7 +1,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import cgi
+from urllib.parse import parse_qsl
 
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -24,7 +24,7 @@ def oauth(request, beta=False):
     if resp['status'] != '200':
         raise Exception("Invalid response %s." % resp['status'])
 
-    request_token = dict(cgi.parse_qsl(content))
+    request_token = dict(parse_qsl(content.decode('utf-8')))
 
     conn = OAuthConnection.get(request.user, beta)
     # this might reset existing auth!
@@ -53,7 +53,7 @@ def oauth_callback(request, beta=False):
     token.set_verifier(oauth_verifier)
     client = oauth2.Client(wl_consumer, token)
     _resp, content = client.request(WL_ACCESS_TOKEN_URL if not beta else BETA_ACCESS_TOKEN_URL, method="POST")
-    access_token = dict(cgi.parse_qsl(content))
+    access_token = dict(parse_qsl(content.decode('utf-8')))
 
     conn.access = True
     conn.token = access_token['oauth_token']
