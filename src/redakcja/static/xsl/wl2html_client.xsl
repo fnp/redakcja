@@ -502,6 +502,18 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="ilustr">
+      <div>
+        <xsl:call-template name="standard-attributes" />
+        <img>
+          <xsl:attribute name="src">
+            <xsl:value-of select="@src" />
+          </xsl:attribute>
+        </img>
+        <p class="alt"><xsl:value-of select="@alt"/></p>
+      </div>
+    </xsl:template>
+
     <!--
         ***********************************
         Style akapitowe oraz strofy i wersy

@@ -196,6 +196,7 @@ PIPELINE = {
                 'js/wiki/view_editor_wysiwyg.js',
                 'js/wiki/view_gallery.js',
                 'js/wiki/view_annotations.js',
+                'js/wiki/view_properties.js',
                 'js/wiki/view_search.js',
                 'js/wiki/view_column_diff.js',
             ),

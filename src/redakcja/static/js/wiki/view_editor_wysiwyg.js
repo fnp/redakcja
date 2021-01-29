@@ -692,6 +692,7 @@
 
         xml2html({
             xml: this.doc.text,
+            base: this.doc.getBase(),
             success: function(element){
                 var htmlView = $('#html-view');
                 htmlView.html(element);

@@ -17,21 +17,20 @@ function withStylesheets(code_block, onError)
     if (!xml2htmlStylesheet) {
     	$.blockUI({message: 'Ładowanie arkuszy stylów...'});
     	$.ajax({
-        	url: STATIC_URL + 'xsl/wl2html_client.xsl?20201110',
-        	dataType: 'xml',
-        	timeout: 10000,
-        	success: function(data) {
+            url: STATIC_URL + 'xsl/wl2html_client.xsl?210129',
+            dataType: 'xml',
+            timeout: 10000,
+            success: function(data) {
             	xml2htmlStylesheet = createXSLT(data);
                 $.unblockUI();
-				code_block();
-
+		code_block();
             },
-			error: onError
+	    error: onError
         })
     }
-	else {
-		code_block();
-	}
+    else {
+	code_block();
+    }
 }
 
 
@@ -61,6 +60,20 @@ function xml2html(options) {
             source.text('');
             options.error(error.text(), source_text);
         } else {
+            let galleryUrl = new URL(
+                options.base,
+                window.location.href
+            );
+            $("img", $(doc.childNodes)).each(function() {
+                $(this).attr(
+                    'src',
+                    new URL(
+                        $(this).attr('src'),
+                        galleryUrl
+                    )
+                );
+            })
+
             options.success(doc.childNodes);
 
             $.themes.withCanon(function(canonThemes) {

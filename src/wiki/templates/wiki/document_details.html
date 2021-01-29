@@ -28,9 +28,10 @@
 {% endblock %}
 
 {% block tabs-right %}
-    {% include "wiki/tabs/gallery_view_item.html" %}
-    {% include "wiki/tabs/annotations_view_item.html" %}
-    {% include "wiki/tabs/search_view_item.html" %}
+  {% include "wiki/tabs/gallery_view_item.html" %}
+  {% include "wiki/tabs/annotations_view_item.html" %}
+  {% include "wiki/tabs/properties_view_item.html" %}
+  {% include "wiki/tabs/search_view_item.html" %}
 {% endblock %}
 
 {% block splitter-extra %}
@@ -38,9 +39,10 @@
     <p class="vsplitbar-title"></p>
     </div>
     <div id="sidebar">
-        {% include "wiki/tabs/gallery_view.html" %}
-        {% include "wiki/tabs/annotations_view.html" %}
-        {% include "wiki/tabs/search_view.html" %}
+      {% include "wiki/tabs/gallery_view.html" %}
+      {% include "wiki/tabs/annotations_view.html" %}
+      {% include "wiki/tabs/properties_view.html" %}
+      {% include "wiki/tabs/search_view.html" %}
     </div>
     <div id="drag-layer"></div>
 {% endblock %}

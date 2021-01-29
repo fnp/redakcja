@@ -8,6 +8,13 @@
     background-color: #C1C1C1;
 }
 
+#side-properties {
+    height: 100%;
+    overflow: auto;
+}
+#side-properties #parents li {
+    cursor: pointer;
+}
 
 #side-annotations {
     display: flex;

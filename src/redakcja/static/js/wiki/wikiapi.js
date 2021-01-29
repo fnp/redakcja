@@ -440,6 +440,10 @@
         return text.length;
     }
 
+    /* Temporary workaround for relative images. */
+    WikiDocument.prototype.getBase = function() {
+        return '/media/dynamic/images/' + this.galleryLink + '/';
+    };
 
 	$.wikiapi.WikiDocument = WikiDocument;
 })(jQuery);
