@@ -13,6 +13,19 @@
                     "name": "alt",
                     "type": "text",
                 },
+                {
+                    "name": "szer",
+                    "type": "percent",
+                },
+                {
+                    "name": "wyrownanie",
+                    "type": "select",
+                    "options": ["lewo", "srodek", "prawo"],
+                },
+                {
+                    "name": "oblew",
+                    "type": "bool",
+                },
             ],
         },
         "ref": {
@@ -45,8 +58,15 @@
             self.$pane.on('change', '.form-control', function() {
                 let $input = $(this);
 
+                let inputval;
+                if ($input.attr('type') == 'checkbox') {
+                    inputval = $input.is(':checked');
+                } else {
+                    inputval = $input.val();
+                }
+                
                 if ($input.data("edited")) {
-                    $input.data("edited").text($input.val());
+                    $input.data("edited").text(inputval);
                     return;
                 }
                 
@@ -56,7 +76,8 @@
                         w(222)
                         let $xmlelem = $($.parseXML(xml));
                         w(333, $xmlelem)
-                        $xmlelem.contents().attr($input.data('property'), $input.val());
+                        w($input.data('property'), $input.val());
+                        $xmlelem.contents().attr($input.data('property'), inputval);
                         w(444, $xmlelem)
                         let newxml = (new XMLSerializer()).serializeToString($xmlelem[0]);
                         w(555, newxml)
@@ -104,7 +125,7 @@
         let nodeDef = elementDefs[node];
         if (nodeDef && nodeDef.attributes) {
             $.each(nodeDef.attributes, function(i, a) {
-                self.addEditField(a.name, a.type, $(element).attr('data-wlf-' + a.name)); // ...
+                self.addEditField(a, $(element).attr('data-wlf-' + a.name)); // ...
             })
         }
 
@@ -115,8 +136,7 @@
             $("> .RDF > .Description > [x-node]", $node).each(function() {
                 $meta = $(this);
                 self.addEditField(
-                    $meta.attr('x-node'),
-                    null,
+                    {"name": $meta.attr('x-node'),},
                     $meta.text(),
                     $meta,
                 );
@@ -124,20 +144,37 @@
         }
     };
         
-    PropertiesPerspective.prototype.addEditField = function(name, type, value, elem) {
+    PropertiesPerspective.prototype.addEditField = function(defn, value, elem) {
         let self = this;
         let $form = $("#properties-form", self.$pane);
 
         let $fg = $("<div class='form-group'>");
-        $("<label/>").attr("for", "property-" + name).text(name).appendTo($fg);
+        $("<label/>").attr("for", "property-" + defn.name).text(defn.name).appendTo($fg);
         let $input;
-        if (type == 'text') {
+        switch (defn.type) {
+        case 'text':
             $input = $("<textarea>");
-        } else {
-            $input = $("<input>")
+            break;
+        case 'select':
+            $input = $("<select>");
+            $.each(defn.options, function(i, e) {
+                $("<option>").text(e).appendTo($input);
+            });
+            break;
+        case 'bool':
+            $input = $("<input type='checkbox'>");
+            break;
+        default:
+            $input = $("<input>");
         }
-        // val?
-        $input.addClass("form-control").attr("id", "property-" + name).data("property", name).val(value);
+
+        $input.addClass("form-control").attr("id", "property-" + defn.name).data("property", defn.name);
+        if ($input.attr('type') == 'checkbox') {
+            $input.prop('checked', value == 'true');
+        } else {
+            $input.val(value);
+        }
+        
         if (elem) {
             $input.data("edited", elem);
         }

@@ -312,6 +312,10 @@
     word-spacing: 1em;
 }
 
+.htmlview .ilustr img {
+    max-width: 100%;
+}
+
 .htmlview .parse-warning {
     display: block;
     font-size: 10pt;
