@@ -26,8 +26,26 @@
 	</form>
 
 
-    <p style="text-align: right"><a class="btn btn-danger" href="{% url "documents_chunk_add" chunk.book.slug chunk.slug %}">{% trans "Split chunk" %}</a></p>
-   </div>
+        <p style="text-align: right"><a class="btn btn-danger" href="{% url "documents_chunk_add" chunk.book.slug chunk.slug %}">{% trans "Split chunk" %}</a></p>
+        </div>
 </div>
 
 {% endblock content %}
+
+
+{% block add_css %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+{% endblock add_css %}
+
+
+{% block add_js %}
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" integrity="sha256-9yRP/2EFlblE92vzCA10469Ctd0jT48HnmmMw5rJZrA=" crossorigin="anonymous"></script>
+  <script>
+   $(function () {
+       $('#id_user').select2({
+	   theme: 'bootstrap4',
+       });
+   });
+  </script>
+{% endblock add_js %}
