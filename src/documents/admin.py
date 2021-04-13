@@ -11,10 +11,14 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
 
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'ordering']
+    list_editable = ['ordering']
+
 admin.site.register(models.Project)
 admin.site.register(models.Book, BookAdmin)
 admin.site.register(models.Chunk)
-admin.site.register(models.Chunk.tag_model)
+admin.site.register(models.Chunk.tag_model, TagAdmin)
 
 admin.site.register(models.Image)
-admin.site.register(models.Image.tag_model)
+admin.site.register(models.Image.tag_model, TagAdmin)
