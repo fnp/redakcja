@@ -16,6 +16,7 @@
             this.$searchInput = $('#search-input', this.$element);
             this.$replaceInput = $('#replace-input', this.$element);
             this.$searchButton = $('#search-button', this.$element);
+            this.$searchPrevButton = $('#search-prev-button', this.$element);
             this.$replaceButton = $('#replace-button', this.$element);
 
             this.$replaceButton.attr("disabled","disabled");
@@ -41,6 +42,11 @@
                     alert('Brak wyników.');
             });
 
+            this.$searchPrevButton.click(function(){
+                if (!self.search(false))
+                    alert('Brak wyników.');
+            });
+
             this.$replaceButton.click(function(){
                 self.replace();
             });
@@ -53,7 +59,7 @@
 
     SearchPerspective.prototype = new $.wiki.SidebarPerspective();
 
-    SearchPerspective.prototype.search = function(){
+    SearchPerspective.prototype.search = function(forward=true){
         var self = this;
         var query = self.$searchInput.val();
 
@@ -73,7 +79,7 @@
                 options
             );
         }
-        if (self.searchCursor.findNext()) {
+        if (forward ? self.searchCursor.findNext() : self.searchCursor.findPrevious()) {
             self.editor.setSelection(self.searchCursor.from(), self.searchCursor.to());
             self.editor.scrollIntoView({from: self.searchCursor.from(), to: self.searchCursor.to()}, 20);
             self.$replaceButton.removeAttr("disabled");
