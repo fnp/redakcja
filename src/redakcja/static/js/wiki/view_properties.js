@@ -47,8 +47,10 @@
             self.$pane = $("#side-properties");
             
             $(document).on('click', '[x-node]', function(e) {
-                e.stopPropagation();
-                self.edit(this);
+                if (!e.redakcja_edited) {
+                    e.redakcja_edited = true;
+                    self.edit(this);
+                }
             });
 
             self.$pane.on('click', '#parents li', function(e) {
