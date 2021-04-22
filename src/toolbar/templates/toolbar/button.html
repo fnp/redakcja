@@ -5,7 +5,7 @@
        data-ui-action="{{ button.scriptlet_id }}"
        data-ui-action-params="{{ button.params|escape }}"
        data-ui-accesskey="{{ button.accesskey }}"
-       {% if button.tooltip %}title="{{ button.full_tooltip }}"{% endif %} >
+       title="{{ button.full_tooltip }}">
        {{ button.label|safe }}
 </button>
 {% if button.link %}
