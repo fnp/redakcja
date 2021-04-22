@@ -27,7 +27,7 @@
 	margin-right: .5vw;
 	background: white;
 	border: 1px solid black;
-	border-radius: 10px;
+	border-radius: .5vw;
 	font-size: 3vw;
 	padding-left: 1vw;
 	padding-top: 1.5vw;
@@ -36,18 +36,26 @@
 #keyboard .keyboard-row .lower, #keyboard .keyboard-row .upper {
 	position: absolute;
 	font-size: 1vw;
-	bottom: 1vw;
-	right: 1vw;
-	left: 1vw;
+	bottom: 0;
+	right: 0;
+	left: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	text-align: right;
+	padding: 1vw;
+	border-radius: .5vw;
 }
 #keyboard .keyboard-row .upper {
 	bottom: auto;
-	top: 1vw;
+	top: 0;
 }
+#keyboard .keyboard-row div:hover .lower, #keyboard .keyboard-row div:hover .upper {
+	background: #ddd;
+	left: auto;
+	overflow: auto;
+}
+
 	#keyboard-close {
 		position: absolute;
 		right: 0;
