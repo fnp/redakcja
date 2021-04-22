@@ -15,3 +15,25 @@ def toolbar():
 @register.inclusion_tag('toolbar/button.html')
 def toolbar_button(b):
     return {'button': b}
+
+
+@register.inclusion_tag('toolbar/keyboard.html')
+def keyboard(groups):
+    keys = {}
+    for g in groups:
+        for b in g.button_set.all():
+            if b.accesskey:
+                keys[b.accesskey] = b
+    rows = [
+        [
+            {
+                'symbol': symbol,
+                'lower': keys.get(symbol.lower()),
+                'upper': keys.get(symbol),
+            }
+            for symbol in row
+        ]
+        for row in ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']
+    ]
+
+    return {'rows': rows}

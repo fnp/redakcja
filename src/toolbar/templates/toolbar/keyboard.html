@@ -1,0 +1,88 @@
+<style>
+#keyboard {
+	display: none;
+	position: absolute;
+	left: 5vw;
+	right: 5vw;
+	top: calc((100vh - 31vw) / 2);
+	z-index: 1000;
+	background: #ddd;
+	padding: 3vw 2.25vw 2.5vw 2.75vw;
+
+}
+#keyboard .keyboard-row {
+	display: flex;
+	direction: row;
+	margin-bottom: .5vw;
+}
+#keyboard .keyboard-row:nth-child(2) {
+	margin-left: 3vw;
+}
+#keyboard .keyboard-row:nth-child(3) {
+	margin-left: 6vw;
+}
+#keyboard .keyboard-row div {
+	width: 8vw;
+	height: 8vw;
+	margin-right: .5vw;
+	background: white;
+	border: 1px solid black;
+	border-radius: 10px;
+	font-size: 3vw;
+	padding-left: 1vw;
+	padding-top: 1.5vw;
+	position: relative;
+}
+#keyboard .keyboard-row .lower, #keyboard .keyboard-row .upper {
+	position: absolute;
+	font-size: 1vw;
+	bottom: 1vw;
+	right: 1vw;
+	left: 1vw;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: right;
+}
+#keyboard .keyboard-row .upper {
+	bottom: auto;
+	top: 1vw;
+}
+	#keyboard-close {
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 3vw;
+		height: 3vw;
+		font-size: 2.5vw;
+		line-height: 3vw;
+		text-align: center;
+		cursor: pointer;
+		border: none;
+		background: none;
+	}
+
+
+</style>
+
+
+<div id="keyboard">
+	{% for row in rows %}
+	<div class="keyboard-row">
+		{% for key in row %}
+		<div>
+			{% if key.upper %}
+                        <span class="upper" title="{{ key.upper.full_tooltip }}">{{ key.upper.label|safe }}</span>
+			{% endif %}
+			{% if key.lower %}
+			<span class="lower" title="{{ key.lower.full_tooltip }}">{{ key.lower.label|safe }}</span>
+			{% endif %}
+			{{ key.symbol }}
+		</div>
+		{% endfor %}
+	</div>
+	{% endfor %}
+        <button id="keyboard-close" data-ui-accesskey="?">🞪</button>
+
+</div>
+

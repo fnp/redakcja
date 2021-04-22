@@ -57,4 +57,9 @@
 
     };
 
+
+    $("#keyboard-close").click(function() {
+	    $(this).parent().toggle();
+    })
+
 })(jQuery);
