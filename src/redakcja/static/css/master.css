@@ -217,3 +217,8 @@ img.tabclose {
     flex: 1;
     overflow: auto;
 }
+
+#source-editor .CodeMirror-wrap pre.CodeMirror-line,
+#source-editor .CodeMirror-wrap pre.CodeMirror-line-like {
+	word-wrap: anywhere;
+}
