@@ -121,8 +121,9 @@
 
   var doFold, noFold
   if (String.prototype.normalize) {
-    doFold = function(str) { return str.normalize("NFD").toLowerCase() }
-    noFold = function(str) { return str.normalize("NFD") }
+    /* FNP: NFD changed to NFC, because of https://github.com/codemirror/CodeMirror/issues/6672 */
+    doFold = function(str) { return str.normalize("NFC").toLowerCase() }
+    noFold = function(str) { return str.normalize("NFC") }
   } else {
     doFold = function(str) { return str.toLowerCase() }
     noFold = function(str) { return str }
