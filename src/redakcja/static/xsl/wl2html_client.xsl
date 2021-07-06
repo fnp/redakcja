@@ -260,13 +260,13 @@
         
     <xsl:template match="motto_podpis" mode="motto">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>    
     
     <xsl:template match="motto_podpis" />
@@ -291,24 +291,24 @@
 
     <xsl:template match="naglowek_listy">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
     <xsl:template match="lista_osoba">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
     <!--  Tagi obejmujące inne komentarze wprowadzające
@@ -318,13 +318,13 @@
     -->
     <xsl:template match="miejsce_czas">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
 
@@ -522,35 +522,35 @@
 
     <xsl:template match="akap">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
     <xsl:template match="akap_cd">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
     <xsl:template match="akap_dialog">
         <xsl:param name="mixed" />
-        <p x-editable="true">
+        <div x-editable="true">
             <xsl:call-template name="standard-attributes" />
             <xsl:call-template name="context-menu" />
             <xsl:apply-templates select="child::node()">
                 <xsl:with-param name="mixed" select="true()" />
             </xsl:apply-templates>
-        </p>
+        </div>
     </xsl:template>
 
     <!--
@@ -599,11 +599,11 @@
         <xsl:choose>
             <!-- Simple verse == not wers_ tags anywhere until the ending br -->
             <xsl:when test="not($verse-content[starts-with(name(), 'wers')])">
-                <p class="wers" x-node="wers" x-verse="true" x-auto-node="true">
+                <div class="wers" x-node="wers" x-verse="true" x-auto-node="true">
                 <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
                     <xsl:with-param name="mixed" select="true()" />
                 </xsl:apply-templates>
-                </p>
+                </div>
             </xsl:when>
 
             <xsl:otherwise>
@@ -618,12 +618,12 @@
         <xsl:param name="mixed" />
 		<!-- <xsl:choose>
 		<xsl:when test="ancestor::*[0]/self::strofa"> -->
-        	<p x-verse="true">
+        	<div x-verse="true">
             	<xsl:call-template name="standard-attributes" />
             	<xsl:apply-templates select="child::node()">
                 	<xsl:with-param name="mixed" select="true()" />
             	</xsl:apply-templates>
-	        </p>
+	        </div>
 		<!-- </xsl:when> 
 		<xsl:choose> -->
     </xsl:template>
@@ -685,7 +685,7 @@
 
     <xsl:template match="sekcja_asterysk">
         <xsl:param name="mixed" />
-        <p><xsl:call-template name="standard-attributes" /></p>
+        <div><xsl:call-template name="standard-attributes" /></div>
     </xsl:template>
 
     <xsl:template match="separator_linia">
