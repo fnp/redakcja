@@ -137,7 +137,7 @@ class CollectionAdmin(admin.ModelAdmin):
     autocomplete_fields = []
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ["name"]
-    fields = ['name', 'slug', 'category', 'estimated_costs']
+    fields = ['name', 'slug', 'category', 'notes', 'estimated_costs']
     readonly_fields = ['estimated_costs']
     inlines = [AuthorInline, BookInline]
 

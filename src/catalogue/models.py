@@ -177,6 +177,7 @@ class Book(WikidataMixin, models.Model):
 class CollectionCategory(models.Model):
     name = models.CharField(_("name"), max_length=255)
     parent = models.ForeignKey('self', models.SET_NULL, related_name='children', null=True, blank=True, verbose_name=_("parent"))
+    notes = models.TextField(_("notes"), blank=True)
 
     class Meta:
         ordering = ('parent__name', 'name')
@@ -194,6 +195,7 @@ class Collection(models.Model):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
     category = models.ForeignKey(CollectionCategory, models.SET_NULL, null=True, blank=True, verbose_name=_("category"))
+    notes = models.TextField(_("notes"), blank=True)
 
     class Meta:
         ordering = ('category', 'name')
