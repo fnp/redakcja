@@ -273,9 +273,11 @@
 			$.blockUI({
 				message: this.$elem,
 				css: {
-					'top': '25%',
-					'left': '25%',
-					'width': '50%'
+                                    'top': '25%',
+                                    'left': '25%',
+                                    'width': '50%',
+                                    'max-height': '75%',
+                                    'overflow-y': 'scroll'
 				}
 			});
 		},
