@@ -117,7 +117,7 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_STORAGE = 'pipeline.storage.PipelineManifestStorage'
 
 PIPELINE = {
     'CSS_COMPRESSOR': None,

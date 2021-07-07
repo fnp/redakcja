@@ -34,9 +34,9 @@ class Book(models.Model):
     parent_number = models.IntegerField(_('parent number'), null=True, blank=True, db_index=True, editable=False)
 
     # Cache
-    _single = models.NullBooleanField(editable=False, db_index=True)
-    _new_publishable = models.NullBooleanField(editable=False)
-    _published = models.NullBooleanField(editable=False)
+    _single = models.BooleanField(editable=False, null=True, db_index=True)
+    _new_publishable = models.BooleanField(editable=False, null=True)
+    _published = models.BooleanField(editable=False, null=True)
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
     dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
         db_index=True, on_delete=models.SET_NULL, editable=False)
@@ -350,10 +350,8 @@ class Book(models.Model):
         }
 
         info = self.book_info()
-        print(info)
         if info is not None:
             update['catalogue_book_id'] = info.url.slug
-            print(info.url.slug)
             if info.cover_source:
                 try:
                     image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))
@@ -362,7 +360,6 @@ class Book(models.Model):
                 else:
                     if info.cover_source == image.get_full_url():
                         update['dc_cover_image'] = image
-        print(update)
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):

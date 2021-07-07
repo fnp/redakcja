@@ -23,9 +23,9 @@ class Chunk(dvcs_models.Document):
     gallery_start = models.IntegerField(_('gallery start'), null=True, blank=True, default=1)
 
     # cache
-    _hidden = models.NullBooleanField(editable=False)
-    _changed = models.NullBooleanField(editable=False)
-    _new_publishable = models.NullBooleanField(editable=False)
+    _hidden = models.BooleanField(editable=False, null=True)
+    _changed = models.BooleanField(editable=False, null=True)
+    _new_publishable = models.BooleanField(editable=False, null=True)
 
     # managers
     objects = models.Manager()

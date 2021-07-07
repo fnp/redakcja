@@ -5,7 +5,7 @@
 
 from documents.test_utils import get_fixture
 
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase
 from django.contrib.auth.models import User
 from documents.models import Book

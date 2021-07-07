@@ -23,9 +23,9 @@ class Image(dvcs_models.Document):
     project = models.ForeignKey(Project, models.SET_NULL, null=True, blank=True)
 
     # cache
-    _new_publishable = models.NullBooleanField(editable=False)
-    _published = models.NullBooleanField(editable=False)
-    _changed = models.NullBooleanField(editable=False)
+    _new_publishable = models.BooleanField(editable=False, null=True)
+    _published = models.BooleanField(editable=False, null=True)
+    _changed = models.BooleanField(editable=False, null=True)
 
     class Meta:
         app_label = 'documents'
