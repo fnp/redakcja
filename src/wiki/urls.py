@@ -31,4 +31,7 @@ urlpatterns = [
     url(r'^pubmark/(?P<chunk_id>\d+)/$', views.pubmark, name="wiki_pubmark"),
 
     url(r'^themes$', views.themes, name="themes"),
+
+    url(r'^back/$', views.back),
+    url(r'^editor-user-area/$', views.editor_user_area),
 ]

@@ -77,6 +77,17 @@ def editor(request, slug, chunk=None, template_name='wiki/document_details.html'
     })
 
 
+def editor_user_area(request):
+    return render(request, 'wiki/editor-user-area.html', {
+        'forms': {
+            "text_save": forms.DocumentTextSaveForm(user=request.user, prefix="textsave"),
+            "text_revert": forms.DocumentTextRevertForm(prefix="textrevert"),
+            "pubmark": forms.DocumentPubmarkForm(prefix="pubmark"),
+        },
+        'can_pubmark': request.user.has_perm('documents.can_pubmark'),
+    })
+
+
 @require_GET
 def editor_readonly(request, slug, chunk=None, template_name='wiki/document_details_readonly.html'):
     try:
@@ -314,3 +325,7 @@ def pubmark(request, chunk_id):
 def themes(request):
     prefix = request.GET.get('q', '')
     return http.HttpResponse('\n'.join([str(t) for t in Theme.objects.filter(name__istartswith=prefix)]))
+
+
+def back(request):
+    return render(request, 'wiki/back.html')

@@ -339,4 +339,28 @@
 		}
 	};
 
+
+    window.addEventListener("message", (event) => {
+        event.source.close()
+
+        $.ajax("/editor/editor-user-area/", {
+            success: function(d) {
+                $("#user-area")[0].innerHTML = d;
+            }
+        });
+    }, false);
+    
+    $("#login").click(function (e) {
+        e.preventDefault();
+        let h = 600;
+        let w = 500;
+        let x = window.screenX + (window.innerWidth - w) / 2;
+        let y = window.screenY + (window.innerHeight - h) / 2;
+        window.open(
+            "/accounts/login/?next=/editor/back",
+            "login-window",
+            "width=" + w + " height=" + h + " top=" + y + " left=" + x
+        );
+    });
+    
 })(jQuery);

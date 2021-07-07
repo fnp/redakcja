@@ -48,7 +48,16 @@
     <div class='navbar-nav'>
       <a class='nav-item nav-link' href="{{ REDMINE_URL }}projects/wl-publikacje/wiki/Pomoc" target="_blank">
         {% trans "Help" %}</a>
-      {% include "registration/head_login.html" %}
+
+
+      <div id="user-area">
+        {% include "registration/head_login.html" %}
+        {% block dialogs %} {% endblock %}
+      </div>
+
+
+
+
       <span class="navbar-text">{% trans "Version" %}: <span id="document-revision">{% trans "Unknown" %}</span></span>
       {% if not readonly %}
         <button class='ml-2 nav-item btn btn-primary' id="save-button">{% trans "Save" %}</button>
@@ -64,6 +73,5 @@
     {% block splitter-extra %} {% endblock %}
   </div>
 
-  {% block dialogs %} {% endblock %}
 
 {% endblock %}

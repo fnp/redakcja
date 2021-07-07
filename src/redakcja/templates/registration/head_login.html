@@ -17,6 +17,6 @@
 {% else %}
   {% url "cas_ng_login" as login_url %}
   {% if login_url != request.path %}
-    <a class="nav-item nav-link" href='{{ login_url }}'>{% trans "Log In" %}</a>
+    <a id="login" class="nav-item nav-link" href='{{ login_url }}'>{% trans "Log In" %}</a>
   {% endif %}
 {% endif %}
