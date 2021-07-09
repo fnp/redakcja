@@ -13,29 +13,6 @@
     padding-left: 90px;
 }
 
-/*
- .htmlview[data-tag-names-visible] *[x-editable]:not(*[x-common])::before {
- display: block;
- float: left;
- clear: left;
- content: attr(x-node);
- font-weight: bold;
- font-style: normal;
- font-variant:normal;
- font-size: 8px;
- line-height: 8px;
- margin-bottom: 4px;
-
- padding: 3px 4px;
- vertical-align: super;
- background-color:#add8e6;
- margin-left: -80px;
- width: 70px;
- text-align: center;
-
- -webkit-border-radius: 4px;
- }
- */
 .htmlview *[x-node = 'RDF'][x-ns = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'] {
     display: none;
 }
@@ -61,7 +38,7 @@
     text-decoration: none;
 }
 
-.htmlview h1 {
+.htmlview .nazwa_utworu {
     font-size: 3em;
     margin: 1.5em 0;
     text-align: center;
@@ -69,21 +46,30 @@
     font-weight: bold;
 }
 
-.htmlview h2 {
+.htmlview .autor_utworu,
+.htmlview .dzielo_nadrzedne,
+.htmlview .naglowek_czesc,
+.htmlview .srodtytul,
+.htmlview .naglowek_akt
+{
     font-size: 2em;
     margin: 1.5em 0 0;
     font-weight: bold;
     line-height: 1.5em;
 }
 
-.htmlview h3 {
+.htmlview .podtytul,
+.htmlview .naglowek_scena,
+.htmlview .naglowek_rozdzial
     font-size: 1.5em;
     margin: 1.5em 0 0;
     font-weight: normal;
     line-height: 1.5em;
 }
 
-.htmlview h4 {
+.htmlview .naglowek_podrozdzial,
+.htmlview .naglowek_osoba
+{
     font-size: 1em;
     margin: 1.5em 0 0;
     line-height: 1.5em;
@@ -275,13 +261,14 @@
     border-bottom: 0.1em solid #000;
 }
 
-.htmlview p.sekcja_asterysk {
+.htmlview hr.sekcja_asterysk {
+    border: none;
     padding: 0;
     margin: 1.5em 0;
     text-align: center;
 }
 
-.htmlview p.sekcja_asterysk:after {
+.htmlview hr.sekcja_asterysk:after {
     content: "*";
 }
 
@@ -296,6 +283,13 @@
 
 .htmlview .mat, .htmlview .slowo_obce, .htmlview .tytul_dziela, .htmlview .didaskalia {
     font-style: italic;
+}
+
+
+.htmlview .indeks_dolny {
+    font-style: normal;
+    vertical-align: sub;
+    font-size: .9em;
 }
 
 .htmlview .wyroznienie {
@@ -342,8 +336,7 @@
     max-width: 20%;
     max-height: 24pt;
     margin-left: 0.5em;
-    overflow: hidden;
-	z-index: 500;
+    z-index: 500;
 }
 
 div[x-node] > .uwaga {
@@ -352,6 +345,7 @@ div[x-node] > .uwaga {
     margin: 1em;
     max-width: 100%;
     max-height: 100%;
+    border: 1px solid black;
 }
 
 .htmlview .uwaga:hover {
