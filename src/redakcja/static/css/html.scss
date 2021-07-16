@@ -7,6 +7,25 @@
     padding: 3em 3em 3em 45px;
     overflow-y: scroll;
     overflow-x: auto;
+
+
+    #caret {
+        display: inline-block;
+        width: 2px;
+        height: 1em;
+        overflow: hidden;
+        margin-left:-1px;
+        margin-right: -1px;
+
+        textarea {
+            border: none;
+            background: #888;
+
+            &:focus {
+                background: red;
+            }
+        }
+    }
 }
 
 .htmlview[data-tag-names-visible] {
@@ -61,6 +80,7 @@
 .htmlview .podtytul,
 .htmlview .naglowek_scena,
 .htmlview .naglowek_rozdzial
+{
     font-size: 1.5em;
     margin: 1.5em 0 0;
     font-weight: normal;
@@ -292,9 +312,22 @@
     font-size: .9em;
 }
 
-.htmlview .wyroznienie {
-    letter-spacing: 0.1em;
+.htmlview {
+    .wyroznienie {
+        //    letter-spacing: 0.1em;
+        background: #dfd;
+        border: 1px solid #0f0;
+    }
+    .slowo_obce {
+        background: #ddf;
+        border: 1px solid #88f;
+    }
+    .tytul_dziela {
+        background: #fdf;
+        border: 1px solid #f8f;
+    }
 }
+
 
 .htmlview .osoba {
     font-style: normal;

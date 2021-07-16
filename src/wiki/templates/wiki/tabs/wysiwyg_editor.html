@@ -9,9 +9,24 @@
         <button class="btn btn-info mr-2" id="insert-annotation-button">
           {% trans "Insert annotation" %}
         </button>
-        <button class="btn btn-info" id="insert-reference-button">
+        <button class="btn btn-info mr-2" id="insert-reference-button">
           {% trans "Insert reference" %}
         </button>
+
+        <div class="btn-group">
+          <button class="btn btn-info insert-inline-tag" data-tag="tytul_dziela">
+            tytuł dzieła
+          </button>
+          <button class="btn btn-info insert-inline-tag" data-tag="wyroznienie">
+            wyroznienie
+          </button>
+          <button class="btn btn-info insert-inline-tag" data-tag="slowo_obce">
+            słowo obce
+          </button>
+          <button class="btn btn-info insert-char">
+            znak spec.
+          </button>
+        </div>
       {% endif %}
     </div>
   </div>

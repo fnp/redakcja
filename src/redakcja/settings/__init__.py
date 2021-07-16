@@ -135,7 +135,7 @@ PIPELINE = {
                 'css/gallery.css',
                 'css/history.css',
                 'css/summary.css',
-                'css/html.css',
+                'css/html.scss',
                 'css/imgareaselect-default.css',
                 'css/dialogs.css',
 

@@ -1,4 +1,229 @@
-(function($){
+(function($) {
+    class Caret {
+        constructor(view) {
+            self = this;
+            self.view = view;
+            self.singleClick = false;
+            
+            let caret = this.element = $('<span id="caret"><textarea></textarea></span>');
+
+            // When user writes into caret, add it to the document.
+            $('textarea', caret).on('input', function() {
+                let v = $(this).val();
+                $(this).val('');
+                self.insertChar(v);
+
+            });
+
+            // On click on x-node element, set caret position.
+            self.view.on('click', '*[x-node]', function(e) {
+                if (e.redakcja_caret_inserted) return;
+                e.redakcja_caret_inserted = true;
+
+                if (self.singleClick) {
+                    self.singleClick = false;
+                    return;
+                }
+                
+                self.detach();
+
+                var selection = window.getSelection();
+                if (!selection.isCollapsed) return;
+
+                self.singleClick = true;
+                setTimeout(function() {
+                    if (self.singleClick) {
+                        self.element.insertBefore(
+                            selection.anchorNode.splitText(
+                                selection.anchorOffset
+                            )
+                        )
+                        self.focus();
+                    }
+                    self.singleClick = false;
+                }, 250);
+
+            });
+
+            self.view.on('keydown', function(e) {
+                // TODO:
+                // Enter (split block)
+                // delete selection?
+
+                // cases:
+                // we are in <akap> (no going up)
+                // we are in <wyroznienie> (can go up)
+                // we are next to <wyroznienie> (can go inside)
+
+                switch (e.key) {
+                case "ArrowRight":
+                    if (e.shiftKey) {
+                        self.detach();
+                        return;
+                    }
+
+                    self.moveRight();
+                    break;
+                case "ArrowLeft":
+                    if (e.shiftKey) {
+                        self.detach();
+                        return;
+                    }
+
+                    self.moveLeft();
+                    break;
+                case "ArrowUp":
+                    if (e.shiftKey) {
+                        self.detach();
+                        return;
+                    }
+                    break;
+                case "ArrowDown":
+                    if (e.shiftKey) {
+                        self.detach();
+                        return;
+                    }
+                    break;
+                case "Backspace":
+                    self.deleteBefore();
+                    break;
+                case "Delete":
+                    self.deleteAfter();
+                    break;
+//                default:
+//                    console.log('key', e.key, e.code);
+                }
+            })
+        }
+
+        get attached() {
+            return this.element.parent().length;
+        }
+
+        detach() {
+            let p;
+            if (this.attached) {
+                p = this.element.parent()[0]
+                this.element.detach();
+                p.normalize()
+            }
+        }
+
+        focus() {
+            $("textarea", self.element).focus();
+        }
+
+        normalize() {
+            this.element.parent()[0].normalize();
+        }
+
+        insertChar(ch) {
+            $(document.createTextNode(ch)).insertBefore(this.element);
+            this.normalize();
+        }
+
+        deleteBefore() {
+            let contents = this.element.parent().contents();
+            // Find the text before caret.
+            let textBefore = contents[contents.index(this.element) - 1];
+
+            // Should be text, but what if not?
+            textBefore.textContent = textBefore.textContent.substr(0, textBefore.textContent.length - 1);
+            this.normalize();
+
+        }
+
+        deleteAfter() {
+            let contents = this.element.parent().contents();
+            // Find the text after caret.
+            let textAfter = contents[contents.index(this.element) + 1];
+            textAfter.textContent = textAfter.textContent.substr(1);
+        }
+
+        moveLeft() {
+            this.move({
+                move: -1,
+                edge: (i, l) => {return !i;},
+                enter: (l) => {return l - 1;},
+                splitTarget: (t) => {return t.splitText(t.length - 1);},
+                noSplitTarget: (t) => {return t.splitText(t.length);},
+            })
+        }
+
+        moveRight() {
+            this.move({
+                move: 1,
+                edge: (i, l) => {return i == l - 1;},
+                enter: (l) => {return 0;},
+                splitTarget: (t) => {return t.splitText(1);},
+                noSplitTarget: (t) => {return t;},
+            })
+        }
+
+        move(opts) {
+            if (!this.attached) return;
+            this.normalize();
+
+            let contents = this.element.parent().contents();
+            let index = contents.index(this.element);
+            let target, moved, oldparent;
+
+            let parent = this.element.parent()[0];
+
+            if (opts.edge(index, contents.length)) {
+                // We're at the end -- what to do?
+                // can we go up?
+
+                if (parent.nodeName == 'EM') {
+                    oldparent = parent;
+                    parent = parent.parentNode;
+                    contents = $(parent).contents();
+                    index = contents.index(oldparent);
+                }
+            }
+
+            index += opts.move;
+            target = contents[index];
+            moved = false;
+
+            while (target.nodeType == 1) {
+                // we've encountered a node.
+                // can we go inside?
+
+                if (target.nodeName == 'EM') {
+                    // enter
+                    parent = $(target);
+                    contents = parent.contents();
+                    index = opts.enter(contents.length);
+                    target = contents[index];
+
+                    // what if it has no elements?
+                } else {
+                    // skip
+                    index += opts.move; // again, what if end?
+                    target = contents[index];
+                    moved = true;
+                }
+
+                // if editable?
+                // what if editable but empty?
+
+            }
+
+            if (target.nodeType == 3) {
+                if (!moved) {
+                    target = opts.splitTarget(target);
+                } else {
+                    target = opts.noSplitTarget(target);
+                }
+
+                this.element.insertBefore(target);
+            }
+            this.normalize();
+            this.focus();
+        }
+    }
+
 
     /* Show theme to the user */
     function selectTheme(themeId){
@@ -153,7 +378,7 @@
 
 
 
-    
+
     /* Insert theme using current selection */
 
     function addTheme(){
@@ -210,10 +435,10 @@
             point.setStart(container, offset);
             return point;
         }
-        
+
         var spoint = createPoint(range.startContainer, range.startOffset);
         var epoint = createPoint(range.endContainer, range.endOffset);
-               
+
         var mtag, btag, etag, errors;
 
         // insert theme-ref
@@ -246,10 +471,18 @@
         });
     }
 
-    function addSymbol() {
-        if($('div.html-editarea textarea')[0]) {
+    function addSymbol(caret) {
+        let editArea;
+
+        if (caret) {
+            editArea = $("textarea", caret.element)[0];
+        } else {
+            editArea = $('div.html-editarea textarea')[0];
+        }
+
+        if(editArea) {
             var specialCharsContainer = $("<div id='specialCharsContainer'><a href='#' id='specialCharsClose'>Zamknij</a><table id='tableSpecialChars' style='width: 600px;'></table></div>");
-                        
+
             var specialChars = [' ', 'Ą','ą','Ć','ć','Ę','ę','Ł','ł','Ń','ń','Ó','ó','Ś','ś','Ż','ż','Ź','ź','Á','á','À','à',
             'Â','â','Ä','ä','Å','å','Ā','ā','Ă','ă','Ã','ã',
             'Æ','æ','Ç','ç','Č','č','Ċ','ċ','Ď','ď','É','é','È','è',
@@ -274,18 +507,18 @@
             '„','”','„”','«','»','«»','»«','’','[',']','~','|','−','·',
             '×','÷','≈','≠','±','≤','≥','∈'];
             var tableContent = "<tr>";
-            
+
             for(var i in specialChars) {
                 if(i % 14 == 0 && i > 0) {
                     tableContent += "</tr><tr>";
-                }              
-                tableContent += "<td><input type='button' class='specialBtn' value='"+specialChars[i]+"'/></td>";              
+                }
+                tableContent += "<td><input type='button' class='specialBtn' value='"+specialChars[i]+"'/></td>";
             }
-            
-            tableContent += "</tr>";                                   
+
+            tableContent += "</tr>";
             $("body").append(specialCharsContainer);
-            
-            
+
+
              // localStorage for recently used characters - reading
              if (typeof(localStorage) != 'undefined') {
                  if (localStorage.getItem("recentSymbols")) {
@@ -293,45 +526,48 @@
                      var recentArray = recent.split(";");
                      var recentRow = "";
                      for(var i in recentArray.reverse()) {
-                        recentRow += "<td><input type='button' class='specialBtn recentSymbol' value='"+recentArray[i]+"'/></td>";              
+                        recentRow += "<td><input type='button' class='specialBtn recentSymbol' value='"+recentArray[i]+"'/></td>";
                      }
-                     recentRow = "<tr>" + recentRow + "</tr>";                              
+                     recentRow = "<tr>" + recentRow + "</tr>";
                  }
-             }            
+             }
             $("#tableSpecialChars").append(recentRow);
             $("#tableSpecialChars").append(tableContent);
-            
+
             /* events */
-            
+
             $('.specialBtn').click(function(){
-                var editArea = $('div.html-editarea textarea')[0];
                 var insertVal = $(this).val();
-                
+
                 // if we want to surround text with quotes
                 // not sure if just check if value has length == 2
-                
-                if (insertVal.length == 2) {
-                    var startTag = insertVal[0];
-                    var endTag = insertVal[1];
-			        var textAreaOpened = editArea;			                                
-			        //IE support
-		                if (document.selection) {
-		                    textAreaOpened.focus();
-		                    sel = document.selection.createRange();
-		                    sel.text = startTag + sel.text + endTag;
-		                }
-		                //MOZILLA/NETSCAPE support
-		                else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
-		                    var startPos = textAreaOpened.selectionStart;
-		                    var endPos = textAreaOpened.selectionEnd;
-		                    textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
-				          + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
-		                }                
+
+                if (caret) {
+                    caret.insertChar(insertVal);
+                    caret.focus();
                 } else {
-                    // if we just want to insert single symbol
-                    insertAtCaret(editArea, insertVal);
+                    if (insertVal.length == 2) {
+                        var startTag = insertVal[0];
+                        var endTag = insertVal[1];
+		        var textAreaOpened = editArea;
+		        //IE support
+		        if (document.selection) {
+		            textAreaOpened.focus();
+		            sel = document.selection.createRange();
+		            sel.text = startTag + sel.text + endTag;
+		        }
+		        //MOZILLA/NETSCAPE support
+		        else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+		            var startPos = textAreaOpened.selectionStart;
+		            var endPos = textAreaOpened.selectionEnd;
+		            textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+			        + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+		        }
+                    } else {
+                        insertAtCaret(editArea, insertVal);
+                    }
                 }
-                
+
                 // localStorage for recently used characters - saving
                 if (typeof(localStorage) != 'undefined') {
                     if (localStorage.getItem("recentSymbols")) {
@@ -360,49 +596,49 @@
                     }
                 }
                 $(specialCharsContainer).remove();
-            });         
+            });
             $('#specialCharsClose').click(function(){
                 $(specialCharsContainer).remove();
-            });                   
-            
+            });
+
         } else {
             window.alert('Najedź na fragment tekstu, wybierz "Edytuj" i ustaw kursor na miejscu gdzie chcesz wstawić symbol.');
         }
     }
 
-    function insertAtCaret(txtarea,text) { 
+    function insertAtCaret(txtarea,text) {
         /* http://www.scottklarr.com/topic/425/how-to-insert-text-into-a-textarea-where-the-cursor-is/ */
-        var scrollPos = txtarea.scrollTop; 
-        var strPos = 0; 
+        var scrollPos = txtarea.scrollTop;
+        var strPos = 0;
         var backStart = 0;
         var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? "ff" : (document.selection ? "ie" : false ) );
-        if (br == "ie") { 
+        if (br == "ie") {
             txtarea.focus();
-            var range = document.selection.createRange(); 
-            range.moveStart ('character', -txtarea.value.length); 
-            strPos = backStart = range.text.length; 
+            var range = document.selection.createRange();
+            range.moveStart ('character', -txtarea.value.length);
+            strPos = backStart = range.text.length;
         } else if (br == "ff") {
-            strPos = txtarea.selectionStart; 
+            strPos = txtarea.selectionStart;
             backStart = txtarea.selectionEnd;
         }
-        var front = (txtarea.value).substring(0,strPos); 
-        var back = (txtarea.value).substring(backStart,txtarea.value.length); 
-        txtarea.value=front+text+back; 
-        strPos = strPos + text.length; 
-        if (br == "ie") { 
-            txtarea.focus(); 
-            var range = document.selection.createRange(); 
-            range.moveStart ('character', -txtarea.value.length); 
-            range.moveStart ('character', strPos); 
-            range.moveEnd ('character', 0); 
-            range.select(); 
-        } else if (br == "ff") { 
-            txtarea.selectionStart = strPos; 
-            txtarea.selectionEnd = strPos; 
-            txtarea.focus(); 
-        } 
-        txtarea.scrollTop = scrollPos; 
-    } 
+        var front = (txtarea.value).substring(0,strPos);
+        var back = (txtarea.value).substring(backStart,txtarea.value.length);
+        txtarea.value=front+text+back;
+        strPos = strPos + text.length;
+        if (br == "ie") {
+            txtarea.focus();
+            var range = document.selection.createRange();
+            range.moveStart ('character', -txtarea.value.length);
+            range.moveStart ('character', strPos);
+            range.moveEnd ('character', 0);
+            range.select();
+        } else if (br == "ff") {
+            txtarea.selectionStart = strPos;
+            txtarea.selectionEnd = strPos;
+            txtarea.focus();
+        }
+        txtarea.scrollTop = scrollPos;
+    }
 
     /* open edition window for selected fragment */
     function openForEdit($origin){
@@ -416,8 +652,8 @@
             $box = $origin;
         }
         var x = $box[0].offsetLeft;
-        var y = $box[0].offsetTop;        
-        
+        var y = $box[0].offsetTop;
+
         var w = $box.outerWidth();
         var h = $box.innerHeight();
 
@@ -425,7 +661,7 @@
             w = Math.max(w, 400);
             h = Math.max(h, 60);
             if($('.htmlview div').offset().left + $('.htmlview div').width() > ($('.vsplitbar').offset().left - 480)){
-                x = -(Math.max($origin.offset().left, $origin.width())); 
+                x = -(Math.max($origin.offset().left, $origin.width()));
             } else {
                 x = 100;
             }
@@ -448,12 +684,12 @@
             top: y,
             width: w
         }).appendTo($box[0].offsetParent || $box.parent()).show();
-        
+
 
         if ($origin.is('*[x-edit-no-format]')) {
 	    $('.akap-edit-button').remove();
         }
-        
+
         if ($origin.is('.motyw')) {
             $.themes.autocomplete($('textarea', $overlay));
         }
@@ -499,7 +735,7 @@
         } else {
             source = $box[0];
         }
-        
+
         html2text({
             element: source,
             stripOuter: true,
@@ -524,7 +760,7 @@
                         xml = '<' + nodeName + '>' + insertedText + '</' + nodeName + '>';
                     }
 
-                    
+
                     xml2html({
                         xml: xml,
                         success: function(element){
@@ -545,11 +781,11 @@
                             alert('Błąd! ' + text);
                         }
                     })
-                    
+
                     var msg = $("<div class='saveNotify'><p>Pamiętaj, żeby zapisać swoje zmiany.</p></div>");
                     $("#base").prepend(msg);
                     $('#base .saveNotify').fadeOut(3000, function(){
-                        $(this).remove(); 
+                        $(this).remove();
                     });
                 }
 
@@ -572,9 +808,9 @@
 			    addSymbol();
 			    return false;
 			}
-			
-			var myField = textAreaOpened;			
-                        
+
+			var myField = textAreaOpened;
+
 			//IE support
 		        if (document.selection) {
 		            textAreaOpened.focus();
@@ -612,6 +848,7 @@
 
 
     function VisualPerspective(options){
+        perspective = this;
 
         var old_callback = options.callback;
 
@@ -620,6 +857,7 @@
             var button = $('<button class="edit-button">Edytuj</button>');
 
             if (!CurrentDocument.readonly) {
+
                 $('#html-view').bind('mousemove', function(event){
                     var editable = $(event.target).closest('*[x-editable]');
                     $('.active', element).not(editable).removeClass('active').children('.edit-button').remove();
@@ -652,7 +890,19 @@
                 $('#insert-theme-button').click(function(){
                     addTheme();
                     return false;
-                });            
+                });
+
+
+                $(".insert-inline-tag").click(function() {
+                    perspective.insertInlineTag($(this).attr('data-tag'));
+                    return false;
+                });
+
+                $(".insert-char").click(function() {
+                    console.log('perspective', perspective);
+                    addSymbol(caret=perspective.caret);
+                    return false;
+                });
 
                 $(document).on('click', '.edit-button', function(event){
                     event.preventDefault();
@@ -690,12 +940,19 @@
                 callback();
         }
 
+        perspective = this;
         xml2html({
             xml: this.doc.text,
             base: this.doc.getBase(),
             success: function(element){
+
                 var htmlView = $('#html-view');
                 htmlView.html(element);
+
+                perspective.caret = new Caret(htmlView);
+
+
+
                 htmlView.find('*[x-node]').dblclick(function(e) {
                     if($(e.target).is('textarea'))
                         return;
@@ -746,6 +1003,73 @@
         });
     };
 
+    VisualPerspective.prototype.insertInlineTag = function(tag) {
+        this.caret.detach();
+
+        let selection = window.getSelection();
+        var n = selection.rangeCount;
+        if (n != 1) {
+            window.alert("Nie zaznaczono obszaru");
+            return false
+        }
+        let range = selection.getRangeAt(0);
+
+        // Make sure that:
+        // Both ends are in the same x-node container.
+        // TODO: That the container is a inline-text container.
+        let node = range.startContainer;
+        if (node.nodeType == node.TEXT_NODE) {
+            node = node.parentNode;
+        }
+        let endNode = range.endContainer;
+        if (endNode.nodeType == endNode.TEXT_NODE) {
+            endNode = endNode.parentNode;
+        }
+        if (node != endNode) {
+            window.alert("Zły obszar.");
+            return false;
+        }
+
+        // We will construct a HTML element with the range selected.
+        let div = $("<span x-pass-thru='true'>");
+
+        contents = $(node).contents();
+        let startChildIndex = node == range.startContainer ? 0 : contents.index(range.startContainer);
+        let endChildIndex = contents.index(range.endContainer);
+
+        current = range.startContainer;
+        if (current.nodeType == current.TEXT_NODE) {
+            current = current.splitText(range.startOffset);
+        }
+        while (current != range.endContainer) {
+            n = current.nextSibling;
+            $(current).appendTo(div);
+            current = n;
+        }
+        if (current.nodeType == current.TEXT_NODE) {
+            end = current.splitText(range.endOffset);
+        }
+        $(current).appendTo(div);
+        
+        html2text({
+            element: div[0],
+            success: function(d) {
+                xml2html({
+                    xml: d = '<' + tag + '>' + d + '</' + tag + '>',
+                    success: function(html) {
+                        // What if no end?
+                        node.insertBefore($(html)[0], end);
+                    }
+                });
+            },
+            error: function(a, b) {
+                console.log(a, b);
+            }
+        });
+    };
+
+
+    
     $.wiki.VisualPerspective = VisualPerspective;
 
 })(jQuery);
