@@ -1,229 +1,4 @@
 (function($) {
-    class Caret {
-        constructor(view) {
-            self = this;
-            self.view = view;
-            self.singleClick = false;
-            
-            let caret = this.element = $('<span id="caret"><textarea></textarea></span>');
-
-            // When user writes into caret, add it to the document.
-            $('textarea', caret).on('input', function() {
-                let v = $(this).val();
-                $(this).val('');
-                self.insertChar(v);
-
-            });
-
-            // On click on x-node element, set caret position.
-            self.view.on('click', '*[x-node]', function(e) {
-                if (e.redakcja_caret_inserted) return;
-                e.redakcja_caret_inserted = true;
-
-                if (self.singleClick) {
-                    self.singleClick = false;
-                    return;
-                }
-                
-                self.detach();
-
-                var selection = window.getSelection();
-                if (!selection.isCollapsed) return;
-
-                self.singleClick = true;
-                setTimeout(function() {
-                    if (self.singleClick) {
-                        self.element.insertBefore(
-                            selection.anchorNode.splitText(
-                                selection.anchorOffset
-                            )
-                        )
-                        self.focus();
-                    }
-                    self.singleClick = false;
-                }, 250);
-
-            });
-
-            self.view.on('keydown', function(e) {
-                // TODO:
-                // Enter (split block)
-                // delete selection?
-
-                // cases:
-                // we are in <akap> (no going up)
-                // we are in <wyroznienie> (can go up)
-                // we are next to <wyroznienie> (can go inside)
-
-                switch (e.key) {
-                case "ArrowRight":
-                    if (e.shiftKey) {
-                        self.detach();
-                        return;
-                    }
-
-                    self.moveRight();
-                    break;
-                case "ArrowLeft":
-                    if (e.shiftKey) {
-                        self.detach();
-                        return;
-                    }
-
-                    self.moveLeft();
-                    break;
-                case "ArrowUp":
-                    if (e.shiftKey) {
-                        self.detach();
-                        return;
-                    }
-                    break;
-                case "ArrowDown":
-                    if (e.shiftKey) {
-                        self.detach();
-                        return;
-                    }
-                    break;
-                case "Backspace":
-                    self.deleteBefore();
-                    break;
-                case "Delete":
-                    self.deleteAfter();
-                    break;
-//                default:
-//                    console.log('key', e.key, e.code);
-                }
-            })
-        }
-
-        get attached() {
-            return this.element.parent().length;
-        }
-
-        detach() {
-            let p;
-            if (this.attached) {
-                p = this.element.parent()[0]
-                this.element.detach();
-                p.normalize()
-            }
-        }
-
-        focus() {
-            $("textarea", self.element).focus();
-        }
-
-        normalize() {
-            this.element.parent()[0].normalize();
-        }
-
-        insertChar(ch) {
-            $(document.createTextNode(ch)).insertBefore(this.element);
-            this.normalize();
-        }
-
-        deleteBefore() {
-            let contents = this.element.parent().contents();
-            // Find the text before caret.
-            let textBefore = contents[contents.index(this.element) - 1];
-
-            // Should be text, but what if not?
-            textBefore.textContent = textBefore.textContent.substr(0, textBefore.textContent.length - 1);
-            this.normalize();
-
-        }
-
-        deleteAfter() {
-            let contents = this.element.parent().contents();
-            // Find the text after caret.
-            let textAfter = contents[contents.index(this.element) + 1];
-            textAfter.textContent = textAfter.textContent.substr(1);
-        }
-
-        moveLeft() {
-            this.move({
-                move: -1,
-                edge: (i, l) => {return !i;},
-                enter: (l) => {return l - 1;},
-                splitTarget: (t) => {return t.splitText(t.length - 1);},
-                noSplitTarget: (t) => {return t.splitText(t.length);},
-            })
-        }
-
-        moveRight() {
-            this.move({
-                move: 1,
-                edge: (i, l) => {return i == l - 1;},
-                enter: (l) => {return 0;},
-                splitTarget: (t) => {return t.splitText(1);},
-                noSplitTarget: (t) => {return t;},
-            })
-        }
-
-        move(opts) {
-            if (!this.attached) return;
-            this.normalize();
-
-            let contents = this.element.parent().contents();
-            let index = contents.index(this.element);
-            let target, moved, oldparent;
-
-            let parent = this.element.parent()[0];
-
-            if (opts.edge(index, contents.length)) {
-                // We're at the end -- what to do?
-                // can we go up?
-
-                if (parent.nodeName == 'EM') {
-                    oldparent = parent;
-                    parent = parent.parentNode;
-                    contents = $(parent).contents();
-                    index = contents.index(oldparent);
-                }
-            }
-
-            index += opts.move;
-            target = contents[index];
-            moved = false;
-
-            while (target.nodeType == 1) {
-                // we've encountered a node.
-                // can we go inside?
-
-                if (target.nodeName == 'EM') {
-                    // enter
-                    parent = $(target);
-                    contents = parent.contents();
-                    index = opts.enter(contents.length);
-                    target = contents[index];
-
-                    // what if it has no elements?
-                } else {
-                    // skip
-                    index += opts.move; // again, what if end?
-                    target = contents[index];
-                    moved = true;
-                }
-
-                // if editable?
-                // what if editable but empty?
-
-            }
-
-            if (target.nodeType == 3) {
-                if (!moved) {
-                    target = opts.splitTarget(target);
-                } else {
-                    target = opts.noSplitTarget(target);
-                }
-
-                this.element.insertBefore(target);
-            }
-            this.normalize();
-            this.focus();
-        }
-    }
-
 
     /* Show theme to the user */
     function selectTheme(themeId){
@@ -867,16 +642,17 @@
                     }
                     if (editable.is('.annotation-inline-box')) {
                         $('*[x-annotation-box]', editable).css({
-                            position: 'absolute',
-                            left: event.clientX - editable.offset().left + 5,
-                            top: event.clientY - editable.offset().top + 5
+//                            left: event.clientX - editable.offset().left + 5,
+//                            top: event.clientY - editable.offset().top + 5
                         }).show();
                     }
                     else {
-                        $('*[x-annotation-box]').hide();
+//                        $('*[x-annotation-box]').hide();
                     }
                 });
 
+                perspective.caret = new Caret(element);
+                
                 $('#insert-reference-button').click(function(){
                     addReference();
                     return false;
@@ -915,6 +691,12 @@
                 selectTheme($(this).attr('theme-class'));
             });
 
+            element.on('click', '.annotation', function(event) {
+                event.preventDefault();
+                $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
+                
+            });
+
             old_callback.call(this);
         };
 
@@ -922,10 +704,6 @@
     };
 
     VisualPerspective.prototype = new $.wiki.Perspective();
-
-    VisualPerspective.prototype.freezeState = function(){
-
-    };
 
     VisualPerspective.prototype.onEnter = function(success, failure){
         $.wiki.Perspective.prototype.onEnter.call(this);
@@ -948,10 +726,6 @@
 
                 var htmlView = $('#html-view');
                 htmlView.html(element);
-
-                perspective.caret = new Caret(htmlView);
-
-
 
                 htmlView.find('*[x-node]').dblclick(function(e) {
                     if($(e.target).is('textarea'))
@@ -976,6 +750,8 @@
     VisualPerspective.prototype.onExit = function(success, failure){
         var self = this;
 
+        self.caret.detach();
+        
         $.blockUI({
             message: 'Zapisywanie widoku...'
         });
@@ -1068,8 +844,6 @@
         });
     };
 
-
-    
     $.wiki.VisualPerspective = VisualPerspective;
 
 })(jQuery);

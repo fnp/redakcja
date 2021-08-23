@@ -44,10 +44,13 @@
     max-width: 36em;
 }
 
+
+// unused?
 .htmlview #toc {
     display: none;
 }
 
+// where is it used, if any?
 .htmlview a {
     color: blue;
     text-decoration: none;
@@ -57,60 +60,9 @@
     text-decoration: none;
 }
 
-.htmlview .nazwa_utworu {
-    font-size: 3em;
-    margin: 1.5em 0;
-    text-align: center;
-    line-height: 1.5em;
-    font-weight: bold;
-}
-
-.htmlview .autor_utworu,
-.htmlview .dzielo_nadrzedne,
-.htmlview .naglowek_czesc,
-.htmlview .srodtytul,
-.htmlview .naglowek_akt
-{
-    font-size: 2em;
-    margin: 1.5em 0 0;
-    font-weight: bold;
-    line-height: 1.5em;
-}
-
-.htmlview .podtytul,
-.htmlview .naglowek_scena,
-.htmlview .naglowek_rozdzial
-{
-    font-size: 1.5em;
-    margin: 1.5em 0 0;
-    font-weight: normal;
-    line-height: 1.5em;
-}
-
-.htmlview .naglowek_podrozdzial,
-.htmlview .naglowek_osoba
-{
-    font-size: 1em;
-    margin: 1.5em 0 0;
-    line-height: 1.5em;
-    font-weight: bold;
-}
-
+// unused?
 .htmlview p {
     margin: 0;
-}
-
-.htmlview #footnotes div {
-    margin: 1.5em 0 0 0;
-}
-
-.htmlview #footnotes p {
-    margin-left: 2.5em;
-    font-size: 0.875em;
-}
-
-.htmlview blockquote {
-    font-size: 0.875em;
 }
 
 .htmlview pre {
@@ -146,29 +98,6 @@
 /* =================== */
 /* = Custom elements = */
 /* =================== */
-.htmlview .autor_utwor {
-    font-size: 0.5em;
-    display: block;
-    line-height: 1.5em;
-    margin-bottom: 0.25em;
-}
-
-.htmlview .dzielo_nadrzedne {
-    /* */
-}
-
-.htmlview .podtytul {
-    /* */
-}
-
-.htmlview .didaskalia {
-    font-style: italic;
-    margin: 0.5em 0 0 1.5em;
-}
-
-.htmlview .kwestia {
-    margin: 0.5em 0 0;
-}
 
 .htmlview .strofa {
     margin: 1.5em 0 0.5em auto;
@@ -203,12 +132,8 @@
     margin-left: 6em;
 }
 
-.htmlview .strofa .wers_do_prawej {
-    text-align: right;
-}
-
 /* błędne wersy */
-.htmlview *:not(.strofa) > *[x-verse]::after {
+.htmlview *:not([x-node='strofa']) > *[x-verse]::after {
     content: "Ten wers znajduje się poza strofą.";
     display: inline;
     background: red;
@@ -225,61 +150,11 @@
     margin: 0;
 }
 
-.htmlview .akap, .htmlview .akap_cd, .htmlview .akap_dialog {
-    text-align: justify;
-    margin: 1.5em 0 0;
-}
-
-.htmlview .motto_container {
-	display: inline-block;
-	margin: 1.5em 0 0;
-	clear: right;
-}
-
-.htmlview .motto {
-    text-align: justify;
-    font-style: italic;
-}
-
-.htmlview p.motto_podpis {
-	position: relative;
-	right: -3em;
-	text-align: right;
-}
-
-.htmlview div.fragment {
-    border-bottom: 0.1em solid #999;
-    padding-bottom: 1.5em;
-}
-
-.htmlview div.nota p, .htmlview div.dedykacja p {
-    text-align: right;
-    font-style: italic;
-}
 
 .htmlview div.ramka {
     border: 1px darkgray solid;
 }
 
-.htmlview .nota_red {
-    background-color: #eee;
-    border: 1px solid #888;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    display: block;
-    padding: 0 1em 1em 1em;
-}
-
-.htmlview hr.sekcja_swiatlo {
-    margin: 2em 0;
-    visibility: hidden;
-}
-
-.htmlview hr.separator_linia {
-    margin: 1.5em 0;
-    border: none;
-    border-bottom: 0.1em solid #000;
-}
 
 .htmlview hr.sekcja_asterysk {
     border: none;
@@ -288,55 +163,9 @@
     text-align: center;
 }
 
-.htmlview hr.sekcja_asterysk:after {
-    content: "*";
-}
-
 .htmlview div.lista_osob ol {
     list-style: none;
     padding: 0 0 0 1.5em;
-}
-
-.htmlview p.miejsce_czas {
-    font-style: italic;
-}
-
-.htmlview .mat, .htmlview .slowo_obce, .htmlview .tytul_dziela, .htmlview .didaskalia {
-    font-style: italic;
-}
-
-
-.htmlview .indeks_dolny {
-    font-style: normal;
-    vertical-align: sub;
-    font-size: .9em;
-}
-
-.htmlview {
-    .wyroznienie {
-        //    letter-spacing: 0.1em;
-        background: #dfd;
-        border: 1px solid #0f0;
-    }
-    .slowo_obce {
-        background: #ddf;
-        border: 1px solid #88f;
-    }
-    .tytul_dziela {
-        background: #fdf;
-        border: 1px solid #f8f;
-    }
-}
-
-
-.htmlview .osoba {
-    font-style: normal;
-    font-variant: small-caps;
-}
-
-.htmlview em.wieksze_odstepy {
-    font-style: normal;
-    word-spacing: 1em;
 }
 
 .htmlview .ilustr img {
@@ -397,7 +226,7 @@ div[x-node] > .uwaga {
     background: green;
 }
 
-.htmlview .motyw {
+.htmlview [x-node='motyw'] {
     /* position: absolute; */
     float: right;
     left: auto;
@@ -471,51 +300,36 @@ div[x-node] > .uwaga {
  * Przypisy w tekście
  */
  
-.htmlview .annotation-inline-box:hover > span[x-annotation-box]{
-    display: block;
-}
+.htmlview .annotation-inline-box {
+    &:hover > span[x-annotation-box] {
+        display: block;
+    }
 
-.htmlview .annotation-inline-box > span[x-annotation-box] {
-    display: none;
-    width: 300px;
-    font-size: 10pt;
-    line-height: 12pt;
-    font-weight: normal;
-    font-style: normal;
-    background: #fffe93;
-    border: 1px solid black;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    padding: 3px 5px;
-    text-decoration: none;
-    z-index: 600;
-}
+    > span[x-annotation-box] {
+        display: none;
+        width: 300px;
+        font-size: 10pt;
+        line-height: 12pt;
+        font-weight: normal;
+        font-style: normal;
+        background: #fffe93;
+        border: 1px solid black;
+        border-radius: 10px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        padding: 3px 5px;
+        text-decoration: none;
+        z-index: 600;
 
-/*
- * Przypisy na końcu utworu (aktualnie nieuzywane)
- */
-.htmlview .annotations-block {
-    counter-reset: secondary;
-}
+        position: absolute;
+        left: 0;
+        top: 1em;
 
-.htmlview .annotations-block .annotation-body {
-    position: relative;
-    padding-left: 2.5em;
-    padding-top: 0.2em;
-}
-
-.htmlview .annotations-block .annotation-backref {
-    position: absolute;
-    top: 0.4em;
-    left: -0.4em;
-    width: 2.5em;
-    text-align: right;
-}
-
-.htmlview .annotations-block .annotation-backref:before {
-    content: "[" counter(secondary) "]";
-    counter-increment: secondary;
+        &.editing {
+            display: block;
+        }
+    }
+    
 }
 
 /*

@@ -1,0 +1,10 @@
+{% for tag in object_list %}
+.htmlview [x-node="{{ tag.name }}"] {
+    {{ tag.editor_css|safe }}
+}
+{% if tag.editor_css_after %}
+.htmlview [x-node="{{ tag.name }}"]::after {
+    {{ tag.editor_css_after|safe }}
+}
+{% endif %}
+{% endfor %}

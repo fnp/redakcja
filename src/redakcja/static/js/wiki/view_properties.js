@@ -57,6 +57,10 @@
                 self.edit($(this).data('node'));
             });
 
+            $(document).on('click', '#bubbles .badge', function(e) {
+                self.edit($(this).data('node'));
+            });
+
             self.$pane.on('change', '.form-control', function() {
                 let $input = $(this);
 
@@ -97,6 +101,14 @@
                 });
                 self.$edited;
             });
+
+            self.$pane.on('click', '.current-convert', function() {
+                self.convert($(this).attr('data-to'));
+            });
+            self.$pane.on('click', '#current-delete', function() {
+                self.delete();
+            });
+            
             
             oldCallback.call(this);
         };
@@ -111,11 +123,22 @@
 
         let $node = $(element);
         $("#parents", self.$pane).empty();
+        $("#bubbles").empty();
+
+        let b = $("<div class='badge badge-primary'></div>").text($node.attr('x-node'));
+        b.data('node', element);
+        $("#bubbles").append(b);
+
         $node.parents('[x-node]').each(function() {
             let a = $("<li class='breadcrumb-item'>").text($(this).attr('x-node'));
             a.data('node', this);
             $("#parents", self.$pane).prepend(a)
+
+            let b = $("<div class='badge badge-info'></div>").text($(this).attr('x-node'));
+            b.data('node', this);
+            $("#bubbles").append(b);
         })
+
         // It's a tag.
         node = $(element).attr('x-node');
         $("h1", self.$pane).text(node);
@@ -135,7 +158,7 @@
         // Only utwor can has matadata now.
         if (node == 'utwor') {
             // Let's find all the metadata.
-            $("> .RDF > .Description > [x-node]", $node).each(function() {
+            $("> [x-node='RDF'] > [x-node='Description'] > [x-node]", $node).each(function() {
                 $meta = $(this);
                 self.addEditField(
                     {"name": $meta.attr('x-node'),},
@@ -144,8 +167,19 @@
                 );
             });
         }
+
+
+
+        // check node type, find relevant tags
+        if ($node[0].nodeName == 'DIV') {
+            $("#current-convert").attr("data-current-type", "div");
+        } else if ($node[0].nodeName == 'EM') {
+            $("#current-convert").attr("data-current-type", "span");
+        }
     };
-        
+
+
+
     PropertiesPerspective.prototype.addEditField = function(defn, value, elem) {
         let self = this;
         let $form = $("#properties-form", self.$pane);
@@ -184,7 +218,18 @@
 
         $fg.appendTo($form);
     }
-    
+
+    PropertiesPerspective.prototype.convert = function(newtag) {
+        this.$edited.attr('x-node', newtag);
+        // TODO: take care of attributes?
+    }
+
+    PropertiesPerspective.prototype.delete = function(newtag) {
+        p = this.$edited.parent();
+        this.$edited.remove();
+        this.edit(p);
+    }
+
     $.wiki.PropertiesPerspective = PropertiesPerspective;
 
 })(jQuery);

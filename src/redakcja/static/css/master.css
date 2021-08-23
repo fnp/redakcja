@@ -161,6 +161,17 @@ img.tabclose {
 #simple-editor {
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+#simple-editor #bubbles {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+#simple-editor #bubbles .badge {
+    display: block;
+    margin-top: 5px;
 }
 
 .htmlview {
@@ -178,14 +189,9 @@ img.tabclose {
 	opacity: 0.4;
 }
 
-.poezja_cyt {
-    margin:1.5em 2em 0;
-    font-size:0.875em
-}
 
-.wers_akap {
-	padding-left: 1em;
-}
+
+
 
 .saveNotify {
     position:absolute; 

@@ -1,0 +1,5 @@
+<ul>
+{% for tag in object_list %}
+  <li><a href="{{ tag.get_absolute_url }}">{{ tag }}</li>
+{% endfor %}
+</ul>

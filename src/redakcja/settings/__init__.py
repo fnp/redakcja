@@ -98,6 +98,7 @@ INSTALLED_APPS = (
     'toolbar',
     'apiclient',
     'email_mangler',
+    'wlxml.apps.WlxmlConfig',
 )
 
 if DEBUG:
@@ -175,6 +176,7 @@ PIPELINE = {
                 'js/slugify.js',
 
                 # wiki scripts
+                'js/wiki/caret.js',
                 'js/wiki/wikiapi.js',
                 'wiki/js/themes.js',
                 'js/wiki/xslt.js',
