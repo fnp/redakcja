@@ -124,7 +124,7 @@ PIPELINE = {
     'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
     'COMPILERS': (
-        'libsasscompiler.LibSassCompiler',
+        'pipeline.compilers.sass.SASSCompiler',
     ),
 
     # CSS and JS files to compress
