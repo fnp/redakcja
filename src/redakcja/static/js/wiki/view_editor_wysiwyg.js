@@ -6,8 +6,8 @@
         selection.removeAllRanges();
 
         var range = document.createRange();
-        var s = $(".motyw[theme-class='" + themeId + "']")[0];
-        var e = $(".end[theme-class='" + themeId + "']")[0];
+        var s = $("[x-node='motyw'][theme-class='" + themeId + "']")[0];
+        var e = $("[x-node='end'][theme-class='" + themeId + "']")[0];
 
         if (s && e) {
             range.setStartAfter(s);
@@ -465,11 +465,11 @@
 	    $('.akap-edit-button').remove();
         }
 
-        if ($origin.is('.motyw')) {
+        if ($origin.is('[x-node="motyw"]')) {
             $.themes.autocomplete($('textarea', $overlay));
         }
 
-        if ($origin.is('.motyw')){
+        if ($origin.is('[x-node="motyw"]')){
             $('.delete-button', $overlay).click(function(){
                 if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten motyw?")) {
                     $('[theme-class="' + $origin.attr('theme-class') + '"]').remove();
@@ -525,7 +525,7 @@
                     var nodeName = $box.attr('x-node') || 'pe';
                     var insertedText = $('textarea', $overlay).val();
 
-                    if ($origin.is('.motyw')) {
+                    if ($origin.is('[x-node="motyw"]')) {
                         insertedText = insertedText.replace(/,\s*$/, '');
                     }
 
@@ -687,7 +687,7 @@
 
             }
 
-            $(document).on('click', '.motyw', function(){
+            $(document).on('click', '[x-node="motyw"]', function(){
                 selectTheme($(this).attr('theme-class'));
             });
 
