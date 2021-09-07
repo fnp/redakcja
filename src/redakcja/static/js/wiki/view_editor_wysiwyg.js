@@ -237,7 +237,7 @@
                                 spoint.insertNode(btag[0])
                                 btag.replaceWith(text);
                                 selection.removeAllRanges();
-                                openForEdit($('.motyw[theme-class="' + id + '"]'));
+                                openForEdit($('[x-node="motyw"][theme-class="' + id + '"]'));
                             }
                         });
                     }
