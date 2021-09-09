@@ -46,7 +46,7 @@
 
             self.$pane = $("#side-properties");
             
-            $(document).on('click', '[x-node]', function(e) {
+            $("#simple-editor").on('click', '[x-node]', function(e) {
                 if (!e.redakcja_edited) {
                     e.redakcja_edited = true;
                     self.edit(this);
