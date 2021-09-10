@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^images/', include('wiki_img.urls')),
     url(r'^cover/', include('cover.urls')),
     url(r'^wlxml/', include('wlxml.urls')),
+
+    path('api/', include('redakcja.api.urls')),
 ]
 
 

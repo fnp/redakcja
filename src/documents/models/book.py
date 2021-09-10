@@ -60,6 +60,12 @@ class Book(models.Model):
         verbose_name = _('book')
         verbose_name_plural = _('books')
 
+    @classmethod
+    def get_visible_for(cls, user):
+        qs = cls.objects.all()
+        if not user.is_authenticated:
+            qs = qs.filter(public=True)
+        return qs
 
     # Representing
     # ============

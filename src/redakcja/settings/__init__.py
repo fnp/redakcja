@@ -88,7 +88,10 @@ INSTALLED_APPS = (
     'fnpdjango',
     'django_cas_ng',
     'bootstrap4',
+    'rest_framework',
+    'django_filters',
 
+    'redakcja.api',
     'catalogue',
     'documents',
     'cover',
@@ -264,6 +267,18 @@ PIPELINE = {
 
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'redakcja.api.auth.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+    ]
+}
 
 
 try:

@@ -39,6 +39,20 @@ class Chunk(dvcs_models.Document):
         verbose_name_plural = _('chunks')
         permissions = [('can_pubmark', 'Can mark for publishing')]
 
+    @classmethod
+    def get_visible_for(cls, user):
+        qs = cls.objects.all()
+        if not user.is_authenticated:
+            qs = qs.filter(book__public=True)
+        return qs
+
+    @classmethod
+    def get_revisions_visible_for(cls, user):
+        qs = cls.change_model.objects.all()
+        if not user.is_authenticated:
+            qs = qs.filter(tree__book__public=True)
+        return qs
+    
     # Representing
     # ============
 

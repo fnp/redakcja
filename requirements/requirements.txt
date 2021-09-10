@@ -26,5 +26,7 @@ django-bootstrap4==3.0.1
 libsasscompiler==0.1.8
 django-debug-toolbar==3.2.1
 django-admin-numeric-filter==0.1.6
+djangorestframework==3.12.4
+django-filter==2.4.0
 
 sentry-sdk==0.12.2

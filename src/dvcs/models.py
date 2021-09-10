@@ -94,7 +94,7 @@ class Change(models.Model):
         unique_together = ['tree', 'revision']
 
     def __str__(self):
-        return u"Id: %r, Tree %r, Parent %r, Data: %s" % (self.id, self.tree_id, self.parent_id, self.data)
+        return "rev. {} @ {}".format(self.revision, self.created_at)
 
     def author_str(self):
         if self.author:
