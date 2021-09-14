@@ -727,14 +727,6 @@
                 var htmlView = $('#html-view');
                 htmlView.html(element);
 
-                htmlView.find('*[x-node]').dblclick(function(e) {
-                    if($(e.target).is('textarea'))
-                        return;
-                    var selection = window.getSelection();
-                    selection.collapseToStart();
-                    selection.modify('extend', 'forward', 'word');
-                    e.stopPropagation();
-                });
                 _finalize(success);
             },
             error: function(text, source){
@@ -784,7 +776,7 @@
 
         let selection = window.getSelection();
         var n = selection.rangeCount;
-        if (n != 1) {
+        if (n != 1 || selection.isCollapsed) {
             window.alert("Nie zaznaczono obszaru");
             return false
         }
