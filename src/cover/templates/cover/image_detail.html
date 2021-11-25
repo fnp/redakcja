@@ -53,7 +53,7 @@
 
 <textarea style="width:100%" rows="5">
 &lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
-&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.author }}, {{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
+&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{% if object.title %}{{ object.title }}, {% endif %}{% if object.author %}{{ object.author }}, {% endif %}{{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
 &lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source>
 </textarea>
 {% endblock %}
