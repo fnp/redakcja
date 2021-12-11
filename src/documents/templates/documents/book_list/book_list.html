@@ -115,3 +115,9 @@
           {% endif %}value="{{ user.username }}">{{ user|username }} ({{ user.count }})</option>
   {% endfor %}
 </select>
+
+<select name="active-users" style="display:none;">
+  {% for user in active_users %}
+  <option value="{{ user.username }}">{{ user|username }}</option>
+  {% endfor %}
+</select>

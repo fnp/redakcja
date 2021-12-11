@@ -2,7 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from re import split
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F, Max
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -127,9 +127,9 @@ def book_list(context, user=None):
                 count=Count('chunk')).filter(count__gt=0).order_by(
                 '-count', 'last_name', 'first_name'),
             "other_users": User.objects.annotate(
-                count=Count('chunk')).filter(count=0).order_by(
-                'last_name', 'first_name'),
-                }
+                count=Count('chunk')).filter(count=0).annotate(m=Max('chunkchange__created_at')).order_by(F('m').desc(nulls_last=True), 'last_name', 'first_name'),
+            "active_users": User.objects.annotate(m=Max('chunkchange__created_at')).order_by(F('m').desc(nulls_last=True), 'last_name', 'first_name'),
+        }
 
     new_context.update({
         "filters": True,

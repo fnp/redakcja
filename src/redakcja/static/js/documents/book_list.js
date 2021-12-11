@@ -50,9 +50,7 @@
 
     var user_callback = get_callback('user');
     var users = [
-        get_items("user", user_callback),
-        {sep: '----'},
-        get_items("other-user", user_callback)
+        get_items("active-users", user_callback)
     ];
     var current_user_items = user_items = {};
     var i = 0;
