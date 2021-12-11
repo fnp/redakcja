@@ -273,7 +273,7 @@ def book_pdf(request, slug, mobile=False):
     doc = book.wldocument()
     # TODO: error handling
     customizations = ['26pt', 'nothemes', 'nomargins', 'notoc'] if mobile else None
-    pdf_file = doc.as_pdf(cover=True, ilustr_path=book.gallery_path(), customizations=customizations)
+    pdf_file = doc.as_pdf(cover=True, base_url=request.build_absolute_uri(book.gallery_path()), customizations=customizations)
     from .ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
                 book.slug + '.pdf', 'application/pdf')
@@ -288,7 +288,7 @@ def book_epub(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    epub = doc.as_epub(ilustr_path=book.gallery_path()).get_bytes()
+    epub = doc.as_epub(base_url=request.build_absolute_uri(book.gallery_path())).get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
@@ -304,7 +304,7 @@ def book_mobi(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    mobi = doc.as_mobi(ilustr_path=book.gallery_path()).get_bytes()
+    mobi = doc.as_mobi(base_url=request.build_absolute_uri(book.gallery_path())).get_bytes()
     response = HttpResponse(content_type='application/x-mobipocket-ebook')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
     response.write(mobi)
