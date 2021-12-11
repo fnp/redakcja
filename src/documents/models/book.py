@@ -417,7 +417,7 @@ class Book(models.Model):
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 
-    def publish(self, user, fake=False, host=None, days=0, beta=False):
+    def publish(self, user, fake=False, host=None, days=0, beta=False, hidden=False):
         """
             Publishes a book on behalf of a (local) user.
         """
@@ -425,7 +425,7 @@ class Book(models.Model):
         changes = self.get_current_changes(publishable=True)
         if not fake:
             book_xml = self.materialize(changes=changes)
-            data = {"book_xml": book_xml, "days": days}
+            data = {"book_xml": book_xml, "days": days, "hidden": hidden}
             if host:
                 data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data, beta=beta)

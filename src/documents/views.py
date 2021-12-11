@@ -572,16 +572,18 @@ def publish(request, slug):
     if form.is_valid():
         days = form.cleaned_data['days']
         beta = form.cleaned_data['beta']
+        hidden = form.cleaned_data['hidden']
     else:
         days = 0
         beta = False
+        hidden = False
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
     try:
         protocol = 'https://' if request.is_secure() else 'http://'
-        book.publish(request.user, host=protocol + request.get_host(), days=days, beta=beta)
+        book.publish(request.user, host=protocol + request.get_host(), days=days, beta=beta, hidden=hidden)
     except NotAuthorizedError:
         return http.HttpResponseRedirect(reverse('apiclient_oauth' if not beta else 'apiclient_beta_oauth'))
     except BaseException as e:

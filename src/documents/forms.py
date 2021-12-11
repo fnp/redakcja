@@ -251,4 +251,5 @@ class MarkFinalForm(forms.Form):
 
 class PublishOptionsForm(forms.Form):
     days = forms.IntegerField(label=u'po ilu dniach udostępnienić (0 = od razu)', min_value=0, initial=0)
+    hidden = forms.BooleanField(label='tekst ukryty przed wyszukiwaniem', required=False, initial=False)
     beta = forms.BooleanField(label=u'Opublikuj na wersji testowej', required=False)
