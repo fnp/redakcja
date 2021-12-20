@@ -45,8 +45,10 @@ class Package(models.Model):
 
     def build(self):
         f = tempfile.NamedTemporaryFile(prefix='depot-', suffix='.zip', mode='wb', delete=False)
+        book_count = self.books.all().count()
         with zipfile.ZipFile(f, 'w') as z:
-            for book in self.books.all():
+            for i, book in enumerate(self.books.all()):
+                print(f'{i}/{book_count} {book.slug}')
                 self.build_for(book, z)
         f.close()
         with open(f.name, 'rb') as ff:
@@ -94,16 +96,20 @@ class Package(models.Model):
                 output = EpubBuilder(
                     cover=cover,
                     base_url=base_url,
-#                    fundraising=[]
+                    fundraising=item.get('fundraising', []),
                 ).build(wldoc2)
 
             elif item['type'] == 'mobi':
                 output = MobiBuilder(
                     cover=cover,
                     base_url=base_url,
+                    fundraising=item.get('fundraising', []),
                 ).build(wldoc2)
 
-            fname = f'{slug}/{slug}.{ext}'
+            fname = f'{slug}/{slug}.'
+            if 'slug' in item:
+                fname += item['slug'] + '.'
+            fname += ext
 
             z.writestr(
                 fname,

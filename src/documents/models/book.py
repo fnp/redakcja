@@ -413,7 +413,7 @@ class Book(models.Model):
         from librarian.parser import WLDocument
         from librarian.document import WLDocument as WLDocument2
 
-        provider = RedakcjaDocProvider(publishable=publishable),
+        provider = RedakcjaDocProvider(publishable=publishable)
         xml = self.materialize(publishable=publishable, changes=changes).encode('utf-8')
         
         if librarian2:

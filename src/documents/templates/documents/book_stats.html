@@ -1,19 +1,19 @@
 <tr>
   <td style="padding-left: {{ depth}}.75em;">{{ book.book_info.title|default:"???" }}</td>
-  <td>{{ stats.self.chars|default_if_none:"?" }}</td>
-  <td>{{ stats.self.words|default_if_none:"?" }}</td>
   <td>{{ stats.self.chars_with_fn|default_if_none:"?" }}</td>
+  <td>{{ stats.self.chars|default_if_none:"?" }}</td>
   <td>{{ stats.self.words_with_fn|default_if_none:"?" }}</td>
+  <td>{{ stats.self.words|default_if_none:"?" }}</td>
 </tr>
 {% if stats.parts %}
   {% for part, partstats in stats.parts %}
     {% include 'documents/book_stats.html' with book=part stats=partstats depth=depth|add:1 %}
   {% endfor %}
   <tr>
-    <td>&Sigma;</td>
-    <td>{{ stats.total.chars }}</td>
-    <td>{{ stats.total.words }}</td>
+    <td style="padding-left: {{ depth}}.75em;">&Sigma;</td>
     <td>{{ stats.total.chars_with_fn }}</td>
+    <td>{{ stats.total.chars }}</td>
     <td>{{ stats.total.words_with_fn }}</td>
+    <td>{{ stats.total.words }}</td>
   </tr>
 {% endif %}
