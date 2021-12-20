@@ -35,13 +35,13 @@ class Package(models.Model):
         return json.loads(self.status_json)
 
     def set_status(self, status):
-        self.status_json = json.dumps(status, indent=4)
+        self.status_json = json.dumps(status, indent=4, ensure_ascii=False)
 
     def get_definition(self):
         return json.loads(self.definition_json)
 
     def set_definition(self, definition):
-        self.definition_json = json.dumps(definition, indent=4)
+        self.definition_json = json.dumps(definition, indent=4, ensure_ascii=False)
 
     def build(self):
         f = tempfile.NamedTemporaryFile(prefix='depot-', suffix='.zip', mode='wb', delete=False)

@@ -4,7 +4,4 @@ from . import models
 
 @admin.register(models.Package)
 class PackageAdmin(admin.ModelAdmin):
-    filter_horizontal = ['books']
-    pass
-    
-# Register your models here.
+    raw_id_fields = ['books']
