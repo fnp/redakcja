@@ -129,4 +129,34 @@ Okładka w rozmiarze
 
 </div>
   </div>
+</div>
+</div>
+
+{% if doc %}
+  <div class="card mt-4">
+    <div class="card-header">
+      <h2>{% trans "Statistics" %}</h2>
+    </div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              {% trans "book" %}
+            </th>
+            <th>{% trans "characters" %}</th>
+            <th>{% trans "words" %}</th>
+            <th>{% trans "characters (with footnotes)" %}</th>
+            <th>{% trans "words (with footnotes)" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% with stats=book.wldocument.get_statistics %}
+            {% include 'documents/book_stats.html' with book=book stats=stats depth=0 %}
+          {% endwith %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
 {% endblock content %}

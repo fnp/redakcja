@@ -17,6 +17,7 @@ from documents.models import BookPublishRecord, ChunkPublishRecord, Project
 from documents.signals import post_publish
 from documents.xml_tools import compile_text, split_xml
 from cover.models import Image
+from io import BytesIO
 import os
 import shutil
 import re
@@ -407,13 +408,21 @@ class Book(models.Model):
         return compile_text(change.materialize() for change in changes)
 
     def wldocument(self, publishable=True, changes=None, 
-            parse_dublincore=True, strict=False):
+                   parse_dublincore=True, strict=False, librarian2=False):
         from documents.ebook_utils import RedakcjaDocProvider
         from librarian.parser import WLDocument
+        from librarian.document import WLDocument as WLDocument2
 
+        provider = RedakcjaDocProvider(publishable=publishable),
+        xml = self.materialize(publishable=publishable, changes=changes).encode('utf-8')
+        
+        if librarian2:
+            return WLDocument2(
+                BytesIO(xml),
+                provider=provider)
         return WLDocument.from_bytes(
-                self.materialize(publishable=publishable, changes=changes).encode('utf-8'),
-                provider=RedakcjaDocProvider(publishable=publishable),
+                xml,
+                provider=provider,
                 parse_dublincore=parse_dublincore,
                 strict=strict)
 

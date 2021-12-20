@@ -288,7 +288,9 @@ def book_epub(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    epub = doc.as_epub(base_url=request.build_absolute_uri(book.gallery_path())).get_bytes()
+
+    #### Problemas: images in children.
+    epub = doc.as_epub(base_url='file://' + book.gallery_path() + '/').get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
@@ -304,7 +306,7 @@ def book_mobi(request, slug):
     # TODO: move to celery
     doc = book.wldocument()
     # TODO: error handling
-    mobi = doc.as_mobi(base_url=request.build_absolute_uri(book.gallery_path())).get_bytes()
+    mobi = doc.as_mobi(base_url='file://' + book.gallery_path() + '/').get_bytes()
     response = HttpResponse(content_type='application/x-mobipocket-ebook')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
     response.write(mobi)
@@ -345,8 +347,14 @@ def book(request, slug):
     publish_error = book.publishable_error()
     publishable = publish_error is None
 
+    try:
+        doc = book.wldocument()
+    except:
+        doc = None
+    
     return render(request, "documents/book_detail.html", {
         "book": book,
+        "doc": doc,
         "publishable": publishable,
         "publishable_error": publish_error,
         "form": form,

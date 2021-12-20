@@ -93,6 +93,7 @@ INSTALLED_APPS = (
 
     'redakcja.api',
     'catalogue',
+    'depot',
     'documents',
     'cover',
     'dvcs',

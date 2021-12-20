@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2020-04-20 16:54+0200\n"
+"PO-Revision-Date: 2021-12-17 11:37+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 3.0\n"
 
 #: documents/forms.py:41
 msgid "Text file must be UTF-8 encoded."
@@ -73,44 +73,45 @@ msgstr "publiczna"
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: documents/models/book.py:34
+#: documents/models/book.py:33
 msgid "parent"
 msgstr "rodzic"
 
-#: documents/models/book.py:35
+#: documents/models/book.py:34
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: documents/models/book.py:53 documents/models/chunk.py:19
+#: documents/models/book.py:60 documents/models/chunk.py:19
 #: documents/models/publish_log.py:15
+#: documents/templates/documents/book_detail.html:145
 msgid "book"
 msgstr "książka"
 
-#: documents/models/book.py:54 documents/views.py:619
+#: documents/models/book.py:61 documents/views.py:627
 msgid "books"
 msgstr "książki"
 
-#: documents/models/book.py:263
+#: documents/models/book.py:271
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: documents/models/book.py:267
+#: documents/models/book.py:275
 msgid "Not all chunks have publishable revisions."
 msgstr "Niektóre części nie są gotowe do publikacji."
 
-#: documents/models/book.py:274 documents/models/image.py:83
+#: documents/models/book.py:282 documents/models/image.py:83
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: documents/models/book.py:276 documents/models/image.py:85
+#: documents/models/book.py:284 documents/models/image.py:85
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: documents/models/book.py:278 documents/models/image.py:87
+#: documents/models/book.py:286 documents/models/image.py:87
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: documents/models/book.py:281 documents/models/image.py:91
+#: documents/models/book.py:289 documents/models/image.py:91
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -293,6 +294,26 @@ msgstr "Zaloguj się, aby opublikować."
 #: documents/templates/documents/image_detail.html:77
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
+
+#: documents/templates/documents/book_detail.html:138
+msgid "Statistics"
+msgstr "Statystyki"
+
+#: documents/templates/documents/book_detail.html:147
+msgid "characters"
+msgstr "znaki"
+
+#: documents/templates/documents/book_detail.html:148
+msgid "words"
+msgstr "słowa"
+
+#: documents/templates/documents/book_detail.html:149
+msgid "characters (with footnotes)"
+msgstr "znaki (z przypisami)"
+
+#: documents/templates/documents/book_detail.html:150
+msgid "words (with footnotes)"
+msgstr "słowa (z przypisami)"
 
 #: documents/templates/documents/book_edit.html:5
 msgid "Edit book"
@@ -603,7 +624,7 @@ msgstr "Dokument o tym slugu już istnieje w repozytorium."
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: documents/views.py:621
+#: documents/views.py:629
 msgid "scan gallery"
 msgstr "galeria skanów"
 
