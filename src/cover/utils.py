@@ -1,17 +1,16 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import csv
+from io import StringIO
 import json
 import re
 from urllib.request import FancyURLopener
 
-from django.contrib.sites.models import Site
-
-
 class URLOpener(FancyURLopener):
     @property
     def version(self):
-        return 'FNP Redakcja (http://%s)' % Site.objects.get_current()
+        return 'FNP Redakcja'
 
 
 class FlickrError(Exception):
@@ -69,3 +68,77 @@ def get_flickr_data(url):
         'title': title,
         'download_url': download_url,
     }
+
+
+def get_wikimedia_data(url):
+    """
+    >>> get_wikimedia_data('https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg')
+    {'title': 'Valdai IverskyMon asv2018 img47', 'author': 'A.Savin', 'source_url': 'https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg', 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/4/43/Valdai_IverskyMon_asv2018_img47.jpg', 'license_url': 'http://artlibre.org/licence/lal/en', 'license_name': 'FAL'}
+
+    """
+    file_name = url.rsplit('/', 1)[-1].rsplit(':', 1)[-1]
+    d = json.loads(URLOpener().open('https://commons.wikimedia.org/w/api.php?action=query&titles=File:{}&prop=imageinfo&iiprop=url|user|extmetadata&iimetadataversion=latest&format=json'.format(file_name)).read().decode('utf-8'))
+    d = list(d['query']['pages'].values())[0]['imageinfo'][0]
+    ext = d['extmetadata']
+
+    meta = {
+        'title': ext['ObjectName']['value'],
+        'author': d['user'],
+        'source_url': d['descriptionurl'],
+        'download_url': d['url'],
+        'license_url': ext['LicenseUrl']['value'],
+        'license_name': ext['LicenseShortName']['value'],
+    }
+    
+    return meta
+
+
+def get_mnw_data(url):
+    """
+    >>> get_mnw_data('https://cyfrowe.mnw.art.pl/pl/katalog/794032')
+    {'title': 'Pejzaż z podwójnym świerkiem', 'author': 'nieznany, Altdorfer, Albrecht (ca 1480-1538)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/794032', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/49/58/49583b3e9b23e2d25f372fe6021ae220.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'DOMENA PUBLICZNA'}
+
+    """
+    nr = url.rsplit('/', 1)[-1]
+    d = list(
+        csv.DictReader(
+            StringIO(
+                URLOpener().open(
+                    'https://cyfrowe-api.mnw.art.pl/api/object/{}/csv'.format(nr)
+                ).read().decode('utf-8')
+            )
+        )
+    )[0]
+
+    authors = []
+    i = 0
+    while f'authors.{i}.name' in d:
+        authors.append(d[f'authors.{i}.name'])
+        i += 1
+
+    license_url = d['copyrights.0.link']
+    license_name = d['copyrights.0.name']
+    if license_name == 'DOMENA PUBLICZNA':
+        license_name = 'domena publiczna'
+        license_url = ''
+        
+    return {
+        'title': d['title'],
+        'author': ', '.join(authors),
+        'source_url': url,
+        'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/{}.{}'.format(
+            d['image.filePath'],
+            d['image.extension'],
+        ),
+        'license_url': license_url,
+        'license_name': license_name,
+    }
+
+
+def get_import_data(url):
+    if re.match(r'(https?://)?(www\.|secure\.)?flickr\.com/', url):
+        return get_flickr_data(url)
+    if re.match(r'(https?://)?(commons|upload)\.wikimedia\.org/', url):
+        return get_wikimedia_data(url)
+    if re.match(r'(https?://)?cyfrowe\.mnw\.art\.pl/', url):
+        return get_mnw_data(url)

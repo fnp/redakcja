@@ -10,7 +10,7 @@ from cover.models import Image
 from django.utils.safestring import mark_safe
 from PIL import Image as PILImage
 
-from cover.utils import get_flickr_data, FlickrError, URLOpener
+from cover.utils import get_import_data, FlickrError, URLOpener
 
 
 class ImageAddForm(forms.ModelForm):
@@ -41,8 +41,8 @@ class ImageAddForm(forms.ModelForm):
             same_source = Image.objects.filter(source_url=source_url)
             if same_source:
                 raise forms.ValidationError(mark_safe(
-                    ugettext('Image <a href="%s">already in repository</a>'
-                             % same_source.first().get_absolute_url())))
+                    ugettext('Image <a href="%(url)s">already in repository</a>.')
+                    % {'url': same_source.first().get_absolute_url()}))
         return source_url
 
     def clean(self):
@@ -91,15 +91,15 @@ class ReadonlyImageEditForm(ImageEditForm):
         raise AssertionError("ReadonlyImageEditForm should not be saved.")
 
 
-class FlickrForm(forms.Form):
-    source_url = forms.URLField(label=_('Flickr URL'))
+class ImportForm(forms.Form):
+    source_url = forms.URLField(label=_('WikiCommons, MNW or Flickr URL'))
 
     def clean_source_url(self):
         url = self.cleaned_data['source_url']
         try:
-            flickr_data = get_flickr_data(url)
+            import_data = get_import_data(url)
         except FlickrError as e:
             raise forms.ValidationError(e)
         for field_name in ('license_url', 'license_name', 'author', 'title', 'download_url'):
-            self.cleaned_data[field_name] = flickr_data[field_name]
-        return flickr_data['source_url']
+            self.cleaned_data[field_name] = import_data[field_name]
+        return import_data['source_url']

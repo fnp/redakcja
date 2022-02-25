@@ -12,11 +12,11 @@
 	<div class="card-body">
 
 <form method="post">{% csrf_token %}
-<input type="hidden" name='form_id' value="flickr" />
+<input type="hidden" name='form_id' value="import" />
 <table class='editable'><tbody>
     {% bootstrap_form ff %}
     {% buttons %}
-    <button class="btn btn-primary" type="submit">{% trans "Load from Flickr" %}</button>
+    <button class="btn btn-primary" type="submit">{% trans "Load from WikiCommons, MNW, Flickr" %}</button>
     {% endbuttons %}
 </tbody></table>
 </form>

@@ -5,42 +5,36 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2014-02-25 13:30+0100\n"
+"PO-Revision-Date: 2022-02-25 14:10+0100\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: \n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 3.0\n"
 
-#: cover/forms.py:34
+#: cover/forms.py:34 cover/forms.py:44
 #, python-format
 msgid "Image <a href=\"%(url)s\">already in repository</a>."
 msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
 
-#: cover/forms.py:44
-#, fuzzy, python-format
-#| msgid "Image <a href=\"%(url)s\">already in repository</a>."
-msgid "Image <a href=\"%s\">already in repository</a>"
-msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
-
 #: cover/forms.py:53
 msgid "No image specified"
-msgstr ""
+msgstr "Nie wskazano obrazu"
 
 #: cover/forms.py:61 cover/forms.py:78
 #, python-format
 msgid "Image too small: %sx%s, minimal dimensions %sx%s"
-msgstr ""
+msgstr "Obraz za mały: %sx%s, minimalny rozmiar %sx%s"
 
 #: cover/forms.py:95
-msgid "Flickr URL"
-msgstr "URL z Flickra"
+msgid "WikiCommons, MNW or Flickr URL"
+msgstr "URL z WikiCommons, MNW albo Flickra"
 
 #: cover/models.py:23
 msgid "title"
@@ -85,8 +79,8 @@ msgid "Add image"
 msgstr "Dodaj obrazek"
 
 #: cover/templates/cover/add_image.html:19
-msgid "Load from Flickr"
-msgstr "Pobierz z Flickra"
+msgid "Load from WikiCommons, MNW, Flickr"
+msgstr "Pobierz z WikiCommons, MNW albo Flickra"
 
 #: cover/templates/cover/image_detail.html:6
 #: cover/templates/cover/image_detail.html:9
@@ -117,3 +111,15 @@ msgstr "Obrazki na okładki"
 #: cover/templates/cover/image_list.html:15
 msgid "Add new"
 msgstr "Dodaj nowy"
+
+#, fuzzy, python-format
+#~| msgid "Image <a href=\"%(url)s\">already in repository</a>."
+#~ msgid "Image <a href=\"%(url)s\">already in repository</a>"
+#~ msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
+
+#, python-format
+#~ msgid "Image <a href=\"%s\">already in repository</a>"
+#~ msgstr "Obraz <a href=\"%s\">jest już w repozytorium</a>."
+
+#~ msgid "Flickr URL"
+#~ msgstr "URL z Flickra"

@@ -133,8 +133,8 @@ def image_list(request):
 def add_image(request):
     form = ff = None
     if request.method == 'POST':
-        if request.POST.get('form_id') == 'flickr':
-            ff = forms.FlickrForm(request.POST)
+        if request.POST.get('form_id') == 'import':
+            ff = forms.ImportForm(request.POST)
             if ff.is_valid():
                 form = forms.ImageAddForm(ff.cleaned_data)
         else:
@@ -145,7 +145,7 @@ def add_image(request):
     if form is None:
         form = forms.ImageAddForm()
     if ff is None:
-        ff = forms.FlickrForm()
+        ff = forms.ImportForm()
     return render(request, 'cover/add_image.html', {
             'form': form,
             'ff': ff,
