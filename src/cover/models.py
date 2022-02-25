@@ -52,6 +52,7 @@ class Image(models.Model):
         return u"%s - %s" % (self.author, self.title)
 
     def save(self, **kwargs):
+        super().save(**kwargs)
         img = self.file
         if self.cut_top or self.cut_bottom or self.cut_left or self.cut_right:
             img = PILImage.open(img)

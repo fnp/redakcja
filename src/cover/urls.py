@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.conf.urls import url
+from django.urls import path
 from . import views
 
 
@@ -17,4 +18,5 @@ urlpatterns = [
     url(r'^image/(?P<pk>\d+)/?$', views.image, name='cover_image'),
     url(r'^image/(?P<pk>\d+)/file/', views.image_file, name='cover_file'),
     url(r'^add_image/$', views.add_image, name='cover_add_image'),
+    path('quick-import/<int:pk>/', views.quick_import, name='cover_quick_import'),
 ]

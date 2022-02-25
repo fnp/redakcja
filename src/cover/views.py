@@ -8,10 +8,14 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from lxml import etree
+from librarian import RDFNS, DCNS
 from documents.helpers import active_tab
-from documents.models import Chunk
+from documents.models import Book, Chunk
 from cover.models import Image
 from cover import forms
+from cover.utils import get_import_data
+
 
 PREVIEW_SIZE = (216, 300)
 
@@ -150,3 +154,61 @@ def add_image(request):
             'form': form,
             'ff': ff,
         })
+
+@permission_required('cover.add_image')
+def quick_import(request, pk):
+    url = request.POST.get('url')
+    if url.startswith('%s://%s/' % (
+            request.scheme,
+            request.get_host())):
+        cover_id = url.rsplit('/', 1)[-1]
+        cover = Image.objects.get(pk=cover_id)
+    else:
+        data = get_import_data(url)
+        same = Image.objects.filter(source_url=data['source_url'])
+        if not same.exists():
+            same = Image.objects.filter(download_url=data['download_url'])
+        if same.exists():
+            cover = same.first()
+        else:
+            form = forms.ImageAddForm(data)
+            if form.is_valid():
+                cover = form.save()
+
+    # We have a cover. Now let's commit.
+    book = Book.objects.get(pk=pk)
+    chunk = book[0]
+    text = chunk.head.materialize()
+
+    root = etree.fromstring(text)
+    rdf = root.find('.//' + RDFNS('Description'))
+    for tag in 'url', 'attribution', 'source':
+        for elem in rdf.findall('.//' + DCNS('relation.coverImage.%s' % tag)):
+            rdf.remove(elem)
+    e = etree.Element(DCNS('relation.coverImage.url'))
+    e.text = request.build_absolute_uri(cover.use_file.url)
+    rdf.append(e)
+    e.tail = '\n    '
+    e = etree.Element(DCNS('relation.coverImage.attribution'))
+    e.text = ''
+    if cover.title:
+        e.text += cover.title + ', '
+    if cover.author:
+        e.text += cover.author + ', '
+    e.text += cover.license_name
+    e.tail = '\n    '
+    rdf.append(e)
+    e = etree.Element(DCNS('relation.coverImage.source'))
+    e.text = cover.get_full_url()
+    e.tail = '\n    '
+    rdf.append(e)
+
+    xml = etree.tostring(root, encoding='unicode')
+    chunk.commit(
+        xml,
+        author=request.user,
+        comment='Cover',
+        publishable=chunk.head.publishable,
+    )
+    return HttpResponseRedirect(book.get_absolute_url())
+        

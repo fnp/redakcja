@@ -21,6 +21,11 @@ class ImageAddForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ImageAddForm, self).__init__(*args, **kwargs)
         self.fields['file'].required = False
+        self.fields['use_file'].required = False
+        self.fields['cut_top'].required = False
+        self.fields['cut_left'].required = False
+        self.fields['cut_bottom'].required = False
+        self.fields['cut_right'].required = False
 
     def clean_download_url(self):
         cl = self.cleaned_data['download_url'] or None
@@ -103,3 +108,4 @@ class ImportForm(forms.Form):
         for field_name in ('license_url', 'license_name', 'author', 'title', 'download_url'):
             self.cleaned_data[field_name] = import_data[field_name]
         return import_data['source_url']
+

@@ -75,8 +75,17 @@
 <div class="col-lg-3">
 <img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
 {% if book.dc_cover_image %}
-    <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
+  <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
 {% endif %}
+<br><br>
+
+<form action="{% url 'cover_quick_import' book.pk %}" method="post">
+  {% csrf_token %}
+  <input type="url" name="url">
+  <button type="submit" class="btn btn-sm btn-info">></button>
+</form>
+
+
 <br><br>
 <form action="{% url 'cover_preview' book.slug %}">
 <input type="hidden" name="download" value="1">
