@@ -10,12 +10,8 @@
 
 <div style="float: right; margin-bottom:1em;">
 
-<a href="{{ object.file.url }}"><img
-        src="{% thumbnail object.file "565x833" as thumb %}
-                {{ thumb.url }}
-             {% empty %}
-                {{ object.file.url }}
-             {% endthumbnail %}" />
+<a href="{{ object.use_file.url }}"><img style="max-width: 565px; max-height: 833px"
+        src="{{ object.use_file.url }}?{{ object.cut_top }}.{{ object.cut_bottom }}.{{ object.cut_left }}.{{ object.cut_right }}" />
     </a>
 <br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
     {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
@@ -52,7 +48,7 @@
 
 
 <textarea style="width:100%" rows="5">
-&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
+&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.use_file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
 &lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{% if object.title %}{{ object.title }}, {% endif %}{% if object.author %}{{ object.author }}, {% endif %}{{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
 &lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source>
 </textarea>
