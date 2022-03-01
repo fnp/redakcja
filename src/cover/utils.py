@@ -6,6 +6,9 @@ from io import StringIO
 import json
 import re
 from urllib.request import FancyURLopener
+from wikidata.client import Client
+from catalogue.constants import WIKIDATA
+
 
 class URLOpener(FancyURLopener):
     @property
@@ -75,6 +78,9 @@ def get_wikimedia_data(url):
     >>> get_wikimedia_data('https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg')
     {'title': 'Valdai IverskyMon asv2018 img47', 'author': 'A.Savin', 'source_url': 'https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg', 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/4/43/Valdai_IverskyMon_asv2018_img47.jpg', 'license_url': 'http://artlibre.org/licence/lal/en', 'license_name': 'FAL'}
 
+    >>> get_wikimedia_data('https://commons.wikimedia.org/wiki/File:Pymonenko_A_boy_in_a_straw_hat.jpg')
+    {'title': 'Chłopiec w słomkowym kapeluszu', 'author': 'Mykola Pymonenko', 'source_url': 'https://commons.wikimedia.org/wiki/File:Pymonenko_A_boy_in_a_straw_hat.jpg', 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Pymonenko_A_boy_in_a_straw_hat.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
+
     """
     file_name = url.rsplit('/', 1)[-1].rsplit(':', 1)[-1]
     d = json.loads(URLOpener().open('https://commons.wikimedia.org/w/api.php?action=query&titles=File:{}&prop=imageinfo&iiprop=url|user|extmetadata&iimetadataversion=latest&format=json'.format(file_name)).read().decode('utf-8'))
@@ -90,6 +96,16 @@ def get_wikimedia_data(url):
         'license_url': ext.get('LicenseUrl', {}).get('value', ''),
         'license_name': ext['LicenseShortName']['value'],
     }
+
+    # There are Wikidata links in ObjectName sametimes. Let's use it.
+    wikidata_match = re.search(r'wikidata\.org/wiki/(Q\d+)', meta['title'])
+    if wikidata_match is not None:
+        qitem = wikidata_match.group(1)
+        client = Client()
+        entity = client.get(qitem)
+        meta['title'] = entity.label.get('pl', str(entity.label))
+        author = entity.get(client.get(WIKIDATA.CREATOR))
+        meta['author'] = author.label.get('pl', str(author.label))
 
     if meta['license_name'] == 'Public domain':
         meta['license_name'] = 'domena publiczna'
