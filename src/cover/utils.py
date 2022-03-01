@@ -78,6 +78,7 @@ def get_wikimedia_data(url):
     """
     file_name = url.rsplit('/', 1)[-1].rsplit(':', 1)[-1]
     d = json.loads(URLOpener().open('https://commons.wikimedia.org/w/api.php?action=query&titles=File:{}&prop=imageinfo&iiprop=url|user|extmetadata&iimetadataversion=latest&format=json'.format(file_name)).read().decode('utf-8'))
+
     d = list(d['query']['pages'].values())[0]['imageinfo'][0]
     ext = d['extmetadata']
 
@@ -86,18 +87,22 @@ def get_wikimedia_data(url):
         'author': d['user'],
         'source_url': d['descriptionurl'],
         'download_url': d['url'],
-        'license_url': ext['LicenseUrl']['value'],
+        'license_url': ext.get('LicenseUrl', {}).get('value', ''),
         'license_name': ext['LicenseShortName']['value'],
     }
-    
+
+    if meta['license_name'] == 'Public domain':
+        meta['license_name'] = 'domena publiczna'
+        meta['license_url'] = 'https://pl.wikipedia.org/wiki/Domena_publiczna'
+
+
     return meta
 
 
 def get_mnw_data(url):
     """
-    >>> get_mnw_data('https://cyfrowe.mnw.art.pl/pl/katalog/794032')
-    {'title': 'Pejzaż z podwójnym świerkiem', 'author': 'nieznany, Altdorfer, Albrecht (ca 1480-1538)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/794032', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/49/58/49583b3e9b23e2d25f372fe6021ae220.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'DOMENA PUBLICZNA'}
-
+    >>> get_mnw_data('https://cyfrowe.mnw.art.pl/pl/katalog/511078')
+    {'title': 'Chłopka (Baba ukraińska)', 'author': 'Krzyżanowski, Konrad (1872-1922)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/32/60/3260ae1704cc530cc62befa9b7d58cbd.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
     """
     nr = url.rsplit('/', 1)[-1]
     d = list(
@@ -120,7 +125,7 @@ def get_mnw_data(url):
     license_name = d['copyrights.0.name']
     if license_name == 'DOMENA PUBLICZNA':
         license_name = 'domena publiczna'
-        license_url = ''
+        license_url = 'https://pl.wikipedia.org/wiki/Domena_publiczna'
         
     return {
         'title': d['title'],

@@ -50,6 +50,11 @@ class ImageAddForm(forms.ModelForm):
                     % {'url': same_source.first().get_absolute_url()}))
         return source_url
 
+    clean_cut_top = lambda self: self.cleaned_data.get('cut_top') or 0
+    clean_cut_bottom = lambda self: self.cleaned_data.get('cut_bottom') or 0
+    clean_cut_left = lambda self: self.cleaned_data.get('cut_left') or 0
+    clean_cut_right = lambda self: self.cleaned_data.get('cut_right') or 0
+    
     def clean(self):
         cleaned_data = super(ImageAddForm, self).clean()
         download_url = cleaned_data.get('download_url', None)

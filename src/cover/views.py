@@ -127,7 +127,7 @@ def image_file(request, pk):
 @active_tab('cover')
 def image_list(request):
     return render(request, "cover/image_list.html", {
-        'object_list': Image.objects.all(),
+        'object_list': Image.objects.all().order_by('-id'),
         'can_add': request.user.has_perm('cover.add_image'),
     })
 

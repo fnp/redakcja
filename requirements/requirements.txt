@@ -10,7 +10,7 @@ python-slugify
 python-docx==0.8.10
 Wikidata==0.6.1
 
-librarian==2.3.2
+librarian==2.3.4
 
 ## Django
 Django==3.1.13
