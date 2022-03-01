@@ -3,7 +3,7 @@
 #
 from django.apps import apps
 from django.contrib.sites.models import Site
-from django.db import models, transaction
+from django.db import connection, models, transaction
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -41,6 +41,7 @@ class Book(models.Model):
     _on_track = models.IntegerField(null=True, blank=True, db_index=True, editable=False)
     dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
         db_index=True, on_delete=models.SET_NULL, editable=False)
+    dc = models.JSONField(null=True, editable=False)
     catalogue_book = models.ForeignKey(
         'catalogue.Book',
         models.DO_NOTHING,
@@ -68,6 +69,14 @@ class Book(models.Model):
             qs = qs.filter(public=True)
         return qs
 
+    @staticmethod
+    def q_dc(field, field_plural, value, prefix=''):
+        if connection.features.supports_json_field_contains:
+            return models.Q(**{f'{prefix}dc__{field_plural}__contains': value})
+        else:
+            return models.Q(**{f'{prefix}dc__{field}': value})
+            
+    
     # Representing
     # ============
 
@@ -367,6 +376,7 @@ class Book(models.Model):
                 else:
                     if info.cover_source == image.get_full_url():
                         update['dc_cover_image'] = image
+            update['dc'] = info.to_dict()
         Book.objects.filter(pk=self.pk).update(**update)
 
     def touch(self):

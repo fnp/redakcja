@@ -1,12 +1,12 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from re import split
+import re
 from django.db.models import Q, Count, F, Max
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
-from documents.models import Chunk, Image, Project
+from documents.models import Book, Chunk, Image, Project
 
 register = template.Library()
 
@@ -70,10 +70,20 @@ def foreign_filter(qs, value, filter_field, model, model_field='slug', unset='-'
 def search_filter(qs, value, filter_fields):
     if not value:
         return qs
-    q = Q(**{"%s__icontains" % filter_fields[0]: value})
-    for field in filter_fields[1:]:
-        q |= Q(**{"%s__icontains" % field: value})
-    return qs.filter(q)
+
+    for word in value.split():
+        m = re.match(r'(.+):(.+)', word)
+        if m is not None:
+            field = m.group(1)
+            value = m.group(2)
+            q = Book.q_dc(field, field + 's', value, 'book__')
+        else:
+            q = Q(**{"%s__icontains" % filter_fields[0]: value})
+            for field in filter_fields[1:]:
+                q |= Q(**{"%s__icontains" % field: value})
+        qs = qs.filter(q)
+
+    return qs
 
 
 _states = [
