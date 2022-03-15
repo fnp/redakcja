@@ -52,6 +52,7 @@ class Book(models.Model):
         related_name='document_books',
         related_query_name='document_book',
     )
+    legimi_id = models.CharField(max_length=255, blank=True)
 
     class NoTextError(BaseException):
         pass

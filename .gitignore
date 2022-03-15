@@ -4,6 +4,7 @@ requirements.pybundle
 *~
 *.swp
 .*.orig
+*#
 /redakcja/media
 /static
 .sass-cache

@@ -18,8 +18,6 @@ DATABASES = {
 
 DEBUG = False
 
-MAINTENANCE_MODE = False
-
 ADMINS = (
     (u'Radek Czajka', 'radoslaw.czajka@nowoczesnapolska.org.pl'),
 )

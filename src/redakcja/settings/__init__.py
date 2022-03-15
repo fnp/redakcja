@@ -53,7 +53,6 @@ if CAS_SERVER_URL:
 MIDDLEWARE += [
     'django.contrib.admindocs.middleware.XViewMiddleware',
     'fnp_django_pagination.middleware.PaginationMiddleware',
-    'maintenancemode.middleware.MaintenanceModeMiddleware',
 ]
 
 if DEBUG:
@@ -128,7 +127,7 @@ PIPELINE = {
     'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
     'COMPILERS': (
-        'pipeline.compilers.sass.SASSCompiler',
+        'libsasscompiler.LibSassCompiler',
     ),
 
     # CSS and JS files to compress
@@ -265,6 +264,9 @@ PIPELINE = {
         }
     }
 }
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
