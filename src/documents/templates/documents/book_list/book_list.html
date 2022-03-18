@@ -117,6 +117,7 @@
 </select>
 
 <select name="active-users" style="display:none;">
+  <option value="-">- {% trans "none" %} -</option>
   {% for user in active_users %}
   <option value="{{ user.username }}">{{ user|username }}</option>
   {% endfor %}
