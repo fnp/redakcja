@@ -40,7 +40,12 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "priority",
         "wikidata_link",
     ]
-    search_fields = ["title", "wikidata", "authors__first_name", "authors__last_name", "translators__first_name", "translators__last_name"]
+    search_fields = [
+        "title", "wikidata",
+        "authors__first_name", "authors__last_name",
+        "translators__first_name", "translators__last_name",
+        "scans_source", "text_source", "notes", "estimate_source",
+    ]
     autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
     prepopulated_fields = {"slug": ("title",)}
     list_filter = [
