@@ -185,7 +185,7 @@ class Legimi:
 
         if wlbook.meta.audience:
             description += '<p><em>{}</em> to lektura szkolna.'.format(wlbook.meta.title)
-            if wlbook.tree.find('//pe'):
+            if wlbook.tree.find('//pe') is not None:
                 description += '<br>Ebook <em>{title}</em> zawiera przypisy opracowane specjalnie dla uczennic i uczniów {school}.'.format(
                     title=wlbook.meta.title,
                     school='szkoły podstawowej' if wlbook.meta.audience == 'SP' else 'liceum i technikum'
