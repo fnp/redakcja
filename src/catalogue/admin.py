@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
 from fnpdjango.actions import export_as_csv_action
 from . import models
+import documents.models
 from .wikidata import WikidataAdminMixin
 
 
@@ -30,6 +31,29 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
 
 
 admin.site.register(models.Author, AuthorAdmin)
+
+
+class LicenseFilter(admin.SimpleListFilter):
+    title = 'Licencja'
+    parameter_name = 'book_license'
+
+    def lookups(self, requesrt, model_admin):
+        return [
+            ('cc', 'CC'),
+            ('fal', 'FAL'),
+            ('pd', 'domena publiczna'),
+        ]
+
+    def queryset(self, request, queryset):
+        v = self.value()
+        if v == 'cc': 
+            return queryset.filter(document_book__dc__license__icontains='creativecommons.org')
+        elif v == 'fal':
+            return queryset.filter(document_book__dc__license__icontains='artlibre.org')
+        elif v == 'pd':
+            return queryset.filter(document_book__dc__license_description__icontains='domena publiczna')
+        else:
+            return queryset
 
 
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
@@ -62,6 +86,8 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "translators__gender", "translators__nationality",
         "document_book__chunk__stage",
         "document_book__chunk__user",
+
+        LicenseFilter,
     ]
     readonly_fields = ["wikidata_link", "estimated_costs"]
     actions = [export_as_csv_action()]
