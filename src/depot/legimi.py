@@ -6,6 +6,7 @@ from librarian.html import transform_abstrakt
 from librarian.builders import EpubBuilder, MobiBuilder
 from librarian.cover import LegimiCornerCover, LegimiCover
 import requests
+from slugify import slugify
 
 
 
@@ -16,6 +17,9 @@ fundraising=[
             "Informacje o nowościach w naszej bibliotece w Twojej skrzynce mailowej? Nic prostszego, zapisz się do newslettera. Kliknij, by pozostawić swój adres e-mail: <a href=\"https://wolnelektury.pl/newsletter/zapisz-sie/\">wolnelektury.pl/newsletter/zapisz-sie/</a>",
             "Przekaż 1% podatku na Wolne Lektury.<br/>\nKRS: 0000070056<br/>\nNazwa organizacji: Fundacja Nowoczesna Polska<br/>\nKażda wpłacona kwota zostanie przeznaczona na rozwój Wolnych Lektur."
 ]
+
+description_add = '<p>Książkę polecają <a href="https://wolnelektury.pl">Wolne Lektury</a> — najpopularniejsza biblioteka on-line.</p>'
+
 
 class Legimi:
     #BASE_URL = 'https://wydawca.legimi.com'
@@ -86,7 +90,7 @@ class Legimi:
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
 
-            'Description': '<p>—</p>',
+            'Description': description_add,
         }
         if meta.isbn_html:
             isbn = meta.isbn_html
@@ -141,6 +145,58 @@ class Legimi:
             if legimi_id:
                 book.legimi_id = legimi_id
                 book.save(update_fields=['legimi_id'])
+
+    def get_description(self, wlbook):
+        description = ''
+        abstract = wlbook.tree.find('.//abstrakt')
+        if abstract is not None:
+            description = transform_abstrakt(abstract)
+        description += description_add
+        description += '<p>'
+        description += ', '.join(
+            '<a href="https://wolnelektury.pl/katalog/autor/{}/">{}</a>'.format(
+                slugify(p.readable()),
+                p.readable(),
+            )
+            for p in wlbook.meta.authors
+        ) + '<br>'
+        description += '<a href="https://wolnelektury.pl/katalog/lektura/{}/">{}</a><br>'.format(
+            wlbook.meta.url.slug,
+            wlbook.meta.title
+        )
+        if wlbook.meta.translators:
+            description += 'tłum. ' + ', '.join(p.readable() for p in wlbook.meta.translators) + '<br>'
+        description += 'Epoka: ' + ', '.join(
+            '<a href="https://wolnelektury.pl/katalog/epoka/{}/">{}</a>'.format(
+                slugify(p),
+                p,
+            )
+            for p in wlbook.meta.epochs
+        ) + ' '
+        description += 'Rodzaj: ' + ', '.join(
+            '<a href="https://wolnelektury.pl/katalog/rodzaj/{}/">{}</a>'.format(
+                slugify(p),
+                p,
+            )
+            for p in wlbook.meta.kinds
+        ) + ' '
+        description += 'Gatunek: ' + ', '.join(
+            '<a href="https://wolnelektury.pl/katalog/gatunek/{}/">{}</a>'.format(
+                slugify(p),
+                p,
+            )
+            for p in wlbook.meta.genres
+        ) + '</p>'
+
+        if wlbook.meta.audience:
+            description += '<p><em>{}</em> to lektura szkolna.'.format(wlbook.meta.title)
+            if wlbook.tree.find('//pe'):
+                description += '<br>Ebook <em>{title}</em> zawiera przypisy opracowane specjalnie dla uczennic i uczniów {school}.'.format(
+                    title=wlbook.meta.title,
+                    school='szkoły podstawowej' if wlbook.meta.audience == 'SP' else 'liceum i technikum'
+                )
+            description += '</p>'
+        return description
 
     def create_book(self, book_data, files_data):
         data = {
