@@ -36,6 +36,8 @@ admin.site.register(models.Author, AuthorAdmin)
 class LicenseFilter(admin.SimpleListFilter):
     title = 'Licencja'
     parameter_name = 'book_license'
+    license_url_field = 'document_book__dc__license'
+    license_name_field = 'document_book__dc__license_description'
 
     def lookups(self, requesrt, model_admin):
         return [
@@ -47,13 +49,26 @@ class LicenseFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         v = self.value()
         if v == 'cc': 
-            return queryset.filter(document_book__dc__license__icontains='creativecommons.org')
+            return queryset.filter(**{
+                self.license_url_field + '__icontains': 'creativecommons.org'
+            })
         elif v == 'fal':
-            return queryset.filter(document_book__dc__license__icontains='artlibre.org')
+            return queryset.filter(**{
+                self.license_url_field + '__icontains': 'artlibre.org'
+            })
         elif v == 'pd':
-            return queryset.filter(document_book__dc__license_description__icontains='domena publiczna')
+            return queryset.filter(**{
+                self.license_name_field + '__icontains': 'domena publiczna'
+            })
         else:
             return queryset
+
+
+class CoverLicenseFilter(LicenseFilter):
+    title = 'Licencja okładki'
+    parameter_name = 'cover_license'
+    license_url_field = 'document_book__dc_cover_image__license_url'
+    license_name_field = 'document_book__dc_cover_image__license_name'
 
 
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
@@ -88,6 +103,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "document_book__chunk__user",
 
         LicenseFilter,
+        CoverLicenseFilter,
     ]
     readonly_fields = ["wikidata_link", "estimated_costs"]
     actions = [export_as_csv_action()]
