@@ -86,11 +86,11 @@ class Legimi:
             "Author": ", ".join(p.readable() for p in meta.authors),
             "Year": meta.created_at[:4],
 
-            'GenreId': '11', # TODO
+            'GenreId': str(self.get_genre(wlbook)),
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
 
-            'Description': description_add,
+            'Description': self.get_description(wlbook),
         }
         if meta.isbn_html:
             isbn = meta.isbn_html
@@ -100,11 +100,6 @@ class Legimi:
             book_data['Isbn'] = isbn
 
         files_data = {}
-
-        abstract = wlbook.tree.find('.//abstrakt')
-        if abstract is not None:
-            book_data['Description'] = transform_abstrakt(abstract)
-        
 
         cover_data = self.upload(
             (meta.url.slug + '.jpg', cover.get_file(), 'image/jpeg')
@@ -198,6 +193,25 @@ class Legimi:
             description += '</p>'
         return description
 
+    def get_genre(self, wlbook):
+        epoch_map = {
+            'Starożytność': 12,
+            'Średniowiecze': 16, 
+            'Renesans': 20,
+            'Barok': 13,
+            'Oświecenie': 14,
+            'Romantyzm': 21,
+            'Pozytywizm': 19,
+            'Modernizm': 18,
+            'Dwudziestolecie międzywojenne': 15,
+            'Współczesność': 17,
+        }
+
+        for epoch in wlbook.meta.epochs:
+            if epoch in epoch_map:
+                return epoch_map[epoch]
+        return 11
+    
     def create_book(self, book_data, files_data):
         data = {
             'createValidationTrue': 'true',
