@@ -2,6 +2,8 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.contrib import admin
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
 from fnpdjango.actions import export_as_csv_action
@@ -32,7 +34,7 @@ admin.site.register(models.Author, AuthorAdmin)
 
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
     list_display = [
-        "title",
+        "smart_title",
         "authors_str",
         "translators_str",
         "language",
@@ -120,6 +122,20 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             for work_type, cost in obj.get_estimated_costs().items()
         )
 
+    def smart_title(self, obj):
+        if obj.title:
+            return obj.title
+        if obj.notes:
+            n = obj.notes
+            if len(n) > 100:
+                n = n[:100] + '…'
+            return mark_safe(
+                '<em><small>' + escape(n) + '</small></em>'
+            )
+        return '---'
+    smart_title.short_description = _('Title')
+    smart_title.admin_order_field = 'title'
+    
 
 admin.site.register(models.Book, BookAdmin)
 

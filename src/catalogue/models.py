@@ -164,10 +164,12 @@ class Book(WikidataMixin, models.Model):
     def authors_str(self):
         return ", ".join(str(author) for author in self.authors.all())
     authors_str.admin_order_field = 'authors__last_name'
+    authors_str.short_description = _('Author')
 
     def translators_str(self):
         return ", ".join(str(author) for author in self.translators.all())
     translators_str.admin_order_field = 'translators__last_name'
+    translators_str.short_description = _('Translator')
 
     def get_estimated_costs(self):
         return {
