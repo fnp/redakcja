@@ -105,7 +105,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         LicenseFilter,
         CoverLicenseFilter,
     ]
-    readonly_fields = ["wikidata_link", "estimated_costs"]
+    readonly_fields = ["wikidata_link", "estimated_costs", "documents_book_link"]
     actions = [export_as_csv_action()]
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
@@ -114,7 +114,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             {
                 "fields": [
                     "title",
-                    "slug",
+                    ("slug", 'documents_book_link'),
                     "authors",
                     "translators",
                     "language",
@@ -177,7 +177,12 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         return '---'
     smart_title.short_description = _('Title')
     smart_title.admin_order_field = 'title'
-    
+
+    def documents_book_link(self, obj):
+        for book in obj.document_books.all():
+            return mark_safe('<a style="position: absolute" href="{}"><img height="100" width="70" src="/cover/preview/{}/?height=100&width=70"></a>'.format(book.get_absolute_url(), book.slug))
+    documents_book_link.short_description = _('Book')
+
 
 admin.site.register(models.Book, BookAdmin)
 
