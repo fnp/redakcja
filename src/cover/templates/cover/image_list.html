@@ -20,17 +20,18 @@
 {% for image in object_list %}
 <div class="col-md-3">
 <div class="card">
-        <a href="{{ image.get_absolute_url }}">
+  <a href="{{ image.get_absolute_url }}">
+    {% if image.file %}
 	<img style="height: 100px; width: auto;" class="card-img-top" src="{% thumbnail image.file "x100" as thumb %}
                 {{ thumb.url }}
              {% empty %}
                 {{ image.file.url }}
              {% endthumbnail %}" />
-	<div class="card-body">
-    
-        {{ image }}
-	</div>
-</a>
+    {% endif %}
+    <div class="card-body">
+      {{ image }}
+    </div>
+  </a>
 </div>
 </div>
 {% endfor %}
