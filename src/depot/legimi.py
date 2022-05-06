@@ -195,16 +195,16 @@ class Legimi:
 
     def get_genre(self, wlbook):
         epoch_map = {
-            'Starożytność': 12,
-            'Średniowiecze': 16, 
-            'Renesans': 20,
-            'Barok': 13,
-            'Oświecenie': 14,
-            'Romantyzm': 21,
-            'Pozytywizm': 19,
-            'Modernizm': 18,
-            'Dwudziestolecie międzywojenne': 15,
-            'Współczesność': 17,
+            'Starożytność': 80,
+            'Średniowiecze': 81,
+            'Renesans': 82,
+            'Barok': 83,
+            'Oświecenie': 84,
+            'Romantyzm': 85,
+            'Pozytywizm': 86,
+            'Modernizm': 87,
+            'Dwudziestolecie międzywojenne': 88,
+            'Współczesność': 90,
         }
 
         for epoch in wlbook.meta.epochs:
