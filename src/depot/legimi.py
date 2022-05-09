@@ -4,7 +4,7 @@ from django.conf import settings
 from librarian.functions import lang_code_3to2
 from librarian.html import transform_abstrakt
 from librarian.builders import EpubBuilder, MobiBuilder
-from librarian.cover import LegimiCornerCover, LegimiCover
+from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
 import requests
 from slugify import slugify
 
@@ -77,9 +77,9 @@ class Legimi:
         wlbook = book.wldocument(librarian2=True)
         meta = wlbook.meta
 
-        cover = LegimiCornerCover(meta, width=1200).output_file()
-        epub_file = EpubBuilder(cover=LegimiCover, fundraising=fundraising).build(wlbook).get_file()
-        mobi_file = MobiBuilder(cover=LegimiCover, fundraising=fundraising).build(wlbook).get_file()
+        cover = LabelMarquiseCover(meta, width=1200).output_file()
+        epub_file = EpubBuilder(cover=MarquiseCover, fundraising=fundraising).build(wlbook).get_file()
+        mobi_file = MobiBuilder(cover=MarquiseCover, fundraising=fundraising).build(wlbook).get_file()
 
         book_data = {
             "Title": meta.title,
