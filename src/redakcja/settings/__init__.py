@@ -115,6 +115,11 @@ LOGIN_REDIRECT_URL = '/documents/user'
 
 MIN_COVER_SIZE = (915, 1270)
 
+LEGIMI_SMALL_WORDS = 2000
+LEGIMI_BIG_WORDS = 10000
+LEGIMI_SMALL_PRICE = 7
+LEGIMI_BIG_PRICE = 20
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

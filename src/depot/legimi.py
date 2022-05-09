@@ -29,6 +29,7 @@ class Legimi:
     CREATE_URL = BASE_URL + '/publishers/publications/create'
     EDIT_URL = BASE_URL + '/publishers/publications/edit/%s'
     EDIT_FILES_URL = BASE_URL + '/publishers/publications/editfiles/%s'
+    EDIT_SALE_URL = BASE_URL + '/publishers/publications/editsale/%s'
     
     def __init__(self, username, password, publisher_id):
         self.username = username
@@ -297,6 +298,42 @@ class Legimi:
             data=current
         )
 
+    def edit_sale(self, book):
+        assert book.legimi_id
+
+        words = book.wldocument().get_statistics()['total']['words_with_fn']
+
+        price = settings.LEGIMI_SMALL_PRICE
+        if words > settings.LEGIMI_SMALL_WORDS:
+            price = settings.LEGIMI_BIG_PRICE
+
+        abo = 'true' if words > settings.LEGIMI_BIG_WORDS else 'false'
+
+        data = {
+            'ValidationTrue': 'true',
+            'Id': book.legimi_id,
+            'SalesPromotionId': "0",
+            'IsLibraryPass': "False",
+            'OriginalEnterToTheMarketType': "No",
+            'OriginalHidingDate': "",
+            'OriginalEnterToTheMarketDate': "",
+            'EnterToTheMarketType': "No",
+            'EnterToTheMarketDate': "",
+            'HidingDate': "",
+            'SalesNoLimitOption': abo,
+            'SalesNoLimitKindle': abo,
+            'SalesInStoreEbookGrossValue': f'{price},00',
+            'SalesPromotion': "False",
+            'SalesPromotionGrossValue': "0,00",
+            'SalesPromotionDatesRange.DateStart': "",
+            'SalesPromotionDatesRange.DateEnd': "",
+        }
+
+        self.session.post(
+            self.EDIT_SALE_URL % book.legimi_id,
+            data=data
+        )
+        
 
 legimi = Legimi(
     settings.LEGIMI_USERNAME,
