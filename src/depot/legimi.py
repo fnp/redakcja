@@ -30,6 +30,107 @@ class Legimi:
     EDIT_URL = BASE_URL + '/publishers/publications/edit/%s'
     EDIT_FILES_URL = BASE_URL + '/publishers/publications/editfiles/%s'
     EDIT_SALE_URL = BASE_URL + '/publishers/publications/editsale/%s'
+
+    CATEGORIES = {
+        'Dla dzieci i młodzieży': 94,
+        'Książki dla dzieci': 15,
+        'Literatura młodzieżowa': 24,
+        'Kryminał': 29,
+        'Kryminał klasyczny': 31,
+        'Kryminał współczesny': 32,
+        'Kryminał historyczny': 30,
+        'default': 8886,
+        'Edukacja': 10,
+        'Słowniki i leksykony': 14,
+        'Encyklopedie': 13,
+        'Lektury': 11,
+        'Starożytność': 80,
+        'Barok': 83,
+        'Oświecenie': 84,
+        'Dwudziestolecie międzywojenne': 88,
+        'Średniowiecze': 81,
+        'Współczesność': 90,
+        'Modernizm': 87,
+        'Pozytywizm': 86,
+        'Renesans': 82,
+        'Romantyzm': 85,
+        'Młoda Polska': 89,
+        'Podręczniki': 52,
+        'Fantastyka i sci-fi': 25,
+        'Fantastyka': 26,
+        'Science fiction': 27,
+        'Języki obce': 59,
+        'Antyki i kolekcjonerstwo': 53,
+        'Astrologia i wróżbiarstwo': 54,
+        'Zdrowie i rodzina': 57,
+        'Hobby': 55,
+        'Medycyna i zdrowie': 58,
+        'Psychologiczne': 78,
+        'Styl': 56,
+        'Humanistyka': 97,
+        'Kultura i sztuka': 64,
+        'Film': 66,
+        'Muzyka': 65,
+        'Eseje literackie': 49,
+        'Historia': 60,
+        'Styl życia': 73,
+        'Wakacje i podróże': 69,
+        'Dla mężczyzn': 79,
+        'Sport': 76,
+        'Obyczajowe i romanse': 93,
+        'Humor': 68,
+        'Obyczajowe': 35,
+        'Powieść': 41,
+        'Powieść przygodowa': 42,
+        'Współczesna powieść przygodowa': 44,
+        'Historyczna powieść przygodowa': 43,
+        'Powieść historyczna': 46,
+        'Powieść psychologiczna': 47,
+        'Powieść religijna': 45,
+        'Romans': 36,
+        'Romans klasyczny': 38,
+        'Romans współczesny': 39,
+        'Literatura erotyczna': 40,
+        'Romans historyczny': 37,
+        'Dla kobiet': 77,
+        'Sensacja, thriller, horror': 91,
+        'Horror': 28,
+        'Sensacja': 33,
+        'Thriller': 34,
+        'Aktualności': 70,
+        'Czasopisma': 71,
+        'Literatura faktu, reportaże, biografie': 92,
+        'Literatura faktu': 16,
+        'Biografie': 17,
+        'Publicystyka': 20,
+        'Dzienniki': 19,
+        'Dokument, esej': 18,
+        'Historia literatury i krytyka literacka': 23,
+        'Literatura popularnonaukowa': 22,
+        'Reportaż': 21,
+        'Społeczno-polityczne': 72,
+        'Poezja i dramat': 95,
+        'Dramat': 48,
+        'Poezja': 50,
+        'Religia i duchowość': 51,
+        'Nauka i nowe technologie': 98,
+        'Nauka i technika': 61,
+        'Nauki ścisłe': 62,
+        'Nauki humanistyczne': 63,
+        'Technologia i Internet': 75,
+        'Specjalistyczne': 99,
+        'Biznes i finanse': 1,
+        'Ekonomia': 5,
+        'Finanse': 6,
+        'Zarządzanie': 3,
+        'Marketing': 2,
+        'Rozwój osobisty': 7,
+        'Kariera i sukces zawodowy': 8,
+        'Psychologia, motywacja': 9,
+        'PR': 4,
+        'Prawo': 67,
+        'Branżowe': 74,
+    }
     
     def __init__(self, username, password, publisher_id):
         self.username = username
@@ -85,7 +186,7 @@ class Legimi:
         book_data = {
             "Title": meta.title,
             "Author": ", ".join(p.readable() for p in meta.authors),
-            "Year": meta.created_at[:4],
+            "Year": str(date.today().year),
 
             'GenreId': str(self.get_genre(wlbook)),
             'Isbn': '',
@@ -117,6 +218,7 @@ class Legimi:
         files_data.update({
             'BookEpub.Token': epub_data['token'],
             'BookEpub.Name': epub_data['name'],
+            'SampleEpubType': 'Generation',
         })
 
         mobi_data = self.upload(
@@ -195,23 +297,12 @@ class Legimi:
         return description
 
     def get_genre(self, wlbook):
-        epoch_map = {
-            'Starożytność': 80,
-            'Średniowiecze': 81,
-            'Renesans': 82,
-            'Barok': 83,
-            'Oświecenie': 84,
-            'Romantyzm': 85,
-            'Pozytywizm': 86,
-            'Modernizm': 87,
-            'Dwudziestolecie międzywojenne': 88,
-            'Współczesność': 90,
-        }
-
+        if wlbook.meta.legimi and wlbook.meta.legimi in self.CATEGORIES:
+            return self.CATEGORIES[wlbook.meta.legimi]
         for epoch in wlbook.meta.epochs:
-            if epoch in epoch_map:
-                return epoch_map[epoch]
-        return 11
+            if epoch in self.CATEGORIES:
+                return self.CATEGORIES[epoch]
+        return self.CATEGORIES['Lektury']
     
     def create_book(self, book_data, files_data):
         data = {
