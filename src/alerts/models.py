@@ -21,7 +21,7 @@ class Alert(models.Model):
         cls.objects.filter(book=book).delete()
         try:
             wlbook = book.wldocument(publishable=False, librarian2=True)
-        except Exception:
+        except Exception as e:
             cls.objects.create(book=book, tag='parse', comment=str(e))
             return
 
