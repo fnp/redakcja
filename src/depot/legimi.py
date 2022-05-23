@@ -314,7 +314,7 @@ class Legimi:
             'SamplesGenerationPercent': '10',
 
             'EnterToTheMarketType': 'No',
-            'EnterToTheMarketDate': date.today().strftime('%d.%m.%Y'),
+            'EnterToTheMarketDate': '',
             'HidingDate': '',
             'SalesNoLimitOption': 'false',
             'SalesNoLimitKindle': 'false',
@@ -408,7 +408,7 @@ class Legimi:
             'OriginalEnterToTheMarketType': "No",
             'OriginalHidingDate': "",
             'OriginalEnterToTheMarketDate': "",
-            'EnterToTheMarketType': "No",
+            'EnterToTheMarketType': "Yes",
             'EnterToTheMarketDate': "",
             'HidingDate': "",
             'SalesNoLimitOption': abo,
@@ -424,7 +424,7 @@ class Legimi:
             self.EDIT_SALE_URL % book.legimi_id,
             data=data
         )
-        
+
 
 legimi = Legimi(
     settings.LEGIMI_USERNAME,
