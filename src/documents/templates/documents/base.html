@@ -35,7 +35,7 @@
             🔔
             <span class="badge badge-danger">{{ alerts.count }}</span>
           </a>
-          <div class="dropdown-menu dropdown-menu-right">
+          <div class="dropdown-menu dropdown-menu-right" style="max-width:400px; overflow: hidden;">
             {% for alert in alerts.items %}
               <a class="dropdown-item" href="{{ alert.book.get_absolute_url }}">
                 {{ alert.book }}<br>
