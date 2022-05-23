@@ -7,6 +7,10 @@ from .rules import rules, rules_by_tag
 class Alert(models.Model):
     book = models.ForeignKey('documents.Book', models.CASCADE)
     tag = models.CharField(max_length=32)
+    comment = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        return self.book.get_absolute_url()
 
     @property
     def rule(self):
@@ -17,12 +21,18 @@ class Alert(models.Model):
         cls.objects.filter(book=book).delete()
         try:
             wlbook = book.wldocument(publishable=False, librarian2=True)
-        except:
-            cls.objects.create(book=book, tag='parse')
+        except Exception:
+            cls.objects.create(book=book, tag='parse', comment=str(e))
             return
 
+        try:
+            meta = wlbook.meta
+        except Exception as e:
+            cls.objects.create(book=book, tag='meta', comment=str(e))
+            return
+        
         for rule in rules:
-            if rule.check_meta(wlbook.meta):
+            if rule.check_meta(meta):
                 print(rule.tag, book)
                 cls.objects.create(book=book, tag=rule.tag)
 

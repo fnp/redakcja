@@ -40,6 +40,9 @@
               <a class="dropdown-item" href="{{ alert.book.get_absolute_url }}">
                 {{ alert.book }}<br>
                 {{ alert.rule.description }}
+                {% if alert.comment %}
+                  <br><small>{{ alert.comment }}</small>
+                {% endif %}
               </a>
             {% endfor %}
           </div>

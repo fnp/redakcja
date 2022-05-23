@@ -12,6 +12,11 @@ class CheckParse(Check):
     description = _('Book parse error.')
 
 
+class CheckMeta(Check):
+    tag = 'meta'
+    description = _('Metadata parse error.')
+
+
 class CheckCoverLocal(Check):
     tag = 'cover-local'
     description = _('Cover is not local')
@@ -26,6 +31,7 @@ class CheckCoverLocal(Check):
 
 rules = [
     CheckParse(),
+    CheckMeta(),
     CheckCoverLocal(),
 ]
 
