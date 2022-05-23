@@ -2,6 +2,7 @@
 {% load pipeline i18n %}
 {% load static %}
 {% load documents %}
+{% load alerts %}
 <!DOCTYPE html>
 <html>
 <head lang="{{ LANGUAGE_CODE }}">
@@ -26,7 +27,25 @@
     </ul>
 
     <ul class="navbar-nav">
-        {% include "registration/head_login.html" %}
+
+      {% get_alerts as alerts %}
+      {% if alerts.count %}
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" title="Alert">
+            🔔
+            <span class="badge badge-danger">{{ alerts.count }}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            {% for alert in alerts.items %}
+              <a class="dropdown-item" href="{{ alert.book.get_absolute_url }}">
+                {{ alert.book }}<br>
+                {{ alert.rule.description }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% include "registration/head_login.html" %}
     </ul>
 </nav>
 

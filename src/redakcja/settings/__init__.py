@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'apiclient',
     'email_mangler',
     'wlxml.apps.WlxmlConfig',
+    'alerts',
 )
 
 if DEBUG:
