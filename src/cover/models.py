@@ -27,7 +27,7 @@ class Image(models.Model):
     license_name = models.CharField(max_length=255, verbose_name=_('license name'))
     license_url = models.URLField(max_length=255, blank=True, verbose_name=_('license URL'))
     source_url = models.URLField(verbose_name=_('source URL'), null=True, blank=True)
-    download_url = models.URLField(unique=True, verbose_name=_('image download URL'), null=True, blank=True)
+    download_url = models.URLField(max_length=4096, unique=True, verbose_name=_('image download URL'), null=True, blank=True)
     file = models.ImageField(
         upload_to='cover/image',
         storage=OverwriteStorage(),

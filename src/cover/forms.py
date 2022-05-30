@@ -102,7 +102,7 @@ class ReadonlyImageEditForm(ImageEditForm):
 
 
 class ImportForm(forms.Form):
-    source_url = forms.URLField(label=_('WikiCommons, MNW or Flickr URL'))
+    source_url = forms.URLField(label=_('WikiCommons, MNW, Flickr, RawPixel URL'))
 
     def clean_source_url(self):
         url = self.cleaned_data['source_url']

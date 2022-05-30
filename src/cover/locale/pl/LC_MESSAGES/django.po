@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-25 14:10+0100\n"
+"PO-Revision-Date: 2022-05-30 11:26+0200\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -18,57 +18,61 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 3.0\n"
 
-#: cover/forms.py:34 cover/forms.py:44
+#: cover/forms.py:39 cover/forms.py:49
 #, python-format
 msgid "Image <a href=\"%(url)s\">already in repository</a>."
 msgstr "Obraz <a href=\"%(url)s\">jest już w repozytorium</a>."
 
-#: cover/forms.py:53
+#: cover/forms.py:63
 msgid "No image specified"
 msgstr "Nie wskazano obrazu"
 
-#: cover/forms.py:61 cover/forms.py:78
+#: cover/forms.py:71 cover/forms.py:88
 #, python-format
 msgid "Image too small: %sx%s, minimal dimensions %sx%s"
 msgstr "Obraz za mały: %sx%s, minimalny rozmiar %sx%s"
 
-#: cover/forms.py:95
-msgid "WikiCommons, MNW or Flickr URL"
-msgstr "URL z WikiCommons, MNW albo Flickra"
+#: cover/forms.py:105
+msgid "WikiCommons, MNW, Flickr, RawPixel URL"
+msgstr "URL z WikiCommons, MNW, Flickra, RawPixel"
 
-#: cover/models.py:23
+#: cover/models.py:25
 msgid "title"
 msgstr "tytuł"
 
-#: cover/models.py:24
+#: cover/models.py:26
 msgid "author"
 msgstr "autor"
 
-#: cover/models.py:25
+#: cover/models.py:27
 msgid "license name"
 msgstr "nazwa licencji"
 
-#: cover/models.py:26
+#: cover/models.py:28
 msgid "license URL"
 msgstr "URL licencji"
 
-#: cover/models.py:27
+#: cover/models.py:29
 msgid "source URL"
 msgstr "URL źródła"
 
-#: cover/models.py:28
+#: cover/models.py:30
 msgid "image download URL"
 msgstr "URL pliku do pobrania"
 
-#: cover/models.py:30
+#: cover/models.py:34
 msgid "file"
 msgstr "plik"
 
-#: cover/models.py:33
+#: cover/models.py:40
+msgid "file for use"
+msgstr "plik do użycia"
+
+#: cover/models.py:48
 msgid "cover image"
 msgstr "obrazek na okładkę"
 
-#: cover/models.py:34
+#: cover/models.py:49
 msgid "cover images"
 msgstr "obrazki na okładki"
 
@@ -79,27 +83,23 @@ msgid "Add image"
 msgstr "Dodaj obrazek"
 
 #: cover/templates/cover/add_image.html:19
-msgid "Load from WikiCommons, MNW, Flickr"
-msgstr "Pobierz z WikiCommons, MNW albo Flickra"
+msgid "Load from WikiCommons, MNW, Flickr, RawPixel"
+msgstr "Pobierz z WikiCommons, MNW, Flickra, RawPixel"
 
 #: cover/templates/cover/image_detail.html:6
 #: cover/templates/cover/image_detail.html:9
 msgid "Cover image"
 msgstr "Obrazek na okładkę"
 
-#: cover/templates/cover/image_detail.html:25
-msgid "source"
-msgstr "źródło"
-
-#: cover/templates/cover/image_detail.html:36
+#: cover/templates/cover/image_detail.html:30
 msgid "Change"
 msgstr "Zmień"
 
-#: cover/templates/cover/image_detail.html:42
+#: cover/templates/cover/image_detail.html:36
 msgid "Used in:"
 msgstr "Użyte w:"
 
-#: cover/templates/cover/image_detail.html:50
+#: cover/templates/cover/image_detail.html:44
 msgid "None"
 msgstr "Brak"
 
@@ -111,6 +111,9 @@ msgstr "Obrazki na okładki"
 #: cover/templates/cover/image_list.html:15
 msgid "Add new"
 msgstr "Dodaj nowy"
+
+#~ msgid "source"
+#~ msgstr "źródło"
 
 #, fuzzy, python-format
 #~| msgid "Image <a href=\"%(url)s\">already in repository</a>."
