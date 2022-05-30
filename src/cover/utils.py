@@ -6,6 +6,8 @@ from io import StringIO
 import json
 import re
 from urllib.request import FancyURLopener
+from django.conf import settings
+import requests
 from wikidata.client import Client
 from catalogue.constants import WIKIDATA
 
@@ -118,7 +120,7 @@ def get_wikimedia_data(url):
 def get_mnw_data(url):
     """
     >>> get_mnw_data('https://cyfrowe.mnw.art.pl/pl/katalog/511078')
-    {'title': 'Chłopka (Baba ukraińska)', 'author': 'Krzyżanowski, Konrad (1872-1922)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/32/60/3260ae1704cc530cc62befa9b7d58cbd.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
+    {'title': 'Chłopka (Baba ukraińska)', 'author': 'Krzyżanowski, Konrad (1872-1922)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/a0/68/a0681c60f203d907d9c45050d245c921.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
     """
     nr = url.rsplit('/', 1)[-1]
     d = list(
@@ -132,27 +134,59 @@ def get_mnw_data(url):
     )[0]
 
     authors = []
-    i = 0
-    while f'authors.{i}.name' in d:
-        authors.append(d[f'authors.{i}.name'])
+    i = 1
+    while f'twórca/wytwórnia {i}' in d:
+        authors.append(d[f'twórca/wytwórnia {i}'])
         i += 1
 
-    license_url = d['copyrights.0.link']
-    license_name = d['copyrights.0.name']
+    license_url = ''
+    license_name = d['klasyfikacja praw autorskich 1']
     if license_name == 'DOMENA PUBLICZNA':
         license_name = 'domena publiczna'
         license_url = 'https://pl.wikipedia.org/wiki/Domena_publiczna'
         
     return {
-        'title': d['title'],
+        'title': d['nazwa/tytuł'],
         'author': ', '.join(authors),
         'source_url': url,
         'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/{}.{}'.format(
-            d['image.filePath'],
-            d['image.extension'],
+            d['ścieżka wizerunku'],
+            d['rozszerzenie pliku wizerunku'],
         ),
         'license_url': license_url,
         'license_name': license_name,
+    }
+
+def get_rawpixel_data(url):
+    photo_id = re.search(r'/(\d+)/', url).group(1)
+
+    s = requests.Session()
+    cookies = settings.RAWPIXEL_SESSION
+
+    token = s.post(
+            'https://www.rawpixel.com/api/v1/user/session',
+            cookies=cookies
+            ).json()['token']
+
+    h = {'X-CSRF-Token': token, 'Accept': 'application/json'}
+
+    data = s.get(
+        f'https://www.rawpixel.com/api/v1/image/data/{photo_id}',
+        headers=h, cookies=cookies).json()
+    download_url = s.post(
+        f'https://www.rawpixel.com/api/v1/image/download/{photo_id}/original',
+        headers=h, cookies=cookies
+    ).json()['downloadUrl']
+
+    title = data['metadata']['title'].rsplit('|', 1)[0].strip()
+
+    return {
+        'title': title,
+        'author': ', '.join(data['metadata']['artist_names']),
+        'source_url': data['url'],
+        'download_url': download_url,
+        'license_url': data['metadata']['licenseUrl'],
+        'license_name': data['metadata']['license'],
     }
 
 
@@ -163,3 +197,5 @@ def get_import_data(url):
         return get_wikimedia_data(url)
     if re.match(r'(https?://)?cyfrowe\.mnw\.art\.pl/', url):
         return get_mnw_data(url)
+    if re.match(r'(https?://)?www\.rawpixel\.com/', url):
+        return get_rawpixel_data(url)
