@@ -50,14 +50,15 @@ def preview(request, book, chunk=None, rev=None):
     width = int(width) if width else None
     height=request.GET.get('height')
     height = int(height) if height else None
-    cover = make_cover(info, width=width, height=height)
-    #cover = make_cover(info)
+
+    if not (height or width):
+        width, height = PREVIEW_SIZE
+
+    cover_class = request.GET.get('cover_class', 'default')
+
+    cover = make_cover(info, cover_class=cover_class, width=width, height=height)
     response = HttpResponse(content_type=cover.mime_type())
-    if height or width:
-        size = (width, height)
-    else:
-        size = PREVIEW_SIZE
-    img = cover.image().resize(size, Image.ANTIALIAS)
+    img = cover.final_image()
     img.save(response, cover.format)
 
     if 'download' in request.GET:

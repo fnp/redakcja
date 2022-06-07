@@ -72,29 +72,38 @@
   </div>
 <div class="card-body">
   <div class="row">
-<div class="col-lg-3">
-<img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
-{% if book.dc_cover_image %}
-  <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
-{% endif %}
-<br><br>
+    <div class="col-lg-3">
+      <img class="cover-preview" src="{% url 'cover_preview' book.slug %}" />
+      {% if book.dc_cover_image %}
+        <a href="{{ book.dc_cover_image.get_absolute_url }}">{{ book.dc_cover_image }}</a>
+      {% endif %}
+      <br><br>
 
-<form action="{% url 'cover_quick_import' book.pk %}" method="post">
-  {% csrf_token %}
-  <input type="url" name="url">
-  <button type="submit" class="btn btn-sm btn-info">></button>
-</form>
+      <form action="{% url 'cover_quick_import' book.pk %}" method="post">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="url" name="url" class="form-control" placeholder="URL okładki">
+          <button type="submit" class="btn btn-sm btn-info">Ustaw</button>
+        </div>
+      </form>
 
 
-<br><br>
-<form action="{% url 'cover_preview' book.slug %}">
-<input type="hidden" name="download" value="1">
-Okładka w rozmiarze
-<input name="width" type="number" required value="600"> x <input name="height" type="number" required value="833">
-<button type="submit" class="btn btn-sm btn-primary">Pobierz</button>
-</form>
-</div>
-<div class="col-lg-9">
+      <br><br>
+      <form action="{% url 'cover_preview' book.slug %}">
+        <input type="hidden" name="download" value="1">
+        Pobierz okładkę:
+        <div class="input-group">
+          <select class="form-control" name='cover_class'>
+            <option value="default">tradycyjna</option>
+            <option value="m">nowa</option>
+          </select><br>
+          <input class="form-control" name="width" type="number" required value="600" size="3" placeholder="szer.">
+          <input class="form-control" name="height" type="number" size="3" placeholder="wys.">
+          <button type="submit" class="btn btn-sm btn-primary">🡇</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-9">
 <p>{% trans "Last published" %}:
     {% if book.last_published %}
         {{ book.last_published }}
