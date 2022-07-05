@@ -13,7 +13,7 @@ Wikidata==0.6.1
 librarian==2.4
 
 ## Django
-Django==3.2.12
+Django==3.2.14
 fnpdjango==0.5
 django-pipeline==2.0.7
 django-cas-ng==4.3.0
