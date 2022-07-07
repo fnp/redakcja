@@ -262,18 +262,24 @@
         </xsl:if>
 
         <xsl:for-each select="@*">
-            <xsl:variable name="id" select="generate-id()" />
-            <xsl:attribute name="x-attr-value-{$id}"><xsl:value-of select="."/></xsl:attribute>
-            <xsl:attribute name="x-attr-name-{$id}"><xsl:value-of select="local-name()"/></xsl:attribute>
-            <xsl:choose>
-            	<xsl:when test="namespace-uri()">
-                <xsl:attribute name="x-attr-ns-{$id}"><xsl:value-of select="namespace-uri()"/></xsl:attribute>
-				</xsl:when>
-				<!-- if the element belongs to default namespace and attribut has no namespace -->
-            	<xsl:when test="not(namespace-uri(.))">
-				<xsl:attribute name="data-wlf-{local-name()}"><xsl:value-of select="."/></xsl:attribute>
-				</xsl:when>
-			</xsl:choose>               
+
+          <xsl:choose>
+            {% for namespace, prefix in namespaces.items %}
+            <xsl:when test="namespace-uri() =  '{{ namespace }}'">
+              <xsl:attribute name="x-a-{{ prefix }}-{local-name()}">
+                <xsl:value-of select="."/>
+              </xsl:attribute>
+            </xsl:when>
+            {% endfor %}
+
+            <xsl:otherwise>
+              <xsl:variable name="id" select="generate-id()" />
+              <xsl:attribute name="x-attr-value-{$id}"><xsl:value-of select="."/></xsl:attribute>
+              <xsl:attribute name="x-attr-name-{$id}"><xsl:value-of select="local-name()"/></xsl:attribute>
+              <xsl:attribute name="x-attr-ns-{$id}"><xsl:value-of select="namespace-uri()"/></xsl:attribute>
+	    </xsl:otherwise>
+	  </xsl:choose>               
+
         </xsl:for-each>
     </xsl:template>
 

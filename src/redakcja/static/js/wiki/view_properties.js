@@ -72,7 +72,11 @@
                 }
                 
                 if ($input.data("edited")) {
-                    $input.data("edited").text(inputval);
+                    if ($input.data("edited-attr")) {
+                        $input.data("edited").attr($input.data("edited-attr"), inputval);
+                    } else {
+                        $input.data("edited").text(inputval);
+                    }
                     return;
                 }
                 
@@ -102,6 +106,37 @@
                 self.$edited;
             });
 
+            
+            self.$pane.on('click', '.meta-add', function() {
+                // create a metadata item
+                let $fg = $(this).parent();
+                let ns = $fg.data('ns');
+                let tag = $fg.data('tag');
+                let field = $fg.data('field');
+                let span = $('<span/>');
+                span.attr('x-node', tag);
+                span.attr('x-ns', ns)
+                if (field.value_type.hasLanguage) {
+                    span.attr('x-a-xml-lang', 'pl');
+                }
+                span.appendTo(
+                    $("> [x-node='RDF'] > [x-node='Description']", self.$edited)
+                );
+
+                self.displayMetaProperty($fg);
+                
+                return false;
+            });
+            
+            self.$pane.on('click', '.meta-delete', function() {
+                let $fg = $(this).closest('.form-group'); 
+                $('input', $fg).data('edited').remove();
+                self.displayMetaProperty($fg);
+                return false;
+            });
+
+
+            
             self.$pane.on('click', '.current-convert', function() {
                 self.convert($(this).attr('data-to'));
             });
@@ -150,25 +185,36 @@
         let nodeDef = elementDefs[node];
         if (nodeDef && nodeDef.attributes) {
             $.each(nodeDef.attributes, function(i, a) {
-                self.addEditField(a, $(element).attr('data-wlf-' + a.name)); // ...
+                self.addEditField(a, $(element).attr('x-a-wl-' + a.name)); // ...
             })
         }
 
-
         // Only utwor can has matadata now.
         if (node == 'utwor') {
-            // Let's find all the metadata.
-            $("> [x-node='RDF'] > [x-node='Description'] > [x-node]", $node).each(function() {
-                $meta = $(this);
-                self.addEditField(
-                    {"name": $meta.attr('x-node'),},
-                    $meta.text(),
-                    $meta,
-                );
+            $('<hr>').appendTo($("#properties-form", self.$pane))
+            META_FIELDS.forEach(function(field) {
+                let $fg = $("<div class='form-group'>");
+                $("<label/>").text(field.name).appendTo($fg);
+
+                // if multiple?
+                $("<button class='meta-add float-right btn btn-primary'>+</button>").appendTo($fg);
+
+                let match = field.uri.match(/({(.*)})?(.*)/);
+                ns = match[2];
+                tag = match[3];
+
+                let cont = $('<div class="c">');
+
+                $fg.data('ns', ns);
+                $fg.data('tag', tag);
+                $fg.data('field', field);
+                cont.appendTo($fg);
+
+                self.displayMetaProperty($fg);
+
+                $fg.appendTo( $("#properties-form", self.$pane));
             });
         }
-
-
 
         // check node type, find relevant tags
         if ($node[0].nodeName == 'DIV') {
@@ -178,6 +224,57 @@
         }
     };
 
+    PropertiesPerspective.prototype.addMetaInput = function(cont, field, element) {
+        let self = this;
+
+        let ig = $('<div class="input-group">');
+        //ig.data('edited', element);
+        ig.appendTo(cont);
+
+        if (field.value_type.hasLanguage) {
+            let pp = $("<div class='input-group-prepend'>");
+            let lang_input = $("<input class='form-control' size='1' class='lang'>");
+            lang_input.data('edited', $(element));
+            lang_input.data('edited-attr', 'x-a-xml-lang');
+            lang_input.val(
+                $(element).attr('x-a-xml-lang')
+            );
+            lang_input.appendTo(pp);
+            pp.appendTo(ig);
+        }
+
+        let $aninput = $("<input class='form-control'>");
+        $aninput.data('edited', $(element))
+        $aninput.val(
+            $(element).text()
+        );
+        $aninput.appendTo(ig);
+
+        let ap = $("<div class='input-group-append'>");
+        ap.appendTo(ig);
+        $("<button class='meta-delete btn btn-outline-secondary'>x</button>").appendTo(ap);
+        
+        // lang
+    };
+    
+
+    PropertiesPerspective.prototype.displayMetaProperty = function($fg) {
+        let self = this;
+        let ns = $fg.data('ns');
+        let tag = $fg.data('tag');
+        let field = $fg.data('field');
+
+        //  clear container
+        $('.c', $fg).empty();
+        
+        $("> [x-node='RDF'] > [x-node='Description'] > [x-node='"+tag+"'][x-ns='"+ns+"']", self.$edited).each(function() {
+            self.addMetaInput(
+                $('.c', $fg),
+                field,
+                this);
+        });
+    };
+    
 
 
     PropertiesPerspective.prototype.addEditField = function(defn, value, elem) {

@@ -505,7 +505,7 @@
 
         if($box.attr("x-edit-attribute")) {
             source = $('<span x-pass-thru="true"/>');
-            source.text($box.attr("data-wlf-" + $box.attr("x-edit-attribute")));
+            source.text($box.attr("x-a-wl-" + $box.attr("x-edit-attribute")));
             source = source[0];
         } else {
             source = $box[0];

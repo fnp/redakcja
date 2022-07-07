@@ -1,6 +1,9 @@
 from io import BytesIO
-from django.views.generic import TemplateView, ListView, DetailView
+import json
+from django.http import HttpResponse
+from django.views.generic import TemplateView, ListView, DetailView, View
 from . import models
+from librarian.dcparser import BookInfo
 from librarian.document import WLDocument
 from librarian.builders import StandaloneHtmlBuilder
 
@@ -15,6 +18,12 @@ class XslView(TemplateView):
         for t in models.Tag.objects.all():
             tags.setdefault(t.type, []).append(t.name)
         ctx['tags'] = tags
+        ctx['namespaces'] = {
+	    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+	    "http://purl.org/dc/elements/1.1/": "dc",
+	    "http://www.w3.org/XML/1998/namespace": "xml",
+            "": "wl",
+        }
         return ctx
 
 
@@ -32,3 +41,22 @@ class TagView(DetailView):
     queryset = models.Tag.objects.all()
     slug_field = 'name'
 
+
+class MetaTagsView(View):
+    def get(self, request):
+        return HttpResponse(
+            'let META_FIELDS = ' + json.dumps([
+                {
+                    'name': f.name,
+                    'required': f.required,
+                    'multiple': f.multiple,
+                    'uri': f.uri,
+                    'value_type': {
+                        'hasLanguage': f.value_type.has_language,
+                        'name': f.value_type.__name__,
+                    }
+                }
+                for f in BookInfo.FIELDS
+            ]),
+            content_type='text/javascript')
+    

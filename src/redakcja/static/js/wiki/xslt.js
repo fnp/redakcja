@@ -107,6 +107,7 @@ const DOCUMENT_TYPE_NODE             = 10;
 const DOCUMENT_FRAGMENT_NODE         = 11;
 const NOTATION_NODE                  = 12;
 const XATTR_RE = /^x-attr-name-(.*)$/;
+const XATTR_KNOWN_RE = /^x-a-([a-z]+)-(.*)$/;
 
 const ELEM_START = 1;
 const ELEM_END = 2;
@@ -117,6 +118,13 @@ const NAMESPACES = {
 	"http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
 	"http://purl.org/dc/elements/1.1/": "dc",
 	"http://www.w3.org/XML/1998/namespace": "xml"
+};
+
+NS_PREFIXES = {
+    'wl': ''
+};
+for (prefix in NAMESPACES) {
+    NS_PREFIXES[NAMESPACES[prefix]] = prefix
 };
 
 function HTMLSerializer() {
@@ -327,32 +335,61 @@ HTMLSerializer.prototype._serializeElement = function(node) {
 
     	/* retrieve attributes */
     	var attributeIDs = [];
+        var attributes = [];
     	for (var i = 0; i < node.attributes.length; i++) {
-    		var attr = node.attributes.item(i);
+    	    var attr = node.attributes.item(i);
 
-    		// check if name starts with "x-attr-name"
-    		var m = attr.name.match(XATTR_RE);
-    		if (m !== null)
-    			attributeIDs.push(m[1]);
+            m = attr.name.match(XATTR_KNOWN_RE);
+            if (m !== null) {
+                prefix = m[1];
+                tag = m[2];
+                attributes.push([
+                    NS_PREFIXES[prefix],
+                    tag,
+                    attr.value
+                ]);
+            } else {
+    	        // check if name starts with "x-attr-name"
+    	        var m = attr.name.match(XATTR_RE);
+    	        if (m !== null) {
+    		    attributeIDs.push(m[1]);
+                }
+            }
     	};
 
     	/* print out */
 
     	self.result += '<' + tagName;
 
-    	$.each(attributeIDs, function() {
-    		var nsData = self._assignNamespace(node.getAttribute('x-attr-ns-'+this));
-
+        function writeAttr(ns, tag, value) {
+            if (ns) {
+    	        var nsData = self._assignNamespace(ns);
     		if(nsData.fresh) {
-    			newNamespaces.push(nsData);
-    			self.stack.push({
-    				"type": NS_END,
-    				"namespace": nsData
-    			});
+    		    newNamespaces.push(nsData);
+    		    self.stack.push({
+    			"type": NS_END,
+    			"namespace": nsData
+    		    });
     		};
+                tag = self._join(nsData.prefix, tag);
+            }
 
-    		self.result += ' ' + self._join(nsData.prefix, node.getAttribute('x-attr-name-'+this));
-    		self.result += '="' + node.getAttribute('x-attr-value-'+this).replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '"';
+    	    self.result += ' ' + tag;
+    	    self.result += '="' + value.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '"';
+        }
+        
+        $.each(attributes, function() {
+            writeAttr(
+                this[0], this[1], this[2]
+            );
+        });
+        
+    	$.each(attributeIDs, function() {
+            writeAttr(
+                node.getAttribute('x-attr-ns-'+this),
+    		node.getAttribute('x-attr-name-'+this),
+    		node.getAttribute('x-attr-value-'+this)
+            );
     	});
 
     	/* print new namespace declarations */

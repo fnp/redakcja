@@ -8,4 +8,6 @@ urlpatterns = [
 
     path('tags/', views.TagsView.as_view(), name='wlxml_tags'),
     path('tags/<slug>/', views.TagView.as_view(), name='wlxml_tag'),
+
+    path('metatags.js', views.MetaTagsView.as_view(), name='wlxml_meta_tags'),
 ]
