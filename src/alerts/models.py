@@ -39,4 +39,5 @@ class Alert(models.Model):
 
 @receiver(post_commit)
 def validate_post_commit(sender, **kwargs):
-    Alert.validate_book(sender.tree.book)
+    if hasattr(sender.tree, 'book'):
+        Alert.validate_book(sender.tree.book)
