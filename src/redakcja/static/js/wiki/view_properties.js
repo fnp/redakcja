@@ -273,6 +273,13 @@
                 field,
                 this);
         });
+
+        count = $('.c > .input-group', $fg).length;
+        if (field.required) {
+            if (!count) {
+                $('<div class="text-warning">WYMAGANE</div>').appendTo($('.c', $fg));
+            }
+        }
     };
     
 
