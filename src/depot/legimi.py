@@ -175,8 +175,8 @@ class Legimi:
 #     success: true
 #     model.Url
 
-    def send_book(self, book):
-        wlbook = book.wldocument(librarian2=True)
+    def send_book(self, book, changes=None):
+        wlbook = book.wldocument(librarian2=True, changes=changes)
         meta = wlbook.meta
 
         cover = LabelMarquiseCover(meta, width=1200).output_file()

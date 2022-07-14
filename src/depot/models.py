@@ -1,11 +1,15 @@
 import json
 import os
 import tempfile
+import traceback
 import zipfile
 from datetime import datetime
+from django.conf import settings
 from django.db import models
+from django.utils.timezone import now
 from librarian.cover import make_cover
 from librarian.builders import EpubBuilder, MobiBuilder
+from .legimi import legimi
 
 
 class Package(models.Model):
@@ -115,3 +119,51 @@ class Package(models.Model):
                 fname,
                 output.get_bytes()
             )
+
+
+class LegimiBookPublish(models.Model):
+    book = models.ForeignKey('documents.Book', models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True)
+    created_at = models.DateTimeField()
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    status = models.PositiveSmallIntegerField(choices=[
+        (0, 'queued'),
+        (10, 'running'),
+        (100, 'done'),
+        (110, 'error'),
+    ], default=0)
+    error = models.TextField(blank=True)
+
+    @classmethod
+    def create_for(cls, book, user):
+        book.assert_publishable()
+        changes = book.get_current_changes(publishable=True)
+        me = cls.objects.create(book=book, user=user, created_at=now())
+        for change in changes:
+            me.legimichunkpublish_set.create(change=change)
+        return me
+
+    def publish(self):
+        self.status = 10
+        self.started_at = now()
+        self.save(update_fields=['status', 'started_at'])
+        try:
+            changes = [
+                p.change for p in
+                self.legimichunkpublish_set.order_by('change__chunk__number')
+            ]
+            legimi.send_book(self.book, changes=changes)
+        except Exception:
+            self.status = 110
+            self.error = traceback.format_exc()
+        else:
+            self.status = 100
+            self.error = ''
+        self.finished_at = now()
+        self.save(update_fields=['status', 'finished_at', 'error'])
+
+
+class LegimiChunkPublish(models.Model):
+    book_publish = models.ForeignKey(LegimiBookPublish, models.CASCADE)
+    change = models.ForeignKey('documents.ChunkChange', models.CASCADE)

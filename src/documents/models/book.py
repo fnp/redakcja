@@ -278,6 +278,9 @@ class Book(models.Model):
         except IndexError:
             return None
 
+    def last_legimi_publish(self):
+        return self.legimibookpublish_set.order_by('-created_at').first()
+
     def assert_publishable(self):
         assert self.chunk_set.exists(), _('No chunks in the book.')
         try:

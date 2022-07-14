@@ -134,9 +134,27 @@
             {{ publish_options_form.as_p }}
             <img src="{{ STATIC_URL }}img/angel-left.png" style="vertical-align: middle" />
             <button id="publish-button" type="submit">
-                <span>{% trans "Publish" %}</span></button>
+              <span>{% trans "Publish" %}</span></button>
             <img src="{{ STATIC_URL }}img/angel-right.png" style="vertical-align: middle" />
-            </form>
+        </form>
+
+        {% if perms.depot.add_legimibookpublish %}
+          <hr>
+          <form method="post" action="{% url 'depot_legimi_publish' book.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">Opublikuj na Legimi<br><small>w kategorii: {{ doc.book_info.legimi|default_if_none:doc.book_info.epoch }}</small></button>
+            {% with llp=book.last_legimi_publish %}
+              {% if llp %}
+                {{ llp.created_at }} &rarr;
+                {{ llp.started_at }} &rarr;
+                {{ llp.finished_at }}
+                ({{ llp.get_status_display }})
+                <!-- {{ llp.id }} -->
+              {% endif %}
+            {% endwith %}
+          </form>
+        {% endif %}
+
     {% else %}
         <a href="{% url 'cas_ng_login' %}">{% trans "Log in to publish." %}</a>
     {% endif %}
@@ -145,10 +163,13 @@
     <ul><li>{{ publishable_error }}</li></ul>
 {% endif %}
 
-</div>
+
+
+    </div>
   </div>
 </div>
 </div>
+
 
 {% if doc %}
   <div class="card mt-4">
@@ -169,7 +190,7 @@
           </tr>
         </thead>
         <tbody>
-          {% with stats=book.wldocument.get_statistics %}
+          {% with stats=doc.get_statistics %}
             {% include 'documents/book_stats.html' with book=book stats=stats depth=0 %}
           {% endwith %}
         </tbody>
