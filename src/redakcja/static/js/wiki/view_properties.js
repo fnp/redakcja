@@ -266,8 +266,12 @@
 
         //  clear container
         $('.c', $fg).empty();
-        
-        $("> [x-node='RDF'] > [x-node='Description'] > [x-node='"+tag+"'][x-ns='"+ns+"']", self.$edited).each(function() {
+
+        let selector = "> [x-node='RDF'] > [x-node='Description'] > [x-node='"+tag+"']";
+        if (ns) {
+            selector += "[x-ns='"+ns+"']";
+        }
+        $(selector, self.$edited).each(function() {
             self.addMetaInput(
                 $('.c', $fg),
                 field,
