@@ -168,20 +168,21 @@ class Legimi:
             "url": model['Url'],
         }
 
-#    name=files[]
-#    filename
-#    content-type
-#    response: json
-#     success: true
-#     model.Url
-
     def send_book(self, book, changes=None):
         wlbook = book.wldocument(librarian2=True, changes=changes)
         meta = wlbook.meta
 
         cover = LabelMarquiseCover(meta, width=1200).output_file()
-        epub_file = EpubBuilder(cover=MarquiseCover, fundraising=fundraising).build(wlbook).get_file()
-        mobi_file = MobiBuilder(cover=MarquiseCover, fundraising=fundraising).build(wlbook).get_file()
+        epub_file = EpubBuilder(
+            cover=MarquiseCover,
+            fundraising=fundraising,
+            base_url='file://' + book.gallery_path() + '/'
+        ).build(wlbook).get_file()
+        mobi_file = MobiBuilder(
+            cover=MarquiseCover,
+            fundraising=fundraising,
+            base_url='file://' + book.gallery_path() + '/'
+        ).build(wlbook).get_file()
 
         book_data = {
             "Title": meta.title,
@@ -196,7 +197,7 @@ class Legimi:
         }
         if meta.isbn_html:
             isbn = meta.isbn_html
-            if isbn.upper().startswith('ISBN '):
+            if isbn.upper().startswith(('ISBN ', 'ISBN-')):
                 isbn = isbn[5:]
             isbn = isbn.strip()
             book_data['Isbn'] = isbn

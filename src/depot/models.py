@@ -154,6 +154,7 @@ class LegimiBookPublish(models.Model):
                 self.legimichunkpublish_set.order_by('change__chunk__number')
             ]
             legimi.send_book(self.book, changes=changes)
+            legimi.edit_sale(self.book)
         except Exception:
             self.status = 110
             self.error = traceback.format_exc()
