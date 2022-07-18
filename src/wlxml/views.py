@@ -6,6 +6,8 @@ from . import models
 from librarian.dcparser import BookInfo
 from librarian.document import WLDocument
 from librarian.builders import StandaloneHtmlBuilder
+from librarian.meta.types.text import LegimiCategory, Epoch, Kind, Genre, Audience
+from depot.legimi import legimi
 
 
 class XslView(TemplateView):
@@ -42,21 +44,47 @@ class TagView(DetailView):
     slug_field = 'name'
 
 
+VALUE_TYPES = {
+    LegimiCategory: {
+        'widget': 'select',
+        'options': list(legimi.CATEGORIES.keys()),
+    },
+    Epoch: {
+        'autocomplete': {
+            'source': '/catalogue/terms/epoch/',
+        }
+    },
+    Kind: {
+        'autocomplete': {
+            'source': '/catalogue/terms/kind/',
+        }
+    },
+    Genre: {
+        'autocomplete': {
+            'source': '/catalogue/terms/genre/',
+        }
+    },
+}
+
+   
 class MetaTagsView(View):
     def get(self, request):
-        return HttpResponse(
-            'let META_FIELDS = ' + json.dumps([
-                {
-                    'name': f.name,
-                    'required': f.required,
-                    'multiple': f.multiple,
-                    'uri': f.uri,
-                    'value_type': {
-                        'hasLanguage': f.value_type.has_language,
-                        'name': f.value_type.__name__,
-                    }
+        fields = []
+        for f in BookInfo.FIELDS:
+            d = {
+                'name': f.name,
+                'required': f.required,
+                'multiple': f.multiple,
+                'uri': f.uri,
+                'value_type': {
+                    'hasLanguage': f.value_type.has_language,
+                    'name': f.value_type.__name__,
                 }
-                for f in BookInfo.FIELDS
-            ]),
+            }
+            d['value_type'].update(VALUE_TYPES.get(f.value_type, {}))
+            fields.append(d)
+
+        return HttpResponse(
+            'let META_FIELDS = ' + json.dumps(fields),
             content_type='text/javascript')
     

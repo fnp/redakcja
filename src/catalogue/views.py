@@ -5,6 +5,9 @@ from django.db.models import Prefetch
 from django.views.generic import DetailView, TemplateView
 from . import models
 import documents.models
+from rest_framework.generics import ListAPIView
+from rest_framework.filters import SearchFilter
+from rest_framework import serializers
 
 
 class CatalogueView(TemplateView):
@@ -33,3 +36,23 @@ class AuthorView(TemplateView):
 
 class BookView(DetailView):
     model = models.Book
+
+
+class TermSearchFilter(SearchFilter):
+    search_param = 'term'
+
+
+class Terms(ListAPIView):
+    filter_backends = [TermSearchFilter]
+    search_fields = ['name']
+
+    class serializer_class(serializers.Serializer):
+        label = serializers.CharField(source='name')
+
+
+class EpochTerms(Terms):
+    queryset = models.Epoch.objects.all()
+class KindTerms(Terms):
+    queryset = models.Kind.objects.all()
+class GenreTerms(Terms):
+    queryset = models.Genre.objects.all()

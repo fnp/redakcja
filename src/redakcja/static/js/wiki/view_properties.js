@@ -243,7 +243,18 @@
             pp.appendTo(ig);
         }
 
-        let $aninput = $("<input class='form-control'>");
+        let $aninput;
+        if (field.value_type.widget == 'select') {
+            $aninput = $("<select class='form-control'>");
+            $.each(field.value_type.options, function() {
+                $("<option>").text(this).appendTo($aninput);
+            })
+        } else {
+            $aninput = $("<input class='form-control'>");
+            if (field.value_type.autocomplete) {
+                $aninput.autocomplete(field.value_type.autocomplete);
+            }
+        }
         $aninput.data('edited', $(element))
         $aninput.val(
             $(element).text()
