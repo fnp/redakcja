@@ -6,6 +6,7 @@ from . import models
 from librarian.dcparser import BookInfo
 from librarian.document import WLDocument
 from librarian.builders import StandaloneHtmlBuilder
+from librarian.meta.types.wluri import WLURI
 from librarian.meta.types.text import LegimiCategory, Epoch, Kind, Genre, Audience
 from depot.legimi import legimi
 
@@ -64,9 +65,62 @@ VALUE_TYPES = {
             'source': '/catalogue/terms/genre/',
         }
     },
+    WLURI: {
+        "autocomplete": {
+            "source": "/catalogue/terms/wluri/",
+        }
+    },
+    "authors": {
+        "autocomplete": {
+            "source": "/catalogue/terms/author/",
+        }
+    },
+    "translators": {
+        "autocomplete": {
+            "source": "/catalogue/terms/author/",
+        }
+    },
+    "editors": {
+        "autocomplete": {
+            "source": "/catalogue/terms/editor/",
+        }
+    },
+    "technical_editors": {
+        "autocomplete": {
+            "source": "/catalogue/terms/editor/",
+        }
+    },
+    "type": {
+        "autocomplete": {
+            "source": ["text"]
+        }
+    },
+    "title": {
+        "autocomplete": {
+            "source": "/catalogue/terms/book_title/",
+        }
+    },
+
+    "language": {
+        'widget': 'select',
+        'options': [
+            'pol',
+            'eng',
+            'fre',
+            'ger',
+            'lit',
+        ],
+    },
+    "publisher": {
+        "autocomplete": {
+            "source": ["Fundacja Nowoczesna Polska"]
+        }
+    },
+
 }
 
-   
+
+
 class MetaTagsView(View):
     def get(self, request):
         fields = []
@@ -81,7 +135,15 @@ class MetaTagsView(View):
                     'name': f.value_type.__name__,
                 }
             }
-            d['value_type'].update(VALUE_TYPES.get(f.value_type, {}))
+            d['value_type'].update(
+                VALUE_TYPES.get(
+                    f.value_type,
+                    VALUE_TYPES.get(
+                        f.name,
+                        {}
+                    )
+                )
+            )
             fields.append(d)
 
         return HttpResponse(

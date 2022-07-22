@@ -119,9 +119,24 @@
                 if (field.value_type.hasLanguage) {
                     span.attr('x-a-xml-lang', 'pl');
                 }
-                span.appendTo(
-                    $("> [x-node='RDF'] > [x-node='Description']", self.$edited)
-                );
+
+                rdf = $("> [x-node='RDF']", self.$edited);
+                if (!rdf.length) {
+                    rdf = $("<span x-node='RDF' x-ns='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>");
+                    self.$edited.prepend(rdf); 
+                    self.$edited.prepend('\n  ');
+                   
+                }
+                rdfdesc = $("> [x-node='Description']", rdf);
+                if (!rdfdesc.length) {
+                    rdfdesc = $("<span x-node='Description' x-ns='http://www.w3.org/1999/02/22-rdf-syntax-ns#' x-a-rdf-about='" + self.doc.fullUri + "'>");
+                    rdf.prepend(rdfdesc);
+                    rdf.prepend('\n    ');
+                    rdfdesc.append('\n    ');
+                    rdf.append('\n  ');
+                }
+                span.appendTo(rdfdesc);
+                rdfdesc.append('\n    ');
 
                 self.displayMetaProperty($fg);
                 

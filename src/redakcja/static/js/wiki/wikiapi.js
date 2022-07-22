@@ -69,6 +69,7 @@
 
 		this.galleryLink = $("*[data-key='gallery']", meta).text();
         this.galleryStart = parseInt($("*[data-key='gallery-start']", meta).text());
+            this.fullUri = $("*[data-key='full-uri']", meta).text();
 
         var diff = $("*[data-key='diff']", meta).text();
         if (diff) {

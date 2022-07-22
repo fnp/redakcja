@@ -64,6 +64,10 @@ class Author(WikidataMixin, models.Model):
         return reverse("catalogue_author", args=[self.slug])
 
     @property
+    def name(self):
+        return f"{self.last_name}, {self.first_name}"
+    
+    @property
     def pd_year(self):
         if self.year_of_death:
             return self.year_of_death + 71
@@ -160,6 +164,10 @@ class Book(WikidataMixin, models.Model):
 
     def get_absolute_url(self):
         return reverse("catalogue_book", args=[self.slug])
+
+    @property
+    def wluri(self):
+        return f'https://wolnelektury.pl/katalog/lektura/{self.slug}/'
     
     def authors_str(self):
         return ", ".join(str(author) for author in self.authors.all())

@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.db.models import Prefetch
+from django.contrib.auth.models import User
 from django.views.generic import DetailView, TemplateView
 from . import models
 import documents.models
@@ -56,3 +57,32 @@ class KindTerms(Terms):
     queryset = models.Kind.objects.all()
 class GenreTerms(Terms):
     queryset = models.Genre.objects.all()
+
+class AuthorTerms(Terms):
+    search_fields = ['first_name', 'last_name']
+    queryset = models.Author.objects.all()
+
+class EditorTerms(Terms):
+    search_fields = ['first_name', 'last_name', 'username']
+    queryset = User.objects.all()
+
+    class serializer_class(serializers.Serializer):
+        label = serializers.SerializerMethodField()
+
+        def get_label(self, obj):
+            return f'{obj.last_name}, {obj.first_name}'
+    
+class BookTitleTerms(Terms):
+    queryset = models.Book.objects.all()
+    search_fields = ['title', 'slug']
+
+    class serializer_class(serializers.Serializer):
+        label = serializers.CharField(source='title')
+
+class WLURITerms(Terms):
+    queryset = models.Book.objects.all()
+    search_fields = ['title', 'slug']
+    
+    class serializer_class(serializers.Serializer):
+        label = serializers.CharField(source='wluri')
+

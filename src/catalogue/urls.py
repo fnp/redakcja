@@ -13,4 +13,9 @@ urlpatterns = [
     path('terms/epoch/', views.EpochTerms.as_view()),
     path('terms/kind/', views.KindTerms.as_view()),
     path('terms/genre/', views.GenreTerms.as_view()),
+    path('terms/wluri/', views.WLURITerms.as_view()),
+    path('terms/book_title/', views.BookTitleTerms.as_view()),
+    path('terms/author/', views.AuthorTerms.as_view()),
+
+    path('terms/editor/', views.EditorTerms.as_view()),
 ]
