@@ -26,7 +26,16 @@ class PublishTests(TestCase):
     def test_publish(self, api_call):
         self.book[0].head.set_publishable(True)
         self.book.publish(self.user)
-        api_call.assert_called_with(self.user, 'books/', {"book_xml": self.text1, "days": 0}, beta=False)
+        api_call.assert_called_with(
+            self.user,
+            'books/',
+            {
+                "book_xml": self.text1,
+                "days": 0,
+                "hidden": False
+            },
+            beta=False
+        )
 
     @patch('apiclient.api_call')
     def test_publish_multiple(self, api_call):
@@ -35,4 +44,13 @@ class PublishTests(TestCase):
         self.book[1].commit(get_fixture('chunk2.xml'))
         self.book[1].head.set_publishable(True)
         self.book.publish(self.user)
-        api_call.assert_called_with(self.user, 'books/', {"book_xml": get_fixture('expected.xml'), "days": 0}, beta=False)
+        api_call.assert_called_with(
+            self.user,
+            'books/',
+            {
+                "book_xml": get_fixture('expected.xml'),
+                "days": 0,
+                "hidden": False
+            },
+            beta=False
+        )

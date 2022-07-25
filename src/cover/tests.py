@@ -2,12 +2,12 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.test import TestCase
-from cover.forms import FlickrForm
+from cover.forms import ImportForm
 
 
 class FlickrTests(TestCase):
     def test_flickr(self):
-        form = FlickrForm({"source_url": "https://www.flickr.com/photos/rczajka/6941928577/in/photostream"})
+        form = ImportForm({"source_url": "https://www.flickr.com/photos/rczajka/6941928577/in/photostream"})
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data['source_url'], "https://www.flickr.com/photos/rczajka/6941928577/")
         self.assertEqual(form.cleaned_data['author'], "Radek Czajka@Flickr")
