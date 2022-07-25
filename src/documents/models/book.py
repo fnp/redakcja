@@ -6,7 +6,7 @@ from django.contrib.sites.models import Site
 from django.db import connection, models, transaction
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from slugify import slugify
 

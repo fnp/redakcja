@@ -14,7 +14,7 @@ from django.http import Http404, HttpResponseForbidden
 from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
 from django.utils.formats import localize
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
 

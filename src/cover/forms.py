@@ -5,7 +5,7 @@ from io import BytesIO
 
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from cover.models import Image
 from django.utils.safestring import mark_safe
 from PIL import Image as PILImage
@@ -36,7 +36,7 @@ class ImageAddForm(forms.ModelForm):
                 pass
             else:
                 raise forms.ValidationError(mark_safe(
-                    ugettext('Image <a href="%(url)s">already in repository</a>.')
+                    gettext('Image <a href="%(url)s">already in repository</a>.')
                     % {'url': img.get_absolute_url()}))
         return cl
 
@@ -46,7 +46,7 @@ class ImageAddForm(forms.ModelForm):
             same_source = Image.objects.filter(source_url=source_url)
             if same_source:
                 raise forms.ValidationError(mark_safe(
-                    ugettext('Image <a href="%(url)s">already in repository</a>.')
+                    gettext('Image <a href="%(url)s">already in repository</a>.')
                     % {'url': same_source.first().get_absolute_url()}))
         return source_url
 
@@ -60,7 +60,7 @@ class ImageAddForm(forms.ModelForm):
         download_url = cleaned_data.get('download_url', None)
         uploaded_file = cleaned_data.get('file', None)
         if not download_url and not uploaded_file:
-            raise forms.ValidationError(ugettext('No image specified'))
+            raise forms.ValidationError(gettext('No image specified'))
         if download_url:
             image_data = URLOpener().open(download_url).read()
             width, height = PILImage.open(BytesIO(image_data)).size
@@ -68,7 +68,7 @@ class ImageAddForm(forms.ModelForm):
             width, height = PILImage.open(uploaded_file.file).size
         min_width, min_height = settings.MIN_COVER_SIZE
         if width < min_width or height < min_height:
-            raise forms.ValidationError(ugettext('Image too small: %sx%s, minimal dimensions %sx%s') %
+            raise forms.ValidationError(gettext('Image too small: %sx%s, minimal dimensions %sx%s') %
                                         (width, height, min_width, min_height))
         return cleaned_data
 
@@ -85,7 +85,7 @@ class ImageEditForm(forms.ModelForm):
         width, height = PILImage.open(uploaded_file.file).size
         min_width, min_height = settings.MIN_COVER_SIZE
         if width < min_width or height < min_height:
-            raise forms.ValidationError(ugettext('Image too small: %sx%s, minimal dimensions %sx%s') %
+            raise forms.ValidationError(gettext('Image too small: %sx%s, minimal dimensions %sx%s') %
                                         (width, height, min_width, min_height))
 
 

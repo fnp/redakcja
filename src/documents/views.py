@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime, date, timedelta
 import logging
 import os
-from urllib.parse import unquote, urlsplit, urlunsplit
+from urllib.parse import quote_plus, unquote, urlsplit, urlunsplit
 
 from django.conf import settings
 from django.contrib import auth
@@ -19,8 +19,7 @@ from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.encoding import iri_to_uri
-from django.utils.http import urlquote_plus
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_cas_ng.decorators import user_passes_test
 

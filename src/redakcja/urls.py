@@ -1,7 +1,6 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from django.conf.urls import url
 from django.urls import include, path
 from django.contrib import admin
 from django.conf import settings
@@ -17,17 +16,17 @@ urlpatterns = [
     #url(r'^admin/logout/$', django_cas_ng.views.logout, name='logout'),
 
     # Admin panel
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', admin.site.urls),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('admin/', admin.site.urls),
     path('catalogue/', include('catalogue.urls')),
-    url(r'^$', RedirectView.as_view(url='/documents/', permanent=False)),
-    url(r'^documents/', include('documents.urls')),
-    url(r'^apiclient/', include('apiclient.urls')),
-    url(r'^editor/', include('wiki.urls')),
-    url(r'^images/', include('wiki_img.urls')),
-    url(r'^cover/', include('cover.urls')),
-    url(r'^depot/', include('depot.urls')),
-    url(r'^wlxml/', include('wlxml.urls')),
+    path('', RedirectView.as_view(url='/documents/', permanent=False)),
+    path('documents/', include('documents.urls')),
+    path('apiclient/', include('apiclient.urls')),
+    path('editor/', include('wiki.urls')),
+    path('images/', include('wiki_img.urls')),
+    path('cover/', include('cover.urls')),
+    path('depot/', include('depot.urls')),
+    path('wlxml/', include('wlxml.urls')),
 
     path('api/', include('redakcja.api.urls')),
 ]
@@ -35,14 +34,14 @@ urlpatterns = [
 
 if settings.CAS_SERVER_URL:
     urlpatterns += [
-        url(r'^accounts/login/$', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
-        url(r'^accounts/logout/$', django_cas_ng.views.LogoutView.as_view(), name='logout'),
+        path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
+        path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='logout'),
     ]
 else:
     import django.contrib.auth.views
     urlpatterns += [
-        url(r'^accounts/login/$', django.contrib.auth.views.LoginView.as_view(), name='cas_ng_login'),
-        url(r'^accounts/', include('django.contrib.auth.urls')),
+        path('accounts/login/', django.contrib.auth.views.LoginView.as_view(), name='cas_ng_login'),
+        path('accounts/', include('django.contrib.auth.urls')),
     ]
 
 
@@ -51,4 +50,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     import debug_toolbar
-    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]

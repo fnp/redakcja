@@ -1,26 +1,26 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from django.conf.urls import url
+from django.urls import path
 from . import views
 
 
 urlpatterns = [
-    url(r'^edit/(?P<slug>[^/]+)/$',
+    path('edit/<slug:slug>/',
         views.editor, name="wiki_img_editor"),
 
-    url(r'^readonly/(?P<slug>[^/]+)/$',
+    path('readonly/<slug:slug>/',
         views.editor_readonly, name="wiki_img_editor_readonly"),
 
-    url(r'^text/(?P<image_id>\d+)/$',
+    path('text/<int:image_id>/',
         views.text, name="wiki_img_text"),
 
-    url(r'^history/(?P<object_id>\d+)/$',
+    path('history/<int:object_id>/',
         views.history, name="wiki_img_history"),
 
-    url(r'^revert/(?P<object_id>\d+)/$',
+    path('revert/<int:object_id>/',
         views.revert, name='wiki_img_revert'),
 
-    url(r'^diff/(?P<object_id>\d+)/$', views.diff, name="wiki_img_diff"),
-    url(r'^pubmark/(?P<object_id>\d+)/$', views.pubmark, name="wiki_img_pubmark"),
+    path('diff/<int:object_id>/', views.diff, name="wiki_img_diff"),
+    path('pubmark/<int:object_id>/', views.pubmark, name="wiki_img_pubmark"),
 ]

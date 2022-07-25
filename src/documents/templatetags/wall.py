@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.urls import reverse
 from django import template
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from documents.models import Chunk, BookPublishRecord, Image, ImagePublishRecord
 

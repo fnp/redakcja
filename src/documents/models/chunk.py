@@ -6,7 +6,7 @@ from django.db import models
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from documents.helpers import cached_in_field
 from documents.managers import VisibleManager
 from dvcs import models as dvcs_models
