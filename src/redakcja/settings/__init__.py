@@ -290,6 +290,9 @@ REST_FRAMEWORK = {
 }
 
 
+TEST_INTEGRATION = False
+
+
 try:
     SENTRY_DSN
 except NameError:

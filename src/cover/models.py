@@ -73,7 +73,7 @@ class Image(models.Model):
             img,
             save=False
         )
-        super().save(**kwargs)
+        super().save(update_fields=['use_file'])
     
     def get_absolute_url(self):
         return reverse('cover_image', args=[self.id])

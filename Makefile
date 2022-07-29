@@ -10,7 +10,13 @@ deploy: src/redakcja/localsettings.py
 .ONESHELL:
 test:
 	cd src
-	coverage run --branch --source='.' ./manage.py test --settings=redakcja.settings.test; true
+	./manage.py test --settings=redakcja.settings.test
+
+
+.ONESHELL:
+test_full:
+	cd src
+	coverage run --branch --source='.' ./manage.py test --settings=redakcja.settings.test_full; true
 	coverage html -d ../htmlcov.new
 	rm -rf ../htmlcov
 	mv ../htmlcov.new ../htmlcov

@@ -76,14 +76,6 @@ def get_flickr_data(url):
 
 
 def get_wikimedia_data(url):
-    """
-    >>> get_wikimedia_data('https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg')
-    {'title': 'Valdai IverskyMon asv2018 img47', 'author': 'A.Savin', 'source_url': 'https://commons.wikimedia.org/wiki/File:Valdai_IverskyMon_asv2018_img47.jpg', 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/4/43/Valdai_IverskyMon_asv2018_img47.jpg', 'license_url': 'http://artlibre.org/licence/lal/en', 'license_name': 'FAL'}
-
-    >>> get_wikimedia_data('https://commons.wikimedia.org/wiki/File:Pymonenko_A_boy_in_a_straw_hat.jpg')
-    {'title': 'Chłopiec w słomkowym kapeluszu', 'author': 'Mykola Pymonenko', 'source_url': 'https://commons.wikimedia.org/wiki/File:Pymonenko_A_boy_in_a_straw_hat.jpg', 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Pymonenko_A_boy_in_a_straw_hat.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
-
-    """
     file_name = url.rsplit('/', 1)[-1].rsplit(':', 1)[-1]
     d = json.loads(URLOpener().open('https://commons.wikimedia.org/w/api.php?action=query&titles=File:{}&prop=imageinfo&iiprop=url|user|extmetadata&iimetadataversion=latest&format=json'.format(file_name)).read().decode('utf-8'))
 
@@ -118,10 +110,6 @@ def get_wikimedia_data(url):
 
 
 def get_mnw_data(url):
-    """
-    >>> get_mnw_data('https://cyfrowe.mnw.art.pl/pl/katalog/511078')
-    {'title': 'Chłopka (Baba ukraińska)', 'author': 'Krzyżanowski, Konrad (1872-1922)', 'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078', 'download_url': 'https://cyfrowe-cdn.mnw.art.pl/upload/multimedia/a0/68/a0681c60f203d907d9c45050d245c921.jpg', 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna', 'license_name': 'domena publiczna'}
-    """
     nr = url.rsplit('/', 1)[-1]
     d = list(
         csv.DictReader(

@@ -26,3 +26,16 @@ SECRET_KEY = "not-so-secret"
 
 
 LITERARY_DIRECTOR_USERNAME = 'Kaowiec'
+
+MIN_COVER_SIZE = (1, 1)
+
+
+class DisableMigrations(object):
+
+    def __contains__(self, item):
+        return True
+
+    def __getitem__(self, item):
+        return None
+
+MIGRATION_MODULES = DisableMigrations()

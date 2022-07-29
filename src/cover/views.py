@@ -1,7 +1,10 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from hashlib import sha1
+from os import makedirs
 import os.path
+import PIL.Image
 from django.conf import settings
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -10,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from lxml import etree
 from librarian import RDFNS, DCNS
+from librarian.cover import make_cover
+from librarian.dcparser import BookInfo
 from documents.helpers import active_tab
 from documents.models import Book, Chunk
 from cover.models import Image
@@ -26,10 +31,6 @@ def preview(request, book, chunk=None, rev=None):
     If chunk and rev number are given, use version from given revision.
     If rev is not given, use publishable version.
     """
-    from PIL import Image
-    from librarian.cover import make_cover
-    from librarian.dcparser import BookInfo
-
     chunk = Chunk.get(book, chunk)
     if rev is not None:
         try:
@@ -44,7 +45,8 @@ def preview(request, book, chunk=None, rev=None):
 
     try:
         info = BookInfo.from_bytes(xml)
-    except:
+    except Exception as e:
+        print(e)
         return HttpResponseRedirect(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     width = request.GET.get('width')
     width = int(width) if width else None
@@ -70,17 +72,11 @@ def preview(request, book, chunk=None, rev=None):
 @csrf_exempt
 @require_POST
 def preview_from_xml(request):
-    from hashlib import sha1
-    from PIL import Image
-    from os import makedirs
-    from lxml import etree
-    from librarian.cover import make_cover
-    from librarian.dcparser import BookInfo
-
     xml = request.POST['xml']
     try:
         info = BookInfo.from_bytes(xml.encode('utf-8'))
-    except:
+    except Exception as e:
+        print(e)
         return HttpResponse(os.path.join(settings.STATIC_URL, "img/sample_cover.png"))
     coverid = sha1(etree.tostring(info.to_etree())).hexdigest()
     cover = make_cover(info)
@@ -91,7 +87,7 @@ def preview_from_xml(request):
     except OSError:
         pass
     fname = os.path.join(cover_dir, "%s.%s" % (coverid, cover.ext()))
-    img = cover.image().resize(PREVIEW_SIZE, Image.ANTIALIAS)
+    img = cover.image().resize(PREVIEW_SIZE, PIL.Image.ANTIALIAS)
     img.save(os.path.join(settings.MEDIA_ROOT, fname))
     return HttpResponse(os.path.join(settings.MEDIA_URL, fname))
 
