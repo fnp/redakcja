@@ -2,7 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.contrib import admin
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
@@ -24,7 +24,17 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
         "wikidata_link",
         "slug",
     ]
-    list_filter = ["year_of_death", "priority", "collections", "status", "gender", "nationality"]
+    list_display_links = [
+        "first_name", "last_name"
+    ]
+    list_filter = [
+        ("year_of_death", RangeNumericFilter),
+        "priority",
+        "collections",
+        "status",
+        "gender",
+        "nationality",
+    ]
     list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
     prepopulated_fields = {"slug": ("first_name", "last_name")}
@@ -114,15 +124,41 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "authors__gender", "authors__nationality",
         "translators__gender", "translators__nationality",
         "document_book__chunk__stage",
-        #"document_book__chunk__user",
 
         LicenseFilter,
         CoverLicenseFilter,
+        'free_license',
+        'polona_missing',
     ]
     list_per_page = 1000000
 
-    readonly_fields = ["wikidata_link", "estimated_costs", "documents_book_link"]
-    actions = [export_as_csv_action()]
+    readonly_fields = [
+        "wikidata_link",
+        "estimated_costs",
+        "documents_book_link",
+        "scans_source_link",
+    ]
+    actions = [export_as_csv_action(
+        fields=[
+            "id",
+            "wikidata",
+            "slug",
+            "title",
+            "authors_str", # authors?
+            "translators_str", # translators?
+            "language",
+            "based_on",
+            "scans_source",
+            "text_source",
+            "notes",
+            "priority",
+            "pd_year",
+            "gazeta_link",
+            "estimated_chars",
+            "estimated_verses",
+            "estimate_source"
+        ]
+    )]
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
         (
@@ -153,7 +189,8 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             _("Plan"),
             {
                 "fields": [
-                    "scans_source",
+                    ("free_license", "polona_missing"),
+                    ("scans_source", "scans_source_link"),
                     "text_source",
                     "priority",
                     "collections",
@@ -198,6 +235,16 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         for book in obj.document_books.all():
             return mark_safe('<a style="position: absolute" href="{}"><img height="100" width="70" src="/cover/preview/{}/?height=100&width=70"></a>'.format(book.get_absolute_url(), book.slug))
     documents_book_link.short_description = _('Book')
+
+    def scans_source_link(self, obj):
+        if obj.scans_source:
+            return format_html(
+                '<a href="{url}" target="_blank">{url}</a>',
+                url=obj.scans_source,
+            )
+        else:
+            return ""
+    scans_source_link.short_description = _('scans source')
 
 
 admin.site.register(models.Book, BookAdmin)

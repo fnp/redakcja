@@ -19,7 +19,10 @@ class Author(WikidataMixin, models.Model):
 
     gender = models.CharField(_("gender"), max_length=255, blank=True)
     nationality = models.CharField(_("nationality"), max_length=255, blank=True)
+    year_of_birth = models.SmallIntegerField(_("year of birth"), null=True, blank=True)
+    place_of_birth = models.CharField(_('place of birth'), max_length=255, blank=True)
     year_of_death = models.SmallIntegerField(_("year of death"), null=True, blank=True)
+    place_of_death = models.CharField(_('place of death'), max_length=255, blank=True)
     status = models.PositiveSmallIntegerField(
         _("status"), 
         null=True,
@@ -58,7 +61,10 @@ class Author(WikidataMixin, models.Model):
         notes = "description"
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        name = f"{self.first_name} {self.last_name}"
+        if self.year_of_death is not None:
+            name += f' (zm. {self.year_of_death})'
+        return name
 
     def get_absolute_url(self):
         return reverse("catalogue_author", args=[self.slug])
@@ -138,6 +144,9 @@ class Book(WikidataMixin, models.Model):
     estimated_chars = models.IntegerField(_("estimated number of characters"), null=True, blank=True)
     estimated_verses = models.IntegerField(_("estimated number of verses"), null=True, blank=True)
     estimate_source = models.CharField(_("source of estimates"), max_length=2048, blank=True)
+
+    free_license = models.BooleanField(_('free license'), default=False)
+    polona_missing = models.BooleanField(_('missing on Polona'), default=False)
 
     class Meta:
         ordering = ("title",)
