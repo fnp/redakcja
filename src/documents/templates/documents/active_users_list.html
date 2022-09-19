@@ -11,6 +11,8 @@
     {% trans "Users active in the year" %} {{ year }}
 </h1>
 
+<p><a href="{% url 'active_users_csv' %}?y={{ year }}">Pobierz jako CSV</a></p>
+
 <ul>
 {% for email, names, count in users %}
 <li>{% for name in names %}{{ name }},  {% endfor %}<a href="mailto:{{ email }}">{{ email }}</a> ({{ count }})</li>

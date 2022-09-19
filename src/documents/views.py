@@ -634,7 +634,7 @@ class GalleryView(UploadView):
         return "%s%s/" % (settings.IMAGE_DIR, self.object.gallery)
 
 
-def active_users_list(request):
+def active_users_list(request, csv=False):
     year = int(request.GET.get('y', date.today().year))
     by_user = defaultdict(lambda: 0)
     by_email = defaultdict(lambda: 0)
@@ -659,10 +659,24 @@ def active_users_list(request):
     for email, count in by_email.items():
         active_users.append((email, names_by_email[email], count))
     active_users.sort(key=lambda x: -x[2])
-    return render(request, 'documents/active_users_list.html', {
-        'users': active_users,
-        'year': year,
-    })
+    if csv:
+        return http.HttpResponse(
+            '\n'.join((
+                ','.join(
+                    (str(x[2]), x[0], ','.join(x[1]))
+                )
+                for x in active_users
+            )),
+            content_type='text/csv',
+            headers={
+                'Content-Disposition': f'attachment; filename=redakcja-{year}.csv',
+            }
+        )
+    else:
+        return render(request, 'documents/active_users_list.html', {
+            'users': active_users,
+            'year': year,
+        })
 
 
 @user_passes_test(lambda u: u.is_superuser)

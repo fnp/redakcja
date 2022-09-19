@@ -25,6 +25,7 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
         "slug",
     ]
     list_filter = ["year_of_death", "priority", "collections", "status", "gender", "nationality"]
+    list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
     prepopulated_fields = {"slug": ("first_name", "last_name")}
     autocomplete_fields = ["collections"]
@@ -71,6 +72,15 @@ class CoverLicenseFilter(LicenseFilter):
     license_name_field = 'document_book__dc_cover_image__license_name'
 
 
+def add_title(base_class, suffix):
+    class TitledCategoryFilter(base_class):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.title += suffix
+    return TitledCategoryFilter
+
+
+
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
     list_display = [
         "smart_title",
@@ -95,16 +105,22 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         ("pd_year", RangeNumericFilter),
         "collections",
         "collections__category",
+        ("authors__collections", add_title(admin.RelatedFieldListFilter, ' autora')),
+        ("authors__collections__category", add_title(admin.RelatedFieldListFilter, ' autora')),
+        ("translators__collections", add_title(admin.RelatedFieldListFilter, ' tłumacza')), 
+        ("translators__collections__category", add_title(admin.RelatedFieldListFilter, ' tłumacza')),
         "epochs", "kinds", "genres",
         "priority",
         "authors__gender", "authors__nationality",
         "translators__gender", "translators__nationality",
         "document_book__chunk__stage",
-        "document_book__chunk__user",
+        #"document_book__chunk__user",
 
         LicenseFilter,
         CoverLicenseFilter,
     ]
+    list_per_page = 1000000
+
     readonly_fields = ["wikidata_link", "estimated_costs", "documents_book_link"]
     actions = [export_as_csv_action()]
     fieldsets = [

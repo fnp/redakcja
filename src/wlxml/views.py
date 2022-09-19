@@ -48,7 +48,7 @@ class TagView(DetailView):
 VALUE_TYPES = {
     LegimiCategory: {
         'widget': 'select',
-        'options': list(legimi.CATEGORIES.keys()),
+        'options': [''] + list(legimi.CATEGORIES.keys()),
     },
     Epoch: {
         'autocomplete': {
@@ -104,6 +104,7 @@ VALUE_TYPES = {
     "language": {
         'widget': 'select',
         'options': [
+            '',
             'pol',
             'eng',
             'fre',

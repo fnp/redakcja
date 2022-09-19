@@ -58,6 +58,7 @@ urlpatterns = [
 
     path('track/<slug:slug>/', PublishTrackFeed()),
     path('active/', views.active_users_list, name='active_users_list'),
+    path('active.csv', views.active_users_list, kwargs={'csv': True}, name='active_users_csv'),
 
     path('mark-final/', views.mark_final, name='mark_final'),
     path('mark-final-completed/', views.mark_final_completed, name='mark_final_completed'),
