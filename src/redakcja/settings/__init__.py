@@ -69,6 +69,8 @@ if CAS_SERVER_URL:
 ROOT_URLCONF = 'redakcja.urls'
 
 INSTALLED_APPS = (
+    'modeltranslation',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -89,6 +91,7 @@ INSTALLED_APPS = (
     'bootstrap4',
     'rest_framework',
     'django_filters',
+    'admin_ordering',
 
     'redakcja.api',
     'catalogue',
@@ -288,6 +291,13 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ]
 }
+
+
+LANGUAGES = [
+    ('pl', 'polski'),
+    ('de', 'Deutsch'),
+    ('lt', 'lietuvių'),
+]
 
 
 TEST_INTEGRATION = False

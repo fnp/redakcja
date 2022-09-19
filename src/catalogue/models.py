@@ -4,6 +4,7 @@ from django.apps import apps
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from admin_ordering.models import OrderableModel
 from wikidata.client import Client
 from .constants import WIKIDATA
 from .wikidata import WikidataMixin
@@ -39,8 +40,6 @@ class Author(WikidataMixin, models.Model):
     culturepl_link = models.CharField(_("culture.pl link"), max_length=255, blank=True)
 
     description = models.TextField(_("description"), blank=True)
-    description_de = models.TextField(_("description (de)"), blank=True)
-    description_lt = models.TextField(_("description (lt)"), blank=True)
 
     priority = models.PositiveSmallIntegerField(
         _("priority"), 
@@ -81,6 +80,11 @@ class Author(WikidataMixin, models.Model):
             return 0
         else:
             return None
+
+
+class NotableBook(OrderableModel):
+    author = models.ForeignKey(Author, models.CASCADE)
+    book = models.ForeignKey('Book', models.CASCADE)
 
 
 class Category(WikidataMixin, models.Model):

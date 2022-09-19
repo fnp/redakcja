@@ -6,13 +6,21 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
+from admin_ordering.admin import OrderableAdmin
 from fnpdjango.actions import export_as_csv_action
+from modeltranslation.admin import TabbedTranslationAdmin
 from . import models
 import documents.models
 from .wikidata import WikidataAdminMixin
 
 
-class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
+class NotableBookInline(OrderableAdmin, admin.TabularInline):
+    model = models.NotableBook
+    raw_id_fields = ['book']
+    ordering_field_hide_input = True
+
+
+class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     list_display = [
         "first_name",
         "last_name",
@@ -39,6 +47,9 @@ class AuthorAdmin(WikidataAdminMixin, admin.ModelAdmin):
     search_fields = ["first_name", "last_name", "wikidata"]
     prepopulated_fields = {"slug": ("first_name", "last_name")}
     autocomplete_fields = ["collections"]
+    inlines = [
+        NotableBookInline,
+    ]
 
 
 admin.site.register(models.Author, AuthorAdmin)
