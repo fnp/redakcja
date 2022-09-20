@@ -23,7 +23,7 @@ class BookDetail(RetrieveAPIView):
 class ChunkList(ListAPIView):
     queryset = models.Chunk.objects.all()
     serializer_class = serializers.ChunkSerializer
-    filter_fields = ['user', 'stage']
+    filterset_fields = ['user', 'stage']
     search_fields = ['book__title']
 
     def get_queryset(self):
