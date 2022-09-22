@@ -99,7 +99,7 @@ def activity(request, isodate=None):
 @never_cache
 def logout_then_redirect(request):
     auth.logout(request)
-    return http.HttpResponseRedirect(urlquote_plus(request.GET.get('next', '/'), safe='/?='))
+    return http.HttpResponseRedirect(quote_plus(request.GET.get('next', '/'), safe='/?='))
 
 
 @permission_required('documents.add_book')
@@ -444,7 +444,7 @@ def chunk_edit(request, slug, chunk):
             form.save()
             go_next = request.GET.get('next', None)
             if go_next:
-                go_next = urlquote_plus(unquote(iri_to_uri(go_next)), safe='/?=&')
+                go_next = quote_plus(unquote(iri_to_uri(go_next)), safe='/?=&')
             else:
                 go_next = doc.book.get_absolute_url()
             return http.HttpResponseRedirect(go_next)
@@ -455,7 +455,7 @@ def chunk_edit(request, slug, chunk):
     if referer:
         parts = urlsplit(referer)
         parts = ['', ''] + list(parts[2:])
-        go_next = urlquote_plus(urlunsplit(parts))
+        go_next = quote_plus(urlunsplit(parts))
     else:
         go_next = ''
 

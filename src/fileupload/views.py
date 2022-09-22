@@ -98,7 +98,7 @@ class UploadView(FormView):
         return super(UploadView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             files = []
             path = self.get_safe_path()
             if os.path.isdir(path):
