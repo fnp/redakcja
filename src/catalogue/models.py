@@ -21,9 +21,23 @@ class Author(WikidataMixin, models.Model):
     gender = models.CharField(_("gender"), max_length=255, blank=True)
     nationality = models.CharField(_("nationality"), max_length=255, blank=True)
     year_of_birth = models.SmallIntegerField(_("year of birth"), null=True, blank=True)
-    place_of_birth = models.CharField(_('place of birth'), max_length=255, blank=True)
+    year_of_birth_inexact = models.BooleanField(_("inexact"), default=False)
+    year_of_birth_range = models.SmallIntegerField(_("year of birth, range end"), null=True, blank=True)
+    date_of_birth = models.DateField(_("date_of_birth"), null=True, blank=True)
+    place_of_birth = models.ForeignKey(
+        'Place', models.PROTECT, null=True, blank=True,
+        verbose_name=_('place of birth'),
+        related_name='authors_born'
+    )
     year_of_death = models.SmallIntegerField(_("year of death"), null=True, blank=True)
-    place_of_death = models.CharField(_('place of death'), max_length=255, blank=True)
+    year_of_death_inexact = models.BooleanField(_("inexact"), default=False)
+    year_of_death_range = models.SmallIntegerField(_("year of death, range end"), null=True, blank=True)
+    date_of_death = models.DateField(_("date_of_death"), null=True, blank=True)
+    place_of_death = models.ForeignKey(
+        'Place', models.PROTECT, null=True, blank=True,
+        verbose_name=_('place of death'),
+        related_name='authors_died'
+    )
     status = models.PositiveSmallIntegerField(
         _("status"), 
         null=True,
@@ -55,9 +69,18 @@ class Author(WikidataMixin, models.Model):
     class Wikidata:
         first_name = WIKIDATA.GIVEN_NAME
         last_name = WIKIDATA.LAST_NAME
+        date_of_birth = WIKIDATA.DATE_OF_BIRTH
+        year_of_birth = WIKIDATA.DATE_OF_BIRTH
+        place_of_birth = WIKIDATA.PLACE_OF_BIRTH
+        date_of_death = WIKIDATA.DATE_OF_DEATH
         year_of_death = WIKIDATA.DATE_OF_DEATH
+        place_of_death = WIKIDATA.PLACE_OF_DEATH
         gender = WIKIDATA.GENDER
         notes = "description"
+
+        def _supplement(obj):
+            if not obj.first_name and not obj.last_name:
+                yield 'first_name', 'label'
 
     def __str__(self):
         name = f"{self.first_name} {self.last_name}"
@@ -169,10 +192,10 @@ class Book(WikidataMixin, models.Model):
         txt = self.title
         astr = self.authors_str()
         if astr:
-            txt = f"{astr} – {txt}"
+            txt = f"{txt}, {astr}"
         tstr = self.translators_str()
         if tstr:
-            txt = f"{txt} (tłum. {tstr})"
+            txt = f"{txt}, tłum. {tstr}"
         return txt
 
     def get_absolute_url(self):
@@ -301,3 +324,17 @@ class WorkRate(models.Model):
             if book.estimated_chars:
                 return (decimal.Decimal(book.estimated_chars) / 1800 * self.per_normpage).quantize(decimal.Decimal('1.00'), rounding=decimal.ROUND_HALF_UP)
 
+
+class Place(WikidataMixin, models.Model):
+    name = models.CharField(_('name'), max_length=255, blank=True)
+    locative = models.CharField(_('locative'), max_length=255, blank=True, help_text=_('in…'))
+
+    class Meta:
+        verbose_name = _('place')
+        verbose_name_plural = _('places')
+    
+    class Wikidata:
+        name = 'label'
+
+    def __str__(self):
+        return self.name

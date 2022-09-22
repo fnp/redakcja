@@ -7,7 +7,13 @@ class AuthorTranslationOptions(TranslationOptions):
     fields = (
         'first_name',
         'last_name',
-        'place_of_birth',
-        'place_of_death',
         'description',
+    )
+
+
+@register(models.Place)
+class PlaceTranslationOptions(TranslationOptions):
+    fields = (
+        'name',
+        'locative',
     )

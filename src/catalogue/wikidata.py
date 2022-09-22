@@ -21,6 +21,28 @@ class WikidataMixin(models.Model):
     class Meta:
         abstract = True
 
+    def wikidata_populate(self, client, entity, attname, wd):
+        model_field = self._meta.get_field(attname)
+        if isinstance(model_field, models.ManyToManyField):
+            if getattr(self, attname).all().exists():
+                return
+        else:
+            if getattr(self, attname):
+                return
+
+        wdvalue = None
+        if wd == "description":
+            wdvalue = entity.description.get("pl", str(entity.description))
+        elif wd == "label":
+            wdvalue = entity.label.get("pl", str(entity.label))
+        else:
+            try:
+                wdvalue = entity.get(client.get(wd))
+            except DatavalueError:
+                pass
+
+        self.set_field_from_wikidata(attname, wdvalue)
+        
     def save(self, **kwargs):
         super().save()
         if self.wikidata and hasattr(self, "Wikidata"):
@@ -33,26 +55,11 @@ class WikidataMixin(models.Model):
                     continue
                 wd = getattr(Wikidata, attname)
 
-                model_field = self._meta.get_field(attname)
-                if isinstance(model_field, models.ManyToManyField):
-                    if getattr(self, attname).all().exists():
-                        continue
-                else:
-                    if getattr(self, attname):
-                        continue
+                self.wikidata_populate(client, entity, attname, wd)
+            if hasattr(Wikidata, '_supplement'):
+                for attname, wd in Wikidata._supplement(self):
+                    self.wikidata_populate(client, entity, attname, wd)
 
-                wdvalue = None
-                if wd == "description":
-                    wdvalue = entity.description.get("pl", str(entity.description))
-                elif wd == "label":
-                    wdvalue = entity.label.get("pl", str(entity.label))
-                else:
-                    try:
-                        wdvalue = entity.get(client.get(wd))
-                    except DatavalueError:
-                        pass
-
-                self.set_field_from_wikidata(attname, wdvalue)
 
         kwargs.update(force_insert=False, force_update=True)
         super().save(**kwargs)

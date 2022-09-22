@@ -16,7 +16,7 @@ from .wikidata import WikidataAdminMixin
 
 class NotableBookInline(OrderableAdmin, admin.TabularInline):
     model = models.NotableBook
-    raw_id_fields = ['book']
+    autocomplete_fields = ['book']
     ordering_field_hide_input = True
 
 
@@ -45,8 +45,35 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     ]
     list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
+    readonly_fields = ["wikidata_link"]
+
+    fieldsets = [
+        (None, {"fields": [("wikidata", "wikidata_link")]}),
+        (
+            _("Identification"),
+            {
+                "fields": [
+                    ("first_name", "last_name"),
+                    "slug",
+                    "gender",
+                    "nationality",
+                    ("date_of_birth", "year_of_birth", "year_of_birth_inexact", "year_of_birth_range", "place_of_birth"),
+                    ("date_of_death", "year_of_death", "year_of_death_inexact", "year_of_death_range", "place_of_death"),
+                    "description",
+                    "status",
+                    "collections",
+                    "priority",
+                    
+                    "notes",
+                    "gazeta_link",
+                    "culturepl_link",
+                ]
+            },
+        ),
+    ]
+    
     prepopulated_fields = {"slug": ("first_name", "last_name")}
-    autocomplete_fields = ["collections"]
+    autocomplete_fields = ["collections", "place_of_birth", "place_of_death"]
     inlines = [
         NotableBookInline,
     ]
@@ -316,3 +343,8 @@ class WorkTypeAdmin(admin.ModelAdmin):
 
 admin.site.register(models.WorkType, WorkTypeAdmin)
 
+
+
+@admin.register(models.Place)
+class PlaceAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
+    search_fields = ['name']
