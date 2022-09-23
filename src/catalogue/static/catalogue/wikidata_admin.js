@@ -8,6 +8,7 @@
             $(".wikidata-hint").remove();
             $wdinput = $(this);
             let qid = $wdinput.val();
+            if (!qid) return;
             $wdinput.addClass('wikidata-processing');
             $.ajax(
                 '/catalogue/wikidata/' + model + '/' + qid,
@@ -39,6 +40,8 @@
                             }
                         };
 
+                    },
+                    complete: function() {
                         $wdinput.removeClass('wikidata-processing');
                     },
                 }
