@@ -18,4 +18,6 @@ urlpatterns = [
     path('terms/author/', views.AuthorTerms.as_view()),
 
     path('terms/editor/', views.EditorTerms.as_view()),
+
+    path('wikidata/<slug:model>/<qid>', views.WikidataView.as_view()),
 ]

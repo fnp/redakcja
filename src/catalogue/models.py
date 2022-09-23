@@ -7,10 +7,10 @@ from django.utils.translation import gettext_lazy as _
 from admin_ordering.models import OrderableModel
 from wikidata.client import Client
 from .constants import WIKIDATA
-from .wikidata import WikidataMixin
+from .wikidata import WikidataModel
 
 
-class Author(WikidataMixin, models.Model):
+class Author(WikidataModel):
     slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
     first_name = models.CharField(_("first name"), max_length=255, blank=True)
     last_name = models.CharField(_("last name"), max_length=255, blank=True)
@@ -110,7 +110,7 @@ class NotableBook(OrderableModel):
     book = models.ForeignKey('Book', models.CASCADE)
 
 
-class Category(WikidataMixin, models.Model):
+class Category(WikidataModel):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
 
@@ -138,7 +138,7 @@ class Kind(Category):
         verbose_name_plural = _('kinds')
 
 
-class Book(WikidataMixin, models.Model):
+class Book(WikidataModel):
     slug = models.SlugField(max_length=255, blank=True, null=True, unique=True)
     authors = models.ManyToManyField(Author, blank=True, verbose_name=_("authors"))
     translators = models.ManyToManyField(
@@ -325,7 +325,7 @@ class WorkRate(models.Model):
                 return (decimal.Decimal(book.estimated_chars) / 1800 * self.per_normpage).quantize(decimal.Decimal('1.00'), rounding=decimal.ROUND_HALF_UP)
 
 
-class Place(WikidataMixin, models.Model):
+class Place(WikidataModel):
     name = models.CharField(_('name'), max_length=255, blank=True)
     locative = models.CharField(_('locative'), max_length=255, blank=True, help_text=_('in…'))
 

@@ -1,0 +1,23 @@
+.wikidata-hint {
+    background-image: url('https://www.wikidata.org/static/favicon/wikidata.ico');
+    background-repeat: no-repeat;
+    background-position: 2px 50%;
+    background-size: 16px auto;
+    padding: 2px 2px 2px 20px;
+    cursor: pointer;
+    color: black;
+    background-color: white;
+    border-radius: 10px;
+}
+
+#id_wikidata {
+    transition: .2s background-position;
+    background-image: url('https://www.wikidata.org/static/favicon/wikidata.ico');
+    background-size: 64px 64px;
+    background-repeat: no-repeat;
+    background-position: -64px 50%;
+}
+#id_wikidata.wikidata-processing {
+    background-position: 100% 50%;
+    transition: 10s background-position;
+}

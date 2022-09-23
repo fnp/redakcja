@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from datetime import date
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.utils.html import format_html
@@ -9,9 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from django.dispatch import receiver
 from wikidata.client import Client
 from wikidata.datavalue import DatavalueError
+from modeltranslation.translator import translator
+from modeltranslation.settings import AVAILABLE_LANGUAGES
 
 
-class WikidataMixin(models.Model):
+class WikidataModel(models.Model):
     wikidata = models.CharField(
         max_length=255,
         blank=True,
@@ -20,8 +23,8 @@ class WikidataMixin(models.Model):
 
     class Meta:
         abstract = True
-
-    def wikidata_populate(self, client, entity, attname, wd):
+        
+    def wikidata_populate_field(self, client, entity, attname, wd, save, lang):
         model_field = self._meta.get_field(attname)
         if isinstance(model_field, models.ManyToManyField):
             if getattr(self, attname).all().exists():
@@ -32,53 +35,87 @@ class WikidataMixin(models.Model):
 
         wdvalue = None
         if wd == "description":
-            wdvalue = entity.description.get("pl", str(entity.description))
+            wdvalue = entity.description.get(lang, str(entity.description))
         elif wd == "label":
-            wdvalue = entity.label.get("pl", str(entity.label))
+            wdvalue = entity.label.get(lang, str(entity.label))
         else:
             try:
+                # TODO: lang?
                 wdvalue = entity.get(client.get(wd))
             except DatavalueError:
                 pass
 
-        self.set_field_from_wikidata(attname, wdvalue)
-        
+        self.set_field_from_wikidata(attname, wdvalue, save=save)
+
+    def wikidata_populate(self, save=True):
+        Wikidata = type(self).Wikidata
+        client = Client()
+        # Probably should getlist
+        entity = client.get(self.wikidata)
+        for attname in dir(Wikidata):
+            if attname.startswith("_"):
+                continue
+            wd = getattr(Wikidata, attname)
+
+            self.wikidata_populate_attribute(client, entity, attname, wd, save=save)
+        if hasattr(Wikidata, '_supplement'):
+            for attname, wd in Wikidata._supplement(self):
+                self.wikidata_populate_attribute(client, entity, attname, wd, save=save)
+
+    def wikidata_fields_for_attribute(self, attname):
+        field = getattr(type(self), attname)
+        if type(self) in translator._registry:
+            opts = translator.get_options_for_model(type(self))
+            if attname in opts.fields:
+                tfields = opts.fields[attname]
+                for tf in tfields:
+                    yield tf.name, tf.language
+                return
+
+        yield attname, settings.LANGUAGE_CODE
+
+    def wikidata_populate_attribute(self, client, entity, attname, wd, save):
+        for fieldname, lang in self.wikidata_fields_for_attribute(attname):
+            self.wikidata_populate_field(client, entity, fieldname, wd, save, lang)
+                
     def save(self, **kwargs):
+        am_new = self.pk is None
+
         super().save()
-        if self.wikidata and hasattr(self, "Wikidata"):
-            Wikidata = type(self).Wikidata
-            client = Client()
-            # Probably should getlist
-            entity = client.get(self.wikidata)
-            for attname in dir(Wikidata):
-                if attname.startswith("_"):
-                    continue
-                wd = getattr(Wikidata, attname)
-
-                self.wikidata_populate(client, entity, attname, wd)
-            if hasattr(Wikidata, '_supplement'):
-                for attname, wd in Wikidata._supplement(self):
-                    self.wikidata_populate(client, entity, attname, wd)
-
+        if am_new and self.wikidata and hasattr(self, "Wikidata"):
+            self.wikidata_populate()
 
         kwargs.update(force_insert=False, force_update=True)
         super().save(**kwargs)
 
-    def set_field_from_wikidata(self, attname, wdvalue):
+    def set_field_from_wikidata(self, attname, wdvalue, save, language='pl'):
         if not wdvalue:
             return
         # Find out what this model field is
         model_field = self._meta.get_field(attname)
         if isinstance(model_field, models.ForeignKey):
             rel_model = model_field.related_model
-            if issubclass(rel_model, WikidataMixin):
-                # welp, we can try and find by WD identifier.
-                wdvalue, created = rel_model.objects.get_or_create(wikidata=wdvalue.id)
+            if issubclass(rel_model, WikidataModel):
+                label = wdvalue.label.get(language, str(wdvalue.label))
+                try:
+                    wdvalue = rel_model.objects.get(wikidata=wdvalue.id)
+                except rel_model.DoesNotExist:
+                    wdvalue = rel_model(wikidata=wdvalue.id)
+                    if save:
+                        wdvalue.save()
+                wdvalue._wikidata_label = label
                 setattr(self, attname, wdvalue)
         elif isinstance(model_field, models.ManyToManyField):
             rel_model = model_field.related_model
-            if issubclass(rel_model, WikidataMixin):
-                wdvalue, created = rel_model.objects.get_or_create(wikidata=wdvalue.id)
+            if issubclass(rel_model, WikidataModel):
+                label = wdvalue.label.get(language, str(wdvalue.label))
+                try:
+                    wdvalue = rel_model.objects.get(wikidata=wdvalue.id)
+                except rel_model.DoesNotExist:
+                    wdvalue = rel_model(wikidata=wdvalue.id)
+                    if save:
+                        wdvalue.save()
+                wdvalue._wikidata_label = label
                 getattr(self, attname).set([wdvalue])
         else:
             # How to get original title?
@@ -86,7 +123,7 @@ class WikidataMixin(models.Model):
                 if isinstance(model_field, models.IntegerField):
                     wdvalue = wdvalue.year
             elif not isinstance(wdvalue, str):
-                wdvalue = wdvalue.label.get("pl", str(wdvalue.label))
+                wdvalue = wdvalue.label.get(language, str(wdvalue.label))
             setattr(self, attname, wdvalue)
 
     def wikidata_link(self):
@@ -102,6 +139,10 @@ class WikidataMixin(models.Model):
 
 
 class WikidataAdminMixin:
+    class Media:
+        css = {"screen": ("catalogue/wikidata_admin.css",)}
+        js = ("catalogue/wikidata_admin.js",)
+
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         form.instance.save()

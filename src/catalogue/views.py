@@ -1,13 +1,19 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from django.apps import apps
 from django.db.models import Prefetch
+from django.http import Http404
+from django.utils.formats import localize_input
 from django.contrib.auth.models import User
 from django.views.generic import DetailView, TemplateView
 from . import models
 import documents.models
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import serializers
 
 
@@ -86,3 +92,46 @@ class WLURITerms(Terms):
     class serializer_class(serializers.Serializer):
         label = serializers.CharField(source='wluri')
 
+
+class WikidataView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get_object(self, model, qid, save):
+        try:
+            Model = apps.get_model('catalogue', model)
+        except LookupError:
+            raise Http404
+        if not issubclass(Model, models.WikidataModel):
+            raise Http404
+
+        obj = Model.objects.filter(wikidata=qid).first()
+        if obj is None:
+            obj = Model(wikidata=qid)
+        if not obj.pk and save:
+            obj.save()
+        else:
+            obj.wikidata_populate(save=False)
+        d = {
+            "id": obj.pk,
+        }
+        for attname in dir(Model.Wikidata):
+            if attname.startswith("_"):
+                continue
+            for fieldname, lang in obj.wikidata_fields_for_attribute(attname):
+                d[fieldname] = getattr(obj, fieldname)
+
+                if isinstance(d[fieldname], models.WikidataModel):
+                    d[attname] = {
+                        "model": type(d[fieldname])._meta.model_name,
+                        "wd": d[fieldname].wikidata,
+                        "label": str(d[fieldname]) or d[fieldname]._wikidata_label,
+                    }
+                else:
+                    d[fieldname] = localize_input(d[fieldname])
+        return Response(d)
+    
+    def get(self, request, model, qid):
+        return self.get_object(model, qid, save=False)
+
+    def post(self, request, model, qid):
+        return self.get_object(model, qid, save=True)
