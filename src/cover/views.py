@@ -158,7 +158,7 @@ def quick_import(request, pk):
     if url.startswith('%s://%s/' % (
             request.scheme,
             request.get_host())):
-        cover_id = url.rsplit('/', 1)[-1]
+        cover_id = url.rstrip('/').rsplit('/', 1)[-1]
         cover = Image.objects.get(pk=cover_id)
     else:
         data = get_import_data(url)
