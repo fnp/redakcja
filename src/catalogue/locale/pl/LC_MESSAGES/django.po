@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-09-22 15:57+0200\n"
+"PO-Revision-Date: 2022-09-26 11:45+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -23,23 +23,23 @@ msgstr ""
 msgid "Identification"
 msgstr "Identyfikacja"
 
-#: catalogue/admin.py:217
+#: catalogue/admin.py:218
 msgid "Features"
 msgstr "Cechy"
 
-#: catalogue/admin.py:227
+#: catalogue/admin.py:228
 msgid "Plan"
 msgstr "Plan"
 
-#: catalogue/admin.py:269
+#: catalogue/admin.py:270
 msgid "Title"
 msgstr "tytuł"
 
-#: catalogue/admin.py:275
+#: catalogue/admin.py:276
 msgid "Book"
 msgstr "książka"
 
-#: catalogue/admin.py:285 catalogue/models.py:160
+#: catalogue/admin.py:286 catalogue/models.py:160
 msgid "scans source"
 msgstr "źródło skanów"
 
@@ -123,12 +123,12 @@ msgstr "Dawno zmarły"
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: catalogue/models.py:52 catalogue/models.py:162 catalogue/models.py:228
-#: catalogue/models.py:246
+#: catalogue/models.py:52 catalogue/models.py:162 catalogue/models.py:232
+#: catalogue/models.py:250
 msgid "notes"
 msgstr "notatki"
 
-#: catalogue/models.py:53 catalogue/models.py:168
+#: catalogue/models.py:53 catalogue/models.py:169
 msgid "gazeta link"
 msgstr "link do bazy gazety"
 
@@ -140,7 +140,7 @@ msgstr "link do bazy culture.pl"
 msgid "description"
 msgstr "opis"
 
-#: catalogue/models.py:59 catalogue/models.py:164 catalogue/models.py:296
+#: catalogue/models.py:59 catalogue/models.py:164 catalogue/models.py:300
 msgid "priority"
 msgstr "priorytet"
 
@@ -156,8 +156,8 @@ msgstr "Średni"
 msgid "High"
 msgstr "Wysoki"
 
-#: catalogue/models.py:62 catalogue/models.py:169 catalogue/models.py:251
-#: catalogue/models.py:303
+#: catalogue/models.py:62 catalogue/models.py:170 catalogue/models.py:255
+#: catalogue/models.py:307
 msgid "collections"
 msgstr "kolekcje"
 
@@ -169,8 +169,8 @@ msgstr "autor"
 msgid "authors"
 msgstr "autorzy"
 
-#: catalogue/models.py:114 catalogue/models.py:226 catalogue/models.py:243
-#: catalogue/models.py:276 catalogue/models.py:329
+#: catalogue/models.py:114 catalogue/models.py:230 catalogue/models.py:247
+#: catalogue/models.py:280 catalogue/models.py:333
 msgid "name"
 msgstr "nazwa"
 
@@ -178,7 +178,7 @@ msgstr "nazwa"
 msgid "epoch"
 msgstr "epoka"
 
-#: catalogue/models.py:126 catalogue/models.py:151 catalogue/models.py:300
+#: catalogue/models.py:126 catalogue/models.py:151 catalogue/models.py:304
 msgid "epochs"
 msgstr "epoki"
 
@@ -186,7 +186,7 @@ msgstr "epoki"
 msgid "genre"
 msgstr "gatunek"
 
-#: catalogue/models.py:132 catalogue/models.py:153 catalogue/models.py:302
+#: catalogue/models.py:132 catalogue/models.py:153 catalogue/models.py:306
 msgid "genres"
 msgstr "gatunki"
 
@@ -194,7 +194,7 @@ msgstr "gatunki"
 msgid "kind"
 msgstr "rodzaj"
 
-#: catalogue/models.py:138 catalogue/models.py:152 catalogue/models.py:301
+#: catalogue/models.py:138 catalogue/models.py:152 catalogue/models.py:305
 msgid "kinds"
 msgstr "rodzaje"
 
@@ -219,102 +219,106 @@ msgid "text source"
 msgstr "źródło tekstu"
 
 #: catalogue/models.py:167
+msgid "original publication year"
+msgstr "rok oryginalnej publikacji"
+
+#: catalogue/models.py:168
 msgid "year of entry into PD"
 msgstr "rok wstąpienia do DP"
 
-#: catalogue/models.py:171
+#: catalogue/models.py:172
 msgid "estimated number of characters"
 msgstr "szacowana liczba znaków"
 
-#: catalogue/models.py:172
+#: catalogue/models.py:173
 msgid "estimated number of verses"
 msgstr "szacowana liczba wersów"
 
-#: catalogue/models.py:173
+#: catalogue/models.py:174
 msgid "source of estimates"
 msgstr "źródło szacunków"
 
-#: catalogue/models.py:175
+#: catalogue/models.py:176
 msgid "free license"
 msgstr "wolna licencja"
 
-#: catalogue/models.py:176
+#: catalogue/models.py:177
 msgid "missing on Polona"
 msgstr "brak na Polonie"
 
-#: catalogue/models.py:180
+#: catalogue/models.py:181
 msgid "book"
 msgstr "książka"
 
-#: catalogue/models.py:181
+#: catalogue/models.py:182
 msgid "books"
 msgstr "książki"
 
-#: catalogue/models.py:211
+#: catalogue/models.py:215
 msgid "Author"
 msgstr "autor"
 
-#: catalogue/models.py:216
+#: catalogue/models.py:220
 msgid "Translator"
 msgstr "tłumacze"
 
-#: catalogue/models.py:227
+#: catalogue/models.py:231
 msgid "parent"
 msgstr "rodzic"
 
-#: catalogue/models.py:232
+#: catalogue/models.py:236
 msgid "collection category"
 msgstr "kategoria kolekcji"
 
-#: catalogue/models.py:233
+#: catalogue/models.py:237
 msgid "collection categories"
 msgstr "kategorie kolekcji"
 
-#: catalogue/models.py:245
+#: catalogue/models.py:249
 msgid "category"
 msgstr "kategoria"
 
-#: catalogue/models.py:250
+#: catalogue/models.py:254
 msgid "collection"
 msgstr "kolekcja"
 
-#: catalogue/models.py:280 catalogue/models.py:299
+#: catalogue/models.py:284 catalogue/models.py:303
 msgid "work type"
 msgstr "rodzaj pracy"
 
-#: catalogue/models.py:281
+#: catalogue/models.py:285
 msgid "work types"
 msgstr "rodzaje prac"
 
-#: catalogue/models.py:297
+#: catalogue/models.py:301
 msgid "per normalized page"
 msgstr "za stronę maszynopisu"
 
-#: catalogue/models.py:298
+#: catalogue/models.py:302
 msgid "per verse"
 msgstr "za wers"
 
-#: catalogue/models.py:307
+#: catalogue/models.py:311
 msgid "work rate"
 msgstr "stawka"
 
-#: catalogue/models.py:308
+#: catalogue/models.py:312
 msgid "work rates"
 msgstr "stawki"
 
-#: catalogue/models.py:330
+#: catalogue/models.py:334
 msgid "locative"
 msgstr "miejscownik"
 
-#: catalogue/models.py:330
+#: catalogue/models.py:334
 msgid "in…"
 msgstr "w…"
 
-#: catalogue/models.py:333
+#: catalogue/models.py:337
 msgid "place"
 msgstr "miejsce"
 
-#: catalogue/models.py:334
+#: catalogue/models.py:338
 msgid "places"
 msgstr "miejsca"
 
@@ -341,7 +345,7 @@ msgstr[1] "%(c)s autorów"
 msgstr[2] "%(c)s autorów"
 msgstr[3] ""
 
-#: catalogue/wikidata.py:18
+#: catalogue/wikidata.py:21
 msgid "If you have a Wikidata ID, like \"Q1337\", enter it and save."
 msgstr "Jeśli masz identyfikator Wikidanych , jak „Q1337”, wklej go i zapisz."
 

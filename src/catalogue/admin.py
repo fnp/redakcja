@@ -45,7 +45,7 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     ]
     list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
-    readonly_fields = ["wikidata_link"]
+    readonly_fields = ["wikidata_link", "description_preview"]
 
     fieldsets = [
         (None, {"fields": [("wikidata", "wikidata_link")]}),
@@ -59,7 +59,7 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
                     "nationality",
                     ("date_of_birth", "year_of_birth", "year_of_birth_inexact", "year_of_birth_range", "place_of_birth"),
                     ("date_of_death", "year_of_death", "year_of_death_inexact", "year_of_death_range", "place_of_death"),
-                    "description",
+                    ("description", "description_preview"),
                     "status",
                     "collections",
                     "priority",
@@ -77,6 +77,9 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     inlines = [
         NotableBookInline,
     ]
+
+    def description_preview(self, obj):
+        return obj.generate_description()
 
 
 admin.site.register(models.Author, AuthorAdmin)
@@ -209,6 +212,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
                     "translators",
                     "language",
                     "based_on",
+                    "original_year",
                     "pd_year",
                 ]
             },

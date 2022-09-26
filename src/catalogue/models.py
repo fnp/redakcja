@@ -2,6 +2,7 @@ from collections import Counter
 import decimal
 from django.apps import apps
 from django.db import models
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from admin_ordering.models import OrderableModel
@@ -104,6 +105,12 @@ class Author(WikidataModel):
         else:
             return None
 
+    def generate_description(self):
+        t = render_to_string(
+            'catalogue/author_description.html',
+            {'obj': self}
+        )
+        return t
 
 class NotableBook(OrderableModel):
     author = models.ForeignKey(Author, models.CASCADE)
@@ -164,6 +171,7 @@ class Book(WikidataModel):
         _("priority"),
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
     )
+    original_year = models.IntegerField(_('original publication year'), null=True, blank=True)
     pd_year = models.IntegerField(_('year of entry into PD'), null=True, blank=True)
     gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
     collections = models.ManyToManyField("Collection", blank=True, verbose_name=_("collections"))
@@ -186,10 +194,13 @@ class Book(WikidataModel):
         title = WIKIDATA.TITLE
         language = WIKIDATA.LANGUAGE
         based_on = WIKIDATA.BASED_ON
+        original_year = WIKIDATA.PUBLICATION_DATE
         notes = "description"
 
     def __str__(self):
         txt = self.title
+        if self.original_year:
+            txt = f"{txt} ({self.original_year})"
         astr = self.authors_str()
         if astr:
             txt = f"{txt}, {astr}"

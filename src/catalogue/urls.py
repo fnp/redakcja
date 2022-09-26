@@ -20,4 +20,6 @@ urlpatterns = [
     path('terms/editor/', views.EditorTerms.as_view()),
 
     path('wikidata/<slug:model>/<qid>', views.WikidataView.as_view()),
+
+    path('publish/author/<int:pk>/', views.publish_author, name='catalogue_publish_author'),
 ]

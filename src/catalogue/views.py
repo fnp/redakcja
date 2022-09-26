@@ -4,9 +4,14 @@
 from django.apps import apps
 from django.db.models import Prefetch
 from django.http import Http404
+from django.urls import reverse
 from django.utils.formats import localize_input
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, TemplateView
+import apiclient
 from . import models
 import documents.models
 from rest_framework.generics import ListAPIView
@@ -126,6 +131,13 @@ class WikidataView(APIView):
                         "wd": d[fieldname].wikidata,
                         "label": str(d[fieldname]) or d[fieldname]._wikidata_label,
                     }
+                elif hasattr(d[fieldname], 'all'):
+                    d[attname] = [
+                            {"model": type(item)._meta.model_name,
+                                "wd": item.wikidata,
+                                "label": str(item) or item._wikidata_label
+                                } for item in d[attname].all()
+                            ]
                 else:
                     d[fieldname] = localize_input(d[fieldname])
         return Response(d)
@@ -135,3 +147,16 @@ class WikidataView(APIView):
 
     def post(self, request, model, qid):
         return self.get_object(model, qid, save=True)
+
+
+@require_POST
+@login_required
+def publish_author(request, pk):
+    author = get_object_or_404(models.Author, pk=pk)
+    data = {
+        "description_pl": author.generate_description(),
+    }
+    apiclient.api_call(request.user, f"authors/{author.slug}/", data)
+    return redirect(reverse('admin:catalogue_author_change', args=[author.pk]))
+        
+    

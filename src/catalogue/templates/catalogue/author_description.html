@@ -1,0 +1,47 @@
+<dl>
+  {% if obj.date_of_birth or obj.place_of_birth %}
+    <dt>Ur.</dt>
+    <dd>
+      {% if obj.date_of_birth %}
+        {{ obj.date_of_birth }}
+      {% endif %}
+      {% if obj.place_of_birth %}
+        w
+        {% if obj.place_of_birth.locative %}
+          {{ obj.place_of_birth.locative }}
+        {% else %}
+          {{ obj.place_of_birth.name }}
+        {% endif %}
+      {% endif %}
+    </dd>
+  {% endif %}
+  {% if obj.date_of_death or obj.place_of_death %}
+    <dt>Zm.</dt>
+    <dd>
+      {% if obj.date_of_death %}
+        {{ obj.date_of_death }}
+      {% endif %}
+      {% if obj.place_of_death %}
+        w
+        {% if obj.place_of_death.locative %}
+          {{ obj.place_of_death.locative }}
+        {% else %}
+          {{ obj.place_of_death.name }}
+        {% endif %}
+      {% endif %}
+    </dd>
+  {% endif %}
+
+  {% if obj.notablebook_set.exists %}
+    <dt>Najważniejsze dzieła:</dt>
+    <dd>
+      {% for nb in obj.notablebook_set.all %}
+        <i>{{ nb.book.title }}</i>{% if nb.book.original_year %}
+          ({{ nb.book.original_year }}){% endif %}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </dd>
+  {% endif %}
+
+</dl>
+
+{{ obj.description }}

@@ -65,12 +65,16 @@ class WikidataModel(models.Model):
     def wikidata_fields_for_attribute(self, attname):
         field = getattr(type(self), attname)
         if type(self) in translator._registry:
-            opts = translator.get_options_for_model(type(self))
-            if attname in opts.fields:
-                tfields = opts.fields[attname]
-                for tf in tfields:
-                    yield tf.name, tf.language
-                return
+            try:
+                opts = translator.get_options_for_model(type(self))
+            except:
+                pass
+            else:
+                if attname in opts.fields:
+                    tfields = opts.fields[attname]
+                    for tf in tfields:
+                        yield tf.name, tf.language
+                    return
 
         yield attname, settings.LANGUAGE_CODE
 
