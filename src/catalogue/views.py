@@ -14,7 +14,7 @@ from django.views.generic import DetailView, TemplateView
 import apiclient
 from . import models
 import documents.models
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -49,6 +49,47 @@ class AuthorView(TemplateView):
 class BookView(DetailView):
     model = models.Book
 
+class BookAPIView(RetrieveAPIView):
+    queryset = models.Book.objects.all()
+    lookup_field = 'slug'
+
+    class serializer_class(serializers.ModelSerializer):
+        class AuthorSerializer(serializers.ModelSerializer):
+            literal = serializers.CharField(source='name')
+
+            class Meta:
+                model = models.Author
+                fields = ['literal']
+
+        def category_serializer(m):
+            class CategorySerializer(serializers.ModelSerializer):
+                literal = serializers.CharField(source='name')
+                class Meta:
+                    model = m
+                    fields = ['literal']
+            return CategorySerializer
+
+        authors = AuthorSerializer(many=True)
+        translators = AuthorSerializer(many=True)
+        epochs = category_serializer(models.Epoch)(many=True)
+        kinds = category_serializer(models.Kind)(many=True)
+        genres = category_serializer(models.Genre)(many=True)
+
+        class Meta:
+            model = models.Book
+            fields = [
+                'title',
+                'authors',
+                'translators',
+                'epochs',
+                'kinds',
+                'genres',
+                'scans_source',
+                'text_source',
+                'original_year',
+                'pd_year',
+            ]
+    
 
 class TermSearchFilter(SearchFilter):
     search_param = 'term'
@@ -115,9 +156,10 @@ class WikidataView(APIView):
         if not obj.pk and save:
             obj.save()
         else:
-            obj.wikidata_populate(save=False)
+            obj.wikidata_populate(save=False, force=True)
         d = {
             "id": obj.pk,
+            "__str__": str(obj),
         }
         for attname in dir(Model.Wikidata):
             if attname.startswith("_"):
@@ -126,18 +168,24 @@ class WikidataView(APIView):
                 d[fieldname] = getattr(obj, fieldname)
 
                 if isinstance(d[fieldname], models.WikidataModel):
-                    d[attname] = {
+                    d[fieldname] = {
                         "model": type(d[fieldname])._meta.model_name,
+                        "id": d[fieldname].pk,
                         "wd": d[fieldname].wikidata,
                         "label": str(d[fieldname]) or d[fieldname]._wikidata_label,
                     }
                 elif hasattr(d[fieldname], 'all'):
-                    d[attname] = [
-                            {"model": type(item)._meta.model_name,
-                                "wd": item.wikidata,
-                                "label": str(item) or item._wikidata_label
-                                } for item in d[attname].all()
-                            ]
+                    d[fieldname] = [
+                        {
+                            "model": type(item)._meta.model_name,
+                            "wd": item.wikidata,
+                            "label": str(item) or item._wikidata_label
+                        } for item in d[fieldname].all()
+                    ]
+                elif hasattr(d[fieldname], 'as_hint_json'):
+                    d[fieldname] = d[fieldname].as_hint_json()
+                elif hasattr(d[fieldname], 'storage'):
+                    d[fieldname] = d[fieldname].url if d[fieldname] else None
                 else:
                     d[fieldname] = localize_input(d[fieldname])
         return Response(d)

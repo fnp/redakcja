@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 class WIKIDATA:
+    IMAGE = 'P18'
     PLACE_OF_BIRTH = 'P19'
     PLACE_OF_DEATH = 'P20'
     GENDER = "P21"

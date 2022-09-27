@@ -18,25 +18,44 @@
                             let val = result[att];
                             let $input = $("#id_" + att);
                             if (val && val != $input.val()) {
+                                let already_set = false;
                                 let el = $('<span class="wikidata-hint">');
+
                                 if (val.wd) {
+                                    if (val.id && val.id == $input.val()) {
+                                        already_set = true;
+                                    } else {
+                                        // A representation of a WD Entity.
+                                        el.on('click', function() {
+                                            set_value_from_wikidata_id(
+                                                $input, val.model, val.wd,
+                                                () => {$(this).remove();}
+                                            );
+                                        });
+                                        el.text(val.label);
+                                    }
+                                } else if (val.img) {
+                                    // A downloadable remote image.
+                                    let img = $('<img height="32">');
+                                    img.attr('src', val.img);
+                                    el.append(img);
                                     el.on('click', function() {
-                                        set_value_from_wikidata_id(
-                                            $input, val.model, val.wd,
-                                            function() {
-                                                $(this).remove();
-                                            }
+                                        set_file_from_url(
+                                            $input, val.download,
+                                            () => {$(this).remove();}
                                         );
                                     });
-                                    el.text(val.label);
                                 } else {
+                                    // A plain literal.
                                     el.on('click', function() {
                                         $input.val(val);
                                         $(this).remove();
                                     });
                                     el.text(val);
                                 }
-                                $input.parent().append(el);
+                                if (!already_set) {
+                                    $input.parent().append(el);
+                                }
                             }
                         };
 
@@ -55,10 +74,25 @@
                     csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function(result) {
-                    $input.val(result.id);
+                    $input.append($('<option>').attr('value', result.id).text(result.__str__));                   
+                    $input.val(result.id).trigger('change');
                     callback();
                 },
             })
+        }
+
+        function set_file_from_url($input, url, callback) {
+            filename = decodeURIComponent(url.match(/.*\/(.*)/)[1]);
+            $.ajax({
+                url: url,
+                success: function(content) {
+                    let file = new File([content], filename);
+                    let container = new DataTransfer(); 
+                    container.items.add(file);
+                    $input[0].files = container.files;
+                    callback()
+                }
+            });
         }
     });
 })(jQuery);

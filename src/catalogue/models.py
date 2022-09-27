@@ -9,6 +9,7 @@ from admin_ordering.models import OrderableModel
 from wikidata.client import Client
 from .constants import WIKIDATA
 from .wikidata import WikidataModel
+from .wikimedia import WikiMedia
 
 
 class Author(WikidataModel):
@@ -51,8 +52,13 @@ class Author(WikidataModel):
         ],
     )
     notes = models.TextField(_("notes"), blank=True)
+
     gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
     culturepl_link = models.CharField(_("culture.pl link"), max_length=255, blank=True)
+    plwiki = models.CharField(blank=True, max_length=255)
+    photo = models.ImageField(blank=True, null=True, upload_to='catalogue/author/')
+    photo_source = models.CharField(blank=True, max_length=255)
+    photo_attribution = models.CharField(max_length=255, blank=True)
 
     description = models.TextField(_("description"), blank=True)
 
@@ -78,6 +84,10 @@ class Author(WikidataModel):
         place_of_death = WIKIDATA.PLACE_OF_DEATH
         gender = WIKIDATA.GENDER
         notes = "description"
+        plwiki = "plwiki"
+        photo = WikiMedia.download(WIKIDATA.IMAGE)
+        photo_source = WikiMedia.descriptionurl(WIKIDATA.IMAGE)
+        photo_attribution = WikiMedia.attribution(WIKIDATA.IMAGE)
 
         def _supplement(obj):
             if not obj.first_name and not obj.last_name:

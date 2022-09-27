@@ -7,11 +7,11 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from django.dispatch import receiver
 from wikidata.client import Client
 from wikidata.datavalue import DatavalueError
 from modeltranslation.translator import translator
 from modeltranslation.settings import AVAILABLE_LANGUAGES
+from .wikimedia import Downloadable
 
 
 class WikidataModel(models.Model):
@@ -23,31 +23,52 @@ class WikidataModel(models.Model):
 
     class Meta:
         abstract = True
-        
-    def wikidata_populate_field(self, client, entity, attname, wd, save, lang):
-        model_field = self._meta.get_field(attname)
-        if isinstance(model_field, models.ManyToManyField):
-            if getattr(self, attname).all().exists():
-                return
-        else:
-            if getattr(self, attname):
-                return
 
+    def get_wikidata_property(self, client, entity, wd, lang):
         wdvalue = None
-        if wd == "description":
+
+        if callable(wd):
+            return wd(
+                lambda next_arg:
+                self.get_wikidata_property(
+                    client, entity, next_arg, lang
+                )
+            )
+        elif wd == "description":
             wdvalue = entity.description.get(lang, str(entity.description))
         elif wd == "label":
             wdvalue = entity.label.get(lang, str(entity.label))
-        else:
+        elif wd[0] == 'P':
             try:
                 # TODO: lang?
                 wdvalue = entity.get(client.get(wd))
             except DatavalueError:
                 pass
+        else:
+            try:
+                # wiki links identified as 'plwiki' etc.
+                wdvalue = entity.attributes['sitelinks'][wd]['url']
+            except KeyError:
+                pass
 
+        return wdvalue
+        
+        
+    def wikidata_populate_field(self, client, entity, attname, wd, save, lang, force=False):
+        if not force:
+            model_field = self._meta.get_field(attname)
+            if isinstance(model_field, models.ManyToManyField):
+                if getattr(self, attname).all().exists():
+                    return
+            else:
+                if getattr(self, attname):
+                    return
+
+        wdvalue = self.get_wikidata_property(client, entity, wd, lang)
+            
         self.set_field_from_wikidata(attname, wdvalue, save=save)
 
-    def wikidata_populate(self, save=True):
+    def wikidata_populate(self, save=True, force=False):
         Wikidata = type(self).Wikidata
         client = Client()
         # Probably should getlist
@@ -57,10 +78,10 @@ class WikidataModel(models.Model):
                 continue
             wd = getattr(Wikidata, attname)
 
-            self.wikidata_populate_attribute(client, entity, attname, wd, save=save)
+            self.wikidata_populate_attribute(client, entity, attname, wd, save=save, force=force)
         if hasattr(Wikidata, '_supplement'):
             for attname, wd in Wikidata._supplement(self):
-                self.wikidata_populate_attribute(client, entity, attname, wd, save=save)
+                self.wikidata_populate_attribute(client, entity, attname, wd, save=save, force=force)
 
     def wikidata_fields_for_attribute(self, attname):
         field = getattr(type(self), attname)
@@ -78,9 +99,9 @@ class WikidataModel(models.Model):
 
         yield attname, settings.LANGUAGE_CODE
 
-    def wikidata_populate_attribute(self, client, entity, attname, wd, save):
+    def wikidata_populate_attribute(self, client, entity, attname, wd, save, force=False):
         for fieldname, lang in self.wikidata_fields_for_attribute(attname):
-            self.wikidata_populate_field(client, entity, fieldname, wd, save, lang)
+            self.wikidata_populate_field(client, entity, fieldname, wd, save, lang, force=force)
                 
     def save(self, **kwargs):
         am_new = self.pk is None
@@ -97,6 +118,7 @@ class WikidataModel(models.Model):
             return
         # Find out what this model field is
         model_field = self._meta.get_field(attname)
+        skip_set = False
         if isinstance(model_field, models.ForeignKey):
             rel_model = model_field.related_model
             if issubclass(rel_model, WikidataModel):
@@ -126,9 +148,18 @@ class WikidataModel(models.Model):
             if isinstance(wdvalue, date):
                 if isinstance(model_field, models.IntegerField):
                     wdvalue = wdvalue.year
-            elif not isinstance(wdvalue, str):
+
+            # If downloadable (and not save)?
+            elif isinstance(wdvalue, Downloadable):
+                if save:
+                    wdvalue.apply_to_field(self, attname)
+                    skip_set = True
+
+            elif hasattr(wdvalue, 'label'):
                 wdvalue = wdvalue.label.get(language, str(wdvalue.label))
-            setattr(self, attname, wdvalue)
+
+            if not skip_set:
+                setattr(self, attname, wdvalue)
 
     def wikidata_link(self):
         if self.wikidata:

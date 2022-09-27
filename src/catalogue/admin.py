@@ -67,6 +67,8 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
                     "notes",
                     "gazeta_link",
                     "culturepl_link",
+                    "plwiki",
+                    "photo", "photo_source", "photo_attribution",
                 ]
             },
         ),

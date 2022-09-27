@@ -8,7 +8,7 @@ oauth2
 httplib2 # oauth2 dependency
 python-slugify
 python-docx==0.8.11
-Wikidata==0.6.1
+Wikidata==0.7
 
 librarian==2.4.8
 
