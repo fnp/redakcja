@@ -23,4 +23,5 @@ urlpatterns = [
     path('wikidata/<slug:model>/<qid>', views.WikidataView.as_view()),
 
     path('publish/author/<int:pk>/', views.publish_author, name='catalogue_publish_author'),
+    path('publish/collection/<int:pk>/', views.publish_collection, name='catalogue_publish_collection'),
 ]

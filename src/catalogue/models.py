@@ -265,6 +265,7 @@ class Collection(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
     category = models.ForeignKey(CollectionCategory, models.SET_NULL, null=True, blank=True, verbose_name=_("category"))
     notes = models.TextField(_("notes"), blank=True)
+    description = models.TextField(_("description"), blank=True)
 
     class Meta:
         ordering = ('category', 'name')

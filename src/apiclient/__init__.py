@@ -21,7 +21,7 @@ class NotAuthorizedError(BaseException):
     pass
 
 
-def api_call(user, path, data=None, beta=False):
+def api_call(user, path, data=None, beta=False, method=None, as_json=False):
     from .models import OAuthConnection
     api_url = BETA_API_URL if beta else WL_API_URL
     conn = OAuthConnection.get(user=user, beta=beta)
@@ -31,21 +31,30 @@ def api_call(user, path, data=None, beta=False):
     client = oauth2.Client(wl_consumer, token)
     if data is not None:
         data = json.dumps(data)
-        data = urlencode({"data": data})
+        headers = {}
+        if as_json:
+            headers["Content-Type"] = 'application/json'
+        else:
+            data = urlencode({"data": data})
+        data = data.encode('utf-8')
+
         resp, content = client.request(
             "%s%s" % (api_url, path),
-            method="POST",
+            method=method or 'POST',
+            headers=headers,
             body=data)
     else:
         resp, content = client.request(
-            "%s%s" % (api_url, path))
+            "%s%s" % (api_url, path),
+            method=method or 'GET'
+        )
     status = resp['status']
 
-    if status == '200':
+    if status in ('200', '201'):
         return json.loads(content)
     elif status.startswith('2'):
         return
     elif status == '401':
         raise ApiError('User not authorized for publishing.')
     else:
-        raise ApiError("WL API call error %s, path: %s" % (status, path))
+        raise ApiError("WL API call error %s, path: %s, body: %s" % (status, path, content))

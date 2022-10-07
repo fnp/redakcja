@@ -206,5 +206,27 @@ def publish_author(request, pk):
     }
     apiclient.api_call(request.user, f"authors/{author.slug}/", data)
     return redirect(reverse('admin:catalogue_author_change', args=[author.pk]))
-        
-    
+
+
+@require_POST
+@login_required
+def publish_collection(request, pk):
+    collection = get_object_or_404(models.Collection, pk=pk)
+    data = {
+        "title": collection.name,
+        "description": collection.description,
+        "book_slugs": "\n".join(
+            book.slug
+            for book in collection.book_set.exclude(slug=None).exclude(slug='')
+        )
+    }
+    apiclient.api_call(
+        request.user,
+        f"collections/{collection.slug}/",
+        data,
+        method='PUT',
+        as_json=True,
+    )
+    return redirect(reverse(
+        'admin:catalogue_collection_change', args=[collection.pk]
+    ))
