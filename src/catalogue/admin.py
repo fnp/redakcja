@@ -187,8 +187,10 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             "wikidata",
             "slug",
             "title",
-            "authors_str", # authors?
-            "translators_str", # translators?
+            "authors_first_names",
+            "authors_last_names",
+            "translators_first_names",
+            "translators_last_names",
             "language",
             "based_on",
             "scans_source",

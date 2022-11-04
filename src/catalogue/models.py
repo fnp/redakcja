@@ -236,6 +236,18 @@ class Book(WikidataModel):
     translators_str.admin_order_field = 'translators__last_name'
     translators_str.short_description = _('Translator')
 
+    def authors_first_names(self):
+        return ', '.join(a.first_name for a in self.authors.all())
+
+    def authors_last_names(self):
+        return ', '.join(a.last_name for a in self.authors.all())
+
+    def translators_first_names(self):
+        return ', '.join(a.first_name for a in self.translators.all())
+
+    def translators_last_names(self):
+        return ', '.join(a.last_name for a in self.translators.all())
+
     def get_estimated_costs(self):
         return {
             work_type: work_type.calculate(self)
