@@ -83,7 +83,7 @@ class Author(WikidataModel):
         year_of_death = WIKIDATA.DATE_OF_DEATH
         place_of_death = WIKIDATA.PLACE_OF_DEATH
         gender = WIKIDATA.GENDER
-        notes = "description"
+        notes = WikiMedia.append("description")
         plwiki = "plwiki"
         photo = WikiMedia.download(WIKIDATA.IMAGE)
         photo_source = WikiMedia.descriptionurl(WIKIDATA.IMAGE)

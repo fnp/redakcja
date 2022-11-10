@@ -178,6 +178,7 @@ class WikidataView(APIView):
                     d[fieldname] = [
                         {
                             "model": type(item)._meta.model_name,
+                            "id": item.pk,
                             "wd": item.wikidata,
                             "label": str(item) or item._wikidata_label
                         } for item in d[fieldname].all()

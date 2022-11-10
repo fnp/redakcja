@@ -159,7 +159,12 @@ class WikidataModel(models.Model):
                 wdvalue = wdvalue.label.get(language, str(wdvalue.label))
 
             if not skip_set:
-                setattr(self, attname, wdvalue)
+                try:
+                    wdvalue = model_field.to_python(wdvalue)
+                except:
+                    pass
+                else:
+                    setattr(self, attname, wdvalue)
 
     def wikidata_link(self):
         if self.wikidata:

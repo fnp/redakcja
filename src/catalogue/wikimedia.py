@@ -50,7 +50,21 @@ class WikiMedia:
             return Downloadable(download_url)
         return transform
 
+    @classmethod
+    def append(cls, arg):
+        def transform(get_value):
+            value = get_value(arg)
+            return Appendable(value)
+        return transform
 
+
+class Appendable(str):
+    def as_hint_json(self):
+        return {
+            'value': self,
+            'action': 'append',
+        }
+    
 class Downloadable:
     def __init__(self, url):
         self.url = url

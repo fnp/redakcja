@@ -30,7 +30,7 @@
     background-repeat: no-repeat;
     background-position: -64px 50%;
 }
-#id_wikidata.wikidata-processing {
+#id_wikidata.wikidata-processing, .wikidata-hint.wikidata-processing {
     background-position: 100% 50%;
     transition: 10s background-position;
 }
