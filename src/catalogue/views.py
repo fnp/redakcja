@@ -165,7 +165,11 @@ class WikidataView(APIView):
             if attname.startswith("_"):
                 continue
             for fieldname, lang in obj.wikidata_fields_for_attribute(attname):
-                d[fieldname] = getattr(obj, fieldname)
+                try:
+                    d[fieldname] = getattr(obj, fieldname)
+                except ValueError:
+                    # Like accessing related field on non-saved object.
+                    continue
 
                 if isinstance(d[fieldname], models.WikidataModel):
                     d[fieldname] = {
