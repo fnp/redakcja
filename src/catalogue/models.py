@@ -205,7 +205,7 @@ class Book(WikidataModel):
         language = WIKIDATA.LANGUAGE
         based_on = WIKIDATA.BASED_ON
         original_year = WIKIDATA.PUBLICATION_DATE
-        notes = "description"
+        notes = WikiMedia.append("description")
 
     def __str__(self):
         txt = self.title
