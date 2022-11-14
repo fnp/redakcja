@@ -4,6 +4,8 @@
     <dd>
       {% if obj.date_of_birth %}
         {{ obj.date_of_birth }}
+      {% elif obj.year_of_birth %}
+        {{ obj.year_of_birth }}
       {% endif %}
       {% if obj.place_of_birth %}
         w
@@ -20,6 +22,8 @@
     <dd>
       {% if obj.date_of_death %}
         {{ obj.date_of_death }}
+      {% elif obj.year_of_death %}
+        {{ obj.year_of_death }}
       {% endif %}
       {% if obj.place_of_death %}
         w

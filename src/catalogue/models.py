@@ -51,7 +51,7 @@ class Author(WikidataModel):
             (4, _("Unknown")),
         ],
     )
-    notes = models.TextField(_("notes"), blank=True)
+    notes = models.TextField(_("notes"), blank=True, help_text=_('private'))
 
     gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
     culturepl_link = models.CharField(_("culture.pl link"), max_length=255, blank=True)
@@ -60,7 +60,7 @@ class Author(WikidataModel):
     photo_source = models.CharField(blank=True, max_length=255)
     photo_attribution = models.CharField(max_length=255, blank=True)
 
-    description = models.TextField(_("description"), blank=True)
+    description = models.TextField(_("description"), blank=True, help_text=_('for publication'))
 
     priority = models.PositiveSmallIntegerField(
         _("priority"), 
@@ -176,7 +176,7 @@ class Book(WikidataModel):
     )
     scans_source = models.CharField(_("scans source"), max_length=255, blank=True)
     text_source = models.CharField(_("text source"), max_length=255, blank=True)
-    notes = models.TextField(_("notes"), blank=True)
+    notes = models.TextField(_("notes"), blank=True, help_text=_('private'))
     priority = models.PositiveSmallIntegerField(
         _("priority"),
         default=0, choices=[(0, _("Low")), (1, _("Medium")), (2, _("High"))]
@@ -262,7 +262,7 @@ class Book(WikidataModel):
 class CollectionCategory(models.Model):
     name = models.CharField(_("name"), max_length=255)
     parent = models.ForeignKey('self', models.SET_NULL, related_name='children', null=True, blank=True, verbose_name=_("parent"))
-    notes = models.TextField(_("notes"), blank=True)
+    notes = models.TextField(_("notes"), blank=True, help_text=_('private'))
 
     class Meta:
         ordering = ('parent__name', 'name')
@@ -280,7 +280,7 @@ class Collection(models.Model):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
     category = models.ForeignKey(CollectionCategory, models.SET_NULL, null=True, blank=True, verbose_name=_("category"))
-    notes = models.TextField(_("notes"), blank=True)
+    notes = models.TextField(_("notes"), blank=True, help_text=_('private'))
     description = models.TextField(_("description"), blank=True)
 
     class Meta:
