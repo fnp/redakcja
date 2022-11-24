@@ -112,16 +112,18 @@
 
         function set_file_from_url($input, url, callback) {
             filename = decodeURIComponent(url.match(/.*\/(.*)/)[1]);
-            $.ajax({
-                url: url,
-                success: function(content) {
-                    let file = new File([content], filename);
-                    let container = new DataTransfer(); 
-                    container.items.add(file);
-                    $input[0].files = container.files;
-                    callback()
-                }
-            });
+
+            let req = new XMLHttpRequest();
+            req.open("GET", url, true);
+            req.responseType = "arraybuffer";
+            req.onload = (event) => {
+                let file = new File([req.response], filename);
+                let container = new DataTransfer(); 
+                container.items.add(file);
+                $input[0].files = container.files;
+                callback();
+            };
+            req.send(null);
         }
     });
 })(jQuery);
