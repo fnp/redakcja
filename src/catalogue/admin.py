@@ -42,6 +42,7 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
         "status",
         "gender",
         "nationality",
+        ("genitive", admin.EmptyFieldListFilter)
     ]
     list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
@@ -335,9 +336,20 @@ admin.site.register(models.Collection, CollectionAdmin)
 class CategoryAdmin(admin.ModelAdmin):
     search_fields = ["name"]
 
-admin.site.register(models.Epoch, CategoryAdmin)
-admin.site.register(models.Genre, CategoryAdmin)
-admin.site.register(models.Kind, CategoryAdmin)
+
+@admin.register(models.Epoch)
+class EpochAdmin(CategoryAdmin):
+    list_display = ['name', 'adjective_feminine_singular', 'adjective_nonmasculine_plural']
+
+
+@admin.register(models.Genre)
+class GenreAdmin(CategoryAdmin):
+    list_display = ['name', 'plural', 'is_epoch_specific']
+
+
+@admin.register(models.Kind)
+class KindAdmin(CategoryAdmin):
+    list_display = ['name', 'collective_noun']
 
 
 

@@ -16,6 +16,10 @@ class Author(WikidataModel):
     slug = models.SlugField(max_length=255, null=True, blank=True, unique=True)
     first_name = models.CharField(_("first name"), max_length=255, blank=True)
     last_name = models.CharField(_("last name"), max_length=255, blank=True)
+    genitive = models.CharField(
+        'dopełniacz', max_length=255, blank=True,
+        help_text='utwory … (czyje?)'
+    )
 
     name_de = models.CharField(_("name (de)"), max_length=255, blank=True)
     name_lt = models.CharField(_("name (lt)"), max_length=255, blank=True)
@@ -137,19 +141,43 @@ class Category(WikidataModel):
     def __str__(self):
         return self.name
 
+
 class Epoch(Category):
+    adjective_feminine_singular = models.CharField(
+        'przymiotnik pojedynczy żeński', max_length=255, blank=True,
+        help_text='twórczość … Adama Mickiewicza'
+    )
+    adjective_nonmasculine_plural = models.CharField(
+        'przymiotnik mnogi niemęskoosobowy', max_length=255, blank=True,
+        help_text='utwory … Adama Mickiewicza'
+    )
+
     class Meta:
         verbose_name = _('epoch')
         verbose_name_plural = _('epochs')
 
 
 class Genre(Category):
+    plural = models.CharField(
+        'liczba mnoga', max_length=255, blank=True,
+        help_text='dotyczy gatunków'
+    )
+    is_epoch_specific = models.BooleanField(
+        default=False,
+        help_text='Po wskazaniu tego gatunku, dodanie epoki byłoby nadmiarowe, np. „dramat romantyczny”'
+    )
+
     class Meta:
         verbose_name = _('genre')
         verbose_name_plural = _('genres')
 
 
 class Kind(Category):
+    collective_noun = models.CharField(
+        'określenie zbiorowe', max_length=255, blank=True,
+        help_text='np. „Liryka” albo „Twórczość dramatyczna”'
+    )
+
     class Meta:
         verbose_name = _('kind')
         verbose_name_plural = _('kinds')
