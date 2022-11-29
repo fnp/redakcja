@@ -56,6 +56,7 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
                 "fields": [
                     ("first_name", "last_name"),
                     "slug",
+                    "genitive",
                     "gender",
                     "nationality",
                     ("date_of_birth", "year_of_birth", "year_of_birth_inexact", "year_of_birth_range", "place_of_birth"),
