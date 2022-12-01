@@ -42,6 +42,8 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
         "status",
         "gender",
         "nationality",
+        "place_of_birth",
+        "place_of_death",
         ("genitive", admin.EmptyFieldListFilter)
     ]
     list_per_page = 10000000
@@ -168,6 +170,12 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "priority",
         "authors__gender", "authors__nationality",
         "translators__gender", "translators__nationality",
+
+        ("authors__place_of_birth", add_title(admin.RelatedFieldListFilter, ' autora')),
+        ("authors__place_of_death", add_title(admin.RelatedFieldListFilter, ' autora')),
+        ("translators__place_of_birth", add_title(admin.RelatedFieldListFilter, ' tłumacza')),
+        ("translators__place_of_death", add_title(admin.RelatedFieldListFilter, ' tłumacza')),
+
         "document_book__chunk__stage",
 
         LicenseFilter,
