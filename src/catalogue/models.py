@@ -315,6 +315,25 @@ class Book(WikidataModel):
         self.monthly_views_reader = stats['views_reader'] / months
         self.save(update_fields=['monthly_views_page', 'monthly_views_reader'])
 
+    @property
+    def content_stats(self):
+        if hasattr(self, '_content_stats'):
+            return self._content_stats
+        try:
+            stats = self.document_books.first().wldocument().get_statistics()['total']
+        except Exception as e:
+            stats = {}
+        self._content_stats = stats
+        return stats
+
+    chars = lambda self: self.content_stats.get('chars', '')
+    chars_with_fn = lambda self: self.content_stats.get('chars_with_fn', '')
+    words = lambda self: self.content_stats.get('words', '')
+    words_with_fn = lambda self: self.content_stats.get('words_with_fn', '')
+    verses = lambda self: self.content_stats.get('verses', '')
+    verses_with_fn = lambda self: self.content_stats.get('verses_with_fn', '')
+    chars_out_verse = lambda self: self.content_stats.get('chars_out_verse', '')
+    chars_out_verse_with_fn = lambda self: self.content_stats.get('chars_out_verse_with_fn', '')
 
 class CollectionCategory(models.Model):
     name = models.CharField(_("name"), max_length=255)

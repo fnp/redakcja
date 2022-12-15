@@ -213,7 +213,20 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             "gazeta_link",
             "estimated_chars",
             "estimated_verses",
-            "estimate_source"
+            "estimate_source",
+
+            "monthly_views_page",
+            "monthly_views_reader",
+
+            # content stats
+            "chars",
+            "chars_with_fn",
+            "words",
+            "words_with_fn",
+            "verses",
+            "chars_out_verse",
+            "verses_with_fn",
+            "chars_out_verse_with_fn",
         ]
     )]
     fieldsets = [
