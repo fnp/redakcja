@@ -1,9 +1,11 @@
 <tr>
   <td style="padding-left: {{ depth}}.75em;">{{ book.book_info.title|default:"???" }}</td>
-  <td>{{ stats.self.chars_with_fn|default_if_none:"?" }}</td>
   <td>{{ stats.self.chars|default_if_none:"?" }}</td>
-  <td>{{ stats.self.words_with_fn|default_if_none:"?" }}</td>
+  <td>{{ stats.self.chars_with_fn|default_if_none:"?" }}</td>
   <td>{{ stats.self.words|default_if_none:"?" }}</td>
+  <td>{{ stats.self.words_with_fn|default_if_none:"?" }}</td>
+  <td>{{ stats.self.verses|default_if_none:"?" }} <small>+ {{ stats.self.chars_out_verse|default_if_none:"?" }} zn.</small></td>
+  <td>{{ stats.self.verses_with_fn|default_if_none:"?" }} <small> + {{ stats.self.chars_out_verse_with_fn|default_if_none:"?" }} zn.</small></td>
 </tr>
 {% if stats.parts %}
   {% for part, partstats in stats.parts %}
@@ -11,9 +13,13 @@
   {% endfor %}
   <tr>
     <td style="padding-left: {{ depth}}.75em;">&Sigma;</td>
-    <td>{{ stats.total.chars_with_fn }}</td>
     <td>{{ stats.total.chars }}</td>
-    <td>{{ stats.total.words_with_fn }}</td>
+    <td>{{ stats.total.chars_with_fn }}</td>
     <td>{{ stats.total.words }}</td>
+    <td>{{ stats.total.words_with_fn }}</td>
+
+    <td>{{ stats.total.verses }} <small>+ {{ stats.total.chars_out_verse }} zn.</small></td>
+    <td>{{ stats.total.verses_with_fn }} <small> + {{ stats.total.chars_out_verse_with_fn }} zn.</small></td>
+
   </tr>
 {% endif %}
