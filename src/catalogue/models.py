@@ -1,6 +1,10 @@
 from collections import Counter
+from datetime import date, timedelta
 import decimal
+import re
+from urllib.request import urlopen
 from django.apps import apps
+from django.conf import settings
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -221,6 +225,9 @@ class Book(WikidataModel):
     free_license = models.BooleanField(_('free license'), default=False)
     polona_missing = models.BooleanField(_('missing on Polona'), default=False)
 
+    monthly_views_reader = models.IntegerField(default=0)
+    monthly_views_page = models.IntegerField(default=0)
+    
     class Meta:
         ordering = ("title",)
         verbose_name = _('book')
@@ -285,6 +292,28 @@ class Book(WikidataModel):
             work_type: work_type.calculate(self)
             for work_type in WorkType.objects.all()
         }
+
+    def update_monthly_stats(self):
+        # Find publication date.
+        # By default, get previous 12 months.
+        this_month = date.today().replace(day=1)
+        cutoff = this_month.replace(year=this_month.year - 1)
+        months = 12
+
+        # If the book was published later,
+        # find out the denominator.
+        pbr = apps.get_model('documents', 'BookPublishRecord').objects.filter(
+            book__catalogue_book=self).order_by('timestamp').first()
+        if pbr is not None and pbr.timestamp.date() > cutoff:
+            months = (this_month - pbr.timestamp.date()).days / 365 * 12
+
+        stats = self.bookmonthlystats_set.filter(date__gte=cutoff).aggregate(
+            views_page=models.Sum('views_page'),
+            views_reader=models.Sum('views_reader')
+        )
+        self.monthly_views_page = stats['views_page'] / months
+        self.monthly_views_reader = stats['views_reader'] / months
+        self.save(update_fields=['monthly_views_page', 'monthly_views_reader'])
 
 
 class CollectionCategory(models.Model):
@@ -404,3 +433,42 @@ class Place(WikidataModel):
 
     def __str__(self):
         return self.name
+
+
+class BookMonthlyStats(models.Model):
+    book = models.ForeignKey('catalogue.Book', models.CASCADE)
+    date = models.DateField()
+    views_reader = models.IntegerField(default=0)
+    views_page = models.IntegerField(default=0)
+
+    @classmethod
+    def build_for_month(cls, date):
+        date = date.replace(day=1)
+        period = 'month'
+
+        date = date.isoformat()
+        url = f'{settings.PIWIK_URL}?date={date}&filter_limit=-1&format=CSV&idSite={settings.PIWIK_WL_SITE_ID}&language=pl&method=Actions.getPageUrls&module=API&period={period}&segment=&token_auth={settings.PIWIK_TOKEN}&flat=1'
+        data = urlopen(url).read().decode('utf-16')
+        lines = data.split('\n')[1:]
+        for line in lines:
+            m = re.match('^/katalog/lektura/([^,./]+)\.html,', line)
+            if m is not None:
+                which = 'views_reader'
+            else:
+                m = re.match('^/katalog/lektura/([^,./]+)/,', line)
+                if m is not None:
+                    which = 'views_page'
+            if m is not None:
+                slug = m.group(1)
+                _url, _uviews, views, _rest = line.split(',', 3)
+                views = int(views)
+                try:
+                    book = Book.objects.get(slug=slug)
+                except Book.DoesNotExist:
+                    continue
+                else:
+                    cls.objects.update_or_create(
+                        book=book, date=date,
+                        defaults={which: views}
+                    )
+                    book.update_monthly_stats()

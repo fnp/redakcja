@@ -190,6 +190,8 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "estimated_costs",
         "documents_book_link",
         "scans_source_link",
+        "monthly_views_page",
+        "monthly_views_reader",
     ]
     actions = [export_as_csv_action(
         fields=[
@@ -253,6 +255,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
                     "notes",
                     ("estimated_chars", "estimated_verses", "estimate_source"),
                     "estimated_costs",
+                    ("monthly_views_page", "monthly_views_reader"),
                 ]
             },
         ),
