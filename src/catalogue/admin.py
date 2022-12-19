@@ -361,20 +361,39 @@ admin.site.register(models.Collection, CollectionAdmin)
 class CategoryAdmin(admin.ModelAdmin):
     search_fields = ["name"]
 
+    def has_description(self, obj):
+        return bool(obj.description)
+    has_description.boolean = True
+    has_description.short_description = 'opis'
+
 
 @admin.register(models.Epoch)
 class EpochAdmin(CategoryAdmin):
-    list_display = ['name', 'adjective_feminine_singular', 'adjective_nonmasculine_plural']
+    list_display = [
+        'name',
+        'adjective_feminine_singular',
+        'adjective_nonmasculine_plural',
+        'has_description',
+    ]
 
 
 @admin.register(models.Genre)
 class GenreAdmin(CategoryAdmin):
-    list_display = ['name', 'plural', 'is_epoch_specific']
+    list_display = [
+        'name',
+        'plural',
+        'is_epoch_specific',
+        'has_description',
+    ]
 
 
 @admin.register(models.Kind)
 class KindAdmin(CategoryAdmin):
-    list_display = ['name', 'collective_noun']
+    list_display = [
+        'name',
+        'collective_noun',
+        'has_description',
+    ]
 
 
 

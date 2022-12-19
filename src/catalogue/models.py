@@ -138,6 +138,7 @@ class NotableBook(OrderableModel):
 class Category(WikidataModel):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
+    description = models.TextField(_("description"), blank=True, help_text=_('for publication'))
 
     class Meta:
         abstract = True
