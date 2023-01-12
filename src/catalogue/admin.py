@@ -2,10 +2,11 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.contrib import admin
+from django.db.models import Min
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin
+from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdmin, RangeNumericForm
 from admin_ordering.admin import OrderableAdmin
 from fnpdjango.actions import export_as_csv_action
 from modeltranslation.admin import TabbedTranslationAdmin
@@ -137,6 +138,60 @@ def add_title(base_class, suffix):
     return TitledCategoryFilter
 
 
+class FirstPublicationYearFilter(admin.ListFilter):
+    title = 'Rok pierwszej publikacji'
+    parameter_name = 'first_publication_year'
+    template = 'admin/filter_numeric_range.html'
+
+    def __init__(self, request, params, *args, **kwargs):
+        super().__init__(request, params, *args, **kwargs)
+
+        self.request = request
+
+        if self.parameter_name + '_from' in params:
+            value = params.pop(self.parameter_name + '_from')
+            self.used_parameters[self.parameter_name + '_from'] = value
+
+        if self.parameter_name + '_to' in params:
+            value = params.pop(self.parameter_name + '_to')
+            self.used_parameters[self.parameter_name + '_to'] = value
+
+    def has_output(self):
+        return True
+
+    def queryset(self, request, queryset):
+        filters = {}
+
+        value_from = self.used_parameters.get(self.parameter_name + '_from', None)
+        if value_from is not None and value_from != '':
+            filters.update({
+                self.parameter_name + '__gte': self.used_parameters.get(self.parameter_name + '_from', None),
+            })
+
+        value_to = self.used_parameters.get(self.parameter_name + '_to', None)
+        if value_to is not None and value_to != '':
+            filters.update({
+                self.parameter_name + '__lte': self.used_parameters.get(self.parameter_name + '_to', None),
+            })
+
+        return queryset.filter(**filters)
+
+    def choices(self, changelist):
+        return ({
+            'request': self.request,
+            'parameter_name': self.parameter_name,
+            'form': RangeNumericForm(name=self.parameter_name, data={
+                self.parameter_name + '_from': self.used_parameters.get(self.parameter_name + '_from', None),
+                self.parameter_name + '_to': self.used_parameters.get(self.parameter_name + '_to', None),
+            }),
+        }, )
+
+    def expected_parameters(self):
+        return [
+            '{}_from'.format(self.parameter_name),
+            '{}_to'.format(self.parameter_name),
+        ]
+
 
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
     list_display = [
@@ -182,6 +237,8 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         CoverLicenseFilter,
         'free_license',
         'polona_missing',
+
+        FirstPublicationYearFilter,
     ]
     list_per_page = 1000000
 
@@ -214,6 +271,9 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             "estimated_chars",
             "estimated_verses",
             "estimate_source",
+
+            "document_book__project",
+            "first_publication_year",
 
             "monthly_views_page",
             "monthly_views_reader",
@@ -278,6 +338,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         qs = super().get_queryset(request)
         if request.resolver_match.view_name.endswith("changelist"):
             qs = qs.prefetch_related("authors", "translators")
+            qs = qs.annotate(first_publication_year=Min('document_book__publish_log__timestamp__year'))
         return qs
 
     def estimated_costs(self, obj):

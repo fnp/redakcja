@@ -288,6 +288,12 @@ class Book(WikidataModel):
     def translators_last_names(self):
         return ', '.join(a.last_name for a in self.translators.all())
 
+    def document_book__project(self):
+        b = self.document_books.first()
+        if b is None: return ''
+        if b.project is None: return ''
+        return b.project.name
+
     def get_estimated_costs(self):
         return {
             work_type: work_type.calculate(self)
