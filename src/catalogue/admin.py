@@ -273,6 +273,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
             "estimate_source",
 
             "document_book__project",
+            "audience",
             "first_publication_year",
 
             "monthly_views_page",

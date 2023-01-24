@@ -294,6 +294,12 @@ class Book(WikidataModel):
         if b.project is None: return ''
         return b.project.name
 
+    def audience(self):
+        try:
+            return self.document_books.first().wldocument().book_info.audience or ''
+        except:
+            return ''
+
     def get_estimated_costs(self):
         return {
             work_type: work_type.calculate(self)
@@ -313,6 +319,9 @@ class Book(WikidataModel):
             book__catalogue_book=self).order_by('timestamp').first()
         if pbr is not None and pbr.timestamp.date() > cutoff:
             months = (this_month - pbr.timestamp.date()).days / 365 * 12
+
+        if not months:
+            return
 
         stats = self.bookmonthlystats_set.filter(date__gte=cutoff).aggregate(
             views_page=models.Sum('views_page'),
