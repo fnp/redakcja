@@ -1,0 +1,14 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {% if change and original.slug %}
+    <li>
+      <form method='post' action="{% url 'catalogue_publish_epoch' original.pk %}">
+
+        {% csrf_token %}
+        <button type="submit">opublikuj</button>
+      </form>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

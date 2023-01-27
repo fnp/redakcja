@@ -62,8 +62,22 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
                     "genitive",
                     "gender",
                     "nationality",
-                    ("date_of_birth", "year_of_birth", "year_of_birth_inexact", "year_of_birth_range", "place_of_birth"),
-                    ("date_of_death", "year_of_death", "year_of_death_inexact", "year_of_death_range", "place_of_death"),
+                    (
+                        "date_of_birth",
+                        "year_of_birth",
+                        "year_of_birth_inexact",
+                        "year_of_birth_range",
+                        "century_of_birth",
+                        "place_of_birth"
+                    ),
+                    (
+                        "date_of_death",
+                        "year_of_death",
+                        "year_of_death_inexact",
+                        "year_of_death_range",
+                        "century_of_death",
+                        "place_of_death"
+                    ),
                     ("description", "description_preview"),
                     "status",
                     "collections",

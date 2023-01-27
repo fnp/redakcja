@@ -30,10 +30,15 @@ class Author(WikidataModel):
 
     gender = models.CharField(_("gender"), max_length=255, blank=True)
     nationality = models.CharField(_("nationality"), max_length=255, blank=True)
+
     year_of_birth = models.SmallIntegerField(_("year of birth"), null=True, blank=True)
     year_of_birth_inexact = models.BooleanField(_("inexact"), default=False)
     year_of_birth_range = models.SmallIntegerField(_("year of birth, range end"), null=True, blank=True)
     date_of_birth = models.DateField(_("date_of_birth"), null=True, blank=True)
+    century_of_birth = models.SmallIntegerField(
+        _("century of birth"), null=True, blank=True,
+        help_text=_('Set if year unknown. Negative for BC.')
+    )
     place_of_birth = models.ForeignKey(
         'Place', models.PROTECT, null=True, blank=True,
         verbose_name=_('place of birth'),
@@ -43,6 +48,10 @@ class Author(WikidataModel):
     year_of_death_inexact = models.BooleanField(_("inexact"), default=False)
     year_of_death_range = models.SmallIntegerField(_("year of death, range end"), null=True, blank=True)
     date_of_death = models.DateField(_("date_of_death"), null=True, blank=True)
+    century_of_death = models.SmallIntegerField(
+        _("century of death"), null=True, blank=True,
+        help_text=_('Set if year unknown. Negative for BC.')
+    )
     place_of_death = models.ForeignKey(
         'Place', models.PROTECT, null=True, blank=True,
         verbose_name=_('place of death'),
@@ -130,6 +139,34 @@ class Author(WikidataModel):
         )
         return t
 
+    def century_description(self, number):
+        n = abs(number)
+        letters = ''
+        while n > 10:
+            letters += 'X'
+            n -= 10
+        if n == 9:
+            letters += 'IX'
+            n = 0
+        elif n >= 5:
+            letters += 'V'
+            n -= 5
+        if n == 4:
+            letters += 'IV'
+            n = 0
+        letters += 'I' * n
+        letters += ' w.'
+        if number < 0:
+            letters += ' p.n.e.'
+        return letters
+
+    def birth_century_description(self):
+        return self.century_description(self.century_of_birth)
+
+    def death_century_description(self):
+        return self.century_description(self.century_of_death)
+
+    
 class NotableBook(OrderableModel):
     author = models.ForeignKey(Author, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)

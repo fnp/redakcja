@@ -22,12 +22,15 @@ from rest_framework.views import APIView
 from rest_framework import serializers
 
 
+
+
+
 class CatalogueView(TemplateView):
     template_name = "catalogue/catalogue.html"
 
     def get_context_data(self):
         ctx = super().get_context_data()
-        ctx["authors"] = models.Author.objects.all().prefetch_related('book_set__book_set', 'translated_book_set__book_set')
+        ctx["authors"] = models.Author.objects.all().prefetch_related('book_set__document_books', 'translated_book_set__document_books')
 
         return ctx
 
@@ -211,6 +214,44 @@ def publish_author(request, pk):
     }
     apiclient.api_call(request.user, f"authors/{author.slug}/", data)
     return redirect(reverse('admin:catalogue_author_change', args=[author.pk]))
+
+
+@require_POST
+@login_required
+def publish_genre(request, pk):
+    obj = get_object_or_404(models.Genre, pk=pk)
+    data = {
+        "description_pl": obj.description,
+        "plural": obj.plural,
+        "is_epoch_specific": obj.is_epoch_specific,
+    }
+    apiclient.api_call(request.user, f"genres/{obj.slug}/", data)
+    return redirect(reverse('admin:catalogue_genre_change', args=[obj.pk]))
+
+
+@require_POST
+@login_required
+def publish_kind(request, pk):
+    obj = get_object_or_404(models.Kind, pk=pk)
+    data = {
+        "description_pl": obj.description,
+        "collective_noun": obj.collective_noun,
+    }
+    apiclient.api_call(request.user, f"kinds/{obj.slug}/", data)
+    return redirect(reverse('admin:catalogue_kind_change', args=[obj.pk]))
+
+
+@require_POST
+@login_required
+def publish_epoch(request, pk):
+    obj = get_object_or_404(models.Epoch, pk=pk)
+    data = {
+        "description_pl": obj.description,
+        "adjective_feminine_singular": obj.adjective_feminine_singular,
+        "adjective_nonmasculine_plural": obj.adjective_feminine_singular,
+    }
+    apiclient.api_call(request.user, f"epochs/{obj.slug}/", data)
+    return redirect(reverse('admin:catalogue_epoch_change', args=[obj.pk]))
 
 
 @require_POST
