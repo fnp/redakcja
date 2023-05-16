@@ -166,7 +166,20 @@ class Author(WikidataModel):
     def death_century_description(self):
         return self.century_description(self.century_of_death)
 
-    
+    def year_description(self, number):
+        n = abs(number)
+        letters = str(n)
+        letters += ' r.'
+        if number < 0:
+            letters += ' p.n.e.'
+        return letters
+
+    def year_of_birth_description(self):
+        return self.year_description(self.year_of_birth)
+    def year_of_death_description(self):
+        return self.year_description(self.year_of_death)
+
+
 class NotableBook(OrderableModel):
     author = models.ForeignKey(Author, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
@@ -544,3 +557,14 @@ class BookMonthlyStats(models.Model):
                         defaults={which: views}
                     )
                     book.update_monthly_stats()
+
+
+class Thema(models.Model):
+    code = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=1024)
+    description = models.TextField(blank=True)
+    usable = models.BooleanField()
+    hidden = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('code',)

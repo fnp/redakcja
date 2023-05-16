@@ -2,10 +2,11 @@
   {% if obj.date_of_birth or obj.year_of_birth or obj.century_of_birth or obj.place_of_birth %}
     <dt>Ur.</dt>
     <dd>
+      {% if obj.year_of_birth_inexact %}ok. {% endif %}
       {% if obj.date_of_birth %}
         {{ obj.date_of_birth }}
       {% elif obj.year_of_birth %}
-        {{ obj.year_of_birth }}
+        {{ obj.year_of_birth_description }}
       {% elif obj.century_of_birth %}
         {{ obj.birth_century_description }}
       {% endif %}
@@ -22,10 +23,11 @@
   {% if obj.date_of_death or obj.year_of_death or obj.century_of_death or obj.place_of_death %}
     <dt>Zm.</dt>
     <dd>
+      {% if obj.year_of_death_inexact %}ok. {% endif %}
       {% if obj.date_of_death %}
         {{ obj.date_of_death }}
       {% elif obj.year_of_death %}
-        {{ obj.year_of_death }}
+        {{ obj.year_of_death_description }}
       {% elif obj.century_of_death %}
         {{ obj.death_century_description }}
       {% endif %}

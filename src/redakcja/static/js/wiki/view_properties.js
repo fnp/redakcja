@@ -267,7 +267,15 @@
         } else {
             $aninput = $("<input class='form-control'>");
             if (field.value_type.autocomplete) {
-                $aninput.autocomplete(field.value_type.autocomplete);
+                let autoOptions = field.value_type.autocomplete;
+                $aninput.autocomplete(autoOptions).autocomplete('instance')._renderItem = function(ul, item) {
+                    let t = item.label;
+                    if (item.name) t += '<br><small><strong>' + item.name + '</strong></small>';
+                    if (item.description) t += '<br><small><em>' + item.description + '</em></small>';
+                    return $( "<li>" )
+                        .append( "<div>" + t + "</div>" )
+                        .appendTo( ul );
+                };
             }
         }
         $aninput.data('edited', $(element))

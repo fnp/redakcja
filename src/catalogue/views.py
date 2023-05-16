@@ -141,6 +141,15 @@ class WLURITerms(Terms):
     class serializer_class(serializers.Serializer):
         label = serializers.CharField(source='wluri')
 
+class ThemaTerms(Terms):
+    queryset = models.Thema.objects.filter(usable=True, hidden=False)
+    search_fields = ['code', 'name', 'description']
+
+    class serializer_class(serializers.Serializer):
+        label = serializers.CharField(source='code')
+        name = serializers.CharField()
+        description = serializers.CharField()
+
 
 class WikidataView(APIView):
     permission_classes = [IsAdminUser]

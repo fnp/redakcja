@@ -488,3 +488,10 @@ admin.site.register(models.WorkType, WorkTypeAdmin)
 @admin.register(models.Place)
 class PlaceAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     search_fields = ['name']
+
+
+@admin.register(models.Thema)
+class ThemaAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'usable', 'hidden']
+    list_filter = ['usable', 'hidden']
+    search_fields = ['code', 'name', 'description']

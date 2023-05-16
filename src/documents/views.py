@@ -262,6 +262,7 @@ def book_html(request, slug):
     return render(request, 'documents/book_text.html', locals())
 
 
+@login_required
 @never_cache
 def book_pdf(request, slug, mobile=False):
     book = get_object_or_404(Book, slug=slug)
@@ -278,6 +279,7 @@ def book_pdf(request, slug, mobile=False):
                 book.slug + '.pdf', 'application/pdf')
 
 
+@login_required
 @never_cache
 def book_epub(request, slug):
     book = get_object_or_404(Book, slug=slug)
@@ -296,6 +298,7 @@ def book_epub(request, slug):
     return response
 
 
+@login_required
 @never_cache
 def book_mobi(request, slug):
     book = get_object_or_404(Book, slug=slug)

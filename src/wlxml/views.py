@@ -7,7 +7,7 @@ from librarian.dcparser import BookInfo
 from librarian.document import WLDocument
 from librarian.builders import StandaloneHtmlBuilder
 from librarian.meta.types.wluri import WLURI
-from librarian.meta.types.text import LegimiCategory, Epoch, Kind, Genre, Audience
+from librarian.meta.types.text import LegimiCategory, Epoch, Kind, Genre, Audience, ThemaCategory
 from depot.legimi import legimi
 
 
@@ -49,6 +49,11 @@ VALUE_TYPES = {
     LegimiCategory: {
         'widget': 'select',
         'options': [''] + list(legimi.CATEGORIES.keys()),
+    },
+    ThemaCategory: {
+        'autocomplete': {
+            'source': '/catalogue/terms/thema/',
+        }
     },
     Epoch: {
         'autocomplete': {
