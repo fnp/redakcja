@@ -190,6 +190,8 @@ class Legimi:
             "Year": str(date.today().year),
 
             'GenreId': str(self.get_genre(wlbook)),
+            'themaCategories': ';'.join(meta.thema),
+            'thema-search': '',
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
 
@@ -351,7 +353,7 @@ class Legimi:
     def edit(self, legimi_id, data):
         current = {
             'ValidationTrue': 'true',
-            'Is': legimi_id
+            'Id': legimi_id
         }
 
         current.update(data)
