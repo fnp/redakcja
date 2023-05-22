@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'email_mangler',
     'wlxml.apps.WlxmlConfig',
     'alerts',
+    'team',
 )
 
 if DEBUG:

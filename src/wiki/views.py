@@ -7,6 +7,7 @@ import logging
 from time import mktime
 from urllib.parse import quote
 
+from django.apps import apps
 from django.conf import settings
 from django.urls import reverse
 from django import http
@@ -275,6 +276,8 @@ def revision(request, chunk_id):
     doc = get_object_or_404(Chunk, pk=chunk_id)
     if not doc.book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
+    Presence = apps.get_model('team', 'Presence')
+    Presence.report(request.user, doc, request.GET.get('a') == 'true')
     return http.HttpResponse(str(doc.revision()))
 
 

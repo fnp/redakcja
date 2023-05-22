@@ -115,7 +115,18 @@ $(function()
 				e.returnValue = "Na stronie mogą być nie zapisane zmiany.";
 				return "Na stronie mogą być nie zapisane zmiany.";
 			};
-        };
+
+
+
+            };
+
+            $('body').mousemove(function(e) {
+                CurrentDocument.active = true;
+            });
+            $('body').keydown(function(e) {
+                CurrentDocument.active = true;
+            });
+
 
 		console.log("Fetching document's text");
 
@@ -145,7 +156,7 @@ $(function()
                             $('#header').addClass('out-of-date');
                             clearInterval(revTimer);
                         }});
-                    }, 300000);
+                    }, 60 * 1000);
 			},
 			failure: function() {
 				$('#loading-overlay').fadeOut();

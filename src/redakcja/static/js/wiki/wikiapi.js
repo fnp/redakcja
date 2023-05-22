@@ -86,6 +86,7 @@
 		this.galleryImages = [];
 		this.text = null;
 		this.has_local_changes = false;
+                this.active = true;
 		this._lock = -1;
 		this._context_lock = -1;
 		this._lock_count = 0;
@@ -178,9 +179,14 @@
     WikiDocument.prototype.checkRevision = function(params) {
         /* this doesn't modify anything, so no locks */
         var self = this;
+        let active = self.active;
+        self.active = false;
         $.ajax({
             method: "GET",
             url: reverse("ajax_document_rev", self.id),
+            data: {
+                'a': active,
+            },
             dataType: 'text',
             success: function(data) {
                 if (data == '') {
