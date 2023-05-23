@@ -141,19 +141,31 @@
 
         {% if perms.depot.add_legimibookpublish %}
           <hr>
-          <form method="post" action="{% url 'depot_legimi_publish' book.pk %}">
-            {% csrf_token %}
-            <button class="btn btn-primary" type="submit">Opublikuj na Legimi<br><small>w kategorii: {{ doc.book_info.legimi|default_if_none:doc.book_info.epoch }}</small></button>
-            {% with llp=book.last_legimi_publish %}
-              {% if llp %}
-                {{ llp.created_at }} &rarr;
-                {{ llp.started_at }} &rarr;
-                {{ llp.finished_at }}
-                ({{ llp.get_status_display }})
-                <!-- {{ llp.id }} -->
-              {% endif %}
-            {% endwith %}
-          </form>
+          {% with thema=doc.book_info.thema %}
+            {% if thema %}
+              <form method="post" action="{% url 'depot_legimi_publish' book.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit">
+                  Opublikuj na Legimi<br><small>w kategorii:
+                  {% for t in thema %}
+                    <tt>{{ t }}</tt>
+                    {% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  </small></button>
+                {% with llp=book.last_legimi_publish %}
+                  {% if llp %}
+                    {{ llp.created_at }} &rarr;
+                    {{ llp.started_at }} &rarr;
+                    {{ llp.finished_at }}
+                    ({{ llp.get_status_display }})
+                    <!-- {{ llp.id }} -->
+                  {% endif %}
+                {% endwith %}
+              </form>
+            {% else %}
+              <div class="alert alert-warning">Nie można opublikować na Legimi, ponieważ nie ustaiono kategorii Thema.</div>
+            {% endif %}
+          {% endwith %}
         {% endif %}
 
     {% else %}
