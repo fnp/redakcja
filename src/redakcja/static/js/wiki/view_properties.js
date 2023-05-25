@@ -171,10 +171,18 @@
     PropertiesPerspective.prototype.edit = function(element) {
         let self = this;
 
-        let $node = $(element);
         $("#parents", self.$pane).empty();
         $("#bubbles").empty();
 
+        $f = $("#properties-form", self.$pane);
+        $f.empty();
+
+        if (element === null) {
+            self.$edited = null;
+            return;
+        }
+
+        let $node = $(element);
         let b = $("<div class='badge badge-primary'></div>").text($node.attr('x-node'));
         b.data('node', element);
         $("#bubbles").append(b);
@@ -193,8 +201,6 @@
         node = $(element).attr('x-node');
         $("h1", self.$pane).text(node);
 
-        $f = $("#properties-form", self.$pane);
-        $f.empty();
         self.$edited = $(element);
 
         let nodeDef = elementDefs[node];
@@ -371,6 +377,16 @@
         this.$edited.remove();
         this.edit(p);
     }
+
+    PropertiesPerspective.prototype.onEnter = function(success, failure){
+        var self = this;
+        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
+
+        if ($.wiki.activePerspective() != 'VisualPerspective')
+            $.wiki.switchToTab('#VisualPerspective');
+
+        self.edit($('[x-node="utwor"]')[0]);
+    };
 
     $.wiki.PropertiesPerspective = PropertiesPerspective;
 

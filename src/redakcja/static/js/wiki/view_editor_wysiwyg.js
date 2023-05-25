@@ -743,6 +743,8 @@
         var self = this;
 
         self.caret.detach();
+
+        $.wiki.exitTab('#PropertiesPerspective');
         
         $.blockUI({
             message: 'Zapisywanie widoku...'

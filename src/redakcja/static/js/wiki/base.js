@@ -104,6 +104,15 @@
 		return this.perspectives[ $(tab).attr('id')];
 	}
 
+    $.wiki.exitTab = function(tab){
+	var self = this;
+	var $tab = $(tab);
+        if (!('.active', $tab)) return;
+	$('.active', $tab).removeClass('active');
+	self.perspectives[$tab.attr('id')].onExit();
+	$('#' + $tab.attr('data-ui-related')).hide();
+    }
+    
     $.wiki.switchToTab = function(tab){
 	var self = this;
 	var $tab = $(tab);

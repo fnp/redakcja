@@ -66,9 +66,7 @@
 		$.wiki.Perspective.prototype.onExit.call(this);
 	    this.doc.setText(this.codemirror.getValue());
 
-            if ($('.vsplitbar').hasClass('active') && $('#SearchPerspective').hasClass('active')) {
-                $.wiki.switchToTab('#ScanGalleryPerspective');
-            }
+            $.wiki.exitTab('#SearchPerspective');
 
 	    if(success) success();
 	}
