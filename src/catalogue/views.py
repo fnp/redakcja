@@ -219,6 +219,7 @@ class WikidataView(APIView):
 def publish_author(request, pk):
     author = get_object_or_404(models.Author, pk=pk)
     data = {
+        "name_pl": author.name,
         "description_pl": author.generate_description(),
     }
     apiclient.api_call(request.user, f"authors/{author.slug}/", data)
@@ -230,6 +231,7 @@ def publish_author(request, pk):
 def publish_genre(request, pk):
     obj = get_object_or_404(models.Genre, pk=pk)
     data = {
+        "name_pl": obj.name,
         "description_pl": obj.description,
         "plural": obj.plural,
         "is_epoch_specific": obj.is_epoch_specific,
@@ -243,6 +245,7 @@ def publish_genre(request, pk):
 def publish_kind(request, pk):
     obj = get_object_or_404(models.Kind, pk=pk)
     data = {
+        "name_pl": obj.name,
         "description_pl": obj.description,
         "collective_noun": obj.collective_noun,
     }
@@ -255,6 +258,7 @@ def publish_kind(request, pk):
 def publish_epoch(request, pk):
     obj = get_object_or_404(models.Epoch, pk=pk)
     data = {
+        "name_pl": obj.name,
         "description_pl": obj.description,
         "adjective_feminine_singular": obj.adjective_feminine_singular,
         "adjective_nonmasculine_plural": obj.adjective_feminine_singular,
