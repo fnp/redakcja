@@ -351,7 +351,7 @@ div[x-node] > .uwaga {
     visibility: hidden;
 }
 
-.edit-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
+.active-block-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
     font-size: 16px;
     line-height: 1.5;
@@ -393,8 +393,12 @@ div[x-node] > .uwaga {
     left:450px;
     width:100px;
 }
+.uwaga-button {
+    right: 0;
+    left: auto;
+}
 
-.edit-button:hover, .edit-button:active,
+.active-block-button:hover, .active-block-button:active,
 .delete-button:hover, .delete-button:active,
 .accept-button:hover, .accept-button:active,
 .tytul-button:hover, .tytul-button:active,

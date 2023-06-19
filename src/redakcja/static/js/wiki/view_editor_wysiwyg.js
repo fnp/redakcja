@@ -479,9 +479,20 @@
                 };
             });
         }
-        else if($box.is('*[x-annotation-box]') || $origin.is('*[x-edit-attribute]')) {
+        else if($box.is('*[x-annotation-box]') || $origin.is('*[x-edit-attribute]') || $origin.is('*[x-node="uwaga"]')) {
+            let q;
+            switch ($origin.attr('x-node')) {
+            case 'uwaga':
+                q = 'tę uwagę';
+                break;
+            case 'ref':
+                q = 'tę referencję';
+                break
+            default:
+                q = 'ten przypis';
+            }
             $('.delete-button', $overlay).click(function(){
-                if (window.confirm("Czy jesteś pewien, że chcesz usunąć ten przypis?")) {
+                if (window.confirm("Czy jesteś pewien, że chcesz usunąć " + q + "?")) {
                     $origin.remove();
                     $overlay.remove();
                     $(document).unbind('click.blur-overlay');
@@ -621,6 +632,16 @@
         });
     }
 
+    function createUwagaBefore(before) {
+        xml2html({
+            xml: '<uwaga/>',
+            success: function(element){
+                let $element = $(element);
+                $element.insertBefore(before);
+                openForEdit($element);
+            }
+        });
+    }
 
     function VisualPerspective(options){
         perspective = this;
@@ -629,25 +650,24 @@
 
         options.callback = function(){
             var element = $("#html-view");
-            var button = $('<button class="edit-button">Edytuj</button>');
+            var button = $('<button class="edit-button active-block-button">Edytuj</button>');
+            var uwagaButton = $('<button class="uwaga-button active-block-button">Uwaga</button>');
 
             if (!CurrentDocument.readonly) {
 
                 $('#html-view').bind('mousemove', function(event){
                     var editable = $(event.target).closest('*[x-editable]');
-                    $('.active', element).not(editable).removeClass('active').children('.edit-button').remove();
+                    $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
 
                     if (!editable.hasClass('active')) {
                         editable.addClass('active').append(button);
+                        if (!editable.is('[x-edit-attribute]')) {
+                            editable.append(uwagaButton);
+                        }
                     }
                     if (editable.is('.annotation-inline-box')) {
                         $('*[x-annotation-box]', editable).css({
-//                            left: event.clientX - editable.offset().left + 5,
-//                            top: event.clientY - editable.offset().top + 5
                         }).show();
-                    }
-                    else {
-//                        $('*[x-annotation-box]').hide();
                     }
                 });
 
@@ -685,6 +705,10 @@
                     openForEdit($(this).parent());
                 });
 
+                $(document).on('click', '.uwaga-button', function(event){
+                    event.preventDefault();
+                    createUwagaBefore($(this).parent());
+                });
             }
 
             $(document).on('click', '[x-node="motyw"]', function(){
