@@ -137,19 +137,19 @@ PIPELINE = {
     'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
     'COMPILERS': (
-        'pipeline.compilers.sass.SASSCompiler',
+        'libsasscompiler.LibSassCompiler',
     ),
 
     # CSS and JS files to compress
     'STYLESHEETS': {
         'detail': {
             'source_filenames': (
+                'css/html.scss',
                 'css/master.css',
                 'css/toolbar.css',
                 'css/gallery.css',
                 'css/history.css',
                 'css/summary.css',
-                'css/html.scss',
                 'css/imgareaselect-default.css',
                 'css/dialogs.css',
 
