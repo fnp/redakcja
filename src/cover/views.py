@@ -32,6 +32,10 @@ def preview(request, book, chunk=None, rev=None):
     If rev is not given, use publishable version.
     """
     chunk = Chunk.get(book, chunk)
+
+    if chunk.book.cover and rev is None and not request.GET.get('width') and not request.GET.get('height'):
+        return HttpResponseRedirect(chunk.book.cover.url)
+
     if rev is not None:
         try:
             revision = chunk.at_revision(rev)

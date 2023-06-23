@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.apps import apps
+from django.core.files.base import ContentFile
 from django.contrib.sites.models import Site
 from django.db import connection, models, transaction
 from django.template.loader import render_to_string
@@ -9,7 +10,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from slugify import slugify
-
+from librarian.cover import make_cover
+from librarian.dcparser import BookInfo
 
 import apiclient
 from documents.helpers import cached_in_field, GalleryMerger
@@ -21,6 +23,7 @@ from io import BytesIO
 import os
 import shutil
 import re
+
 
 class Book(models.Model):
     """ A document edited on the wiki """
@@ -42,6 +45,7 @@ class Book(models.Model):
     dc_cover_image = models.ForeignKey(Image, blank=True, null=True,
         db_index=True, on_delete=models.SET_NULL, editable=False)
     dc = models.JSONField(null=True, editable=False)
+    cover = models.FileField(blank=True, upload_to='documents/cover')
     catalogue_book = models.ForeignKey(
         'catalogue.Book',
         models.DO_NOTHING,
@@ -392,6 +396,21 @@ class Book(models.Model):
         }
         Book.objects.filter(pk=self.pk).update(**update)
         self.refresh_dc_cache()
+        self.build_cover()
+
+    def build_cover(self):
+        width, height = 216, 300
+        try:
+            xml = self.materialize(publishable=True).encode('utf-8')
+            info = BookInfo.from_bytes(xml)
+            cover = make_cover(info, width=width, height=height)
+            out = BytesIO()
+            ext = cover.ext()
+            cover.save(out)
+            self.cover.save(f'{self.slug}.{ext}', out, save=False)
+            type(self).objects.filter(pk=self.pk).update(cover=self.cover)
+        except:
+            type(self).objects.filter(pk=self.pk).update(cover='')
 
     # Materializing & publishing
     # ==========================
