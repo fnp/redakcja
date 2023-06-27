@@ -30,7 +30,7 @@ class Caret {
             if (!selection.isCollapsed) return;
             var anchorNode = selection.anchorNode;
             // Is selection still inside a node?
-            if (!$(anchorNode).closest('[x-node]')) return;
+            if (!$(anchorNode).closest('[x-node]').length) return;
             
             self.singleClick = true;
             setTimeout(function() {
