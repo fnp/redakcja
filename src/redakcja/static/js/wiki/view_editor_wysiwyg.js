@@ -661,7 +661,10 @@
 
                     if (!editable.hasClass('active')) {
                         editable.addClass('active').append(button);
-                        if (!editable.is('[x-edit-attribute]')) {
+                        if (!editable.is('[x-edit-attribute]') &&
+                            !editable.is('.annotation-inline-box') &&
+                            !editable.is('[x-edit-no-format]')
+                           ) {
                             editable.append(uwagaButton);
                         }
                     }
