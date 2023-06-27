@@ -6,6 +6,11 @@
 #history-view {
     flex: 1;
     overflow: auto;
+
+}
+
+#history-view .message-box {
+    text-align: center;
 }
 
 /*

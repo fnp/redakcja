@@ -293,8 +293,15 @@ def history(request, chunk_id):
     if not doc.book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
+    history = doc.history()
+    try:
+        before = int(request.GET.get('before'))
+    except:
+        pass
+    else:
+        history = history.filter(revision__lt=before)
     changes = []
-    for change in doc.history().reverse():
+    for change in history.reverse()[:20]:
         changes.append({
                 "version": change.revision,
                 "description": change.description,

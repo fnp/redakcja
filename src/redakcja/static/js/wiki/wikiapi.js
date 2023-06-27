@@ -125,33 +125,26 @@
 			}
 		});
 	};
-	/*
-	 * Fetch history of this document.
-	 *
-	 * from - First revision to fetch (default = 0) upto - Last revision to
-	 * fetch (default = tip)
-	 *
-	 */
-	WikiDocument.prototype.fetchHistory = function(params) {
-		/* this doesn't modify anything, so no locks */
-		params = $.extend({}, noops, params);
-		var self = this;
-		$.ajax({
-			method: "GET",
-			url: reverse("ajax_document_history", self.id),
-			dataType: 'json',
-			data: {
-				"from": params['from'],
-				"upto": params['upto']
-			},
-			success: function(data) {
-				params['success'](self, data);
-			},
-			error: function() {
-				params['failure'](self, "Nie udało się wczytać historii dokumentu.");
-			}
-		});
-	};
+    /*
+     * Fetch history of this document.
+     *
+     */
+    WikiDocument.prototype.fetchHistory = function(params) {
+	/* this doesn't modify anything, so no locks */
+	params = $.extend({}, noops, params);
+	var self = this;
+	$.ajax({
+	    method: "GET",
+	    url: reverse("ajax_document_history", self.id) + "?before=" + params.before,
+	    dataType: 'json',
+	    success: function(data) {
+		params['success'](self, data);
+	    },
+	    error: function() {
+		params['failure'](self, "Nie udało się wczytać historii dokumentu.");
+	    }
+	});
+    };
 	WikiDocument.prototype.fetchDiff = function(params) {
 		/* this doesn't modify anything, so no locks */
 		var self = this;
