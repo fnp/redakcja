@@ -103,7 +103,7 @@
         $('#history-view .message-box').html('Wczytywanie historii…').show();
         $('#changes-list').html('');
         this.finished = false;
-        this.befored = '';
+        this.before = '';
         this.triggerFetch();
     };
     HistoryPerspective.prototype.stopFetching = function() {
