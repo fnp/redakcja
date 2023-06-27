@@ -28,12 +28,15 @@ class Caret {
             
             var selection = window.getSelection();
             if (!selection.isCollapsed) return;
+            var anchorNode = selection.anchorNode;
+            // Is selection still inside a node?
+            if (!$(anchorNode).closest('[x-node]')) return;
             
             self.singleClick = true;
             setTimeout(function() {
                 if (self.singleClick) {
                     self.element.insertBefore(
-                        selection.anchorNode.splitText(
+                        anchorNode.splitText(
                             selection.anchorOffset
                         )
                     )
