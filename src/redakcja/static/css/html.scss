@@ -538,3 +538,13 @@ div[x-node] > .uwaga {
     border:0;
     color: black;
 } 
+
+
+#media-chooser {
+    img {
+        border: 3px solid transparent;
+        &.active {
+            border-color: green;
+        }
+    }
+}

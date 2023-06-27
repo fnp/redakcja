@@ -22,7 +22,7 @@ from cover import forms
 from cover.utils import get_import_data
 
 
-PREVIEW_SIZE = (216, 300)
+PREVIEW_SIZE = (212, 300)
 
 
 def preview(request, book, chunk=None, rev=None):

@@ -8,6 +8,7 @@
             "attributes": [
                 {
                     "name": "src",
+                    "type": "media",
                 },
                 {
                     "name": "alt",
@@ -151,6 +152,26 @@
             });
 
 
+            $('#media-chooser').on('show.bs.modal', function (event) {
+                var input = $("input", $(event.relatedTarget).parent());
+                var modal = $(this);
+                modal.data('target-input', input);
+                var imglist = modal.find('.modal-body');
+                $.each(self.doc.galleryImages, (i, imgItem) => {
+                    img = $("<img>").attr("src", imgItem.thumb).attr('title', imgItem.url).data('url', imgItem.url).on('click', function() {
+                        imglist.find('img').removeClass('active');
+                        $(this).addClass('active');
+                    });
+                    imglist.append(img);
+                });
+            })
+            $('#media-chooser .ctrl-ok').on('click', function (event) {
+                $('#media-chooser').data('target-input')
+                    .val(
+                        (new URL($('#media-chooser .active').data('url'), document.baseURI)).href
+                    ).trigger('change');
+                $('#media-chooser').modal('hide');
+            });
             
             self.$pane.on('click', '.current-convert', function() {
                 self.convert($(this).attr('data-to'));
@@ -334,22 +355,28 @@
 
         let $fg = $("<div class='form-group'>");
         $("<label/>").attr("for", "property-" + defn.name).text(defn.name).appendTo($fg);
-        let $input;
+        let $input, $inputCnt;
         switch (defn.type) {
         case 'text':
-            $input = $("<textarea>");
+            $inputCnt =$input = $("<textarea>");
             break;
         case 'select':
-            $input = $("<select>");
+            $inputCnt = $input = $("<select>");
             $.each(defn.options, function(i, e) {
                 $("<option>").text(e).appendTo($input);
             });
             break;
         case 'bool':
-            $input = $("<input type='checkbox'>");
+            $inputCnt = $input = $("<input type='checkbox'>");
+            break;
+        case 'media':
+            $inputCnt = $("<div class='media-input input-group'>");
+            $input = $("<input type='text'>");
+            $inputCnt.append($input);
+            $inputCnt.append($("<button type='button' class='ctrl-media-choose btn btn-primary' data-toggle='modal' data-target='#media-chooser'>…</button>"));
             break;
         default:
-            $input = $("<input>");
+            $inputCnt = $input = $("<input>");
         }
 
         $input.addClass("form-control").attr("id", "property-" + defn.name).data("property", defn.name);
@@ -362,7 +389,7 @@
         if (elem) {
             $input.data("edited", elem);
         }
-        $input.appendTo($fg);
+        $inputCnt.appendTo($fg);
 
         $fg.appendTo($form);
     }
@@ -385,7 +412,9 @@
         if ($.wiki.activePerspective() != 'VisualPerspective')
             $.wiki.switchToTab('#VisualPerspective');
 
-        self.edit($('[x-node="utwor"]')[0]);
+        if (self.$edited === null) {
+            self.edit($('[x-node="utwor"]')[0]);
+        }
     };
 
     $.wiki.PropertiesPerspective = PropertiesPerspective;

@@ -399,7 +399,7 @@ class Book(models.Model):
         self.build_cover()
 
     def build_cover(self):
-        width, height = 216, 300
+        width, height = 212, 300
         try:
             xml = self.materialize(publishable=True).encode('utf-8')
             info = BookInfo.from_bytes(xml)

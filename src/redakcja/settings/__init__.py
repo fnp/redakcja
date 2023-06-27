@@ -125,6 +125,8 @@ LEGIMI_BIG_WORDS = 10000
 LEGIMI_SMALL_PRICE = 7
 LEGIMI_BIG_PRICE = 20
 
+THUMBNAIL_PRESERVE_FORMAT = True
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

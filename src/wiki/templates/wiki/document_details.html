@@ -15,17 +15,17 @@
 {% endblock %}
 
 {% block tabs-menu %}
-    {% include "wiki/tabs/summary_view_item.html" %}
-    {% include "wiki/tabs/wysiwyg_editor_item.html" %}
-    {% include "wiki/tabs/source_editor_item.html" %}
-    {% include "wiki/tabs/history_view_item.html" %}
+  {% include "wiki/tabs/summary_view_item.html" %}
+  {% include "wiki/tabs/wysiwyg_editor_item.html" %}
+  {% include "wiki/tabs/source_editor_item.html" %}
+  {% include "wiki/tabs/history_view_item.html" %}
 {% endblock %}
 
 {% block tabs-content %}
-    {% include "wiki/tabs/summary_view.html" %}
-    {% include "wiki/tabs/wysiwyg_editor.html" %}
-    {% include "wiki/tabs/source_editor.html" %}
-    {% include "wiki/tabs/history_view.html" %}
+  {% include "wiki/tabs/summary_view.html" %}
+  {% include "wiki/tabs/wysiwyg_editor.html" %}
+  {% include "wiki/tabs/source_editor.html" %}
+  {% include "wiki/tabs/history_view.html" %}
 {% endblock %}
 
 {% block tabs-right %}
@@ -36,21 +36,22 @@
 {% endblock %}
 
 {% block splitter-extra %}
-<div id="vsplitbar" class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
+  <div id="vsplitbar" class="vsplitbar" title="{% trans "Click to open/close gallery" %}">
     <p class="vsplitbar-title"></p>
-    </div>
-    <div id="sidebar">
-      {% include "wiki/tabs/gallery_view.html" %}
-      {% include "wiki/tabs/annotations_view.html" %}
-      {% include "wiki/tabs/properties_view.html" %}
-      {% include "wiki/tabs/search_view.html" %}
-    </div>
-    <div id="drag-layer"></div>
+  </div>
+  <div id="sidebar">
+    {% include "wiki/tabs/gallery_view.html" %}
+    {% include "wiki/tabs/annotations_view.html" %}
+    {% include "wiki/tabs/properties_view.html" %}
+    {% include "wiki/tabs/search_view.html" %}
+  </div>
+  <div id="drag-layer"></div>
 {% endblock %}
 
 {% block dialogs %}
   {% include "wiki/save_dialog.html" %}
   {% include "wiki/revert_dialog.html" %}
+  {% include "wiki/media_dialog.html" %}
   {% if can_pubmark %}
     {% include "wiki/pubmark_dialog.html" %}
   {% endif %}

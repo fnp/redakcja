@@ -18,6 +18,7 @@ from django.utils.formats import localize
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
+from sorl.thumbnail import get_thumbnail
 
 from documents.models import Book, Chunk
 from . import nice_diff
@@ -231,13 +232,17 @@ def gallery(request, directory):
         def is_image(filename):
             return os.path.splitext(filename)[1].lower() in (u'.jpg', u'.jpeg', u'.png')
 
-        images = [map_to_url(f) for f in os.listdir(base_dir) if is_image(f)]
-        images.sort()
-
         books = Book.objects.filter(gallery=directory)
 
         if not all(book.public for book in books) and not request.user.is_authenticated:
             return HttpResponseForbidden("Not authorized.")
+
+        images = [
+            {
+                "url": map_to_url(f),
+                "thumb": get_thumbnail(os.path.join(base_dir, f), '120x120').url
+            } for f in sorted(os.listdir(base_dir)) if is_image(f)
+        ]
 
         return JSONResponse(images)
     except (IndexError, OSError):
