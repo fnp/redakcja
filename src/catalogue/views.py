@@ -225,7 +225,7 @@ def publish_author(request, pk):
         "gazeta_link": author.gazeta_link,
         "culturepl_link": author.culturepl_link,
         "wiki_link_pl": author.plwiki,
-        "photo": request.build_absolute_uri(author.photo.url),
+        "photo": request.build_absolute_uri(author.photo.url) if author.photo else None,
         "photo_source": author.photo_source,
         "photo_attribution": author.photo_attribution,
     }
