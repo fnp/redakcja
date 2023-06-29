@@ -61,7 +61,7 @@ def oauth_callback(request, beta=False):
     conn.token_secret = access_token['oauth_token_secret']
     conn.save()
 
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(reverse('documents_user'))
 
 
 @login_required

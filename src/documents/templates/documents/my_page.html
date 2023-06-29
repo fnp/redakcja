@@ -22,12 +22,12 @@
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
-  {% if wllogin %}
-    <div class="card">
-      <div class="card-header">
-        <h2>Konto WL</h2>
-      </div>
-      <div class="card-body">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2>Konto WL</h2>
+    </div>
+    <div class="card-body">
+      {% if wllogin %}
         <p>
           Podłączone konto na Wolnych Lekturach:
           <strong>{{ wllogin }}</strong>
@@ -38,10 +38,16 @@
             Odłącz
           </button>
         </form>
-      </div>
-
+      {% else %}
+        <form method="post" action="{% url 'apiclient_oauth' %}">
+          {% csrf_token %}
+          <button class="btn btn-primary">
+            Podłącz konto
+          </button>
+        </form>
+      {% endif %}
     </div>
-  {% endif %}
+  </div>
 
   <div class="card">
 	<div class="card-header">

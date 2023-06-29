@@ -221,6 +221,13 @@ def publish_author(request, pk):
     data = {
         "name_pl": author.name,
         "description_pl": author.generate_description(),
+        "genitive": author.genitive,
+        "gazeta_link": author.gazeta_link,
+        "culturepl_link": author.culturepl_link,
+        "wiki_link_pl": author.plwiki,
+        "photo": request.build_absolute_uri(author.photo.url),
+        "photo_source": author.photo_source,
+        "photo_attribution": author.photo_attribution,
     }
     apiclient.api_call(request.user, f"authors/{author.slug}/", data)
     return redirect(reverse('admin:catalogue_author_change', args=[author.pk]))
