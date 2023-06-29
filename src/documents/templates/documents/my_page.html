@@ -22,7 +22,28 @@
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}
-<div class="card">
+  {% if wllogin %}
+    <div class="card">
+      <div class="card-header">
+        <h2>Konto WL</h2>
+      </div>
+      <div class="card-body">
+        <p>
+          Podłączone konto na Wolnych Lekturach:
+          <strong>{{ wllogin }}</strong>
+        </p>
+        <form method="post" action="{% url 'apiclient_disconnect' %}">
+          {% csrf_token %}
+          <button class="btn btn-danger">
+            Odłącz
+          </button>
+        </form>
+      </div>
+
+    </div>
+  {% endif %}
+
+  <div class="card">
 	<div class="card-header">
         <h2>{% trans "Your last edited documents" %}</h2>
 	</div>

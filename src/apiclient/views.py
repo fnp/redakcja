@@ -6,6 +6,7 @@ from urllib.parse import parse_qsl
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.http import require_POST
 import oauth2
 
 from apiclient.models import OAuthConnection
@@ -61,3 +62,10 @@ def oauth_callback(request, beta=False):
     conn.save()
 
     return HttpResponseRedirect('/')
+
+
+@login_required
+@require_POST
+def disconnect(request):
+    request.user.oauthconnection_set.filter(beta=False).delete()
+    return HttpResponseRedirect(reverse('documents_user'))

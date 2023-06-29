@@ -10,4 +10,5 @@ urlpatterns = [
     path('oauth_callback/', views.oauth_callback, name='apiclient_oauth_callback'),
     path('oauth-beta/', views.oauth, kwargs={'beta': True}, name='apiclient_beta_oauth'),
     path('oauth_callback-beta/', views.oauth_callback, kwargs={'beta': True}, name='apiclient_beta_callback'),
+    path('disconnect', views.disconnect, name='apiclient_disconnect'),
 ]

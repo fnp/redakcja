@@ -23,7 +23,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_cas_ng.decorators import user_passes_test
 
-from apiclient import NotAuthorizedError
+from apiclient import api_call, NotAuthorizedError
 from . import forms
 from . import helpers
 from .helpers import active_tab
@@ -65,9 +65,17 @@ def my(request):
         key=lambda x: x[1]['time'], reverse=True)
     for k, v in last_books:
         v['time'] = datetime.fromtimestamp(v['time'])
+    try:
+        resp = api_call(request.user, 'username/')
+    except NotAuthorizedError:
+        wllogin = None
+    else:
+        wllogin = resp['username']
+
     return render(request, 'documents/my_page.html', {
         'last_books': last_books,
         "logout_to": '/',
+        "wllogin": wllogin,
         })
 
 
