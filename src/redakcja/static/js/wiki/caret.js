@@ -151,10 +151,21 @@ class Caret {
     splitBlock() {
         let splitter = this.element;
         let parent, newParent, splitIndex, index;
-        
+
         while (!splitter.is('div[x-node]')) {
             parent = splitter.parent();
             splitIndex = parent.contents().index(splitter);
+
+            if (parent.is('[x-annotation-box]')) {
+                // We're splitting inside an inline-style annotation.
+                // Convert into a block-style annotation now.
+                let p = $('<div x-editable="true" x-node="akap">');
+                parent.contents().appendTo(p);
+                parent.empty();
+                parent.append(p);
+                parent = p;
+            }
+
             newParent = parent.clone();
             index = parent.contents().length - 1;
             while (index >= splitIndex) {
