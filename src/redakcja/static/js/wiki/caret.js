@@ -4,7 +4,7 @@ class Caret {
         self.view = view;
         self.singleClick = false;
         
-        let caret = this.element = $('<span id="caret"><textarea></textarea></span>');
+        let caret = this.element = $('<nobr><span id="caret"><textarea></textarea></span></nobr>');
         
         // When user writes into caret, add it to the document.
         $('textarea', caret).on('input', function() {
@@ -16,8 +16,8 @@ class Caret {
         
         // On click on x-node element, set caret position.
         self.view.on('click', '*[x-node]', function(e) {
-            if (e.redakcja_caret_inserted) return;
-            e.redakcja_caret_inserted = true;
+            if (e.redakcja_caret_ignore) return;
+            e.redakcja_caret_ignore = true;
             
             if (self.singleClick) {
                 self.singleClick = false;
@@ -29,8 +29,10 @@ class Caret {
             var selection = window.getSelection();
             if (!selection.isCollapsed) return;
             var anchorNode = selection.anchorNode;
+            if (anchorNode.nodeType != Node.TEXT_NODE) return;
             // Is selection still inside a node?
             if (!$(anchorNode).closest('[x-node]').length) return;
+            if ($(anchorNode).parents('[x-annotation-box]').not('.editing').length) return;
             
             self.singleClick = true;
             setTimeout(function() {
@@ -48,8 +50,6 @@ class Caret {
         });
         
         self.element.on('keydown', function(e) {
-            console.log('KEY');
-            
             // TODO:
             // delete selection?
             
@@ -107,8 +107,6 @@ class Caret {
     }
     
     detach() {
-        console.log(this.view);
-        
         let p;
         if (this.attached) {
             p = this.element.parent()[0]
@@ -125,11 +123,17 @@ class Caret {
         this.element.parent()[0].normalize();
     }
     
+    insert(elem) {
+        elem.insertBefore(this.element);
+    }
+
     insertChar(ch) {
-        $(document.createTextNode(ch)).insertBefore(this.element);
+        this.insert(
+            $(document.createTextNode(ch))
+        );
         this.normalize();
     }
-    
+
     deleteBefore() {
         let contents = this.element.parent().contents();
         // Find the text before caret.
@@ -173,13 +177,11 @@ class Caret {
                 --index;
             }
             while (index >= 0) {
-                console.log(newParent, index);
                 parent.contents()[index].remove();
                 -- index;
             }
             newParent.insertBefore(parent);
             
-            console.log('split', parent);
             splitter = parent;
         }
     }
@@ -214,7 +216,7 @@ class Caret {
         let target, moved, oldparent;
         
         let parent = this.element.parent()[0];
-        
+
         if (opts.edge(index, contents.length)) {
             // We're at the end -- what to do?
             // can we go up?
@@ -231,7 +233,7 @@ class Caret {
         target = contents[index];
         moved = false;
         
-        while (target.nodeType == 1) {
+        while (target !== undefined && target.nodeType == Node.ELEMENT_NODE) {
             // we've encountered a node.
             // can we go inside?
             
@@ -255,7 +257,7 @@ class Caret {
             
         }
         
-        if (target.nodeType == 3) {
+        if (target !== undefined && target.nodeType == Node.TEXT_NODE ) {
             if (!moved) {
                 target = opts.splitTarget(target);
             } else {

@@ -18,15 +18,21 @@
 
     /* Verify insertion port for annotation or theme */
     function verifyTagInsertPoint(node){
-        if (node.nodeType == 3) { // Text Node
+        if (node.nodeType == Node.TEXT_NODE) {
             node = node.parentNode;
         }
 
-        if (node.nodeType != 1) {
+        if (node.nodeType != Node.ELEMENT_NODE) {
             return false;
         }
 
         node = $(node);
+        if (node.attr('id') == 'caret') {
+            node = node.parent();
+        }
+        while (node.attr('x-pass-thru')) {
+            node = node.parent();
+        }
         var xtype = node.attr('x-node');
 
         if (!xtype || (xtype.search(':') >= 0) ||
@@ -36,6 +42,12 @@
             return false;
         }
 
+        return true;
+    }
+
+    function verifyThemeBoundaryPoint(node) {
+        if (!verifyTagInsertPoint(node)) return false;
+        node = $(node);
         // don't allow themes inside annotations
         if (node.closest('[x-node="pe"]').length > 0)
             return false;
@@ -50,10 +62,10 @@
         var text = "";
 
         $(fragment.childNodes).each(function(){
-            if (this.nodeType == 3) // textNode
+            if (this.nodeType == Node.TEXT_NODE)
                 text += this.nodeValue;
             else {
-                if (this.nodeType == 1 &&
+                if (this.nodeType == Node.ELEMENT_NODE &&
                         $.inArray($(this).attr('x-node'), ANNOT_FORBIDDEN) == -1) {
                     text += html2plainText(this);
                 }
@@ -69,28 +81,26 @@
         var selection = window.getSelection();
         var n = selection.rangeCount;
 
-        if (n == 0) {
+        if (selection.isCollapsed) {
             window.alert("Nie zaznaczono żadnego obszaru");
             return false;
         }
 
-        // for now allow only 1 range
-        if (n > 1) {
-            window.alert("Zaznacz jeden obszar");
-            return false;
-        }
-
-        // remember the selected range
-        var range = selection.getRangeAt(0);
+        var range = selection.getRangeAt(n - 1);
 
         if (!verifyTagInsertPoint(range.endContainer)) {
             window.alert("Nie można wstawić w to miejsce przypisu.");
             return false;
         }
 
-        // BUG #273 - selected text can contain themes, which should be omitted from
-        // defining term
-        var text = html2plainText(range.cloneContents());
+        text = '';
+        for (let i = 0; i < n; ++ i) {
+            let rangeI = selection.getRangeAt(i);
+            if (verifyTagInsertPoint(rangeI.startContainer) &&
+                verifyTagInsertPoint(rangeI.endContainer)) {
+                text += html2plainText(rangeI.cloneContents());
+            }
+        }
         var tag = $('<span></span>');
         range.collapse(false);
         range.insertNode(tag[0]);
@@ -110,46 +120,6 @@
     }
 
 
-    function addReference(){
-        var selection = window.getSelection();
-        var n = selection.rangeCount;
-
-        if (n == 0) {
-            window.alert("Nie zaznaczono żadnego obszaru");
-            return false;
-        }
-
-        // for now allow only 1 range
-        if (n > 1) {
-            window.alert("Zaznacz jeden obszar");
-            return false;
-        }
-
-        // remember the selected range
-        var range = selection.getRangeAt(0);
-
-        if (!verifyTagInsertPoint(range.endContainer)) {
-            window.alert("Nie można wstawić w to miejsce przypisu.");
-            return false;
-        }
-
-        var tag = $('<span></span>');
-        range.collapse(false);
-        range.insertNode(tag[0]);
-
-        xml2html({
-            xml: '<ref href=""/>',
-            success: function(text){
-                var t = $(text);
-                tag.replaceWith(t);
-                openForEdit(t);
-            },
-            error: function(){
-                tag.remove();
-                alert('Błąd przy dodawaniu referncji:' + errors);
-            }
-        })
-    }
 
 
 
@@ -185,12 +155,12 @@
         // verify if the start/end points make even sense -
         // they must be inside a x-node (otherwise they will be discarded)
         // and the x-node must be a main text
-        if (!verifyTagInsertPoint(range.startContainer)) {
+        if (!verifyThemeBoundaryPoint(range.startContainer)) {
             window.alert("Motyw nie może się zaczynać w tym miejscu.");
             return false;
         }
 
-        if (!verifyTagInsertPoint(range.endContainer)) {
+        if (!verifyThemeBoundaryPoint(range.endContainer)) {
             window.alert("Motyw nie może się kończyć w tym miejscu.");
             return false;
         }
@@ -644,7 +614,7 @@
     }
 
     function VisualPerspective(options){
-        perspective = this;
+        perspective = self = this;
 
         var old_callback = options.callback;
 
@@ -677,7 +647,7 @@
                 perspective.caret = new Caret(element);
                 
                 $('#insert-reference-button').click(function(){
-                    addReference();
+                    self.addReference();
                     return false;
                 });
 
@@ -698,7 +668,6 @@
                 });
 
                 $(".insert-char").click(function() {
-                    console.log('perspective', perspective);
                     addSymbol(caret=perspective.caret);
                     return false;
                 });
@@ -720,8 +689,9 @@
 
             element.on('click', '.annotation', function(event) {
                 event.preventDefault();
+                event.redakcja_caret_ignore = true;
                 $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
-                
+                perspective.caret.detach();
             });
 
             old_callback.call(this);
@@ -864,6 +834,52 @@
             }
         });
     };
+
+    VisualPerspective.prototype.insertAtRange = function(range, elem) {
+        let self = this;
+        let $end = $(range.endContainer);
+        if ($end.attr('id') == 'caret') {
+            self.caret.insert(elem);
+        } else {
+            range.insertNode(elem[0]);
+        }
+    }
+
+    VisualPerspective.prototype.addReference = function() {
+        let self = this;
+        var selection = window.getSelection();
+        var n = selection.rangeCount;
+
+        // TODO: if no selection, take caret position..
+        if (n == 0) {
+            window.alert("Nie zaznaczono żadnego obszaru");
+            return false;
+        }
+
+        var range = selection.getRangeAt(n - 1);
+        if (!verifyTagInsertPoint(range.endContainer)) {
+            window.alert("Nie można wstawić w to miejsce referencji.");
+            return false;
+        }
+
+        var tag = $('<span></span>');
+
+        range.collapse(false);
+        self.insertAtRange(range, tag);
+
+        xml2html({
+            xml: '<ref href=""/>',
+            success: function(text){
+                var t = $(text);
+                tag.replaceWith(t);
+                openForEdit(t);
+            },
+            error: function(){
+                tag.remove();
+                alert('Błąd przy dodawaniu referncji:' + errors);
+            }
+        })
+    }
 
     $.wiki.VisualPerspective = VisualPerspective;
 
