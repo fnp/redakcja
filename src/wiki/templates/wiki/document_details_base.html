@@ -15,16 +15,17 @@
    var STATIC_URL = '{{STATIC_URL}}';
   </script>
   {% javascript 'detail' %}
-  <script
-			  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-			  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			  crossorigin="anonymous"></script>
+    <script
+	src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+	integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+	crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block maincontent %}
   <div id="document-meta"
-	   data-chunk-id="{{ chunk.pk }}" style="display:none">
+       data-chunk-id="{{ chunk.pk }}" style="display:none">
 
+    <span data-key="book-slug">{{ chunk.book.slug }}</span>
     <span data-key="gallery">{{ chunk.book.gallery }}</span>
     <span data-key="gallery-start">{% if chunk.gallery_start %}{{ chunk.gallery_start }}{% endif %}</span>
     <span data-key="revision">{{ revision }}</span>
@@ -34,8 +35,9 @@
   </div>
 
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark" id="header">
-    <a class="navbar-brand" href="{% url 'documents_document_list' %}">
-      <img src="{% static 'img/wl-orange.png' %}"  alt="Home" />
+    <a class="navbar-brand" href="{{ chunk.book.get_absolute_url }}" target="_blank">
+      <img src="{% url 'cover_preview' chunk.book.slug chunk.slug %}"
+           style="height: 59px; margin-top:-13px;margin-bottom: -13px;">
     </a>
 
     <ul class="tabs nav nav-tabs mr-auto" id="tabs">

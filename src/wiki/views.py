@@ -337,6 +337,36 @@ def pubmark(request, chunk_id):
         return JSONFormInvalid(form)
 
 
+@require_POST
+@ajax_require_permission('documents.book_edit')
+def set_gallery(request, chunk_id):
+    doc = get_object_or_404(Chunk, pk=chunk_id)
+    book = doc.book
+    book.gallery = request.POST['gallery']
+    book.save(update_fields=['gallery'])
+    return JSONResponse({})
+
+@require_POST
+@ajax_require_permission('documents.chunk_edit')
+def set_gallery_start(request, chunk_id):
+    doc = get_object_or_404(Chunk, pk=chunk_id)
+    doc.gallery_start = request.POST['start']
+    doc.save(update_fields=['gallery_start'])
+    return JSONResponse({})
+
+@ajax_require_permission('documents.chunk_edit')
+def galleries(request):
+    return JSONResponse(
+        sorted(
+            os.listdir(
+                os.path.join(
+                    settings.MEDIA_ROOT,
+                    settings.IMAGE_DIR,
+                )
+            )
+        )
+    )
+
 def themes(request):
     prefix = request.GET.get('q', '')
     return http.HttpResponse('\n'.join([str(t) for t in Theme.objects.filter(name__istartswith=prefix)]))

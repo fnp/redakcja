@@ -91,6 +91,59 @@
                 self.alterZoom((-0.2));
             });
 
+            $('.ctrl-gallery-setstart', this.$element).click(function(e) {
+                e.preventDefault();
+                CurrentDocument.setGalleryStart(self.config().page);
+            });
+            $('.ctrl-gallery-edit', this.$element).click(function(e) {
+                e.preventDefault();
+                CurrentDocument.openGalleryEdit();
+            });
+            $('.ctrl-gallery-refresh', this.$element).click(function(e) {
+                e.preventDefault();
+                self.refreshGallery();
+            });
+            $('#gallery-chooser').on('show.bs.modal', function (event) {
+                var modal = $(this);
+                var datalist = modal.find('.modal-body');
+                datalist.html('');
+                self.doc.withGalleryList(function(galleries) {
+                    console.log(galleries);
+                    $.each(galleries, (i, gallery) => {
+                        item = $('<div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="gallery"></label></div>');
+                        $('input', item).val(gallery);
+                        $('label', item).append(gallery);
+                        if (gallery == self.doc.galleryLink) {
+                            item.addClass('text-primary')
+                            $('input', item).prop('checked', true);
+                        }
+                        item.appendTo(datalist);
+                    });
+                    item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-none form-check-input" type="radio" name="gallery"><em class="text-secondary">brak</em></label></div>');
+                    item.appendTo(datalist);
+                    item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-new form-check-input" type="radio" name="gallery"><input class="ctrl-name form-control" placeholder="nowa"></label></div>');
+                    item.appendTo(datalist);
+                });
+            })
+            $('#gallery-chooser .ctrl-ok').on('click', function (event) {
+                let item = $('#gallery-chooser :checked');
+                let name;
+                if (item.hasClass('ctrl-none')) {
+                    name = '';
+                }
+                else if (item.hasClass('ctrl-new')) {
+                    name = $('#gallery-chooser .ctrl-name').val();
+                } else {
+                    name = item.val();
+                }
+                
+                self.doc.setGallery(name);
+                $('#gallery-chooser').modal('hide');
+                self.refreshGallery(function() {
+                    self.setPage(1);
+                });
+            });
+
             $(window).resize(function(){
                 self.dimensions.galleryWidth = self.$image.parent().width();
                 self.dimensions.galleryHeight = self.$image.parent().height();
@@ -222,11 +275,8 @@
     /*
      * Loading gallery
      */
-    ScanGalleryPerspective.prototype.onEnter = function(success, failure){
-        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
-
+    ScanGalleryPerspective.prototype.refreshGallery = function(success, failure) {
         var self = this;
-
         this.doc.refreshGallery({
             success: function(doc, data){
                 self.$image.show();
@@ -243,7 +293,11 @@
                 if(failure) failure();
             }
         });
+    }
 
+    ScanGalleryPerspective.prototype.onEnter = function(success, failure){
+        $.wiki.SidebarPerspective.prototype.onEnter.call(this);
+        this.refreshGallery(success, failure);
     };
 
 	ScanGalleryPerspective.prototype.onExit = function(success, failure) {

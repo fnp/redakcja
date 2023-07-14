@@ -1,3 +1,4 @@
+
 {% load i18n %}
 <div id="side-gallery">
     <!-- gallery toolbar -->
@@ -25,6 +26,16 @@
       <div class="btn-group ml-2">
         <button class="btn btn-info zoom-in">＋</button>
         <button class="btn btn-info zoom-out">&mdash;</button>
+      </div>
+
+    </div>
+    <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle text-info" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">⚙</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item ctrl-gallery-setstart" href="#" title="Ustawia początek galerii tego utworu na bieżącej stronie">Ustaw początek</a>
+        <a class="dropdown-item ctrl-gallery-choose" href="#" title="Wybiera inną galerię" data-toggle='modal' data-target='#gallery-chooser'>Wybierz galerię</a>
+        <a class="dropdown-item ctrl-gallery-edit" href="#">Edytuj galerię</a>
+        <a class="dropdown-item ctrl-gallery-refresh" href="#" title="Ponownie ładuje galerię">Odśwież galerię</a>
       </div>
     </div>
   </div>

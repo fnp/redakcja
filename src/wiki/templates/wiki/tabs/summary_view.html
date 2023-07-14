@@ -12,28 +12,13 @@
 		</div>
 
 		<h2>
-			<label>{% trans "Title" %}:</label>
-			<span data-ui-editable="true" data-edit-target="meta.displayTitle"
-			>{{ chunk.pretty_name }}</span>
+			{{ chunk.pretty_name }}
 		</h2>
         <p><a href="{{ chunk.book.get_absolute_url }}">{% trans "Go to the book's page" %}</a>
         </p>
 		<p>
 			<label>{% trans "Document ID" %}:</label>
 			<span>{{ chunk.book.slug }}/{{ chunk.slug }}</span>
-		</p>
-		<p>
-			<label>{% trans "Current version" %}:</label>
-			{{ chunk.revision }} ({{ chunk.head.created_at }})
-		</p>
-		<p>
-			<label>{% trans "Last edited by" %}:</label>
-			{{ chunk.head.author }}
-		</p>
-		<p>
-			<label>{% trans "Link to gallery" %}:</label>
-			<span data-ui-editable="true" data-edit-target="meta.galleryLink"
-			>{{ chunk.book.gallery }}</span>
 		</p>
 		<p>
 		    <label>{% trans "Characters in document" %}:</label>
