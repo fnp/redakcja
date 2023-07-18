@@ -85,6 +85,8 @@ class Author(WikidataModel):
     )
     collections = models.ManyToManyField("Collection", blank=True, verbose_name=_("collections"))
 
+    woblink = models.IntegerField(null=True, blank=True)
+    
     class Meta:
         verbose_name = _('author')
         verbose_name_plural = _('authors')

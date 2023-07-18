@@ -1,8 +1,11 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import json
 from django.contrib import admin
 from django.db.models import Min
+from django import forms
+from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -21,7 +24,52 @@ class NotableBookInline(OrderableAdmin, admin.TabularInline):
     ordering_field_hide_input = True
 
 
+class WoblinkAuthorWidget(forms.Select):
+    class Media:
+        js = ("catalogue/woblink_admin.js",)
+
+    def __init__(self):
+        self.attrs = {}
+        self.choices = []
+        self.field = None
+
+    def get_url(self):
+        return reverse('catalogue_woblink_author_autocomplete')
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs=extra_attrs)
+        attrs.setdefault("class", "")
+        attrs.update(
+            {
+                "data-ajax--cache": "true",
+                "data-ajax--delay": 250,
+                "data-ajax--type": "GET",
+                "data-ajax--url": self.get_url(),
+                "data-app-label": '',
+                "data-model-name": '',
+                "data-field-name": '',
+                "data-theme": "admin-autocomplete",
+                "data-allow-clear": json.dumps(not self.is_required),
+
+                "data-placeholder": "", # Chyba że znaleziony?
+                "lang": "pl",
+                "class": attrs["class"]
+                + (" " if attrs["class"] else "")
+                + "admin-autocomplete admin-woblink",
+            }
+        )
+        return attrs
+
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = models.Author
+        fields = '__all__'
+        widgets = {
+            'woblink': WoblinkAuthorWidget,
+        }
+
 class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
+    form = AuthorForm
     list_display = [
         "first_name",
         "last_name",
@@ -31,6 +79,7 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
         "nationality",
         "priority",
         "wikidata_link",
+        "woblink_link",
         "slug",
     ]
     list_display_links = [
@@ -49,10 +98,20 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
     ]
     list_per_page = 10000000
     search_fields = ["first_name", "last_name", "wikidata"]
-    readonly_fields = ["wikidata_link", "description_preview"]
+    readonly_fields = ["wikidata_link", "description_preview", "woblink_link"]
+    prepopulated_fields = {"slug": ("first_name", "last_name")}
+    autocomplete_fields = ["collections", "place_of_birth", "place_of_death"]
+    inlines = [
+        NotableBookInline,
+    ]
 
     fieldsets = [
-        (None, {"fields": [("wikidata", "wikidata_link")]}),
+        (None, {
+            "fields": [
+                ("wikidata", "wikidata_link"),
+                ("woblink", "woblink_link"),
+            ]
+        }),
         (
             _("Identification"),
             {
@@ -92,15 +151,20 @@ class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
             },
         ),
     ]
-    
-    prepopulated_fields = {"slug": ("first_name", "last_name")}
-    autocomplete_fields = ["collections", "place_of_birth", "place_of_death"]
-    inlines = [
-        NotableBookInline,
-    ]
 
     def description_preview(self, obj):
         return obj.generate_description()
+
+    def woblink_link(self, obj):
+        if obj.woblink:
+            return format_html(
+                '<a href="https://woblink.com/autor/{slug}-{w}" target="_blank">{w}</a>',
+                w=obj.woblink,
+                slug=obj.slug,
+            )
+        else:
+            return ""
+    woblink_link.admin_order_field = "woblink"
 
 
 admin.site.register(models.Author, AuthorAdmin)

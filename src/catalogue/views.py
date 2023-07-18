@@ -3,7 +3,7 @@
 #
 from django.apps import apps
 from django.db.models import Prefetch
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils.formats import localize_input
 from django.contrib.auth.decorators import login_required
@@ -20,7 +20,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import serializers
-
+from depot.woblink import get_woblink_session
 
 
 
@@ -296,3 +296,23 @@ def publish_collection(request, pk):
     return redirect(reverse(
         'admin:catalogue_collection_change', args=[collection.pk]
     ))
+
+
+@login_required
+def woblink_author_autocomplete(request):
+    session = get_woblink_session()
+    term = request.GET.get('term')
+    if not term:
+        return JsonResponse({})
+    response = session.get(
+        'https://publisher.woblink.com/author/autocomplete/' + term
+    ).json()
+    return JsonResponse({
+        "results": [
+            {
+                "id": item['autId'],
+                "text": item['autFullname'],
+            }
+            for item in response
+        ],
+    })
