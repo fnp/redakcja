@@ -4,29 +4,29 @@
  */
 (function($){
 
-    function PubmarkDialog(element, options){
-        if (!options.revision  && options.revision != 0)
-            throw "PubmarkDialog needs a revision number.";
+    class PubmarkDialog extends $.wiki.cls.GenericDialog {
+        constructor(element, options) {
+            if (!options.revision  && options.revision != 0)
+                throw "PubmarkDialog needs a revision number.";
 
-        this.ctx = $.wiki.exitContext();
-        this.clearForm();
+            super(element);
+            this.ctx = $.wiki.exitContext();
+            this.clearForm();
 
-        /* fill out hidden fields */
-        this.$form = $('form', element);
+            /* fill out hidden fields */
+            this.$form = $('form', element);
 
-        $("input[name='pubmark-id']", this.$form).val(CurrentDocument.id);
-        $("input[name='pubmark-revision']", this.$form).val(options.revision);
+            $("input[name='pubmark-id']", this.$form).val(CurrentDocument.id);
+            $("input[name='pubmark-revision']", this.$form).val(options.revision);
 
-        $.wiki.cls.GenericDialog.call(this, element);
-    };
+        }
 
-    PubmarkDialog.prototype = $.extend(new $.wiki.cls.GenericDialog(), {
-        cancelAction: function(){
+        cancelAction() {
             $.wiki.enterContext(this.ctx);
             this.hide();
-        },
+        }
 
-        saveAction: function(){
+        saveAction() {
             var self = this;
 
             self.$elem.block({
@@ -54,7 +54,7 @@
                 }
             });
         }
-    });
+    }
 
     /* make it global */
     $.wiki.cls.PubmarkDialog = PubmarkDialog;

@@ -4,26 +4,24 @@
  */
 (function($) {
 
-    function RevertDialog(element, options) {
-        this.ctx = $.wiki.exitContext();
-        this.clearForm();
+    class RevertDialog extends $.wiki.cls.GenericDialog {
+        constructor(element, options) {
+            super(element);
+            this.ctx = $.wiki.exitContext();
+            this.clearForm();
 
-        /* fill out hidden fields */
-        this.$form = $('form', element);
+            /* fill out hidden fields */
+            this.$form = $('form', element);
 
-        $("input[name='textrevert-revision']", this.$form).val(options.revision);
+            $("input[name='textrevert-revision']", this.$form).val(options.revision);
+        }
 
-        $.wiki.cls.GenericDialog.call(this, element);
-    };
+        cancelAction() {
+            $.wiki.enterContext(this.ctx);
+            this.hide();
+        };
 
-    RevertDialog.prototype = new $.wiki.cls.GenericDialog();
-
-    RevertDialog.prototype.cancelAction = function() {
-        $.wiki.enterContext(this.ctx);
-        this.hide();
-    };
-
-    RevertDialog.prototype.revertAction = function() {
+        revertAction() {
             var self = this;
 
             self.$elem.block({
@@ -33,7 +31,6 @@
             $.wiki.blocking = self.$elem;
 
             try {
-
                 CurrentDocument.revertToVersion({
                     form: self.$form,
                     success: function(e, msg) {
@@ -58,7 +55,8 @@
                 console.log('Exception:', e)
                 self.$elem.unblock();
             }
-    }; /* end of revert dialog */
+        }
+    }
 
     /* make it global */
     $.wiki.cls.RevertDialog = RevertDialog;

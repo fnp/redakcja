@@ -1,35 +1,28 @@
 (function($){
 
-	function DiffPerspective(options) {
-		var old_callback = options.callback || function() {};
-		var self = this;
+    class DiffPerspective extends $.wiki.Perspective {
+        constructor(options) {
+	    var old_callback = options.callback || function() {};
 
-        options.callback = function(){
-			self.base_id = options.base_id;
-			old_callback.call(this);
-		};
+            options.callback = function() {
+	        var self = this;
+		self.base_id = options.base_id;
+		old_callback.call(this);
+	    };
+	    super(options);
+        }
 
-		$.wiki.Perspective.call(this, options);
-    };
+        freezeState() {
+            // must
+        };
 
-    DiffPerspective.prototype = new $.wiki.Perspective();
-
-    DiffPerspective.prototype.freezeState = function(){
-        // must
-    };
-
-	DiffPerspective.prototype.destroy = function() {
-        $.wiki.switchToTab('#HistoryPerspective');
-		$('#' + this.base_id).remove();
-		$('#' + this.perspective_id).remove();
-	};
-
-	DiffPerspective.prototype.onEnter = function(success, failure){
-		$.wiki.Perspective.prototype.onEnter.call(this);
-		console.log("Entered diff view");
-	};
-
-	$.wiki.DiffPerspective = DiffPerspective;
+	destroy() {
+            $.wiki.switchToTab('#HistoryPerspective');
+            $('#' + this.base_id).remove();
+            $('#' + this.perspective_id).remove();
+	}
+    }
+    $.wiki.DiffPerspective = DiffPerspective;
 
 })(jQuery);
 

@@ -4,7 +4,7 @@
 {% if user.is_authenticated %}
   <div class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ user.username }}">
-      <img src="{% gravatar_url item.get_email 26 %}" alt="{{ user.username }}">
+      <img src="{% gravatar_url user.email 26 %}" alt="{{ user.username }}">
     </a>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
       <h6 class="dropdown-header">{{ user.username }}</h6>

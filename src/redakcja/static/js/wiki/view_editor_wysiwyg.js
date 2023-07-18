@@ -121,9 +121,6 @@
 
 
 
-
-
-
     /* Insert theme using current selection */
 
     function addTheme(){
@@ -141,10 +138,8 @@
             return false;
         }
 
-
         // remember the selected range
         var range = selection.getRangeAt(0);
-
 
         if ($(range.startContainer).is('.html-editarea') ||
         $(range.endContainer).is('.html-editarea')) {
@@ -294,20 +289,20 @@
                     if (insertVal.length == 2) {
                         var startTag = insertVal[0];
                         var endTag = insertVal[1];
-		        var textAreaOpened = editArea;
-		        //IE support
-		        if (document.selection) {
-		            textAreaOpened.focus();
-		            sel = document.selection.createRange();
-		            sel.text = startTag + sel.text + endTag;
-		        }
-		        //MOZILLA/NETSCAPE support
-		        else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
-		            var startPos = textAreaOpened.selectionStart;
-		            var endPos = textAreaOpened.selectionEnd;
-		            textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
-			        + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
-		        }
+                        var textAreaOpened = editArea;
+                        //IE support
+                        if (document.selection) {
+                            textAreaOpened.focus();
+                            sel = document.selection.createRange();
+                            sel.text = startTag + sel.text + endTag;
+                        }
+                        //MOZILLA/NETSCAPE support
+                        else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+                            var startPos = textAreaOpened.selectionStart;
+                            var endPos = textAreaOpened.selectionEnd;
+                            textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+                                + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+                        }
                     } else {
                         insertAtCaret(editArea, insertVal);
                     }
@@ -432,7 +427,7 @@
 
 
         if ($origin.is('*[x-edit-no-format]')) {
-	    $('.akap-edit-button').remove();
+            $('.akap-edit-button').remove();
         }
 
         if ($origin.is('[x-node="motyw"]')) {
@@ -516,7 +511,6 @@
                         xml = '<' + nodeName + '>' + insertedText + '</' + nodeName + '>';
                     }
 
-
                     xml2html({
                         xml: xml,
                         success: function(element){
@@ -545,42 +539,42 @@
                     });
                 }
 
-		$('.akap-edit-button', $overlay).click(function(){
-			var textAreaOpened = $('textarea', $overlay)[0];
-			var startTag = "";
-			var endTag = "";
-			var buttonName = this.innerHTML;
+                $('.akap-edit-button', $overlay).click(function(){
+                    var textAreaOpened = $('textarea', $overlay)[0];
+                    var startTag = "";
+                    var endTag = "";
+                    var buttonName = this.innerHTML;
 
-			if(buttonName == "słowo obce") {
-				startTag = "<slowo_obce>";
-				endTag = "</slowo_obce>";
-			} else if (buttonName == "wyróżnienie") {
-				startTag = "<wyroznienie>";
-				endTag = "</wyroznienie>";
-			} else if (buttonName == "tytuł dzieła") {
-				startTag = "<tytul_dziela>";
-				endTag = "</tytul_dziela>";
-			} else if(buttonName == "znak spec."){
-			    addSymbol();
-			    return false;
-			}
+                    if(buttonName == "słowo obce") {
+                        startTag = "<slowo_obce>";
+                        endTag = "</slowo_obce>";
+                    } else if (buttonName == "wyróżnienie") {
+                        startTag = "<wyroznienie>";
+                        endTag = "</wyroznienie>";
+                    } else if (buttonName == "tytuł dzieła") {
+                        startTag = "<tytul_dziela>";
+                        endTag = "</tytul_dziela>";
+                    } else if(buttonName == "znak spec."){
+                        addSymbol();
+                        return false;
+                    }
 
-			var myField = textAreaOpened;
+                    var myField = textAreaOpened;
 
-			//IE support
-		        if (document.selection) {
-		            textAreaOpened.focus();
-		            sel = document.selection.createRange();
-		            sel.text = startTag + sel.text + endTag;
-		        }
-		        //MOZILLA/NETSCAPE support
-		        else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
-		            var startPos = textAreaOpened.selectionStart;
-		            var endPos = textAreaOpened.selectionEnd;
-		            textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
-				  + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
-		        }
-		});
+                    //IE support
+                    if (document.selection) {
+                        textAreaOpened.focus();
+                        sel = document.selection.createRange();
+                        sel.text = startTag + sel.text + endTag;
+                    }
+                    //MOZILLA/NETSCAPE support
+                    else if (textAreaOpened.selectionStart || textAreaOpened.selectionStart == '0') {
+                        var startPos = textAreaOpened.selectionStart;
+                        var endPos = textAreaOpened.selectionEnd;
+                        textAreaOpened.value = textAreaOpened.value.substring(0, startPos)
+                            + startTag + textAreaOpened.value.substring(startPos, endPos) + endTag + textAreaOpened.value.substring(endPos, textAreaOpened.value.length);
+                    }
+                });
 
                 $('.accept-button', $overlay).click(function(){
                     save();
@@ -613,272 +607,285 @@
         });
     }
 
-    function VisualPerspective(options){
-        perspective = self = this;
+    class VisualPerspective extends $.wiki.Perspective {
+        constructor(options) {
+            var old_callback = options.callback;
 
-        var old_callback = options.callback;
+            options.callback = function(){
+                let self = this;
+                var element = $("#html-view");
+                var button = $('<button class="edit-button active-block-button">Edytuj</button>');
+                var uwagaButton = $('<button class="uwaga-button active-block-button">Uwaga</button>');
 
-        options.callback = function(){
-            var element = $("#html-view");
-            var button = $('<button class="edit-button active-block-button">Edytuj</button>');
-            var uwagaButton = $('<button class="uwaga-button active-block-button">Uwaga</button>');
+                if (!CurrentDocument.readonly) {
 
-            if (!CurrentDocument.readonly) {
+                    $('#html-view').bind('mousemove', function(event){
+                        var editable = $(event.target).closest('*[x-editable]');
+                        $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
 
-                $('#html-view').bind('mousemove', function(event){
-                    var editable = $(event.target).closest('*[x-editable]');
-                    $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
-
-                    if (!editable.hasClass('active')) {
-                        editable.addClass('active').append(button);
-                        if (!editable.is('[x-edit-attribute]') &&
-                            !editable.is('.annotation-inline-box') &&
-                            !editable.is('[x-edit-no-format]')
-                           ) {
-                            editable.append(uwagaButton);
+                        if (!editable.hasClass('active')) {
+                            editable.addClass('active').append(button);
+                            if (!editable.is('[x-edit-attribute]') &&
+                                !editable.is('.annotation-inline-box') &&
+                                !editable.is('[x-edit-no-format]')
+                               ) {
+                                editable.append(uwagaButton);
+                            }
                         }
-                    }
-                    if (editable.is('.annotation-inline-box')) {
-                        $('*[x-annotation-box]', editable).css({
-                        }).show();
-                    }
+                        if (editable.is('.annotation-inline-box')) {
+                            $('*[x-annotation-box]', editable).css({
+                            }).show();
+                        }
+                    });
+
+                    self.caret = new Caret(element);
+
+                    $('#insert-reference-button').click(function(){
+                        self.addReference();
+                        return false;
+                    });
+
+                    $('#insert-annotation-button').click(function(){
+                        addAnnotation();
+                        return false;
+                    });
+
+                    $('#insert-theme-button').click(function(){
+                        addTheme();
+                        return false;
+                    });
+
+
+                    $(".insert-inline-tag").click(function() {
+                        self.insertInlineTag($(this).attr('data-tag'));
+                        return false;
+                    });
+
+                    $(".insert-char").click(function() {
+                        addSymbol(caret=self.caret);
+                        return false;
+                    });
+
+                    $(document).on('click', '.edit-button', function(event){
+                        event.preventDefault();
+                        openForEdit($(this).parent());
+                    });
+
+                    $(document).on('click', '.uwaga-button', function(event){
+                        event.preventDefault();
+                        createUwagaBefore($(this).parent());
+                    });
+                }
+
+                $(document).on('click', '[x-node="motyw"]', function(){
+                    selectTheme($(this).attr('theme-class'));
                 });
 
-                perspective.caret = new Caret(element);
-                
-                $('#insert-reference-button').click(function(){
-                    self.addReference();
-                    return false;
-                });
-
-                $('#insert-annotation-button').click(function(){
-                    addAnnotation();
-                    return false;
-                });
-
-                $('#insert-theme-button').click(function(){
-                    addTheme();
-                    return false;
-                });
-
-
-                $(".insert-inline-tag").click(function() {
-                    perspective.insertInlineTag($(this).attr('data-tag'));
-                    return false;
-                });
-
-                $(".insert-char").click(function() {
-                    addSymbol(caret=perspective.caret);
-                    return false;
-                });
-
-                $(document).on('click', '.edit-button', function(event){
+                element.on('click', '.annotation', function(event) {
                     event.preventDefault();
-                    openForEdit($(this).parent());
+                    event.redakcja_caret_ignore = true;
+                    $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
+                    self.caret.detach();
                 });
 
-                $(document).on('click', '.uwaga-button', function(event){
-                    event.preventDefault();
-                    createUwagaBefore($(this).parent());
-                });
+                old_callback.call(this);
+            };
+
+            super(options);
+        }
+
+        onEnter(success, failure) {
+            super.onEnter();
+
+            $.blockUI({
+                message: 'Uaktualnianie widoku...'
+            });
+
+            function _finalize(callback){
+                $.unblockUI();
+                if (callback)
+                    callback();
             }
 
-            $(document).on('click', '[x-node="motyw"]', function(){
-                selectTheme($(this).attr('theme-class'));
-            });
+            xml2html({
+                xml: this.doc.text,
+                base: this.doc.getBase(),
+                success: function(element){
 
-            element.on('click', '.annotation', function(event) {
-                event.preventDefault();
-                event.redakcja_caret_ignore = true;
-                $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
-                perspective.caret.detach();
-            });
+                    var htmlView = $('#html-view');
+                    htmlView.html(element);
 
-            old_callback.call(this);
+                    _finalize(success);
+                },
+                error: function(text, source){
+                    let err = '<p class="error">Wystąpił błąd:</p><p>'+text+'</p>';
+                    if (source)
+                        err += '<pre>'+source.replace(/&/g, '&amp;').replace(/</g, '&lt;')+'</pre>'
+                    $('#html-view').html(err);
+                    _finalize(failure);
+                }
+            });
         };
 
-        $.wiki.Perspective.call(this, options);
-    };
+        onExit(success, failure) {
+            var self = this;
 
-    VisualPerspective.prototype = new $.wiki.Perspective();
+            self.caret.detach();
 
-    VisualPerspective.prototype.onEnter = function(success, failure){
-        $.wiki.Perspective.prototype.onEnter.call(this);
+            $.wiki.exitTab('#PropertiesPerspective');
 
-        $.blockUI({
-            message: 'Uaktualnianie widoku...'
-        });
+            $.blockUI({
+                message: 'Zapisywanie widoku...'
+            });
 
-        function _finalize(callback){
-            $.unblockUI();
-            if (callback)
-                callback();
-        }
-
-        perspective = this;
-        xml2html({
-            xml: this.doc.text,
-            base: this.doc.getBase(),
-            success: function(element){
-
-                var htmlView = $('#html-view');
-                htmlView.html(element);
-
-                _finalize(success);
-            },
-            error: function(text, source){
-                err = '<p class="error">Wystąpił błąd:</p><p>'+text+'</p>';
-                if (source)
-                    err += '<pre>'+source.replace(/&/g, '&amp;').replace(/</g, '&lt;')+'</pre>'
-                $('#html-view').html(err);
-                _finalize(failure);
+            function _finalize(callback){
+                $.unblockUI();
+                if (callback)
+                    callback();
             }
-        });
-    };
 
-    VisualPerspective.prototype.onExit = function(success, failure){
-        var self = this;
+            if ($('#html-view .error').length > 0)
+                return _finalize(failure);
 
-        self.caret.detach();
+            html2text({
+                element: $('#html-view').get(0),
+                stripOuter: true,
+                success: function(text){
+                    self.doc.setText(text);
+                    _finalize(success);
+                },
+                error: function(text){
+                    $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                    _finalize(failure);
+                }
+            });
+        };
 
-        $.wiki.exitTab('#PropertiesPerspective');
-        
-        $.blockUI({
-            message: 'Zapisywanie widoku...'
-        });
+        insertInlineTag(tag) {
+            this.caret.detach();
 
-        function _finalize(callback){
-            $.unblockUI();
-            if (callback)
-                callback();
-        }
-
-        if ($('#html-view .error').length > 0)
-            return _finalize(failure);
-
-        html2text({
-            element: $('#html-view').get(0),
-            stripOuter: true,
-            success: function(text){
-                self.doc.setText(text);
-                _finalize(success);
-            },
-            error: function(text){
-                $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
-                _finalize(failure);
+            let selection = window.getSelection();
+            var n = selection.rangeCount;
+            if (n != 1 || selection.isCollapsed) {
+                window.alert("Nie zaznaczono obszaru");
+                return false
             }
-        });
-    };
+            let range = selection.getRangeAt(0);
 
-    VisualPerspective.prototype.insertInlineTag = function(tag) {
-        this.caret.detach();
+            // Make sure that:
+            // Both ends are in the same x-node container.
+            // Both ends are set to text nodes.
+            // TODO: That the container is a inline-text container.
+            let commonNode = range.endContainer;
 
-        let selection = window.getSelection();
-        var n = selection.rangeCount;
-        if (n != 1 || selection.isCollapsed) {
-            window.alert("Nie zaznaczono obszaru");
-            return false
-        }
-        let range = selection.getRangeAt(0);
-
-        // Make sure that:
-        // Both ends are in the same x-node container.
-        // TODO: That the container is a inline-text container.
-        let node = range.startContainer;
-        if (node.nodeType == node.TEXT_NODE) {
-            node = node.parentNode;
-        }
-        let endNode = range.endContainer;
-        if (endNode.nodeType == endNode.TEXT_NODE) {
-            endNode = endNode.parentNode;
-        }
-        if (node != endNode) {
-            window.alert("Zły obszar.");
-            return false;
-        }
-
-        // We will construct a HTML element with the range selected.
-        let div = $("<span x-pass-thru='true'>");
-
-        contents = $(node).contents();
-        let startChildIndex = node == range.startContainer ? 0 : contents.index(range.startContainer);
-        let endChildIndex = contents.index(range.endContainer);
-
-        current = range.startContainer;
-        if (current.nodeType == current.TEXT_NODE) {
-            current = current.splitText(range.startOffset);
-        }
-        while (current != range.endContainer) {
-            n = current.nextSibling;
-            $(current).appendTo(div);
-            current = n;
-        }
-        if (current.nodeType == current.TEXT_NODE) {
-            end = current.splitText(range.endOffset);
-        }
-        $(current).appendTo(div);
-        
-        html2text({
-            element: div[0],
-            success: function(d) {
-                xml2html({
-                    xml: d = '<' + tag + '>' + d + '</' + tag + '>',
-                    success: function(html) {
-                        // What if no end?
-                        node.insertBefore($(html)[0], end);
-                    }
-                });
-            },
-            error: function(a, b) {
-                console.log(a, b);
+            if (commonNode.nodeType == Node.TEXT_NODE) {
+                commonNode = commonNode.parentNode;
             }
-        });
-    };
-
-    VisualPerspective.prototype.insertAtRange = function(range, elem) {
-        let self = this;
-        let $end = $(range.endContainer);
-        if ($end.attr('id') == 'caret') {
-            self.caret.insert(elem);
-        } else {
-            range.insertNode(elem[0]);
-        }
-    }
-
-    VisualPerspective.prototype.addReference = function() {
-        let self = this;
-        var selection = window.getSelection();
-        var n = selection.rangeCount;
-
-        // TODO: if no selection, take caret position..
-        if (n == 0) {
-            window.alert("Nie zaznaczono żadnego obszaru");
-            return false;
-        }
-
-        var range = selection.getRangeAt(n - 1);
-        if (!verifyTagInsertPoint(range.endContainer)) {
-            window.alert("Nie można wstawić w to miejsce referencji.");
-            return false;
-        }
-
-        var tag = $('<span></span>');
-
-        range.collapse(false);
-        self.insertAtRange(range, tag);
-
-        xml2html({
-            xml: '<ref href=""/>',
-            success: function(text){
-                var t = $(text);
-                tag.replaceWith(t);
-                openForEdit(t);
-            },
-            error: function(){
-                tag.remove();
-                alert('Błąd przy dodawaniu referncji:' + errors);
+            let node = range.startContainer;
+            if (node.nodeType == Node.TEXT_NODE) {
+                node = node.parentNode;
             }
-        })
+            if (node != commonNode) {
+                window.alert("Zły obszar.");
+                return false;
+            }
+
+            let end;
+            if (range.endContainer.nodeType == Node.TEXT_NODE) {
+                end = range.endContainer.splitText(range.endOffset);
+            } else {
+                end = document.createTextNode('');
+                let cont = $(range.endContainer).contents();
+                if (range.endOffset < cont.length) {
+                    range.endContainer.insertBefore(end, cont[range.endOffset])
+                } else {
+                    range.endContainer.append(end);
+                }
+            }
+
+            let current;
+            if (range.startContainer.nodeType == Node.TEXT_NODE) {
+                current = range.startContainer.splitText(range.startOffset);
+            } else {
+                current = document.createTextNode('');
+                let cont = $(range.startContainer).contents();
+                if (range.startOffset < cont.length) {
+                    range.startContainer.insertBefore(current, cont[range.startOffset])
+                } else {
+                    startNode.append(current);
+                }
+            }
+
+            // We will construct a HTML element with the range selected.
+            let div = $("<span x-pass-thru='true'>");
+            while (current != end) {
+                n = current.nextSibling;
+                $(current).appendTo(div);
+                current = n;
+            }
+
+            html2text({
+                element: div[0],
+                success: function(d) {
+                    xml2html({
+                        xml: d = '<' + tag + '>' + d + '</' + tag + '>',
+                        success: function(html) {
+                            // What if no end?
+                            node.insertBefore($(html)[0], end);
+                        }
+                    });
+                },
+                error: function(a, b) {
+                    console.log(a, b);
+                }
+            });
+        }
+
+        insertAtRange(range, elem) {
+            let self = this;
+            let $end = $(range.endContainer);
+            if ($end.attr('id') == 'caret') {
+                self.caret.insert(elem);
+            } else {
+                range.insertNode(elem[0]);
+            }
+        }
+
+        addReference() {
+            let self = this;
+            var selection = window.getSelection();
+            var n = selection.rangeCount;
+
+            // TODO: if no selection, take caret position..
+            if (n == 0) {
+                window.alert("Nie zaznaczono żadnego obszaru");
+                return false;
+            }
+
+            var range = selection.getRangeAt(n - 1);
+            if (!verifyTagInsertPoint(range.endContainer)) {
+                window.alert("Nie można wstawić w to miejsce referencji.");
+                return false;
+            }
+
+            var tag = $('<span></span>');
+
+            range.collapse(false);
+            self.insertAtRange(range, tag);
+
+            xml2html({
+                xml: '<ref href=""/>',
+                success: function(text){
+                    var t = $(text);
+                    tag.replaceWith(t);
+                    openForEdit(t);
+                },
+                error: function(){
+                    tag.remove();
+                    alert('Błąd przy dodawaniu referncji:' + errors);
+                }
+            })
+        }
     }
 
     $.wiki.VisualPerspective = VisualPerspective;
