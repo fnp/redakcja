@@ -198,7 +198,6 @@ PIPELINE = {
 
                 # base UI
                 'js/wiki/base.js',
-                'wiki/js/sidebar-perspective.js',
                 'js/wiki/toolbar.js',
 
                 # dialogs
@@ -207,6 +206,7 @@ PIPELINE = {
                 'js/wiki/dialog_pubmark.js',
 
                 # views
+                'js/wiki/view_sidebar.js',
                 'js/wiki/view_history.js',
                 'js/wiki/view_summary.js',
                 'js/wiki/view_editor_source.js',
