@@ -1,10 +1,7 @@
 (function($) {
 
     class SidebarPerspective extends $.wiki.Perspective {
-        constructor(options) {
-            super(options);
-            this.noupdate_hash_onenter = true;
-        }
+        noupdate_hash_onenter = true;
 
         onEnter(success, failure) {
             super.onEnter();

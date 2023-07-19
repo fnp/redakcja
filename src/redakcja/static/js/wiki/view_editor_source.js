@@ -2,64 +2,49 @@
 
     class CodeMirrorPerspective extends $.wiki.Perspective {
         constructor(options) {
-            var old_callback = options.callback;
-            options.callback = function(){
-                var self = this;
-
-                this.codemirror = CodeMirror.fromTextArea($(
-                    '#codemirror_placeholder').get(0), {
-                        mode: 'xml',
-                        lineWrapping: true,
-                        lineNumbers: true,
-                        readOnly: CurrentDocument.readonly || false,
-                        identUnit: 0,
-                    });
-
-                $('#source-editor').keydown(function(event) {
-                    if(!event.altKey)
-                        return;
-
-                    var c = event.key;
-                    var button = $("#source-editor button[data-ui-accesskey='"+c+"']");
-                    if(button.length == 0)
-                        return;
-                    button.get(0).click();
-                    event.preventDefault();
-                });
-
-                $('#source-editor .toolbar').toolbarize({
-                    actionContext: self.codemirror
-                });
-
-                // textarea is no longer needed
-                $('#codemirror_placeholder').remove();
-                old_callback.call(self);
-            }
             super(options);
-        }
+            var self = this;
 
-        freezeState() {
-            this.config().position =  this.codemirror.getScrollInfo().top;
-        }
+            this.codemirror = CodeMirror.fromTextArea($(
+                '#codemirror_placeholder').get(0), {
+                    mode: 'xml',
+                    lineWrapping: true,
+                    lineNumbers: true,
+                    readOnly: CurrentDocument.readonly || false,
+                    identUnit: 0,
+                });
 
-        unfreezeState () {
-            this.codemirror.scrollTo(0, this.config().position || 0);
+            $('#source-editor').keydown(function(event) {
+                if(!event.altKey)
+                    return;
+
+                var c = event.key;
+                var button = $("#source-editor button[data-ui-accesskey='"+c+"']");
+                if(button.length == 0)
+                    return;
+                button.get(0).click();
+                event.preventDefault();
+            });
+
+            $('#source-editor .toolbar').toolbarize({
+                actionContext: self.codemirror
+            });
+
+            // textarea is no longer needed
+            $('#codemirror_placeholder').remove();
         }
 
         onEnter(success, failure) {
             super.onEnter();
-
             this.codemirror.setValue(this.doc.text);
-
-            this.unfreezeState(this._uistate);
+            this.codemirror.scrollTo(0, this.config().position || 0);
 
             if(success) success();
         }
 
         onExit(success, failure) {
-            this.freezeState();
-
             super.onExit();
+            this.config().position =  this.codemirror.getScrollInfo().top;
             this.doc.setText(this.codemirror.getValue());
 
             $.wiki.exitTab('#SearchPerspective');

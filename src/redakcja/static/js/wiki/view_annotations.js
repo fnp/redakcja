@@ -4,37 +4,31 @@
      * Perspective
      */
     class AnnotationsPerspective extends $.wiki.SidebarPerspective {
+        vsplitbar = 'PRZYPISY';
+
         constructor(options) {
-            var old_callback = options.callback || function() { };
-
-            options.callback = function(){
-                var self = this;
-
-                this.vsplitbar = 'PRZYPISY';
-                this.$element = $("#side-annotations");
-                this.$error = $('.error-message', this.$element);
-                this.$annos = $('.annotations-list', this.$element);
-                this.$spinner = $('.spinner', this.$element);
-                this.$refresh = $('.refresh', this.$element);
-
-                this.$refresh.click(function() {
-                    var $this = $(this);
-
-                    self.$refresh.removeClass('active');
-                    $this.addClass('active');
-                    var atype = $this.attr('data-tag');
-
-                    self.$annos.hide();
-                    self.$error.hide();
-                    self.$spinner.fadeIn(100, function() {
-                        self.refresh(atype);
-                    });
-                });
-
-                old_callback.call(this);
-            };
-
             super(options);
+
+            var self = this;
+            this.$element = $("#side-annotations");
+            this.$error = $('.error-message', this.$element);
+            this.$annos = $('.annotations-list', this.$element);
+            this.$spinner = $('.spinner', this.$element);
+            this.$refresh = $('.refresh', this.$element);
+
+            this.$refresh.click(function() {
+                var $this = $(this);
+
+                self.$refresh.removeClass('active');
+                $this.addClass('active');
+                var atype = $this.attr('data-tag');
+
+                self.$annos.hide();
+                self.$error.hide();
+                self.$spinner.fadeIn(100, function() {
+                    self.refresh(atype);
+                });
+            });
         }
 
         updateAnnotationIds() {

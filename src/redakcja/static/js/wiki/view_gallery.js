@@ -45,120 +45,111 @@
      * Perspective
      */
     class ScanGalleryPerspective extends $.wiki.SidebarPerspective {
-        constructor(options){
-            var old_callback = options.callback || function() { };
+        vsplitbar = 'GALERIA';
+        dimensions = {};
+        zoomFactor = 1;
+        origin = {};
+        imageOrigin = {};
 
-            options.callback = function(){
-                var self = this;
-
-                this.vsplitbar = 'GALERIA';
-                this.dimensions = {};
-                this.zoomFactor = 1;
-                if (this.config().page == undefined)
-                    this.config().page = CurrentDocument.galleryStart;
-                this.$element = $("#side-gallery");
-                this.$numberInput = $('.page-number', this.$element);
-
-                // ...
-                var origin = {};
-                var imageOrigin = {};
-
-                this.$image = $('.gallery-image img', this.$element).attr('unselectable', 'on');
-
-                // button handlers
-                this.$numberInput.change(function(event){
-                    event.preventDefault();
-                    self.setPage($(this).val());
-                });
-
-                $('.start-page', this.$element).click(function(){
-                    self.setPage(CurrentDocument.galleryStart);
-                });
-
-                $('.previous-page', this.$element).click(function(){
-                    self.setPage(parseInt(self.$numberInput.val(),10) - 1);
-                });
-
-                $('.next-page', this.$element).click(function(){
-                    self.setPage(parseInt(self.$numberInput.val(),10) + 1);
-                });
-
-                $('.zoom-in', this.$element).click(function(){
-                    self.alterZoom(0.2);
-                });
-
-                $('.zoom-out', this.$element).click(function(){
-                    self.alterZoom((-0.2));
-                });
-
-                $('.ctrl-gallery-setstart', this.$element).click(function(e) {
-                    e.preventDefault();
-                    CurrentDocument.setGalleryStart(self.config().page);
-                });
-                $('.ctrl-gallery-edit', this.$element).click(function(e) {
-                    e.preventDefault();
-                    CurrentDocument.openGalleryEdit();
-                });
-                $('.ctrl-gallery-refresh', this.$element).click(function(e) {
-                    e.preventDefault();
-                    self.refreshGallery();
-                });
-                $('#gallery-chooser').on('show.bs.modal', function (event) {
-                    var modal = $(this);
-                    var datalist = modal.find('.modal-body');
-                    datalist.html('');
-                    self.doc.withGalleryList(function(galleries) {
-                        let item;
-                        $.each(galleries, (i, gallery) => {
-                            item = $('<div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="gallery"></label></div>');
-                            $('input', item).val(gallery);
-                            $('label', item).append(gallery);
-                            if (gallery == self.doc.galleryLink) {
-                                item.addClass('text-primary')
-                                $('input', item).prop('checked', true);
-                            }
-                            item.appendTo(datalist);
-                        });
-                        item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-none form-check-input" type="radio" name="gallery"><em class="text-secondary">brak</em></label></div>');
-                        item.appendTo(datalist);
-                        item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-new form-check-input" type="radio" name="gallery"><input class="ctrl-name form-control" placeholder="nowa"></label></div>');
-                        item.appendTo(datalist);
-                    });
-                })
-                $('#gallery-chooser .ctrl-ok').on('click', function (event) {
-                    let item = $('#gallery-chooser :checked');
-                    let name;
-                    if (item.hasClass('ctrl-none')) {
-                        name = '';
-                    }
-                    else if (item.hasClass('ctrl-new')) {
-                        name = $('#gallery-chooser .ctrl-name').val();
-                    } else {
-                        name = item.val();
-                    }
-
-                    self.doc.setGallery(name);
-                    $('#gallery-chooser').modal('hide');
-                    self.refreshGallery(function() {
-                        self.setPage(1);
-                    });
-                });
-
-                $(window).resize(function(){
-                    self.dimensions.galleryWidth = self.$image.parent().width();
-                    self.dimensions.galleryHeight = self.$image.parent().height();
-                });
-
-                this.$image.load(function(){
-                    self._resizeImage();
-                }).bind('mousedown', function() {
-                    self.imageMoveStart.apply(self, arguments);
-                });
-
-                old_callback.call(this);
-            };
-
+        constructor(options) {
             super(options);
+            var self = this;
+            if (this.config().page == undefined)
+                this.config().page = CurrentDocument.galleryStart;
+            this.$element = $("#side-gallery");
+            this.$numberInput = $('.page-number', this.$element);
+
+            this.$image = $('.gallery-image img', this.$element).attr('unselectable', 'on');
+
+            // button handlers
+            this.$numberInput.change(function(event){
+                event.preventDefault();
+                self.setPage($(this).val());
+            });
+
+            $('.start-page', this.$element).click(function(){
+                self.setPage(CurrentDocument.galleryStart);
+            });
+
+            $('.previous-page', this.$element).click(function(){
+                self.setPage(parseInt(self.$numberInput.val(),10) - 1);
+            });
+
+            $('.next-page', this.$element).click(function(){
+                self.setPage(parseInt(self.$numberInput.val(),10) + 1);
+            });
+
+            $('.zoom-in', this.$element).click(function(){
+                self.alterZoom(0.2);
+            });
+
+            $('.zoom-out', this.$element).click(function(){
+                self.alterZoom((-0.2));
+            });
+
+            $('.ctrl-gallery-setstart', this.$element).click(function(e) {
+                e.preventDefault();
+                CurrentDocument.setGalleryStart(self.config().page);
+            });
+            $('.ctrl-gallery-edit', this.$element).click(function(e) {
+                e.preventDefault();
+                CurrentDocument.openGalleryEdit();
+            });
+            $('.ctrl-gallery-refresh', this.$element).click(function(e) {
+                e.preventDefault();
+                self.refreshGallery();
+            });
+            $('#gallery-chooser').on('show.bs.modal', function (event) {
+                var modal = $(this);
+                var datalist = modal.find('.modal-body');
+                datalist.html('');
+                self.doc.withGalleryList(function(galleries) {
+                    let item;
+                    $.each(galleries, (i, gallery) => {
+                        item = $('<div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="gallery"></label></div>');
+                        $('input', item).val(gallery);
+                        $('label', item).append(gallery);
+                        if (gallery == self.doc.galleryLink) {
+                            item.addClass('text-primary')
+                            $('input', item).prop('checked', true);
+                        }
+                        item.appendTo(datalist);
+                    });
+                    item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-none form-check-input" type="radio" name="gallery"><em class="text-secondary">brak</em></label></div>');
+                    item.appendTo(datalist);
+                    item = $('<div class="form-check"><label class="form-check-label"><input class="ctrl-new form-check-input" type="radio" name="gallery"><input class="ctrl-name form-control" placeholder="nowa"></label></div>');
+                    item.appendTo(datalist);
+                });
+            });
+            $('#gallery-chooser .ctrl-ok').on('click', function (event) {
+                let item = $('#gallery-chooser :checked');
+                let name;
+                if (item.hasClass('ctrl-none')) {
+                    name = '';
+                }
+                else if (item.hasClass('ctrl-new')) {
+                    name = $('#gallery-chooser .ctrl-name').val();
+                } else {
+                    name = item.val();
+                }
+
+                self.doc.setGallery(name);
+                $('#gallery-chooser').modal('hide');
+                self.refreshGallery(function() {
+                    self.setPage(1);
+                });
+            });
+
+            $(window).resize(function(){
+                self.dimensions.galleryWidth = self.$image.parent().width();
+                self.dimensions.galleryHeight = self.$image.parent().height();
+            });
+
+            this.$image.load(function(){
+                self._resizeImage();
+            }).bind('mousedown', function() {
+                self.imageMoveStart.apply(self, arguments);
+            });
         }
 
         _resizeImage() {

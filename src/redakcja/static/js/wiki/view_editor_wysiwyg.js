@@ -609,89 +609,81 @@
 
     class VisualPerspective extends $.wiki.Perspective {
         constructor(options) {
-            var old_callback = options.callback;
-
-            options.callback = function(){
-                let self = this;
-                var element = $("#html-view");
-                var button = $('<button class="edit-button active-block-button">Edytuj</button>');
-                var uwagaButton = $('<button class="uwaga-button active-block-button">Uwaga</button>');
-
-                if (!CurrentDocument.readonly) {
-
-                    $('#html-view').bind('mousemove', function(event){
-                        var editable = $(event.target).closest('*[x-editable]');
-                        $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
-
-                        if (!editable.hasClass('active')) {
-                            editable.addClass('active').append(button);
-                            if (!editable.is('[x-edit-attribute]') &&
-                                !editable.is('.annotation-inline-box') &&
-                                !editable.is('[x-edit-no-format]')
-                               ) {
-                                editable.append(uwagaButton);
-                            }
-                        }
-                        if (editable.is('.annotation-inline-box')) {
-                            $('*[x-annotation-box]', editable).css({
-                            }).show();
-                        }
-                    });
-
-                    self.caret = new Caret(element);
-
-                    $('#insert-reference-button').click(function(){
-                        self.addReference();
-                        return false;
-                    });
-
-                    $('#insert-annotation-button').click(function(){
-                        addAnnotation();
-                        return false;
-                    });
-
-                    $('#insert-theme-button').click(function(){
-                        addTheme();
-                        return false;
-                    });
-
-
-                    $(".insert-inline-tag").click(function() {
-                        self.insertInlineTag($(this).attr('data-tag'));
-                        return false;
-                    });
-
-                    $(".insert-char").click(function() {
-                        addSymbol(caret=self.caret);
-                        return false;
-                    });
-
-                    $(document).on('click', '.edit-button', function(event){
-                        event.preventDefault();
-                        openForEdit($(this).parent());
-                    });
-
-                    $(document).on('click', '.uwaga-button', function(event){
-                        event.preventDefault();
-                        createUwagaBefore($(this).parent());
-                    });
-                }
-
-                $(document).on('click', '[x-node="motyw"]', function(){
-                    selectTheme($(this).attr('theme-class'));
-                });
-
-                element.on('click', '.annotation', function(event) {
-                    event.preventDefault();
-                    event.redakcja_caret_ignore = true;
-                    $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
-                    self.caret.detach();
-                });
-
-                old_callback.call(this);
-            };
-
             super(options);
+            let self = this;
+            var element = $("#html-view");
+            var button = $('<button class="edit-button active-block-button">Edytuj</button>');
+            var uwagaButton = $('<button class="uwaga-button active-block-button">Uwaga</button>');
+
+            if (!CurrentDocument.readonly) {
+
+                $('#html-view').bind('mousemove', function(event){
+                    var editable = $(event.target).closest('*[x-editable]');
+                    $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
+
+                    if (!editable.hasClass('active')) {
+                        editable.addClass('active').append(button);
+                        if (!editable.is('[x-edit-attribute]') &&
+                            !editable.is('.annotation-inline-box') &&
+                            !editable.is('[x-edit-no-format]')
+                           ) {
+                            editable.append(uwagaButton);
+                        }
+                    }
+                    if (editable.is('.annotation-inline-box')) {
+                        $('*[x-annotation-box]', editable).css({
+                        }).show();
+                    }
+                });
+
+                self.caret = new Caret(element);
+
+                $('#insert-reference-button').click(function(){
+                    self.addReference();
+                    return false;
+                });
+
+                $('#insert-annotation-button').click(function(){
+                    addAnnotation();
+                    return false;
+                });
+
+                $('#insert-theme-button').click(function(){
+                    addTheme();
+                    return false;
+                });
+
+                $(".insert-inline-tag").click(function() {
+                    self.insertInlineTag($(this).attr('data-tag'));
+                    return false;
+                });
+
+                $(".insert-char").click(function() {
+                    addSymbol(caret=self.caret);
+                    return false;
+                });
+
+                $(document).on('click', '.edit-button', function(event){
+                    event.preventDefault();
+                    openForEdit($(this).parent());
+                });
+
+                $(document).on('click', '.uwaga-button', function(event){
+                    event.preventDefault();
+                    createUwagaBefore($(this).parent());
+                });
+            }
+
+            $(document).on('click', '[x-node="motyw"]', function(){
+                selectTheme($(this).attr('theme-class'));
+            });
+
+            element.on('click', '.annotation', function(event) {
+                event.preventDefault();
+                event.redakcja_caret_ignore = true;
+                $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
+                self.caret.detach();
+            });
         }
 
         onEnter(success, failure) {

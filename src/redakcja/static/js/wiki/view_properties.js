@@ -39,13 +39,12 @@
     };
 
     class PropertiesPerspective extends $.wiki.SidebarPerspective {
-        constructor(options) {
-            let oldCallback = options.callback || function() {};
+        vsplitbar = 'WŁAŚCIWOŚCI';
 
-            options.callback = function() {
+        constructor(options) {
+            super(options);
                 let self = this;
 
-                self.vsplitbar = 'WŁAŚCIWOŚCI';
                 self.$pane = $("#side-properties");
 
                 $("#simple-editor").on('click', '[x-node]', function(e) {
@@ -180,11 +179,6 @@
                 self.$pane.on('click', '#current-delete', function() {
                     self.delete();
                 });
-
-                oldCallback.call(this);
-            };
-
-            super(options);
         }
 
         edit(element) {

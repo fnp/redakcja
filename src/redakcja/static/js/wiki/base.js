@@ -65,8 +65,7 @@
         return (!!CurrentDocument && CurrentDocument.has_local_changes) || ap.dirty();
     };
 
-    $.wiki.newTab = function(doc, title, klass) {
-        var base_id = 'id' + Math.floor(Math.random()* 5000000000);
+    $.wiki.newTab = function(doc, title, klass, base_id) {
         var id = (''+klass)+'_' + base_id;
         var $tab = $('<li class="nav-item" id="'+id+'" data-ui-related="'+base_id+'" data-ui-jsclass="'+klass+'" ><a href="#" class="nav-link">'
                      + title + ' <span class="badge badge-danger tabclose">x</span></a></li>');
@@ -89,15 +88,12 @@
     $.wiki.initTab = function(options) {
         var klass = $(options.tab).attr('data-ui-jsclass');
 
-        return new $.wiki[klass]({
+        let perspective = new $.wiki[klass]({
             doc: options.doc,
             id: $(options.tab).attr('id'),
-            callback: function() {
-                $.wiki.perspectives[this.perspective_id] = this;
-                if(options.callback)
-                    options.callback.call(this);
-            }
         });
+        $.wiki.perspectives[perspective.perspective_id] = perspective;
+        return perspective;
     };
 
     $.wiki.perspectiveForTab = function(tab) { // element or id
@@ -116,6 +112,17 @@
     $.wiki.switchToTab = function(tab){
         var self = this;
         var $tab = $(tab);
+
+        // Create dynamic tabs (for diffs).
+        if ($tab.length != 1) {
+            let parts = tab.split('_');
+            if (parts.length > 1) {
+                // TODO: register perspectives for it.
+                if (parts[0] == '#DiffPerspective') {
+                    $tab = $($.wiki.DiffPerspective.openId(parts[1]));
+                }
+            }
+        }
 
         if($tab.length != 1)
             $tab = $(DEFAULT_PERSPECTIVE);
@@ -144,18 +151,8 @@
      */
     $.wiki.Perspective = class Perspective {
         constructor(options) {
-            if(!options) return;
-
             this.doc = options.doc;
-            if (options.id) {
-                this.perspective_id = options.id;
-            }
-            else {
-                this.perspective_id = '';
-            }
-
-            if(options.callback)
-                options.callback.call(this);
+            this.perspective_id = options.id || ''
         };
 
         config() {
@@ -186,14 +183,6 @@
 
         destroy() {
             // pass
-        }
-
-        freezeState() {
-            // free UI state (don't store data here)
-        }
-
-        unfreezeState(frozenState) {
-                // restore UI state
         }
     }
 

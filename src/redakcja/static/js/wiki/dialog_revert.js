@@ -6,8 +6,9 @@
 
     class RevertDialog extends $.wiki.cls.GenericDialog {
         constructor(element, options) {
+            let ctx = $.wiki.exitContext();
             super(element);
-            this.ctx = $.wiki.exitContext();
+            this.ctx = ctx;
             this.clearForm();
 
             /* fill out hidden fields */

@@ -51,8 +51,8 @@ def changes_wall(user=None, max_len=None, day=None):
             w.header = _('Edit')
         w.title = chunk.pretty_name()
         w.summary = item.description
-        w.url = reverse('wiki_editor', 
-                args=[chunk.book.slug, chunk.slug]) + '?diff=%d' % item.revision
+        w.url = reverse('wiki_editor', args=[chunk.book.slug, chunk.slug]) + \
+            '#DiffPerspective_R%d-%d' % (item.revision - 1, item.revision)
         w.timestamp = item.created_at
         w.user = item.author
         w.user_name = item.author_name

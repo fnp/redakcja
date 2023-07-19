@@ -9,8 +9,9 @@
             if (!options.revision  && options.revision != 0)
                 throw "PubmarkDialog needs a revision number.";
 
+            let ctx = $.wiki.exitContext();
             super(element);
-            this.ctx = $.wiki.exitContext();
+            this.ctx = ctx;
             this.clearForm();
 
             /* fill out hidden fields */

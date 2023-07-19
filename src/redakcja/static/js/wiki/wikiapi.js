@@ -121,18 +121,6 @@
             this.galleryStart = parseInt($("*[data-key='gallery-start']", meta).text());
             this.fullUri = $("*[data-key='full-uri']", meta).text();
 
-            var diff = $("*[data-key='diff']", meta).text();
-            if (diff) {
-                diff = diff.split(',');
-                if (diff.length == 2 && diff[0] < diff[1])
-                    this.diff = diff;
-                else if (diff.length == 1) {
-                    diff = parseInt(diff);
-                    if (diff != NaN)
-                        this.diff = [diff - 1, diff];
-                }
-            }
-
 	    this.galleryImages = [];
 	    this.text = null;
 	    this.has_local_changes = false;

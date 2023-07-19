@@ -2,20 +2,13 @@
 
     class SummaryPerspective extends $.wiki.Perspective {
         constructor(options) {
-            var old_callback = options.callback || function() {};
-
-            options.callback = function() {
-                var self = this;
-
-                // first time page is rendered
-                $('#summary-cover-refresh').click(function() {
-                    self.refreshCover();
-                });
-
-                old_callback.call(this);
-            }
-
             super(options);
+            var self = this;
+
+            // first time page is rendered
+            $('#summary-cover-refresh').click(function() {
+                self.refreshCover();
+            });
         }
 
         refreshCover() {
@@ -50,16 +43,10 @@
             }
         }
 
-        freezeState = function() {
-            // must
-        }
-
         onEnter(success, failure){
             super.onEnter();
 
             this.showCharCount();
-
-            console.log("Entered summery view");
         }
     }
     $.wiki.SummaryPerspective = SummaryPerspective;

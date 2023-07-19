@@ -5,9 +5,10 @@
 (function($) {
 
     class SaveDialog extends $.wiki.cls.GenericDialog {
-        constructor(element) {
+        constructor(element, options) {
+            let ctx = $.wiki.exitContext();
             super(element);
-            this.ctx = $.wiki.exitContext();
+            this.ctx = ctx;
             this.clearForm();
 
             /* fill out hidden fields */

@@ -4,57 +4,51 @@
      * Perspective
      */
     class SearchPerspective extends $.wiki.SidebarPerspective {
+        vsplitbar = 'ZNAJDŹ I ZAMIEŃ';
+        options = Array();
+
         constructor(options) {
-            var old_callback = options.callback || function() { };
-
-            options.callback = function(){
-                var self = this;
-
-                this.vsplitbar = 'ZNAJDŹ I ZAMIEŃ';
-                this.editor = null;
-                this.$element = $("#side-search");
-                this.$searchInput = $('#search-input', this.$element);
-                this.$replaceInput = $('#replace-input', this.$element);
-                this.$searchButton = $('#search-button', this.$element);
-                this.$searchPrevButton = $('#search-prev-button', this.$element);
-                this.$replaceButton = $('#replace-button', this.$element);
-
-                this.$replaceButton.attr("disabled","disabled");
-                this.options = Array();
-
-                // handlers
-                this.$searchInput.change(function(event){
-                    self.searchCursor = null;
-                });
-                this.$replaceInput.change(function(event){
-                    self.searchCursor = null;
-                });
-
-                $("#side-search input:checkbox").each(function() {
-                    self.options[this.id] = this.checked;
-                }).change(function(){
-                    self.options[this.id] = this.checked;
-                    self.searchCursor = null;
-                });
-
-                this.$searchButton.click(function(){
-                    if (!self.search())
-                        alert('Brak wyników.');
-                });
-
-                this.$searchPrevButton.click(function(){
-                    if (!self.search(false))
-                        alert('Brak wyników.');
-                });
-
-                this.$replaceButton.click(function(){
-                    self.replace();
-                });
-
-                old_callback.call(this);
-            };
-
             super(options);
+            var self = this;
+
+            this.editor = null;
+            this.$element = $("#side-search");
+            this.$searchInput = $('#search-input', this.$element);
+            this.$replaceInput = $('#replace-input', this.$element);
+            this.$searchButton = $('#search-button', this.$element);
+            this.$searchPrevButton = $('#search-prev-button', this.$element);
+            this.$replaceButton = $('#replace-button', this.$element);
+
+            this.$replaceButton.attr("disabled","disabled");
+
+            // handlers
+            this.$searchInput.change(function(event){
+                self.searchCursor = null;
+            });
+            this.$replaceInput.change(function(event){
+                self.searchCursor = null;
+            });
+
+            $("#side-search input:checkbox").each(function() {
+                self.options[this.id] = this.checked;
+            }).change(function(){
+                self.options[this.id] = this.checked;
+                self.searchCursor = null;
+            });
+
+            this.$searchButton.click(function(){
+                if (!self.search())
+                    alert('Brak wyników.');
+            });
+
+            this.$searchPrevButton.click(function(){
+                if (!self.search(false))
+                    alert('Brak wyników.');
+            });
+
+            this.$replaceButton.click(function(){
+                self.replace();
+            });
         }
 
         search(forward=true) {
