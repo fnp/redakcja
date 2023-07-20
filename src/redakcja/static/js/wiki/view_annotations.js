@@ -32,7 +32,7 @@
         }
 
         updateAnnotationIds() {
-            let selt = this;
+            let self = this;
             self.annotationToAnchor = {};
             $('#html-view').find('.annotation-inline-box').each(
                 function(i, annoBox) {
@@ -65,9 +65,10 @@
             var anchor = self.annotationToAnchor[content];
             if (anchor != undefined) {
                 var $htmlView = $("#html-view");
-                var top = $htmlView.offset().top +
-                    $("[name=" + anchor + "]", $htmlView).offset().top -
-                    $htmlView.children().eq(0).offset().top;
+                var top = $("[name=" + anchor + "]", $htmlView).offset().top -
+                    $htmlView.offset().top +
+                    $htmlView.scrollTop()
+                ;
 
                 $htmlView.animate({scrollTop: top}, 250);
             }
