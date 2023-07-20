@@ -18,10 +18,25 @@ $.wiki.diff = function(a, b) {
                 x = Vp[k - 1] + 1;
             }
             y = x - k;
+
             while (x < N && y < M && a[x] == b[y]) {
                 x ++;
                 y ++;
+
+                // Avoid comparing long text character by character.
+                let step = 1;
+                while (true) {
+                    step = Math.min(step * 2, N - x, M - y);
+                    if (!step) break;
+                    if (a.substr(x, step) == b.substr(y, step)) {
+                        x += step;
+                        y += step;
+                    } else {
+                        break;
+                    }
+                }
             }
+
             V[k] = x;
             if (x == N && y == M) {
                 endD = D;
@@ -36,7 +51,7 @@ $.wiki.diff = function(a, b) {
 
     // Now go back.
     result = []
-    let snake, px, py;
+    let px, py;
     for (D = endD; D; --D) {
         k = x - y;
         V = VV[D - 1];
