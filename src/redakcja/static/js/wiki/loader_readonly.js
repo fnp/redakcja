@@ -72,22 +72,8 @@ $(function()
 	/* Load configuration */
 	$.wiki.loadConfig();
 
-	var initAll = function(a, f) {
-		if (a.length == 0) return f();
-
-		$.wiki.initTab({
-			tab: a.pop(),
-			doc: CurrentDocument,
-			callback: function(){
-				initAll(a, f);
-			}
-		});
-	};
-
-
-	/*
-	 * Initialize all perspectives
-	 */
-	initAll( $.makeArray($('#tabs li')), initialize);
-	console.log(location.hash);
+    $('.tabs li').each((i, e) => {
+        $.wiki.initTab({tab: e, doc: CurrentDocument});
+    });
+    initialize();
 });

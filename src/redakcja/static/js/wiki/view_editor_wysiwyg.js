@@ -526,6 +526,7 @@
                                 $origin.html($(element).html());
                             }
                             $overlay.remove();
+                            $.wiki.activePerspective().flush();
                         },
                         error: function(text){
                             alert('Błąd! ' + text);
@@ -639,36 +640,43 @@
                 self.caret = new Caret(element);
 
                 $('#insert-reference-button').click(function(){
+                    self.flush();
                     self.addReference();
                     return false;
                 });
 
                 $('#insert-annotation-button').click(function(){
+                    self.flush();
                     addAnnotation();
                     return false;
                 });
 
                 $('#insert-theme-button').click(function(){
+                    self.flush();
                     addTheme();
                     return false;
                 });
 
                 $(".insert-inline-tag").click(function() {
+                    self.flush();
                     self.insertInlineTag($(this).attr('data-tag'));
                     return false;
                 });
 
                 $(".insert-char").click(function() {
+                    self.flush();
                     addSymbol(caret=self.caret);
                     return false;
                 });
 
                 $(document).on('click', '.edit-button', function(event){
+                    self.flush();
                     event.preventDefault();
                     openForEdit($(this).parent());
                 });
 
                 $(document).on('click', '.uwaga-button', function(event){
+                    self.flush();
                     event.preventDefault();
                     createUwagaBefore($(this).parent());
                 });
@@ -679,6 +687,7 @@
             });
 
             element.on('click', '.annotation', function(event) {
+                self.flush();
                 event.preventDefault();
                 event.redakcja_caret_ignore = true;
                 $('[x-annotation-box]', $(this).parent()).toggleClass('editing');
@@ -706,6 +715,8 @@
 
                     var htmlView = $('#html-view');
                     htmlView.html(element);
+                    if ('PropertiesPerspective' in $.wiki.perspectives)
+                        $.wiki.perspectives.PropertiesPerspective.enable();
 
                     _finalize(success);
                 },
@@ -717,44 +728,51 @@
                     _finalize(failure);
                 }
             });
-        };
+        }
+
+        flush() {
+            let self = this;
+            return new Promise((resolve, reject) => {
+                if ($('#html-view .error').length > 0) {
+                    reject()
+                } else {
+                    //return _finalize(failure);
+                    html2text({
+                        element: $('#html-view').get(0),
+                        stripOuter: true,
+                        success: (text) => {
+                            self.doc.setText(text);
+                            resolve();
+                        },
+                        error: (text) => {
+                            reject(text);
+                            //$('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
+                        }
+                    });
+                }
+            });
+        }
 
         onExit(success, failure) {
             var self = this;
 
             self.caret.detach();
 
-            $.wiki.exitTab('#PropertiesPerspective');
+            if ('PropertiesPerspective' in $.wiki.perspectives)
+                $.wiki.perspectives.PropertiesPerspective.disable();
 
-            $.blockUI({
-                message: 'Zapisywanie widoku...'
-            });
-
-            function _finalize(callback){
-                $.unblockUI();
-                if (callback)
-                    callback();
-            }
-
-            if ($('#html-view .error').length > 0)
-                return _finalize(failure);
-
-            html2text({
-                element: $('#html-view').get(0),
-                stripOuter: true,
-                success: function(text){
-                    self.doc.setText(text);
-                    _finalize(success);
-                },
-                error: function(text){
-                    $('#source-editor').html('<p>Wystąpił błąd:</p><pre>' + text + '</pre>');
-                    _finalize(failure);
-                }
+            self.flush().then(() => {
+                success && success();
+            }).catch((e) => {
+                // TODO report
+                console.log('REJECTED!', e);
+                failure && failure();
             });
         };
 
         insertInlineTag(tag) {
             this.caret.detach();
+            let self = this;
 
             let selection = window.getSelection();
             var n = selection.rangeCount;
@@ -824,6 +842,7 @@
                         success: function(html) {
                             // What if no end?
                             node.insertBefore($(html)[0], end);
+                            self.flush();
                         }
                     });
                 },

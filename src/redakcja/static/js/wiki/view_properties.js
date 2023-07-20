@@ -40,6 +40,7 @@
 
     class PropertiesPerspective extends $.wiki.SidebarPerspective {
         vsplitbar = 'WŁAŚCIWOŚCI';
+        $edited = null;
 
         constructor(options) {
             super(options);
@@ -78,6 +79,7 @@
                         } else {
                             $input.data("edited").text(inputval);
                         }
+                        $.wiki.perspectives.VisualPerspective.flush();
                         return;
                     }
 
@@ -99,6 +101,7 @@
                                     let htmlElem = $(html);
                                     self.$edited.replaceWith(htmlElem);
                                     self.edit(htmlElem);
+                                    $.wiki.activePerspective().flush();
                                 }
                             });
                         },
@@ -148,6 +151,7 @@
                     let $fg = $(this).closest('.form-group');
                     $('input', $fg).data('edited').remove();
                     self.displayMetaProperty($fg);
+                    $.wiki.perspectives.VisualPerspective.flush();
                     return false;
                 });
 
@@ -192,6 +196,7 @@
 
             if (element === null) {
                 self.$edited = null;
+                $("h1", self.$pane).text('');
                 return;
             }
 
@@ -401,9 +406,16 @@
             if ($.wiki.activePerspective() != 'VisualPerspective')
                 $.wiki.switchToTab('#VisualPerspective');
 
-            if (self.$edited === null) {
-                self.edit($('[x-node="utwor"]')[0]);
+            this.enable();
+        }
+
+        enable() {
+            if (this.$edited === null) {
+                this.edit($('[x-node="utwor"]')[0]);
             }
+        }
+        disable() {
+            this.edit(null);
         }
     }
     $.wiki.PropertiesPerspective = PropertiesPerspective;

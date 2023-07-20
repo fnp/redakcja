@@ -199,6 +199,8 @@ PIPELINE = {
                 # base UI
                 'js/wiki/base.js',
                 'js/wiki/toolbar.js',
+                'js/lib/diff.js',
+                'js/wiki/undo.js',
 
                 # dialogs
                 'js/wiki/dialog_save.js',

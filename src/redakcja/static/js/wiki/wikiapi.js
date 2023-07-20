@@ -150,6 +150,7 @@
 
 		    if (self.text === null || self.revision !== data.revision) {
 		        self.text = data.text;
+                        $.wiki.undo.push(data.text);
 		        self.revision = data.revision;
 		        self.gallery = data.gallery;
 		        changed = true;
@@ -288,10 +289,30 @@
         /*
          * Set document's text
          */
-        setText(text) {
+        setText(text, silent=false) {
             if (text == this.text) return;
+            if (!silent) {
+                $.wiki.undo.push(text);
+            }
             this.text = text;
             this.has_local_changes = true;
+        }
+
+        undo() {
+            let ctx = $.wiki.exitContext();
+            this.setText(
+                $.wiki.undo.undo(),
+                true
+            );
+            $.wiki.enterContext(ctx);
+        }
+        redo() {
+            let ctx = $.wiki.exitContext();
+            this.setText(
+                $.wiki.undo.redo(),
+                true
+            );
+            $.wiki.enterContext(ctx);
         }
 
         /*

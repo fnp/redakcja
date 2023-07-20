@@ -103,7 +103,7 @@
     $.wiki.exitTab = function(tab){
         var self = this;
         var $tab = $(tab);
-        if (!('.active', $tab)) return;
+        if (!('.active', $tab).length) return;
         $('.active', $tab).removeClass('active');
         self.perspectives[$tab.attr('id')].onExit();
         $('#' + $tab.attr('data-ui-related')).hide();

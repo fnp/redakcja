@@ -37,6 +37,7 @@ class Caret {
             self.singleClick = true;
             setTimeout(function() {
                 if (self.singleClick) {
+                    $.wiki.activePerspective().flush();
                     self.element.insertBefore(
                         anchorNode.splitText(
                             selection.anchorOffset
@@ -208,6 +209,8 @@ class Caret {
     
     move(opts) {
         if (!this.attached) return;
+
+        $.wiki.activePerspective().flush();
         
         this.normalize();
         
