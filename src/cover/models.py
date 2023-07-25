@@ -11,6 +11,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from PIL import Image as PILImage
+from librarian.dcparser import BookInfo
+from librarian.meta.types.person import Person
+from librarian.cover import make_cover
 from cover.utils import URLOpener
 
 
@@ -39,6 +42,13 @@ class Image(models.Model):
         editable=True,
         verbose_name=_('file for use')
     )
+
+    example = models.ImageField(
+        upload_to='cover/example',
+        storage=OverwriteStorage(),
+        editable=False,
+    )
+
     cut_top = models.IntegerField(default=0, )
     cut_bottom = models.IntegerField(default=0)
     cut_left = models.IntegerField(default=0)
@@ -73,13 +83,69 @@ class Image(models.Model):
             img,
             save=False
         )
+
         super().save(update_fields=['use_file'])
+
+        self.example.save(
+            "%d.jpg" % self.pk,
+            ContentFile(self.build_example().get_bytes()),
+            save=False
+        )
+        super().save(update_fields=['example'])
+        
+
+    def build_example(self):
+        class A:
+            pass
+        info = A()
+        info.authors = []
+        info.translators = []
+        info.cover_class = None
+        info.cover_box_position = None
+        info.title = '?'
+        info.cover_url = 'file://' + self.use_file.path
+        return make_cover(info, width=200).output_file()
     
     def get_absolute_url(self):
         return reverse('cover_image', args=[self.id])
 
     def get_full_url(self):
         return "http://%s%s" % (Site.objects.get_current().domain, self.get_absolute_url())
+
+    def cut_percentages(self):
+        img = PILImage.open(self.file)
+        max_w, max_h = 600, 600
+        w, h = img.size
+        scale = min(max_w / w, max_h / h)
+        ws, hs = round(w * scale), round(h * scale)
+
+        return {
+            'left': 100 * self.cut_left / w,
+            'right': 100 * self.cut_right / w,
+            'top': 100 * self.cut_top / h,
+            'bottom': 100 * self.cut_bottom / h,
+            'width': ws,
+            'height': hs,
+            'th': f'{ws}x{hs}',
+        }
+
+    @property
+    def etag(self):
+        return f'{self.cut_top}.{self.cut_bottom}.{self.cut_left}.{self.cut_right}'
+
+    @property
+    def attribution(self):
+        pieces = []
+        if self.title:
+            pieces.append(self.title)
+        if self.author:
+            pieces.append(self.author)
+        if self.license_name:
+            pieces.append(self.license_name)
+        if self.source_url:
+            pieces.append(self.source_url.split('/')[2])
+        return ', '.join(pieces)
+    
 
 
 @receiver(post_save, sender=Image)

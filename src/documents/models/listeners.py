@@ -3,6 +3,7 @@
 #
 from django.contrib.auth.models import User
 from django.db import models
+import cover.models
 from documents.models import (Book, Chunk, Image, BookPublishRecord,
         ImagePublishRecord)
 from documents.signals import post_publish
@@ -52,4 +53,10 @@ def listener_create(sender, instance, created, **kwargs):
     if created:
         instance.chunk_set.create(number=1, slug='1')
 models.signals.post_save.connect(listener_create, sender=Book)
+
+
+def cover_changed(sender, instance, created, **kwargs):
+    for book in instance.book_set.all():
+        book.build_cover()
+models.signals.post_save.connect(cover_changed, sender=cover.models.Image)
 

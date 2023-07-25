@@ -556,6 +556,14 @@ class PlaceAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
 
 @admin.register(models.Thema)
 class ThemaAdmin(admin.ModelAdmin):
-    list_display = ['code', 'name', 'usable', 'hidden']
-    list_filter = ['usable', 'hidden']
-    search_fields = ['code', 'name', 'description']
+    list_display = ['code', 'name', 'usable', 'hidden', 'woblink_category']
+    list_filter = ['usable', 'usable_as_main', 'hidden']
+    search_fields = ['code', 'name', 'description', 'public_description']
+    prepopulated_fields = {"slug": ["name"]}
+
+
+@admin.register(models.Audience)
+class ThemaAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'thema']
+    search_fields = ['code', 'name', 'description', 'thema']
+    prepopulated_fields = {"slug": ["name"]}

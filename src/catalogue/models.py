@@ -217,7 +217,6 @@ class Epoch(Category):
 class Genre(Category):
     plural = models.CharField(
         'liczba mnoga', max_length=255, blank=True,
-        help_text='dotyczy gatunków'
     )
     is_epoch_specific = models.BooleanField(
         default=False,
@@ -564,9 +563,43 @@ class BookMonthlyStats(models.Model):
 class Thema(models.Model):
     code = models.CharField(max_length=128, unique=True)
     name = models.CharField(max_length=1024)
+    slug = models.SlugField(
+        max_length=255, null=True, blank=True, unique=True,
+        help_text='Element adresu na WL, w postaci: /tag/slug/. Można zmieniać.'
+    )
+    plural = models.CharField(
+        'liczba mnoga', max_length=255, blank=True,
+    )
     description = models.TextField(blank=True)
+    public_description = models.TextField(blank=True)
     usable = models.BooleanField()
+    usable_as_main = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
+    woblink_category = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = ('code',)
+        verbose_name_plural = 'Thema'
+
+
+class Audience(models.Model):
+    code = models.CharField(
+        max_length=128, unique=True,
+        help_text='Techniczny identifyikator. W miarę możliwości nie należy zmieniać.'
+    )
+    name = models.CharField(
+        max_length=1024,
+        help_text='W formie: „dla … (kogo?)”'
+    )
+    slug = models.SlugField(
+        max_length=255, null=True, blank=True, unique=True,
+        help_text='Element adresu na WL, w postaci: /dla/slug/. Można zmieniać.'
+    )
+    description = models.TextField(blank=True)
+    thema = models.CharField(
+        max_length=32, blank=True,
+        help_text='Odpowiadający kwalifikator Thema.'
+    )
 
     class Meta:
         ordering = ('code',)

@@ -1,53 +1,94 @@
 {% extends "documents/base.html" %}
-{% load i18n %}
+{% load i18n l10n %}
 {% load thumbnail %}
 {% load build_absolute_uri from fnp_common %}
+{% load bootstrap4 %}
 
 {% block titleextra %}{% trans "Cover image" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Cover image" %}</h1>
+  <h1>{% trans "Cover image" %}</h1>
+  <div class="row">
+    <div class="col-md-5">
 
-<div style="float: right; margin-bottom:1em;">
 
-<a href="{{ object.use_file.url }}"><img style="max-width: 565px; max-height: 833px"
-        src="{{ object.use_file.url }}?{{ object.cut_top }}.{{ object.cut_bottom }}.{{ object.cut_left }}.{{ object.cut_right }}" />
-    </a>
-<br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
-    {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
-        {{ object.license_name }}
-    {% if object.license_url %}</a>{% endif %}
+
+
+
+      {% if editable %}
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+      {% endif %}
+      <table class='editable'><tbody>
+        {% bootstrap_form form %}
+        {% if editable %}
+          {% buttons %}
+          <button type="submit" class="btn btn-primary">{% trans "Change" %}</button>
+      {% endbuttons %}
+        {% endif %}
+      </tbody></table>
+      {% if editable %}</form>{% endif %}
+    </div>
+
+
+    <div class="col-md-7">
+      {% with perc=object.cut_percentages %}
+        <a href="{{ object.use_file.url }}" style="position: relative; display: block; width: {{ perc.width }}px; height: {{ perc.height }}px;">
+          {% thumbnail object.file perc.th as th %}
+          <img src="{{ th.url }}" />
+    {% endthumbnail %}
+    {% localize off %}
+    <div style="background: black; opacity: .5; display: block; position: absolute; top:0; left: 0; right: 0; height: {{ perc.top }}%"></div>
+    <div style="background: black; opacity: .5; display: block; position: absolute; bottom:0; left: 0; right: 0; height: {{ perc.bottom }}%"></div>
+    <div style="background: black; opacity: .5; display: block; position: absolute; top: {{ perc.top }}%; bottom: {{ perc.bottom }}%; left: 0; width: {{ perc.left }}%"></div>
+    <div style="background: black; opacity: .5; display: block; position: absolute; top: {{ perc.top }}%; bottom: {{ perc.bottom }}%; right: 0; width: {{ perc.right }}%"></div>
+      {% endlocalize %}
+      {% endwith %}
+        </a>
+        <br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
+        {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
+          {{ object.license_name }}
+          {% if object.license_url %}</a>{% endif %}
+
+          {% if object.example %}
+            <div class="mt-4">
+              <img src="{{ object.example.url }}?{{ object.etag }}">
+            </div>
+          {% endif %}
+    </div>
+  </div>
+
+
+  <textarea style="width:100%" rows="6" class="form-control mt-4" disabled>
+&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.use_file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
+&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.attribution }}&lt;/dc:relation.coverImage.attribution>
+&lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source></textarea>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h2>{% trans "Used in:" %}</h2>
+    </div>
+    <div class="card-body">
+      {% if object.book_set.exists %}
+        <ul style="list-style: none; padding: 0; display: flex; gap: 10px;">
+          {% for book in object.book_set.all %}
+            <li>
+              <a href="{{ book.get_absolute_url }}">
+                <img src="{{ book.cover.url }}?{{ object.etag }}" alt="{{ book }}">
+              </a>
+            </li>
+            <li>
+              <a href="{{ book.get_absolute_url }}" title="{{ book }}">
+                <img src="{{ book.cover.url }}?{{ object.etag }}" alt="{{ book }}">
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>{% trans "None" %}</p>
+      {% endif %}
+  </div>
 </div>
 
 
-{% if editable %}
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-{% endif %}
-<table class='editable'><tbody>
-    {{ form.as_table }}
-    {% if editable %}
-        <tr><td></td><td><button type="submit">{% trans "Change" %}</button></td></tr>
-    {% endif %}
-</tbody></table>
-{% if editable %}</form>{% endif %}
-
-
-<h2>{% trans "Used in:" %}</h2>
-{% if object.book_set %}
-<ul>
-    {% for book in object.book_set.all %}
-        <li><a href="{{ book.get_absolute_url }}">{{ book }}</a></li>
-    {% endfor %}
-</ul>
-{% else %}
-    <p>{% trans "None" %}</p>
-{% endif %}
-
-
-<textarea style="width:100%" rows="5">
-&lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.use_file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
-&lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{% if object.title %}{{ object.title }}, {% endif %}{% if object.author %}{{ object.author }}, {% endif %}{{ object.license_name }}&lt;/dc:relation.coverImage.attribution>
-&lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source>
-</textarea>
 {% endblock %}

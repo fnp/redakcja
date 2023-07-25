@@ -119,7 +119,7 @@ VALUE_TYPES = {
     },
     "publisher": {
         "autocomplete": {
-            "source": ["Fundacja Nowoczesna Polska"]
+            "source": ["Fundacja Wolne Lektury"]
         }
     },
 

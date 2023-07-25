@@ -77,7 +77,7 @@ class ImageEditForm(forms.ModelForm):
     """Form used for editing a Book."""
     class Meta:
         model = Image
-        exclude = ['download_url']
+        exclude = ['download_url', 'use_file', 'example',]
 
     def clean(self):
         cleaned_data = super(ImageEditForm, self).clean()

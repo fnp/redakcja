@@ -7,7 +7,7 @@ import os.path
 import PIL.Image
 from django.conf import settings
 from django.contrib.auth.decorators import permission_required
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -102,6 +102,17 @@ def preview_from_xml(request):
 @active_tab('cover')
 def image(request, pk):
     img = get_object_or_404(Image, pk=pk)
+
+    if not request.accepts('text/html') and request.accepts('application/json') or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'attribution': img.attribution,
+            'cut_left': img.cut_left,
+            'cut_right': img.cut_right,
+            'cut_top': img.cut_top,
+            'cut_bottom': img.cut_bottom,
+            'file': img.file.url,
+            'use_file': img.use_file.url,
+        })
 
     if request.user.has_perm('cover.change_image'):
         if request.method == "POST":
