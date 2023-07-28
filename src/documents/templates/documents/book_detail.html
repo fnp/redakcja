@@ -141,16 +141,23 @@
 
         {% if perms.depot.add_legimibookpublish %}
           <hr>
-          {% with thema=doc.book_info.thema %}
-            {% if thema %}
+          {% with thema_main=doc.book_info.thema_main thema=doc.book_info.thema %}
+            {% if thema_main or thema %}
               <form method="post" action="{% url 'depot_legimi_publish' book.pk %}">
                 {% csrf_token %}
                 <button class="btn btn-primary" type="submit">
                   Opublikuj na Legimi<br><small>w kategorii:
+                  {% if thema_main %}
+                    <tt>{{ thema_main }}</tt>
+                  {% endif %}
                   {% for t in thema %}
+                    {% if forloop.first and thema_main %}oraz: {% endif %}
                     <tt>{{ t }}</tt>
                     {% if not forloop.last %}, {% endif %}
                   {% endfor %}
+                  {% if not thema_main %}
+                    <span class="badge badge-secondary" title="Nie ustalono głównej kategorii Thema">&nbsp;*&nbsp;</small>
+                  {% endif %}
                   </small></button>
                 {% with llp=book.last_legimi_publish %}
                   {% if llp %}
@@ -163,7 +170,7 @@
                 {% endwith %}
               </form>
             {% else %}
-              <div class="alert alert-warning">Nie można opublikować na Legimi, ponieważ nie ustaiono kategorii Thema.</div>
+              <div class="alert alert-warning">Nie można opublikować na Legimi, ponieważ nie ustalono kategorii Thema.</div>
             {% endif %}
           {% endwith %}
         {% endif %}

@@ -149,7 +149,8 @@
 
                 self.$pane.on('click', '.meta-delete', function() {
                     let $fg = $(this).closest('.form-group');
-                    $('input', $fg).data('edited').remove();
+                    let $ig = $(this).closest('.input-group');
+                    $('input', $ig).data('edited').remove();
                     self.displayMetaProperty($fg);
                     $.wiki.perspectives.VisualPerspective.flush();
                     return false;

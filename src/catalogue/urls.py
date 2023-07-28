@@ -11,6 +11,7 @@ urlpatterns = [
     path("book/<slug:slug>/", views.BookView.as_view(), name="catalogue_book"),
     path("book/<slug:slug>.json", views.BookAPIView.as_view(), name="catalogue_book_api"),
 
+    path('terms/audience/', views.AudienceTerms.as_view()),
     path('terms/epoch/', views.EpochTerms.as_view()),
     path('terms/kind/', views.KindTerms.as_view()),
     path('terms/genre/', views.GenreTerms.as_view()),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('terms/book_title/', views.BookTitleTerms.as_view()),
     path('terms/author/', views.AuthorTerms.as_view()),
     path('terms/thema/', views.ThemaTerms.as_view()),
+    path('terms/thema-main/', views.MainThemaTerms.as_view()),
 
     path('terms/editor/', views.EditorTerms.as_view()),
 

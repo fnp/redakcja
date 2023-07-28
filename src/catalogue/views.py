@@ -106,6 +106,15 @@ class Terms(ListAPIView):
         label = serializers.CharField(source='name')
 
 
+class AudienceTerms(Terms):
+    queryset = models.Audience.objects.all()
+    search_fields = ['code', 'name', 'description']
+
+    class serializer_class(serializers.Serializer):
+        label = serializers.CharField(source='code')
+        name = serializers.CharField()
+        description = serializers.CharField()
+
 class EpochTerms(Terms):
     queryset = models.Epoch.objects.all()
 class KindTerms(Terms):
@@ -149,6 +158,9 @@ class ThemaTerms(Terms):
         label = serializers.CharField(source='code')
         name = serializers.CharField()
         description = serializers.CharField()
+
+class MainThemaTerms(ThemaTerms):
+    queryset = models.Thema.objects.filter(usable=True, hidden=False, usable_as_main=True)
 
 
 class WikidataView(APIView):

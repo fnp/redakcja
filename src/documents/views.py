@@ -295,11 +295,13 @@ def book_epub(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     # TODO: move to celery
-    doc = book.wldocument()
+    doc = book.wldocument(librarian2=True)
     # TODO: error handling
 
-    #### Problemas: images in children.
-    epub = doc.as_epub(base_url='file://' + book.gallery_path() + '/').get_bytes()
+    from librarian.builders import EpubBuilder
+    epub = EpubBuilder(
+        base_url='file://' + book.gallery_path() + '/'
+    ).build(doc).get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
@@ -314,9 +316,12 @@ def book_mobi(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     # TODO: move to celery
-    doc = book.wldocument()
+    doc = book.wldocument(librarian2=True)
     # TODO: error handling
-    mobi = doc.as_mobi(base_url='file://' + book.gallery_path() + '/').get_bytes()
+    from librarian.builders import MobiBuilder
+    mobi = MobiBuilder(
+        base_url='file://' + book.gallery_path() + '/'
+    ).build(doc).get_bytes()
     response = HttpResponse(content_type='application/x-mobipocket-ebook')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
     response.write(mobi)

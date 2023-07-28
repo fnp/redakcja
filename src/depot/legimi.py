@@ -184,13 +184,18 @@ class Legimi:
             base_url='file://' + book.gallery_path() + '/'
         ).build(wlbook).get_file()
 
+        thema = []
+        if meta.thema_main:
+            thema.append(meta.thema_main)
+        thema.extend(meta.thema)
+        
         book_data = {
             "Title": meta.title,
             "Author": ", ".join(p.readable() for p in meta.authors),
             "Year": str(date.today().year),
 
             'GenreId': str(self.get_genre(wlbook)),
-            'themaCategories': ';'.join(meta.thema),
+            'themaCategories': ';'.join(thema),
             'thema-search': '',
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
@@ -289,12 +294,13 @@ class Legimi:
             for p in wlbook.meta.genres
         ) + '</p>'
 
-        if wlbook.meta.audience:
+        # TODO: Move away from using audiences for this.
+        if wlbook.meta.audience in ('L', 'SP1', 'SP2', 'SP3', 'SP4'):
             description += '<p><em>{}</em> to lektura szkolna.'.format(wlbook.meta.title)
             if wlbook.tree.find('//pe') is not None:
                 description += '<br>Ebook <em>{title}</em> zawiera przypisy opracowane specjalnie dla uczennic i uczniów {school}.'.format(
                     title=wlbook.meta.title,
-                    school='szkoły podstawowej' if wlbook.meta.audience == 'SP' else 'liceum i technikum'
+                    school='szkoły podstawowej' if wlbook.meta.audience.startswith('SP') else 'liceum i technikum'
                 )
             description += '</p>'
         return description
