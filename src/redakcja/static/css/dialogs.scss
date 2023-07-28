@@ -30,3 +30,20 @@
 	width: 90%;
 	margin: 0.2em 4%;
 }
+
+
+
+#meta-chooser {
+    .form-check {
+        margin: 1em;
+    }
+    .meta-chooser_toggle {
+        position: absolute;
+        top: 1.5em;
+        left: 0;
+        cursor: pointer;
+    }
+    .name {
+        font-weight: bold;
+    }
+}

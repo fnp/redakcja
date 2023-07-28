@@ -153,7 +153,7 @@ PIPELINE = {
                 'css/history.css',
                 'css/summary.css',
                 'css/imgareaselect-default.css',
-                'css/dialogs.css',
+                'css/dialogs.scss',
 
                 'wiki/scss/splitter.scss',
                 'wiki/scss/visual.scss'

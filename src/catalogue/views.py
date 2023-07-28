@@ -92,7 +92,7 @@ class BookAPIView(RetrieveAPIView):
                 'original_year',
                 'pd_year',
             ]
-    
+
 
 class TermSearchFilter(SearchFilter):
     search_param = 'term'
@@ -135,7 +135,7 @@ class EditorTerms(Terms):
 
         def get_label(self, obj):
             return f'{obj.last_name}, {obj.first_name}'
-    
+
 class BookTitleTerms(Terms):
     queryset = models.Book.objects.all()
     search_fields = ['title', 'slug']
@@ -146,7 +146,7 @@ class BookTitleTerms(Terms):
 class WLURITerms(Terms):
     queryset = models.Book.objects.all()
     search_fields = ['title', 'slug']
-    
+
     class serializer_class(serializers.Serializer):
         label = serializers.CharField(source='wluri')
 
@@ -161,6 +161,78 @@ class ThemaTerms(Terms):
 
 class MainThemaTerms(ThemaTerms):
     queryset = models.Thema.objects.filter(usable=True, hidden=False, usable_as_main=True)
+
+
+
+class Chooser(APIView):
+    def get(self, request):
+        return Response([{
+            'value': 'x',
+            'name': 'name',
+            'description': 'desc',
+            'sub': [
+                {
+                    'value': 'y',
+                    'name': 'name y',
+                    'description': 'desc y',
+                }
+            ]
+        }])
+
+
+class ThemaChooser(Chooser):
+    queryset = models.Thema.objects.filter(usable=True, hidden=False)
+
+    def get(self, request):
+        tree = {}
+
+        def getitem(code):
+            if len(code) == 1:
+                parent = tree
+            else:
+                parent = getitem(code[:-1]).setdefault('sub', {})
+            return parent.setdefault(code, {})
+
+        def getmissing(t):
+            for k, v in t.items():
+                if 'name' not in v:
+                    yield k
+                if 'sub' in v:
+                    for c in getmissing(v['sub']):
+                        yield c
+
+        def populate(thema):
+            item = getitem(thema.code)
+            item['usable'] = thema.usable
+            item['hidden'] = thema.hidden
+            item['name'] = thema.name
+            item['description'] = thema.description
+
+        def order(tree):
+            res = []
+            for k, v in tree.items():
+                v.update(value=k)
+                if 'sub' in v:
+                    v['sub'] = order(v['sub'])
+                res.append(v)
+            while len(res) == 1 and 'name' not in res[0] and 'sub' in res[0]:
+                res = res[0]['sub']
+            return res
+
+        for thema in self.queryset.all():
+            populate(thema)
+
+        missing = list(getmissing(tree))
+        for thema in models.Thema.objects.filter(code__in=missing):
+            populate(thema)
+
+        tree = order(tree)
+
+        return Response(tree)
+
+
+class MainThemaChooser(ThemaChooser):
+    queryset = models.Thema.objects.filter(usable=True, hidden=False, usable_as_main=True)[:1000]
 
 
 class WikidataView(APIView):
@@ -218,7 +290,7 @@ class WikidataView(APIView):
                 else:
                     d[fieldname] = localize_input(d[fieldname])
         return Response(d)
-    
+
     def get(self, request, model, qid):
         return self.get_object(model, qid, save=False)
 

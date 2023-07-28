@@ -58,12 +58,18 @@ VALUE_TYPES = {
     ThemaCategory: {
         'autocomplete': {
             'source': '/catalogue/terms/thema/',
-        }
+        },
+        'chooser': {
+            'source': '/catalogue/chooser/thema/',
+        },
     },
     MainThemaCategory: {
         'autocomplete': {
             'source': '/catalogue/terms/thema-main/',
-        }
+        },
+        'chooser': {
+            'source': '/catalogue/chooser/thema-main/',
+        },
     },
     Epoch: {
         'autocomplete': {

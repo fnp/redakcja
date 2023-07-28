@@ -178,6 +178,65 @@
                     $('#media-chooser').modal('hide');
                 });
 
+            /* Meta chooser */
+            $('#meta-chooser').on('show.bs.modal', function (event) {
+                let input = $("input", $(event.relatedTarget).closest('.input-group'));
+                let $fg = $(event.relatedTarget).closest('.form-group');
+                let field = $fg.data('field');
+                let modal = $(this);
+                modal.data('target-input', input);
+                let body = modal.find('.modal-body');
+                body.html('');
+
+                let add_options = function(cnt, options, value) {
+                    $.each(options, (i, item) => {
+                        let elem = $('<div class="form-check"><label class="form-check-label"><input class="form-check-input" type="radio" name="metachoose"><div class="value"></div><div class="name"></div><div class="description"></div></label></div>');
+                        if (!item.usable) {
+                            $('input', elem).remove();
+                        }
+                        if (item.hidden) {
+                            $('input', elem).prop('disabled', 'disabled');
+                        }
+                        $('input', elem).val(item.value);
+                        $('input', elem).val(item.value);
+                        $('.value', elem).text(item.value);
+                        $('.name', elem).append(item.name);
+                        $('.description', elem).append(item.description);
+                        let valueMatch = value && value.startsWith(item.value);
+                        if (valueMatch) {
+                            $('label', elem).addClass('text-primary')
+                            if (value == item.value) {
+                                $('input', elem).prop('checked', true);
+                            }
+                        }
+                        if (item.sub) {
+                            let subT = $('<div class="meta-chooser_toggle">+</div>');
+                            let sub = $('<div>');
+                            elem.append(subT);
+                            elem.append(sub);
+                            subT.on('click', () => {
+                                sub.toggle()
+                            });
+                            add_options(sub, item.sub, valueMatch ? value : null);
+                        }
+                        elem.appendTo(cnt);
+                    });
+                };
+
+                $.ajax({
+                    url: field.value_type.chooser.source,
+                    success: function(data) {
+                        add_options(body, data, input.val());
+                    }
+                });
+            })
+            $('#meta-chooser .ctrl-ok').on('click', function (event) {
+                $('#meta-chooser').data('target-input').val(
+                    $('#meta-chooser :checked').val()
+                ).trigger('change');
+                $('#meta-chooser').modal('hide');
+            });
+
                 self.$pane.on('click', '.current-convert', function() {
                     self.convert($(this).attr('data-to'));
                 });
@@ -311,6 +370,10 @@
 
             let ap = $("<div class='input-group-append'>");
             ap.appendTo(ig);
+
+            if (field.value_type.chooser) {
+                ap.append($("<button type='button' class='btn btn-outline-secondary' data-toggle='modal' data-target='#meta-chooser'>…</button>"));
+            }
             $("<button class='meta-delete btn btn-outline-secondary'>x</button>").appendTo(ap);
 
             // lang

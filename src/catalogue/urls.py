@@ -23,6 +23,9 @@ urlpatterns = [
 
     path('terms/editor/', views.EditorTerms.as_view()),
 
+    path('chooser/thema/', views.ThemaChooser.as_view()),
+    path('chooser/thema-main/', views.MainThemaChooser.as_view()),
+
     path('wikidata/<slug:model>/<qid>', views.WikidataView.as_view()),
 
     path('publish/author/<int:pk>/', views.publish_author, name='catalogue_publish_author'),
