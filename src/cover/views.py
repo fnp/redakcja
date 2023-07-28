@@ -105,6 +105,11 @@ def image(request, pk):
 
     if not request.accepts('text/html') and request.accepts('application/json') or request.GET.get('format') == 'json':
         return JsonResponse({
+            'title': img.title,
+            'author': img.author,
+            'license_name': img.license_name,
+            'license_url': img.license_url,
+            'source_url': img.source_url,
             'attribution': img.attribution,
             'cut_left': img.cut_left,
             'cut_right': img.cut_right,

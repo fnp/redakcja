@@ -60,7 +60,7 @@ VALUE_TYPES = {
             'source': '/catalogue/terms/thema/',
         }
     },
-    ThemaCategory: {
+    MainThemaCategory: {
         'autocomplete': {
             'source': '/catalogue/terms/thema-main/',
         }
