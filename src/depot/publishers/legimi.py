@@ -1,28 +1,15 @@
 from datetime import date
 import re
 from django.conf import settings
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from librarian.functions import lang_code_3to2
-from librarian.html import transform_abstrakt
 from librarian.builders import EpubBuilder, MobiBuilder
 from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
-import requests
-from slugify import slugify
+from .base import BasePublisher
 
 
-
-fundraising=[
-            "Książka, którą czytasz, pochodzi z <a href=\"https://wolnelektury.pl/\">Wolnych Lektur</a>. Naszą misją jest wspieranie dzieciaków w dostępie do lektur szkolnych oraz zachęcanie ich do czytania. Miło Cię poznać!",
-            "Podoba Ci się to, co robimy? Jesteśmy organizacją pożytku publicznego. Wesprzyj Wolne Lektury drobną wpłatą: <a href=\"https://wolnelektury.pl/towarzystwo/\">wolnelektury.pl/towarzystwo/</a>",
-            "Przyjaciele Wolnych Lektur otrzymują dostęp do prapremier wcześniej niż inni. Zadeklaruj stałą wpłatę i dołącz do Towarzystwa Przyjaciół Wolnych Lektur: <a href=\"https://wolnelektury.pl/towarzystwo/\">wolnelektury.pl/towarzystwo/</a>",
-            "Informacje o nowościach w naszej bibliotece w Twojej skrzynce mailowej? Nic prostszego, zapisz się do newslettera. Kliknij, by pozostawić swój adres e-mail: <a href=\"https://wolnelektury.pl/newsletter/zapisz-sie/\">wolnelektury.pl/newsletter/zapisz-sie/</a>",
-            "Przekaż 1% podatku na Wolne Lektury.<br/>\nKRS: 0000070056<br/>\nNazwa organizacji: Fundacja Nowoczesna Polska<br/>\nKażda wpłacona kwota zostanie przeznaczona na rozwój Wolnych Lektur."
-]
-
-description_add = '<p>Książkę polecają <a href="https://wolnelektury.pl">Wolne Lektury</a> — najpopularniejsza biblioteka on-line.</p>'
-
-
-class Legimi:
-    #BASE_URL = 'https://wydawca.legimi.com'
+class Legimi(BasePublisher):
     BASE_URL = 'https://panel.legimi.pl'
     LOGIN_URL = BASE_URL + '/publishers/membership'
     UPLOAD_URL = BASE_URL + '/administration/upload/start'
@@ -131,30 +118,48 @@ class Legimi:
         'Prawo': 67,
         'Branżowe': 74,
     }
-    
-    def __init__(self, username, password, publisher_id):
-        self.username = username
-        self.password = password
-        self.publisher_id = publisher_id
-        self._session = None
 
-    @property
-    def session(self):
-        if self._session is None:
-            session = requests.Session()
-            response = session.post(
-                self.LOGIN_URL,
-                data={
-                    'ValidationTrue': 'true',
-                    'UserName': self.username,
-                    'Password': self.password,
-                })
-            self._session = session
-        return self._session
-        
+    def login(self):
+        self._session.post(
+            self.LOGIN_URL,
+            data={
+                'ValidationTrue': 'true',
+                'UserName': self.username,
+                'Password': self.password,
+            })
+
+    def can_publish(self, shop, book):
+        meta = book.wldocument(librarian2=True).meta
+        d = {
+            'errors': [],
+            'warnings': [],
+        }
+        if meta.thema_main or meta.thema:
+            if meta.thema_main:
+                comment = "w kategorii <b><tt>{code}</tt></b>".format(
+                    code=escape(meta.thema_main)
+                )
+                if meta.thema:
+                    comment += " oraz: " + ", ".join(
+                        "<b><tt>{code}</tt></b>".format(code=escape(t))
+                        for t in meta.thema
+                    )
+                d['comment'] = mark_safe(comment)
+            elif meta.thema:
+                d['comment'] = mark_safe(
+                    "w kategorii " + ", ".join(
+                        "<b><tt>{code}</tt></b>".format(code=escape(t))
+                        for t in meta.thema
+                    )
+                )
+                d['warnings'].append('Brak głównej kategorii Thema')
+        else:
+            d['errors'].append('Brak kategorii Thema.')
+        return d
+
     def list(self):
         return self.session.get('https://wydawca.legimi.com/publishers/publications')
-        
+
     def upload(self, content):
         response = self.session.post(
             self.UPLOAD_URL,
@@ -168,19 +173,20 @@ class Legimi:
             "url": model['Url'],
         }
 
-    def send_book(self, book, changes=None):
+    def send_book(self, shop, book, changes=None):
         wlbook = book.wldocument(librarian2=True, changes=changes)
         meta = wlbook.meta
 
         cover = LabelMarquiseCover(meta, width=1200).output_file()
+        texts = shop.get_texts()
         epub_file = EpubBuilder(
             cover=MarquiseCover,
-            fundraising=fundraising,
+            fundraising=texts,
             base_url='file://' + book.gallery_path() + '/'
         ).build(wlbook).get_file()
         mobi_file = MobiBuilder(
             cover=MarquiseCover,
-            fundraising=fundraising,
+            fundraising=texts,
             base_url='file://' + book.gallery_path() + '/'
         ).build(wlbook).get_file()
 
@@ -188,7 +194,7 @@ class Legimi:
         if meta.thema_main:
             thema.append(meta.thema_main)
         thema.extend(meta.thema)
-        
+
         book_data = {
             "Title": meta.title,
             "Author": ", ".join(p.readable() for p in meta.authors),
@@ -200,7 +206,7 @@ class Legimi:
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
 
-            'Description': self.get_description(wlbook),
+            'Description': self.get_description(wlbook, shop.description_add),
         }
         if meta.isbn_html:
             isbn = meta.isbn_html
@@ -236,7 +242,7 @@ class Legimi:
             'BookMobi.Token': mobi_data['token'],
             'BookMobi.Name': mobi_data['name'],
         })
-        
+
         if book.legimi_id:
             self.edit(
                 book.legimi_id,
@@ -252,58 +258,7 @@ class Legimi:
                 book.legimi_id = legimi_id
                 book.save(update_fields=['legimi_id'])
 
-    def get_description(self, wlbook):
-        description = ''
-        abstract = wlbook.tree.find('.//abstrakt')
-        if abstract is not None:
-            description = transform_abstrakt(abstract)
-        description += description_add
-        description += '<p>'
-        description += ', '.join(
-            '<a href="https://wolnelektury.pl/katalog/autor/{}/">{}</a>'.format(
-                slugify(p.readable()),
-                p.readable(),
-            )
-            for p in wlbook.meta.authors
-        ) + '<br>'
-        description += '<a href="https://wolnelektury.pl/katalog/lektura/{}/">{}</a><br>'.format(
-            wlbook.meta.url.slug,
-            wlbook.meta.title
-        )
-        if wlbook.meta.translators:
-            description += 'tłum. ' + ', '.join(p.readable() for p in wlbook.meta.translators) + '<br>'
-        description += 'Epoka: ' + ', '.join(
-            '<a href="https://wolnelektury.pl/katalog/epoka/{}/">{}</a>'.format(
-                slugify(p),
-                p,
-            )
-            for p in wlbook.meta.epochs
-        ) + ' '
-        description += 'Rodzaj: ' + ', '.join(
-            '<a href="https://wolnelektury.pl/katalog/rodzaj/{}/">{}</a>'.format(
-                slugify(p),
-                p,
-            )
-            for p in wlbook.meta.kinds
-        ) + ' '
-        description += 'Gatunek: ' + ', '.join(
-            '<a href="https://wolnelektury.pl/katalog/gatunek/{}/">{}</a>'.format(
-                slugify(p),
-                p,
-            )
-            for p in wlbook.meta.genres
-        ) + '</p>'
-
-        # TODO: Move away from using audiences for this.
-        if wlbook.meta.audience in ('L', 'SP1', 'SP2', 'SP3', 'SP4'):
-            description += '<p><em>{}</em> to lektura szkolna.'.format(wlbook.meta.title)
-            if wlbook.tree.find('//pe') is not None:
-                description += '<br>Ebook <em>{title}</em> zawiera przypisy opracowane specjalnie dla uczennic i uczniów {school}.'.format(
-                    title=wlbook.meta.title,
-                    school='szkoły podstawowej' if wlbook.meta.audience.startswith('SP') else 'liceum i technikum'
-                )
-            description += '</p>'
-        return description
+        self.edit_sale(book)
 
     def get_genre(self, wlbook):
         if wlbook.meta.legimi and wlbook.meta.legimi in self.CATEGORIES:
@@ -312,11 +267,11 @@ class Legimi:
             if epoch in self.CATEGORIES:
                 return self.CATEGORIES[epoch]
         return self.CATEGORIES['Lektury']
-    
+
     def create_book(self, book_data, files_data):
         data = {
             'createValidationTrue': 'true',
-            'PublisherId': self.publisher_id,#3609954
+            'PublisherId': self.publisher_handle,
             'IsLibraryPass': 'False',
 
             'SamplesGenerationType': 'Quantity',
@@ -363,7 +318,7 @@ class Legimi:
         }
 
         current.update(data)
-        
+
         self.session.post(
             self.EDIT_URL % legimi_id,
             data=current
@@ -392,7 +347,7 @@ class Legimi:
             })
 
         current.update(files_data)
- 
+
         response = self.session.post(
             self.EDIT_FILES_URL % legimi_id,
             data=current
@@ -433,10 +388,3 @@ class Legimi:
             self.EDIT_SALE_URL % book.legimi_id,
             data=data
         )
-
-
-legimi = Legimi(
-    settings.LEGIMI_USERNAME,
-    settings.LEGIMI_PASSWORD,
-    settings.LEGIMI_PUBLISHER_ID,
-)

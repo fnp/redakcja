@@ -20,7 +20,9 @@ class DocumentCreateForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['parent', 'parent_number', 'project']
+        fields = [
+            'title', 'slug', 'public', 'gallery'
+        ]
 
     def __init__(self, *args, **kwargs):
         super(DocumentCreateForm, self).__init__(*args, **kwargs)
@@ -151,7 +153,7 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['project', 'cover', 'legimi_id']
+        exclude = ['project', 'cover', 'legimi_id', 'woblink_id']
 
     def __init__(self, *args, **kwargs):
         ret = super(BookForm, self).__init__(*args, **kwargs)

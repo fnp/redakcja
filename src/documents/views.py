@@ -363,10 +363,10 @@ def book(request, slug):
     publishable = publish_error is None
 
     try:
-        doc = book.wldocument()
+        doc = book.wldocument(librarian2=True)
     except:
         doc = None
-    
+
     return render(request, "documents/book_detail.html", {
         "book": book,
         "doc": doc,

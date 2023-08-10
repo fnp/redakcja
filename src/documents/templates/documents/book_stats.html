@@ -1,11 +1,19 @@
 <tr>
-  <td style="padding-left: {{ depth}}.75em;">{{ book.book_info.title|default:"???" }}</td>
-  <td>{{ stats.self.chars|default_if_none:"?" }}</td>
-  <td>{{ stats.self.chars_with_fn|default_if_none:"?" }}</td>
-  <td>{{ stats.self.words|default_if_none:"?" }}</td>
-  <td>{{ stats.self.words_with_fn|default_if_none:"?" }}</td>
-  <td>{{ stats.self.verses|default_if_none:"?" }} <small>+ {{ stats.self.chars_out_verse|default_if_none:"?" }} zn.</small></td>
-  <td>{{ stats.self.verses_with_fn|default_if_none:"?" }} <small> + {{ stats.self.chars_out_verse_with_fn|default_if_none:"?" }} zn.</small></td>
+  <td style="padding-left: {{ depth}}.75em;">
+    {{ book.meta.title|default:"???" }}
+  </td>
+  {% if stats.error %}
+    <td colspan="6">
+      {{ stats.error }}
+    </td>
+  {% else %}
+    <td>{{ stats.self.chars|default_if_none:"?" }}</td>
+    <td>{{ stats.self.chars_with_fn|default_if_none:"?" }}</td>
+    <td>{{ stats.self.words|default_if_none:"?" }}</td>
+    <td>{{ stats.self.words_with_fn|default_if_none:"?" }}</td>
+    <td>{{ stats.self.verses|default_if_none:"?" }} <small>+ {{ stats.self.chars_out_verse|default_if_none:"?" }} zn.</small></td>
+    <td>{{ stats.self.verses_with_fn|default_if_none:"?" }} <small> + {{ stats.self.chars_out_verse_with_fn|default_if_none:"?" }} zn.</small></td>
+  {% endif %}
 </tr>
 {% if stats.parts %}
   {% for part, partstats in stats.parts %}

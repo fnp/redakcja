@@ -121,6 +121,16 @@ class Author(WikidataModel):
     def get_absolute_url(self):
         return reverse("catalogue_author", args=[self.slug])
 
+    @classmethod
+    def get_by_literal(cls, literal):
+        names = literal.split(',', 1)
+        names = [n.strip() for n in names]
+        if len(names) == 2:
+            return cls.objects.filter(last_name=names[0], first_name=names[1]).first()
+        else:
+            return cls.objects.filter(last_name=names[0], first_name='').first() or \
+                cls.objects.filter(first_name=names[0], last_name='').first()
+
     @property
     def name(self):
         return f"{self.last_name}, {self.first_name}"

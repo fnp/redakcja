@@ -3,9 +3,8 @@ from . import views
 
 
 urlpatterns = [
-    path(
-        'legimi-publish/<int:book_id>/',
-        views.LegimiPublishView.as_view(),
-        name='depot_legimi_publish'
+    path('shop-publish/<int:shop_id>/<int:book_id>/',
+         views.ShopPublishView.as_view(),
+         name='depot_shop_publish'
     )
 ]

@@ -5,13 +5,14 @@ from documents.models import Book
 from . import models
 
 
-class LegimiPublishView(PermissionRequiredMixin, View):
-    permission_required = 'depot.add_legimibookpublish'
+class ShopPublishView(PermissionRequiredMixin, View):
+    permission_required = 'depot.add_shopbookpublish'
 
-    def post(self, request, book_id):
+    def post(self, request, shop_id, book_id):
+        shop = get_object_or_404(models.Shop, pk=shop_id)
         book = get_object_or_404(Book, pk=book_id)
         try:
-            publish = models.LegimiBookPublish.create_for(book, request.user)
+            publish = models.ShopBookPublish.create_for(book, request.user, shop)
         except AssertionError:
             pass
         return redirect(book.get_absolute_url())

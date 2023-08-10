@@ -8,7 +8,7 @@ from librarian.document import WLDocument
 from librarian.builders import StandaloneHtmlBuilder
 from librarian.meta.types.wluri import WLURI
 from librarian.meta.types.text import LegimiCategory, Epoch, Kind, Genre, Audience, ThemaCategory, MainThemaCategory
-from depot.legimi import legimi
+from depot.publishers.legimi import Legimi
 
 
 class XslView(TemplateView):
@@ -48,7 +48,7 @@ class TagView(DetailView):
 VALUE_TYPES = {
     LegimiCategory: {
         'widget': 'select',
-        'options': [''] + list(legimi.CATEGORIES.keys()),
+        'options': [''] + list(Legimi.CATEGORIES.keys()),
     },
     Audience: {
         'autocomplete': {

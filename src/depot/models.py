@@ -9,7 +9,8 @@ from django.db import models
 from django.utils.timezone import now
 from librarian.cover import make_cover
 from librarian.builders import EpubBuilder, MobiBuilder
-from .legimi import legimi
+from .publishers.legimi import Legimi
+from .publishers.woblink import Woblink
 
 
 class Package(models.Model):
@@ -27,14 +28,14 @@ class Package(models.Model):
             self.set_status(self.get_status())
         except:
             pass
-        
+
         try:
             self.set_definition(self.get_definition())
         except:
             pass
 
         super().save(*args, **kwargs)
-    
+
     def get_status(self):
         return json.loads(self.status_json)
 
@@ -121,9 +122,10 @@ class Package(models.Model):
             )
 
 
-class LegimiBookPublish(models.Model):
+class ShopBookPublish(models.Model):
     book = models.ForeignKey('documents.Book', models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True)
+    shop = models.ForeignKey('Shop', models.SET_NULL, null=True)
     created_at = models.DateTimeField()
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
@@ -136,12 +138,12 @@ class LegimiBookPublish(models.Model):
     error = models.TextField(blank=True)
 
     @classmethod
-    def create_for(cls, book, user):
+    def create_for(cls, book, user, shop):
         book.assert_publishable()
         changes = book.get_current_changes(publishable=True)
-        me = cls.objects.create(book=book, user=user, created_at=now())
+        me = cls.objects.create(book=book, user=user, shop=shop, created_at=now())
         for change in changes:
-            me.legimichunkpublish_set.create(change=change)
+            me.shopchunkpublish_set.create(change=change)
         return me
 
     def publish(self):
@@ -151,10 +153,11 @@ class LegimiBookPublish(models.Model):
         try:
             changes = [
                 p.change for p in
-                self.legimichunkpublish_set.order_by('change__chunk__number')
+                self.shopchunkpublish_set.order_by('change__chunk__number')
             ]
-            legimi.send_book(self.book, changes=changes)
-            legimi.edit_sale(self.book)
+
+            self.shop.publish(self.book, changes=changes)
+
         except Exception:
             self.status = 110
             self.error = traceback.format_exc()
@@ -165,6 +168,71 @@ class LegimiBookPublish(models.Model):
         self.save(update_fields=['status', 'finished_at', 'error'])
 
 
-class LegimiChunkPublish(models.Model):
-    book_publish = models.ForeignKey(LegimiBookPublish, models.CASCADE)
+class ShopChunkPublish(models.Model):
+    book_publish = models.ForeignKey(ShopBookPublish, models.CASCADE)
     change = models.ForeignKey('documents.ChunkChange', models.CASCADE)
+
+
+class Shop(models.Model):
+    name = models.CharField(max_length=255)
+    shop = models.CharField(max_length=32, choices=[
+        ('legimi', 'Legimi'),
+        ('woblink', 'Woblink'),
+    ])
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    publisher_handle = models.CharField(max_length=255, blank=True)
+    description_add = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.shop
+
+    def get_texts(self):
+        return [t.text for t in self.mediainserttext_set.all()]
+
+    def get_price(self, words, pages):
+        price_obj = self.pricelevel_set.exclude(
+            min_pages__gt=pages
+        ).exclude(
+            min_words__gt=words
+        ).order_by('-price').first()
+        if price_obj is None:
+            return None
+        return price_obj.price
+
+    def get_publisher(self):
+        if self.shop == 'legimi':
+            pub_class = Legimi
+        elif self.shop == 'woblink':
+            pub_class = Woblink
+        return pub_class(self.username, self.password, self.publisher_handle)
+
+    def publish(self, book, changes):
+        self.get_publisher().send_book(
+            self, book, changes=changes,
+        )
+
+    def can_publish(self, book):
+        return self.get_publisher().can_publish(self, book)
+
+    def get_last(self, book):
+        return self.shopbookpublish_set.filter(book=book).order_by('-created_at').first()
+
+
+class PriceLevel(models.Model):
+    shop = models.ForeignKey(Shop, models.CASCADE)
+    min_pages = models.IntegerField(null=True, blank=True)
+    min_words = models.IntegerField(null=True, blank=True)
+    price = models.IntegerField()
+
+    class Meta:
+        ordering = ('price',)
+
+
+class MediaInsertText(models.Model):
+    shop = models.ForeignKey(Shop, models.CASCADE)
+    ordering = models.IntegerField()
+    text = models.TextField()
+
+    class Meta:
+        ordering = ('ordering',)

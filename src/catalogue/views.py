@@ -20,7 +20,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import serializers
-from depot.woblink import get_woblink_session
+import depot.models
 
 
 
@@ -384,11 +384,14 @@ def publish_collection(request, pk):
 
 @login_required
 def woblink_author_autocomplete(request):
-    session = get_woblink_session()
+    shop = depot.models.Shop.objects.filter(shop='woblink').first()
+    if shop is None:
+        return JsonResponse({})
+    woblink = shop.get_publisher()
     term = request.GET.get('term')
     if not term:
         return JsonResponse({})
-    response = session.get(
+    response = woblink.session.get(
         'https://publisher.woblink.com/author/autocomplete/' + term
     ).json()
     return JsonResponse({

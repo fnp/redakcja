@@ -57,6 +57,7 @@ class Book(models.Model):
         related_query_name='document_book',
     )
     legimi_id = models.CharField(max_length=255, blank=True)
+    woblink_id = models.CharField(max_length=255, blank=True)
 
     class NoTextError(BaseException):
         pass
@@ -281,9 +282,6 @@ class Book(models.Model):
             return self.publish_log.all()[0].timestamp
         except IndexError:
             return None
-
-    def last_legimi_publish(self):
-        return self.legimibookpublish_set.order_by('-created_at').first()
 
     def assert_publishable(self):
         assert self.chunk_set.exists(), _('No chunks in the book.')
