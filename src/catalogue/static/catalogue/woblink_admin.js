@@ -4,11 +4,10 @@
         $(".admin-woblink").on("select2:open", function(e) {
             console.log("TRIGGER", e);
             let $input = $(".select2-container--open input");
-            let fname = $("#id_first_name_pl").val();
-            let lname = $("#id_last_name_pl").val();
-            console.log('A', fname, lname);
+            let fname = $("#id_first_name_pl").val() || '';
+            let lname = $("#id_last_name_pl").val() || '';
             $input.val(
-                fname + ' ' + lname
+                (fname + ' ' + lname).trim()
             ).trigger('input');
         });
 

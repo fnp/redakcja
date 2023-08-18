@@ -34,6 +34,6 @@ urlpatterns = [
     path('publish/epoch/<int:pk>/', views.publish_epoch, name='catalogue_publish_epoch'),
     path('publish/collection/<int:pk>/', views.publish_collection, name='catalogue_publish_collection'),
 
-    path('woblink/author/autocomplete', views.woblink_author_autocomplete,
-         name='catalogue_woblink_author_autocomplete'),
+    path('woblink/<category>/autocomplete', views.woblink_autocomplete,
+         name='catalogue_woblink_autocomplete'),
 ]

@@ -8,7 +8,7 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from librarian.builders.html import SnippetHtmlBuilder
 from librarian.functions import lang_code_3to2
-from catalogue.models import Author, Thema
+from catalogue.models import Audience, Author, Thema
 from .. import models
 from .base import BasePublisher
 from .woblink_constants import WOBLINK_CATEGORIES
@@ -129,6 +129,8 @@ class Woblink(BasePublisher):
     GENERATE_DEMO_URL = BASE_URL + 'task/run/generate-%s-demo/%s/%d'
     CHECK_DEMO_URL = BASE_URL + 'task/run/check-%s-demo/%s'
 
+    SEARCH_CATALOGUE_URL = BASE_URL + '{category}/autocomplete/{term}'
+
     ROLE_AUTHOR = 1
     ROLE_TRANSLATOR = 4
 
@@ -148,6 +150,28 @@ class Woblink(BasePublisher):
             data=data,
         )
 
+    def search_catalogue(self, category, term):
+        return self.session.get(
+            self.SEARCH_CATALOGUE_URL.format(category=category, term=term)
+        ).json()
+
+    def search_author_catalogue(self, term):
+        return [
+            {
+                'id': item['autId'],
+                'text': item['autFullname']
+            }
+            for item in self.search_catalogue('author', term)
+        ]
+    def search_series_catalogue(self, term):
+        return [
+            {
+                'id': item['id'],
+                'text': item['name']
+            }
+            for item in self.search_catalogue('series', term)
+        ]
+        
     def get_isbn(self, meta, errors=None):
         if not meta.isbn_epub:
             if errors is not None:
@@ -219,7 +243,8 @@ class Woblink(BasePublisher):
         return category_ids
 
     def get_series(self, meta, errors=None):
-        pass
+        return list(Audience.objects.filter(code__in=audiences).exclude(
+            woblink=None).values_list('woblink', flat=True))
 
     def get_abstract(self, wldoc, errors=None, description_add=None):
         description = self.get_description(wldoc, description_add)
@@ -351,6 +376,7 @@ class Woblink(BasePublisher):
             "lang2code": self.get_lang2code(wldoc.meta, errors=errors),
             "genres": self.get_genres(wldoc.meta, errors=errors),
             "price": self.get_price(shop, wldoc, errors=errors),
+            "series": self.get_series(wldoc.meta, errors=errors),
         }
 
     def with_form_name(self, data, name):
@@ -371,6 +397,14 @@ class Woblink(BasePublisher):
             for (author_type, author_id) in data['authors']
         ]
 
+        series_data = [
+            {
+                'PublicationId': woblink_id,
+                'SeriesId': series_id,
+            }
+            for series_id in data['series']
+        ]
+
         d = {
             'pubTitle': book_data['title'],
             'npwAuthorHasPublications': json.dumps(authors_data),
@@ -378,7 +412,7 @@ class Woblink(BasePublisher):
             'pubNote': data['abstract']['rest'],
             'pubCulture': data['lang2code'],
             'npwPublicationHasAwards': '[]',
-            'npwPublicationHasSeriess': '[]', # TODO
+            'npwPublicationHasSeriess': json.dumps(series_id),
                 # "[{\"Id\":6153,\"PublicationId\":73876,\"SeriesId\":1615,\"Tome\":null}]"
         }
         d = self.with_form_name(d, 'EditPublicationStep1')
@@ -402,8 +436,8 @@ class Woblink(BasePublisher):
                 if legacy is None:
                     legacy = WOBLINK_CATEGORIES[p].get('legacy')
             else:
-                gd.setdefault(p, {})
-                ds[p]['isMain'] = True
+                gd.setdefault(g, {})
+                gd[g]['isMain'] = True
         gd = [
             {
                 "pubId": woblink_id,
@@ -423,7 +457,7 @@ class Woblink(BasePublisher):
     def edit_step3(self, woblink_id, book_data):
         d = {
             'pubBasePrice': book_data['price'],
-            'pubPremiereDate': '2023-08-09', #date.today().isoformat(),
+            'pubPremiereDate': date.today().isoformat(),
             'pubIsLicenseIndefinite': '1',
             'pubFileFormat': 'epub+mobi',
             'pubIsAcs': '0',

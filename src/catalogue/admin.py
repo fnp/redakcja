@@ -24,9 +24,22 @@ class NotableBookInline(OrderableAdmin, admin.TabularInline):
     ordering_field_hide_input = True
 
 
-class WoblinkAuthorWidget(forms.Select):
+class WoblinkCatalogueWidget(forms.Select):
     class Media:
-        js = ("catalogue/woblink_admin.js",)
+        js = (
+            "admin/js/vendor/jquery/jquery.min.js",
+            "admin/js/vendor/select2/select2.full.min.js",
+            "admin/js/vendor/select2/i18n/pl.js",
+            "catalogue/woblink_admin.js",
+            "admin/js/jquery.init.js",
+            "admin/js/autocomplete.js",
+        )
+        css = {
+            "screen": (
+                "admin/css/vendor/select2/select2.min.css",
+                "admin/css/autocomplete.css",
+            ),
+        }
 
     def __init__(self):
         self.attrs = {}
@@ -34,7 +47,7 @@ class WoblinkAuthorWidget(forms.Select):
         self.field = None
 
     def get_url(self):
-        return reverse('catalogue_woblink_author_autocomplete')
+        return reverse('catalogue_woblink_autocomplete', args=[self.category])
 
     def build_attrs(self, base_attrs, extra_attrs=None):
         attrs = super().build_attrs(base_attrs, extra_attrs=extra_attrs)
@@ -59,6 +72,9 @@ class WoblinkAuthorWidget(forms.Select):
             }
         )
         return attrs
+
+class WoblinkAuthorWidget(WoblinkCatalogueWidget):
+    category = 'author'
 
 class AuthorForm(forms.ModelForm):
     class Meta:
@@ -287,7 +303,8 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
         "translators__first_name", "translators__last_name",
         "scans_source", "text_source", "notes", "estimate_source",
     ]
-    autocomplete_fields = ["authors", "translators", "based_on", "collections", "epochs", "genres", "kinds"]
+    autocomplete_fields = ["authors", "translators", "based_on", "epochs", "genres", "kinds"]
+    filter_horizontal = ['collections']
     prepopulated_fields = {"slug": ("title",)}
     list_filter = [
         "language",
@@ -562,8 +579,26 @@ class ThemaAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ["name"]}
 
 
+
+class WoblinkSeriesWidget(WoblinkCatalogueWidget):
+    category = 'series'
+
+class AudienceForm(forms.ModelForm):
+    class Meta:
+        model = models.Audience
+        fields = '__all__'
+        widgets = {
+            'woblink': WoblinkSeriesWidget,
+        }
+
 @admin.register(models.Audience)
-class ThemaAdmin(admin.ModelAdmin):
-    list_display = ['code', 'name', 'thema']
-    search_fields = ['code', 'name', 'description', 'thema']
+class AudienceAdmin(admin.ModelAdmin):
+    form = AudienceForm
+    list_display = ['code', 'name', 'thema', 'woblink']
+    search_fields = ['code', 'name', 'description', 'thema', 'woblink']
     prepopulated_fields = {"slug": ["name"]}
+    fields = ['code', 'name', 'slug', 'description', 'thema', ('woblink', 'woblink_id')]
+    readonly_fields = ['woblink_id']
+
+    def woblink_id(self, obj):
+        return obj.woblink or ''

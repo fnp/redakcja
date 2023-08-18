@@ -383,7 +383,7 @@ def publish_collection(request, pk):
 
 
 @login_required
-def woblink_author_autocomplete(request):
+def woblink_autocomplete(request, category):
     shop = depot.models.Shop.objects.filter(shop='woblink').first()
     if shop is None:
         return JsonResponse({})
@@ -391,15 +391,12 @@ def woblink_author_autocomplete(request):
     term = request.GET.get('term')
     if not term:
         return JsonResponse({})
-    response = woblink.session.get(
-        'https://publisher.woblink.com/author/autocomplete/' + term
-    ).json()
-    return JsonResponse({
-        "results": [
-            {
-                "id": item['autId'],
-                "text": item['autFullname'],
-            }
-            for item in response
-        ],
-    })
+
+    if category == 'author':
+        results = woblink.search_author_catalogue(term)
+    elif category == 'series':
+        results = woblink.search_series_catalogue(term)
+    else:
+        raise Http404
+
+    return JsonResponse({"results": results})

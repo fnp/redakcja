@@ -610,6 +610,7 @@ class Audience(models.Model):
         max_length=32, blank=True,
         help_text='Odpowiadający kwalifikator Thema.'
     )
+    woblink = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ('code',)
