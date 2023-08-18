@@ -243,17 +243,26 @@ class Woblink(BasePublisher):
         return category_ids
 
     def get_series(self, meta, errors=None):
-        return list(Audience.objects.filter(code__in=audiences).exclude(
+        return list(Audience.objects.filter(code__in=meta.audiences).exclude(
             woblink=None).values_list('woblink', flat=True))
 
     def get_abstract(self, wldoc, errors=None, description_add=None):
         description = self.get_description(wldoc, description_add)
         parts = description.split('\n', 1)
         if len(parts) == 1 or len(parts[0]) > 200:
-            p1 = description[:200].rsplit(' ', 1)[0]
-            p2 = description[len(p1):]
-            p1 += '…'
-            p2 = '…' + p2
+            # No newline found here.
+            # Try to find last sentence end..
+            parts = re.split(r' \.', description[200::-1], 1)
+            if len(parts) == 2:
+                p1 = parts[1][::-1] + '.'
+                p2 = description[len(p1) + 1:]
+            else:
+                # No sentence end found.
+                # Just find a space.
+                p1 = description[:200].rsplit(' ', 1)[0]
+                p2 = description[len(p1) + 1:]
+                p1 += '…'
+                p2 = '…' + p2
             parts = [p1, p2]
 
         m = re.search(r'<[^>]+$', parts[0])
@@ -412,8 +421,7 @@ class Woblink(BasePublisher):
             'pubNote': data['abstract']['rest'],
             'pubCulture': data['lang2code'],
             'npwPublicationHasAwards': '[]',
-            'npwPublicationHasSeriess': json.dumps(series_id),
-                # "[{\"Id\":6153,\"PublicationId\":73876,\"SeriesId\":1615,\"Tome\":null}]"
+            'npwPublicationHasSeriess': json.dumps(series_data),
         }
         d = self.with_form_name(d, 'EditPublicationStep1')
         d['roles'] = [author_type for (author_type, author_id) in data['authors']]
