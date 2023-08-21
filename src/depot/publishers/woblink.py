@@ -271,7 +271,7 @@ class Woblink(BasePublisher):
             parts[1] = m.group(0) + parts[1]
 
         opened = []
-        for tag in re.findall(r'<[^>]+[^/>]>', parts[0]):
+        for tag in re.findall(r'<[^>]*[^/>]>', parts[0]):
             if tag[1] == '/':
                 opened.pop()
             else:
@@ -288,7 +288,12 @@ class Woblink(BasePublisher):
         return lang_code_3to2(meta.language)
 
     def get_price(self, shop, wldoc, errors=None):
-        stats = wldoc.get_statistics()['total']
+        try:
+            stats = wldoc.get_statistics()['total']
+        except:
+            if errors:
+                errors.append(NoPrice(shop))
+            return 0
         words = stats['words_with_fn']
         pages = stats['chars_with_fn'] / 1800
         price = shop.get_price(words, pages)
