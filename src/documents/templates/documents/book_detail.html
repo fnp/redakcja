@@ -200,7 +200,7 @@
   </div>
 
 
-  {% if doc %}
+  {% if stats %}
     <div class="card mt-4">
       <div class="card-header">
         <h2>{% trans "Statistics" %}</h2>
@@ -221,9 +221,7 @@
             </tr>
           </thead>
           <tbody>
-            {% with stats=doc.get_statistics %}
-              {% include 'documents/book_stats.html' with book=doc stats=stats depth=0 %}
-          {% endwith %}
+            {% include 'documents/book_stats.html' with book=doc stats=stats depth=0 %}
         </tbody>
       </table>
     </div>

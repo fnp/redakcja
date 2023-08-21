@@ -362,14 +362,21 @@ def book(request, slug):
     publish_error = book.publishable_error()
     publishable = publish_error is None
 
+    stats = None
     try:
         doc = book.wldocument(librarian2=True)
     except:
         doc = None
+    else:
+        try:
+            stats = doc.get_statistic()
+        except:
+            pass
 
     return render(request, "documents/book_detail.html", {
         "book": book,
         "doc": doc,
+        "stats": stats,
         "publishable": publishable,
         "publishable_error": publish_error,
         "form": form,
