@@ -267,7 +267,7 @@ class Woblink(BasePublisher):
 
         m = re.search(r'<[^>]+$', parts[0])
         if m is not None:
-            parts[0] = parts[:-len(m.group(0))]
+            parts[0] = parts[0][:-len(m.group(0))]
             parts[1] = m.group(0) + parts[1]
 
         opened = []
