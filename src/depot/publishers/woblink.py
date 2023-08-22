@@ -523,6 +523,10 @@ class Woblink(BasePublisher):
             sleep(2)
 
     def upload_file(self, woblink_id, filename, content, field_name, mime_type):
+        form_name = f'Upload{field_name}'
+        id_field = f'pub{field_name}ResId'
+        field_name = field_name.lower()
+
         data = {
             'pubId': woblink_id,
         }
@@ -530,10 +534,6 @@ class Woblink(BasePublisher):
             field_name: (filename, content, mime_type)
         }
         
-        form_name = f'Upload{field_name}'
-        id_field = f'pub{field_name}ResId'
-        field_name = field_name.lower()
-
         response = self.session.post(
             self.UPLOAD_URL % field_name,
             data=self.with_form_name(data, form_name),
