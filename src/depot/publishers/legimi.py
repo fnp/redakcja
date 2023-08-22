@@ -133,6 +133,7 @@ class Legimi(BasePublisher):
         d = {
             'errors': [],
             'warnings': [],
+            'info': []
         }
         if meta.thema_main or meta.thema:
             if meta.thema_main:
@@ -144,14 +145,14 @@ class Legimi(BasePublisher):
                         "<b><tt>{code}</tt></b>".format(code=escape(t))
                         for t in meta.thema
                     )
-                d['comment'] = mark_safe(comment)
+                d['info'].append(mark_safe(comment))
             elif meta.thema:
-                d['comment'] = mark_safe(
+                d['info'].append(mark_safe(
                     "w kategorii " + ", ".join(
                         "<b><tt>{code}</tt></b>".format(code=escape(t))
                         for t in meta.thema
                     )
-                )
+                ))
                 d['warnings'].append('Brak głównej kategorii Thema')
         else:
             d['errors'].append('Brak kategorii Thema.')

@@ -153,11 +153,11 @@
                         Opublikuj na {{ shop.name }}
                       </button>
                     </form>
-                    {% if shop.comment %}
+                    {% for info in shop.info %}
                       <div class="alert alert-info">
-                        {{ shop.comment }}
+                        {{ info }}
                       </div>
-                    {% endif %}
+                    {% endfor %}
                   {% else %}
                     {% for error in shop.errors %}
                       <div class="alert alert-danger">

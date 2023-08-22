@@ -124,6 +124,8 @@ class Woblink(BasePublisher):
     STEP1_URL = BASE_URL + 'catalog/edit/%s'
     STEP2_URL = BASE_URL + 'catalog/edit/%s/2'
     STEP3_URL = BASE_URL + 'catalog/edit/%s/3'
+    STEP4_URL = BASE_URL + 'catalog/edit/%s/4'
+    STEP5_URL = BASE_URL + 'catalog/edit/%s/5'
     UPLOAD_URL = BASE_URL + 'file/upload-%s'
     JOB_STATUS_URL = BASE_URL + 'task/status'
     GENERATE_DEMO_URL = BASE_URL + 'task/run/generate-%s-demo/%s/%d'
@@ -309,6 +311,7 @@ class Woblink(BasePublisher):
         d = {
             'warnings': [],
             'errors': [],
+            'info': [],
         }
         errors = []
         book_data = self.get_book_data(shop, wldoc, errors)
@@ -320,11 +323,15 @@ class Woblink(BasePublisher):
             errlist.append(error.as_html())
 
         if book_data.get('genres'):
-            d['comment'] = format_html(
+            d['info'].append(format_html(
                 'W kategoriach: {cat} ({price} zł)',
                 cat=', '.join(self.describe_category(g) for g in book_data['genres']),
-                price=book_data['price']
-            )
+                price=book_data['price'],
+            ))
+        d['info'].append(mark_safe(
+            '<strong>' + book_data['abstract']['header'] +
+            '</strong><br/>' + book_data['abstract']['rest']
+        ))
 
         return d
 
@@ -378,6 +385,8 @@ class Woblink(BasePublisher):
             book.woblink_id, wldoc, book.gallery_path(),
             fundraising=texts
         )
+        self.edit_step4(book.woblink_id, book_data)
+        self.edit_step5(book.woblink_id, book_data)
 
     def get_book_data(self, shop, wldoc, errors=None):
         return {
@@ -478,6 +487,16 @@ class Woblink(BasePublisher):
         }
         d = self.with_form_name(d, 'EditPublicationStep3')
         return self.session.post(self.STEP3_URL % woblink_id, data=d)
+
+    def edit_step4(self, woblink_id, book_data):
+        d = {}
+        d = self.with_form_name(d, 'EditPublicationStep4')
+        return self.session.post(self.STEP4_URL % woblink_id, data=d)
+
+    def edit_step5(self, woblink_id, book_data):
+        d = {}
+        d = self.with_form_name(d, 'EditPublicationStep5')
+        return self.session.post(self.STEP5_URL % woblink_id, data=d)
 
     def wait_for_job(self, job_id):
         while True:
