@@ -488,6 +488,7 @@ class Woblink(BasePublisher):
             'pubFileFormat': 'epub+mobi',
             'pubIsAcs': '0',
             'pubPublisherIndex': '',
+            'save_and_continue': '',
         }
         d = self.with_form_name(d, 'EditPublicationStep3')
         return self.session.post(self.STEP3_URL % woblink_id, data=d)
@@ -501,12 +502,13 @@ class Woblink(BasePublisher):
             'pubMobiDemoResId': mobi_demo,
             'pubFileFormat': 'epub+mobi',
             'pubId': woblink_id,
+            'save_and_continue': '',
         }
         d = self.with_form_name(d, 'EditPublicationStep4')
         return self.session.post(self.STEP4_URL % woblink_id, data=d)
 
     def edit_step5(self, woblink_id, book_data):
-        d = {}
+        d = {'save': ''}
         d = self.with_form_name(d, 'EditPublicationStep5')
         return self.session.post(self.STEP5_URL % woblink_id, data=d)
 
