@@ -375,17 +375,21 @@ class Woblink(BasePublisher):
         self.edit_step1(book.woblink_id, book_data)
         self.edit_step2(book.woblink_id, book_data)
         self.edit_step3(book.woblink_id, book_data)
-        self.send_cover(book.woblink_id, wldoc)
+        cover_id = self.send_cover(book.woblink_id, wldoc)
+
         texts = shop.get_texts()
-        self.send_epub(
+        epub_id, epub_demo = self.send_epub(
             book.woblink_id, wldoc, book.gallery_path(),
             fundraising=texts
         )
-        self.send_mobi(
+        mobi_id, mobi_demo = self.send_mobi(
             book.woblink_id, wldoc, book.gallery_path(),
             fundraising=texts
         )
-        self.edit_step4(book.woblink_id, book_data)
+        self.edit_step4(
+            book.woblink_id, book_data,
+            cover_id, epub_id, epub_demo, mobi_id, mobi_demo,
+        )
         self.edit_step5(book.woblink_id, book_data)
 
     def get_book_data(self, shop, wldoc, errors=None):
@@ -488,8 +492,16 @@ class Woblink(BasePublisher):
         d = self.with_form_name(d, 'EditPublicationStep3')
         return self.session.post(self.STEP3_URL % woblink_id, data=d)
 
-    def edit_step4(self, woblink_id, book_data):
-        d = {}
+    def edit_step4(self, woblink_id, book_data, cover_id, epub_id, epub_demo, mobi_id, mobi_demo):
+        d = {
+            'pubCoverResId': cover_id,
+            'pubEpubResId': epub_id,
+            'pubEpubDemoResId': epub_demo,
+            'pubMobiResId': mobi_id,
+            'pubMobiDemoResId': mobi_demo,
+            'pubFileFormat': 'epub+mobi',
+            'pubId': woblink_id,
+        }
         d = self.with_form_name(d, 'EditPublicationStep4')
         return self.session.post(self.STEP4_URL % woblink_id, data=d)
 
@@ -507,16 +519,21 @@ class Woblink(BasePublisher):
             data = response.json()[job_id]
             if data['ready']:
                 assert data['successful']
-                return
+                return data.get('returnValue')
             sleep(2)
 
-    def upload_file(self, woblink_id, filename, content, form_name, field_name, mime_type):
+    def upload_file(self, woblink_id, filename, content, field_name, mime_type):
         data = {
             'pubId': woblink_id,
         }
         files = {
             field_name: (filename, content, mime_type)
         }
+        
+        form_name = f'Upload{field_name}'
+        id_field = f'pub{field_name}ResId'
+        field_name = field_name.lower()
+
         response = self.session.post(
             self.UPLOAD_URL % field_name,
             data=self.with_form_name(data, form_name),
@@ -524,8 +541,10 @@ class Woblink(BasePublisher):
         )
         resp_data = response.json()
         assert resp_data['success'] is True
+        file_id = resp_data[id_field]
         if 'jobId' in resp_data:
             self.wait_for_job(resp_data['jobId'])
+        return file_id
 
     def generate_demo(self, woblink_id, file_format, check=True):
         percent = 10
@@ -534,7 +553,7 @@ class Woblink(BasePublisher):
                 self.GENERATE_DEMO_URL % (file_format, woblink_id, percent),
             ).json()['jobId']
             try:
-                self.wait_for_job(job_id)
+                file_id = self.wait_for_job(job_id)
             except AssertionError:
                 if percent < 50:
                     percent += 10
@@ -549,6 +568,7 @@ class Woblink(BasePublisher):
                     self.CHECK_DEMO_URL % (file_format, woblink_id)
                 ).json()['jobId']
             )
+        return file_id
 
     def send_epub(self, woblink_id, doc, gallery_path, fundraising=None):
         from librarian.builders import EpubBuilder
@@ -556,7 +576,7 @@ class Woblink(BasePublisher):
             base_url='file://' + gallery_path + '/',
             fundraising=fundraising or [],
         ).build(doc).get_file()
-        self.upload_file(
+        file_id = self.upload_file(
             woblink_id,
             doc.meta.url.slug + '.epub',
             content,
@@ -564,7 +584,8 @@ class Woblink(BasePublisher):
             'epub',
             'application/epub+zip'
         )
-        self.generate_demo(woblink_id, 'epub')
+        demo_id = self.generate_demo(woblink_id, 'epub')
+        return file_id, demo_id
 
     def send_mobi(self, woblink_id, doc, gallery_path, fundraising=None):
         from librarian.builders import MobiBuilder
@@ -572,7 +593,7 @@ class Woblink(BasePublisher):
             base_url='file://' + gallery_path + '/',
             fundraising=fundraising or [],
         ).build(doc).get_file()
-        self.upload_file(
+        file_id = self.upload_file(
             woblink_id,
             doc.meta.url.slug + '.mobi',
             content,
@@ -580,7 +601,8 @@ class Woblink(BasePublisher):
             'mobi',
             'application/x-mobipocket-ebook'
         )
-        self.generate_demo(woblink_id, 'mobi', check=False)
+        demo_id = self.generate_demo(woblink_id, 'mobi', check=False)
+        return file_id, demo_id
 
     def send_cover(self, woblink_id, doc):
         from librarian.cover import make_cover
@@ -590,7 +612,7 @@ class Woblink(BasePublisher):
         content = io.BytesIO()
         cover.final_image().save(content, cover.format)
         content.seek(0)
-        self.upload_file(
+        file_id = self.upload_file(
             woblink_id,
             doc.meta.url.slug + '.jpeg',
             content,
@@ -598,3 +620,4 @@ class Woblink(BasePublisher):
             'cover',
             cover.mime_type()
         )
+        return file_id
