@@ -580,8 +580,7 @@ class Woblink(BasePublisher):
             woblink_id,
             doc.meta.url.slug + '.epub',
             content,
-            'UploadEpub',
-            'epub',
+            'Epub',
             'application/epub+zip'
         )
         demo_id = self.generate_demo(woblink_id, 'epub')
@@ -597,8 +596,7 @@ class Woblink(BasePublisher):
             woblink_id,
             doc.meta.url.slug + '.mobi',
             content,
-            'UploadMobi',
-            'mobi',
+            'Mobi',
             'application/x-mobipocket-ebook'
         )
         demo_id = self.generate_demo(woblink_id, 'mobi', check=False)
@@ -616,8 +614,7 @@ class Woblink(BasePublisher):
             woblink_id,
             doc.meta.url.slug + '.jpeg',
             content,
-            'UploadCover',
-            'cover',
+            'Cover',
             cover.mime_type()
         )
         return file_id
