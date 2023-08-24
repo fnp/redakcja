@@ -220,6 +220,12 @@ class Woblink(BasePublisher):
             if errors is not None:
                 errors.append(NoMainThemaWarning())
         thema_codes.extend(meta.thema)
+
+        thema_codes.extend(
+            Audience.objects.filter(code__in=meta.audiences).exclude(
+                thema=None).values_list('thema', flat=True)
+        )
+
         if not thema_codes:
             if errors is not None:
                 errors.append(NoThema())
