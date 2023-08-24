@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 from librarian.functions import lang_code_3to2
 from librarian.builders import EpubBuilder, MobiBuilder
 from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
+from catalogue.models import Audience
 from .base import BasePublisher
 
 
@@ -135,24 +136,15 @@ class Legimi(BasePublisher):
             'warnings': [],
             'info': []
         }
-        if meta.thema_main or meta.thema:
-            if meta.thema_main:
-                comment = "w kategorii <b><tt>{code}</tt></b>".format(
-                    code=escape(meta.thema_main)
+        thema = self.get_thema(meta)
+        if thema:
+            d['info'].append(mark_safe(
+                "w kategorii " + ", ".join(
+                    "<b><tt>{code}</tt></b>".format(code=escape(t))
+                    for t in thema
                 )
-                if meta.thema:
-                    comment += " oraz: " + ", ".join(
-                        "<b><tt>{code}</tt></b>".format(code=escape(t))
-                        for t in meta.thema
-                    )
-                d['info'].append(mark_safe(comment))
-            elif meta.thema:
-                d['info'].append(mark_safe(
-                    "w kategorii " + ", ".join(
-                        "<b><tt>{code}</tt></b>".format(code=escape(t))
-                        for t in meta.thema
-                    )
-                ))
+            ))
+            if not meta.thema_main:
                 d['warnings'].append('Brak głównej kategorii Thema')
         else:
             d['errors'].append('Brak kategorii Thema.')
@@ -174,6 +166,18 @@ class Legimi(BasePublisher):
             "url": model['Url'],
         }
 
+    def get_thema(self, meta):
+        thema = []
+        if meta.thema_main:
+            thema.append(meta.thema_main)
+        thema.extend(meta.thema)
+
+        thema.extend(
+            Audience.objects.filter(code__in=meta.audiences).exclude(
+                thema=None).values_list('thema', flat=True)
+        )
+        return thema
+
     def send_book(self, shop, book, changes=None):
         wlbook = book.wldocument(librarian2=True, changes=changes)
         meta = wlbook.meta
@@ -191,18 +195,13 @@ class Legimi(BasePublisher):
             base_url='file://' + book.gallery_path() + '/'
         ).build(wlbook).get_file()
 
-        thema = []
-        if meta.thema_main:
-            thema.append(meta.thema_main)
-        thema.extend(meta.thema)
-
         book_data = {
             "Title": meta.title,
             "Author": ", ".join(p.readable() for p in meta.authors),
             "Year": str(date.today().year),
 
             'GenreId': str(self.get_genre(wlbook)),
-            'themaCategories': ';'.join(thema),
+            'themaCategories': ';'.join(self.get_thema(meta)),
             'thema-search': '',
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
