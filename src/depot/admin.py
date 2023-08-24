@@ -24,3 +24,10 @@ class ShopAdmin(admin.ModelAdmin):
         MediaInsertTextInline,
         PriceLevelInline,
     ]
+
+@admin.register(models.ShopBookPublish)
+class ShopBookPublishAdmin(admin.ModelAdmin):
+    list_display = ['created_at', 'book', 'user', 'shop', 'status', 'started_at', 'finished_at']
+    list_filter = ['status', 'shop']
+    search_fields = ['book', 'user']
+    date_hierarchy = 'started_at'
