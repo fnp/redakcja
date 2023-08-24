@@ -397,7 +397,7 @@ class Book(WikidataModel):
         if hasattr(self, '_content_stats'):
             return self._content_stats
         try:
-            stats = self.document_books.first().wldocument().get_statistics()['total']
+            stats = self.document_books.first().wldocument(librarian2=True).get_statistics()['total']
         except Exception as e:
             stats = {}
         self._content_stats = stats

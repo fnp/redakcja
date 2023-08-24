@@ -356,7 +356,7 @@ class Legimi(BasePublisher):
     def edit_sale(self, book):
         assert book.legimi_id
 
-        words = book.wldocument().get_statistics()['total']['words_with_fn']
+        words = book.wldocument(librarian2=True).get_statistics()['total']['words_with_fn']
 
         price = settings.LEGIMI_SMALL_PRICE
         if words > settings.LEGIMI_SMALL_WORDS:
