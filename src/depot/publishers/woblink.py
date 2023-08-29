@@ -223,7 +223,7 @@ class Woblink(BasePublisher):
 
         thema_codes.extend(
             Audience.objects.filter(code__in=meta.audiences).exclude(
-                thema=None).values_list('thema', flat=True)
+                thema='').values_list('thema', flat=True)
         )
 
         if not thema_codes:

@@ -73,6 +73,20 @@ class WoblinkCatalogueWidget(forms.Select):
         )
         return attrs
 
+    def optgroups(self, name, value, attrs=None):
+        """ Add synthetic option for keeping the current value. """
+        return [(None, [
+            self.create_option(
+                name,
+                v,
+                '(bez zmian)',
+                selected=True,
+                index=index,
+                attrs=attrs,
+            )
+            for index, v in enumerate(value)
+        ], 0)]
+
 class WoblinkAuthorWidget(WoblinkCatalogueWidget):
     category = 'author'
 

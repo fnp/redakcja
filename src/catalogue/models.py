@@ -128,8 +128,10 @@ class Author(WikidataModel):
         if len(names) == 2:
             return cls.objects.filter(last_name=names[0], first_name=names[1]).first()
         else:
-            return cls.objects.filter(last_name=names[0], first_name='').first() or \
-                cls.objects.filter(first_name=names[0], last_name='').first()
+            return cls.objects.filter(last_name_pl=names[0], first_name_pl='').first() or \
+                cls.objects.filter(first_name_pl=names[0], last_name_pl='').first() or \
+                cls.objects.filter(first_name_pl=literal, last_name_pl='').first() or \
+                cls.objects.filter(first_name_pl=literal, last_name_pl=None).first()
 
     @property
     def name(self):
