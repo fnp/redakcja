@@ -141,39 +141,39 @@
               </form>
 
 
-              {% if perms.depot.add_shopbookpublish %}
-                {% depot_shops book as shops %}
-                {% for shop in shops %}
+              {% if perms.depot.add_sitebookpublish %}
+                {% depot_sites book as sites %}
+                {% for site in sites %}
                   <hr>
-                  <h3 class="mb-3">{{ shop.name }}</h3>
-                  {% if not shop.errors %}
-                    <form method="post" action="{% url 'depot_shop_publish' shop.shop_id book.pk %}">
+                  <h3 class="mb-3">{{ site.name }}</h3>
+                  {% if not site.errors %}
+                    <form method="post" action="{% url 'depot_site_publish' site.site_id book.pk %}">
                       {% csrf_token %}
                       <button class="btn btn-primary mb-3" type="submit">
-                        Opublikuj na {{ shop.name }}
+                        Opublikuj na {{ site.name }}
                       </button>
                     </form>
-                    {% for info in shop.info %}
+                    {% for info in site.info %}
                       <div class="alert alert-info">
                         {{ info }}
                       </div>
                     {% endfor %}
                   {% else %}
-                    {% for error in shop.errors %}
+                    {% for error in site.errors %}
                       <div class="alert alert-danger">
                         {{ error }}
                       </div>
                     {% endfor %}
                   {% endif %}
-                  {% for warning in shop.warnings %}
+                  {% for warning in site.warnings %}
                     <div class="alert alert-warning">
                       {{ warning }}
                     </div>
                   {% endfor %}
-                  {% if shop.id %}
-                    id:{{ shop.id }}
+                  {% if site.id %}
+                    id:{{ site.id }}
                   {% endif %}
-                  {% with last=shop.last %}
+                  {% with last=site.last %}
                   {% if last %}
                     {{ last.created_at }} &rarr;
                     {{ last.started_at }} &rarr;
@@ -181,7 +181,7 @@
                     <span title="{{ last.error }}">
                       ({{ last.get_status_display }})
                     </span>
-                    <!-- {{ shop.last.id }} -->
+                    <!-- {{ site.last.id }} -->
                   {% endif %}
                   {% endwith %}
                 {% endfor %}

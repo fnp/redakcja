@@ -17,7 +17,7 @@ class BasePublisher:
             self.login()
         return self._session
 
-    def send_book(self, shop, book, changes=None):
+    def send_book(self, site_book_publish, changes=None):
         raise NotImplementedError()
 
     def get_description(self, wlbook, description_add=''):

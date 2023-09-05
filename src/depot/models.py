@@ -122,10 +122,22 @@ class Package(models.Model):
             )
 
 
-class ShopBookPublish(models.Model):
+class SiteBook(models.Model):
+    site = models.ForeignKey('Site', models.SET_NULL, null=True)
     book = models.ForeignKey('documents.Book', models.CASCADE)
+    external_id = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = (('book', 'site'),)
+
+    def __str__(self):
+        return f'{self.site} : {self.book} : {self.external_id}'
+        
+
+class SiteBookPublish(models.Model):
+    site_book = models.ForeignKey(SiteBook, models.PROTECT, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True)
-    shop = models.ForeignKey('Shop', models.SET_NULL, null=True)
     created_at = models.DateTimeField()
     started_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
@@ -138,12 +150,16 @@ class ShopBookPublish(models.Model):
     error = models.TextField(blank=True)
 
     @classmethod
-    def create_for(cls, book, user, shop):
+    def create_for(cls, book, user, site):
         book.assert_publishable()
         changes = book.get_current_changes(publishable=True)
-        me = cls.objects.create(book=book, user=user, shop=shop, created_at=now())
+        site_book, created = SiteBook.objects.get_or_create(
+            site=site, book=book
+        )
+        me = cls.objects.create(
+            site_book=site_book, user=user, created_at=now())
         for change in changes:
-            me.shopchunkpublish_set.create(change=change)
+            me.sitechunkpublish_set.create(change=change)
         return me
 
     def publish(self):
@@ -153,10 +169,10 @@ class ShopBookPublish(models.Model):
         try:
             changes = [
                 p.change for p in
-                self.shopchunkpublish_set.order_by('change__chunk__number')
+                self.sitechunkpublish_set.order_by('change__chunk__number')
             ]
 
-            self.shop.publish(self.book, changes=changes)
+            self.site.publish(self, changes=changes)
 
         except Exception:
             self.status = 110
@@ -168,14 +184,14 @@ class ShopBookPublish(models.Model):
         self.save(update_fields=['status', 'finished_at', 'error'])
 
 
-class ShopChunkPublish(models.Model):
-    book_publish = models.ForeignKey(ShopBookPublish, models.CASCADE)
+class SiteChunkPublish(models.Model):
+    book_publish = models.ForeignKey(SiteBookPublish, models.CASCADE)
     change = models.ForeignKey('documents.ChunkChange', models.CASCADE)
 
 
-class Shop(models.Model):
+class Site(models.Model):
     name = models.CharField(max_length=255)
-    shop = models.CharField(max_length=32, choices=[
+    site_type = models.CharField(max_length=32, choices=[
         ('legimi', 'Legimi'),
         ('woblink', 'Woblink'),
     ])
@@ -185,7 +201,7 @@ class Shop(models.Model):
     description_add = models.TextField(blank=True)
 
     def __str__(self):
-        return self.shop
+        return self.name
 
     def get_texts(self):
         return [t.text for t in self.mediainserttext_set.all()]
@@ -201,26 +217,32 @@ class Shop(models.Model):
         return price_obj.price
 
     def get_publisher(self):
-        if self.shop == 'legimi':
+        if self.site_type == 'legimi':
             pub_class = Legimi
-        elif self.shop == 'woblink':
+        elif self.site_type == 'woblink':
             pub_class = Woblink
         return pub_class(self.username, self.password, self.publisher_handle)
 
-    def publish(self, book, changes):
+    def publish(self, site_book_publish, changes):
         self.get_publisher().send_book(
-            self, book, changes=changes,
+            site_book_publish,
+            changes=changes,
         )
 
     def can_publish(self, book):
         return self.get_publisher().can_publish(self, book)
 
     def get_last(self, book):
-        return self.shopbookpublish_set.filter(book=book).order_by('-created_at').first()
+        return SiteBookPublish.objects.filter(
+            site_book__site=self, site_book__book=book
+        ).order_by('-created_at').first()
 
+    def get_external_id_for_book(self, book):
+        site_book = self.sitebook_set.filter(book=book).first()
+        return (site_book and site_book.external_id) or ''
 
 class PriceLevel(models.Model):
-    shop = models.ForeignKey(Shop, models.CASCADE)
+    site = models.ForeignKey(Site, models.CASCADE)
     min_pages = models.IntegerField(null=True, blank=True)
     min_words = models.IntegerField(null=True, blank=True)
     price = models.IntegerField()
@@ -230,7 +252,7 @@ class PriceLevel(models.Model):
 
 
 class MediaInsertText(models.Model):
-    shop = models.ForeignKey(Shop, models.CASCADE)
+    site = models.ForeignKey(Site, models.CASCADE)
     ordering = models.IntegerField()
     text = models.TextField()
 

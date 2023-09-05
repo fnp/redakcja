@@ -20,8 +20,8 @@ class WoblinkError(ValueError):
 class NoPrice(WoblinkError):
     def as_html(self):
         return format_html(
-            'Brak <a href="/admin/depot/shop/{price}">określonej ceny</a>.',
-            price=self.args[0].id
+            'Brak <a href="/admin/depot/site/{site}">określonej ceny</a>.',
+            site=self.args[0].id
         )
 
 class NoIsbn(WoblinkError):
@@ -295,24 +295,24 @@ class Woblink(BasePublisher):
     def get_lang2code(self, meta, errors=None):
         return lang_code_3to2(meta.language)
 
-    def get_price(self, shop, wldoc, errors=None):
+    def get_price(self, site, wldoc, errors=None):
         try:
             stats = wldoc.get_statistics()['total']
         except:
             if errors:
-                errors.append(NoPrice(shop))
+                errors.append(NoPrice(site))
             return 0
         words = stats['words_with_fn']
         pages = stats['chars_with_fn'] / 1800
-        price = shop.get_price(words, pages)
+        price = site.get_price(words, pages)
         if price is None:
             if errors:
-                errors.append(NoPrice(shop))
+                errors.append(NoPrice(site))
             return 0
 
         return price
 
-    def can_publish(self, shop, book):
+    def can_publish(self, site, book):
         wldoc = book.wldocument(librarian2=True)
         d = {
             'warnings': [],
@@ -320,7 +320,7 @@ class Woblink(BasePublisher):
             'info': [],
         }
         errors = []
-        book_data = self.get_book_data(shop, wldoc, errors)
+        book_data = self.get_book_data(site, wldoc, errors)
         for error in errors:
             if not isinstance(error, Warning):
                 errlist = d['errors']
@@ -365,50 +365,53 @@ class Woblink(BasePublisher):
         if m is not None:
             return m.group(1)
 
-    def send_book(self, shop, book, changes=None):
+    def send_book(self, site_book_publish, changes=None):
+        site_book = site_book_publish.site_book
+        book = site_book.book
+        site = site_book.site
         wldoc = book.wldocument(librarian2=True, changes=changes, publishable=False) # TODO pub
         meta = wldoc.meta
 
-        book_data = self.get_book_data(shop, wldoc)
+        book_data = self.get_book_data(site, wldoc)
 
-        if not book.woblink_id:
-            #book.woblink_id = 2959868
+        if not site_book.external_id:
             woblink_id = self.create_book(book_data['isbn'])
             assert woblink_id
-            book.woblink_id = woblink_id
-            book.save(update_fields=['woblink_id'])
+            site_book.external_id = woblink_id
+            site_book.save(update_fields=['external_id'])
+        woblink_id = site_book.external_id
 
-        self.edit_step1(book.woblink_id, book_data)
-        self.edit_step2(book.woblink_id, book_data)
-        self.edit_step3(book.woblink_id, book_data)
-        cover_id = self.send_cover(book.woblink_id, wldoc)
+        self.edit_step1(woblink_id, book_data)
+        self.edit_step2(woblink_id, book_data)
+        self.edit_step3(woblink_id, book_data)
+        cover_id = self.send_cover(woblink_id, wldoc)
 
-        texts = shop.get_texts()
+        texts = site.get_texts()
         epub_id, epub_demo = self.send_epub(
-            book.woblink_id, wldoc, book.gallery_path(),
+            woblink_id, wldoc, book.gallery_path(),
             fundraising=texts
         )
         mobi_id, mobi_demo = self.send_mobi(
-            book.woblink_id, wldoc, book.gallery_path(),
+            woblink_id, wldoc, book.gallery_path(),
             fundraising=texts
         )
         self.edit_step4(
-            book.woblink_id, book_data,
+            woblink_id, book_data,
             cover_id, epub_id, epub_demo, mobi_id, mobi_demo,
         )
-        self.edit_step5(book.woblink_id, book_data)
+        self.edit_step5(woblink_id, book_data)
 
-    def get_book_data(self, shop, wldoc, errors=None):
+    def get_book_data(self, site, wldoc, errors=None):
         return {
             "title": wldoc.meta.title,
             "isbn": self.get_isbn(wldoc.meta, errors=errors),
             "authors": self.get_authors_data(wldoc.meta, errors=errors),
             "abstract": self.get_abstract(
-                wldoc, errors=errors, description_add=shop.description_add
+                wldoc, errors=errors, description_add=site.description_add
             ),
             "lang2code": self.get_lang2code(wldoc.meta, errors=errors),
             "genres": self.get_genres(wldoc.meta, errors=errors),
-            "price": self.get_price(shop, wldoc, errors=errors),
+            "price": self.get_price(site, wldoc, errors=errors),
             "series": self.get_series(wldoc.meta, errors=errors),
         }
 

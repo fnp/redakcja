@@ -18,16 +18,17 @@ class PriceLevelInline(OrderableAdmin, admin.TabularInline):
     extra = 0
 
 
-@admin.register(models.Shop)
-class ShopAdmin(admin.ModelAdmin):
+@admin.register(models.Site)
+class SiteAdmin(admin.ModelAdmin):
     inlines = [
         MediaInsertTextInline,
         PriceLevelInline,
     ]
 
-@admin.register(models.ShopBookPublish)
-class ShopBookPublishAdmin(admin.ModelAdmin):
-    list_display = ['created_at', 'book', 'user', 'shop', 'status', 'started_at', 'finished_at']
-    list_filter = ['status', 'shop']
+@admin.register(models.SiteBookPublish)
+class SiteBookPublishAdmin(admin.ModelAdmin):
+    list_display = ['created_at', 'site_book', 'user', 'status', 'started_at', 'finished_at']
+    list_filter = ['status', 'site_book__site']
     search_fields = ['book', 'user']
     date_hierarchy = 'started_at'
+    raw_id_fields = ['site_book']

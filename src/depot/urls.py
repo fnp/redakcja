@@ -3,8 +3,8 @@ from . import views
 
 
 urlpatterns = [
-    path('shop-publish/<int:shop_id>/<int:book_id>/',
-         views.ShopPublishView.as_view(),
-         name='depot_shop_publish'
+    path('site-publish/<int:site_id>/<int:book_id>/',
+         views.SitePublishView.as_view(),
+         name='depot_site_publish'
     )
 ]

@@ -153,7 +153,7 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['project', 'cover', 'legimi_id', 'woblink_id']
+        exclude = ['project', 'cover']
 
     def __init__(self, *args, **kwargs):
         ret = super(BookForm, self).__init__(*args, **kwargs)

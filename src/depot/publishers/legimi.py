@@ -129,7 +129,7 @@ class Legimi(BasePublisher):
                 'Password': self.password,
             })
 
-    def can_publish(self, shop, book):
+    def can_publish(self, site, book):
         meta = book.wldocument(librarian2=True).meta
         d = {
             'errors': [],
@@ -178,12 +178,15 @@ class Legimi(BasePublisher):
         )
         return thema
 
-    def send_book(self, shop, book, changes=None):
+    def send_book(self, site_book_publish, changes=None):
+        site_book = site_book_publish.site_book
+        site = site_book.site
+        book = site_book.book
         wlbook = book.wldocument(librarian2=True, changes=changes)
         meta = wlbook.meta
 
         cover = LabelMarquiseCover(meta, width=1200).output_file()
-        texts = shop.get_texts()
+        texts = site.get_texts()
         epub_file = EpubBuilder(
             cover=MarquiseCover,
             fundraising=texts,
@@ -206,7 +209,7 @@ class Legimi(BasePublisher):
             'Isbn': '',
             'LanguageLocale': lang_code_3to2(meta.language),
 
-            'Description': self.get_description(wlbook, shop.description_add),
+            'Description': self.get_description(wlbook, site.description_add),
         }
         if meta.isbn_html:
             isbn = meta.isbn_html
@@ -243,20 +246,20 @@ class Legimi(BasePublisher):
             'BookMobi.Name': mobi_data['name'],
         })
 
-        if book.legimi_id:
+        if site_book.external_id:
             self.edit(
-                book.legimi_id,
+                site_book.external_id,
                 book_data
             )
             self.edit_files(
-                book.legimi_id,
+                site_book.external_id,
                 files_data
             )
         else:
             legimi_id = self.create_book(book_data, files_data)
             if legimi_id:
-                book.legimi_id = legimi_id
-                book.save(update_fields=['legimi_id'])
+                site_book.external_id = legimi_id
+                site_book.save(update_fields=['external_id'])
 
         self.edit_sale(book)
 

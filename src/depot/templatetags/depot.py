@@ -1,20 +1,20 @@
 from django.template import Library
-from depot.models import Shop
+from depot.models import Site
 
 
 register = Library()
 
 
 @register.simple_tag(takes_context=True)
-def depot_shops(context, book):
-    shops = []
-    for shop in Shop.objects.all():
+def depot_sites(context, book):
+    sites = []
+    for site in Site.objects.all():
         d = {
-            'shop_id': shop.id,
-            'name': shop.name,
+            'site_id': site.id,
+            'name': site.name,
         }
-        d.update(shop.can_publish(book))
-        d['last'] = shop.get_last(book)
-        d['id'] = getattr(book, shop.shop + '_id')
-        shops.append(d)
-    return shops
+        d.update(site.can_publish(book))
+        d['last'] = site.get_last(book)
+        d['id'] = site.get_external_id_for_book(book)
+        sites.append(d)
+    return sites

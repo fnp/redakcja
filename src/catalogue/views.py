@@ -384,10 +384,10 @@ def publish_collection(request, pk):
 
 @login_required
 def woblink_autocomplete(request, category):
-    shop = depot.models.Shop.objects.filter(shop='woblink').first()
-    if shop is None:
+    site = depot.models.Site.objects.filter(site_type='woblink').first()
+    if site is None:
         return JsonResponse({})
-    woblink = shop.get_publisher()
+    woblink = site.get_publisher()
     term = request.GET.get('term')
     if not term:
         return JsonResponse({})

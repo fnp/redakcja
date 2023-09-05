@@ -2,9 +2,17 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from django.contrib import admin
+import depot.models
 from . import models
 
+
+class SiteBookInline(admin.TabularInline):
+    model = depot.models.SiteBook
+    extra = 0
+
+
 class BookAdmin(admin.ModelAdmin):
+    inlines = [SiteBookInline]
     list_display = ['title', 'public', '_published', '_new_publishable', 'project']
     list_filter = ['public', '_published', '_new_publishable', 'project']
     prepopulated_fields = {'slug': ['title']}
