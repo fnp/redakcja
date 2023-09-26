@@ -98,7 +98,7 @@ class Isbn(models.Model):
         max_length=32, choices=[
             (form, form)
             for form, config in FORMS
-        ], null=True, blank=True
+        ], blank=True
     )
     bn_data = models.TextField(blank=True)
     wl_data = models.TextField(blank=True)
@@ -139,12 +139,15 @@ class Isbn(models.Model):
                     isbn, created = pool.isbn_set.get_or_create(
                         suffix=suffix,
                     )
+                    add_note = False
                     if isbn.book is None:
                         isbn.book = catalogue_book
-                    else:
-                        assert isbn.book is catalogue_book
-                    if isbn.form is None:
+                    elif isbn.book is not catalogue_book:
+                        add_note = True
+                    if not isbn.form:
                         isbn.form = form
-                    else:
-                        assert isbn.form == form
-                    isbn.save(update_fields=['book', 'form'])
+                    elif isbn.form != form:
+                        add_note = True
+                    if add_note:
+                        isbn.notes += '\n\n' + catalogue_book.slug + ' ' + form
+                    isbn.save(update_fields=['book', 'form', 'notes'])
