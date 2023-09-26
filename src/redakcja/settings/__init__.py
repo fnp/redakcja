@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'wlxml.apps.WlxmlConfig',
     'alerts',
     'team',
+    'isbn',
 )
 
 if DEBUG:
