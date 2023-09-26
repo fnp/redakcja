@@ -41,7 +41,7 @@ class BasePublisher:
             '<a href="https://wolnelektury.pl/katalog/autor/{}/">{}</a>'.format(
                 slugify(p.readable()),
                 p.readable(),
-            )
+            ) if p is not None else ''
             for p in wlbook.meta.authors
         ) + '<br>'
         description += '<a href="https://wolnelektury.pl/katalog/lektura/{}/">{}</a><br>'.format(
@@ -54,21 +54,21 @@ class BasePublisher:
             '<a href="https://wolnelektury.pl/katalog/epoka/{}/">{}</a>'.format(
                 slugify(p),
                 p,
-            )
+            ) if p is not None else ''
             for p in wlbook.meta.epochs
         ) + ' '
         description += 'Rodzaj: ' + ', '.join(
             '<a href="https://wolnelektury.pl/katalog/rodzaj/{}/">{}</a>'.format(
                 slugify(p),
                 p,
-            )
+            ) if p is not None else ''
             for p in wlbook.meta.kinds
         ) + ' '
         description += 'Gatunek: ' + ', '.join(
             '<a href="https://wolnelektury.pl/katalog/gatunek/{}/">{}</a>'.format(
                 slugify(p),
                 p,
-            )
+            ) if p is not None else ''
             for p in wlbook.meta.genres
         ) + '</p>'
 

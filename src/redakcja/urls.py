@@ -27,6 +27,7 @@ urlpatterns = [
     path('cover/', include('cover.urls')),
     path('depot/', include('depot.urls')),
     path('wlxml/', include('wlxml.urls')),
+    path('isbn/', include('isbn.urls')),
 
     path('api/', include('redakcja.api.urls')),
 ]

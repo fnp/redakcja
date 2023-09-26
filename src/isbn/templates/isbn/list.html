@@ -1,0 +1,75 @@
+{% extends "documents/base.html" %}
+{% load pagination_tags %}
+{% load l10n %}
+
+
+{% block content %}
+  {% localize off %}
+  <table class="table">
+    {% for pool in pools %}
+      <tr>
+        <th>
+          {{ pool.get_purpose_display }}
+        </th>
+        <th>
+          ({{ pool }})
+        </th>
+        <th>
+          <div class="progress" style="height: 20px;">
+            {% with p=pool.fill_percentage %}
+              <div class="progress-bar" role="progressbar" style="width: {{ p }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{% if p > 30 %}{{ pool.entries }} / {{ pool.size }}{% endif %}</div>
+              {% if p <= 30 %}{{ pool.entries }} / {{ pool.size }}{% endif %}
+            {% endwith %}
+          </div>
+        </th>
+      </tr>
+    {% endfor %}
+  </table>
+  {% endlocalize %}
+
+  {% autopaginate list 100 %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ISBN</th>
+        <th>Książka</th>
+        <th>Forma</th>
+        <th>Czas</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for isbn in list %}
+        <tr>
+          <td>
+            {{ isbn.get_code }}
+          </td>
+          <td>
+            {{ isbn.book|default_if_none:'—' }}
+          </td>
+          <td>
+            {{ isbn.form|default_if_none:'—' }}
+          </td>
+          <td>
+            {{ isbn.datestamp|default_if_none:'—' }}
+          </td>
+          <td>
+            {% if isbn.wl_data %}
+              <span class="badge badge-info" title="{{ isbn.wl_data }}">WL</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if isbn.bn_data %}
+              <span class="badge badge-info" title="{{ isbn.bn_data }}">BN</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if isbn.notes %}
+              <span class="badge badge-info" title="{{ isbn.notes }}">not.</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% paginate %}
+{% endblock %}

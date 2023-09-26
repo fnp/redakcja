@@ -99,7 +99,10 @@ def get_wikimedia_data(url):
         entity = client.get(qitem)
         meta['title'] = entity.label.get('pl', str(entity.label))
         author = entity.get(client.get(WIKIDATA.CREATOR))
-        meta['author'] = author.label.get('pl', str(author.label))
+        if author is not None:
+            meta['author'] = author.label.get('pl', str(author.label))
+        else:
+            meta['author'] = ''
 
     if meta['license_name'] == 'Public domain':
         meta['license_name'] = 'domena publiczna'

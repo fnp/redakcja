@@ -369,7 +369,7 @@ def book(request, slug):
         doc = None
     else:
         try:
-            stats = doc.get_statistic()
+            stats = doc.get_statistics()
         except:
             pass
 
