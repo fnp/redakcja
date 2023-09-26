@@ -142,7 +142,7 @@ class Isbn(models.Model):
                     add_note = False
                     if isbn.book is None:
                         isbn.book = catalogue_book
-                    elif isbn.book is not catalogue_book:
+                    elif isbn.book != catalogue_book:
                         add_note = True
                     if not isbn.form:
                         isbn.form = form
