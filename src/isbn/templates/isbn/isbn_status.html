@@ -1,0 +1,19 @@
+<div class="row mb-4">
+  <div class="col-4">
+    ISBN
+    {% for form, value in formats %}
+      <span class="badge badge-{% if value %}primary{% else %}secondary{% endif %}" title="{{ value }}">{{ form }}</span>
+    {% endfor %}
+  </div>
+  <div class="col-4">
+    {% if can_generate %}
+      <form method="post" action="{% url 'isbn_generate' book.pk %}">
+        {% csrf_token %}
+        <button class="btn btn-primary btn-sm">
+          uzupełnij
+        </button>
+      </form>
+    {% endif %}
+    {{ error }}
+  </div>
+</div>

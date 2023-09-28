@@ -1,3 +1,4 @@
+from datetime import date
 from django.apps import apps
 from django.db import models
 from lxml import etree
@@ -113,6 +114,36 @@ class Isbn(models.Model):
         
     def get_code(self, dashes=True):
         return self.pool.get_code(self.suffix, dashes=dashes)
+
+    @classmethod
+    def get_for_book(cls, book, form):
+        isbn = cls.objects.filter(book=book, form=form).first()
+        if isbn is None:
+            return cls.assign(book, form)
+        return isbn
+
+    @classmethod
+    def assign(cls, book, form):
+        pool = IsbnPool.objects.filter(purpose=IsbnPool.PURPOSE_WL).first()
+        suffix = pool.isbn_set.aggregate(s=models.Max('suffix'))['s'] + 1
+        assert suffix <= pool.suffix_to
+        return pool.isbn_set.create(
+            book=book, form=form, suffix=suffix, datestamp=date.today()
+        )
+
+    @classmethod
+    def formats_from_document(cls, document):
+        # This is a document
+        meta = document.wldocument(librarian2=True).meta
+        is_parent = len(meta.parts)
+        formats = []
+        for form, config in FORMS:
+            if config.book and (not is_parent or config.parent):
+                formats.append((
+                    form,
+                    getattr(meta, f'isbn_{form}')
+                ))
+        return formats
 
     @classmethod
     def import_from_documents(cls):

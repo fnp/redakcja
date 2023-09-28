@@ -37,6 +37,7 @@ def main_tabs(context):
         tabs.append(Tab('upload', _('Upload'), reverse("documents_upload")))
 
     tabs.append(Tab('cover', _('Covers'), reverse("cover_image_list")))
+    tabs.append(Tab('isbn', 'ISBN', reverse("isbn_list")))
 
     return {"tabs": tabs, "active_tab": active}
 

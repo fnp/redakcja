@@ -2,6 +2,7 @@
 {% load book_list i18n %}
 {% load bootstrap4 %}
 {% load depot %}
+{% load isbn %}
 
 
 {% block titleextra %}{{ book.title }}{% endblock %}
@@ -124,6 +125,8 @@
               <a href="{% url 'documents_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a><br/>
               <a href="{% url 'documents_book_mobi' book.slug %}" rel="nofollow">{% trans "MOBI version" %}</a><br/>
             </p>
+
+            {% isbn_status book %}
 
             {% if user.is_authenticated %}
               <!--
