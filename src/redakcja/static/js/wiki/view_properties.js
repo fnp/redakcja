@@ -163,7 +163,7 @@
                     var imglist = modal.find('.modal-body');
                     imglist.html('');
                     $.each(self.doc.galleryImages, (i, imgItem) => {
-                        img = $("<img>").attr("src", imgItem.thumb).attr('title', imgItem.url).data('url', imgItem.url).on('click', function() {
+                        let img = $("<img>").attr("src", imgItem.thumb).attr('title', imgItem.url).data('url', imgItem.url).on('click', function() {
                             imglist.find('img').removeClass('active');
                             $(this).addClass('active');
                         });
