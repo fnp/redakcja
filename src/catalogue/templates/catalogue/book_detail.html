@@ -10,10 +10,19 @@
 {% block content %}
   <div class="card">
     <div class="card-header">
-      <h1>{% trans "Catalogue" %}</h1>
+      <h1>{{ book }}</h1>
     </div>
     <div class="card-body">
       <table class="table">
+        {% with is_published=book.is_published %}
+          {% if is_published %}
+            <a href="https://wolnelektury.pl/katalog/lektura/{{ book.slug }}" target="_blank">
+          {% endif %}
+          {% if is_published %}
+            </a>
+          {% endif %}
+        {% endwith %}
+
         {% for author in book.authors.all %}
           <tr>
             <th>
@@ -67,14 +76,70 @@
             {{ book.get_priorty_display }}
           </td>
           <td>
-            {% for b in book.document_books.all %}
-              <a href="{{ b.get_absolute_url }}">
-                {{ b }}
-              </a>
-            {% endfor %}
           </td>
         </tr>
       </table>
     </div>
   </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      Tekst
+    </div>
+    <div class="card-body">
+      {% for b in book.document_books.all %}
+        <a href="{{ b.get_absolute_url }}">
+          {{ b }}
+        </a>
+      {% empty %}
+        Brak tekstu. Jeśli masz źródło ze skanami, utwórz z niego tekst niżej.
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      Audio
+    </div>
+    <div class="card-body">
+      {% with audio=book.audio_status.items %}
+        {% if audio %}
+          <table class="table">
+          {% for s in audio %}
+            <tr><td>{{ s.part }}</td><td>{{ s.youtube_status }}</td></tr>
+          {% endfor %}
+          </table>
+        {% endif %}
+      {% endwith %}
+      <!-- tbd -->
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      Źródło
+    </div>
+    <div class="card-body">
+      {% for bs in book.booksource_set.all %}
+        <a href="{{ bs.source.get_absolute_url }}">
+          {{ bs.source }}
+        </a>
+        {% if bs.page_start or bs.page_end %}
+          ({{ bs.page_start }}—{{ bs.page_end }})
+        {% else %}
+          (całość)
+        {% endif %}
+        <form method="post" action="{% url 'source_book_prepare' bs.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-primary">Utwórz tekst książki</button>
+        </form>
+      {% empty %}
+        Brak źródła.
+        Możesz je dodać.
+      {% endfor %}
+    </div>
+  </div>
+
+
+
 {% endblock content %}

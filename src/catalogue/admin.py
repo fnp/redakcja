@@ -15,6 +15,7 @@ from fnpdjango.actions import export_as_csv_action
 from modeltranslation.admin import TabbedTranslationAdmin
 from . import models
 import documents.models
+import sources.models
 from .wikidata import WikidataAdminMixin
 
 
@@ -301,7 +302,13 @@ class FirstPublicationYearFilter(admin.ListFilter):
         ]
 
 
+class SourcesInline(admin.TabularInline):
+    model = sources.models.BookSource
+    extra = 1
+
+
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
+    inlines = [SourcesInline]
     list_display = [
         "smart_title",
         "authors_str",

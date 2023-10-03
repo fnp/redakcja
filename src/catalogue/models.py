@@ -321,6 +321,12 @@ class Book(WikidataModel):
     def get_absolute_url(self):
         return reverse("catalogue_book", args=[self.slug])
 
+    def is_text_public(self):
+        return self.free_license or (self.pd_year is not None and self.pd_year <= date.today().year)
+
+    def audio_status(self):
+        return {}
+    
     @property
     def wluri(self):
         return f'https://wolnelektury.pl/katalog/lektura/{self.slug}/'
@@ -369,6 +375,15 @@ class Book(WikidataModel):
             for work_type in WorkType.objects.all()
         }
 
+    def scans_gallery(self):
+        bs = self.booksource_set.first()
+        if bs is None:
+            return ''
+        return bs.pk
+
+    def is_published(self):
+        return any(b.is_published() for b in self.document_books.all())
+    
     def update_monthly_stats(self):
         # Find publication date.
         # By default, get previous 12 months.

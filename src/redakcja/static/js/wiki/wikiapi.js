@@ -35,6 +35,9 @@
 	    return base_path + "/history/" + arguments[1] + '/';
 	}
 
+	if (vname == "ajax_document_scans") {
+            return base_path + "/scans/" + arguments[1] + '/';
+	}
 	if (vname == "ajax_document_gallery") {
 	    return base_path + "/gallery/" + arguments[1] + '/';
 	}
@@ -117,11 +120,11 @@
 	    this.readonly = !!$("*[data-key='readonly']", meta).text();
 
 	    this.bookSlug = $("*[data-key='book-slug']", meta).text();
+	    this.scansLink = $("*[data-key='scans']", meta).text();
 	    this.galleryLink = $("*[data-key='gallery']", meta).text();
             this.galleryStart = parseInt($("*[data-key='gallery-start']", meta).text());
             this.fullUri = $("*[data-key='full-uri']", meta).text();
 
-	    this.galleryImages = [];
 	    this.text = null;
 	    this.has_local_changes = false;
             this.active = true;
@@ -233,24 +236,43 @@
             });
         }
 
+        refreshImageGallery(params) {
+            if (this.galleryLink) {
+                params = $.extend({}, params, {
+                    url: reverse("ajax_document_gallery", this.galleryLink)
+                });
+            }
+            this.refreshGallery(params);
+        }
+
+        refreshScansGallery(params) {
+            if (this.scansLink) {
+                params = $.extend({}, params, {
+                    url: reverse("ajax_document_scans", this.scansLink)
+                });
+                this.refreshGallery(params);
+            } else {
+                // Fallback to image gallery.
+                this.refreshImageGallery(params)
+            }
+        }
+        
         /*
          * Fetch gallery
          */
         refreshGallery(params) {
 	    params = $.extend({}, noops, params);
 	    var self = this;
-	    if (!self.galleryLink) {
-	        params['failure'](self, 'Brak galerii.');
+            if (!params.url) {
+	        params.failure('Brak galerii.');
 	        return;
-	    }
+            }
 	    $.ajax({
 	        method: "GET",
-	        url: reverse("ajax_document_gallery", self.galleryLink),
+	        url: params.url,
 	        dataType: 'json',
-	        // data: {},
 	        success: function(data) {
-		    self.galleryImages = data;
-		    params['success'](self, data);
+		    params.success(data);
 	        },
 	        error: function(xhr) {
                     switch (xhr.status) {
@@ -258,12 +280,11 @@
                         var msg = 'Galerie dostępne tylko dla zalogowanych użytkowników.';
                         break;
                     case 404:
-                        var msg = "Nie znaleziono galerii o nazwie: '" + self.galleryLink + "'.";
+                        var msg = "Nie znaleziono galerii.";
                     default:
-                        var msg = "Nie udało się wczytać galerii o nazwie: '" + self.galleryLink + "'.";
+                        var msg = "Nie udało się wczytać galerii.";
                     }
-		    self.galleryImages = [];
-		    params['failure'](self, msg);
+		    params.failure(msg);
 	        }
 	    });
         }

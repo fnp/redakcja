@@ -26,6 +26,7 @@
        data-chunk-id="{{ chunk.pk }}" style="display:none">
 
     <span data-key="book-slug">{{ chunk.book.slug }}</span>
+    <span data-key="scans">{{ chunk.book.catalogue_book.scans_gallery }}</span>
     <span data-key="gallery">{{ chunk.book.gallery }}</span>
     <span data-key="gallery-start">{% if chunk.gallery_start %}{{ chunk.gallery_start }}{% endif %}</span>
     <span data-key="revision">{{ revision }}</span>

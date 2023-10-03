@@ -1,0 +1,21 @@
+{% extends "documents/base.html" %}
+
+{% block content %}
+  <h1>{{ book_source.book }} z: {{ book_source.source }}</h1>
+
+  {% with doc=book_source.get_document %}
+    {% if doc %}
+      Tekst:
+      <a href="{{ doc.get_absolute_url }}">
+        {{ doc }}
+      </a>
+      </a>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-primary">Utwórz tekst</button>
+  </form>
+
+{% endblock %}

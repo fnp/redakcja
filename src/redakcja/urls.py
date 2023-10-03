@@ -28,6 +28,7 @@ urlpatterns = [
     path('depot/', include('depot.urls')),
     path('wlxml/', include('wlxml.urls')),
     path('isbn/', include('isbn.urls')),
+    path('sources/', include('sources.urls')),
 
     path('api/', include('redakcja.api.urls')),
 ]

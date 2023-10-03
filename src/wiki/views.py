@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404, render
 from sorl.thumbnail import get_thumbnail
 
 from documents.models import Book, Chunk
+import sources.models
 from . import nice_diff
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
@@ -248,6 +249,19 @@ def gallery(request, directory):
     except (IndexError, OSError):
         logger.exception("Unable to fetch gallery")
         raise http.Http404
+
+
+@never_cache
+def scans_list(request, pk):
+    bs = get_object_or_404(sources.models.BookSource, pk=pk)
+    def map_to_url(filename):
+        return quote(("%s/%s" % (settings.MEDIA_URL, filename)))
+    images = [
+        {
+            "url": map_to_url(f),
+        } for f in bs.get_view_files()
+    ]
+    return JSONResponse(images)
 
 
 @never_cache

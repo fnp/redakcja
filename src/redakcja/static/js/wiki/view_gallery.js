@@ -186,10 +186,10 @@
         }
 
         setPage(newPage) {
-            newPage = normalizeNumber(newPage, this.doc.galleryImages.length);
+            newPage = normalizeNumber(newPage, this.galleryImages.length);
             this.$numberInput.val(newPage);
             this.config().page = newPage;
-            $('.gallery-image img', this.$element).attr('src', this.doc.galleryImages[newPage - 1].url);
+            $('.gallery-image img', this.$element).attr('src', this.galleryImages[newPage - 1].url);
         }
 
         alterZoom(delta) {
@@ -262,17 +262,19 @@
          */
         refreshGallery(success, failure) {
             var self = this;
-            this.doc.refreshGallery({
-                success: function(doc, data){
+            this.doc.refreshScansGallery({
+                
+                success: function(galleryImages) {
+                    self.galleryImages = galleryImages;
                     self.$image.show();
                     console.log("gconfig:", self.config().page );
                     self.setPage( self.config().page );
-                    $('#imagesCount').html("/" + doc.galleryImages.length);
+                    $('#imagesCount').html("/" + galleryImages.length);
 
                     $('.error_message', self.$element).hide();
                     if(success) success();
                 },
-                failure: function(doc, message){
+                failure: function(message) {
                     self.$image.hide();
                     $('.error_message', self.$element).show().html(message);
                     if(failure) failure();
