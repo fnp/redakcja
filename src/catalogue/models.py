@@ -279,6 +279,7 @@ class Book(WikidataModel):
     )
     original_year = models.IntegerField(_('original publication year'), null=True, blank=True)
     pd_year = models.IntegerField(_('year of entry into PD'), null=True, blank=True)
+    plwiki = models.CharField(blank=True, max_length=255)
     gazeta_link = models.CharField(_("gazeta link"), max_length=255, blank=True)
     collections = models.ManyToManyField("Collection", blank=True, verbose_name=_("collections"))
 
@@ -298,6 +299,7 @@ class Book(WikidataModel):
         verbose_name_plural = _('books')
 
     class Wikidata:
+        plwiki = "plwiki"
         authors = WIKIDATA.AUTHOR
         translators = WIKIDATA.TRANSLATOR
         title = WIKIDATA.TITLE

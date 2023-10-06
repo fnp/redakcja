@@ -420,6 +420,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
                     "based_on",
                     "original_year",
                     "pd_year",
+                    "plwiki",
                 ]
             },
         ),
