@@ -172,7 +172,7 @@ class SiteBookPublish(models.Model):
                 self.sitechunkpublish_set.order_by('change__chunk__number')
             ]
 
-            self.site.publish(self, changes=changes)
+            self.site_book.site.publish(self, changes=changes)
 
         except Exception:
             self.status = 110
