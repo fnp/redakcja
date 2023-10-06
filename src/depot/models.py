@@ -169,7 +169,7 @@ class SiteBookPublish(models.Model):
         try:
             changes = [
                 p.change for p in
-                self.sitechunkpublish_set.order_by('change__chunk__number')
+                self.sitechunkpublish_set.order_by('change__tree__number')
             ]
 
             self.site_book.site.publish(self, changes=changes)
