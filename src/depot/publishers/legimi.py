@@ -261,7 +261,7 @@ class Legimi(BasePublisher):
                 site_book.external_id = legimi_id
                 site_book.save(update_fields=['external_id'])
 
-        self.edit_sale(book)
+        self.edit_sale(site_book)
 
     def get_genre(self, wlbook):
         if wlbook.meta.legimi and wlbook.meta.legimi in self.CATEGORIES:
