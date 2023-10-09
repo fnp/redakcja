@@ -13,6 +13,7 @@ from admin_numeric_filter.admin import RangeNumericFilter, NumericFilterModelAdm
 from admin_ordering.admin import OrderableAdmin
 from fnpdjango.actions import export_as_csv_action
 from modeltranslation.admin import TabbedTranslationAdmin
+from reversion.admin import VersionAdmin
 from . import models
 import documents.models
 import sources.models
@@ -99,7 +100,7 @@ class AuthorForm(forms.ModelForm):
             'woblink': WoblinkAuthorWidget,
         }
 
-class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
+class AuthorAdmin(WikidataAdminMixin, TabbedTranslationAdmin, VersionAdmin):
     form = AuthorForm
     list_display = [
         "first_name",
@@ -307,7 +308,7 @@ class SourcesInline(admin.TabularInline):
     extra = 1
 
 
-class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
+class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin, VersionAdmin):
     inlines = [SourcesInline]
     list_display = [
         "smart_title",
@@ -501,7 +502,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin):
 admin.site.register(models.Book, BookAdmin)
 
 
-admin.site.register(models.CollectionCategory)
+admin.site.register(models.CollectionCategory, VersionAdmin)
 
 
 class AuthorInline(admin.TabularInline):
@@ -514,7 +515,7 @@ class BookInline(admin.TabularInline):
     autocomplete_fields = ["book"]
 
 
-class CollectionAdmin(admin.ModelAdmin):
+class CollectionAdmin(VersionAdmin):
     list_display = ["name"]
     autocomplete_fields = []
     prepopulated_fields = {"slug": ("name",)}
@@ -537,7 +538,7 @@ admin.site.register(models.Collection, CollectionAdmin)
 
 
 
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(VersionAdmin):
     search_fields = ["name"]
 
     def has_description(self, obj):
@@ -581,7 +582,7 @@ class WorkRateInline(admin.TabularInline):
     autocomplete_fields = ['kinds', 'genres', 'epochs', 'collections']
 
 
-class WorkTypeAdmin(admin.ModelAdmin):
+class WorkTypeAdmin(VersionAdmin):
     inlines = [WorkRateInline]
 
 admin.site.register(models.WorkType, WorkTypeAdmin)
@@ -589,12 +590,12 @@ admin.site.register(models.WorkType, WorkTypeAdmin)
 
 
 @admin.register(models.Place)
-class PlaceAdmin(WikidataAdminMixin, TabbedTranslationAdmin):
+class PlaceAdmin(WikidataAdminMixin, TabbedTranslationAdmin, VersionAdmin):
     search_fields = ['name']
 
 
 @admin.register(models.Thema)
-class ThemaAdmin(admin.ModelAdmin):
+class ThemaAdmin(VersionAdmin):
     list_display = ['code', 'name', 'usable', 'hidden', 'woblink_category']
     list_filter = ['usable', 'usable_as_main', 'hidden']
     search_fields = ['code', 'name', 'description', 'public_description']
@@ -614,7 +615,7 @@ class AudienceForm(forms.ModelForm):
         }
 
 @admin.register(models.Audience)
-class AudienceAdmin(admin.ModelAdmin):
+class AudienceAdmin(VersionAdmin):
     form = AudienceForm
     list_display = ['code', 'name', 'thema', 'woblink']
     search_fields = ['code', 'name', 'description', 'thema', 'woblink']

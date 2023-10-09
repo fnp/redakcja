@@ -198,6 +198,9 @@ class NotableBook(OrderableModel):
     author = models.ForeignKey(Author, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
 
+    def __str__(self):
+        return self.book.title
+
 
 class Category(WikidataModel):
     name = models.CharField(_("name"), max_length=255)

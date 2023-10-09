@@ -70,6 +70,7 @@ ROOT_URLCONF = 'redakcja.urls'
 
 INSTALLED_APPS = (
     'modeltranslation',
+    'reversion',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
