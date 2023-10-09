@@ -356,8 +356,9 @@ class Legimi(BasePublisher):
             data=current
         )
 
-    def edit_sale(self, book):
-        assert book.legimi_id
+    def edit_sale(self, site_book):
+        book = site_book.book
+        assert site_book.external_id
 
         words = book.wldocument(librarian2=True).get_statistics()['total']['words_with_fn']
 
@@ -369,7 +370,7 @@ class Legimi(BasePublisher):
 
         data = {
             'ValidationTrue': 'true',
-            'Id': book.legimi_id,
+            'Id': site_book.external_id,
             'SalesPromotionId': "0",
             'IsLibraryPass': "False",
             'OriginalEnterToTheMarketType': "No",
@@ -388,6 +389,6 @@ class Legimi(BasePublisher):
         }
 
         self.session.post(
-            self.EDIT_SALE_URL % book.legimi_id,
+            self.EDIT_SALE_URL % site_book.external_id,
             data=data
         )
