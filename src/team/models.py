@@ -6,6 +6,13 @@ from django.utils.timezone import now
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, models.CASCADE)
     presence = models.BooleanField()
+    approve_by_default = models.BooleanField()
+
+    class Meta:
+        verbose_name = verbose_name_plural = 'profil'
+
+    def __str__(self):
+        return self.user.username
 
 
 class Presence(models.Model):

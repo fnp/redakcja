@@ -321,7 +321,7 @@ def history(request, chunk_id):
                 "description": change.description,
                 "author": change.author_str(),
                 "date": localize(change.created_at),
-                "publishable": _("Publishable") + "\n" if change.publishable else "",
+                "publishable": change.publishable,
                 "tag": ',\n'.join(str(tag) for tag in change.tags.all()),
                 "published": _("Published") + ": " + \
                     localize(change.publish_log.order_by('-book_record__timestamp')[0].book_record.timestamp) \

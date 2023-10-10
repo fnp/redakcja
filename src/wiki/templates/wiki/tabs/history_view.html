@@ -1,13 +1,11 @@
 {% load i18n %}
-<div id="history-view-editor" class="editor" style="display: none">
+<div id="history-view-editor" class="editor {% if can_pubmark %}can-approve{% endif %}" style="display: none">
   <div class="toolbar navbar navbar-dark bg-secondary">
     <div class="nav">
       <button type="button" id="make-diff-button" class="btn btn-info mr-2"
               data-enabled-when="2" disabled="disabled">{% trans "Compare versions" %}</button>
-      {% if can_pubmark %}
-        <button type="button" id="pubmark-changeset-button" class="btn btn-info mr-2"
-                data-enabled-when="1" disabled="disabled">{% trans "Mark for publishing" %}</button>
-      {% endif %}
+      <button type="button" id="pubmark-changeset-button" class="btn btn-info mr-2"
+                data-enabled-when="1" disabled="disabled">{% trans "Approve" %}</button>
       <button type="button" id="doc-revert-button" class="btn btn-info mr-2"
               data-enabled-when="1" disabled="disabled">{% trans "Revert document" %}</button>
       <button id="open-preview-button" disabled="disabled" class="btn btn-info mr-2"
@@ -21,7 +19,7 @@
       <tbody id="changes-list">
       </tbody>
       <tbody style="display: none;">
-	<tr class="entry row-stub">
+	<tr data-stub-value="publishable" data-stub-target="data-approved" class="entry row-stub">
 	  <td data-stub-value="version"></td>
 	  <td>
             <span data-stub-value="date"></span>
@@ -30,7 +28,7 @@
 	    <span data-stub-value="description"></span>
 	  </td>
 	  <td>
-            <div data-stub-value="publishable"></div>
+            <div class="approved"></div>
             <div data-stub-value="published"></div>
             <div data-stub-value="tag"></div>
 	  </td>

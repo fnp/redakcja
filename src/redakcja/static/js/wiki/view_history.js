@@ -53,6 +53,12 @@
                     attr('disabled', null);
             });
 
+            $(document).on('click', '#changes-list .entry .approved', function(){
+                $("#changes-list .entry.selected").removeClass('selected');
+                $(this).closest('.entry').click();
+                self.showPubmarkForm();
+                return false;
+            })
             $(document).on('click', '#changes-list span.tag', function(event){
                 return false;
             });
@@ -138,7 +144,8 @@
             }
 
             var version = parseInt($("*[data-stub-value='version']", selected[0]).text());
-            $.wiki.showDialog('#pubmark_dialog', {'revision': version});
+            var approved = selected.attr('data-approved') == 'true';
+            $.wiki.showDialog('#pubmark_dialog', {'revision': version, 'approved': !approved});
         }
 
         makeDiff() {

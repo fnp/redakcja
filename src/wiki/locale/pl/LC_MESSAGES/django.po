@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-06-27 11:54+0200\n"
+"PO-Revision-Date: 2023-10-10 15:18+0200\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
@@ -17,27 +17,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: wiki/forms.py:17 wiki/forms.py:61 wiki/views.py:303
-msgid "Publishable"
-msgstr "Gotowe do publikacji"
+#: wiki/forms.py:17
+msgid "Approved"
+msgstr "Zatwierdzona"
 
-#: wiki/forms.py:36 wiki/forms.py:87
+#: wiki/forms.py:36 wiki/forms.py:95
 msgid "Author"
 msgstr "Autor"
 
-#: wiki/forms.py:37 wiki/forms.py:88
+#: wiki/forms.py:37 wiki/forms.py:96
 msgid "Your name"
 msgstr "Imię i nazwisko"
 
-#: wiki/forms.py:42 wiki/forms.py:93
+#: wiki/forms.py:42 wiki/forms.py:101
 msgid "Author's email"
 msgstr "E-mail autora"
 
-#: wiki/forms.py:43 wiki/forms.py:94
+#: wiki/forms.py:43 wiki/forms.py:102
 msgid "Your email address, so we can show a gravatar :)"
 msgstr "Adres e-mail, żebyśmy mogli pokazać gravatar :)"
 
-#: wiki/forms.py:49 wiki/forms.py:100
+#: wiki/forms.py:49 wiki/forms.py:108
 msgid "Your comments"
 msgstr "Twój komentarz"
 
@@ -53,11 +53,15 @@ msgstr "Ukończono"
 msgid "If you completed a life cycle stage, select it."
 msgstr "Jeśli został ukończony etap prac, wskaż go."
 
-#: wiki/forms.py:62
-msgid "Mark this revision as publishable."
-msgstr "Oznacz tę wersję jako gotową do publikacji."
+#: wiki/forms.py:61 wiki/templates/wiki/tabs/history_view.html:8
+msgid "Approve"
+msgstr "Zatwierdź"
 
-#: wiki/forms.py:101
+#: wiki/forms.py:62
+msgid "Approve this revision."
+msgstr "Zatwierdź tę wersję."
+
+#: wiki/forms.py:109
 msgid "Describe the reason for reverting."
 msgstr "Opisz powód przywrócenia."
 
@@ -85,40 +89,44 @@ msgstr "Stara wersja"
 msgid "New version"
 msgstr "Nowa wersja"
 
-#: wiki/templates/wiki/document_details.html:39
+#: wiki/templates/wiki/document_details.html:46
 msgid "Click to open/close gallery"
 msgstr "Kliknij, aby (ro)zwinąć galerię"
 
-#: wiki/templates/wiki/document_details_base.html:51
+#: wiki/templates/wiki/document_details_base.html:56
 msgid "Help"
 msgstr "Pomoc"
 
-#: wiki/templates/wiki/document_details_base.html:62
+#: wiki/templates/wiki/document_details_base.html:67
 msgid "Version"
 msgstr "Wersja"
 
-#: wiki/templates/wiki/document_details_base.html:62
+#: wiki/templates/wiki/document_details_base.html:67
 msgid "Unknown"
 msgstr "Nieznana"
 
-#: wiki/templates/wiki/document_details_base.html:64
+#: wiki/templates/wiki/document_details_base.html:69
 #: wiki/templates/wiki/pubmark_dialog.html:16
 msgid "Save"
 msgstr "Zapisz"
 
-#: wiki/templates/wiki/document_details_base.html:65
+#: wiki/templates/wiki/document_details_base.html:70
 msgid "Save attempt in progress"
 msgstr "Trwa zapisywanie"
 
-#: wiki/templates/wiki/document_details_base.html:66
+#: wiki/templates/wiki/document_details_base.html:71
 msgid "There is a newer version of this document!"
 msgstr "Istnieje nowsza wersja tego dokumentu!"
 
+#: wiki/templates/wiki/gallery_dialog.html:8
 #: wiki/templates/wiki/media_dialog.html:8
+#: wiki/templates/wiki/meta_chooser.html:8
 msgid "Choose"
 msgstr "Wybierz"
 
+#: wiki/templates/wiki/gallery_dialog.html:9
 #: wiki/templates/wiki/media_dialog.html:9
+#: wiki/templates/wiki/meta_chooser.html:9
 #: wiki/templates/wiki/pubmark_dialog.html:17
 #: wiki/templates/wiki/revert_dialog.html:40
 msgid "Cancel"
@@ -136,15 +144,15 @@ msgstr "wszystkie"
 msgid "Annotations"
 msgstr "Przypisy"
 
-#: wiki/templates/wiki/tabs/gallery_view.html:7
+#: wiki/templates/wiki/tabs/gallery_view.html:8
 msgid "Go to first image of this part"
 msgstr "Przejdź na początek"
 
-#: wiki/templates/wiki/tabs/gallery_view.html:10
+#: wiki/templates/wiki/tabs/gallery_view.html:11
 msgid "Previous"
 msgstr "Poprzednie"
 
-#: wiki/templates/wiki/tabs/gallery_view.html:21
+#: wiki/templates/wiki/tabs/gallery_view.html:22
 msgid "Next"
 msgstr "Następne"
 
@@ -156,15 +164,11 @@ msgstr "Galeria"
 msgid "Compare versions"
 msgstr "Porównaj wersje"
 
-#: wiki/templates/wiki/tabs/history_view.html:9
-msgid "Mark for publishing"
-msgstr "Oznacz do publikacji"
-
-#: wiki/templates/wiki/tabs/history_view.html:12
+#: wiki/templates/wiki/tabs/history_view.html:10
 msgid "Revert document"
 msgstr "Przywróć wersję"
 
-#: wiki/templates/wiki/tabs/history_view.html:15
+#: wiki/templates/wiki/tabs/history_view.html:13
 msgid "View version"
 msgstr "Zobacz wersję"
 
@@ -219,49 +223,33 @@ msgstr "Kod źródłowy"
 msgid "Refresh from working copy"
 msgstr "Odśwież z edytowanej wersji"
 
-#: wiki/templates/wiki/tabs/summary_view.html:15
-msgid "Title"
-msgstr "Tytuł"
-
-#: wiki/templates/wiki/tabs/summary_view.html:19
+#: wiki/templates/wiki/tabs/summary_view.html:17
 msgid "Go to the book's page"
 msgstr "Przejdź do strony książki"
 
-#: wiki/templates/wiki/tabs/summary_view.html:22
+#: wiki/templates/wiki/tabs/summary_view.html:20
 msgid "Document ID"
 msgstr "ID dokumentu"
 
-#: wiki/templates/wiki/tabs/summary_view.html:26
-msgid "Current version"
-msgstr "Aktualna wersja"
-
-#: wiki/templates/wiki/tabs/summary_view.html:30
-msgid "Last edited by"
-msgstr "Ostatnio edytowane przez"
-
-#: wiki/templates/wiki/tabs/summary_view.html:34
-msgid "Link to gallery"
-msgstr "Link do galerii"
-
-#: wiki/templates/wiki/tabs/summary_view.html:39
+#: wiki/templates/wiki/tabs/summary_view.html:24
 msgid "Characters in document"
 msgstr "Znaków w dokumencie"
 
-#: wiki/templates/wiki/tabs/summary_view.html:41
-#: wiki/templates/wiki/tabs/summary_view.html:42
-#: wiki/templates/wiki/tabs/summary_view.html:45
+#: wiki/templates/wiki/tabs/summary_view.html:26
+#: wiki/templates/wiki/tabs/summary_view.html:27
+#: wiki/templates/wiki/tabs/summary_view.html:30
 msgid "pages"
 msgstr "stron maszynopisu"
 
-#: wiki/templates/wiki/tabs/summary_view.html:41
+#: wiki/templates/wiki/tabs/summary_view.html:26
 msgid "without footnotes and themes"
 msgstr "bez przypisów i motywów"
 
-#: wiki/templates/wiki/tabs/summary_view.html:42
+#: wiki/templates/wiki/tabs/summary_view.html:27
 msgid "with footnotes and themes"
 msgstr "z przypisami i motywami"
 
-#: wiki/templates/wiki/tabs/summary_view.html:45
+#: wiki/templates/wiki/tabs/summary_view.html:30
 msgid "untagged"
 msgstr "nieotagowane"
 
@@ -287,17 +275,38 @@ msgstr "Wstaw referencję"
 msgid "Visual editor"
 msgstr "Edytor wizualny"
 
-#: wiki/views.py:305
+#: wiki/views.py:326
 msgid "Published"
 msgstr "Opublikowano"
 
-#: wiki/views.py:326
+#: wiki/views.py:347
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: wiki/views.py:328
+#: wiki/views.py:349
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
+
+#~ msgid "Publishable"
+#~ msgstr "Gotowe do publikacji"
+
+#~ msgid "Mark this revision as publishable."
+#~ msgstr "Oznacz tę wersję jako gotową do publikacji."
+
+#~ msgid "Mark for publishing"
+#~ msgstr "Oznacz do publikacji"
+
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#~ msgid "Current version"
+#~ msgstr "Aktualna wersja"
+
+#~ msgid "Last edited by"
+#~ msgstr "Ostatnio edytowane przez"
+
+#~ msgid "Link to gallery"
+#~ msgstr "Link do galerii"
 
 #~ msgid "Zoom in"
 #~ msgstr "Powiększ"

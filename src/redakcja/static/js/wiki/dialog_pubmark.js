@@ -19,7 +19,11 @@
 
             $("input[name='pubmark-id']", this.$form).val(CurrentDocument.id);
             $("input[name='pubmark-revision']", this.$form).val(options.revision);
-
+            if (options.approved) {
+                $("input[name='pubmark-publishable']", this.$form).prop('checked');
+            } else {
+                $("input[name='pubmark-publishable']", this.$form).removeProp('checked');
+            }
         }
 
         cancelAction() {

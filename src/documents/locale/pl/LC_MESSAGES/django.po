@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-12-17 11:37+0100\n"
+"PO-Revision-Date: 2023-10-10 15:35+0200\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
@@ -17,101 +17,101 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: documents/forms.py:41
+#: documents/forms.py:43
 msgid "Text file must be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: documents/forms.py:57
+#: documents/forms.py:59
 msgid "Title not set"
 msgstr "Brak tytułu"
 
-#: documents/forms.py:60
+#: documents/forms.py:62
 msgid "Slug not set"
 msgstr "Brak slugu"
 
-#: documents/forms.py:63
+#: documents/forms.py:65
 msgid "You must either enter text or upload a file"
 msgstr "Proszę wpisać tekst albo wybrać plik do załadowania"
 
-#: documents/forms.py:72
+#: documents/forms.py:74
 msgid "ZIP file"
 msgstr "Plik ZIP"
 
-#: documents/forms.py:73
+#: documents/forms.py:75
 msgid "Directories are documents in chunks"
 msgstr "Katalogi zawierają dokumenty w częściach"
 
-#: documents/forms.py:97 documents/forms.py:198
+#: documents/forms.py:99 documents/forms.py:200
 msgid "Assigned to"
 msgstr "Przypisane do"
 
-#: documents/forms.py:118 documents/forms.py:132
+#: documents/forms.py:120 documents/forms.py:134
 msgid "Chunk with this slug already exists"
 msgstr "Część z tym slugiem już istnieje"
 
-#: documents/forms.py:141
+#: documents/forms.py:143
 msgid "Append to"
 msgstr "Dołącz do"
 
-#: documents/models/book.py:27 documents/models/chunk.py:21
+#: documents/models/book.py:32 documents/models/chunk.py:21
 #: documents/models/image.py:20
 msgid "title"
 msgstr "tytuł"
 
-#: documents/models/book.py:28 documents/models/chunk.py:22
+#: documents/models/book.py:33 documents/models/chunk.py:22
 #: documents/models/image.py:21
 msgid "slug"
 msgstr "slug"
 
-#: documents/models/book.py:29 documents/models/image.py:22
+#: documents/models/book.py:39 documents/models/image.py:22
 msgid "public"
 msgstr "publiczna"
 
-#: documents/models/book.py:30
+#: documents/models/book.py:43
 msgid "scan gallery name"
 msgstr "nazwa galerii skanów"
 
-#: documents/models/book.py:33
+#: documents/models/book.py:48
 msgid "parent"
 msgstr "rodzic"
 
-#: documents/models/book.py:34
+#: documents/models/book.py:49
 msgid "parent number"
 msgstr "numeracja rodzica"
 
-#: documents/models/book.py:60 documents/models/chunk.py:19
+#: documents/models/book.py:82 documents/models/chunk.py:19
 #: documents/models/publish_log.py:15
-#: documents/templates/documents/book_detail.html:145
+#: documents/templates/documents/book_detail.html:216
 msgid "book"
 msgstr "książka"
 
-#: documents/models/book.py:61 documents/views.py:627
+#: documents/models/book.py:83 documents/views.py:651
 msgid "books"
 msgstr "książki"
 
-#: documents/models/book.py:271
+#: documents/models/book.py:301
 msgid "No chunks in the book."
 msgstr "Książka nie ma części."
 
-#: documents/models/book.py:275
-msgid "Not all chunks have publishable revisions."
-msgstr "Niektóre części nie są gotowe do publikacji."
+#: documents/models/book.py:305
+msgid "Not all chunks have approved revisions."
+msgstr "Niektóre części nie mają zatwierdzonych wersji."
 
-#: documents/models/book.py:282 documents/models/image.py:83
+#: documents/models/book.py:312 documents/models/image.py:83
 msgid "Invalid XML"
 msgstr "Nieprawidłowy XML"
 
-#: documents/models/book.py:284 documents/models/image.py:85
+#: documents/models/book.py:314 documents/models/image.py:85
 msgid "No Dublin Core found."
 msgstr "Brak sekcji Dublin Core."
 
-#: documents/models/book.py:286 documents/models/image.py:87
+#: documents/models/book.py:316 documents/models/image.py:87
 msgid "Invalid Dublin Core"
 msgstr "Nieprawidłowy Dublin Core"
 
-#: documents/models/book.py:289 documents/models/image.py:91
+#: documents/models/book.py:319 documents/models/image.py:91
 msgid "rdf:about is not"
 msgstr "rdf:about jest różny od"
 
@@ -141,8 +141,8 @@ msgid "images"
 msgstr "obrazy"
 
 #: documents/models/image.py:75
-msgid "There is no publishable revision"
-msgstr "Żadna wersja nie została oznaczona do publikacji."
+msgid "There is no approved revision"
+msgstr "Żadna wersja nie została zatwierdzona"
 
 #: documents/models/project.py:11
 msgid "name"
@@ -213,7 +213,7 @@ msgstr "Użytkownicy aktywni w roku"
 msgid "Activity"
 msgstr "Aktywność"
 
-#: documents/templates/documents/base.html:13
+#: documents/templates/documents/base.html:14
 msgid "Platforma Redakcyjna"
 msgstr "Platforma Redakcyjna"
 
@@ -222,98 +222,106 @@ msgstr "Platforma Redakcyjna"
 msgid "Append book"
 msgstr "Dołącz książkę"
 
-#: documents/templates/documents/book_detail.html:24
+#: documents/templates/documents/book_detail.html:26
 #: documents/templates/documents/book_edit.html:13
 #: documents/templates/documents/chunk_edit.html:22
 #: documents/templates/documents/image_detail.html:22
 msgid "Save"
 msgstr "Zapisz"
 
-#: documents/templates/documents/book_detail.html:31
+#: documents/templates/documents/book_detail.html:33
 msgid "Edit gallery"
 msgstr "Edytuj galerię"
 
-#: documents/templates/documents/book_detail.html:34
+#: documents/templates/documents/book_detail.html:36
 msgid "Append to other book"
 msgstr "Dołącz do innej książki"
 
-#: documents/templates/documents/book_detail.html:53
+#: documents/templates/documents/book_detail.html:55
 msgid "Chunks"
 msgstr "Części"
 
-#: documents/templates/documents/book_detail.html:71
+#: documents/templates/documents/book_detail.html:73
 #: documents/templates/documents/image_detail.html:47
 #: documents/templatetags/wall.py:108 documents/templatetags/wall.py:129
 msgid "Publication"
 msgstr "Publikacja"
 
-#: documents/templates/documents/book_detail.html:89
+#: documents/templates/documents/book_detail.html:110
 #: documents/templates/documents/image_detail.html:51
 msgid "Last published"
 msgstr "Ostatnio opublikowano"
 
-#: documents/templates/documents/book_detail.html:99
+#: documents/templates/documents/book_detail.html:120
 msgid "Full XML"
 msgstr "Pełny XML"
 
-#: documents/templates/documents/book_detail.html:100
+#: documents/templates/documents/book_detail.html:121
 msgid "HTML version"
 msgstr "Wersja HTML"
 
-#: documents/templates/documents/book_detail.html:101
+#: documents/templates/documents/book_detail.html:122
 msgid "TXT version"
 msgstr "Wersja TXT"
 
-#: documents/templates/documents/book_detail.html:102
+#: documents/templates/documents/book_detail.html:123
 msgid "PDF version"
 msgstr "Wersja PDF"
 
-#: documents/templates/documents/book_detail.html:103
+#: documents/templates/documents/book_detail.html:124
 msgid "PDF version for mobiles"
 msgstr "Wersja PDF na telefony"
 
-#: documents/templates/documents/book_detail.html:104
+#: documents/templates/documents/book_detail.html:125
 msgid "EPUB version"
 msgstr "Wersja EPUB"
 
-#: documents/templates/documents/book_detail.html:105
+#: documents/templates/documents/book_detail.html:126
 msgid "MOBI version"
 msgstr "Wersja MOBI"
 
-#: documents/templates/documents/book_detail.html:119
+#: documents/templates/documents/book_detail.html:142
 #: documents/templates/documents/image_detail.html:70
 msgid "Publish"
 msgstr "Opublikuj"
 
-#: documents/templates/documents/book_detail.html:123
+#: documents/templates/documents/book_detail.html:194
 #: documents/templates/documents/image_detail.html:74
 msgid "Log in to publish."
 msgstr "Zaloguj się, aby opublikować."
 
-#: documents/templates/documents/book_detail.html:126
+#: documents/templates/documents/book_detail.html:197
 #: documents/templates/documents/image_detail.html:77
 msgid "This book can't be published yet, because:"
 msgstr "Ta książka nie może jeszcze zostać opublikowana. Powód:"
 
-#: documents/templates/documents/book_detail.html:138
+#: documents/templates/documents/book_detail.html:209
 msgid "Statistics"
 msgstr "Statystyki"
 
-#: documents/templates/documents/book_detail.html:147
+#: documents/templates/documents/book_detail.html:218
 msgid "characters"
 msgstr "znaki"
 
-#: documents/templates/documents/book_detail.html:148
-msgid "words"
-msgstr "słowa"
-
-#: documents/templates/documents/book_detail.html:149
+#: documents/templates/documents/book_detail.html:219
 msgid "characters (with footnotes)"
 msgstr "znaki (z przypisami)"
 
-#: documents/templates/documents/book_detail.html:150
+#: documents/templates/documents/book_detail.html:220
+msgid "words"
+msgstr "słowa"
+
+#: documents/templates/documents/book_detail.html:221
 msgid "words (with footnotes)"
 msgstr "słowa (z przypisami)"
+
+#: documents/templates/documents/book_detail.html:222
+msgid "wiersze (+ inne znaki)"
+msgstr ""
+
+#: documents/templates/documents/book_detail.html:223
+msgid "wiersze (+ inne znaki, z przypisami)"
+msgstr ""
 
 #: documents/templates/documents/book_edit.html:5
 msgid "Edit book"
@@ -348,24 +356,24 @@ msgstr "Ustawienia części"
 #: documents/templates/documents/book_list/book.html:20
 #: documents/templates/documents/book_list/book.html:42
 #: documents/templates/documents/image_short.html:17
-#: documents/templatetags/book_list.py:82
-#: documents/templatetags/book_list.py:150
+#: documents/templatetags/book_list.py:92
+#: documents/templatetags/book_list.py:160
 msgid "published"
 msgstr "opublikowane"
 
 #: documents/templates/documents/book_list/book.html:23
 #: documents/templates/documents/book_list/book.html:45
 #: documents/templates/documents/image_short.html:20
-#: documents/templatetags/book_list.py:80
-#: documents/templatetags/book_list.py:148
+#: documents/templatetags/book_list.py:90
+#: documents/templatetags/book_list.py:158
 msgid "publishable"
 msgstr "do publikacji"
 
 #: documents/templates/documents/book_list/book.html:26
 #: documents/templates/documents/book_list/chunk.html:26
 #: documents/templates/documents/image_short.html:23
-#: documents/templatetags/book_list.py:81
-#: documents/templatetags/book_list.py:149
+#: documents/templatetags/book_list.py:91
+#: documents/templatetags/book_list.py:159
 msgid "changed"
 msgstr "zmienione"
 
@@ -382,6 +390,7 @@ msgstr "etap"
 #: documents/templates/documents/book_list/book_list.html:36
 #: documents/templates/documents/book_list/book_list.html:47
 #: documents/templates/documents/book_list/book_list.html:68
+#: documents/templates/documents/book_list/book_list.html:120
 #: documents/templates/documents/image_table.html:32
 #: documents/templates/documents/image_table.html:43
 #: documents/templates/documents/image_table.html:62
@@ -549,11 +558,11 @@ msgstr "Nie znaleziono obrazów."
 msgid "My page"
 msgstr "Moja strona"
 
-#: documents/templates/documents/my_page.html:27
+#: documents/templates/documents/my_page.html:54
 msgid "Your last edited documents"
 msgstr "Twoje ostatnie edycje"
 
-#: documents/templates/documents/my_page.html:47
+#: documents/templates/documents/my_page.html:74
 #: documents/templates/documents/user_page.html:18
 msgid "Recent activity for"
 msgstr "Ostatnia aktywność dla:"
@@ -577,13 +586,13 @@ msgstr "nie zalogowany"
 msgid "No activity recorded."
 msgstr "Nie zanotowano aktywności."
 
-#: documents/templatetags/book_list.py:83
-#: documents/templatetags/book_list.py:151
+#: documents/templatetags/book_list.py:93
+#: documents/templatetags/book_list.py:161
 msgid "unpublished"
 msgstr "nie opublikowane"
 
-#: documents/templatetags/book_list.py:84
-#: documents/templatetags/book_list.py:152
+#: documents/templatetags/book_list.py:94
+#: documents/templatetags/book_list.py:162
 msgid "empty"
 msgstr "puste"
 
@@ -611,20 +620,20 @@ msgstr "Powiązana zmiana"
 msgid "Edit"
 msgstr "Zmiana"
 
-#: documents/views.py:172
+#: documents/views.py:179
 #, python-format
 msgid "Slug already used for %s"
 msgstr "Slug taki sam jak dla pliku %s"
 
-#: documents/views.py:174
+#: documents/views.py:181
 msgid "Slug already used in repository."
 msgstr "Dokument o tym slugu już istnieje w repozytorium."
 
-#: documents/views.py:180
+#: documents/views.py:187
 msgid "File should be UTF-8 encoded."
 msgstr "Plik powinien mieć kodowanie UTF-8."
 
-#: documents/views.py:629
+#: documents/views.py:653
 msgid "scan gallery"
 msgstr "galeria skanów"
 

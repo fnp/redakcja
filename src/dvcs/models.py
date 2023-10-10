@@ -86,7 +86,7 @@ class Change(models.Model):
 
     description = models.TextField(_('description'), blank=True, default='')
     created_at = models.DateTimeField(editable=False, db_index=True, default=datetime.now)
-    publishable = models.BooleanField(_('publishable'), default=False)
+    publishable = models.BooleanField(_('approved'), default=False)
 
     class Meta:
         abstract = True

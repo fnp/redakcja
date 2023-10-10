@@ -196,8 +196,7 @@
         $elem.removeClass('row-stub');
         params.container.append($elem);
 
-        $('*[data-stub-value]', $elem).each(function() {
-            var $this = $(this);
+        var populate = function($this) {
             var field = $this.attr('data-stub-value');
 
             var value = params.data[field];
@@ -215,7 +214,9 @@
                 $this.removeAttr('data-stub-target');
                 $this.removeAttr('data-stub-value');
             }
-        });
+        }
+        if ($elem.attr('data-stub-value')) populate($elem);
+        $('*[data-stub-value]', $elem).each(function() {populate($(this))});
 
         $elem.show();
         return $elem;
@@ -344,6 +345,7 @@
         $.ajax("/editor/editor-user-area/", {
             success: function(d) {
                 $("#user-area")[0].innerHTML = d;
+                $('#history-view-editor').toggleClass('can-approve', $('#user-area #pubmark_dialog').length > 0);
             }
         });
     }, false);

@@ -88,6 +88,24 @@ table#changes-list-container {
     vertical-align: text-top;
 }
 
+.can-approve #changes-list .approved:hover {
+    cursor: pointer;
+}
+#pubmark-changeset-button {display: none;}
+.can-approve #pubmark-changeset-button {display: inline-block;}
+
+#changes-list *[data-approved = 'false'] .approved:after {
+    content: '☐';
+    color: red;
+    white-space: pre-line;
+}
+#changes-list *[data-approved = 'true'] .approved:after {
+    content: '🗹';
+    font-size: .8em;
+    color: #80ff80;
+    white-space: pre-line;
+}
+
 #changes-list *[data-stub-value = 'description'] {
     font-size: .8em;
     color: gray;

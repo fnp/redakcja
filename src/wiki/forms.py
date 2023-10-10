@@ -9,12 +9,12 @@ from documents.models import Chunk
 
 class DocumentPubmarkForm(forms.Form):
     """
-        Form for marking revisions for publishing.
+        Form for approving revisions.
     """
 
     id = forms.CharField(widget=forms.HiddenInput)
     publishable = forms.BooleanField(required=False, initial=True,
-            label=_('Publishable'))
+            label=_('Approved'))
     revision = forms.IntegerField(widget=forms.HiddenInput)
 
 
@@ -58,8 +58,8 @@ class DocumentTextSaveForm(forms.Form):
     )
 
     publishable = forms.BooleanField(required=False, initial=False,
-        label=_('Publishable'),
-        help_text=_(u"Mark this revision as publishable.")
+        label=_('Approve'),
+        help_text=_("Approve this revision.")
     )
 
     def __init__(self, *args, **kwargs):
@@ -68,6 +68,14 @@ class DocumentTextSaveForm(forms.Form):
         if user and user.is_authenticated:
             self.fields['author_name'].required = False
             self.fields['author_email'].required = False
+            try:
+                user.profile
+            except:
+                pass
+            else:
+                if user.profile.approve_by_default:
+                    self.fields['publishable'].initial = True
+
         return r
 
 

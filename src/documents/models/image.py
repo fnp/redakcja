@@ -72,7 +72,7 @@ class Image(dvcs_models.Document):
                 return open(self.image.path)
 
         publishable = self.publishable()
-        assert publishable, _("There is no publishable revision")
+        assert publishable, _("There is no approved revision")
         picture_xml = publishable.materialize()
 
         try:

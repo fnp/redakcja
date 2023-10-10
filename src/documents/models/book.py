@@ -286,7 +286,7 @@ class Book(models.Model):
         try:
             changes = self.get_current_changes(publishable=True)
         except self.NoTextError:
-            raise AssertionError(_('Not all chunks have publishable revisions.'))
+            raise AssertionError(_('Not all chunks have approved revisions.'))
 
         from librarian import NoDublinCore, ParseError, ValidationError
 
