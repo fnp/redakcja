@@ -565,6 +565,12 @@ class Woblink(BasePublisher):
             ).json()['jobId']
             try:
                 file_id = self.wait_for_job(job_id)
+                if check:
+                    self.wait_for_job(
+                        self.session.get(
+                            self.CHECK_DEMO_URL % (file_format, woblink_id)
+                        ).json()['jobId']
+                    )
             except AssertionError:
                 if percent < 50:
                     percent += 10
@@ -573,12 +579,6 @@ class Woblink(BasePublisher):
             else:
                 break
 
-        if check:
-            self.wait_for_job(
-                self.session.get(
-                    self.CHECK_DEMO_URL % (file_format, woblink_id)
-                ).json()['jobId']
-            )
         return file_id
 
     def send_epub(self, woblink_id, doc, gallery_path, fundraising=None):
