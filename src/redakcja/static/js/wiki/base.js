@@ -308,7 +308,7 @@
                 var span = $("*[data-ui-error-for='"+field_name+"']", this.$elem);
 
                 if(!span.length) {
-                    unassigned.push(field_name);
+                    unassigned.push(errors[field_name]);
                     continue;
                 }
 
@@ -316,7 +316,8 @@
             }
 
             if(unassigned.length > 0)
-                global.text( global.text() + 'W formularzu wystąpiły błędy');
+                global.text(
+                    global.text() + 'Wystąpił błąd: ' + unassigned.join(', '));
         }
     }
 

@@ -2,6 +2,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from datetime import datetime
+import json
 import os
 import logging
 from time import mktime
@@ -11,7 +12,7 @@ from django.apps import apps
 from django.conf import settings
 from django.urls import reverse
 from django import http
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.middleware.gzip import GZipMiddleware
 from django.utils.decorators import decorator_from_middleware
 from django.utils.formats import localize
@@ -36,6 +37,10 @@ from django.views.decorators.cache import never_cache
 logger = logging.getLogger("fnp.wiki")
 
 MAX_LAST_DOCS = 10
+
+
+class HttpResponseLengthRequired(HttpResponse):
+    status_code = 411
 
 
 @never_cache
@@ -129,6 +134,20 @@ def text(request, chunk_id):
         return HttpResponseForbidden("Not authorized.")
 
     if request.method == 'POST':
+        # Check length to reject broken request.
+        try:
+            expected_cl = int(request.META['CONTENT_LENGTH'])
+        except:
+            return HttpResponseLengthRequired(json.dumps(
+                {"__message": _("Content length required.")}
+            ))
+        # 411 if missing
+        cl = len(request.body)
+        if cl != expected_cl:
+            return HttpResponseBadRequest(json.dumps(
+                {"__message": _("Wrong content length, request probably interrupted.")}
+            ))
+
         form = forms.DocumentTextSaveForm(request.POST, user=request.user, prefix="textsave")
         if form.is_valid():
             if request.user.is_authenticated:

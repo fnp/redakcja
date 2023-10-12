@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Platforma Redakcyjna\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 15:18+0200\n"
+"PO-Revision-Date: 2023-10-12 10:12+0200\n"
 "Last-Translator: Radek Czajka <radoslaw.czajka@nowoczesnapolska.org.pl>\n"
 "Language-Team: Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org."
 "pl>\n"
@@ -275,15 +275,24 @@ msgstr "Wstaw referencję"
 msgid "Visual editor"
 msgstr "Edytor wizualny"
 
-#: wiki/views.py:326
+#: wiki/views.py:138
+msgid "Wrong content length, request probably interrupted."
+msgstr ""
+"Nieprawidłowa długość treści, żądanie prawdopodobnie zostało przerwane."
+
+#: wiki/views.py:146
+msgid "Content length required."
+msgstr "Brak nagłówka określającego długość treści zapytania."
+
+#: wiki/views.py:347
 msgid "Published"
 msgstr "Opublikowano"
 
-#: wiki/views.py:347
+#: wiki/views.py:368
 msgid "Revision marked"
 msgstr "Wersja oznaczona"
 
-#: wiki/views.py:349
+#: wiki/views.py:370
 msgid "Nothing changed"
 msgstr "Nic nie uległo zmianie"
 
