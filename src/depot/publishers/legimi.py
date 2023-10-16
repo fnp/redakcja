@@ -130,12 +130,16 @@ class Legimi(BasePublisher):
             })
 
     def can_publish(self, site, book):
-        meta = book.wldocument(librarian2=True).meta
         d = {
             'errors': [],
             'warnings': [],
             'info': []
         }
+        try:
+            meta = book.wldocument(librarian2=True).meta
+        except:
+            d['errors'].append('Nieprawidłowy dokument.')
+            return d
         thema = self.get_thema(meta)
         if thema:
             d['info'].append(mark_safe(

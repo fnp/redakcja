@@ -313,12 +313,16 @@ class Woblink(BasePublisher):
         return price
 
     def can_publish(self, site, book):
-        wldoc = book.wldocument(librarian2=True)
         d = {
             'warnings': [],
             'errors': [],
             'info': [],
         }
+        try:
+            wldoc = book.wldocument(librarian2=True)
+        except:
+            d['errors'].append('Nieprawidłowy dokument.')
+            return d
         errors = []
         book_data = self.get_book_data(site, wldoc, errors)
         for error in errors:
