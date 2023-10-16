@@ -134,7 +134,10 @@ class Isbn(models.Model):
     @classmethod
     def formats_from_document(cls, document):
         # This is a document
-        meta = document.wldocument(librarian2=True).meta
+        try:
+            meta = document.wldocument(librarian2=True).meta
+        except:
+            return []
         is_parent = len(meta.parts)
         formats = []
         for form, config in FORMS:
