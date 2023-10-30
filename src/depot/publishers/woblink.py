@@ -332,6 +332,12 @@ class Woblink(BasePublisher):
                 errlist = d['warnings']
             errlist.append(error.as_html())
 
+        if book_data.get('isbn'):
+            d['info'].append(format_html(
+                'ISBN: {isbn}',
+                isbn=book_data['isbn'],
+            ))
+
         if book_data.get('genres'):
             d['info'].append(format_html(
                 'W kategoriach: {cat} ({price} zł)',
