@@ -21,7 +21,11 @@ def _trim(text, trim_begin=True, trim_end=True):
         that eg. one big XML file can be compiled from many small XML files.
     """
     if trim_begin:
-        text = RE_TRIM_BEGIN.split(text, maxsplit=1)[-1]
+        parts = RE_TRIM_BEGIN.split(text, maxsplit=1)
+        text = parts[-1]
+        if len(parts) > 1:
+            lines = parts[0].count('\n')
+            text = f'<!--TRIM:{lines}-->' + text
     if trim_end:
         text = RE_TRIM_END.split(text, maxsplit=1)[0]
     return text

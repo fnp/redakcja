@@ -41,6 +41,7 @@ urlpatterns = [
     path('book/<slug:slug>/txt', views.book_txt, name="documents_book_txt"),
     path('book/<slug:slug>/html', views.book_html, name="documents_book_html"),
     path('book/<slug:slug>/epub', views.book_epub, name="documents_book_epub"),
+    path('book/<slug:slug>/epubcheck', views.book_epubcheck, name="documents_book_epubcheck"),
     path('book/<slug:slug>/mobi', views.book_mobi, name="documents_book_mobi"),
     path('book/<slug:slug>/pdf', views.book_pdf, name="documents_book_pdf"),
     path('book/<slug:slug>/pdf-mobile', views.book_pdf, kwargs={'mobile': True}, name="documents_book_pdf_mobile"),

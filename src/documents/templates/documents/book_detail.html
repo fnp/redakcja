@@ -122,7 +122,8 @@
               <a href="{% url 'documents_book_txt' book.slug %}" rel="nofollow">{% trans "TXT version" %}</a><br/>
               <a href="{% url 'documents_book_pdf' book.slug %}" rel="nofollow">{% trans "PDF version" %}</a><br/>
               <a href="{% url 'documents_book_pdf_mobile' book.slug %}" rel="nofollow">{% trans "PDF version for mobiles" %}</a><br/>
-              <a href="{% url 'documents_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a><br/>
+              <a href="{% url 'documents_book_epub' book.slug %}" rel="nofollow">{% trans "EPUB version" %}</a>
+              <a href="{% url 'documents_book_epubcheck' book.slug %}" rel="nofollow">sprawdź</a><br/>
               <a href="{% url 'documents_book_mobi' book.slug %}" rel="nofollow">{% trans "MOBI version" %}</a><br/>
             </p>
 

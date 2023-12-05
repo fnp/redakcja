@@ -1,0 +1,43 @@
+{% extends "documents/base.html" %}
+{% load book_list i18n %}
+{% load bootstrap4 %}
+{% load depot %}
+{% load isbn %}
+
+
+{% block titleextra %}{{ book.title }}{% endblock %}
+
+
+{% block content %}
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h1>Weryfikacja epub: <a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h1>
+    </div>
+    <div class="card-body">
+      {% for msg in messages %}
+        <div class="alert alert-{% if msg.severity == "ERROR" %}danger{% else %}info{% endif %}">
+          {{ msg.message }}
+          {% if msg.suggestion %}
+            <br><br>
+            {{ msg.suggestion }}
+          {% endif %}
+          {% for loc in msg.locations %}
+            {% if loc.wl_chunk %}
+              <br>
+              <a class="btn btn-primary" target="_blank" href="{% url 'wiki_editor' book.slug loc.wl_chunk.slug %}#CodeMirrorPerspective">
+                {% if loc.wl_chunk.title %}
+                  {{ loc.wl_chunk.title }}:
+                {% endif %}
+                Linia {{ loc.wl_line }}
+              </a>
+            {% else %}
+              <br><small><tt>{{ loc }}</tt></small>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock content %}

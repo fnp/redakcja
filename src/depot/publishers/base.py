@@ -44,10 +44,11 @@ class BasePublisher:
             ) if p is not None else ''
             for p in wlbook.meta.authors
         ) + '<br>'
-        description += '<a href="https://wolnelektury.pl/katalog/lektura/{}/">{}</a><br>'.format(
-            wlbook.meta.url.slug,
-            wlbook.meta.title
-        )
+        if wlbook.meta.url is not None:
+            description += '<a href="https://wolnelektury.pl/katalog/lektura/{}/">{}</a><br>'.format(
+                wlbook.meta.url.slug,
+                wlbook.meta.title
+            )
         if wlbook.meta.translators:
             description += 'tłum. ' + ', '.join(p.readable() for p in wlbook.meta.translators) + '<br>'
         description += 'Epoka: ' + ', '.join(

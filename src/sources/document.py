@@ -48,7 +48,7 @@ def add_rdf(root, book_source):
     # created_at
     etree.SubElement(desc, DCNS('date')).text = date.today().isoformat()
     # date.pd
-    etree.SubElement(desc, DCNS('date.pd')).text = book.pd_year
+    etree.SubElement(desc, DCNS('date.pd')).text = str(book.pd_year)
     #publisher
     etree.SubElement(desc, DCNS('publisher')). text = 'Fundacja Wolne Lektury'
     #language

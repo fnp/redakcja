@@ -23,6 +23,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_cas_ng.decorators import user_passes_test
 
+from librarian import epubcheck
 from apiclient import api_call, NotAuthorizedError
 from . import forms
 from . import helpers
@@ -300,12 +301,42 @@ def book_epub(request, slug):
 
     from librarian.builders import EpubBuilder
     epub = EpubBuilder(
-        base_url='file://' + book.gallery_path() + '/'
+        base_url='file://' + book.gallery_path() + '/',
+        debug=True
     ).build(doc).get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
     response.write(epub)
     return response
+
+
+@login_required
+@never_cache
+def book_epubcheck(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    # TODO: move to celery
+    doc = book.wldocument(librarian2=True)
+    # TODO: error handling
+
+    from librarian.builders import EpubBuilder
+    epub = EpubBuilder(
+        base_url='file://' + book.gallery_path() + '/',
+        debug=True
+    ).build(doc)
+    fname = epub.get_filename()
+
+    messages = epubcheck.epubcheck(fname)
+    for message in messages:
+        for location in message.get('locations', []):
+            if 'wl_chunk' in location:
+                location['wl_chunk'] = book[location['wl_chunk']]
+    return render(request, 'documents/book_epubcheck.html', {
+        'messages': messages,
+        'book': book,
+    })
 
 
 @login_required
