@@ -65,7 +65,11 @@ def preview(request, book, chunk=None, rev=None):
 
     cover_class = request.GET.get('cover_class', 'default')
 
-    cover = make_cover(info, cover_class=cover_class, width=width, height=height)
+    kwargs = {}
+    if chunk.book.project is not None:
+        if chunk.book.project.logo_mono or chunk.book.project.logo:
+            kwargs['cover_logo'] = (chunk.book.project.logo_mono or chunk.book.project.logo).path
+    cover = make_cover(info, cover_class=cover_class, width=width, height=height, **kwargs)
     response = HttpResponse(content_type=cover.mime_type())
     img = cover.final_image()
     img.save(response, cover.format)

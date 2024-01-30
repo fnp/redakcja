@@ -23,6 +23,7 @@ from io import BytesIO
 import os
 import shutil
 import re
+from urllib.parse import urljoin
 
 
 class Book(models.Model):
@@ -399,7 +400,11 @@ class Book(models.Model):
         try:
             xml = self.materialize(publishable=True).encode('utf-8')
             info = BookInfo.from_bytes(xml)
-            cover = make_cover(info, width=width, height=height)
+            kwargs = {}
+            if chunk.book.project is not None:
+                if chunk.book.project.logo_mono or chunk.book.project.logo:
+                    kwargs['cover_logo'] = (chunk.book.project.logo_mono or chunk.book.project.logo).path
+            cover = make_cover(info, width=width, height=height, **kwargs)
             out = BytesIO()
             ext = cover.ext()
             cover.save(out)
@@ -464,6 +469,17 @@ class Book(models.Model):
         if not fake:
             book_xml = self.materialize(changes=changes)
             data = {"book_xml": book_xml, "days": days, "hidden": hidden}
+            if self.project is not None:
+                if self.project.logo:
+                    data['logo'] = urljoin(
+                        'https://' + Site.objects.get_current().domain,
+                        self.project.logo.url,
+                    )
+                if self.project.logo_mono:
+                    data['logo_mono'] = urljoin(
+                        'https://' + Site.objects.get_current().domain,
+                        self.project.logo.url,
+                    )
             if host:
                 data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data, beta=beta)

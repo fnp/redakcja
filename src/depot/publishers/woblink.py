@@ -187,6 +187,7 @@ class Woblink(BasePublisher):
                 (self.ROLE_TRANSLATOR, meta.translators, False)
         ]:
             for person_literal in items:
+                if person_literal is None: continue
                 if person_literal.lang != 'pl':
                     if errors is not None:
                         if obligatory:
