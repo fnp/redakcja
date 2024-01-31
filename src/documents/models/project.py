@@ -12,6 +12,7 @@ class Project(models.Model):
     notes = models.TextField(_('notes'), blank=True, null=True)
     logo = models.FileField(upload_to='projects', blank=True)
     logo_mono = models.FileField(upload_to='logo_mono', help_text='white on transparent', blank=True)
+    logo_alt = models.CharField(max_length=255, blank=True)
 
     class Meta:
         app_label = 'documents'
