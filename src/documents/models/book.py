@@ -478,8 +478,10 @@ class Book(models.Model):
                 if self.project.logo_mono:
                     data['logo_mono'] = urljoin(
                         'https://' + Site.objects.get_current().domain,
-                        self.project.logo.url,
+                        self.project.logo_mono.url,
                     )
+                if self.project.logo_alt:
+                    data['logo_alt'] = self.project.logo_alt
             if host:
                 data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data, beta=beta)
