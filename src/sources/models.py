@@ -67,6 +67,7 @@ class Source(models.Model):
         return os.path.isdir(d) and os.listdir(d)
 
     def process(self):
+        processed_at = now()
         updir = os.path.join(
             settings.MEDIA_ROOT,
             self.get_upload_directory()
@@ -83,7 +84,7 @@ class Source(models.Model):
             self.build_view_directory(updir, d)
         with utils.replace_dir(ocr_dir) as d:
             self.build_ocr_directory(updir, d)
-        self.processed_at = now()
+        self.processed_at = processed_at
         self.save(update_fields=['processed_at'])
     
     def build_view_directory(self, srcpath, targetpath):
