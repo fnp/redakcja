@@ -12,6 +12,8 @@ class SourceView(DetailView):
 
 
 class SourceUploadView(UploadView):
+    template_name = 'sources/upload.html'
+
     def get_object(self, request, sid):
         source = get_object_or_404(models.Source, id=sid)
         return source

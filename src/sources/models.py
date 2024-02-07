@@ -38,6 +38,10 @@ class Source(models.Model):
     def get_ocr_directory(self):
         return f'sources/ocr/{self.pk}/'
 
+    def has_upload_files(self):
+        d = os.path.join(settings.MEDIA_ROOT, self.get_upload_directory())
+        return os.path.isdir(d) and os.listdir(d)
+    
     def get_view_files(self):
         d = self.get_view_directory()
         return [
@@ -47,12 +51,20 @@ class Source(models.Model):
             ))
         ]
 
+    def has_view_files(self):
+        d = os.path.join(settings.MEDIA_ROOT, self.get_view_directory())
+        return os.path.isdir(d) and os.listdir(d)
+    
     def get_ocr_files(self):
         d = os.path.join(settings.MEDIA_ROOT, self.get_ocr_directory())
         return [
             d + name
             for name in sorted(os.listdir(d))
         ]
+
+    def has_ocr_files(self):
+        d = os.path.join(settings.MEDIA_ROOT, self.get_ocr_directory())
+        return os.path.isdir(d) and os.listdir(d)
 
     def process(self):
         updir = os.path.join(

@@ -2,7 +2,7 @@
 {% load sorl_thumbnail %}
 
 {% block content %}
-  <h1>{{ source }}</h1>
+  <h1>Źródło: {{ source }}</h1>
 
   <p>
   <a href="{% url 'source_upload' source.pk %}">
@@ -13,9 +13,16 @@
   <h2>Przypisania do książek:</h2>
   {% for bs in source.booksource_set.all %}
     <div>
-      <a href="{% url 'source_book_prepare' bs.pk %}">
-        {{ bs.book }} {{ bs.page_start }}—{{ bs.page_end }}
+      <a href="{{ bs.book.get_absolute_url }}">
+        {{ bs.book }}
       </a>
+      <small>
+        {% if bs.page_start or bs.page_end %}
+          (skany {{ bs.page_start }}—{{ bs.page_end }})
+        {% else %}
+          (całość)
+        {% endif %}
+      </small>
     </div>
     {% for f in bs.get_files %}
       {% thumbnail f '200x200' as c %}

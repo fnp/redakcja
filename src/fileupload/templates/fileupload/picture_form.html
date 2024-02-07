@@ -26,6 +26,7 @@
 {% endfor %}
 </h1>
 
+{% block note %}{% endblock %}
 
     <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
         <div class="row fileupload-buttonbar">
