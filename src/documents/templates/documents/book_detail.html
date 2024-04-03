@@ -70,7 +70,28 @@
   <div class='card mt-4'>
 
     <div class="card-header">
-      <h2>{% trans "Publication" %}</h2>
+      <h2>
+        {% trans "Publication" %}
+        |
+        {% if book.project %}
+          {% if book.project.can_sell %}
+            <span title="Książka do sprzedaży">💶</span>
+          {% else %}
+            <span title="Książka nie do sprzedaży">🙅</span>
+          {% endif %}
+        {% else %}
+          <span title="Brak informacji o możliwości sprzedaży">❓</span>
+        {% endif %}
+        {% if has_audio %}
+          | 🎧
+          {% if can_sell_audio %}
+            <span title="Audiobook do sprzedaży">💶</span>
+          {% else %}
+            <span title="Audiobook nie do sprzedaży">🙅</span>
+          {% endif %}
+        {% endif %}
+      </h2>
+
     </div>
     <div class="card-body">
       <div class="row">
@@ -126,6 +147,8 @@
               <a href="{% url 'documents_book_epubcheck' book.slug %}" rel="nofollow">sprawdź</a><br/>
               <a href="{% url 'documents_book_mobi' book.slug %}" rel="nofollow">{% trans "MOBI version" %}</a><br/>
             </p>
+
+            <p><a href="./synchro">Sprawdź synchronizację</a></p>
 
             {% isbn_status book %}
 

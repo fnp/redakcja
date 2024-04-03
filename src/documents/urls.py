@@ -45,6 +45,7 @@ urlpatterns = [
     path('book/<slug:slug>/mobi', views.book_mobi, name="documents_book_mobi"),
     path('book/<slug:slug>/pdf', views.book_pdf, name="documents_book_pdf"),
     path('book/<slug:slug>/pdf-mobile', views.book_pdf, kwargs={'mobile': True}, name="documents_book_pdf_mobile"),
+    path('book/<slug:slug>/synchro', views.synchro, name="documents_book_synchro"),
 
     path('chunk_add/<slug:slug>/<slug:chunk>/',
         views.chunk_add, name="documents_chunk_add"),

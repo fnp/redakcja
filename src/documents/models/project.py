@@ -13,6 +13,8 @@ class Project(models.Model):
     logo = models.FileField(upload_to='projects', blank=True)
     logo_mono = models.FileField(upload_to='logo_mono', help_text='white on transparent', blank=True)
     logo_alt = models.CharField(max_length=255, blank=True)
+    private_notes = models.TextField(blank=True, verbose_name='Prywatne notatki')
+    can_sell = models.BooleanField(default=True, verbose_name='Do sprzedaży')
 
     class Meta:
         app_label = 'documents'

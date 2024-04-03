@@ -1,0 +1,49 @@
+{% extends "documents/base.html" %}
+
+
+{% block content %}
+
+  <div class="row mb-4">
+    <div class="col-4">
+    </div>
+    <div class="col-8">
+      {% if not length_ok %}
+        <div class="alert alert-warning">
+          Liczba znalezionych części dokumentu nie zgadza się z liczbą części audiobooka.
+          Konieczna jest korekta za pomocą atrybutów <code>forcesplit</code> i <code>nosplit</code>.
+        </div>
+      {% else %}
+        <form method="post" action="">
+          {% csrf_token %}
+          <button class="btn btn-primary">
+            Zaplanuj synchronizację
+          </button>
+        </form>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nagłówek cięcia</th>
+        <th>Audiobook</th>
+      </tr>
+    </thead>
+    {% for h, m in table %}
+      <tr>
+        <td>
+          {% if h %}
+            <a target="_blank" href="{% url 'wiki_editor' book.slug %}#CodeMirrorPerspective">
+              {{ h.0 }} (linia {{ h.2 }})
+            </a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>{{ m|default_if_none:'—' }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

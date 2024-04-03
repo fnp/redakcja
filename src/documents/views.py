@@ -2,7 +2,9 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from collections import defaultdict
+from copy import deepcopy
 from datetime import datetime, date, timedelta
+from itertools import zip_longest
 import logging
 import os
 from urllib.parse import quote_plus, unquote, urlsplit, urlunsplit
@@ -22,8 +24,11 @@ from django.utils.encoding import iri_to_uri
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_cas_ng.decorators import user_passes_test
+import requests
 
 from librarian import epubcheck
+from librarian.html import raw_printable_text
+
 from apiclient import api_call, NotAuthorizedError
 from . import forms
 from . import helpers
@@ -404,6 +409,14 @@ def book(request, slug):
         except:
             pass
 
+    if book.catalogue_book_id:
+        audio_items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{book.catalogue_book_id}.json').json()['items']
+        has_audio = bool(audio_items)
+        can_sell_audio = has_audio and all(x['project']['can_sell'] for x in audio_items)
+    else:
+        has_audio = None
+        can_sell_audio = None
+        
     return render(request, "documents/book_detail.html", {
         "book": book,
         "doc": doc,
@@ -413,6 +426,8 @@ def book(request, slug):
         "form": form,
         "publish_options_form": publish_options_form,
         "editable": editable,
+        "has_audio": has_audio,
+        "can_sell_audio": can_sell_audio,
     })
 
 
@@ -747,3 +762,81 @@ def mark_final(request):
 
 def mark_final_completed(request):
     return render(request, 'documents/mark_final_completed.html')
+
+
+def synchro(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if not book.accessible(request):
+        return HttpResponseForbidden("Not authorized.")
+
+    document = book.wldocument(librarian2=True)
+    slug = document.meta.url.slug
+    print(f'https://audio.wolnelektury.pl/archive/book/{slug}.json')
+    error = None
+    try:
+        items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{slug}.json').json()['items']
+    except:
+        error = 'Błąd połączenia z repozytorium audio.'
+        items = []
+    else:
+        mp3 = [
+            item['part'] for item in items
+        ]
+
+    split_on = (
+        'naglowek_rozdzial',
+        'naglowek_scena',
+        )
+    
+    if split_on:
+        documents = []
+        headers = [('Początek', 0, 0)]
+        present = True
+        n = 0
+        while present:
+            present = False
+            n += 1
+            newdoc = deepcopy(document)
+            newdoc.tree.getroot().document = newdoc
+            
+            master = newdoc.tree.getroot()[-1]
+            i = 0
+            for item in list(master):
+                #chunkno, sourceline = 0, self.sourceline
+                #if builder.splits:
+                #    chunkno, sourceline = len(builder.splits), sourceline - builder.splits[-1]
+
+                if 'forcesplit' in item.attrib or (item.tag in split_on and 'nosplit' not in item.attrib):
+                    # TODO: clear
+                    i += 1
+                    if n > 1 and i == n:
+                        headers.append((
+                            raw_printable_text(item),
+                            0,
+                            item.sourceline,
+                        ))
+                if i != n and not (n == 1 and not i):
+                    master.remove(item)
+                else:
+                    present = True
+                if present:
+                    documents.append(newdoc)
+    else:
+        documents = [document]
+        headers = [(
+            document.meta.title, 0 ,0
+        )]
+
+    length_ok = len(headers) == len(mp3)
+    table = zip_longest(headers, mp3)
+
+    
+    return render(request, 'documents/synchro.html', {
+        'book': book,
+        'documents': documents,
+        'headers': headers,
+        'mp3': mp3,
+        'length_ok': length_ok,
+        'table': table,
+        'error': error,
+    })
