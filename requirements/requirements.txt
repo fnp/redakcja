@@ -3,7 +3,7 @@
 ## Python libraries
 merge3==0.0.13
 PyYAML==6.0
-Pillow==9.5.0
+Pillow==10.3.0
 oauth2
 httplib2 # oauth2 dependency
 python-slugify==8.0.1
