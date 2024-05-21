@@ -597,7 +597,12 @@ class BookMonthlyStats(models.Model):
 
 
 class Thema(models.Model):
-    code = models.CharField(max_length=128, unique=True)
+    code = models.CharField(
+        max_length=128, unique=True,
+        help_text='Używamy rozszerzenia <code>.WL-</code> do oznaczania własnych kodów.<br> '
+        'Przykładowo, w przypadku potrzeby stworzenia nowej kategorii „insurekcja kościuszkowska”, '
+        'można by ją utworzyć jako 3MLQ‑PL‑A.WL-A, czyli w ramach już istniejącej wyższej kategorii 3MLQ‑PL‑A „rozbiory Polski”.',
+    )
     name = models.CharField(max_length=1024)
     slug = models.SlugField(
         max_length=255, null=True, blank=True, unique=True,
