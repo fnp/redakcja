@@ -230,6 +230,10 @@ class Epoch(Category):
 
 
 class Genre(Category):
+    thema = models.CharField(
+        max_length=32, blank=True,
+        help_text='Odpowiadający kwalifikator Thema.'
+    )
     plural = models.CharField(
         'liczba mnoga', max_length=255, blank=True,
     )
