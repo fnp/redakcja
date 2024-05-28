@@ -384,11 +384,8 @@ class Book(WikidataModel):
             for work_type in WorkType.objects.all()
         }
 
-    def scans_gallery(self):
-        bs = self.booksource_set.first()
-        if bs is None:
-            return ''
-        return bs.pk
+    def scans_galleries(self):
+        return [bs.pk for bs in self.booksource_set.all()]
 
     def is_published(self):
         return any(b.is_published() for b in self.document_books.all())
@@ -428,6 +425,15 @@ class Book(WikidataModel):
             stats = {}
         self._content_stats = stats
         return stats
+
+    @property
+    def are_sources_ready(self):
+        if not self.booksource_set.exists():
+            return False
+        for bs in self.booksource_set.all():
+            if not bs.source.has_view_files() or not bs.source.has_ocr_files() or bs.source.modified_at > bs.source.processed_at:
+                return False
+        return True
 
     chars = lambda self: self.content_stats.get('chars', '')
     chars_with_fn = lambda self: self.content_stats.get('chars_with_fn', '')

@@ -119,11 +119,12 @@ class Source(models.Model):
 class BookSource(models.Model):
     book = models.ForeignKey('catalogue.Book', models.CASCADE)
     source = models.ForeignKey(Source, models.CASCADE)
+    ordering = models.IntegerField(default=1)
     page_start = models.IntegerField(null=True, blank=True)
     page_end = models.IntegerField(null=True, blank=True)
         
     class Meta:
-        ordering = ('page_start',)
+        ordering = ('ordering', 'page_start',)
 
     def __str__(self):
         return f'{self.source} -> {self.book}'
@@ -151,16 +152,17 @@ class BookSource(models.Model):
 
     def get_document(self):
         return self.book.document_books.first()
-        
-    def prepare_document(self, user=None):
-        DBook = apps.get_model('documents', 'Book')
-        texts = document.build_document_texts(self)
 
-        dbook = self.get_document()
+    @classmethod
+    def prepare_document(cls, book, user=None):
+        DBook = apps.get_model('documents', 'Book')
+        texts = document.build_document_texts(book)
+
+        dbook = book.document_books.first()
         if dbook is None:
             dbook = DBook.create(
                 user, texts[0],
-                title=self.book.title,
+                title=book.title,
                 slug=str(uuid.uuid4()),
             )
         else:

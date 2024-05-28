@@ -271,15 +271,21 @@ def gallery(request, directory):
 
 
 @never_cache
-def scans_list(request, pk):
-    bs = get_object_or_404(sources.models.BookSource, pk=pk)
+def scans_list(request, pks):
+    pks = pks.split(',')
+    bss = [
+        get_object_or_404(sources.models.BookSource, pk=pk)
+        for pk in pks
+    ]
     def map_to_url(filename):
         return quote(("%s/%s" % (settings.MEDIA_URL, filename)))
-    images = [
-        {
-            "url": map_to_url(f),
-        } for f in bs.get_view_files()
-    ]
+    images = []
+    for bs in bss:
+        images.extend([
+            {
+                "url": map_to_url(f),
+            } for f in bs.get_view_files()
+        ])
     return JSONResponse(images)
 
 

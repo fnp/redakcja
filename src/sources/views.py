@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from fileupload.views import UploadView
+import catalogue.models
 from . import models
 
 
@@ -39,17 +40,11 @@ class SourceUploadView(UploadView):
         return response
 
 
-def prepare(request, bsid):
-    bs = get_object_or_404(models.BookSource, id=bsid)
+def prepare(request, pk):
+    book = get_object_or_404(catalogue.models.Book, id=pk)
 
     if request.POST:
-        dbook = bs.prepare_document(request.user)
+        dbook = models.BookSource.prepare_document(book, request.user)
         return redirect('wiki_editor', dbook.slug, dbook[0].slug)
     else:
-        return render(
-            request,
-            'sources/prepare.html',
-            {
-                'book_source': bs,
-            }
-        )
+        return redirect(book.get_absolute_url())

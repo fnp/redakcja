@@ -120,48 +120,59 @@
       Źródło
     </div>
     <div class="card-body">
-      {% for bs in book.booksource_set.all %}
-        <a href="{{ bs.source.get_absolute_url }}">
-          {{ bs.source }}
-        </a>
-        {% if bs.page_start or bs.page_end %}
-          (strony {{ bs.page_start }}—{{ bs.page_end }})
-        {% else %}
-          <small>
-            (źródło w całości przypisane do utworu <em>{{ book }}</em>)
-          </small>
-        {% endif %}
+      <table class="table">
+        <tbody>
+          {% for bs in book.booksource_set.all %}
+            <tr>
+              <td>
+                <a href="{{ bs.source.get_absolute_url }}">
+                  {{ bs.source }}
+                </a>
+              </td>
+              <td>
+                {% if bs.page_start or bs.page_end %}
+                  (strony {{ bs.page_start }}—{{ bs.page_end }})
+                {% else %}
+                  <small>
+                    (źródło w całości przypisane do utworu <em>{{ book }}</em>)
+                  </small>
+                {% endif %}
+              </td>
+              <td>
+                {% if not bs.source.has_upload_files %}
+                  <div class="alert alert-info">
+                    Źródło nie ma jeszcze załadowanych skanów.
+                    <a href="{% url 'source_upload' bs.source.id %}">
+                      Załaduj skany</a>.
+                  </div>
+                {% elif not bs.source.has_view_files %}
+                  <div class="alert alert-info">
+                    Trwa generowanie podglądu.
+                  </div>
+                {% elif not bs.source.has_ocr_files %}
+                  <div class="alert alert-info">
+                    Trwa OCR.
+                  </div>
+                {% elif bs.source.modified_at > bs.source.processed_at %}
+                  <div class="alert alert-info">
+                    Zmodyfikowano skany, trwa aktualizacja.
+                  </div>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            Brak źródła.
+            Możesz je dodać.
+          {% endfor %}
+        </tbody>
+      </table>
 
-        {% if not bs.source.has_upload_files %}
-
-          <div class="alert alert-info">
-            Źródło nie ma jeszcze załadowanych skanów.
-            <a href="{% url 'source_upload' bs.source.id %}">
-              Załaduj skany</a>.
-          </div>
-
-        {% elif not bs.source.has_view_files %}
-          <div class="alert alert-info">
-            Trwa generowanie podglądu.
-          </div>
-        {% elif not bs.source.has_ocr_files %}
-          <div class="alert alert-info">
-            Trwa OCR.
-          </div>
-        {% elif bs.source.modified_at > bs.source.processed_at %}
-          <div class="alert alert-info">
-            Zmodyfikowano skany, trwa aktualizacja.
-          </div>
-        {% else %}
-          <form method="post" action="{% url 'source_book_prepare' bs.pk %}">
-            {% csrf_token %}
-            <button class="btn btn-primary">Utwórz tekst książki</button>
-          </form>
-        {% endif %}
-      {% empty %}
-        Brak źródła.
-        Możesz je dodać.
-      {% endfor %}
+      <form method="post" action="{% url 'source_book_prepare' book.pk %}">
+        {% csrf_token %}
+        <button class="btn btn-primary"
+                {% if not book.are_sources_ready %}disabled="disabled"{% endif %}
+        >Utwórz tekst książki</button>
+      </form>
     </div>
   </div>
 

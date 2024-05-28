@@ -15,7 +15,7 @@ urlpatterns = [
          views.editor_readonly, name="wiki_editor_readonly"),
 
     path('gallery/<directory>/', views.gallery, name="wiki_gallery"),
-    path('scans/<int:pk>/', views.scans_list, name="wiki_scans"),
+    path('scans/<str:pks>/', views.scans_list, name="wiki_scans"),
     path('history/<int:chunk_id>/', views.history, name="wiki_history"),
     path('rev/<int:chunk_id>/', views.revision, name="wiki_revision"),
     path('text/<int:chunk_id>/', views.text, name="wiki_text"),

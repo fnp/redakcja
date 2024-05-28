@@ -6,19 +6,20 @@ from . import ocr
 from django.conf import settings
 
 
-def build_document_texts(book_source):
+def build_document_texts(book):
     texts = []
     for builder in text_builders:
         root = etree.Element('utwor')
         # add meta
-        add_rdf(root, book_source)
+        add_rdf(root, book)
 
         # add master
         master = etree.SubElement(root, 'powiesc')
 
-        for page in book_source.get_ocr_files():
-            builder(master, page)
-    
+        for book_source in book.booksource_set.all():
+            for page in book_source.get_ocr_files():
+                builder(master, page)
+
         texts.append(etree.tostring(root, encoding='unicode', pretty_print=True))
     return texts
 
@@ -30,9 +31,7 @@ text_builders = [
 ]
 
 
-def add_rdf(root, book_source):
-    book = book_source.book
-    
+def add_rdf(root, book):
     # TODO: to librarian
     rdf = etree.SubElement(root, RDFNS('RDF'))
     desc = etree.SubElement(rdf, RDFNS('Description'), **{})
@@ -55,7 +54,11 @@ def add_rdf(root, book_source):
     etree.SubElement(desc, DCNS('language')).text = book.language # 3to2?
     #description
     #source_name
-    etree.SubElement(desc, DCNS('source')).text = book_source.source.name
+    # TODO: allow multiple source meta entries.
+    sources = []
+    for book_source in book.booksource_set.all():
+        sources.append(book_source.source.name)
+    etree.SubElement(desc, DCNS('source')).text = ';\n '.join(sources)
     #url
     etree.SubElement(desc, DCNS('identifier.url')).text = f'https://wolnelektury.pl/katalog/lektura/{book.slug}/'
     #license?
