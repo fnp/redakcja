@@ -166,7 +166,17 @@ class MetaTagsView(View):
                     )
                 )
             )
-            fields.append(d)
+            if d['name'] == 'thema':
+                d_loc = d.copy()
+                d_time = d.copy()
+                d['filter'] = {'not': {'startswith': ['1', '3']}}
+                d_loc['filter'] = {'startswith': ['1']}
+                d_loc['name'] += ' (miejsca)'
+                d_time['filter'] = {'startswith': ['3']}
+                d_time['name'] += ' (czas)'
+                fields.extend([d, d_loc, d_time])
+            else:
+                fields.append(d)
 
         return HttpResponse(
             'let META_FIELDS = ' + json.dumps(fields),

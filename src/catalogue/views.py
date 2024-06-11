@@ -1,8 +1,9 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import json
 from django.apps import apps
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.utils.formats import localize_input
@@ -219,7 +220,29 @@ class ThemaChooser(Chooser):
                 res = res[0]['sub']
             return res
 
-        for thema in self.queryset.all():
+        def apply_filter(filt):
+            if 'not' in filt:
+                return ~apply_filter(filt['not'])
+            if 'startswith' in filt:
+                q = None
+                for prefix in filt['startswith']:
+                    q2 = Q(code__startswith=prefix)
+                    if q:
+                        q |= q2
+                    else:
+                        q = q2
+                return q
+            assert False
+
+        qs = self.queryset
+        try:
+            filt = json.loads(request.GET.get('filter'))
+        except:
+            pass
+        else:
+            qs = qs.filter(apply_filter(filt))
+
+        for thema in qs:
             populate(thema)
 
         missing = list(getmissing(tree))

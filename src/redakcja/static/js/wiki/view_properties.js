@@ -139,6 +139,9 @@
                         rdfdesc.append('\n    ');
                         rdf.append('\n  ');
                     }
+                    if (field.filter && field.filter.startswith) {
+                        span.text(field.filter.startswith[0]);
+                    }
                     span.appendTo(rdfdesc);
                     rdfdesc.append('\n    ');
 
@@ -230,6 +233,7 @@
 
                 $.ajax({
                     url: field.value_type.chooser.source,
+                    data: field.filter ? {'filter': JSON.stringify(field.filter)} : '',
                     success: function(data) {
                         add_options(body, data, input.val());
                     }
@@ -384,6 +388,18 @@
             // lang
         }
 
+        applyFilter(filter, text) {
+            if (filter.not) {
+                return !this.applyFilter(filter.not, text)
+            } else if (filter.startswith) {
+                for (prefix of filter.startswith) {
+                    if (text.startsWith(prefix))
+                        return true;
+                }
+                return false;
+            }
+        }
+        
         displayMetaProperty($fg) {
             let self = this;
             let ns = $fg.data('ns');
@@ -398,6 +414,11 @@
                 selector += "[x-ns='"+ns+"']";
             }
             $(selector, self.$edited).each(function() {
+                if (field.filter) {
+                    let text = $(this).text();
+                    if (!self.applyFilter(field.filter, text))
+                        return;
+                }
                 self.addMetaInput(
                     $('.c', $fg),
                     field,
