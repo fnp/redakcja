@@ -25,7 +25,7 @@ django-bootstrap4==23.1
 libsasscompiler==0.1.9
 django-debug-toolbar==4.1.0
 django-admin-numeric-filter==0.1.9
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 django-filter==23.2
 django-modeltranslation==0.18.10
 django-admin-ordering==0.17
