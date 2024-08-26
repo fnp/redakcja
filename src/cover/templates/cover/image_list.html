@@ -7,14 +7,25 @@
 {% block content %}
 <div class="card mt-4 mb-4">
 	<div class="card-header">
-<h1>{% trans "Cover images" %}</h1>
+<h1>{% trans "Cover images" %}{% if only_unused %} (nieużywane){% endif %}</h1>
 	</div>
 	<div class="card-body">
 
-{% if can_add %}
-    <a class="btn btn-primary" href="{% url 'cover_add_image' %}">{% trans "Add new" %}</a>
-{% endif %}
+          <div class="mb-4">
+            {% if can_add %}
+              <a class="btn btn-primary" href="{% url 'cover_add_image' %}">{% trans "Add new" %}</a>
+            {% endif %}
+            {% if only_unused %}
+              <a class="btn btn-secondary" href=".">
+                Pokaż wszystkie
+              </a>
+            {% else %}
+              <a class="btn btn-secondary" href="?unused=1">
+                Pokaż tylko nieużywane
+              </a>
+            {% endif %}
 
+          </div>
 <div class="row">
 {% autopaginate object_list 100 %}
 {% for image in object_list %}

@@ -150,9 +150,14 @@ def image_file(request, pk):
 
 @active_tab('cover')
 def image_list(request):
+    qs = Image.objects.all().order_by('-id')
+    only_unused = request.GET.get('unused')
+    if only_unused:
+        qs = qs.filter(book=None)
     return render(request, "cover/image_list.html", {
-        'object_list': Image.objects.all().order_by('-id'),
+        'object_list': qs,
         'can_add': request.user.has_perm('cover.add_image'),
+        'only_unused': only_unused,
     })
 
 
