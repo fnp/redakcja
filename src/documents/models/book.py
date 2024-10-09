@@ -379,7 +379,7 @@ class Book(models.Model):
                 except:
                     pass
                 else:
-                    if info.cover_source == image.get_full_url():
+                    if info.cover_source.rstrip('/') == image.get_full_url().rstrip('/'):
                         update['dc_cover_image'] = image
             update['dc'] = info.to_dict()
         Book.objects.filter(pk=self.pk).update(**update)
@@ -401,9 +401,9 @@ class Book(models.Model):
             xml = self.materialize(publishable=True).encode('utf-8')
             info = BookInfo.from_bytes(xml)
             kwargs = {}
-            if chunk.book.project is not None:
-                if chunk.book.project.logo_mono or chunk.book.project.logo:
-                    kwargs['cover_logo'] = (chunk.book.project.logo_mono or chunk.book.project.logo).path
+            if self.project is not None:
+                if self.project.logo_mono or self.project.logo:
+                    kwargs['cover_logo'] = (self.project.logo_mono or self.project.logo).path
             cover = make_cover(info, width=width, height=height, **kwargs)
             out = BytesIO()
             ext = cover.ext()
