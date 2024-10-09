@@ -35,7 +35,10 @@
                     "name": "href",
                 },
             ],
-        }
+            "tab": {"attributes": [{"name": "szer"}]},
+            "naglowek_parsza": {"attributes": [{"name": "nazwa"}]},
+            "naglowek_czytanie": {"attributes": [{"name": "nazwa"}]}
+        },
     };
 
     class PropertiesPerspective extends $.wiki.SidebarPerspective {
