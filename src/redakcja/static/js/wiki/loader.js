@@ -113,10 +113,10 @@ $(function() {
         };
 
         $('body').mousemove(function(e) {
-            CurrentDocument.active = true;
+            CurrentDocument.active = new Date();
         });
         $('body').keydown(function(e) {
-            CurrentDocument.active = true;
+            CurrentDocument.active = new Date();
         });
 
         console.log("Fetching document's text");
@@ -141,13 +141,15 @@ $(function() {
                 console.log("Initial tab is:", active_tab)
                 $.wiki.switchToTab(active_tab);
 
-                /* every minute check for a newer version */
+                /* check for a newer version */
+                CurrentDocument.checkRevision({outdated: function(){
+                    $('#header').addClass('out-of-date');
+                }});
                 var revTimer = setInterval(function() {
                     CurrentDocument.checkRevision({outdated: function(){
                         $('#header').addClass('out-of-date');
-                        clearInterval(revTimer);
                     }});
-                }, 60 * 1000);
+                }, 5 * 1000);
             },
             failure: function() {
                 $('#loading-overlay').fadeOut();

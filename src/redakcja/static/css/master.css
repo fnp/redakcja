@@ -228,3 +228,13 @@ img.tabclose {
 #source-editor .CodeMirror-wrap pre.CodeMirror-line-like {
 	word-wrap: anywhere;
 }
+
+
+#people img {
+    margin-left: -10px;
+    border-radius: 100%;
+    opacity: .5;
+}
+#people img.active {
+    opacity: 1;
+}

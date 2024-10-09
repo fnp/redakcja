@@ -22,6 +22,7 @@ admin.site.register(User, CustomUserAdmin)
 
 
 @admin.register(models.Presence)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'timestamp', 'active']
+class PresenceAdmin(admin.ModelAdmin):
+    list_display = ['session_key', 'chunk', 'user', 'since', 'until', 'active']
+    raw_id_fields = ['chunk', 'user']
 

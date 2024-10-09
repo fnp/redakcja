@@ -127,7 +127,7 @@
 
 	    this.text = null;
 	    this.has_local_changes = false;
-            this.active = true;
+            this.active = new Date();
 	    this._lock = -1;
 	    this._context_lock = -1;
 	    this._lock_count = 0;
@@ -216,22 +216,41 @@
         checkRevision(params) {
             /* this doesn't modify anything, so no locks */
             var self = this;
-            let active = self.active;
-            self.active = false;
+            let active = new Date() - self.active < 30 * 1000;
             $.ajax({
                 method: "GET",
                 url: reverse("ajax_document_rev", self.id),
                 data: {
                     'a': active,
+                    'new': 1,
                 },
-                dataType: 'text',
+                dataType: 'json',
                 success: function(data) {
                     if (data == '') {
                         if (params.error)
                             params.error();
                     }
-                    else if (data != self.revision)
-                        params.outdated();
+                    else {
+                        let people = $('<div>');
+                        data.people.forEach((p) => {
+                            let item = $('<img>');
+                            item.attr('src', p.gravatar),
+                            item.attr(
+                                'title',
+                                p.name  + ' (' +
+                                    (p.active ? 'akt.' : 'nieakt.') +
+                                    ' od ' + p.since + ')')
+                            if (p.active) {
+                                item.addClass('active');
+                            }
+                            people.append(item);
+                        });
+                        $("#people").html(people);
+
+                        if (data.rev != self.revision) {
+                            params.outdated();
+                        }
+		    }
                 }
             });
         }

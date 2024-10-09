@@ -19,11 +19,13 @@ from django.utils.formats import localize
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404, render
+from django_gravatar.helpers import get_gravatar_url
 from sorl.thumbnail import get_thumbnail
 
 from documents.models import Book, Chunk
 import sources.models
 from . import nice_diff
+from team.models import Presence
 from wiki import forms
 from wiki.helpers import (JSONResponse, JSONFormInvalid, JSONServerError,
                 ajax_require_permission)
@@ -317,12 +319,34 @@ def diff(request, chunk_id):
 
 @never_cache
 def revision(request, chunk_id):
+    if not request.session.session_key:
+        return HttpResponseForbidden("Not authorized.")
     doc = get_object_or_404(Chunk, pk=chunk_id)
     if not doc.book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
-    Presence = apps.get_model('team', 'Presence')
-    Presence.report(request.user, doc, request.GET.get('a') == 'true')
-    return http.HttpResponse(str(doc.revision()))
+
+    Presence.report(
+        request.user, request.session.session_key,
+        doc,
+        request.GET.get('a') == 'true'
+    )
+
+    # Temporary compat for unreloaded clients.
+    if not request.GET.get('new'):
+        return http.HttpResponse(str(doc.revision()))
+
+    return JSONResponse({
+        'rev': doc.revision(),
+        'people': list([
+            {
+                'name': (p.user.first_name + ' ' + p.user.last_name) if p.user is not None else '?',
+                'gravatar': get_gravatar_url(p.user.email if p.user is not None else '-', size=26),
+                'since': p.since.strftime('%H:%M'),
+                'active': p.active,
+            }
+            for p in Presence.get_current(request.session.session_key, doc)
+        ]),
+    })
 
 
 @never_cache
