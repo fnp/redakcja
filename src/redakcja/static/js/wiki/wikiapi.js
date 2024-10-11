@@ -126,6 +126,7 @@
             this.fullUri = $("*[data-key='full-uri']", meta).text();
 
 	    this.text = null;
+            this.saving = false;
 	    this.has_local_changes = false;
             this.active = new Date();
 	    this._lock = -1;
@@ -217,6 +218,7 @@
             /* this doesn't modify anything, so no locks */
             var self = this;
             let active = new Date() - self.active < 30 * 1000;
+            let saving = self.saving;
             $.ajax({
                 method: "GET",
                 url: reverse("ajax_document_rev", self.id),
@@ -247,7 +249,7 @@
                         });
                         $("#people").html(people);
 
-                        if (data.rev != self.revision) {
+                        if (!saving && (data.rev != self.revision)) {
                             params.outdated();
                         }
 		    }
@@ -375,6 +377,7 @@
 
 	    data['textsave-text'] = self.text;
 
+            self.saving = true;
 	    $.ajax({
 	        url: reverse("ajax_document_text", self.id),
 	        type: "POST",
@@ -392,10 +395,12 @@
 		        changed = true;
 		        self.triggerDocumentChanged();
 		    };
+                    self.saving = false;
 
 		    params['success'](self, changed, ((changed && "Udało się zapisać :)") || "Twoja wersja i serwera jest identyczna"));
 	        },
 	        error: function(xhr) {
+                    self.saving = false;
                     if ($('#header').hasClass('saving')) {
                         $('#header').removeClass('saving');
                         $.blockUI({

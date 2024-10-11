@@ -17,7 +17,7 @@ class Profile(models.Model):
 
 
 class Presence(models.Model):
-    GAP_THRESHOLD = 60
+    GAP_THRESHOLD = 10
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=255)
