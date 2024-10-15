@@ -1,6 +1,7 @@
 from collections import Counter
 from datetime import date, timedelta
 import decimal
+import io
 import re
 from urllib.request import urlopen
 from django.apps import apps
@@ -11,6 +12,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from admin_ordering.models import OrderableModel
 from wikidata.client import Client
+from librarian import DCNS
+from librarian.cover import make_cover
+from librarian.dcparser import BookInfo, Person
 from .constants import WIKIDATA
 from .wikidata import WikidataModel
 from .wikimedia import WikiMedia
@@ -260,6 +264,8 @@ class Kind(Category):
 
 class Book(WikidataModel):
     slug = models.SlugField(max_length=255, blank=True, null=True, unique=True)
+    parent = models.ForeignKey('self', models.SET_NULL, null=True, blank=True)
+    parent_number = models.IntegerField(null=True, blank=True)
     authors = models.ManyToManyField(Author, blank=True, verbose_name=_("authors"))
     translators = models.ManyToManyField(
         Author,
@@ -297,6 +303,8 @@ class Book(WikidataModel):
     free_license = models.BooleanField(_('free license'), default=False)
     polona_missing = models.BooleanField(_('missing on Polona'), default=False)
 
+    cover = models.FileField(blank=True, upload_to='catalogue/cover')
+
     monthly_views_reader = models.IntegerField(default=0)
     monthly_views_page = models.IntegerField(default=0)
     
@@ -326,6 +334,25 @@ class Book(WikidataModel):
         if tstr:
             txt = f"{txt}, tłum. {tstr}"
         return txt
+
+    def build_cover(self):
+        width, height = 212, 300
+        # TODO: BookInfo shouldn't be required to build a cover.
+        info = BookInfo(rdf_attrs={}, dc_fields={
+            DCNS('creator'): [Person('Mickiewicz', 'Adam')],
+            DCNS('title'): ['Ziutek'],
+            DCNS('date'): ['1900-01-01'],
+            DCNS('publisher'): ['F'],
+            DCNS('language'): ['pol'],
+            DCNS('identifier.url'): ['test'],
+            DCNS('rights'): ['-'],
+        })
+        cover = make_cover(info, width=width, height=height)
+        out = io.BytesIO()
+        ext = cover.ext()
+        cover.save(out)
+        self.cover.save(f'{self.slug}.{ext}', out, save=False)
+        type(self).objects.filter(pk=self.pk).update(cover=self.cover)
 
     def get_absolute_url(self):
         return reverse("catalogue_book", args=[self.slug])
@@ -443,6 +470,18 @@ class Book(WikidataModel):
     verses_with_fn = lambda self: self.content_stats.get('verses_with_fn', '')
     chars_out_verse = lambda self: self.content_stats.get('chars_out_verse', '')
     chars_out_verse_with_fn = lambda self: self.content_stats.get('chars_out_verse_with_fn', '')
+
+
+class EditorNote(models.Model):
+    book = models.ForeignKey(Book, models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    changed_at = models.DateTimeField(auto_now=True)
+    note = models.TextField(blank=True)
+    rate = models.IntegerField(default=3, choices=[
+        (n, n) for n in range(1, 6)
+    ])
+
 
 class CollectionCategory(models.Model):
     name = models.CharField(_("name"), max_length=255)

@@ -240,6 +240,26 @@ class CoverLicenseFilter(LicenseFilter):
     license_name_field = 'document_book__dc_cover_image__license_name'
 
 
+class ChildrenFilter(admin.SimpleListFilter):
+    title = 'Status utworu podrzędnego'
+    parameter_name = 'book_children'
+
+    def lookups(self, requesrt, model_admin):
+        return [
+            ('no', 'bez podrzędnych'),
+            ('only', 'tylko podrzędne'),
+        ]
+
+    def queryset(self, request, queryset):
+        v = self.value()
+        if v == 'no':
+            return queryset.filter(parent=None)
+        elif v == 'only':
+            return queryset.exclude(parent=None)
+        else:
+            return queryset
+
+
 def add_title(base_class, suffix):
     class TitledCategoryFilter(base_class):
         def __init__(self, *args, **kwargs):
@@ -308,6 +328,11 @@ class SourcesInline(admin.TabularInline):
     extra = 1
 
 
+class SourcesInline(admin.TabularInline):
+    model = models.EditorNote
+    extra = 1
+
+
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin, VersionAdmin):
     inlines = [SourcesInline]
     list_display = [
@@ -325,10 +350,11 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin, VersionAdmin):
         "translators__first_name", "translators__last_name",
         "scans_source", "text_source", "notes", "estimate_source",
     ]
-    autocomplete_fields = ["authors", "translators", "based_on", "epochs", "genres", "kinds"]
+    autocomplete_fields = ["parent", "authors", "translators", "based_on", "epochs", "genres", "kinds"]
     filter_horizontal = ['collections']
     prepopulated_fields = {"slug": ("title",)}
     list_filter = [
+        ChildrenFilter,
         "language",
         "based_on__language",
         ("pd_year", RangeNumericFilter),
@@ -414,6 +440,7 @@ class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin, VersionAdmin):
             {
                 "fields": [
                     "title",
+                    ("parent", "parent_number"),
                     ("slug", 'documents_book_link'),
                     "authors",
                     "translators",
@@ -564,6 +591,16 @@ class GenreAdmin(CategoryAdmin):
         'plural',
         'is_epoch_specific',
         'has_description',
+        'thema',
+    ]
+    fields = [
+        'wikidata',
+        'name',
+        'plural',
+        'slug',
+        'is_epoch_specific',
+        'thema',
+        'description',
     ]
 
 
