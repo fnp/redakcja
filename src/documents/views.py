@@ -35,6 +35,7 @@ from . import helpers
 from .helpers import active_tab
 from .models import (Book, Chunk, Image, BookPublishRecord, 
         ChunkPublishRecord, ImagePublishRecord, Project)
+import catalogue.models
 from fileupload.views import UploadView
 
 #
@@ -237,7 +238,7 @@ def book_xml(request, slug):
 
 @never_cache
 def book_xml_dc(request, slug):
-    book = get_object_or_404(Book, catalogue_book_id=slug)
+    book = get_object_or_404(Book, dc_slug=slug)
     return serve_xml(request, book, slug)
 
 
@@ -409,14 +410,18 @@ def book(request, slug):
         except:
             pass
 
-    if book.catalogue_book_id:
-        audio_items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{book.catalogue_book_id}.json').json()['items']
+    cbook_by_slug = None
+    if book.dc_slug:
+        audio_items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{book.dc_slug}.json').json()['items']
         has_audio = bool(audio_items)
         can_sell_audio = has_audio and all(x['project']['can_sell'] for x in audio_items)
+
+        if book.catalogue_book is None or book.dc_slug != book.catalogue_book.slug:
+            cbook_by_slug = catalogue.models.Book.objects.filter(slug=book.dc_slug).first()
     else:
         has_audio = None
         can_sell_audio = None
-        
+
     return render(request, "documents/book_detail.html", {
         "book": book,
         "doc": doc,
@@ -428,6 +433,7 @@ def book(request, slug):
         "editable": editable,
         "has_audio": has_audio,
         "can_sell_audio": can_sell_audio,
+        "cbook_by_slug": cbook_by_slug,
     })
 
 
@@ -840,3 +846,13 @@ def synchro(request, slug):
         'table': table,
         'error': error,
     })
+
+
+@permission_required('documents.change_book')
+def attach_book_to_catalogue(request, pk):
+    dbook = get_object_or_404(Book, pk=pk)
+    if dbook.dc_slug:
+        cbook = get_object_or_404(catalogue.models.Book, slug=dbook.dc_slug)
+        dbook.catalogue_book = cbook
+        dbook.save()
+    return http.HttpResponseRedirect(dbook.get_absolute_url())

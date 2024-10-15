@@ -16,7 +16,7 @@
     </div>
     <div class="card-body">
       <div class="row">
-	<div class="col-md-8">
+	<div class="col-md-6">
 
 
           {% if editable %}<form method='POST'>{% csrf_token %}{% endif %}
@@ -38,11 +38,48 @@
 
 
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-6">
           {% with cbook=book.catalogue_book %}
             {% if cbook %}
-	      W katalogu:
-	      <a href="{% url 'catalogue_book' cbook.slug %}">{{ cbook }}</a>
+              <p>
+	        W katalogu:
+	        <a href="{% url 'catalogue_book' cbook.slug %}">{{ cbook }}</a>
+              </p>
+
+              {% if cbook.slug != book.dc_slug %}
+                <p class="alert alert-warning">
+                  Slug książki w metadanych tekstu nie zgadza się ze slugiem książki w katalogu.</p>
+                <p>
+                Upewnij się że tekst jest przypisany do właściwego rekordu w katalogu:<br>
+                <tt>{{ book.dc_slug }}</tt> (tekst)<br>
+                <tt>{{ cbook.slug }}</tt> (<a href="/admin/catalogue/book/{{ cbook.pk }}/change/">katalog</a>)<br>
+                </p>
+              {% endif %}
+
+            {% else %}
+              <p class="alert alert-warning">Tekst nie przypisany do rekordu książki w katalogu.</p>
+
+              {% if book.dc_slug %}
+                {% if cbook_by_slug %}
+                  W katalogue znajduje się
+                  <a href="/admin/catalogue/book/{{ cbook_by_slug.id }}/change/">rekord książki</a> o slugu:<br>
+                  {{ book.dc_slug }}<br><br>
+                  {% if request.user.is_staff %}
+                    <form method="POST" action="{% url 'documents_book_attach_to_catalogue' book.id %}">
+                      {% csrf_token %}
+                      <button class="btn btn-primary">Przypisz tekst do tego rekordu w katalogu</button>
+                    </form>
+                  {% endif %}
+                {% else %}
+                  <p>
+                    W katalogu brak rekordu o slugu:<br><tt>{{ book.dc_slug }}</tt>
+                  </p>
+                {% endif %}
+              {% else %}
+                <p>
+                  Ten tekst nie ma slugu określonego w metadanych.
+                </p>
+              {% endif %}
             {% endif %}
           {% endwith %}
 	</div>
@@ -191,6 +228,11 @@
                         {{ error }}
                       </div>
                     {% endfor %}
+                    {% for info in site.info %}
+                      <div class="alert alert-info">
+                        {{ info }}
+                      </div>
+                    {% endfor %}
                   {% endif %}
                   {% for warning in site.warnings %}
                     <div class="alert alert-warning">
@@ -201,15 +243,15 @@
                     id:{{ site.id }}
                   {% endif %}
                   {% with last=site.last %}
-                  {% if last %}
-                    {{ last.created_at }} &rarr;
-                    {{ last.started_at }} &rarr;
-                    {{ last.finished_at }}
-                    <span title="{{ last.error }}">
-                      ({{ last.get_status_display }})
-                    </span>
-                    <!-- {{ site.last.id }} -->
-                  {% endif %}
+                    {% if last %}
+                      {{ last.created_at }} &rarr;
+                      {{ last.started_at }} &rarr;
+                      {{ last.finished_at }}
+                      <span title="{{ last.error }}">
+                        ({{ last.get_status_display }})
+                      </span>
+                      <!-- {{ site.last.id }} -->
+                    {% endif %}
                   {% endwith %}
                 {% endfor %}
               {% endif %}

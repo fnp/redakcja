@@ -130,7 +130,7 @@ class BookSource(models.Model):
         return f'{self.source} -> {self.book}'
 
     def get_absolute_url(self):
-        return reverse('source_book_prepare', args=[self.pk])
+        return reverse('source_book_prepare', args=[self.book.pk])
 
     def get_view_files(self):
         # TODO: won't work for PDFs.
@@ -162,6 +162,7 @@ class BookSource(models.Model):
         if dbook is None:
             dbook = DBook.create(
                 user, texts[0],
+                catalogue_book=book,
                 title=book.title,
                 slug=str(uuid.uuid4()),
             )

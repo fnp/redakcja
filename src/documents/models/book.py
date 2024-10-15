@@ -47,13 +47,17 @@ class Book(models.Model):
         db_index=True, on_delete=models.SET_NULL, editable=False)
     dc = models.JSONField(null=True, editable=False)
     cover = models.FileField(blank=True, upload_to='documents/cover')
+
+    dc_slug = models.CharField(
+        max_length=2048,
+        null=True, blank=True,
+        editable=False,
+    )
     catalogue_book = models.ForeignKey(
         'catalogue.Book',
-        models.DO_NOTHING,
-        to_field='slug',
+        models.PROTECT,
         null=True, blank=True,
-        db_constraint=False,
-        editable=False, db_index=True,
+        editable=False,
         related_name='document_books',
         related_query_name='document_book',
     )
@@ -366,13 +370,13 @@ class Book(models.Model):
 
     def refresh_dc_cache(self):
         update = {
-            'catalogue_book_id': None,
+            'dc_slug': None,
             'dc_cover_image': None,
         }
 
         info = self.book_info()
         if info is not None:
-            update['catalogue_book_id'] = info.url.slug
+            update['dc_slug'] = info.url.slug
             if info.cover_source:
                 try:
                     image = Image.objects.get(pk=int(info.cover_source.rstrip('/').rsplit('/', 1)[-1]))

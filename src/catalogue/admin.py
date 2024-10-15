@@ -328,13 +328,13 @@ class SourcesInline(admin.TabularInline):
     extra = 1
 
 
-class SourcesInline(admin.TabularInline):
+class EditorNoteInline(admin.TabularInline):
     model = models.EditorNote
     extra = 1
 
 
 class BookAdmin(WikidataAdminMixin, NumericFilterModelAdmin, VersionAdmin):
-    inlines = [SourcesInline]
+    inlines = [EditorNoteInline, SourcesInline]
     list_display = [
         "smart_title",
         "authors_str",
