@@ -33,6 +33,7 @@ class Image(models.Model):
     download_url = models.URLField(max_length=4096, unique=True, verbose_name=_('image download URL'), null=True, blank=True)
     file = models.ImageField(
         upload_to='cover/image',
+        max_length=1024,
         storage=OverwriteStorage(),
         verbose_name=_('file')
     )
