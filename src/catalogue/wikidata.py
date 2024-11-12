@@ -164,6 +164,9 @@ class WikidataModel(models.Model):
                 except:
                     pass
                 else:
+                    max_length = getattr(model_field, 'max_length', None)
+                    if max_length:
+                        wdvalue = wdvalue[:max_length]
                     setattr(self, attname, wdvalue)
 
     def wikidata_link(self):
