@@ -537,7 +537,7 @@
             $.xmlns["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
             $('rdf|RDF', doc).remove();
             if (params.noFootnotes) {
-                $('pa, pe, pr, pt', doc).remove();
+                $('pa, pe, pr, pt, ptrad', doc).remove();
             }
 	    if (params.noThemes) {
 	        $('motyw', doc).remove();

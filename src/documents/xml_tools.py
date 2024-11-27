@@ -107,7 +107,7 @@ def split_xml(text):
 
         # find the chapter's title
         name_elem = deepcopy(element)
-        for tag in 'extra', 'motyw', 'pa', 'pe', 'pr', 'pt', 'uwaga':
+        for tag in 'extra', 'motyw', 'pa', 'pe', 'pr', 'pt', 'ptrad', 'uwaga':
             for a in name_elem.findall('.//' + tag):
                 a.text=''
                 del a[:]

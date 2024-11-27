@@ -56,7 +56,7 @@
     }
 
     /* Convert HTML fragment to plaintext */
-    var ANNOT_FORBIDDEN = ['pt', 'pa', 'pr', 'pe', 'begin', 'end', 'motyw'];
+    var ANNOT_FORBIDDEN = ['pt', 'pa', 'pr', 'pe', 'ptrad', 'begin', 'end', 'motyw'];
 
     function html2plainText(fragment){
         var text = "";
