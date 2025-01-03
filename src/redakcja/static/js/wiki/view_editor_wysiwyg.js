@@ -515,7 +515,8 @@
             element: source,
             stripOuter: true,
             success: function(text){
-                $('textarea', $overlay).val($.trim(text));
+		let ttext = $.trim(text);
+                $('textarea', $overlay).val(ttext);
 
                 setTimeout(function(){
                     $('textarea', $overlay).elastic().focus();
@@ -658,6 +659,26 @@
                     if (editable.is('.annotation-inline-box')) {
                         $('*[x-annotation-box]', editable).css({
                         }).show();
+                    }
+                    if (editable.is('.reference-inline-box')) {
+			let preview = $('*[x-preview]', editable);
+			preview.show();
+			let link = $("a", preview);
+			let href = link.attr('href');
+			if (link.attr('title') == '?' && href.startsWith('https://www.wikidata.org/wiki/')) {
+			    link.attr('title', '…');
+			    let qid = href.split('/').reverse()[0];
+			    $.ajax({
+				url: 'https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/' + qid + '?_fields=labels',
+				dataType: "json",
+				success: function(data) {
+				    link.attr(
+					'title',
+					data['labels']['pl'] || data['labels']['en']
+				    );
+				},
+			    });
+			}
                     }
                 });
 

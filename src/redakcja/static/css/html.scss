@@ -300,12 +300,19 @@ div[x-node] > .uwaga {
  * Przypisy w tekście
  */
  
-.htmlview .annotation-inline-box {
-    &:hover > span[x-annotation-box] {
-        display: block;
+.htmlview .annotation-inline-box,
+.htmlview .reference-inline-box {
+    &:hover {
+	> span[x-annotation-box],
+	> span[x-preview]
+	{
+            display: block;
+	}
     }
 
-    > span[x-annotation-box] {
+    > span[x-annotation-box],
+    > span[x-preview]
+    {
         display: none;
         width: 300px;
         font-size: 10pt;

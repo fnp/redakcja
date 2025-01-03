@@ -178,6 +178,14 @@
           <xsl:with-param name="extra-class" select="'reference-inline-box'" />
         </xsl:call-template>
         <a class="reference">📌</a>
+        <span x-preview="true" x-pass-thru="true">
+	  <a target="wiki" title="?">
+	    <xsl:attribute name="href">
+	      <xsl:value-of select="@href" />
+	    </xsl:attribute>
+	    <xsl:value-of select="@href" />
+	  </a>
+        </span>
       </span>
     </xsl:template>
     
