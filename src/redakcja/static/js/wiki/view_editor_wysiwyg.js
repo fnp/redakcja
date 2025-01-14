@@ -753,6 +753,7 @@
                     callback();
             }
 
+	    let self = this;
             xml2html({
                 xml: this.doc.text,
                 base: this.doc.getBase(),
@@ -760,6 +761,7 @@
 
                     var htmlView = $('#html-view');
                     htmlView.html(element);
+		    self.renumber();
                     if ('PropertiesPerspective' in $.wiki.perspectives)
                         $.wiki.perspectives.PropertiesPerspective.enable();
 
@@ -942,6 +944,22 @@
                 }
             })
         }
+
+	renumber() {
+	    let number = 0;
+            $('#html-view *').each((i, e) => {
+		let $e = $(e);
+		if ($e.closest('[x-node="abstrakt"]').length) return;
+		if ($e.closest('[x-node="nota_red"]').length) return;
+		let node = $e.attr('x-node');
+		if (node == 'numeracja') {
+		    number = 0;
+		} else if (['werset', 'akap', 'wers'].includes(node)) {
+		    number ++;
+		    $e.attr('x-number', number);
+		}
+	    })
+	}
     }
 
     $.wiki.VisualPerspective = VisualPerspective;

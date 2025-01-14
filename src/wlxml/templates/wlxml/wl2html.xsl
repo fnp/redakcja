@@ -57,6 +57,20 @@
       </div>
     </xsl:template>
 
+    <xsl:template match="numeracja">
+      <div>
+        <xsl:call-template name="standard-attributes" />
+        <div>
+          <xsl:attribute name="data-start">
+            <xsl:value-of select="@start" />
+          </xsl:attribute>
+          <xsl:attribute name="data-link">
+            <xsl:value-of select="@link" />
+          </xsl:attribute>
+        </div>
+      </div>
+    </xsl:template>
+
     <!--
         ********
         STROFA

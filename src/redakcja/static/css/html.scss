@@ -556,3 +556,27 @@ div[x-node] > .uwaga {
         }
     }
 }
+
+
+
+div[x-node="numeracja"] {
+    background: lightblue;
+    margin: 2em;
+    padding: 2em;
+    border-radius: 1em;
+    &::before {
+	content: "Reset numeracji";
+    }
+}
+
+*[x-number]::before {
+    display: block;
+    content: attr(x-number);
+    position: absolute;
+    text-align: right;
+    width: 40px;
+    left: -60px;
+    font-size: .9em;
+    opacity: .8;
+    
+}
