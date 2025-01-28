@@ -75,8 +75,10 @@ class Chunk(dvcs_models.Document):
 
     def split(self, slug, title='', **kwargs):
         """ Create an empty chunk after this one """
-        self.book.chunk_set.filter(number__gt=self.number).update(
-                number=models.F('number')+1)
+        # Single update makes unique constr choke on postgres.
+        for chunk in self.book.chunk_set.filter(number__gt=self.number).order_by('-number'):
+            chunk.number += 1
+            chunk.save()
         new_chunk = None
         while not new_chunk:
             new_slug = self.book.make_chunk_slug(slug)
