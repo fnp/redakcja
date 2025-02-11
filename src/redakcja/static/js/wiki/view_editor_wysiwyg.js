@@ -951,6 +951,7 @@
 		let $e = $(e);
 		if ($e.closest('[x-node="abstrakt"]').length) return;
 		if ($e.closest('[x-node="nota_red"]').length) return;
+		if ($e.closest('[x-annotation-box="true"]').length) return;
 		let node = $e.attr('x-node');
 		if (node == 'numeracja') {
 		    number = 0;
