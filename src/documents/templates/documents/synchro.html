@@ -3,47 +3,144 @@
 
 {% block content %}
 
-  <div class="row mb-4">
-    <div class="col-4">
-    </div>
-    <div class="col-8">
-      {% if not length_ok %}
-        <div class="alert alert-warning">
-          Liczba znalezionych części dokumentu nie zgadza się z liczbą części audiobooka.
-          Konieczna jest korekta za pomocą atrybutów <code>forcesplit</code> i <code>nosplit</code>.
-        </div>
-      {% else %}
-        <form method="post" action="">
-          {% csrf_token %}
-          <button class="btn btn-primary">
-            Zaplanuj synchronizację
-          </button>
-        </form>
-      {% endif %}
+<h1>Wskazówki synchronizacji dla: <a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h1>
 
-    </div>
-  </div>
-
-  <table class="table">
+  
+  <table class="table" id="sync-table">
     <thead>
       <tr>
+        <th></th>
         <th>Nagłówek cięcia</th>
         <th>Audiobook</th>
       </tr>
     </thead>
-    {% for h, m in table %}
-      <tr>
-        <td>
-          {% if h %}
-            <a target="_blank" href="{% url 'wiki_editor' book.slug %}#CodeMirrorPerspective">
-              {{ h.0 }} (linia {{ h.2 }})
-            </a>
-          {% else %}
-            —
-          {% endif %}
-        </td>
-        <td>{{ m|default_if_none:'—' }}</td>
-      </tr>
-    {% endfor %}
+    <tbody>
+    </tbody>
   </table>
+
+
+<form method="post" action="">
+  {% csrf_token %}
+  <input type="hidden" name="hints" id="hints">
+  <button class="btn btn-primary">
+    Zapisz wskazówki
+  </button>
+</form>
+
+{% endblock %}
+
+
+{% block add_js %}
+<script type="text/javascript">
+  $(function() {
+  
+      let hints = {{ hints|safe }};
+      let mp3 = {{ mp3|safe }};
+      let headers = {{ headers|safe }};
+      let headers_other = {{ headers_other|safe }};
+
+      let table = $("#sync-table tbody");
+
+      function showTable() {
+	  $("#hints").val(JSON.stringify(hints));
+	  
+	  let mI = 0;
+	  let hI = 0;
+	  let row = 0;
+	  let hint;
+	  table.empty();
+	  while (mI < mp3.length || hI < headers.length) {
+	      let tr = $("<tr>");
+
+	      if (row < hints.length) {
+		  hint = hints[row];
+	      } else {
+		  hint = [];
+	      }
+	      tr.data('hint', hint);
+
+	      let td = $("<td>");
+	      if (headers_other.length) {
+		  td.append(
+		      $('<button class="btn btn-primary mr-1">').text('+').click(function() {
+			  hintAdd(tr);
+		      })
+		  );
+	      }
+	      td.append(
+		  $('<button class="btn btn-primary">').text('-').click(function() {
+		      hintRm(tr);
+		  })
+	      );
+	      td.appendTo(tr);
+	      if (hint[0] == '+') {
+		  tr.addClass('hit-add');
+		  // select?
+		  let sel = $("<select>");
+		  sel.append($("<option>").text('wybierz'));
+		  $.each(headers_other, (i, e) => {
+		      let opt = $("<option>").text(
+			  e[1] + ' (' + e[0] + ')'
+		      ).val(i);
+		      if (i == hint[1]) {
+			  opt.attr('selected', 'selected')
+		      }
+		      sel.append(opt)
+		  });
+		  sel.change(function() {
+		      tr.data('hint', ['+', $(this).val()]);
+		      refreshTable();
+		  });
+
+		  $("<td>").append(sel).appendTo(tr);
+	      } else {
+		  let td = $("<td>").text(headers[hI][1]).appendTo(tr);
+		  if (hint[0] == '-') {
+		      tr.addClass('text-muted');
+		  }
+		  hI ++;
+	      }
+
+	      if (hint[0] == '-') {
+		  $("<td>").appendTo(tr);
+	      } else {
+		  $("<td>").text(mp3[mI]).appendTo(tr);
+		  mI ++;
+	      }
+	      table.append(tr);
+	      row ++;
+	  }
+      }
+
+      showTable();
+
+      function refreshTable() {
+	  hints = [];
+	  $("tr", table).each((i, e) => {
+	      hint = $(e).data('hint')
+	      if (hint !== null) {
+		  hints.push(hint)
+	      }
+	  });
+	  showTable();
+      }
+      
+      function hintAdd(tr) {
+	  $("<tr>").data('hint', ['+']).insertBefore(tr);
+	  refreshTable();
+      }
+      function hintRm(tr) {
+	  let $tr = $(tr);
+	  let hint = $tr.data('hint');
+	  if (hint[0] == '+') {
+	      $tr.data('hint', null)
+	  } else if (hint[0] == '-') {
+	      $tr.data('hint', [])
+	  } else {
+	      $tr.data('hint', ['-'])
+	  }
+	  refreshTable();
+      }
+  });
+</script>
 {% endblock %}

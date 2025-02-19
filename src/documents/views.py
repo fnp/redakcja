@@ -5,6 +5,7 @@ from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 from itertools import zip_longest
+import json
 import logging
 import os
 from urllib.parse import quote_plus, unquote, urlsplit, urlunsplit
@@ -25,6 +26,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_cas_ng.decorators import user_passes_test
 import requests
+from lxml import etree
 
 from librarian import epubcheck
 from librarian.html import raw_printable_text
@@ -770,14 +772,29 @@ def mark_final_completed(request):
     return render(request, 'documents/mark_final_completed.html')
 
 
+@login_required
 def synchro(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    document = book.wldocument(librarian2=True)
+    if request.method == 'POST':
+        #hints = json.loads(request.POST.get('hints'))
+        chunk = book[0]
+        tree = etree.fromstring(chunk.head.materialize())
+        m = tree.find('.//meta[@id="synchro"]')
+        if m is None:
+            rdf = tree.find('.//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description')
+            m = etree.SubElement(rdf, 'meta', id="synchro")
+            m.tail = '\n'
+        m.text = request.POST.get('hints')
+        text = etree.tostring(tree, encoding='unicode')
+        chunk.commit(text, author=request.user, description='Synchronizacja')
+        return HttpResponseRedirect('')
+    
+    document = book.wldocument(librarian2=True, publishable=False)
+
     slug = document.meta.url.slug
-    print(f'https://audio.wolnelektury.pl/archive/book/{slug}.json')
     error = None
     try:
         items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{slug}.json').json()['items']
@@ -792,59 +809,49 @@ def synchro(request, slug):
     split_on = (
         'naglowek_rozdzial',
         'naglowek_scena',
-        )
-    
-    if split_on:
-        documents = []
-        headers = [('Początek', 0, 0)]
-        present = True
-        n = 0
-        while present:
-            present = False
-            n += 1
-            newdoc = deepcopy(document)
-            newdoc.tree.getroot().document = newdoc
-            
-            master = newdoc.tree.getroot()[-1]
-            i = 0
-            for item in list(master):
-                #chunkno, sourceline = 0, self.sourceline
-                #if builder.splits:
-                #    chunkno, sourceline = len(builder.splits), sourceline - builder.splits[-1]
+    )
+    split_other = (
+        'naglowek_czesc',
+        'naglowek_akt',
+        'naglowek_podrozdzial',
+        'srodtytul',
+    )
 
-                if 'forcesplit' in item.attrib or (item.tag in split_on and 'nosplit' not in item.attrib):
-                    # TODO: clear
-                    i += 1
-                    if n > 1 and i == n:
-                        headers.append((
-                            raw_printable_text(item),
-                            0,
-                            item.sourceline,
-                        ))
-                if i != n and not (n == 1 and not i):
-                    master.remove(item)
-                else:
-                    present = True
-                if present:
-                    documents.append(newdoc)
-    else:
-        documents = [document]
-        headers = [(
-            document.meta.title, 0 ,0
-        )]
+    headers = []
+    headers_other = []
+    master = document.tree.getroot()[-1]
+    for item in master:
+        if item.tag in split_on:
+            headers.append([
+                item.tag,
+                raw_printable_text(item),
+                0,
+                item.sourceline,
+            ])
+        if item.tag in split_other:
+            headers_other.append([
+                item.tag,
+                raw_printable_text(item),
+                0,
+                item.sourceline,
+            ])
 
-    length_ok = len(headers) == len(mp3)
-    table = zip_longest(headers, mp3)
-
+    hints = []
+    m = document.tree.find('.//meta[@id="synchro"]')
+    if m is not None:
+        try:
+            hints = json.loads(m.text)
+        except:
+            raise
+            pass
     
     return render(request, 'documents/synchro.html', {
         'book': book,
-        'documents': documents,
         'headers': headers,
+        'headers_other': headers_other,
         'mp3': mp3,
-        'length_ok': length_ok,
-        'table': table,
         'error': error,
+        'hints': hints,
     })
 
 
