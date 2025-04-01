@@ -249,9 +249,7 @@
             var self = this;
 
             /* bind buttons */
-            $('button[data-ui-action]', self.$elem).click(function(event) {
-                event.preventDefault();
-
+            function dataUiAction(elem) {
                 var action = $(this).attr('data-ui-action');
                 console.log("Button pressed, action: ", action);
 
@@ -262,6 +260,15 @@
                     // always hide on cancel
                     if(action == 'cancel')
                         self.hide();
+                }
+            }
+            $('button[data-ui-action]', self.$elem).click(function(event) {
+                event.preventDefault();
+                dataUiAction(this);
+            }).on('keydown'), function(event) {
+                if (event.key == 'Enter') {
+                    event.preventDefault();
+                    dataUiAction(this);
                 }
             });
         }
