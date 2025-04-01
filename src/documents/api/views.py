@@ -24,7 +24,10 @@ class ChunkList(ListAPIView):
     queryset = models.Chunk.objects.all()
     serializer_class = serializers.ChunkSerializer
     filterset_fields = ['user', 'stage']
-    search_fields = ['book__title']
+    search_fields = [
+        'book__title',
+        '=book_slug',
+    ]
 
     def get_queryset(self):
         return models.Chunk.get_visible_for(self.request.user)
