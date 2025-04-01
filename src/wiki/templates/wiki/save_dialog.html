@@ -26,34 +26,39 @@
         <span data-ui-error-for="{{ forms.text_save.author_email.name }}"> </span></td>
     </tr>
     </table>
-	{% else %}
-	<p>
-		{{ forms.text_save.stage_completed.label }}:
-		{{ forms.text_save.stage_completed }}
-		<span class="help_text">{{ forms.text_save.stage_completed.help_text }}</span>
-		<span data-ui-error-for="{{ forms.text_save.stage_completed.name }}"> </span>
-	</p>
-    {% if can_pubmark %}
-	<p>
-		{{ forms.text_save.publishable.label_tag }}:
-		{{ forms.text_save.publishable }}
-		<span class="help_text">{{ forms.text_save.publishable.help_text }}</span>
-		<span data-ui-error-for="{{ forms.text_save.publishable.name }}"> </span>
-	</p>
     {% endif %}
 
+    <p data-ui-error-for="__all__"> </p>
+
+    <div class="container">
+      <button type="submit" class="ok btn btn-primary" data-ui-action="save">Zapisz</button>
+      <button type="button" class="cancel btn btn-secondary" data-ui-action="cancel">Anuluj</button>
+
+      {% if request.user.is_authenticated %}
+      <div class="row mt-4">
+	<div class="col-6">
+	  {{ forms.text_save.stage_completed.label }}:
+	  {{ forms.text_save.stage_completed }}
+	  <span class="help_text">{{ forms.text_save.stage_completed.help_text }}</span>
+	  <span data-ui-error-for="{{ forms.text_save.stage_completed.name }}"> </span>
+	</div>
+	{% if can_pubmark %}
+	<div class="col-6">
+	  {{ forms.text_save.publishable.label_tag }}
+	  {{ forms.text_save.publishable }}
+	  <span class="help_text">{{ forms.text_save.publishable.help_text }}</span>
+	  <span data-ui-error-for="{{ forms.text_save.publishable.name }}"> </span>
+	</div>
 	{% endif %}
+      </div>
+
+      {% endif %}
+    </div>
 
 
 	{% for f in forms.text_save.hidden_fields %}
 		{{ f }}
 	{% endfor %}
 
-	<p data-ui-error-for="__all__"> </p>
-
-	<p class="action_area">
-		<button type="submit" class="ok" data-ui-action="save">Zapisz</button>
-		<button type="button" class="cancel" data-ui-action="cancel">Anuluj</button>
-	</p>
 	</form>
 </div>

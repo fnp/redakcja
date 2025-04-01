@@ -110,7 +110,7 @@
             success: function(text){
                 var t = $(text);
                 tag.replaceWith(t);
-                openForEdit(t);
+                openForEdit(t, trim=false);
             },
             error: function(){
                 tag.remove();
@@ -405,7 +405,7 @@
     }
 
     /* open edition window for selected fragment */
-    function openForEdit($origin){
+    function openForEdit($origin, trim=true){
         var $box = null
 
         // annotations overlay their sub box - not their own box //
@@ -515,7 +515,10 @@
             element: source,
             stripOuter: true,
             success: function(text){
-		let ttext = $.trim(text);
+		let ttext = text;
+		if (trim) {
+		    ttext = ttext.trim();
+		}
                 $('textarea', $overlay).val(ttext);
 
                 setTimeout(function(){

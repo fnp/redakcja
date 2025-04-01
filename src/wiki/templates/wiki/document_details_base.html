@@ -67,7 +67,7 @@
 
       <span class="navbar-text">{% trans "Version" %}: <span id="document-revision">{% trans "Unknown" %}</span></span>
       {% if not readonly %}
-        <button class='ml-2 nav-item btn btn-primary' id="save-button">{% trans "Save" %}</button>
+        <button class='ml-2 nav-item btn btn-primary' id="save-button" title="[Ctrl-s]">{% trans "Save" %}</button>
 	<span id='save-attempt-info' class="navbar-text ml-2"><span class="alert alert-info">{% trans "Save attempt in progress" %}</span></span>
 	<span id='out-of-date-info' class="navbar-text ml-2"><span class="alert alert-danger">{% trans "There is a newer version of this document!" %}</span></span>
       {% endif %}

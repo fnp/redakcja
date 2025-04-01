@@ -119,6 +119,17 @@ $(function() {
             CurrentDocument.active = new Date();
         });
 
+	$(window).keydown(function(e) {
+	    if (e.ctrlKey || e.metaKey) {
+		switch (e.key) {
+		case 's':
+		    e.preventDefault();
+		    $("#save-button").click();
+		    break;
+		}
+	    }
+	});
+
         console.log("Fetching document's text");
 
         $(document).bind('wlapi_document_changed', function(event, doc) {
