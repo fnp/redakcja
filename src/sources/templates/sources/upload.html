@@ -5,3 +5,21 @@
     Skany źródła ładujemy w oryginalnej jakości.
   </div>
 {% endblock %}
+
+
+{% block add_css %}
+{{ block.super }}
+<style>
+.files{
+	counter-reset: row 0;
+}
+.files tr:before {
+  counter-increment: row;
+  content: counter(row);
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 5px;
+}
+</style>
+{% endblock %}
