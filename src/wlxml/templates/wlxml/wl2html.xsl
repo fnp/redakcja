@@ -81,16 +81,16 @@
             <xsl:call-template name="standard-attributes" />
          
             <xsl:choose>
-                <xsl:when test="count(br) > 0">
-                    <xsl:variable name="first-verse" select="br[1]/preceding-sibling::node()" />                    
+                <xsl:when test="count(_n) > 0">
+                    <xsl:variable name="first-verse" select="_n[1]/preceding-sibling::node()" />
                     <xsl:call-template name="verse">
                         <xsl:with-param name="verse-content" select="$first-verse" />                        
                     </xsl:call-template>
-                    <xsl:for-each select="br">
-                        <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
-                        <!-- select all nodes up to the next br or end of stanza -->
+                    <xsl:for-each select="_n">
+                        <xsl:variable name="lnum" select="count(preceding-sibling::_n)" />
+                        <!-- select all nodes up to the next _n or end of stanza -->
                         <xsl:variable name="current-verse"
-                            select="following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />                        
+                            select="following-sibling::node()[count(preceding-sibling::_n) = $lnum+1]" />
                         <xsl:call-template name="verse">
                             <xsl:with-param name="verse-content" select="$current-verse" />                            
                         </xsl:call-template>
@@ -106,7 +106,7 @@
     </xsl:template>
 
     <xsl:template name="verse">
-        <!-- the verse contents including the last br (if any) -->
+        <!-- the verse contents including the last _n (if any) -->
         <xsl:param name="verse-content" />
         <xsl:variable name="first-tag-name" select="name($verse-content/self::*)" />
         <!-- name of text nodes is '' == false -->
@@ -114,17 +114,17 @@
         <!-- THIS IS A HORROR!!! -->
         <!-- Possible variants: -->
         <xsl:choose>
-            <!-- Simple verse == not wers_ tags anywhere until the ending br -->
+            <!-- Simple verse == not wers_ tags anywhere until the ending _n -->
             <xsl:when test="not($verse-content[starts-with(name(), 'wers')])">
                 <div class="wers" x-node="wers" x-verse="true" x-auto-node="true">
-                <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
+                <xsl:apply-templates select="$verse-content[local-name(.) != '_n']">
                     <xsl:with-param name="mixed" select="true()" />
                 </xsl:apply-templates>
                 </div>
             </xsl:when>
 
             <xsl:otherwise>
-            <xsl:apply-templates select="$verse-content[local-name(.) != 'br']">
+            <xsl:apply-templates select="$verse-content[local-name(.) != '_n']">
                 <xsl:with-param name="mixed" select="false()" />
             </xsl:apply-templates>
             </xsl:otherwise>
@@ -143,7 +143,7 @@
     </xsl:template>
     {% endif %}
 
-    <xsl:template match="br"><xsl:text>/</xsl:text></xsl:template>
+    <xsl:template match="_n"><xsl:text>/</xsl:text></xsl:template>
 
     {% if tags.span %}
     <!-- Style znakowe         span -->

@@ -36,7 +36,7 @@ function withStylesheets(code_block, onError)
 
 function xml2html(options) {
     withStylesheets(function() {
-        var xml = options.xml.replace(/\/(\s+)/g, '<br />$1');
+        var xml = options.xml.replace(/\/(\s+)/g, '<_n />$1');
         xml = xml.replace(/([^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s<>«»\\*_!,:;?&%."'=#()\/-]+)/g, '<alien>$1</alien>');
         var parser = new DOMParser();
         var serializer = new XMLSerializer();
