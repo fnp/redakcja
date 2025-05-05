@@ -250,7 +250,7 @@
 
             /* bind buttons */
             function dataUiAction(elem) {
-                var action = $(this).attr('data-ui-action');
+                var action = $(elem).attr('data-ui-action');
                 console.log("Button pressed, action: ", action);
 
                 try {
@@ -265,7 +265,7 @@
             $('button[data-ui-action]', self.$elem).click(function(event) {
                 event.preventDefault();
                 dataUiAction(this);
-            }).on('keydown'), function(event) {
+            }).on('keydown', function(event) {
                 if (event.key == 'Enter') {
                     event.preventDefault();
                     dataUiAction(this);
