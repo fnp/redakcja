@@ -31,4 +31,4 @@ django-modeltranslation==0.18.10
 django-admin-ordering==0.17
 django-reversion==5.0.6
 
-sentry-sdk==1.25.1
+sentry-sdk==1.45.1
