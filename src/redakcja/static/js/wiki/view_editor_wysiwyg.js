@@ -441,7 +441,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button><button class="tytul-button akap-edit-button">tytuł dzieła</button><button class="wyroznienie-button akap-edit-button">wyróżnienie</button><button class="slowo-button akap-edit-button">słowo obce</button><button class="znak-button akap-edit-button">znak spec.</button><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><div class="html-editarea-toolbar"><div class="html-editarea-toolbar-left"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button></div><div class="html-editarea-toolbar-right"><button class="akap-edit-button">tytuł dzieła</button><button class="akap-edit-button">wyróżnienie</button><button class="akap-edit-button">słowo obce</button><button class="akap-edit-button">br</button><button class="akap-edit-button">znak spec.</button></div></div><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -583,9 +583,12 @@
                     } else if (buttonName == "tytuł dzieła") {
                         startTag = "<tytul_dziela>";
                         endTag = "</tytul_dziela>";
-                    } else if(buttonName == "znak spec."){
+                    } else if (buttonName == "znak spec."){
                         addSymbol();
                         return false;
+                    } else if (buttonName == "br") {
+                        startTag = "<br/>";
+                        endTag = "";
                     }
 
                     var myField = textAreaOpened;
@@ -648,15 +651,18 @@
 
                 $('#html-view').bind('mousemove', function(event){
                     var editable = $(event.target).closest('*[x-editable]');
-                    $('.active', element).not(editable).removeClass('active').children('.active-block-button').remove();
+                    $('.active', element).not(editable).removeClass('active').children('.html-editarea-toolbar').remove();
 
                     if (!editable.hasClass('active')) {
-                        editable.addClass('active').append(button);
+                        editable.append($("<div class='html-editarea-toolbar'><div class='html-editarea-toolbar-left'></div></div>"));
+                        var buttonSpace = $('.html-editarea-toolbar-left', editable);
+                        editable.addClass('active');
+                        buttonSpace.append(button);
                         if (!editable.is('[x-edit-attribute]') &&
                             !editable.is('.annotation-inline-box') &&
                             !editable.is('[x-edit-no-format]')
                            ) {
-                            editable.append(uwagaButton);
+                            buttonSpace.append(uwagaButton);
                         }
                     }
                     if (editable.is('.annotation-inline-box')) {
@@ -720,13 +726,13 @@
                 $(document).on('click', '.edit-button', function(event){
                     self.flush();
                     event.preventDefault();
-                    openForEdit($(this).parent());
+                    openForEdit($(this).closest('.html-editarea-toolbar').parent());
                 });
 
                 $(document).on('click', '.uwaga-button', function(event){
                     self.flush();
                     event.preventDefault();
-                    createUwagaBefore($(this).parent());
+                    createUwagaBefore($(this).closest('.html-editarea-toolbar').parent());
                 });
             }
 

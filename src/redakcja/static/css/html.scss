@@ -359,63 +359,36 @@ div[x-node] > .uwaga {
     visibility: hidden;
 }
 
-.active-block-button, .delete-button, .accept-button, .tytul-button, .wyroznienie-button, .slowo-button, .znak-button {
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-    font-size: 16px;
-    line-height: 1.5;
+.html-editarea-toolbar {
+    display: flex;
+    justify-content: space-between;
     position: absolute;
     top: -28px;
     left: -1px;
-    width: 72px;
     height: 28px;
-    display: block;
-    /*    margin: 4px 0 2px 0;*/
-    padding: 5px 5px 2px 5px;
-    background-color: #FAFAFA;
-    /*    z-index: 3000;*/
-    /*    color: #FFF;
-     z-index: 1500;
-     */
-    border: 1px solid #DDD;
-    border-bottom: none;
-}
+    right: -1px;
 
-.delete-button {
-    left: 70px;
-}
+    .html-editarea-toolbar-left,
+    .html-editarea-toolbar-right {
+        display: flex;
+    }
 
-.tytul-button {
-    left:150px;
-    width:100px;
-}
+    button {
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        font-size: 16px;
+        line-height: 1.5;
 
-.wyroznienie-button {
-    left:250px;
-    width:100px;
-}
-.slowo-button {
-    left:350px;
-    width:100px;
-}
-.znak-button {
-    left:450px;
-    width:100px;
-}
-.uwaga-button {
-    right: 0;
-    left: auto;
-}
+        display: block;
+        padding: 5px 5px 2px 5px;
+        background-color: #FAFAFA;
+        border: 1px solid #DDD;
+        border-bottom: none;
 
-.active-block-button:hover, .active-block-button:active,
-.delete-button:hover, .delete-button:active,
-.accept-button:hover, .accept-button:active,
-.tytul-button:hover, .tytul-button:active,
-.wyroznienie-button:hover, .wyroznienie-button:active,
-.slowo-button:hover, .slowo-button:active,
-.znak-button:hover, .znak-button:active {
-    /*    color: #FFF;*/
-    background-color: #999;
-    color: #FFF;
+        &:hover {
+            background-color: #999;
+            color: #FFF;
+        }
+    }
 }
 
 /*
