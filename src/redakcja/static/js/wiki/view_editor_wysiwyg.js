@@ -654,8 +654,9 @@
                     $('.active', element).not(editable).removeClass('active').children('.html-editarea-toolbar').remove();
 
                     if (!editable.hasClass('active')) {
-                        editable.append($("<div class='html-editarea-toolbar'><div class='html-editarea-toolbar-left'></div></div>"));
-                        var buttonSpace = $('.html-editarea-toolbar-left', editable);
+                        var toolbar = $("<div class='html-editarea-toolbar'><div class='html-editarea-toolbar-left'></div></div>")
+                        editable.append(toolbar);
+                        var buttonSpace = $('.html-editarea-toolbar-left', toolbar);
                         editable.addClass('active');
                         buttonSpace.append(button);
                         if (!editable.is('[x-edit-attribute]') &&
