@@ -441,7 +441,7 @@
         }
 
         // start edition on this node
-        var $overlay = $('<div class="html-editarea"><div class="html-editarea-toolbar"><div class="html-editarea-toolbar-left"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button></div><div class="html-editarea-toolbar-right"><button class="akap-edit-button">tytuł dzieła</button><button class="akap-edit-button">wyróżnienie</button><button class="akap-edit-button">słowo obce</button><button class="akap-edit-button">br</button><button class="akap-edit-button">znak spec.</button></div></div><textarea></textarea></div>').css({
+        var $overlay = $('<div class="html-editarea"><div class="html-editarea-toolbar"><div class="html-editarea-toolbar-left"><button class="accept-button">Zapisz</button><button class="delete-button">Usuń</button></div><div class="html-editarea-toolbar-right"><button class="akap-edit-button" data-tag="tytul_dziela">tytuł dzieła</button><button class="akap-edit-button" data-tag="wyroznienie">wyróżnienie</button><button class="akap-edit-button" data-tag="slowo_obce">słowo obce</button><button class="akap-edit-button" data-tag-selfclosing="br">br</button><button class="akap-edit-button" data-act="spec">znak spec.</button></div></div><textarea></textarea></div>').css({
             position: 'absolute',
             height: h,
             left: x,
@@ -572,23 +572,20 @@
                     var textAreaOpened = $('textarea', $overlay)[0];
                     var startTag = "";
                     var endTag = "";
-                    var buttonName = this.innerHTML;
+                    var tag = "";
+                    var $this = $(this);
 
-                    if(buttonName == "słowo obce") {
-                        startTag = "<slowo_obce>";
-                        endTag = "</slowo_obce>";
-                    } else if (buttonName == "wyróżnienie") {
-                        startTag = "<wyroznienie>";
-                        endTag = "</wyroznienie>";
-                    } else if (buttonName == "tytuł dzieła") {
-                        startTag = "<tytul_dziela>";
-                        endTag = "</tytul_dziela>";
-                    } else if (buttonName == "znak spec."){
-                        addSymbol();
+                    if ($this.data('tag')) {
+                        tag = $this.data('tag');
+                        startTag = "<" + $this.data('tag') + ">";
+                        endTag = "</" + $this.data('tag') + ">";
+                    } else if ($this.data('tag-selfclosing')){
+                        startTag = "<" + $this.data('tag-selfclosing') + "/>";
+                    } else if ($this.data('act')) {
+                        if ($this.data('act') == 'spec') {
+                            addSymbol();
+                        }
                         return false;
-                    } else if (buttonName == "br") {
-                        startTag = "<br/>";
-                        endTag = "";
                     }
 
                     var myField = textAreaOpened;

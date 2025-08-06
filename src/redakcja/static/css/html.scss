@@ -383,6 +383,7 @@ div[x-node] > .uwaga {
         background-color: #FAFAFA;
         border: 1px solid #DDD;
         border-bottom: none;
+        white-space: nowrap;
 
         &:hover {
             background-color: #999;
