@@ -1,19 +1,21 @@
 {% extends "documents/base.html" %}
 {% load i18n %}
-{% load upload_tags %}
 
 {% block add_css %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/style.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/bootstrap-image-gallery.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}fileupload/css/jquery.fileupload-ui.css">
-    <!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="stylesheet" href="{{ STATIC_URL }}jQuery-File-Upload-10.32.0/css/jquery.fileupload.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}jQuery-File-Upload-10.32.0/css/jquery.fileupload-ui.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript
+      ><link rel="stylesheet" href="{{ STATIC_URL }}jQuery-File-Upload-10.32.0/css/jquery.fileupload-noscript.css"
+    /></noscript>
+    <noscript
+      ><link rel="stylesheet" href="{{ STATIC_URL }}jQuery-File-Upload-10.32.0/css/jquery.fileupload-ui-noscript.css"
+             /></noscript>
 {% endblock %}
 
 
 {% block content %}
-
 <h1>
 {% trans "Browse:" %}
 {% for crumb in view.breadcrumbs %}
@@ -28,60 +30,164 @@
 
 {% block note %}{% endblock %}
 
+
     <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
         <div class="row fileupload-buttonbar">
-            <div class="span7">
+            <div class="col-lg-7">
+            <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button">
-                    <i class="icon-plus icon-white"></i>
+                    <i class="fas fa-plus"></i>
                     <span>{% trans "Add files..." %}</span>
-                    <input type="file" multiple="" name="files">
+                    <input type="file" name="files[]" multiple />
                 </span>
                 <button class="btn btn-primary start" type="submit">
-                    <i class="icon-upload icon-white"></i>
+                    <i class="fas fa-upload"></i>
                     <span>{% trans "Start upload" %}</span>
                 </button>
                 <button class="btn btn-warning cancel" type="reset">
-                    <i class="icon-ban-circle icon-white"></i>
+                    <i class="fas fa-ban"></i>
                     <span>{% trans "Cancel upload" %}</span>
                 </button>
                 <button class="btn btn-danger delete" type="button">
-                    <i class="icon-trash icon-white"></i>
+                    <i class="fas fa-trash"></i>
                     <span>{% trans "Delete" %}</span>
                 </button>
-                <input type="checkbox" class="toggle">
+                <input type="checkbox" class="toggle" />
+                <!-- The global file processing state -->
+                <span class="fileupload-process"></span>
             </div>
-            <div class="span5 fileupload-progress fade">
-                <div class="progress progress-success progres-striped active">
-                    <div class="bar" style="width:0%"></div>
+            <!-- The global progress state -->
+            <div class="col-lg-5 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div
+                  class="progress progress-striped active"
+                  role="progressbar"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    class="progress-bar progress-bar-success"
+                    style="width: 0%;"
+                  ></div>
                 </div>
+                <!-- The extended global progress state -->
                 <div class="progress-extended">&nbsp;</div>
+              </div>
             </div>
+            <!-- The table listing the files available for upload/download -->
+            <table role="presentation" class="table table-striped">
+              <tbody class="files"></tbody>
+            </table>
         </div>
-        <div class="fileupload-loading"></div>
-        <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
     </form>
-    <div class="fileupload-content">
-        <table class="files"></table>
-        <div class="fileupload-progressbar"></div>
-    </div>
 
 {% endblock %}
 
+
 {% block add_js %}
 
-{% upload_js %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/jquery.ui.widget.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/tmpl.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/load-image.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/canvas-to-blob.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/bootstrap-image-gallery.min.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/jquery.iframe-transport.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload-fp.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/jquery.fileupload-ui.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/locale-{{ LANGUAGE_CODE }}.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/main.js"></script>
-<script src="{{ STATIC_URL }}fileupload/js/csrf.js"></script>
+{% verbatim %}
+    <script id="template-upload" type="text/x-tmpl">
+      {% for (var i=0, file; file=o.files[i]; i++) { %}
+          <tr class="template-upload fades{%=o.options.loadImageFileTypes.test(file.type)?' image':''%}">
+              <td>
+                  <span class="preview"></span>
+              </td>
+              <td>
+                  <p class="name">{%=file.name%}</p>
+                  <strong class="error text-danger"></strong>
+              </td>
+              <td>
+                  <p class="size">{%=o.options.messages.processing%}</p>
+                  <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+              </td>
+              <td>
+                  {% if (!i && !o.options.autoUpload) { %}
+                      <button class="btn btn-primary start" disabled>
+                          <i class="fas fa-upload"></i>
+                          <span>{%=o.options.messages.start%}</span>
+                      </button>
+                  {% } %}
+                  {% if (!i) { %}
+                      <button class="btn btn-warning cancel">
+                          <i class="fas fa-ban"></i>
+                          <span>{%=o.options.messages.cancel%}</span>
+                      </button>
+                  {% } %}
+              </td>
+          </tr>
+      {% } %}
+    </script>
+    <!-- The template to display files available for download -->
+    <script id="template-download" type="text/x-tmpl">
+      {% for (var i=0, file; file=o.files[i]; i++) { %}
+          <tr class="template-download fade{%=file.thumbnail_url?' image':''%}">
+              <td>
+                  <span class="preview">
+                      {% if (file.thumbnail_url) { %}
+                          <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnail_url%}"></a>
+                      {% } %}
+                  </span>
+              </td>
+              <td>
+                  <p class="name">
+                      {% if (file.url) { %}
+                          <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnail_url?'data-gallery':''%}>{%=file.name%}</a>
+                      {% } else { %}
+                          <span>{%=file.name%}</span>
+                      {% } %}
+                  </p>
+                  {% if (file.error) { %}
+                      <div><span class="label label-danger">{%=o.options.messages.error%}</span> {%=file.error%}</div>
+                  {% } %}
+              </td>
+              <td>
+                  <span class="size">{%=o.formatFileSize(file.size)%}</span>
+              </td>
+              <td>
+                  {% if (file.delete_url) { %}
+                      <button class="btn btn-danger delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                          <i class="fas fa-trash"></i>
+                          <span>{%=o.options.messages.delete%}</span>
+                      </button>
+                      <input type="checkbox" name="delete" value="1" class="toggle">
+                  {% } else { %}
+                      <button class="btn btn-warning cancel">
+                          <i class="fas fa-ban"></i>
+                          <span>{%=o.options.messages.cancel%}</span>
+                      </button>
+                  {% } %}
+              </td>
+          </tr>
+      {% } %}
+    </script>
+{% endverbatim %}
+
+
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/vendor/jquery.ui.widget.js"></script>
+    <!-- The Templates plugin is included to render the upload/download listings -->
+    <script src="{{ STATIC_URL }}lib/JavaScript-Templates/tmpl.min.js"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+
+    <script src="{{ STATIC_URL }}lib/JavaScript-Load-Image/load-image.all.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload.js"></script>
+    <!-- The File Upload processing plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-process.js"></script>
+    <!-- The File Upload image preview & resize plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-image.js"></script>
+    <!-- The File Upload audio preview plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-audio.js"></script>
+    <!-- The File Upload video preview plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-video.js"></script>
+    <!-- The File Upload validation plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-validate.js"></script>
+    <!-- The File Upload user interface plugin -->
+    <script src="{{ STATIC_URL }}lib/jQuery-File-Upload-10.32.0/js/jquery.fileupload-ui.js"></script>
+    <!-- The main application script -->
+    <script src="{{ STATIC_URL }}fileupload/js/main.js"></script>
+    <script src="{{ STATIC_URL }}fileupload/js/csrf.js"></script>
 {% endblock %}

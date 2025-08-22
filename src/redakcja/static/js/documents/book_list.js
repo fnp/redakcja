@@ -13,7 +13,7 @@
        return $.map($("input[name=select_chunk]:checked"), function(ele, idx) {
            return ele.value;
            }).concat(
-               $.map($("input[name=select_book][data-chunk-id!=]:checked"), function(ele, idx) {
+               $.map($("input[name=select_book][data-chunk-id]:checked"), function(ele, idx) {
                    return $(ele).attr("data-chunk-id");
                    })).join();
    };
@@ -38,7 +38,7 @@
 
     var get_items = function(field, callback) {
         var d = {};
-        $.each($("select[name="+field+"] option[value!=]"),
+        $.each($("select[name="+field+"] option[value]"),
             function(idx, ele) {
                 d[field + "_" + idx] = {
                     name: $(ele).text(), 

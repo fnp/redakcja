@@ -119,9 +119,8 @@ class UploadView(FormView):
                                 quote(f.encode('utf-8'))),
                             'delete_type': "DELETE"
                         })
-                        thumbnail_url = thumbnail(self.get_directory() + f),
                     files.append(file_info)
-            return JSONResponse(files)
+            return JSONResponse({"files": files})
         else:
             return super(UploadView, self).get(request, *args, **kwargs)
 
@@ -144,7 +143,7 @@ class UploadView(FormView):
                             quote(f.name.encode('utf-8'))),
                 'delete_type': "DELETE"
             })
-        response = JSONResponse(data)
+        response = JSONResponse({"files": data})
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
