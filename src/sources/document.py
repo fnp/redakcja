@@ -26,8 +26,8 @@ def build_document_texts(book):
 
 text_builders = [
     ocr.add_page_to_master,
-    ocr.add_page_to_master_as_stanzas,
-    ocr.add_page_to_master_as_p,
+    #ocr.add_page_to_master_as_stanzas,
+    #ocr.add_page_to_master_as_p,
 ]
 
 
