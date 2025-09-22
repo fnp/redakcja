@@ -96,6 +96,9 @@ def get_wikimedia_data(url):
     if wikidata_match is not None:
         qitem = wikidata_match.group(1)
         client = Client()
+        client.opener.addheaders = [(
+            'User-Agent', 'Wolne Lektury Redakcja / Python-wikidata'
+        )]
         entity = client.get(qitem)
         meta['title'] = entity.label.get('pl', str(entity.label))
         author = entity.get(client.get(WIKIDATA.CREATOR))

@@ -71,6 +71,9 @@ class WikidataModel(models.Model):
     def wikidata_populate(self, save=True, force=False):
         Wikidata = type(self).Wikidata
         client = Client()
+        client.opener.addheaders = [(
+            'User-Agent', 'Wolne Lektury Redakcja / Python-wikidata'
+        )]
         # Probably should getlist
         entity = client.get(self.wikidata)
         for attname in dir(Wikidata):

@@ -11,7 +11,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from admin_ordering.models import OrderableModel
-from wikidata.client import Client
 from librarian import DCNS
 from librarian.cover import make_cover
 from librarian.dcparser import BookInfo, Person
