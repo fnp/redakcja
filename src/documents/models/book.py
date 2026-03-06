@@ -486,6 +486,8 @@ class Book(models.Model):
                     )
                 if self.project.logo_alt:
                     data['logo_alt'] = self.project.logo_alt
+                if not self.project.can_sell:
+                    data['can_sell'] = False
             if host:
                 data['gallery_url'] = host + self.gallery_url()
             apiclient.api_call(user, "books/", data, beta=beta)
