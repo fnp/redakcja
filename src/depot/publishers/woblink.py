@@ -294,7 +294,7 @@ class Woblink(BasePublisher):
         }
 
     def get_lang2code(self, meta, errors=None):
-        return lang_code_3to2(meta.language)
+        return lang_code_3to2(meta.language or '')
 
     def get_price(self, site, wldoc, errors=None):
         try:
