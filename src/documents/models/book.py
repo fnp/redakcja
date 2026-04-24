@@ -473,6 +473,11 @@ class Book(models.Model):
         if not fake:
             book_xml = self.materialize(changes=changes)
             data = {"book_xml": book_xml, "days": days, "hidden": hidden}
+            if self.catalogue_book is not None:
+                cb = self.catalogue_book
+                isbn = cb.isbn_set.filter(form='mp3').first()
+                if isbn is not None:
+                data['isbn_mp3'] = isbn.get_code()
             if self.project is not None:
                 if self.project.logo:
                     data['logo'] = urljoin(
