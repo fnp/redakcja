@@ -477,7 +477,7 @@ class Book(models.Model):
                 cb = self.catalogue_book
                 isbn = cb.isbn_set.filter(form='mp3').first()
                 if isbn is not None:
-                data['isbn_mp3'] = isbn.get_code()
+                    data['isbn_mp3'] = isbn.get_code()
             if self.project is not None:
                 if self.project.logo:
                     data['logo'] = urljoin(
