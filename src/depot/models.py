@@ -174,9 +174,9 @@ class SiteBookPublish(models.Model):
 
             self.site_book.site.publish(self, changes=changes)
 
-        except Exception:
+        except Exception as e:
             self.status = 110
-            self.error = traceback.format_exc()
+            self.error = str(e) + '\n\n' + traceback.format_exc()
         else:
             self.status = 100
             self.error = ''

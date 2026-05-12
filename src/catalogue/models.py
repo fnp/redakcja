@@ -666,6 +666,9 @@ class Thema(models.Model):
         ordering = ('code',)
         verbose_name_plural = 'Thema'
 
+    @staticmethod
+    def standardize(code):
+        return code.split('.')[0]
 
 class Audience(models.Model):
     code = models.CharField(

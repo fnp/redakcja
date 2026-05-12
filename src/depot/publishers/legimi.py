@@ -1,19 +1,20 @@
 from datetime import date
 import re
+from urllib.parse import urljoin
 from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from librarian.functions import lang_code_3to2
 from librarian.builders import EpubBuilder, MobiBuilder
 from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
-from catalogue.models import Audience
+from lxml import html
+from catalogue.models import Audience, Thema
 from .base import BasePublisher
 
 
 class Legimi(BasePublisher):
-    BASE_URL = 'https://panel.legimi.pl'
-    LOGIN_URL = BASE_URL + '/publishers/membership'
-    UPLOAD_URL = BASE_URL + '/administration/upload/start'
+    BASE_URL = 'https://wydawca.legimi.pl'
+    UPLOAD_URL = BASE_URL + '/upload/start'
     CREATE_URL = BASE_URL + '/publishers/publications/create'
     EDIT_URL = BASE_URL + '/publishers/publications/edit/%s'
     EDIT_FILES_URL = BASE_URL + '/publishers/publications/editfiles/%s'
@@ -121,13 +122,14 @@ class Legimi(BasePublisher):
     }
 
     def login(self):
-        self._session.post(
-            self.LOGIN_URL,
-            data={
-                'ValidationTrue': 'true',
-                'UserName': self.username,
-                'Password': self.password,
-            })
+        r = self._session.get(self.BASE_URL)
+        h = html.fromstring(r.text)
+        form = h.findall('.//form')[0]
+        login_url = urljoin(r.url, form.action)
+        data = {e.name: e.value for e in form.findall('.//input')}
+        data['Login'] = self.username
+        data['Password'] = self.password
+        self._session.post(login_url, data=data)
 
     def can_publish(self, site, book):
         d = {
@@ -180,6 +182,7 @@ class Legimi(BasePublisher):
             Audience.objects.filter(code__in=meta.audiences).exclude(
                 thema=None).values_list('thema', flat=True)
         )
+        thema = [Thema.standardize(t) for t in thema]
         return thema
 
     def send_book(self, site_book_publish, changes=None):
@@ -315,8 +318,8 @@ class Legimi(BasePublisher):
 
         response = self.session.post(self.CREATE_URL, data=data)
         m = re.search(r'/(\d+)$', response.url)
-        if m is not None:
-            return m.group(1)
+        assert m is not None, 'Legimi.create_book: ' + response.text
+        return m.group(1)
 
     def edit(self, legimi_id, data):
         current = {
