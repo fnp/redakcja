@@ -41,7 +41,7 @@ class FlickrTests(TestCase):
                 'author': "Radek Czajka@Flickr",
                 'title': "Pirate Stańczyk",
                 'license_name': "CC BY 2.0",
-                'license_url': "https://creativecommons.org/licenses/by/2.0/",
+                'license_url': "https://creativecommons.org/licenses/by/2.0/deed.en",
                 'download_url': re.compile(r'\.staticflickr\.com'),
             }
         )
@@ -72,7 +72,7 @@ class FlickrTests(TestCase):
             form.cleaned_data,
             {
                 'title': 'Chłopiec w słomkowym kapeluszu',
-                'author': 'Mykola Pymonenko',
+                'author': 'Mykoła Pymonenko',
                 'source_url': 'https://commons.wikimedia.org/wiki/File:Pymonenko_A_boy_in_a_straw_hat.jpg',
                 'download_url': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Pymonenko_A_boy_in_a_straw_hat.jpg',
                 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna',
@@ -82,7 +82,7 @@ class FlickrTests(TestCase):
         
     def test_mnw(self):
         form = ImportForm({
-            "source_url": 'https://cyfrowe.mnw.art.pl/pl/katalog/511078'
+            "source_url": 'https://cyfrowe.mnw.art.pl/pl/zbiory/447973'
         })
         self.assertTrue(form.is_valid())
         self.assertEqualWithRe(
@@ -90,7 +90,7 @@ class FlickrTests(TestCase):
             {
                 'title': 'Chłopka (Baba ukraińska)',
                 'author': 'Krzyżanowski, Konrad (1872-1922)',
-                'source_url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078',
+                'source_url': 'https://cyfrowe.mnw.art.pl/pl/zbiory/447973',
                 'download_url': re.compile(r'https://cyfrowe-cdn\.mnw\.art\.pl/.*\.jpg'),
                 'license_url': 'https://pl.wikipedia.org/wiki/Domena_publiczna',
                 'license_name': 'domena publiczna'
@@ -106,7 +106,7 @@ class FlickrTests(TestCase):
         self.client.post(
             '/cover/quick-import/1/',
             {
-                'url': 'https://cyfrowe.mnw.art.pl/pl/katalog/511078'
+                'url': 'https://cyfrowe.mnw.art.pl/pl/zbiory/447973'
             }
         )
 
