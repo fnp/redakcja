@@ -49,6 +49,8 @@ USE_L10N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = PROJECT_ROOT + '/media/dynamic'
 STATIC_ROOT = PROJECT_ROOT + '/../static/'
+CATALOGUE_REPO_PATH = MEDIA_ROOT + '/repo'
+CATALOGUE_IMAGE_REPO_PATH = MEDIA_ROOT + '/imgrepo'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -64,6 +66,7 @@ BROKER_URL = 'django://'
 
 SHOW_APP_VERSION = False
 
+CAS_SERVER_URL = None
 CAS_APPLY_ATTRIBUTES_TO_USER = True
 CAS_RENAME_ATTRIBUTES = {
     'email': 'email', 'firstname': 'first_name', 'lastname': 'last_name'}

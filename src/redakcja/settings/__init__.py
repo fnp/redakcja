@@ -1,11 +1,15 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os.path
+import os
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from .defaults import *
-from ..localsettings import *
+
+try:
+    from ..localsettings import *
+except ImportError:
+    pass
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20000000
 
@@ -14,6 +18,16 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 STATICFILES_DIRS = [
     PROJECT_ROOT + '/static/'
 ]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'db',
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'NAME': os.environ.get('POSTGRES_USER'),
+    }
+}
 
 TEMPLATES = [
     {
