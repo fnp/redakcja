@@ -54,4 +54,86 @@ class Migration(migrations.Migration):
             name='project',
             table=None,
         ),
+        migrations.RunSQL(
+            sql="""
+ ALTER INDEX catalogue_book_pkey RENAME TO documents_book_pkey;
+ ALTER INDEX catalogue_book_slug_key RENAME TO documents_book_slug_key;
+ ALTER INDEX catalogue_bookpublishrecord_pkey RENAME TO documents_bookpublishrecord_pkey;
+ ALTER INDEX catalogue_chunk_pkey RENAME TO documents_chunk_pkey;
+ ALTER INDEX catalogue_chunkchange_pkey RENAME TO documents_chunkchange_pkey;
+ ALTER INDEX catalogue_chunkpublishrecord_pkey RENAME TO documents_chunkpublishrecord_pkey;
+ ALTER INDEX catalogue_chunktag_pkey RENAME TO documents_chunktag_pkey;
+ ALTER INDEX catalogue_chunktag_slug_key RENAME TO documents_chunktag_slug_key;
+ ALTER INDEX catalogue_image_pkey RENAME TO documents_image_pkey;
+ ALTER INDEX catalogue_image_slug_key RENAME TO documents_image_slug_key;
+ ALTER INDEX catalogue_imagechange_pkey RENAME TO documents_imagechange_pkey;
+ ALTER INDEX catalogue_imagepublishrecord_pkey RENAME TO documents_imagepublishrecord_pkey;
+ ALTER INDEX catalogue_imagetag_pkey RENAME TO documents_imagetag_pkey;
+ ALTER INDEX catalogue_imagetag_slug_key RENAME TO documents_imagetag_slug_key;
+ ALTER INDEX catalogue_project_pkey RENAME TO documents_project_pkey;
+ ALTER INDEX catalogue_project_name_key RENAME TO documents_project_name_key;
+ ALTER INDEX catalogue_imagechange_tags_pkey RENAME TO documents_imagechange_tags_pkey;
+ ALTER INDEX catalogue_imagechange_tree_id_revision_6e12f515_uniq RENAME TO documents_imagechange_tree_id_revision_6e12f515_uniq;
+ ALTER INDEX catalogue_chunkchange_tags_pkey RENAME TO documents_chunkchange_tags_pkey;
+ ALTER INDEX catalogue_chunkchange_tree_id_revision_568924e6_uniq RENAME TO documents_chunkchange_tree_id_revision_568924e6_uniq;
+ ALTER INDEX catalogue_chunk_book_id_number_7afb76cf_uniq RENAME TO documents_chunk_book_id_number_7afb76cf_uniq;
+ ALTER INDEX catalogue_chunk_book_id_slug_a8153f66_uniq RENAME TO documents_chunk_book_id_slug_a8153f66_uniq;
+ ALTER INDEX catalogue_book_title_08816623 RENAME TO documents_book_title_08816623;
+ ALTER INDEX catalogue_book_title_08816623_like RENAME TO documents_book_title_08816623_like;
+ ALTER INDEX catalogue_book_slug_25b78b2e_like RENAME TO documents_book_slug_25b78b2e_like;
+ ALTER INDEX catalogue_book_public_4c0f7b98 RENAME TO documents_book_public_4c0f7b98;
+ ALTER INDEX catalogue_book_parent_number_c5ba072a RENAME TO documents_book_parent_number_c5ba072a;
+ ALTER INDEX catalogue_book__single_d83aa1d7 RENAME TO documents_book__single_d83aa1d7;
+ ALTER INDEX catalogue_book__on_track_7fe6ea8e RENAME TO documents_book__on_track_7fe6ea8e;
+ ALTER INDEX catalogue_book_dc_slug_debf43f5 RENAME TO documents_book_dc_slug_debf43f5;
+ ALTER INDEX catalogue_book_dc_slug_debf43f5_like RENAME TO documents_book_dc_slug_debf43f5_like;
+ ALTER INDEX catalogue_bookpublishrecord_book_id_c2c86c3f RENAME TO documents_bookpublishrecord_book_id_c2c86c3f;
+ ALTER INDEX catalogue_bookpublishrecord_user_id_2657a6c5 RENAME TO documents_bookpublishrecord_user_id_2657a6c5;
+ ALTER INDEX catalogue_chunk_slug_baa26355 RENAME TO documents_chunk_slug_baa26355;
+ ALTER INDEX catalogue_chunk_slug_baa26355_like RENAME TO documents_chunk_slug_baa26355_like;
+ ALTER INDEX catalogue_chunk_book_id_adf66d1b RENAME TO documents_chunk_book_id_adf66d1b;
+ ALTER INDEX catalogue_chunk_creator_id_fb002387 RENAME TO documents_chunk_creator_id_fb002387;
+ ALTER INDEX catalogue_chunkchange_revision_4173a0fd RENAME TO documents_chunkchange_revision_4173a0fd;
+ ALTER INDEX catalogue_chunkchange_created_at_0378b9be RENAME TO documents_chunkchange_created_at_0378b9be;
+ ALTER INDEX catalogue_chunkchange_author_id_88bfbdd7 RENAME TO documents_chunkchange_author_id_88bfbdd7;
+ ALTER INDEX catalogue_chunkchange_merge_parent_id_648fc7d2 RENAME TO documents_chunkchange_merge_parent_id_648fc7d2;
+ ALTER INDEX catalogue_chunkchange_parent_id_22088b88 RENAME TO documents_chunkchange_parent_id_22088b88;
+ ALTER INDEX catalogue_chunkpublishrecord_book_record_id_122d285d RENAME TO documents_chunkpublishrecord_book_record_id_122d285d;
+ ALTER INDEX catalogue_chunkpublishrecord_change_id_c0552b51 RENAME TO documents_chunkpublishrecord_change_id_c0552b51;
+ ALTER INDEX catalogue_chunktag_slug_2dc86400_like RENAME TO documents_chunktag_slug_2dc86400_like;
+ ALTER INDEX catalogue_image_slug_8d0a27de_like RENAME TO documents_image_slug_8d0a27de_like;
+ ALTER INDEX catalogue_image_public_98f46f3a RENAME TO documents_image_public_98f46f3a;
+ ALTER INDEX catalogue_image_creator_id_9a01e7d0 RENAME TO documents_image_creator_id_9a01e7d0;
+ ALTER INDEX catalogue_imagechange_revision_1cf45643 RENAME TO documents_imagechange_revision_1cf45643;
+ ALTER INDEX catalogue_imagechange_created_at_c76353d3 RENAME TO documents_imagechange_created_at_c76353d3;
+ ALTER INDEX catalogue_imagechange_author_id_05ce98da RENAME TO documents_imagechange_author_id_05ce98da;
+ ALTER INDEX catalogue_imagechange_merge_parent_id_3455e893 RENAME TO documents_imagechange_merge_parent_id_3455e893;
+ ALTER INDEX catalogue_imagechange_parent_id_6aa5b75c RENAME TO documents_imagechange_parent_id_6aa5b75c;
+ ALTER INDEX catalogue_imagepublishrecord_change_id_36dc59e4 RENAME TO documents_imagepublishrecord_change_id_36dc59e4;
+ ALTER INDEX catalogue_imagepublishrecord_image_id_a623b22a RENAME TO documents_imagepublishrecord_image_id_a623b22a;
+ ALTER INDEX catalogue_imagepublishrecord_user_id_1fdd106a RENAME TO documents_imagepublishrecord_user_id_1fdd106a;
+ ALTER INDEX catalogue_imagetag_slug_c8507fb4_like RENAME TO documents_imagetag_slug_c8507fb4_like;
+ ALTER INDEX catalogue_project_name_72095a02_like RENAME TO documents_project_name_72095a02_like;
+ ALTER INDEX catalogue_imagechange_ta_imagechange_id_imagetag__502a117e_uniq RENAME TO documents_imagechange_ta_imagechange_id_imagetag__502a117e_uniq;
+ ALTER INDEX catalogue_imagechange_tags_imagechange_id_871867b7 RENAME TO documents_imagechange_tags_imagechange_id_871867b7;
+ ALTER INDEX catalogue_imagechange_tags_imagetag_id_bd7eff53 RENAME TO documents_imagechange_tags_imagetag_id_bd7eff53;
+ ALTER INDEX catalogue_imagechange_tree_id_15c49fe6 RENAME TO documents_imagechange_tree_id_15c49fe6;
+ ALTER INDEX catalogue_image_head_id_dcd3ffee RENAME TO documents_image_head_id_dcd3ffee;
+ ALTER INDEX catalogue_image_project_id_4c16eb68 RENAME TO documents_image_project_id_4c16eb68;
+ ALTER INDEX catalogue_image_stage_id_be04da20 RENAME TO documents_image_stage_id_be04da20;
+ ALTER INDEX catalogue_image_user_id_c19e921e RENAME TO documents_image_user_id_c19e921e;
+ ALTER INDEX catalogue_chunkchange_ta_chunkchange_id_chunktag__9fa1b0b9_uniq RENAME TO documents_chunkchange_ta_chunkchange_id_chunktag__9fa1b0b9_uniq;
+ ALTER INDEX catalogue_chunkchange_tags_chunkchange_id_7a1e2804 RENAME TO documents_chunkchange_tags_chunkchange_id_7a1e2804;
+ ALTER INDEX catalogue_chunkchange_tags_chunktag_id_a12a751e RENAME TO documents_chunkchange_tags_chunktag_id_a12a751e;
+ ALTER INDEX catalogue_chunkchange_tree_id_d52fcc3c RENAME TO documents_chunkchange_tree_id_d52fcc3c;
+ ALTER INDEX catalogue_chunk_head_id_e19434c0 RENAME TO documents_chunk_head_id_e19434c0;
+ ALTER INDEX catalogue_chunk_stage_id_5fc2dc93 RENAME TO documents_chunk_stage_id_5fc2dc93;
+ ALTER INDEX catalogue_chunk_user_id_8789cea2 RENAME TO documents_chunk_user_id_8789cea2;
+ ALTER INDEX catalogue_book_dc_cover_image_id_7e0db0ba RENAME TO documents_book_dc_cover_image_id_7e0db0ba;
+ ALTER INDEX catalogue_book_parent_id_50db0920 RENAME TO documents_book_parent_id_50db0920;
+ ALTER INDEX catalogue_book_project_id_73241afc RENAME TO documents_book_project_id_73241afc;
+            """,
+            reverse_sql=migrations.RunSQL.noop
+        )
+
     ]

@@ -14,6 +14,7 @@ librarian==24.5.9
 
 ## Django
 Django==4.1.9
+psycopg2-binary
 fnpdjango==0.7
 django-pipeline==2.1.0
 django-cas-ng==4.3.0
