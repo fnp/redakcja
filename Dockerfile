@@ -86,13 +86,4 @@ COPY --from=static-builder /app/var/static /app/var/static
 
 FROM base AS prod
 
-RUN pip install --no-cache-dir gunicorn
-
-USER app
-COPY src /app/src
-
-
-
-FROM prod-base AS prod
-
 COPY --from=static-builder /app/var/static/staticfiles.json /app/var/static/staticfiles.json
