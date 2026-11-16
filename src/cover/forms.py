@@ -79,14 +79,19 @@ class ImageEditForm(forms.ModelForm):
         model = Image
         exclude = ['download_url', 'use_file', 'example',]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['file'].required = False
+
     def clean(self):
         cleaned_data = super(ImageEditForm, self).clean()
         uploaded_file = cleaned_data.get('file', None)
-        width, height = PILImage.open(uploaded_file.file).size
-        min_width, min_height = settings.MIN_COVER_SIZE
-        if width < min_width or height < min_height:
-            raise forms.ValidationError(gettext('Image too small: %sx%s, minimal dimensions %sx%s') %
-                                        (width, height, min_width, min_height))
+        if uploaded_file is not None:
+            width, height = PILImage.open(uploaded_file.file).size
+            min_width, min_height = settings.MIN_COVER_SIZE
+            if width < min_width or height < min_height:
+                raise forms.ValidationError(gettext('Image too small: %sx%s, minimal dimensions %sx%s') %
+                                            (width, height, min_width, min_height))
 
 
 class ReadonlyImageEditForm(ImageEditForm):

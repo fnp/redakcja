@@ -264,7 +264,11 @@ def book_html(request, slug):
         return HttpResponseForbidden("Not authorized.")
 
     doc = book.wldocument(parse_dublincore=False)
-    html = doc.as_html(options={'gallery': "'%s'" % book.gallery_url()})
+    html = doc.as_html(
+        gallery_url='%stmp/html/' % settings.MEDIA_URL,
+        gallery_path='%s/tmp/html/' % settings.MEDIA_ROOT,
+        base_url=request.build_absolute_uri(book.gallery_url()),
+        options={'gallery': "'%s'" % book.gallery_url()})
 
     html = html.get_bytes().decode('utf-8') if html is not None else ''
     # response = http.HttpResponse(html, content_type='text/html')
@@ -290,7 +294,7 @@ def book_pdf(request, slug, mobile=False):
     doc = book.wldocument()
     # TODO: error handling
     customizations = ['26pt', 'nothemes', 'nomargins', 'notoc'] if mobile else None
-    pdf_file = doc.as_pdf(cover=True, base_url=request.build_absolute_uri(book.gallery_path()), customizations=customizations)
+    pdf_file = doc.as_pdf(cover=True, base_url=request.build_absolute_uri(book.gallery_url()), customizations=customizations)
     from .ebook_utils import serve_file
     return serve_file(pdf_file.get_filename(),
                 book.slug + '.pdf', 'application/pdf')
@@ -414,9 +418,14 @@ def book(request, slug):
 
     cbook_by_slug = None
     if book.dc_slug:
-        audio_items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{book.dc_slug}.json').json()['items']
-        has_audio = bool(audio_items)
-        can_sell_audio = has_audio and all(x['project']['can_sell'] for x in audio_items)
+        try:
+            audio_items = requests.get(f'https://audio.wolnelektury.pl/archive/book/{book.dc_slug}.json').json()['items']
+        except:
+            has_audio = None
+            can_sell_audio = None
+        else:
+            has_audio = bool(audio_items)
+            can_sell_audio = has_audio and all(x['project']['can_sell'] for x in audio_items)
 
         if book.catalogue_book is None or book.dc_slug != book.catalogue_book.slug:
             cbook_by_slug = catalogue.models.Book.objects.filter(slug=book.dc_slug).first()

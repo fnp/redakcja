@@ -668,6 +668,7 @@ class Thema(models.Model):
 
     @staticmethod
     def standardize(code):
+        if code is None: return None
         return code.split('.')[0]
 
 class Audience(models.Model):

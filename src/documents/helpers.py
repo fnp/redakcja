@@ -3,7 +3,7 @@
 #
 from datetime import date
 from functools import wraps
-from os.path import join
+from os.path import join, exists
 from os import listdir, stat
 from shutil import move, rmtree
 from django.conf import settings
@@ -77,9 +77,9 @@ class GalleryMerger(object):
         return self.dest_size is not None
 
     def merge(self):
-        if not self.dest:
+        if not self.dest or not exists(self.path(self.dest)):
             return self.src
-        if not self.src:
+        if not self.src or not exists(self.path(self.src)):
             return self.dest
 
         files = listdir(self.path(self.dest))

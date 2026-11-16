@@ -32,6 +32,7 @@
 
 
     <div class="col-md-7">
+      {% if object.use_file %}
       {% with perc=object.cut_percentages %}
         <a href="{{ object.use_file.url }}" style="position: relative; display: block; width: {{ perc.width }}px; height: {{ perc.height }}px;">
           {% thumbnail object.file perc.th as th %}
@@ -43,7 +44,8 @@
     <div style="background: black; opacity: .5; display: block; position: absolute; top: {{ perc.top }}%; bottom: {{ perc.bottom }}%; left: 0; width: {{ perc.left }}%"></div>
     <div style="background: black; opacity: .5; display: block; position: absolute; top: {{ perc.top }}%; bottom: {{ perc.bottom }}%; right: 0; width: {{ perc.right }}%"></div>
       {% endlocalize %}
-      {% endwith %}
+    {% endwith %}
+    {% endif %}
         </a>
         <br/><a href="{{ object.source_url }}">{{ object.title }}</a> by {{ object.author }},
         {% if object.license_url %}<a href="{{ object.license_url }}">{% endif %}
@@ -58,11 +60,12 @@
     </div>
   </div>
 
-
+{% if object.use_file %}
   <textarea style="width:100%" rows="6" class="form-control mt-4" disabled>
 &lt;dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.use_file.url|build_absolute_uri:request }}&lt;/dc:relation.coverImage.url>
 &lt;dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.attribution }}&lt;/dc:relation.coverImage.attribution>
 &lt;dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">{{ object.get_full_url }}&lt;/dc:relation.coverImage.source></textarea>
+  {% endif %}
 
   <div class="card mt-4">
     <div class="card-header">
