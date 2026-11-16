@@ -31,6 +31,7 @@ urlpatterns = [
     path('create/', views.create_missing, name='documents_create_missing'),
 
     path('book/<slug:slug>/publish', views.publish, name="documents_publish"),
+    path('book/<slug:slug>/fix-ilustr', views.fix_ilustr, name="documents_fix_ilustr"),
 
     path('book/<slug:slug>/', views.book, name="documents_book"),
     path('book/<slug:slug>/gallery/',

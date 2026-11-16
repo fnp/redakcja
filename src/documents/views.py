@@ -11,7 +11,7 @@ import os
 from urllib.parse import quote_plus, unquote, urlsplit, urlunsplit
 
 from django.conf import settings
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
@@ -674,6 +674,22 @@ def publish(request, slug):
         return http.HttpResponse(repr(e))
     else:
         return http.HttpResponseRedirect(book.get_absolute_url())
+
+
+@require_POST
+@login_required
+def fix_ilustr(request, slug):
+    from .ilustr import IlustrFixer
+    book = get_object_or_404(Book, slug=slug)
+    protocol = 'https://' if request.is_secure() else 'http://'
+    fixer = IlustrFixer(protocol + request.get_host(), author=request.user)
+    with transaction.atomic():
+        fixer.fix_book(book)
+    if fixer.stats['unresolved'] or fixer.stats['conflicts']:
+        messages.warning(request, 'Nie wszystkie ilustracje udało się naprawić.')
+    elif fixer.stats['fixed']:
+        messages.success(request, 'Naprawiono adresy ilustracji.')
+    return http.HttpResponseRedirect(book.get_absolute_url())
 
 
 @require_POST

@@ -52,6 +52,14 @@
 </nav>
 
 <div class="container mt-4 mb-4">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag|default:'info' }}{% endif %} alert-dismissible" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    {% endfor %}
+  {% endif %}
   {% block content %}
     <div class="row">
       <div class="col-lg-8">

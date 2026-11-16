@@ -4,5 +4,18 @@
         font-size: 1rem;
         line-height: 1.5;
     }
+
+    // Images require absolute src.
+    [x-node="ilustr"]:not([x-a-wl-src^="http://"]):not([x-a-wl-src^="https://"]) {
+        outline: 3px solid #dc3545;
+
+        &::before {
+            content: "Ilustracja bez pełnego adresu";
+            display: block;
+            color: #dc3545;
+            font-family: sans-serif;
+            font-size: .8rem;
+        }
+    }
 }
     

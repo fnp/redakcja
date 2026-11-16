@@ -171,7 +171,7 @@
 
                     self.doc.refreshImageGallery({
                         success: function(galleryImages) {
-                            $.each(self.doc.galleryImages, (i, imgItem) => {
+                            $.each(galleryImages, (i, imgItem) => {
                                 let img = $("<img>").attr("src", imgItem.thumb).attr('title', imgItem.url).data('url', imgItem.url).on('click', function() {
                                     imglist.find('img').removeClass('active');
                                     $(this).addClass('active');

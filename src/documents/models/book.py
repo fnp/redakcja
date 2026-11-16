@@ -307,6 +307,26 @@ class Book(models.Model):
         valid_about = self.correct_about()
         assert bi.about == valid_about, _("rdf:about is not") + " " + valid_about
 
+        srcs = self.relative_ilustr_srcs(changes=changes)
+        assert not srcs, 'Ilustracje bez pełnego adresu: ' + ', '.join(
+            src or '(pusty)' for src in srcs)
+
+    def relative_ilustr_srcs(self, changes=None):
+        """Returns `src` of illustrations which aren't absolute URLs.
+
+        Those only work relative to the gallery, so they break
+        outside of it. Checks the current text, unless `changes` are given.
+        """
+        from lxml import etree
+        try:
+            tree = etree.fromstring(self.materialize(changes=changes).encode('utf-8'))
+        except (self.NoTextError, etree.XMLSyntaxError):
+            return []
+        return [
+            elem.get('src', '') for elem in tree.iter('ilustr')
+            if not elem.get('src', '').startswith(('http://', 'https://'))
+        ]
+
     def publishable_error(self):
         try:
             return self.assert_publishable()
