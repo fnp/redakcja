@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-01-27 16:53+0100\n"
+"PO-Revision-Date: 2026-11-24 18:02+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
 "(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
 "n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.6\n"
 
 #: catalogue/admin.py:57 catalogue/admin.py:310
 msgid "Identification"
@@ -89,7 +89,7 @@ msgstr "wiek urodzenia"
 
 #: catalogue/models.py:40 catalogue/models.py:53
 msgid "Set if year unknown. Negative for BC."
-msgstr "Ustaw gry nie jest znany rok. Wartości ujemne dla w. p.n.e."
+msgstr "Ustaw gdy nie jest znany rok. Wartości ujemne dla w. p.n.e."
 
 #: catalogue/models.py:44
 msgid "place of birth"
