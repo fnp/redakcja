@@ -51,7 +51,7 @@ FROM nginx:alpine AS nginx
 ARG UID=8200
 ARG GID=8200
 
-# COPY nginx.conf conf.d/...
+COPY scripts/nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN addgroup -g $GID app && addgroup nginx app
 COPY --from=static-builder /app/src/static /app/var/static
