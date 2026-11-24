@@ -1,0 +1,42 @@
+x-app-base: &app-base
+  build:
+    context: .
+    target: dev
+    args:
+      UID: ${UID:-1000}
+      GID: ${GID:-1000}
+  env_file:
+   - .env
+  environment:
+    DEBUG: "True"
+  volumes:
+   - ./src:/app/src
+   - ./scripts:/app/scripts
+   - ./var/media:/app/var/media
+   - ./var/static:/app/var/static
+   - ./var/repo:/app/var/repo
+   - ${LIBRARIAN:-/nonexistent}:/${LIBRARIAN:+edita}ble/librarian
+   - ipython:/app/.ipython
+  depends_on:
+   - db
+  entrypoint: /app/scripts/entrypoint.sh
+  extra_hosts:
+   - "host.docker.internal:host-gateway"
+
+services:
+  web:
+    <<: *app-base
+    ports:
+     - "8001:8000"
+    command: ./manage.py runserver 0.0.0.0:8000
+
+  db:
+    image: postgres:18
+    env_file:
+      - .env
+    volumes:
+      - ./var/postgresql-data/:/var/lib/postgresql/
+
+
+volumes:
+  ipython:

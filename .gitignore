@@ -9,6 +9,7 @@ requirements.pybundle
 /static
 .sass-cache
 var
+.env
 
 # Python garbage
 *.pyc

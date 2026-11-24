@@ -22,3 +22,7 @@ test_full:
 	mv ../htmlcov.new ../htmlcov
 	coverage report
 	rm .coverage
+
+
+shell:
+	UID=$(UID) GID=$(GID) docker compose exec web bash
