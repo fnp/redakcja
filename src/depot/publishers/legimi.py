@@ -5,10 +5,10 @@ from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from librarian.functions import lang_code_3to2
-from librarian.builders import EpubBuilder, MobiBuilder
-from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
+from librarian.covers.marquise import LabelMarquiseCover
 from lxml import html
 from catalogue.models import Audience, Thema
+from documents.remote_build import remote_build
 from .base import BasePublisher
 
 
@@ -194,16 +194,12 @@ class Legimi(BasePublisher):
 
         cover = LabelMarquiseCover(meta, width=1200).output_file()
         texts = site.get_texts()
-        epub_file = EpubBuilder(
-            cover=MarquiseCover,
-            fundraising=texts,
-            base_url='file://' + book.gallery_path() + '/'
-        ).build(wlbook).get_file()
-        mobi_file = MobiBuilder(
-            cover=MarquiseCover,
-            fundraising=texts,
-            base_url='file://' + book.gallery_path() + '/'
-        ).build(wlbook).get_file()
+        epub_file = remote_build(book, 'epub', options={
+            'fundraising': texts,
+        })
+        mobi_file = remote_build(book, 'mobi', options={
+            'fundraising': texts,
+        })
 
         book_data = {
             "Title": meta.title,

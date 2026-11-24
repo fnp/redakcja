@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from librarian.builders.html import SnippetHtmlBuilder
 from librarian.functions import lang_code_3to2
 from catalogue.models import Audience, Author, Thema
+from documents.remote_build import remote_build
 from .. import models
 from .base import BasePublisher
 from .woblink_constants import WOBLINK_CATEGORIES
@@ -399,11 +400,11 @@ class Woblink(BasePublisher):
 
         texts = site.get_texts()
         epub_id, epub_demo = self.send_epub(
-            woblink_id, wldoc, book.gallery_path(),
+            woblink_id, book,
             fundraising=texts
         )
         mobi_id, mobi_demo = self.send_mobi(
-            woblink_id, wldoc, book.gallery_path(),
+            woblink_id, book,
             fundraising=texts
         )
         self.edit_step4(
@@ -592,15 +593,13 @@ class Woblink(BasePublisher):
 
         return file_id
 
-    def send_epub(self, woblink_id, doc, gallery_path, fundraising=None):
-        from librarian.builders import EpubBuilder
-        content = EpubBuilder(
-            base_url='file://' + gallery_path + '/',
-            fundraising=fundraising or [],
-        ).build(doc).get_file()
+    def send_epub(self, woblink_id, book, fundraising=None):
+        content = remote_build(book, 'epub', options={
+            "fundraising": fundraising or [],
+        })
         file_id = self.upload_file(
             woblink_id,
-            doc.meta.url.slug + '.epub',
+            book.dc_slug + '.epub',
             content,
             'Epub',
             'application/epub+zip'
@@ -608,15 +607,13 @@ class Woblink(BasePublisher):
         demo_id = self.generate_demo(woblink_id, 'epub')
         return file_id, demo_id
 
-    def send_mobi(self, woblink_id, doc, gallery_path, fundraising=None):
-        from librarian.builders import MobiBuilder
-        content = MobiBuilder(
-            base_url='file://' + gallery_path + '/',
-            fundraising=fundraising or [],
-        ).build(doc).get_file()
+    def send_mobi(self, woblink_id, book, fundraising=None):
+        content = remote_build(book, 'mobi', options={
+            "fundraising": fundraising or [],
+        })
         file_id = self.upload_file(
             woblink_id,
-            doc.meta.url.slug + '.mobi',
+            book.dc_slug + '.mobi',
             content,
             'Mobi',
             'application/x-mobipocket-ebook'

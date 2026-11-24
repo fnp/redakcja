@@ -1,6 +1,8 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from urllib.parse import urljoin
+from django.apps import apps
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -24,3 +26,14 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def logo_for_cover(self):
+        Site = apps.get_model('sites', 'Site')
+        domain = Site.objects.get_current().domain
+        logo = self.logo_mono or self.logo
+        if logo:
+            url = logo.url
+            return urljoin(
+                'https://' + domain,
+                url
+            )

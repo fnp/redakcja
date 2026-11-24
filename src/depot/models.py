@@ -1,14 +1,15 @@
 import json
 import os
+from urllib.parse import urljoin
 import tempfile
 import traceback
 import zipfile
 from datetime import datetime
+from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.utils.timezone import now
 from librarian.cover import make_cover
-from librarian.builders import EpubBuilder, MobiBuilder
 from .publishers.legimi import Legimi
 from .publishers.woblink import Woblink
 
@@ -61,16 +62,13 @@ class Package(models.Model):
         os.unlink(f.name)
 
     def build_for(self, book, z):
-        wldoc2 = book.wldocument(librarian2=True)
-        slug = wldoc2.meta.url.slug
+        Site = apps.get_model('sites', 'Site')
+        slug = book.dc_slug
         for item in self.get_definition():
-            wldoc = book.wldocument()
-            wldoc2 = book.wldocument(librarian2=True)
-            base_url = 'file://' + book.gallery_path() + '/'
-
             ext = item['type']
 
             if item['type'] == 'cover':
+                wldoc = book.wldocument()
                 kwargs = {}
                 if self.logo:
                     kwargs['cover_logo'] = self.logo.path
@@ -78,48 +76,28 @@ class Package(models.Model):
                     if k in item:
                         kwargs[k] = item[k]
                 cover = make_cover(wldoc.book_info, **kwargs)
-                output = cover.output_file()
+                output = cover.output_file().get_bytes()
                 ext = cover.ext()
 
-            elif item['type'] == 'pdf':
-                cover_kwargs = {}
+            elif item['type'] in ('pdf', 'epub', 'mobi'):
+                options = {}
                 if 'cover_class' in item:
-                    cover_kwargs['cover_class'] = item['cover_class']
+                    options['cover_class'] = item['cover_class']
                 if self.logo:
-                    cover_kwargs['cover_logo'] = self.logo.path
-                cover = lambda *args, **kwargs: make_cover(*args, **kwargs, **cover_kwargs)
-                output = wldoc.as_pdf(cover=cover, base_url=base_url)
-
-            elif item['type'] == 'epub':
-                cover_kwargs = {}
-                if 'cover_class' in item:
-                    cover_kwargs['cover_class'] = item['cover_class']
-                if self.logo:
-                    cover_kwargs['cover_logo'] = self.logo.path
-                cover = lambda *args, **kwargs: make_cover(*args, **kwargs, **cover_kwargs)
-
-                output = EpubBuilder(
-                    cover=cover,
-                    base_url=base_url,
-                    fundraising=item.get('fundraising', []),
-                ).build(wldoc2)
-
-            elif item['type'] == 'mobi':
-                output = MobiBuilder(
-                    cover=cover,
-                    base_url=base_url,
-                    fundraising=item.get('fundraising', []),
-                ).build(wldoc2)
+                    logo_url = urljoin(
+                        'https://' + Site.objects.get_current().domain,
+                        self.logo.url
+                    )
+                    options['cover_logo'] = logo_url
+                if 'fundraising' in item:
+                    options['fundraising'] = item['fundraising']
+                output = remote_build(book, item['type'], options=options)
 
             fname = f'{slug}/{slug}.'
             if 'slug' in item:
                 fname += item['slug'] + '.'
             fname += ext
-
-            z.writestr(
-                fname,
-                output.get_bytes()
-            )
+            z.writestr(fname, output)
 
 
 class SiteBook(models.Model):

@@ -37,6 +37,7 @@ from . import helpers
 from .helpers import active_tab
 from .models import (Book, Chunk, Image, BookPublishRecord, 
         ChunkPublishRecord, ImagePublishRecord, Project)
+from .remote_build import remote_build
 import catalogue.models
 from fileupload.views import UploadView
 
@@ -267,8 +268,7 @@ def book_html(request, slug):
     html = doc.as_html(
         gallery_url='%stmp/html/' % settings.MEDIA_URL,
         gallery_path='%s/tmp/html/' % settings.MEDIA_ROOT,
-        base_url=request.build_absolute_uri(book.gallery_url()),
-        options={'gallery': "'%s'" % book.gallery_url()})
+    )
 
     html = html.get_bytes().decode('utf-8') if html is not None else ''
     # response = http.HttpResponse(html, content_type='text/html')
@@ -290,14 +290,24 @@ def book_pdf(request, slug, mobile=False):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    # TODO: move to celery
-    doc = book.wldocument()
-    # TODO: error handling
-    customizations = ['26pt', 'nothemes', 'nomargins', 'notoc'] if mobile else None
-    pdf_file = doc.as_pdf(cover=True, base_url=request.build_absolute_uri(book.gallery_url()), customizations=customizations)
-    from .ebook_utils import serve_file
-    return serve_file(pdf_file.get_filename(),
-                book.slug + '.pdf', 'application/pdf')
+    customizations = ['notoc']
+    if mobile:
+        customizations += ['26pt', 'nothemes', 'nomargins']
+    options = {
+        'customizations': customizations
+    }
+    if book.project is not None and (logo := book.project.logo_for_cover()):
+        options['cover_logo'] = logo
+    try:
+        content = remote_build(book, 'pdf', options=options)
+    except RuntimeError as e:
+        return HttpResponse(str(e))
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename={book.dc_slug}.pdf'
+    response.write(content)
+    return response
+
 
 
 @login_required
@@ -306,49 +316,20 @@ def book_epub(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
+    options = {
+        #'debug': True
+    }
+    if book.project is not None and (logo := book.project.logo_for_cover()):
+        options['cover_logo'] = logo
+    try:
+        content = remote_build(book, 'epub', options=options)
+    except RuntimeError as e:
+        return HttpResponse(str(e))
 
-    # TODO: move to celery
-    doc = book.wldocument(librarian2=True)
-    # TODO: error handling
-
-    from librarian.builders import EpubBuilder
-    epub = EpubBuilder(
-        base_url='file://' + book.gallery_path() + '/',
-        debug=True
-    ).build(doc).get_bytes()
     response = HttpResponse(content_type='application/epub+zip')
     response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.epub'
-    response.write(epub)
+    response.write(content)
     return response
-
-
-@login_required
-@never_cache
-def book_epubcheck(request, slug):
-    book = get_object_or_404(Book, slug=slug)
-    if not book.accessible(request):
-        return HttpResponseForbidden("Not authorized.")
-
-    # TODO: move to celery
-    doc = book.wldocument(librarian2=True)
-    # TODO: error handling
-
-    from librarian.builders import EpubBuilder
-    epub = EpubBuilder(
-        base_url='file://' + book.gallery_path() + '/',
-        debug=True
-    ).build(doc)
-    fname = epub.get_filename()
-
-    messages = epubcheck.epubcheck(fname)
-    for message in messages:
-        for location in message.get('locations', []):
-            if 'wl_chunk' in location:
-                location['wl_chunk'] = book[location['wl_chunk']]
-    return render(request, 'documents/book_epubcheck.html', {
-        'messages': messages,
-        'book': book,
-    })
 
 
 @login_required
@@ -358,16 +339,16 @@ def book_mobi(request, slug):
     if not book.accessible(request):
         return HttpResponseForbidden("Not authorized.")
 
-    # TODO: move to celery
-    doc = book.wldocument(librarian2=True)
-    # TODO: error handling
-    from librarian.builders import MobiBuilder
-    mobi = MobiBuilder(
-        base_url='file://' + book.gallery_path() + '/'
-    ).build(doc).get_bytes()
+    options = {}
+    if book.project is not None and (logo := book.project.logo_for_cover()):
+        options['cover_logo'] = logo
+    try:
+        content = remote_build(book, 'mobi', options=options)
+    except RuntimeError as e:
+        return HttpResponse(str(e))
     response = HttpResponse(content_type='application/x-mobipocket-ebook')
-    response['Content-Disposition'] = 'attachment; filename=%s' % book.slug + '.mobi'
-    response.write(mobi)
+    response['Content-Disposition'] = f'attachment; filename={book.dc_slug}.mobi'
+    response.write(content)
     return response
 
 

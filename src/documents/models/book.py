@@ -528,7 +528,3 @@ class Book(models.Model):
                 self.public = False
                 self.save()
             post_publish.send(sender=br)
-
-    def latex_dir(self):
-        doc = self.wldocument()
-        return doc.latex_dir(cover=True, ilustr_path=self.gallery_path())

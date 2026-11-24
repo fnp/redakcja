@@ -1,7 +1,7 @@
 # This file is part of FNP-Redakcja, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os.path
+import os
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -78,3 +78,6 @@ LEGIMI_PASSWORD = None
 LEGIMI_PUBLISHER_ID = None
 
 MIN_COVER_SIZE = (800, 800)
+
+REMOTE_BUILD_URL = os.environ.get('REMOTE_BUILD_URL')
+REMOTE_BUILD_TOKEN = os.environ.get('REMOTE_BUILD_TOKEN')

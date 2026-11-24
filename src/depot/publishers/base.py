@@ -25,7 +25,7 @@ class BasePublisher:
 
         if wlbook.meta.audience in ('L', 'SP1', 'SP2', 'SP3', 'SP4'):
             description += '<p><em>{}</em> to lektura szkolna.'.format(wlbook.meta.title)
-            if wlbook.tree.find('//pe') is not None:
+            if wlbook.tree.find('.//pe') is not None:
                 description += '<br>Ebook <em>{title}</em> zawiera przypisy opracowane specjalnie dla uczennic i uczniów {school}.'.format(
                     title=wlbook.meta.title,
                     school='szkoły podstawowej' if wlbook.meta.audience.startswith('SP') else 'liceum i technikum'
