@@ -126,13 +126,13 @@ class CoverPreviewTest(TestCase):
     def test_preview_from_bad_xml(self):
         response = self.client.post('/cover/preview/', data={"xml": ''})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, b'/media/static/img/sample_cover.png')
+        self.assertEqual(response.content, b'/static/img/sample_cover.png')
 
     @patch('cover.views.make_cover')
     def test_preview_from_minimal_xml(self, make_cover):
         response = self.client.post('/cover/preview/', data={"xml": SAMPLE_XML})
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'/media/dynamic/cover/preview/', response.content)
+        self.assertIn(b'/media/cover/preview/', response.content)
 
     def test_bad_book(self):
         response = self.client.get('/cover/preview/test/')
@@ -221,4 +221,4 @@ class TestCover(TestCase):
         
     def test_image_file(self):
         response = self.client.get('/cover/image/1/file/')
-        self.assertRegex(response['Location'], r'^/media/dynamic/cover/image/')
+        self.assertRegex(response['Location'], r'^/media/cover/image/')

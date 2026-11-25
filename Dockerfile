@@ -54,11 +54,11 @@ ARG GID=8200
 COPY scripts/nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN addgroup -g $GID app && addgroup nginx app
-COPY --from=static-builder /app/src/static /app/var/static
+COPY --from=static-builder /app/var/static /app/var/static
 
 
 
 
 FROM prod-base AS prod
 
-COPY --from=static-builder /app/src/static/staticfiles.json /app/src/static/staticfiles.json
+COPY --from=static-builder /app/var/static/staticfiles.json /app/var/static/staticfiles.json

@@ -60,17 +60,10 @@ function xml2html(options) {
             source.text('');
             options.error(error.text(), source_text);
         } else {
-            let galleryUrl = new URL(
-                options.base,
-                window.location.href
-            );
             $("img", $(doc.childNodes)).each(function() {
                 $(this).attr(
                     'src',
-                    new URL(
-                        $(this).attr('src'),
-                        galleryUrl
-                    )
+                    $(this).attr('src'),
                 );
             })
 

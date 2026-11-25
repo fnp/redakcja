@@ -546,11 +546,6 @@
             text = $.trim(text.replace(/\s{2,}/g, ' '));
             return text.length;
         }
-
-        /* Temporary workaround for relative images. */
-        getBase() {
-            return '/media/dynamic/images/' + this.galleryLink + '/';
-        }
     }
 
     $.wikiapi.WikiDocument = WikiDocument;

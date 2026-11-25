@@ -1,8 +1,5 @@
 (function($){
 
-    let w = function() {};
-    w = console.log;
-
     const elementDefs = {
         "ilustr": {
             "attributes": [
@@ -89,17 +86,11 @@
                     html2text({
                         element: self.$edited[0],
                         success: function(xml) {
-                            w(222)
                             let $xmlelem = $($.parseXML(xml));
-                            w(333, $xmlelem)
-                            w($input.data('property'), $input.val());
                             $xmlelem.contents().attr($input.data('property'), inputval);
-                            w(444, $xmlelem)
                             let newxml = (new XMLSerializer()).serializeToString($xmlelem[0]);
-                            w(555, newxml)
                             xml2html({
                                 xml: newxml,
-                                base: self.doc.getBase(),
                                 success: function(html) {
                                     let htmlElem = $(html);
                                     self.$edited.replaceWith(htmlElem);

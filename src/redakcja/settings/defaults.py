@@ -3,8 +3,6 @@
 #
 import os
 
-PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -46,24 +44,20 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = PROJECT_ROOT + '/media/dynamic'
-STATIC_ROOT = PROJECT_ROOT + '/../static/'
-CATALOGUE_REPO_PATH = MEDIA_ROOT + '/repo'
-CATALOGUE_IMAGE_REPO_PATH = MEDIA_ROOT + '/imgrepo'
+MEDIA_ROOT = '/app/var/media'
+STATIC_ROOT = '/app/var/static'
+CATALOGUE_REPO_PATH = '/app/var/dvcs'
+CATALOGUE_IMAGE_REPO_PATH = '/app/var/dvcs-img'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/dynamic/'
-STATIC_URL = '/media/static/'
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
 
 SESSION_COOKIE_NAME = "redakcja_sessionid"
 
 IMAGE_DIR = 'images/'
-
-BROKER_URL = 'django://'
-
-SHOW_APP_VERSION = False
 
 CAS_SERVER_URL = None
 CAS_APPLY_ATTRIBUTES_TO_USER = True
